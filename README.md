@@ -4,7 +4,9 @@ Unigram – An Universal take on Telegram. Made by the community, for the commun
 Windows 10 (Mobile) introduced with the Universal Windows Platform a whole list of features to make your (chatting) life easier. However, the current official Telegram-app has no signs of releasing an UWP-version with these capabilities soon. That’s why we decided to build our own.
 
 
-Our main goal: Make chatting via Telegram fun and engaging. How? By building an app that’s fast, functional and easy to use.
+Our main goal:
+-
+Make chatting via Telegram fun and engaging. How? By building an app that’s fast, functional and easy to use.
 
 
 At first we’ll aim to build an experience that’s feature wise on par with the current WP-app. After that we’ll have more time to implement extra functions to make the app even better to use!
@@ -22,9 +24,12 @@ We look forward to your ideas and or contributions! Together we can make this a 
 =================================================================
 
 Milestones:
+-
 (These are subject to change!)
+
 Completed:
--	
+
+
 Currently:
 -	Design UI and build XAML-mockups
 
@@ -63,6 +68,6 @@ UWP-specific:
 -	Quick reply from notifications
 -	Support for Continuum
 -	Adaptive design
--	Share contract (target and from the app?)
+-	Share contracts
 -	Integrate with the People Hub
 -	And more…
