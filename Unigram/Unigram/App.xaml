@@ -4,5 +4,32 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram"
     RequestedTheme="Light">
+    <Application.Resources>
+        <DataTemplate x:Key="ChatsListViewItem">
+            <Grid Height="70" Margin="0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <Grid Height="70" Width="70" Grid.Column="0" HorizontalAlignment="Left">
+                    <Ellipse Fill="#FF54759E"/>
+                    <TextBlock Text="A" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Light" FontSize="30" TextAlignment="Center"/>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <StackPanel VerticalAlignment="Center" Margin="10,0">
+                        <TextBlock Text="Name" Foreground="White"/>
+                        <TextBlock TextWrapping="Wrap" MaxLines="2" Text="I have something in the fridge. lorem ipsum is a bacon ipsum but an ipossum is yellow." TextTrimming="CharacterEllipsis" Foreground="#FF8F8F8F" FontSize="11" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Grid>
+                <Grid  Grid.Column="2">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Tue" HorizontalAlignment="Center" Foreground="White" Margin="0,5,0,0"/>
+                        <FontIcon Glyph="" Foreground="White" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+    </Application.Resources>
 
 </Application>
