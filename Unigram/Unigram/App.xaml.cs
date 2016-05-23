@@ -42,12 +42,12 @@ namespace Unigram
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-#if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                this.DebugSettings.EnableFrameRateCounter = true;
-            }
-#endif
+//#if DEBUG
+//            if (System.Diagnostics.Debugger.IsAttached)
+//            {
+//                this.DebugSettings.EnableFrameRateCounter = true;
+//            }
+//#endif
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -75,12 +75,39 @@ namespace Unigram
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    rootFrame.Navigate(typeof(Views.ChatsSummary), e.Arguments);
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
+                this.ShowStatusBar();
+            }
+            
+        }
+
+
+
+        // Show the StatusBar
+        private async void ShowStatusBar()
+        {
+            // Show StatusBar on Win10 Mobile, in theme of the pass
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.BackgroundOpacity = 1;
+                await statusBar.ShowAsync();
+                // use Accentcolour in statusbar
+                //var accentColour = Application.Current.Resources["SystemControlHighlightAccentBrush"] as SolidColorBrush;
+                //statusBar.BackgroundColor = accentColour.Color;
+                statusBar.BackgroundColor = new Windows.UI.Color() { R = 54, G = 173, B = 225 };
+                statusBar.ForegroundColor = new Windows.UI.Color() { R = 255, G = 255, B = 255 };
+
+                // Example colour
             }
         }
+
+
+
+
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails
