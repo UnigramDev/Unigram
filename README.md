@@ -16,7 +16,9 @@ https://onedrive.live.com/redir?resid=ECCD256D4687F1CC!430502&authkey=!ANW1q05gJ
 
 
 Want to contribute? Join the Dev chat on Telegram or join the discussion on Reddit: 
+
 https://telegram.me/joinchat/ARAF8wcUwLskZCgotn3kKA
+
 https://www.reddit.com/r/windowsphone/comments/4kkcjc/no_uwp_version_of_telegram_lets_make_one/
 
 We look forward to your ideas and or contributions! Together we can make this a great Telegram client for all of us!
