@@ -1,2 +1,2 @@
-# unigram
-The community made UWP-version of Telegram
+# Unigram
+The UWP-version of Telegram build by the community
