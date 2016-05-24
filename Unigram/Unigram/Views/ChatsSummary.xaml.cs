@@ -22,16 +22,10 @@ namespace Unigram.Views
         {
             this.InitializeComponent();
         }
-
-
-
-
-
-
         
-        private void cbtnMasterAbout_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(Views.About));
-        }
+        //private void cbtnMasterAbout_Click(object sender, RoutedEventArgs e)
+        //{
+        //    Frame.Navigate(typeof(Views.About));
+        //}
     }
 }
