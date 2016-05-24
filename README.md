@@ -12,8 +12,7 @@ Make chatting via Telegram fun and engaging. How? By building an app that’s fa
 At first we’ll aim to build an experience that’s feature wise on par with the current WP-app. After that we’ll have more time to implement extra functions to make the app even better to use!
 
 You can check out our current designs of Unigram here:
-https://imgur.com/a/mayUM
-
+https://www.behance.net/gallery/37507573/Unigram-for-Windows-10-Mobile
 
 Want to contribute? Join the Dev chat on Telegram or join the discussion on Reddit: 
 
