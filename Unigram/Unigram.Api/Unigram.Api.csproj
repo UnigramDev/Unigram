@@ -23,7 +23,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,7 +32,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -40,7 +40,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -50,7 +50,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -62,7 +62,7 @@
     <PlatformTarget>ARM</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\ARM\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>ARM</PlatformTarget>
@@ -72,7 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
     <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -84,7 +84,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -94,7 +94,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -105,10 +105,431 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="project.json" />
+    <Compile Include="Hash\CRC32\CRC32.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
+    <Compile Include="Services\MTProtoService.Channel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aggregator\EventAggregator.cs" />
+    <Compile Include="Aggregator\ExtensionMethods.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Extensions\ActionExtensions.cs" />
+    <Compile Include="Extensions\HttpWebRequestExtensions.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
+    <Compile Include="Extensions\TLObjectExtensions.cs" />
+    <Compile Include="Hash\MD5\MD5.cs" />
+    <Compile Include="Hash\MD5\MD5CryptoServiceProvider.cs" />
+    <Compile Include="Hash\MD5\MD5Managed.cs" />
+    <Compile Include="Helpers\Execute.cs" />
+    <Compile Include="Helpers\FileUtils.cs" />
+    <Compile Include="Helpers\RequestHelper.cs" />
+    <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Logs\Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Cache\Context.cs" />
+    <Compile Include="Services\Cache\EventArgs\DialogAddedEventArgs.cs" />
+    <Compile Include="Services\Cache\EventArgs\TopMessageUpdatedEventArgs.cs" />
+    <Compile Include="Services\Cache\ICacheService.cs" />
+    <Compile Include="Services\Cache\InMemoryCacheService.cs" />
+    <Compile Include="Services\Cache\InMemoryDatabase.cs" />
+    <Compile Include="Services\Connection\ConnectionService.cs" />
+    <Compile Include="Services\DCOptionItem.cs" />
+    <Compile Include="Services\DelayedItem.cs" />
+    <Compile Include="Services\DeviceInfo\IDeviceInfoService.cs" />
+    <Compile Include="Services\FileManager\AudioFileManager.cs" />
+    <Compile Include="Services\FileManager\DocumentFileManager.cs" />
+    <Compile Include="Services\FileManager\DownloadableItem.cs" />
+    <Compile Include="Services\FileManager\DownloadablePart.cs" />
+    <Compile Include="Services\FileManager\DownloadingCanceledEventArgs.cs" />
+    <Compile Include="Services\FileManager\EncryptedFileManager.cs" />
+    <Compile Include="Services\FileManager\FileManager.cs" />
+    <Compile Include="Services\FileManager\IAudioFileManager.cs" />
+    <Compile Include="Services\FileManager\IDocumentFileManager.cs" />
+    <Compile Include="Services\FileManager\IEncryptedFileManager.cs" />
+    <Compile Include="Services\FileManager\IFileManager.cs" />
+    <Compile Include="Services\FileManager\IUploadAudioFileManager.cs" />
+    <Compile Include="Services\FileManager\IUploadFileManager.cs" />
+    <Compile Include="Services\FileManager\IUploadVideoFileManager.cs" />
+    <Compile Include="Services\FileManager\IVideoFileManager.cs" />
+    <Compile Include="Services\FileManager\ProgressChangedEventArgs.cs" />
+    <Compile Include="Services\FileManager\UploadAudioFileManager.cs" />
+    <Compile Include="Services\FileManager\UploadFileManager.cs" />
+    <Compile Include="Services\FileManager\UploadVideoFileManager.cs" />
+    <Compile Include="Services\FileManager\VideoFileManager.cs" />
+    <Compile Include="Services\FileManager\Worker.cs" />
+    <Compile Include="Services\HistoryItem.cs" />
+    <Compile Include="Services\IMTProtoService.cs" />
+    <Compile Include="Services\Messages\ISenderService.cs" />
+    <Compile Include="Services\Messages\SenderService.cs" />
+    <Compile Include="Services\MTProtoService.Account.cs" />
+    <Compile Include="Services\MTProtoService.Auth.cs" />
+    <Compile Include="Services\MTProtoService.ByTransport.cs" />
+    <Compile Include="Services\MTProtoService.Config.cs" />
+    <Compile Include="Services\MTProtoService.Contacts.cs" />
+    <Compile Include="Services\MTProtoService.cs" />
+    <Compile Include="Services\MTProtoService.DHKeyExchange.cs" />
+    <Compile Include="Services\MTProtoService.Help.cs" />
+    <Compile Include="Services\MTProtoService.Helpers.cs" />
+    <Compile Include="Services\MTProtoService.HttpLongPoll.cs" />
+    <Compile Include="Services\MTProtoService.Messages.cs" />
+    <Compile Include="Services\MTProtoService.Photos.cs" />
+    <Compile Include="Services\MTProtoService.SecretChats.cs" />
+    <Compile Include="Services\MTProtoService.SendingQueue.cs" />
+    <Compile Include="Services\MTProtoService.Stuff.cs" />
+    <Compile Include="Services\MTProtoService.Updates.cs" />
+    <Compile Include="Services\MTProtoService.Upload.cs" />
+    <Compile Include="Services\MTProtoService.Users.cs" />
+    <Compile Include="Services\ServiceBase.cs" />
+    <Compile Include="Services\Updates\IUpdatesService.cs" />
+    <Compile Include="Services\Updates\ReceiveUpdatesEventArgs.cs" />
+    <Compile Include="Services\Updates\UpdatesBySeqComparer.cs" />
+    <Compile Include="Services\Updates\UpdatesService.cs" />
+    <Compile Include="TL\Account\TLChangePhone.cs" />
+    <Compile Include="TL\Account\TLCheckPassword.cs" />
+    <Compile Include="TL\Account\TLGetAuthorizations.cs" />
+    <Compile Include="TL\Account\TLGetPassword.cs" />
+    <Compile Include="TL\Account\TLGetPasswordSettings.cs" />
+    <Compile Include="TL\Account\TLGetWallPapers.cs" />
+    <Compile Include="TL\Account\TLRecoverPassword.cs" />
+    <Compile Include="TL\Account\TLRequestPasswordRecovery.cs" />
+    <Compile Include="TL\Account\TLResetAuthorization.cs" />
+    <Compile Include="TL\Account\TLResetPassword.cs" />
+    <Compile Include="TL\Account\TLSendChangePhoneCode.cs" />
+    <Compile Include="TL\Account\TLSetPassword.cs" />
+    <Compile Include="TL\Account\TLUpdateDeviceLocked.cs" />
+    <Compile Include="TL\Account\TLUpdatePasswordSettings.cs" />
+    <Compile Include="TL\Enums.cs" />
+    <Compile Include="TL\Functions\Account\TLCheckUsername.cs" />
+    <Compile Include="TL\Functions\Account\TLDeleteAccount.cs" />
+    <Compile Include="TL\Functions\Account\TLGetAccountTTL.cs" />
+    <Compile Include="TL\Functions\Account\TLGetNotifySettings.cs" />
+    <Compile Include="TL\Functions\Account\TLGetPrivacy.cs" />
+    <Compile Include="TL\Functions\Account\TLRegisterDevice.cs" />
+    <Compile Include="TL\Functions\Account\TLResetNotifySettings.cs" />
+    <Compile Include="TL\Functions\Account\TLSetPrivacy.cs" />
+    <Compile Include="TL\Functions\Account\TLUnregisterDevice.cs" />
+    <Compile Include="TL\Functions\Account\TLUpdateNotifySettings.cs" />
+    <Compile Include="TL\Functions\Account\TLUpdateProfile.cs" />
+    <Compile Include="TL\Functions\Account\TLUpdateStatus.cs" />
+    <Compile Include="TL\Functions\Account\TLUpdateUserName.cs" />
+    <Compile Include="TL\Functions\Auth\TLCheckPhone.cs" />
+    <Compile Include="TL\Functions\Auth\TLExportAuthorization.cs" />
+    <Compile Include="TL\Functions\Auth\TLImportAuthorization.cs" />
+    <Compile Include="TL\Functions\Auth\TLLogOut.cs" />
+    <Compile Include="TL\Functions\Auth\TLResetAuthorizations.cs" />
+    <Compile Include="TL\Functions\Auth\TLSendCall.cs" />
+    <Compile Include="TL\Functions\Auth\TLSendCode.cs" />
+    <Compile Include="TL\Functions\Auth\TLSendInvites.cs" />
+    <Compile Include="TL\Functions\Auth\TLSendSms.cs" />
+    <Compile Include="TL\Functions\Auth\TLSignIn.cs" />
+    <Compile Include="TL\Functions\Auth\TLSignUp.cs" />
+    <Compile Include="TL\Functions\Channels\TLCheckUsername.cs" />
+    <Compile Include="TL\Functions\Channels\TLCreateChannel.cs" />
+    <Compile Include="TL\Functions\Channels\TLDeleteChannel.cs" />
+    <Compile Include="TL\Functions\Channels\TLDeleteChannelMessages.cs" />
+    <Compile Include="TL\Functions\Channels\TLEditAbout.cs" />
+    <Compile Include="TL\Functions\Channels\TLEditAdmin.cs" />
+    <Compile Include="TL\Functions\Channels\TLEditPhoto.cs" />
+    <Compile Include="TL\Functions\Channels\TLEditTitle.cs" />
+    <Compile Include="TL\Functions\Channels\TLExportInvite.cs" />
+    <Compile Include="TL\Functions\Channels\TLGetChannels.cs" />
+    <Compile Include="TL\Functions\Channels\TLGetDialogs.cs" />
+    <Compile Include="TL\Functions\Channels\TLGetFullChannel.cs" />
+    <Compile Include="TL\Functions\Channels\TLGetImportantHistory.cs" />
+    <Compile Include="TL\Functions\Channels\TLGetMessages.cs" />
+    <Compile Include="TL\Functions\Channels\TLGetParticipant.cs" />
+    <Compile Include="TL\Functions\Channels\TLGetParticipants.cs" />
+    <Compile Include="TL\Functions\Channels\TLInviteToChannel.cs" />
+    <Compile Include="TL\Functions\Channels\TLJoinChannel.cs" />
+    <Compile Include="TL\Functions\Channels\TLKickFromChannel.cs" />
+    <Compile Include="TL\Functions\Channels\TLLeaveChannel.cs" />
+    <Compile Include="TL\Functions\Channels\TLReadHistory.cs" />
+    <Compile Include="TL\Functions\Channels\TLToggleComments.cs" />
+    <Compile Include="TL\Functions\Channels\TLUpdateChannelUsername.cs" />
+    <Compile Include="TL\Functions\Contacts\TLBlock.cs" />
+    <Compile Include="TL\Functions\Contacts\TLDeleteContact.cs" />
+    <Compile Include="TL\Functions\Contacts\TLDeleteContacts.cs" />
+    <Compile Include="TL\Functions\Contacts\TLGetBlocked.cs" />
+    <Compile Include="TL\Functions\Contacts\TLGetContacts.cs" />
+    <Compile Include="TL\Functions\Contacts\TLGetStatuses.cs" />
+    <Compile Include="TL\Functions\Contacts\TLImportContacts.cs" />
+    <Compile Include="TL\Functions\Contacts\TLResolveUsername.cs" />
+    <Compile Include="TL\Functions\Contacts\TLSearch.cs" />
+    <Compile Include="TL\Functions\Contacts\TLUnblock.cs" />
+    <Compile Include="TL\Functions\DHKeyExchange\TLReqDHParams.cs" />
+    <Compile Include="TL\Functions\DHKeyExchange\TLReqPQ.cs" />
+    <Compile Include="TL\Functions\DHKeyExchange\TLSetClientDHParams.cs" />
+    <Compile Include="TL\Functions\Help\TLGetAppChangelog.cs" />
+    <Compile Include="TL\Functions\Help\TLGetConfig.cs" />
+    <Compile Include="TL\Functions\Help\TLGetInviteText.cs" />
+    <Compile Include="TL\Functions\Help\TLGetNearestDC.cs" />
+    <Compile Include="TL\Functions\Help\TLGetSupport.cs" />
+    <Compile Include="TL\Functions\Help\TLInvokeWithLayerN.cs" />
+    <Compile Include="TL\Functions\Help\TLInvokeWithoutUpdates.cs" />
+    <Compile Include="TL\Functions\Messages\TLAcceptEncryption.cs" />
+    <Compile Include="TL\Functions\Messages\TLAddChatUser.cs" />
+    <Compile Include="TL\Functions\Messages\TLCheckChatInvite.cs" />
+    <Compile Include="TL\Functions\Messages\TLCreateChat.cs" />
+    <Compile Include="TL\Functions\Messages\TLDeactivateChat.cs" />
+    <Compile Include="TL\Functions\Messages\TLDeleteChatUser.cs" />
+    <Compile Include="TL\Functions\Messages\TLDeleteHistory.cs" />
+    <Compile Include="TL\Functions\Messages\TLDeleteMessages.cs" />
+    <Compile Include="TL\Functions\Messages\TLDiscardEncryption.cs" />
+    <Compile Include="TL\Functions\Messages\TLEditChatAdmin.cs" />
+    <Compile Include="TL\Functions\Messages\TLEditChatPhoto.cs" />
+    <Compile Include="TL\Functions\Messages\TLEditChatTitle.cs" />
+    <Compile Include="TL\Functions\Messages\TLExportChatInvite.cs" />
+    <Compile Include="TL\Functions\Messages\TLForwardMessage.cs" />
+    <Compile Include="TL\Functions\Messages\TLForwardMessages.cs" />
+    <Compile Include="TL\Functions\Messages\TLGetAllStickers.cs" />
+    <Compile Include="TL\Functions\Messages\TLGetChats.cs" />
+    <Compile Include="TL\Functions\Messages\TLGetDHConfig.cs" />
+    <Compile Include="TL\Functions\Messages\TLGetDialogs.cs" />
+    <Compile Include="TL\Functions\Messages\TLGetFullChat.cs" />
+    <Compile Include="TL\Functions\Messages\TLGetHistory.cs" />
+    <Compile Include="TL\Functions\Messages\TLGetMessages.cs" />
+    <Compile Include="TL\Functions\Messages\TLGetStickers.cs" />
+    <Compile Include="TL\Functions\Messages\TLGetStickerSet.cs" />
+    <Compile Include="TL\Functions\Messages\TLGetWebPagePreview.cs" />
+    <Compile Include="TL\Functions\Messages\TLImportChatInvite.cs" />
+    <Compile Include="TL\Functions\Messages\TLInstallStickerSet.cs" />
+    <Compile Include="TL\Functions\Messages\TLMigrateChat.cs" />
+    <Compile Include="TL\Functions\Messages\TLReadEncryptedHistory.cs" />
+    <Compile Include="TL\Functions\Messages\TLReadHistory.cs" />
+    <Compile Include="TL\Functions\Messages\TLReadMessageContents.cs" />
+    <Compile Include="TL\Functions\Messages\TLReceivedMessages.cs" />
+    <Compile Include="TL\Functions\Messages\TLReceivedQueue.cs" />
+    <Compile Include="TL\Functions\Messages\TLReportSpam.cs" />
+    <Compile Include="TL\Functions\Messages\TLRequestEncryption.cs" />
+    <Compile Include="TL\Functions\Messages\TLRestoreMessages.cs" />
+    <Compile Include="TL\Functions\Messages\TLSearch.cs" />
+    <Compile Include="TL\Functions\Messages\TLSendBroadcast.cs" />
+    <Compile Include="TL\Functions\Messages\TLSendEncrypted.cs" />
+    <Compile Include="TL\Functions\Messages\TLSendEncryptedFile.cs" />
+    <Compile Include="TL\Functions\Messages\TLSendEncryptedService.cs" />
+    <Compile Include="TL\Functions\Messages\TLSendMedia.cs" />
+    <Compile Include="TL\Functions\Messages\TLSendMessage.cs" />
+    <Compile Include="TL\Functions\Messages\TLSetEncryptedTyping.cs" />
+    <Compile Include="TL\Functions\Messages\TLSetTyping.cs" />
+    <Compile Include="TL\Functions\Messages\TLStartBot.cs" />
+    <Compile Include="TL\Functions\Messages\TLToggleChatAdmins.cs" />
+    <Compile Include="TL\Functions\Messages\TLUninstallStickerSet.cs" />
+    <Compile Include="TL\Functions\Photos\TLGetUserPhotos.cs" />
+    <Compile Include="TL\Functions\Photos\TLUpdateProfilePhoto.cs" />
+    <Compile Include="TL\Functions\Photos\TLUploadProfilePhoto.cs" />
+    <Compile Include="TL\Functions\Stuff\TLGetFutureSalts.cs" />
+    <Compile Include="TL\Functions\Stuff\TLHttpWait.cs" />
+    <Compile Include="TL\Functions\Stuff\TLMessageAcknowledgments.cs" />
+    <Compile Include="TL\Functions\Stuff\TLRPCDropAnswer.cs" />
+    <Compile Include="TL\Functions\Updates\TLGetChannelDifference.cs" />
+    <Compile Include="TL\Functions\Updates\TLGetDifference.cs" />
+    <Compile Include="TL\Functions\Updates\TLGetState.cs" />
+    <Compile Include="TL\Functions\Upload\TLGetFile.cs" />
+    <Compile Include="TL\Functions\Upload\TLSaveFilePart.cs" />
+    <Compile Include="TL\Functions\Users\TLGetFullUser.cs" />
+    <Compile Include="TL\Functions\Users\TLGetUsers.cs" />
+    <Compile Include="TL\Interfaces\IBytes.cs" />
+    <Compile Include="TL\Interfaces\IFullName.cs" />
+    <Compile Include="TL\Interfaces\IInputPeer.cs" />
+    <Compile Include="TL\Interfaces\ISelectable.cs" />
+    <Compile Include="TL\Interfaces\IVIsibility.cs" />
+    <Compile Include="TL\SignatureAttribute.cs" />
+    <Compile Include="TL\TLAccountAuthorization.cs" />
+    <Compile Include="TL\TLAccountAuthorizations.cs" />
+    <Compile Include="TL\TLAccountDaysTTL.cs" />
+    <Compile Include="TL\TLActionInfo.cs" />
+    <Compile Include="TL\TLAffectedHistory.cs" />
+    <Compile Include="TL\TLAffectedMessages.cs" />
+    <Compile Include="TL\TLAllStrickers.cs" />
+    <Compile Include="TL\TLAppChangelogBase.cs" />
+    <Compile Include="TL\TLAudio.cs" />
+    <Compile Include="TL\TLAuthorization.cs" />
+    <Compile Include="TL\TLBadMessageNotification.cs" />
+    <Compile Include="TL\TLBadServerSalt.cs" />
+    <Compile Include="TL\TLBool.cs" />
+    <Compile Include="TL\TLBotCommand.cs" />
+    <Compile Include="TL\TLBotInfo.cs" />
+    <Compile Include="TL\TLChannelDifference.cs" />
+    <Compile Include="TL\TLChannelMessagesFiler.cs" />
+    <Compile Include="TL\TLChannelParticipant.cs" />
+    <Compile Include="TL\TLChannelParticipantRole.cs" />
+    <Compile Include="TL\TLChannelParticipantsFilter.cs" />
+    <Compile Include="TL\TLChat.cs" />
+    <Compile Include="TL\TLChatFull.cs" />
+    <Compile Include="TL\TLChatInvite.cs" />
+    <Compile Include="TL\TLChatParticipant.cs" />
+    <Compile Include="TL\TLChatParticipants.cs" />
+    <Compile Include="TL\TLChats.cs" />
+    <Compile Include="TL\TLCheckedPhone.cs" />
+    <Compile Include="TL\TLClientDHInnerData.cs" />
+    <Compile Include="TL\TLConfig.cs" />
+    <Compile Include="TL\TLContact.cs" />
+    <Compile Include="TL\TLContactBlocked.cs" />
+    <Compile Include="TL\TLContactFound.cs" />
+    <Compile Include="TL\TLContactLink.cs" />
+    <Compile Include="TL\TLContacts.cs" />
+    <Compile Include="TL\TLContactsBlocked.cs" />
+    <Compile Include="TL\TLContactsFound.cs" />
+    <Compile Include="TL\TLContactStatus.cs" />
+    <Compile Include="TL\TLContainerTransportMessage.cs" />
+    <Compile Include="TL\TLDCOption.cs" />
+    <Compile Include="TL\TLDecryptedMessage.cs" />
+    <Compile Include="TL\TLDecryptedMessageAction.cs" />
+    <Compile Include="TL\TLDecryptedMessageLayer.cs" />
+    <Compile Include="TL\TLDecryptedMessageMedia.cs" />
+    <Compile Include="TL\TLDHConfig.cs" />
+    <Compile Include="TL\TLDHGen.cs" />
+    <Compile Include="TL\TLDialog.cs" />
+    <Compile Include="TL\TLDialogs.cs" />
+    <Compile Include="TL\TLDifference.cs" />
+    <Compile Include="TL\TLDisabledFeature.cs" />
+    <Compile Include="TL\TLDocument.cs" />
+    <Compile Include="TL\TLDocumentAttribute.cs" />
+    <Compile Include="TL\TLDouble.cs" />
+    <Compile Include="TL\TLEncryptedChat.cs" />
+    <Compile Include="TL\TLEncryptedFile.cs" />
+    <Compile Include="TL\TLEncryptedMessage.cs" />
+    <Compile Include="TL\TLExportedAuthorization.cs" />
+    <Compile Include="TL\TLFile.cs" />
+    <Compile Include="TL\TLFileLocation.cs" />
+    <Compile Include="TL\TLFileType.cs" />
+    <Compile Include="TL\TLForeignLink.cs" />
+    <Compile Include="TL\TLFutureSalt.cs" />
+    <Compile Include="TL\TLGeoPoint.cs" />
+    <Compile Include="TL\TLGzipPacked.cs" />
+    <Compile Include="TL\TLHashtagItem.cs" />
+    <Compile Include="TL\TLImportedContact.cs" />
+    <Compile Include="TL\TLImportedContacts.cs" />
+    <Compile Include="TL\TLInitConnection.cs" />
+    <Compile Include="TL\TLInputAudio.cs" />
+    <Compile Include="TL\TLInputChatBase.cs" />
+    <Compile Include="TL\TLInputChatPhoto.cs" />
+    <Compile Include="TL\TLInputContact.cs" />
+    <Compile Include="TL\TLInputDocument.cs" />
+    <Compile Include="TL\TLInputEncryptedChat.cs" />
+    <Compile Include="TL\TLInputEncryptedFile.cs" />
+    <Compile Include="TL\TLInputEncryptedFileBigUploaded.cs" />
+    <Compile Include="TL\TLInputEncryptedFileLocation.cs" />
+    <Compile Include="TL\TLInputFile.cs" />
+    <Compile Include="TL\TLInputFileBig.cs" />
+    <Compile Include="TL\TLInputFileLocation.cs" />
+    <Compile Include="TL\TLInputGeoPoint.cs" />
+    <Compile Include="TL\TLInputMedia.cs" />
+    <Compile Include="TL\TLInputMessagesFilter.cs" />
+    <Compile Include="TL\TLInputNotifyPeer.cs" />
+    <Compile Include="TL\TLInputPeerBase.cs" />
+    <Compile Include="TL\TLInputPeerNotifyEvents.cs" />
+    <Compile Include="TL\TLInputPeerNotifySettings.cs" />
+    <Compile Include="TL\TLInputPhoto.cs" />
+    <Compile Include="TL\TLInputPhotoCrop.cs" />
+    <Compile Include="TL\TLInputPrivacyKey.cs" />
+    <Compile Include="TL\TLInputPrivacyRule.cs" />
+    <Compile Include="TL\TLInputStickerSet.cs" />
+    <Compile Include="TL\TLInputUser.cs" />
+    <Compile Include="TL\TLInputVideo.cs" />
+    <Compile Include="TL\TLInt.cs" />
+    <Compile Include="TL\TLInt128.cs" />
+    <Compile Include="TL\TLInt256.cs" />
+    <Compile Include="TL\TLInviteText.cs" />
+    <Compile Include="TL\TLInvokeAfterMsg.cs" />
+    <Compile Include="TL\TLKeyboardButton.cs" />
+    <Compile Include="TL\TLKeyboardButtonRow.cs" />
+    <Compile Include="TL\TLLink.cs" />
+    <Compile Include="TL\TLLong.cs" />
+    <Compile Include="TL\TLMessage.cs" />
+    <Compile Include="TL\TLMessage.Encrypted.cs" />
+    <Compile Include="TL\TLMessageAction.cs" />
+    <Compile Include="TL\TLMessageContainer.cs" />
+    <Compile Include="TL\TLMessageEntity.cs" />
+    <Compile Include="TL\TLMessageGroup.cs" />
+    <Compile Include="TL\TLMessageInfo.cs" />
+    <Compile Include="TL\TLMessageMedia.cs" />
+    <Compile Include="TL\TLMessageRange.cs" />
+    <Compile Include="TL\TLMessages.cs" />
+    <Compile Include="TL\TLMessagesAcknowledgment.cs" />
+    <Compile Include="TL\TLMessagesChannelParticipants.cs" />
+    <Compile Include="TL\TLMessagesChatFull.cs" />
+    <Compile Include="TL\TLMessagesStickerSet.cs" />
+    <Compile Include="TL\TLMyLink.cs" />
+    <Compile Include="TL\TLNearestDC.cs" />
+    <Compile Include="TL\TLNewSessionCreated.cs" />
+    <Compile Include="TL\TLNonEncryptedMessage.cs" />
+    <Compile Include="TL\TLNotifyPeer.cs" />
+    <Compile Include="TL\TLNull.cs" />
+    <Compile Include="TL\TLObject.cs" />
+    <Compile Include="TL\TLObjectGenerator.cs" />
+    <Compile Include="TL\TLPasscodeParams.cs" />
+    <Compile Include="TL\TLPassword.cs" />
+    <Compile Include="TL\TLPasswordInputSettings.cs" />
+    <Compile Include="TL\TLPasswordRecovery.cs" />
+    <Compile Include="TL\TLPasswordSettings.cs" />
+    <Compile Include="TL\TLPeer.cs" />
+    <Compile Include="TL\TLPeerNotifyEvents.cs" />
+    <Compile Include="TL\TLPeerNotifySettings.cs" />
+    <Compile Include="TL\TLPhoto.cs" />
+    <Compile Include="TL\TLPhotos.cs" />
+    <Compile Include="TL\TLPhotoSize.cs" />
+    <Compile Include="TL\TLPhotosPhoto.cs" />
+    <Compile Include="TL\TLPong.cs" />
+    <Compile Include="TL\TLPQInnerData.cs" />
+    <Compile Include="TL\TLPrivacyKey.cs" />
+    <Compile Include="TL\TLPrivacyRule.cs" />
+    <Compile Include="TL\TLPrivacyRules.cs" />
+    <Compile Include="TL\TLReceivedNotifyMessage.cs" />
+    <Compile Include="TL\TLRecentlyUsedSticker.cs" />
+    <Compile Include="TL\TLReplyKeyboardMarkup.cs" />
+    <Compile Include="TL\TLRequest.cs" />
+    <Compile Include="TL\TLResolvedPeer.cs" />
+    <Compile Include="TL\TLResponse.cs" />
+    <Compile Include="TL\TLResPQ.cs" />
+    <Compile Include="TL\TLResultInfo.cs" />
+    <Compile Include="TL\TLRPCDropAnswer.cs" />
+    <Compile Include="TL\TLRPCError.cs" />
+    <Compile Include="TL\TLRPCResult.cs" />
+    <Compile Include="TL\TLSendMessageAction.cs" />
+    <Compile Include="TL\TLSentChangePhoneCode.cs" />
+    <Compile Include="TL\TLSentCode.cs" />
+    <Compile Include="TL\TLSentEncryptedFile.cs" />
+    <Compile Include="TL\TLSentEncryptedMessage.cs" />
+    <Compile Include="TL\TLSentMessage.cs" />
+    <Compile Include="TL\TLServerDHInnerData.cs" />
+    <Compile Include="TL\TLServerDHParams.cs" />
+    <Compile Include="TL\TLServerFile.cs" />
+    <Compile Include="TL\TLSignatures.cs" />
+    <Compile Include="TL\TLState.cs" />
+    <Compile Include="TL\TLStatedMessage.cs" />
+    <Compile Include="TL\TLStatedMessages.cs" />
+    <Compile Include="TL\TLStickerPack.cs" />
+    <Compile Include="TL\TLStickers.cs" />
+    <Compile Include="TL\TLStickerSet.cs" />
+    <Compile Include="TL\TLString.cs" />
+    <Compile Include="TL\TLSupport.cs" />
+    <Compile Include="TL\TLUpdate.cs" />
+    <Compile Include="TL\TLUpdates.cs" />
+    <Compile Include="TL\TLUserBase.cs" />
+    <Compile Include="TL\TLUserFull.cs" />
+    <Compile Include="TL\TLUserStatus.cs" />
+    <Compile Include="TL\TLUtils.cs" />
+    <Compile Include="TL\TLUtils.Log.cs" />
+    <Compile Include="TL\TLVector.cs" />
+    <Compile Include="TL\TLVideo.cs" />
+    <Compile Include="TL\TLWallpaperSolid.cs" />
+    <Compile Include="TL\TLWebPage.cs" />
+    <Compile Include="Transport\DataEventArgs.cs" />
+    <Compile Include="Transport\ITransport.cs" />
+    <Compile Include="Transport\ITransportService.cs" />
+    <Compile Include="Transport\TCPTransportBase.cs" />
+    <Compile Include="Transport\TCPTransportResult.cs" />
+    <Compile Include="Transport\TcpTransportWinRT.cs" />
+    <Compile Include="Transport\TransportService.cs" />
+    <Compile Include="WindowsPhone\BigInteger.cs" />
+    <Compile Include="WindowsPhone\Tuple.cs" />
     <EmbeddedResource Include="Properties\Unigram.Api.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Compression\" />
+    <Folder Include="MD5\" />
+    <Folder Include="Services\Updates\EventArgs\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

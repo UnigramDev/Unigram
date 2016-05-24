@@ -1,0 +1,18 @@
+﻿using System;
+using Telegram.Api.Services;
+
+namespace Telegram.Api.Transport
+{
+    public interface ITransportService
+    {
+        ITransport GetTransport(string host, int port, TransportType type, out bool isCreated);
+
+        ITransport GetFileTransport(string host, int port, TransportType type, out bool isCreated);
+
+        void Close();
+        void CloseTransport(ITransport transport);
+
+        event EventHandler<TransportEventArgs> TransportConnecting;
+        event EventHandler<TransportEventArgs> TransportConnected;
+    }
+}
