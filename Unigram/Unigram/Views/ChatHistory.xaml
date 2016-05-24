@@ -1,0 +1,41 @@
+﻿<Page x:Class="Unigram.Views.ChatHistory"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Unigram.Views"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      RequestedTheme="Dark"
+      mc:Ignorable="d">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <RelativePanel>
+            <!-- Master - Titlebar -->
+            <RelativePanel x:Name="gridMasterTitlebar"
+                           Height="48"
+                           Margin="0,12,0,0"
+                           RelativePanel.AlignLeftWithPanel="True"
+                           RelativePanel.AlignRightWithPanel="True"
+                           RelativePanel.AlignTopWithPanel="True">
+                <!--Background="{StaticResource MasterHeaderBgBrush}"-->
+                <!-- ChatIcon -->
+                <Ellipse x:Name="elpMasataerChatIcon"
+                         Width="48"
+                         Height="48"
+                         Margin="12,0,0,0"
+                         RelativePanel.AlignVerticalCenterWithPanel="True"
+                         RelativePanel.AlignLeftWithPanel="True">
+                    <Ellipse.Fill>
+                        <ImageBrush x:Name="imgMasterChatIcon"
+                                    ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock x:Name="tblMasterTitle"
+                           Text="UNIGRAM"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           RequestedTheme="Dark"
+                           Margin="12,0"
+                           RelativePanel.RightOf="elpMasataerChatIcon"
+                           RelativePanel.AlignVerticalCenterWithPanel="True" />
+            </RelativePanel>
+        </RelativePanel>
+    </Grid>
+</Page>
