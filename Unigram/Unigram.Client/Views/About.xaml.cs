@@ -17,6 +17,7 @@
     using Windows.UI.Xaml.Media.Animation;
     using Windows.UI.Xaml.Navigation;
 
+
     public sealed partial class About : Page
     {
         public About()
@@ -42,9 +43,9 @@
                     var modifiedEntry = new PageStackEntry(masterPageEntry.SourcePageType, null, masterPageEntry.NavigationTransitionInfo);
                     backStack.Add(modifiedEntry);
                 }
-                catch // If stuff goes to the shitter, go back to the NoteMaster (MASTER. MASTER OF THE PUPPETS YADATADADATATAAAAA)
+                catch // If stuff goes to the shitter, go back to Home
                 {
-                    Frame.Navigate(typeof(Views.ChatsSummary), new DrillInNavigationTransitionInfo());
+                    Frame.Navigate(typeof(Views.Home), new DrillInNavigationTransitionInfo());
                 }
             }
 
@@ -72,7 +73,7 @@
         }
         private void OnBackRequested()
         {
-            Frame.Navigate(typeof(Views.ChatsSummary));    // Well, just go back to the NoteMaster
+            Frame.Navigate(typeof(Views.Home));    // Well, just go back to the Home
         }
     }
 }

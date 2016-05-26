@@ -41,7 +41,7 @@
                 <RelativePanel x:Name="gridMasterAppInfo"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.AlignRightWithPanel="True">
-                    <Image x:Name="imgMasterChatIcon"
+                    <Image x:Name="imgMasterAppLogo"
                            Height="96"
                            Width="96"                                   
                            Source="ms-appx:///Assets/Mockups/Logos/logo.png" />
@@ -49,13 +49,13 @@
                                Padding="16,0"
                                Text="Unigram"
                                Style="{StaticResource TitleTextBlockStyle}"
-                               RelativePanel.RightOf="imgMasterChatIcon"/>
+                               RelativePanel.RightOf="imgMasterAppLogo"/>
                     <TextBlock x:Name="tblMasterAppVersion"
                                Padding="16,0"
                                Text="Version Prototype"
                                Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
                                Style="{StaticResource BodyTextBlockStyle}"
-                               RelativePanel.RightOf="imgMasterChatIcon"
+                               RelativePanel.RightOf="imgMasterAppLogo"
                                RelativePanel.Below="tblMasterAppTitle"/>
                 </RelativePanel>
 

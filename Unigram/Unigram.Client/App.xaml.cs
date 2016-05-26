@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -77,8 +78,25 @@ namespace Unigram.Client
                     // parameter
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
+
                 // Ensure the current window is active
                 Window.Current.Activate();
+                ShowStatusBar();
+            }
+        }
+
+        private async Task ShowStatusBar()
+        {
+            // Show StatusBar on Win10 Mobile, in theme of the pass
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.BackgroundOpacity = 1;
+                await statusBar.ShowAsync();
+                statusBar.BackgroundColor = new Windows.UI.Color() { R = 54, G = 173, B = 225 };
+                statusBar.ForegroundColor = new Windows.UI.Color() { R = 255, G = 255, B = 255 };
+
+                // Example colour
             }
         }
 

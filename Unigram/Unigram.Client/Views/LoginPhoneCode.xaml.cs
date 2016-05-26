@@ -15,16 +15,14 @@
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Navigation;
 
-    public sealed partial class ChatsSummary : Page
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
+    public sealed partial class LoginPhoneCode : Page
     {
-        public ChatsSummary()
+        public LoginPhoneCode()
         {
             this.InitializeComponent();
-        }
-
-        private void cbtnMasterAbout_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(Views.About));
         }
     }
 }

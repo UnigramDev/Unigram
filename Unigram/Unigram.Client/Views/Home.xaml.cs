@@ -1,5 +1,4 @@
-﻿
-namespace Unigram.Client.Views
+﻿namespace Unigram.Client.Views
 {
     using System;
     using System.Collections.Generic;
@@ -16,11 +15,19 @@ namespace Unigram.Client.Views
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Navigation;
 
-    public sealed partial class Settings : Page
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
+    public sealed partial class Home : Page
     {
-        public Settings()
+        public Home()
         {
             this.InitializeComponent();
+        }
+
+        private void cbtnMasterAbout_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Views.About));
         }
     }
 }
