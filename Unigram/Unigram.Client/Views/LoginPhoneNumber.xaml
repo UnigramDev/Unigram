@@ -8,6 +8,129 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <RelativePanel>
+            <!-- Master - Titlebar -->
+            <RelativePanel x:Name="gridMasterTitlebar"
+                           Height="48"
+                           Background="#FF36ADE1"
+                           RelativePanel.AlignLeftWithPanel="True"
+                           RelativePanel.AlignRightWithPanel="True"
+                           RelativePanel.AlignTopWithPanel="True">
+                <TextBlock x:Name="tblMasterTitle"
+                           Text="WELCOME TO UNIGRAM" 
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           RequestedTheme="Dark"
+                           Padding="16,0"
+                           RelativePanel.AlignVerticalCenterWithPanel="True"/>
+            </RelativePanel>
 
+            <!-- Master - Main content -->
+            <RelativePanel x:Name="gridMasterContent"
+                           RelativePanel.AlignLeftWithPanel="True"
+                           RelativePanel.AlignRightWithPanel="True"
+                           RelativePanel.Below="gridMasterTitlebar"
+                           RelativePanel.AlignBottomWithPanel="True">
+                <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
+                              RelativePanel.AlignRightWithPanel="True"
+                              RelativePanel.AlignBottomWithPanel="True"
+                              RelativePanel.AlignTopWithPanel="True">
+                    <RelativePanel Padding="16">
+                        <!-- Master - logo and intro -->
+                        <RelativePanel x:Name="gridMasterWelcomeIntro"
+                                       RelativePanel.AlignLeftWithPanel="True"
+                                       RelativePanel.AlignRightWithPanel="True">
+                            <Image x:Name="imgMasterWelcomeLogo"
+                                   Height="96"
+                                   Width="96"                                   
+                                   Source="ms-appx:///Assets/Mockups/Logos/logo.png" />
+                            <TextBlock x:Name="tblMasterWelcomeIntroText"
+                                       Padding="16,0"
+                                       Text="Unigram is an UWP Telegram-app build by the Windows Community, for the Windows community"
+                                       TextWrapping="Wrap"
+                                       FontSize="12"                               
+                                       RelativePanel.AlignRightWithPanel="True"
+                                       RelativePanel.AlignVerticalCenterWithPanel="True"
+                                       RelativePanel.RightOf="imgMasterWelcomeLogo"/>
+                        </RelativePanel>
+
+
+                        <!-- Master - Phone Number -->
+                        <RelativePanel x:Name="gridMasterPhone"
+                                       Visibility="Visible"
+                                       Padding="0,16,0,0"
+                                       RelativePanel.AlignLeftWithPanel="True"
+                                       RelativePanel.AlignRightWithPanel="True"
+                                       RelativePanel.Below="gridMasterWelcomeIntro">
+                            <TextBlock x:Name="tblMasterPhoneTitle"
+                                       Text="Your phone number"
+                                       Style="{StaticResource TitleTextBlockStyle}"
+                                       RelativePanel.AlignLeftWithPanel="True"
+                                       RelativePanel.AlignRightWithPanel="True"
+                                       RelativePanel.AlignTopWithPanel="True"/>
+                            <TextBlock x:Name="tblMasterPhoneIntro"
+                                       Text="Please select the country you live in and enter your phone number"
+                                       TextWrapping="Wrap"
+                                       FontSize="14"
+                                       Padding="0,8,0,0"
+                                       RelativePanel.AlignLeftWithPanel="True"
+                                       RelativePanel.AlignRightWithPanel="True"
+                                       RelativePanel.Below="tblMasterPhoneTitle" />                            
+                            <RelativePanel x:Name="gridMasterPhoneInput"
+                                           Padding="0,0,0,0"
+                                           RelativePanel.AlignLeftWithPanel="True"
+                                           RelativePanel.AlignRightWithPanel="True"
+                                           RelativePanel.Below="tblMasterPhoneIntro">
+                                <ComboBox x:Name="cboxMasterPhoneInputCounty"
+                                          Header="Country:"
+                                          PlaceholderText="Select your country..."
+                                          Margin="0,16,0,0"
+                                          RelativePanel.AlignLeftWithPanel="True"
+                                          RelativePanel.AlignRightWithPanel="True"
+                                          RelativePanel.AlignTopWithPanel="True">
+                                    <ComboBoxItem Content="+31 - Netherlands"/>
+                                    <ComboBoxItem Content="+91 - India"/>
+                                    <!-- Temporary CBox items-->
+                                    
+                                </ComboBox>
+                                <TextBlock x:Name="tblMasterPhoneInputText"
+                                           Visibility="Collapsed"
+                                           Text="Enter your code:"
+                                           FontSize="12"
+                                           RelativePanel.AlignLeftWithPanel="True"
+                                           RelativePanel.AlignRightWithPanel="True"
+                                           RelativePanel.Below="cboxMasterPhoneInputCounty" />
+                                <TextBox x:Name="txtMasterPhoneInputPhoneNumber"
+                                         Margin="0,16,0,0"
+                                         Header="Phone number:"
+                                         PlaceholderText="Your code" 
+                                         RelativePanel.AlignLeftWithPanel="True"
+                                         RelativePanel.AlignRightWithPanel="True"
+                                         RelativePanel.Below="tblMasterPhoneInputText"/>
+                                <Button x:Name="btnMasterPhoneInputConfirm"
+                                        Background="{StaticResource SystemControlBackgroundAccentBrush}"
+                                        RequestedTheme="Dark"
+                                        Content="Next"
+                                        Padding="24,6"
+                                        Margin="0,16,0,0"
+                                        RelativePanel.Below="txtMasterPhoneInputPhoneNumber"/>
+                            </RelativePanel>
+                        </RelativePanel>
+                        <!-- END OF Master - Phone Number -->
+
+
+
+
+                    </RelativePanel>
+                </ScrollViewer>
+
+
+
+
+
+
+            </RelativePanel>
+
+
+        </RelativePanel>
     </Grid>
 </Page>
