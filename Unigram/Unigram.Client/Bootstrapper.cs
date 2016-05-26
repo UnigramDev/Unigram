@@ -28,6 +28,7 @@
         public void Configure()
         {
             container.ContainerBuilder.RegisterType<MTProtoService>().As<IMTProtoService>();
+            container.ContainerBuilder.RegisterType<TelegramEventAggregator>().As<ITelegramEventAggregator>();
             container.ContainerBuilder.RegisterType<InMemoryCacheService>().As<ICacheService>();
             container.ContainerBuilder.RegisterType<PhoneInfoService>().As<IDeviceInfoService>();
             container.ContainerBuilder.RegisterType<UpdatesService>().As<IUpdatesService>();
