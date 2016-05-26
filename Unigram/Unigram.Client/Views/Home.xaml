@@ -92,12 +92,17 @@
                         <RelativePanel Height="72"
                                        VerticalAlignment="Center">
                             <!-- ChatIcon -->
-                            <Image x:Name="imgMasterChatIcon"
-                                   Height="60"
-                                   Width="60"                                   
-                                   Source="ms-appx:///Assets/Mockups/UserIcons/user_batman.png"
-                                   RelativePanel.AlignVerticalCenterWithPanel="True"
-                                   RelativePanel.AlignLeftWithPanel="True" />
+                            <Ellipse x:Name="imgMasterChatIcon"
+                                     Height="60"
+                                     Width="60"
+                                     Stroke="{StaticResource AppBarBorderThemeBrush}"
+                                     StrokeThickness="1"
+                                     RelativePanel.AlignVerticalCenterWithPanel="True"
+                                     RelativePanel.AlignLeftWithPanel="True">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
+                                </Ellipse.Fill>
+                            </Ellipse>
                             <!-- Chat Info -->
                             <Grid x:Name="gridMasterLvChatInfo"
                                   Margin="16,0,0,0"
