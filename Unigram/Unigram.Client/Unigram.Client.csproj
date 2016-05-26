@@ -95,6 +95,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -167,6 +168,10 @@
     <ProjectReference Include="..\Unigram.Api\Unigram.Api.csproj">
       <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
       <Name>Unigram.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Unigram.Core\Unigram.Core.csproj">
+      <Project>{580d2885-8129-499e-9ffd-39ff1b586f18}</Project>
+      <Name>Unigram.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Unigram.ViewModel\Unigram.ViewModel.csproj">
       <Project>{335c9b3e-8632-4d60-a54c-d27bd9504762}</Project>
