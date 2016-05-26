@@ -15,24 +15,27 @@
     using Telegram.Api.Services.Connection;
     using Telegram.Api.Services.Updates;
     using Telegram.Api.Transport;
-
+    using ViewModel;
     public class Bootstrapper
     {
-        private UnigramContainerBuilder container;
+        private UnigramContainer container;
 
         public Bootstrapper()
         {
-            container = UnigramContainerBuilder.Instance;
+            container = UnigramContainer.Instance;
         }
 
         public void Configure()
         {
-            container.RegisterType<MTProtoService>().As<IMTProtoService>();
-            container.RegisterType<InMemoryCacheService>().As<ICacheService>();
-            container.RegisterType<PhoneInfoService>().As<IDeviceInfoService>();
-            container.RegisterType<UpdatesService>().As<IUpdatesService>();
-            container.RegisterType<TransportService>().As<ITransportService>();
-            container.RegisterType<ConnectionService>().As<IConnectionService>();
+            container.ContainerBuilder.RegisterType<MTProtoService>().As<IMTProtoService>();
+            container.ContainerBuilder.RegisterType<InMemoryCacheService>().As<ICacheService>();
+            container.ContainerBuilder.RegisterType<PhoneInfoService>().As<IDeviceInfoService>();
+            container.ContainerBuilder.RegisterType<UpdatesService>().As<IUpdatesService>();
+            container.ContainerBuilder.RegisterType<TransportService>().As<ITransportService>();
+            container.ContainerBuilder.RegisterType<ConnectionService>().As<IConnectionService>();
+            container.ContainerBuilder.RegisterType<LoginPhoneNumberViewModel>();
+
+            container.Build();
         }
     }
 }

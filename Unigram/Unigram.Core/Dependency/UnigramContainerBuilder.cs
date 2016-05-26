@@ -7,20 +7,47 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class UnigramContainerBuilder : ContainerBuilder
+    public class UnigramContainer
     {
-        private static UnigramContainerBuilder instance = new UnigramContainerBuilder();
+        private static UnigramContainer instance = new UnigramContainer();
+        private ContainerBuilder builder = new ContainerBuilder();
+        private IContainer container;
 
-        private UnigramContainerBuilder()
+        private UnigramContainer()
         {
+
         }
 
-        public static UnigramContainerBuilder Instance
+        public static UnigramContainer Instance
         {
             get
             {
                 return instance;
             }
+        }
+
+        public ContainerBuilder ContainerBuilder
+        {
+            get
+            {
+                return builder;
+            }
+        }
+
+        public void Build()
+        {
+            container = builder.Build();
+        }
+
+        public TService ResolverType<TService>()
+        {
+            TService result = default(TService);
+            if (container != null)
+            {
+                result = container.Resolve<TService>();
+            }
+
+            return result;
         }
     }
 }

@@ -100,11 +100,6 @@
                         <AppBarButton.Icon>
                             <FontIcon Glyph="&#xE946;" />
                         </AppBarButton.Icon>
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="Click">
-                                <Core:NavigateToPageAction TargetPage="Unigram.Client.Views.About" />
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
                     </AppBarButton>
                 </CommandBar.SecondaryCommands>
                 <!-- Commands visible on commandbar-->
