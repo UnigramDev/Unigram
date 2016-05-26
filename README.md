@@ -1,4 +1,6 @@
-# Unigram
+<img src="https://guerrerotook.visualstudio.com/_apis/public/build/definitions/e0459511-ef0a-40bf-8566-582a6d515754/29/badge" alt="VSO BUILD" />
+
+Unigram
 Unigram – An Universal take on Telegram. Made by the community, for the community
 
 Windows 10 (Mobile) introduced with the Universal Windows Platform a whole list of features to make your (chatting) life easier. However, the current official Telegram-app has no signs of releasing an UWP-version with these capabilities soon. That’s why we decided to build our own.
