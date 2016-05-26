@@ -26,5 +26,10 @@ namespace Unigram.Client.Views
         {
             this.InitializeComponent();
         }
+
+        private void btnMasterPhoneInputConfirm_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(Views.LoginPhoneCode));
+        }
     }
 }

@@ -6,7 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
+    <Page.Transitions>
+        <TransitionCollection>
+            <EdgeUIThemeTransition Edge="Right"/>
+        </TransitionCollection>
+    </Page.Transitions>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <RelativePanel>
             <!-- Master - Titlebar -->
@@ -112,7 +117,8 @@
                                         Content="Next"
                                         Padding="24,6"
                                         Margin="0,16,0,0"
-                                        RelativePanel.Below="txtMasterPhoneInputPhoneNumber"/>
+                                        RelativePanel.Below="txtMasterPhoneInputPhoneNumber"
+                                        Click="btnMasterPhoneInputConfirm_Click"/>
                             </RelativePanel>
                         </RelativePanel>
                         <!-- END OF Master - Phone Number -->
