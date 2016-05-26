@@ -8,6 +8,7 @@
       x:Class="Unigram.Client.Views.Home"
       mc:Ignorable="d">
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        
         <!-- Visual State Managers -->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="AdaptiveStates">
@@ -29,6 +30,8 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        
+        
         <!-- Grid Definitions for the Master/Detail-view -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="MasterColumn"
@@ -36,8 +39,8 @@
             <ColumnDefinition x:Name="DetailColumn"
                               Width="*" />
         </Grid.ColumnDefinitions>
-        <!-- End of Master -->
-        <!-- End of Details -->
+
+        
         <!-- Master -->
         <RelativePanel x:Name="gridMaster"
                        Grid.Column="0"
@@ -51,6 +54,7 @@
                            RelativePanel.AlignRightWithPanel="True"
                            RelativePanel.AlignTopWithPanel="True">
                 <TextBlock x:Name="tblMasterTitle"
+                           x:Uid="Home-Titlebar-Title"
                            Text="UNIGRAM"
                            Style="{StaticResource BaseTextBlockStyle}"
                            RequestedTheme="Dark"
@@ -86,39 +90,49 @@
                         RelativePanel.AlignLeftWithPanel="True"
                         RelativePanel.AlignRightWithPanel="True"
                         RelativePanel.AlignBottomWithPanel="True">
+                <!-- Commands visible on commandbar-->
+                <CommandBar.PrimaryCommands>
+                    <AppBarButton x:Name="cbtnMasterNewChat"
+                                  x:Uid="CBTN-NewChat"
+                                  Icon="Add"
+                                  Label="New chat" />
+                    <AppBarButton x:Name="cbtnMasterFilter"
+                                  x:Uid="CBTN-Filter"
+                                  Icon="Filter"
+                                  Label="Filter" />
+                    <AppBarButton x:Name="cbtnMasterSearch"
+                                  x:Uid="CBTN-Search"
+                                  Icon="Find"
+                                  Label="Search" />
+                </CommandBar.PrimaryCommands>
+                
                 <!-- Commands hidden in the eclipse-menu -->
                 <CommandBar.SecondaryCommands>
                     <AppBarButton x:Name="cbtnMasterSelect"
+                                  x:Uid="CBTN-Select"
                                   Icon="Bullets"
                                   Label="Select" />
                     <AppBarButton x:Name="cbtnMasterSettings"
+                                  x:Uid="CBTN-Settings"
                                   Icon="Setting"
                                   Label="Settings" />
                     <AppBarButton x:Name="cbtnMasterAbout"
+                                  x:Uid="CBTN-About"
                                   Label="About">
                         <!--Click="cbtnMasterAbout_Click"-->
                         <AppBarButton.Icon>
                             <FontIcon Glyph="&#xE946;" />
                         </AppBarButton.Icon>
-                        <Interactivity:Interaction.Behaviors>
+                        <!--<Interactivity:Interaction.Behaviors>
                             <Core:EventTriggerBehavior EventName="Click">
                                 <Core:NavigateToPageAction TargetPage="Unigram.Client.Views.About" />
                             </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
+                        </Interactivity:Interaction.Behaviors>-->
                     </AppBarButton>
                 </CommandBar.SecondaryCommands>
-                <!-- Commands visible on commandbar-->
-                <AppBarButton x:Name="cbtnMasterAdd"
-                              Icon="Add"
-                              Label="New chat" />
-                <AppBarButton x:Name="cbtnMasterFilter"
-                              Icon="Filter"
-                              Label="Filter" />
-                <AppBarButton x:Name="cbtnMasterSearch"
-                              Icon="Find"
-                              Label="Search" />
             </CommandBar>
         </RelativePanel>
+        <!-- End of Master -->
         <!-- Details -->
         <RelativePanel x:Name="gridDetails"
                        Grid.Column="1"
@@ -132,5 +146,6 @@
                    RelativePanel.AlignTopWithPanel="True"
                    RelativePanel.AlignBottomWithPanel="True" />
         </RelativePanel>
+        <!-- End of Details -->
     </Grid>
 </Page>

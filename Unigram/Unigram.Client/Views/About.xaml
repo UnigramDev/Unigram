@@ -22,6 +22,7 @@
                            RelativePanel.AlignRightWithPanel="True"
                            RelativePanel.AlignTopWithPanel="True">
                 <TextBlock x:Name="tblMasterTitle"
+                           x:Uid="About-Titlebar-Title"
                            Text="ABOUT" 
                            Style="{StaticResource BaseTextBlockStyle}"
                            RequestedTheme="Dark"
@@ -46,16 +47,25 @@
                            Width="96"                                   
                            Source="ms-appx:///Assets/Mockups/Logos/logo.png" />
                     <TextBlock x:Name="tblMasterAppTitle"
+                               x:Uid="About-App-Title"
                                Padding="16,0"
                                Text="Unigram"
                                Style="{StaticResource TitleTextBlockStyle}"
                                RelativePanel.RightOf="imgMasterAppLogo"/>
                     <TextBlock x:Name="tblMasterAppVersion"
-                               Padding="16,0"
+                               x:Uid="About-App-Version"
+                               Padding="16,0,0,0"
                                Text="Version Prototype"
                                Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
                                Style="{StaticResource BodyTextBlockStyle}"
                                RelativePanel.RightOf="imgMasterAppLogo"
+                               RelativePanel.Below="tblMasterAppTitle"/>
+                    <TextBlock x:Name="tblMasterAppVersionNumber"
+                               Padding="4,0,16,0"
+                               Text="[number]"
+                               Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               RelativePanel.RightOf="tblMasterAppVersion"
                                RelativePanel.Below="tblMasterAppTitle"/>
                 </RelativePanel>
 
@@ -67,12 +77,14 @@
                                RelativePanel.AlignRightWithPanel="True"
                                RelativePanel.Below="gridMasterAppInfo">
                     <TextBlock x:Name="tblMasterAppThanksTitle"
+                               x:Uid="About-Thanks-Title"
                                Text="Special Thanks"
                                Style="{StaticResource TitleTextBlockStyle}"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.AlignRightWithPanel="True"
                                RelativePanel.AlignTopWithPanel="True"/>
                     <TextBlock x:Name="tblMasterAppThanksIntro"
+                               x:Uid="About-Thanks-Intro"
                                Text="Building this app has not been possible without the help of all these awesome people:"
                                TextWrapping="Wrap"
                                FontSize="14"
@@ -81,6 +93,7 @@
                                RelativePanel.AlignRightWithPanel="True"
                                RelativePanel.Below="tblMasterAppThanksTitle" />
                     <TextBlock x:Name="tblMasterAppThanksPeople"
+                               x:Uid="About-Thanks-People"
                                Text=""
                                TextWrapping="Wrap"
                                FontSize="14"
