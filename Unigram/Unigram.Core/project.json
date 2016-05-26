@@ -1,5 +1,6 @@
 ﻿{
   "dependencies": {
+    "Autofac": "3.5.2",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
     "StyleCop.Analyzers": "1.0.0"
   },
