@@ -16,12 +16,9 @@
         <RelativePanel>
             <!-- Master - Titlebar -->
             <RelativePanel x:Name="gridMasterTitlebar"
-                           Height="48"
-                           Background="#FF36ADE1"
-                           RelativePanel.AlignLeftWithPanel="True"
-                           RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.AlignTopWithPanel="True">
+                           Style="{StaticResource StyleRPMasterTitleBar}">
                 <TextBlock x:Name="tblMasterTitle"
+                           x:Uid="Login-Titlebar-Title"
                            Text="WELCOME TO UNIGRAM" 
                            Style="{StaticResource BaseTextBlockStyle}"
                            RequestedTheme="Dark"

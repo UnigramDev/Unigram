@@ -137,7 +137,7 @@
     <value>ABOUT</value>
     <comment>About - Titlebar - Page Title</comment>
   </data>
-  <data name="bout-Thanks-Intro.Text" xml:space="preserve">
+  <data name="About-Thanks-Intro.Text" xml:space="preserve">
     <value>Building this app has not been possible without the help of all these awesome people:</value>
     <comment>About - Thanks - Intro</comment>
   </data>
@@ -168,5 +168,21 @@
   <data name="Home-Titlebar-Title.Text" xml:space="preserve">
     <value>UNIGRAM</value>
     <comment>Home - Titlebar - Page Title</comment>
+  </data>
+  <data name="Login-Titlebar-Title.Text" xml:space="preserve">
+    <value>WELCOME TO UNIGRAM</value>
+    <comment>Login - Titlebar - Page Title</comment>
+  </data>
+  <data name="Settings-Settings-LocationPermission.Header" xml:space="preserve">
+    <value>Let Unigram use your location</value>
+    <comment>Settings - Settings - ToggleSwitch - Permission for Location </comment>
+  </data>
+  <data name="Settings-Settings-SyncPeopleHub.Header" xml:space="preserve">
+    <value>Sync with People Hub</value>
+    <comment>Settings - Settings - ToggleSwitch - Sync with People Hub</comment>
+  </data>
+  <data name="Settings-Titlebar-Title.Text" xml:space="preserve">
+    <value>SETTINGS</value>
+    <comment>Settings - Titlebar - Page Title</comment>
   </data>
 </root>

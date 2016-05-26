@@ -6,8 +6,12 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-      RequestedTheme="Dark"
       mc:Ignorable="d">
+    <Page.Transitions>
+        <TransitionCollection>
+            <EdgeUIThemeTransition Edge="Right"/>
+        </TransitionCollection>
+    </Page.Transitions>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <RelativePanel x:Name="gridMaster"
@@ -18,7 +22,8 @@
             <RelativePanel x:Name="gridMasterTitlebar"
                            Style="{StaticResource StyleRPMasterTitleBar}">
                 <TextBlock x:Name="tblMasterTitle"
-                           Text="Settings"
+                           x:Uid="Settings-Titlebar-Title"
+                           Text="SETTINGS"
                            Style="{StaticResource BaseTextBlockStyle}"
                            RequestedTheme="Dark"
                            Padding="16,0"
@@ -86,21 +91,17 @@
                                RelativePanel.AlignBottomWithPanel="True">
                     <!-- switch to toggle location permissions-->
                     <StackPanel x:Name="spLocationPermission">
-                        <TextBlock x:Name="tbLocationPermission"
-                                   FontWeight="Normal"
-                                   Text="Let unigram use your location"
-                                   Style="{StaticResource BaseTextBlockStyle}" />
-                        <ToggleSwitch x:Name="tsLocationPermission" />
+                        <ToggleSwitch x:Name="tsLocationPermission"
+                                      x:Uid="Settings-Settings-LocationPermission"
+                                      Header="Let Unigram use your location"/>
                     </StackPanel>
                     <!-- switch to toggle sync with people hub permisson-->
                     <StackPanel x:Name="spSyncPeopleHub"
                                 RelativePanel.Below="spLocationPermission"
                                 Margin="0,24">
-                        <TextBlock x:Name="tbSyncPeopleHub"
-                                   FontWeight="Normal"
-                                   Text="Sync with People Hub"
-                                   Style="{StaticResource BaseTextBlockStyle}" />
-                        <ToggleSwitch />
+                        <ToggleSwitch x:Name="tsSyncPeopleHub"
+                                      x:Uid="Settings-Settings-SyncPeopleHub"
+                                      Header="Sync with People Hub"/>
                     </StackPanel>
                     <!-- Takes to notification and sounds-->
                     <TextBlock x:Name="tbNotificationSounds"

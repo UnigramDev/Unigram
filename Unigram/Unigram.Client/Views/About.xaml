@@ -16,11 +16,7 @@
         <RelativePanel>
             <!-- Master - Titlebar -->
             <RelativePanel x:Name="gridMasterTitlebar"
-                           Height="48"
-                           Background="#FF36ADE1"
-                           RelativePanel.AlignLeftWithPanel="True"
-                           RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.AlignTopWithPanel="True">
+                           Style="{StaticResource StyleRPMasterTitleBar}">
                 <TextBlock x:Name="tblMasterTitle"
                            x:Uid="About-Titlebar-Title"
                            Text="ABOUT" 
@@ -98,7 +94,6 @@
                                TextWrapping="Wrap"
                                FontSize="14"
                                Padding="0,16,0,0"
-                               Visibility="Collapsed"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.AlignRightWithPanel="True"
                                RelativePanel.Below="tblMasterAppThanksIntro" />
