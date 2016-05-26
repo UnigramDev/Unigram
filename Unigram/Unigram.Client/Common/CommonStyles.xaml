@@ -2,12 +2,18 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="using:Unigram.Client.Common">
 
+    <!--Brushes start-->
+    <SolidColorBrush x:Key="defaultHeaderLightBlue"
+                     Color="#FF36ADE1" />
+    <!--Brushes end-->
+
+    <!--Data templates start-->
     <!--Data template for Master chat list-->
     <DataTemplate x:Key="dtMasterChatList">
         <RelativePanel Height="72"
                        VerticalAlignment="Center">
             <!-- ChatIcon -->
-            <Ellipse x:Name="elpMasataerChatIcon"
+            <Ellipse x:Name="elpMasterChatIcon"
                      Width="60"
                      Height="60"
                      RelativePanel.AlignVerticalCenterWithPanel="True"
@@ -22,7 +28,7 @@
                   Margin="16,0,0,0"
                   RelativePanel.AlignVerticalCenterWithPanel="True"
                   RelativePanel.AlignRightWithPanel="True"
-                  RelativePanel.RightOf="elpMasataerChatIcon">
+                  RelativePanel.RightOf="elpMasterChatIcon">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -82,4 +88,24 @@
             </Grid>
         </RelativePanel>
     </DataTemplate>
+    <!--Data templates end-->
+
+    <!--Styles start-->
+
+    <!--Style for master title bar on all pages-->
+    <Style TargetType="RelativePanel"
+           x:Key="StyleRPMasterTitleBar">
+        <Setter Property="Height"
+                Value="48" />
+        <Setter Property="Background"
+                Value="{StaticResource defaultHeaderLightBlue}" />
+        <Setter Property="RelativePanel.AlignLeftWithPanel"
+                Value="True" />
+        <Setter Property="RelativePanel.AlignRightWithPanel"
+                Value="True" />
+        <Setter Property="RelativePanel.AlignTopWithPanel"
+                Value="True" />
+    </Style>
+
+    <!--Styles end-->
 </ResourceDictionary>

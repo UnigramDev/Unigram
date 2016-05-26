@@ -45,11 +45,7 @@
                        VerticalAlignment="Stretch">
             <!-- Master - Titlebar -->
             <RelativePanel x:Name="gridMasterTitlebar"
-                           Height="48"
-                           Background="#FF36ADE1"
-                           RelativePanel.AlignLeftWithPanel="True"
-                           RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.AlignTopWithPanel="True">
+                           Style="{StaticResource StyleRPMasterTitleBar}">
                 <TextBlock x:Name="tblMasterTitle"
                            Text="UNIGRAM"
                            Style="{StaticResource BaseTextBlockStyle}"
@@ -93,7 +89,13 @@
                                   Label="Select" />
                     <AppBarButton x:Name="cbtnMasterSettings"
                                   Icon="Setting"
-                                  Label="Settings" />
+                                  Label="Settings">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="Click">
+                                <Core:NavigateToPageAction TargetPage="Unigram.Client.Views.Settings" />
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </AppBarButton>
                     <AppBarButton x:Name="cbtnMasterAbout"
                                   Label="About">
                         <!--Click="cbtnMasterAbout_Click"-->
