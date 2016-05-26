@@ -124,7 +124,9 @@
     <None Include="Unigram.Client_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Mockups\Logos\logo-transparent.png" />
     <Content Include="Assets\Mockups\Logos\logo.png" />
+    <Content Include="Assets\Mockups\README.txt" />
     <Content Include="Assets\Mockups\UserIcons\user_batman.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -183,6 +185,9 @@
     <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\Logos\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

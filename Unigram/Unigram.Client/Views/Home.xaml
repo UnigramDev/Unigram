@@ -8,7 +8,49 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <RelativePanel>
+
+
+        <!-- Visual State Managers -->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveStates">
+                <VisualState x:Name="DefaultState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="MasterColumn.Width" Value="*" />
+                        <Setter Target="DetailColumn.Width" Value="0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
+        
+
+
+
+        <!-- Grid Definitions for the Master/Detail-view -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="MasterColumn" Width="320" />
+            <ColumnDefinition x:Name="DetailColumn" Width="*" />
+        </Grid.ColumnDefinitions>
+
+
+
+
+
+        <!-- Master -->
+        <RelativePanel x:Name="gridMaster"
+                       Grid.Column="0"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch">
             <!-- Master - Titlebar -->
             <RelativePanel x:Name="gridMasterTitlebar"
                            Height="48"
@@ -179,5 +221,25 @@
 
             </CommandBar>
         </RelativePanel>
+        <!-- End of Master -->
+
+        <!-- Details -->
+        <RelativePanel x:Name="gridDetails"
+                       Grid.Column="1"
+                       BorderBrush="{StaticResource AppBarBorderThemeBrush}"
+                       BorderThickness="1,0,0,0"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch">
+            <Frame x:Name="frameDetailsDetails"
+                   RelativePanel.AlignLeftWithPanel="True"
+                   RelativePanel.AlignRightWithPanel="True"
+                   RelativePanel.AlignTopWithPanel="True"
+                   RelativePanel.AlignBottomWithPanel="True" />
+
+
+        </RelativePanel>
+        <!-- End of Details -->
+        
+        
     </Grid>
 </Page>

@@ -23,6 +23,7 @@
         public Home()
         {
             this.InitializeComponent();
+            frameDetailsDetails.Navigate(typeof(Views.LoginPhoneNumber));
         }
 
         private void cbtnMasterAbout_Click(object sender, RoutedEventArgs e)
