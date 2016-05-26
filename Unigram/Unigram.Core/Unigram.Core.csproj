@@ -108,7 +108,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IExtendedDeviceInfoService.cs" />
+    <Compile Include="Services\PhoneInfoService.cs" />
+    <Compile Include="Services\PhoneInfoServiceBase.cs" />
     <EmbeddedResource Include="Properties\Unigram.Core.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Unigram.Api\Unigram.Api.csproj">
+      <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
+      <Name>Unigram.Api</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
