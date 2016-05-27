@@ -71,6 +71,7 @@
                            RelativePanel.Below="rpMasterTitlebar"
                            RelativePanel.Above="cmbarMaster">
                 <ListView x:Name="lvMasterChats"
+                          Background="{StaticResource SystemControlBackgroundListLowBrush}"
                           ItemTemplate="{StaticResource dtMasterChatList}"
                           HorizontalContentAlignment="Stretch"
                           VerticalContentAlignment="Center"

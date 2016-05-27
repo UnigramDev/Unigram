@@ -237,4 +237,16 @@
     <value>Your phone number</value>
     <comment>Login - Phone Number - Title</comment>
   </data>
+  <data name="Settings-Settings-ChatSettings-Title.Text" xml:space="preserve">
+    <value>Chat settings</value>
+    <comment>Settings - Settings - Chat settings - Title</comment>
+  </data>
+  <data name="Settings-Settings-NotificationsSounds-Title.Text" xml:space="preserve">
+    <value>Notifications and Sounds</value>
+    <comment>Settings - Settings - Notifications &amp; Sounds - Title</comment>
+  </data>
+  <data name="Settings-Settings-PrivacySecurity-Title.Text" xml:space="preserve">
+    <value>Privacy and Security</value>
+    <comment>Settings - Settings - Privacy &amp; Security - Title</comment>
+  </data>
 </root>
