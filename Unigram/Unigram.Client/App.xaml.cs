@@ -33,6 +33,19 @@ namespace Unigram.Client
             this.Suspending += OnSuspending;
         }
 
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (args.Kind == ActivationKind.ToastNotification)
+            {
+                ToastNotificationActivatedEventArgs toastActivationArgs = args as ToastNotificationActivatedEventArgs;
+                
+                if (rootFrame.BackStack.Count == 0)
+                    rootFrame.BackStack.Add(new PageStackEntry(typeof(Views.Home), null, null));
+            }
+            Window.Current.Activate();
+        }
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -46,7 +59,7 @@ namespace Unigram.Client
                 this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
-
+            
             new Bootstrapper().Configure();
 
             Frame rootFrame = Window.Current.Content as Frame;

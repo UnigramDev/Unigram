@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dependency\UnigramContainerBuilder.cs" />
+    <Compile Include="Notifications\Toast.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IExtendedDeviceInfoService.cs" />
     <Compile Include="Services\PhoneInfoService.cs" />

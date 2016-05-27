@@ -124,18 +124,51 @@
     <None Include="Unigram.Client_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Icons\Toast\send.png" />
+    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-100.png" />
+    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-125.png" />
+    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-150.png" />
+    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-400.png" />
+    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-400.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-16_altform-unplated.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-256_altform-unplated.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-48_altform-unplated.png" />
+    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-400.png" />
+    <Content Include="Assets\Logos\StoreLogo\StoreLogo.scale-100.png" />
+    <Content Include="Assets\Logos\StoreLogo\StoreLogo.scale-125.png" />
+    <Content Include="Assets\Logos\StoreLogo\StoreLogo.scale-150.png" />
+    <Content Include="Assets\Logos\StoreLogo\StoreLogo.scale-200.png" />
+    <Content Include="Assets\Logos\StoreLogo\StoreLogo.scale-400.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\Mockups\Logos\logo-transparent.png" />
     <Content Include="Assets\Mockups\Logos\logo.png" />
     <Content Include="Assets\Mockups\README.txt" />
     <Content Include="Assets\Mockups\UserIcons\user_batman.png" />
     <Content Include="Properties\Default.rd.xml" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -190,13 +223,14 @@
     <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
       <Name>Behaviors SDK %28XAML%29</Name>
     </SDKReference>
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0">
+      <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
+    </SDKReference>
     <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Assets\Logos\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
