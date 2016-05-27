@@ -122,7 +122,7 @@
     <comment>About - App info - App Name</comment>
   </data>
   <data name="About-App-Version.Text" xml:space="preserve">
-    <value>Version Prototype</value>
+    <value>Version</value>
     <comment>About - App info - App version</comment>
   </data>
   <data name="About-Thanks-People.Text" xml:space="preserve">
@@ -184,5 +184,57 @@
   <data name="Settings-Titlebar-Title.Text" xml:space="preserve">
     <value>SETTINGS</value>
     <comment>Settings - Titlebar - Page Title</comment>
+  </data>
+  <data name="BTN-CodeNotRecieved.Content" xml:space="preserve">
+    <value>I have not recieved a code</value>
+    <comment>Button - Login</comment>
+  </data>
+  <data name="BTN-Next.Content" xml:space="preserve">
+    <value>Next</value>
+    <comment>Button - Next</comment>
+  </data>
+  <data name="Login-Code-Code.Header" xml:space="preserve">
+    <value>Enter your code:</value>
+    <comment>Login - Code - Code Input - Header</comment>
+  </data>
+  <data name="Login-Code-Code.PlaceholderText" xml:space="preserve">
+    <value>Enter your code here...</value>
+    <comment>Login - Code - Code Input - Placeholder Text</comment>
+  </data>
+  <data name="Login-Code-Intro.Text" xml:space="preserve">
+    <value>We've send you a message with the code:</value>
+    <comment>Login - Code - Intro</comment>
+  </data>
+  <data name="Login-Code-Title.Text" xml:space="preserve">
+    <value>Your code</value>
+    <comment>Login - Code - Title</comment>
+  </data>
+  <data name="Login-Intro-Intro.Text" xml:space="preserve">
+    <value>Unigram is an UWP Telegram-app build by the Windows Community, for the Windows community</value>
+    <comment>Login - App Intro - Intro Text</comment>
+  </data>
+  <data name="Login-PhoneNumber-Country.Header" xml:space="preserve">
+    <value>Country:</value>
+    <comment>Login - Phone Number - Country - Header</comment>
+  </data>
+  <data name="Login-PhoneNumber-Country.PlaceholderText" xml:space="preserve">
+    <value>Select your country...</value>
+    <comment>Login - Phone Number - Country - Placeholder Text</comment>
+  </data>
+  <data name="Login-PhoneNumber-Intro.Text" xml:space="preserve">
+    <value>Please select the country you live in and enter your phone number</value>
+    <comment>Login - Phone Number - Intro</comment>
+  </data>
+  <data name="Login-PhoneNumber-PhoneNumber.Header" xml:space="preserve">
+    <value>Phone number</value>
+    <comment>Login - Phone Number - Phone Number - Header</comment>
+  </data>
+  <data name="Login-PhoneNumber-PhoneNumber.PlaceholderText" xml:space="preserve">
+    <value>What is your phone number?</value>
+    <comment>Login - Phone Number - Phone Number - Placeholder Text</comment>
+  </data>
+  <data name="Login-PhoneNumber-Title.Text" xml:space="preserve">
+    <value>Your phone number</value>
+    <comment>Login - Phone Number - Title</comment>
   </data>
 </root>

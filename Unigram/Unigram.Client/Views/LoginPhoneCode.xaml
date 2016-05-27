@@ -46,6 +46,7 @@
                                    Width="96"                                   
                                    Source="ms-appx:///Assets/Mockups/Logos/logo.png" />
                             <TextBlock x:Name="tblMasterWelcomeIntroText"
+                                       x:Uid="Login-Intro-Intro"
                                        Padding="16,0"
                                        Text="Unigram is an UWP Telegram-app build by the Windows Community, for the Windows community"
                                        TextWrapping="Wrap"
@@ -54,7 +55,7 @@
                                        RelativePanel.AlignVerticalCenterWithPanel="True"
                                        RelativePanel.RightOf="imgMasterWelcomeLogo"/>
                         </RelativePanel>
-
+                        <!-- END OF Master - Logo and intro -->
 
                         <!-- Master - Code -->
                         <RelativePanel x:Name="rpMasterCode"
@@ -63,13 +64,16 @@
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
                                        RelativePanel.Below="rpMasterWelcomeIntro">
+                            <!-- Title of this block and stuff -->
                             <TextBlock x:Name="tblMasterCodeTitle"
+                                       x:Uid="Login-Code-Title"
                                        Text="Your code"
                                        Style="{StaticResource TitleTextBlockStyle}"
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
                                        RelativePanel.AlignTopWithPanel="True"/>
                             <TextBlock x:Name="tblMasterCodeIntro"
+                                       x:Uid="Login-Code-Intro"
                                        Text="We've send you a message with the code:"
                                        TextWrapping="Wrap"
                                        FontSize="14"
@@ -82,28 +86,27 @@
                                            RelativePanel.AlignLeftWithPanel="True"
                                            RelativePanel.AlignRightWithPanel="True"
                                            RelativePanel.Below="tblMasterCodeIntro">
-                                <TextBlock x:Name="tblMasterCodeInputText"
-                                           Visibility="Collapsed"
-                                           Text="Enter your code:"
-                                           FontSize="12"
-                                           RelativePanel.AlignLeftWithPanel="True"
-                                           RelativePanel.AlignRightWithPanel="True"
-                                           RelativePanel.AlignTopWithPanel="True" />
+                                <!-- Input for the user to fill in the recieved code -->
                                 <TextBox x:Name="txtMasterCodeInputInput"
+                                         x:Uid="Login-Code-Code"
                                          Margin="0,16,0,0"
                                          Header="Enter your code:"
                                          PlaceholderText="Your code" 
                                          RelativePanel.AlignLeftWithPanel="True"
                                          RelativePanel.AlignRightWithPanel="True"
-                                         RelativePanel.Below="tblMasterCodeInputText"/>
+                                         RelativePanel.AlignTopWithPanel="True"/>
+                                <!-- Button to take the user to the next page -->
                                 <Button x:Name="btnMasterCodeInputConfirm"
+                                        x:Uid="BTN-Next"
                                         Background="{StaticResource SystemControlBackgroundAccentBrush}"
                                         RequestedTheme="Dark"
                                         Content="Next"
                                         Padding="24,6"
                                         Margin="0,16,0,0"
                                         RelativePanel.Below="txtMasterCodeInputInput"/>
+                                <!-- Button in case the user did not recieve a code -->
                                 <Button x:Name="btnMasterCodeInputNoCode"
+                                        x:Uid="BTN-CodeNotRecieved"
                                         Content="I have not recieved a code"
                                         Style="{StaticResource TextBlockButtonStyle}"
                                         Margin="0,8,0,0"
@@ -111,20 +114,10 @@
                             </RelativePanel>
                         </RelativePanel>
                         <!-- END OF Master - Code -->
-
-
-
-
+                        
                     </RelativePanel>
                 </ScrollViewer>
-
-
-
-
-
-
             </RelativePanel>
-
 
         </RelativePanel>
     </Grid>
