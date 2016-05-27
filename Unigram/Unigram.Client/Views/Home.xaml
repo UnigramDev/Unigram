@@ -7,6 +7,13 @@
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
       x:Class="Unigram.Client.Views.Home"
       mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <EntranceThemeTransition FromVerticalOffset="20"/>
+        </TransitionCollection>
+    </Page.Transitions>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         
         <!-- Visual State Managers -->
