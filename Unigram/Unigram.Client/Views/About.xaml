@@ -15,7 +15,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <RelativePanel>
             <!-- Master - Titlebar -->
-            <RelativePanel x:Name="gridMasterTitlebar"
+            <RelativePanel x:Name="rpMasterTitlebar"
                            Style="{StaticResource StyleRPMasterTitleBar}">
                 <TextBlock x:Name="tblMasterTitle"
                            x:Uid="About-Titlebar-Title"
@@ -27,15 +27,15 @@
             </RelativePanel>
 
             <!-- Master - Main content -->
-            <RelativePanel x:Name="gridMasterContent"
+            <RelativePanel x:Name="rpMasterContent"
                            Padding="16"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.Below="gridMasterTitlebar"
+                           RelativePanel.Below="rpMasterTitlebar"
                            RelativePanel.AlignBottomWithPanel="True">
                 
                 <!-- Master - App info and logo -->
-                <RelativePanel x:Name="gridMasterAppInfo"
+                <RelativePanel x:Name="rpMasterAppInfo"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.AlignRightWithPanel="True">
                     <Image x:Name="imgMasterAppLogo"
@@ -67,11 +67,11 @@
 
                 
                 <!-- Master - Made possible by -->
-                <RelativePanel x:Name="gridMasterAppThanks"
+                <RelativePanel x:Name="rpMasterAppThanks"
                                Padding="0,16,0,0"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.AlignRightWithPanel="True"
-                               RelativePanel.Below="gridMasterAppInfo">
+                               RelativePanel.Below="rpMasterAppInfo">
                     <TextBlock x:Name="tblMasterAppThanksTitle"
                                x:Uid="About-Thanks-Title"
                                Text="Special Thanks"

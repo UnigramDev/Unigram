@@ -54,7 +54,7 @@
                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                            Margin="8,6,0,6"
                            FontSize="14" />
-                <RelativePanel x:Name="gridMasterLvChatInfoData"
+                <RelativePanel x:Name="rpMasterLvChatInfoData"
                                Grid.Row="1"
                                Grid.ColumnSpan="2">
                     <TextBlock x:Name="tblMasterLvChatMessage"
