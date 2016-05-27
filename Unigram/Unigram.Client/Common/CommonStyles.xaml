@@ -11,6 +11,7 @@
     <!--Data template for Master chat list-->
     <DataTemplate x:Key="dtMasterChatList">
         <RelativePanel Height="72"
+                       Margin="0,4"
                        VerticalAlignment="Center">
             <!-- ChatIcon -->
             <Ellipse x:Name="elpMasterChatIcon"
