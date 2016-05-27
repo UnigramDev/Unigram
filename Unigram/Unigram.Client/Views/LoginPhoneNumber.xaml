@@ -15,7 +15,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <RelativePanel>
             <!-- Master - Titlebar -->
-            <RelativePanel x:Name="gridMasterTitlebar"
+            <RelativePanel x:Name="rpMasterTitlebar"
                            Style="{StaticResource StyleRPMasterTitleBar}">
                 <TextBlock x:Name="tblMasterTitle"
                            x:Uid="Login-Titlebar-Title"
@@ -27,18 +27,18 @@
             </RelativePanel>
 
             <!-- Master - Main content -->
-            <RelativePanel x:Name="gridMasterContent"
+            <RelativePanel x:Name="rpMasterContent"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.Below="gridMasterTitlebar"
+                           RelativePanel.Below="rpMasterTitlebar"
                            RelativePanel.AlignBottomWithPanel="True">
                 <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
                               RelativePanel.AlignRightWithPanel="True"
                               RelativePanel.AlignBottomWithPanel="True"
                               RelativePanel.AlignTopWithPanel="True">
                     <RelativePanel Padding="16">
-                        <!-- Master - logo and intro -->
-                        <RelativePanel x:Name="gridMasterWelcomeIntro"
+                        <!-- Master - Logo and intro -->
+                        <RelativePanel x:Name="rpMasterWelcomeIntro"
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True">
                             <Image x:Name="imgMasterWelcomeLogo"
@@ -46,6 +46,7 @@
                                    Width="96"                                   
                                    Source="ms-appx:///Assets/Mockups/Logos/logo.png" />
                             <TextBlock x:Name="tblMasterWelcomeIntroText"
+                                       x:Uid="Login-Intro-Intro"
                                        Padding="16,0"
                                        Text="Unigram is an UWP Telegram-app build by the Windows Community, for the Windows community"
                                        TextWrapping="Wrap"
@@ -57,19 +58,21 @@
 
 
                         <!-- Master - Phone Number -->
-                        <RelativePanel x:Name="gridMasterPhone"
+                        <RelativePanel x:Name="rpMasterPhone"
                                        Visibility="Visible"
                                        Padding="0,16,0,0"
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
-                                       RelativePanel.Below="gridMasterWelcomeIntro">
+                                       RelativePanel.Below="rpMasterWelcomeIntro">
                             <TextBlock x:Name="tblMasterPhoneTitle"
+                                       x:Uid="Login-PhoneNumber-Title"
                                        Text="Your phone number"
                                        Style="{StaticResource TitleTextBlockStyle}"
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
                                        RelativePanel.AlignTopWithPanel="True"/>
                             <TextBlock x:Name="tblMasterPhoneIntro"
+                                       x:Uid="Login-PhoneNumber-Intro"
                                        Text="Please select the country you live in and enter your phone number"
                                        TextWrapping="Wrap"
                                        FontSize="14"
@@ -77,38 +80,36 @@
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
                                        RelativePanel.Below="tblMasterPhoneTitle" />                            
-                            <RelativePanel x:Name="gridMasterPhoneInput"
+                            <RelativePanel x:Name="rpMasterPhoneInput"
                                            Padding="0,0,0,0"
                                            RelativePanel.AlignLeftWithPanel="True"
                                            RelativePanel.AlignRightWithPanel="True"
                                            RelativePanel.Below="tblMasterPhoneIntro">
+                                <!-- The user can select his/her country here -->
                                 <ComboBox x:Name="cboxMasterPhoneInputCounty"
+                                          x:Uid="Login-PhoneNumber-CountryInput"
                                           Header="Country:"
                                           PlaceholderText="Select your country..."
                                           Margin="0,16,0,0"
                                           RelativePanel.AlignLeftWithPanel="True"
                                           RelativePanel.AlignRightWithPanel="True"
                                           RelativePanel.AlignTopWithPanel="True">
-                                    <ComboBoxItem Content="+31 - Netherlands"/>
-                                    <ComboBoxItem Content="+91 - India"/>
                                     <!-- Temporary CBox items-->
-                                    
+                                    <ComboBoxItem Content="+31 - Netherlands"/>
+                                    <ComboBoxItem Content="+91 - India"/>                                 
                                 </ComboBox>
-                                <TextBlock x:Name="tblMasterPhoneInputText"
-                                           Visibility="Collapsed"
-                                           Text="Enter your code:"
-                                           FontSize="12"
-                                           RelativePanel.AlignLeftWithPanel="True"
-                                           RelativePanel.AlignRightWithPanel="True"
-                                           RelativePanel.Below="cboxMasterPhoneInputCounty" />
+                                
+                                <!-- The user can enter their phone number here -->
                                 <TextBox x:Name="txtMasterPhoneInputPhoneNumber"
+                                         x:Uid="Login-PhoneNumber-PhoneNumber"
                                          Margin="0,16,0,0"
                                          Header="Phone number:"
-                                         PlaceholderText="Your code" 
+                                         PlaceholderText="What's your phone number?" 
                                          RelativePanel.AlignLeftWithPanel="True"
                                          RelativePanel.AlignRightWithPanel="True"
-                                         RelativePanel.Below="tblMasterPhoneInputText"/>
+                                         RelativePanel.Below="cboxMasterPhoneInputCounty"/>
                                 <Button x:Name="btnMasterPhoneInputConfirm"
+                                        x:Uid="BTN-Next"
                                         Background="{StaticResource SystemControlBackgroundAccentBrush}"
                                         RequestedTheme="Dark"
                                         Content="Next"

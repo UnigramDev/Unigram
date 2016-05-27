@@ -42,12 +42,12 @@
 
         
         <!-- Master -->
-        <RelativePanel x:Name="gridMaster"
+        <RelativePanel x:Name="rpMaster"
                        Grid.Column="0"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch">
             <!-- Master - Titlebar -->
-            <RelativePanel x:Name="gridMasterTitlebar"
+            <RelativePanel x:Name="rpMasterTitlebar"
                            Style="{StaticResource StyleRPMasterTitleBar}">
                 <TextBlock x:Name="tblMasterTitle"
                            x:Uid="Home-Titlebar-Title"
@@ -58,12 +58,13 @@
                            RelativePanel.AlignVerticalCenterWithPanel="True" />
             </RelativePanel>
             <!-- Master - Main content -->
-            <RelativePanel x:Name="gridMasterContent"
+            <RelativePanel x:Name="rpMasterContent"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.Below="gridMasterTitlebar"
+                           RelativePanel.Below="rpMasterTitlebar"
                            RelativePanel.Above="cmbarMaster">
                 <ListView x:Name="lvMasterChats"
+                          Background="{StaticResource SystemControlBackgroundListLowBrush}"
                           ItemTemplate="{StaticResource dtMasterChatList}"
                           HorizontalContentAlignment="Stretch"
                           VerticalContentAlignment="Center"
@@ -136,7 +137,7 @@
         </RelativePanel>
         <!-- End of Master -->
         <!-- Details -->
-        <RelativePanel x:Name="gridDetails"
+        <RelativePanel x:Name="rpDetails"
                        Grid.Column="1"
                        BorderBrush="{StaticResource AppBarBorderThemeBrush}"
                        BorderThickness="1,0,0,0"

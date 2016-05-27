@@ -11,6 +11,7 @@
     <!--Data template for Master chat list-->
     <DataTemplate x:Key="dtMasterChatList">
         <RelativePanel Height="72"
+                       Margin="0,4"
                        VerticalAlignment="Center">
             <!-- ChatIcon -->
             <Ellipse x:Name="elpMasterChatIcon"
@@ -54,7 +55,7 @@
                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                            Margin="8,6,0,6"
                            FontSize="14" />
-                <RelativePanel x:Name="gridMasterLvChatInfoData"
+                <RelativePanel x:Name="rpMasterLvChatInfoData"
                                Grid.Row="1"
                                Grid.ColumnSpan="2">
                     <TextBlock x:Name="tblMasterLvChatMessage"
