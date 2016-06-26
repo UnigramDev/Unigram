@@ -28,5 +28,16 @@ namespace Unigram.Views
 
             DataContext = UnigramContainer.Instance.ResolverType<LoginPhoneNumberViewModel>();
         }
+
+        private void PhoneNumber_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter && txtMasterPhoneInputPhoneNumber.Text != null)
+            {
+                //var vm = (LoginPhoneNumberViewModel)DataContext;
+                ViewModel.PhoneNumber = txtMasterPhoneInputPhoneNumber.Text;
+                ViewModel.SendCommand.Execute(sender);
+                e.Handled = true;
+            }
+        }
     }
 }
