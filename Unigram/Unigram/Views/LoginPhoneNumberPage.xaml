@@ -278,6 +278,7 @@
                                          Text="{Binding PhoneNumber, Mode=TwoWay}"
                                          Margin="80,12,0,0"
                                          Width="220"
+                                         InputScope="Digits"
                                          KeyDown="PhoneNumber_KeyDown"
                                          Header="Phone number:"
                                          PlaceholderText="What's your phone number?" 
