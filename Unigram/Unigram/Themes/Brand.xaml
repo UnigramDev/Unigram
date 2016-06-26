@@ -1,0 +1,17 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <SolidColorBrush x:Key="TelegramDialogStateBrush" Color="#64BC54"/>
+            <SolidColorBrush x:Key="TelegramDialogLabelFromBrush" Color="#4981AF"/>
+            <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeBrush" Color="#009CE6"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadLabelBrush" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="TelegramDialogVerifiedForegroundBrush" Color="#33A8E6"/>
+            <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="#FFFFFF"/>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

@@ -1,0 +1,609 @@
+﻿<Page
+    x:Class="Unigram.Views.UserInfoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="1400"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Style x:Key="HyperButtonStyle" TargetType="controls:HyperButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,0,0,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:HyperButton">
+                        <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="{TemplateBinding Padding}"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SubtitleButtonStyle" TargetType="controls:HyperButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,0,0,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:HyperButton">
+                        <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <TextBlock Text="{TemplateBinding Tag}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
+                            <ContentPresenter x:Name="ContentPresenter" TextWrapping="Wrap" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,0,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="{TemplateBinding Padding}"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PickerButtonStyle" TargetType="controls:HyperButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,11,12,12"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:HyperButton">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Content="{TemplateBinding Tag}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" Grid.Column="1">
+                                <FlyoutBase.AttachedFlyout>
+                                    <Flyout Placement="Bottom">
+                                        <ListView x:Name="ItemsRoot" ItemsSource="{Binding DataContext.Spans, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+                                    </Flyout>
+                                </FlyoutBase.AttachedFlyout>
+                            </ContentPresenter>
+
+                            <FontIcon x:Name="DropDownGlyph"
+                                      Grid.Column="2"
+                                      IsHitTestVisible="False"
+                                      Margin="0,10,12,10"
+                                      Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                      FontSize="12"
+                                      Glyph="&#xE0E5;"
+                                      HorizontalAlignment="Right"
+                                      VerticalAlignment="Center"
+                                      AutomationProperties.AccessibilityView="Raw" />
+
+                            <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="12,0,0,0" Grid.Row="1" Grid.ColumnSpan="3"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="NarrowState"/>
+                <VisualState x:Name="FilledState">
+                    <VisualState.Setters>
+                        <!--<Setter Target="Group1.Margin" Value="12,0"/>
+                        <Setter Target="Group2.Margin" Value="12,24,12,0"/>
+                        <Setter Target="Group3.Margin" Value="12,24,12,0"/>
+                        <Setter Target="Group4.Margin" Value="12,24,12,24"/>-->
+                        <Setter Target="Group1.CornerRadius" Value="8"/>
+                        <Setter Target="Group2.CornerRadius" Value="8"/>
+                        <Setter Target="Group3.CornerRadius" Value="8"/>
+                        <Setter Target="Group4.CornerRadius" Value="8"/>
+                        <Setter Target="Group1.BorderThickness" Value="0"/>
+                        <Setter Target="Group2.BorderThickness" Value="0"/>
+                        <Setter Target="Group3.BorderThickness" Value="0"/>
+                        <Setter Target="Group4.BorderThickness" Value="0"/>
+
+                        <Setter Target="Separator.Visibility" Value="Collapsed"/>
+                        <Setter Target="Column1.Width" Value="18*"/>
+                        <Setter Target="Column2.Width" Value="64*"/>
+                        <Setter Target="Column3.Width" Value="18*"/>
+                        <Setter Target="Column1.MinWidth" Value="12"/>
+                        <Setter Target="Column2.MinWidth" Value="476"/>
+                        <Setter Target="Column3.MinWidth" Value="12"/>
+
+                        <Setter Target="cbarInfo.(Grid.Row)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid Background="{ThemeResource SystemControlBackgroundListMediumBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <!-- Main content -->
+            <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
+                          RelativePanel.AlignRightWithPanel="True"
+                          RelativePanel.AlignTopWithPanel="True"
+                          RelativePanel.Above="cbarInfo"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                          ScrollViewer.VerticalScrollMode="Auto"
+                          Grid.Row="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition x:Name="Column1" Width="0"/>
+                        <ColumnDefinition x:Name="Column2"/>
+                        <ColumnDefinition x:Name="Column3" Width="0"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- Chatinfo -->
+                    <RelativePanel x:Name="rpContentInfo"
+                                   RelativePanel.AlignLeftWithPanel="True"
+                                   RelativePanel.AlignRightWithPanel="True"
+                                   RelativePanel.AlignTopWithPanel="True"
+                                   Grid.Column="1">
+                        <!--User icon-->
+                        <Button x:Name="elpContentInfoChatIcon"
+                                Width="128"
+                                Height="128"
+                                Margin="0,24,0,12"
+                                Padding="0"
+                                BorderThickness="0"
+                                Command="{Binding PhotoCommand}"
+                                RelativePanel.AlignHorizontalCenterWithPanel="True">
+                            <Ellipse Width="128"
+                                     Height="128"
+                                     RelativePanel.AlignHorizontalCenterWithPanel="True">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="{Binding Item.Photo, Converter={StaticResource DefaultPhotoConverter}}" />
+                                </Ellipse.Fill>
+                            </Ellipse>
+                        </Button>
+
+                        <!--Chat Info StackPanel -->
+                        <StackPanel x:Name="spInfoChat"
+                                    Margin="12,0,12,12"
+                                    RelativePanel.AlignVerticalCenterWithPanel="True"
+                                    RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                    RelativePanel.Below="elpContentInfoChatIcon">
+                            <!-- Chat Name (Personal + Group) -->
+                            <TextBlock x:Name="tblUserInfoChatName"
+                                       Visibility="Visible"
+                                       HorizontalAlignment="Center"
+                                       Text="{Binding Item.FullName}"
+                                       Style="{ThemeResource SubtitleTextBlockStyle}"
+                                       FontWeight="SemiBold" />
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0,6">
+                                <!-- Username (Personal only) -->
+                                <TextBlock x:Name="tblUserInfoChatUsername"
+                                           Visibility="Collapsed"
+                                           Text="@batman"
+                                           Margin="0"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                           Style="{ThemeResource BaseTextBlockStyle}"
+                                           FontWeight="Normal" />
+                                <TextBlock x:Name="tblUserInfoChatSpace"
+                                           Visibility="Collapsed"
+                                           Text="-" 
+                                           Margin="8,0"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                           Style="{ThemeResource BaseTextBlockStyle}"
+                                           FontWeight="Normal" />
+
+                                <!-- Chat-status (Personal + Group) -->
+                                <TextBlock x:Name="tblUserInfoChatStatus"
+                                           Visibility="Visible"
+                                           Text="Last seen on 12:57"
+                                           Margin="0"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                           Style="{ThemeResource BaseTextBlockStyle}"
+                                           FontWeight="Normal" />
+                            </StackPanel>
+                        </StackPanel>
+                    </RelativePanel>
+                    <!-- END OF - Chatinfo -->
+
+                    <!-- Chat options -->
+                    <StackPanel x:Name="rpContentOptions"
+                                Margin="0"
+                                RelativePanel.AlignLeftWithPanel="True"
+                                RelativePanel.AlignRightWithPanel="True"
+                                RelativePanel.Below="rpContentInfo"
+                                RelativePanel.AlignBottomWithPanel="True"
+                                Grid.Row="1"
+                                Grid.Column="1">
+
+                        <!-- Phone number (Personal only)  -->
+                        <!--<RelativePanel x:Name="rpOptionsPhone"
+                             Visibility="Visible"
+                             Margin="0,12,0,0"
+                             Padding="0,4"
+                             RelativePanel.AlignLeftWithPanel="True"
+                             RelativePanel.AlignRightWithPanel="True"
+                             RelativePanel.AlignTopWithPanel="True">
+                             <StackPanel Orientation="Vertical">
+                             <TextBlock x:Uid="ChatInfo-Options-PhoneNumber-Title"
+                             Text="Call"
+                             Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                             FontWeight="Normal"
+                             Margin="0,0,0,2"
+                             Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                             <Button x:Name="btnOptionsPhoneCall"
+                             Background="Transparent"
+                             Padding="0">
+                             <Button.Content>
+                             <RelativePanel>
+                             <TextBlock x:Name="tblOptionsPhoneIcon"
+                             Text="&#xE13A;"
+                             FontFamily="Segoe MDL2 Assets"
+                             FontSize="18"
+                             RelativePanel.AlignVerticalCenterWithPanel="True"
+                             RelativePanel.AlignLeftWithPanel="True"/>
+                             <TextBlock x:Name="tblOptionsPhoneNumber"
+                             Margin="24,0,0,0"
+                             Text="+14 - 439348390"
+                             FontWeight="Normal"
+                             Style="{ThemeResource SubtitleTextBlockStyle}"
+                             RelativePanel.RightOf="tblOptionsPhoneIcon"/>
+                             </RelativePanel>
+                             </Button.Content>
+                             </Button>
+                             </StackPanel>
+                             </RelativePanel>-->
+
+                        <local:TableStackPanel x:Name="Group1" 
+                                               BorderThickness="0,0,0,1"
+                                               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                               BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                            <Rectangle x:Name="Separator" Height="1" Fill="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                            <controls:HyperButton
+                                Tag="Call" 
+                                Style="{StaticResource SubtitleButtonStyle}">
+                                <TextBlock>
+                                    <Run Text="+"/><Run Text="{Binding Phone}"/>
+                                </TextBlock>
+                            </controls:HyperButton>
+
+                            <controls:HyperButton 
+                                Content="{Binding Full.BotInfo.Description}" 
+                                Tag="About" 
+                                Visibility="{Binding AboutVisibility}"
+                                Style="{StaticResource SubtitleButtonStyle}"/>
+
+                            <controls:HyperButton 
+                                Tag="Username" 
+                                Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"
+                                Style="{StaticResource SubtitleButtonStyle}">
+                                <TextBlock>
+                                    <Run Text="@"/><Run Text="{Binding Item.Username}"/>
+                                </TextBlock>
+                            </controls:HyperButton>
+                        </local:TableStackPanel>
+
+                        <local:TableStackPanel 
+                            x:Name="Group2" 
+                            BorderThickness="0,0,0,1"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            Margin="0,24,0,0">
+                            <controls:HyperButton
+                                Content="Send message" 
+                                Command="{Binding SendMessageCommand}"
+                                Style="{StaticResource HyperButtonStyle}"/>
+
+                            <controls:HyperButton
+                                Content="Add contact" 
+                                Style="{StaticResource HyperButtonStyle}"/>
+
+                            <controls:HyperButton
+                                Content="Add to group"
+                                Visibility="{Binding AddToGroupVisibility}"
+                                Style="{StaticResource HyperButtonStyle}"/>
+
+                            <controls:HyperButton
+                                Content="Share contact" 
+                                Style="{StaticResource HyperButtonStyle}"/>
+
+                            <controls:HyperButton 
+                                Content="Help" 
+                                Visibility="{Binding HelpVisibility}"
+                                Style="{StaticResource HyperButtonStyle}"/>
+                        </local:TableStackPanel>
+
+                        <local:TableStackPanel 
+                            x:Name="Group3" 
+                            BorderThickness="0,0,0,1"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            Margin="0,24,0,0">
+                            <controls:HyperButton 
+                                Content="Shared media" 
+                                Style="{StaticResource HyperButtonStyle}" 
+                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+
+                            <controls:HyperButton 
+                                Content="Enabled" 
+                                Tag="Notifications and sounds" 
+                                Style="{ThemeResource PickerButtonStyle}"/>
+                        </local:TableStackPanel>
+
+                        <local:TableStackPanel
+                            x:Name="Group4" 
+                            BorderThickness="0,0,0,1"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            Margin="0,24">
+                            <controls:HyperButton
+                                Content="Report" 
+                                Command="{Binding ReportCommand}"
+                                Visibility="{Binding ReportVisibility}"
+                                Style="{StaticResource HyperButtonStyle}"/>
+
+                            <controls:HyperButton 
+                                Content="Stop bot" 
+                                Command="{Binding BlockCommand}"
+                                Visibility="{Binding StopVisibility}"
+                                Style="{StaticResource HyperButtonStyle}" 
+                                Foreground="Red"/>
+
+                            <controls:HyperButton 
+                                Content="Restart bot" 
+                                Command="{Binding UnblockCommand}"
+                                Visibility="{Binding UnstopVisibility}"
+                                Style="{StaticResource HyperButtonStyle}" 
+                                Foreground="Red"/>
+
+                            <controls:HyperButton
+                                Content="Block" 
+                                Command="{Binding BlockCommand}"
+                                Visibility="{Binding BlockVisibility}"
+                                Style="{StaticResource HyperButtonStyle}" 
+                                Foreground="Red"/>
+
+                            <controls:HyperButton
+                                Content="Unblock" 
+                                Command="{Binding UnblockCommand}"
+                                Visibility="{Binding UnblockVisibility}"
+                                Style="{StaticResource HyperButtonStyle}" 
+                                Foreground="Red"/>
+                        </local:TableStackPanel>
+
+
+
+                        <!-- Notifications (Personal + Group) -->
+                        <!--<RelativePanel x:Name="rpOptionsNotifications"
+                             Margin="0,18"    
+                             RelativePanel.Below="rpOptionsPhone">
+                             <TextBlock x:Name="tblOptionsNotifications"
+                             x:Uid="ChatInfo-Options-NotificationsText"
+                             Text="Notifications" 
+                             Style="{StaticResource SubtitleTextBlockStyle}"
+                             RelativePanel.AlignVerticalCenterWithPanel="True"
+                             RelativePanel.AlignLeftWithPanel="True"/>
+                             <ToggleSwitch x:Name="tsOptionsNotifications"
+                             Margin="60,0,12,0"
+                             Visibility="Visible"
+                             RelativePanel.AlignVerticalCenterWithPanel="True"
+                             RelativePanel.RightOf="tblOptionsNotifications"/>
+                             </RelativePanel>-->
+                        <ToggleSwitch x:Name="tsOptionsNotifications"
+                                      x:Uid="ChatInfo-Options-Notifications"
+                                      Header="Show notifications from this chat"
+                                      Margin="0,24"
+                                      Visibility="Collapsed"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      RelativePanel.Below="rpOptionsPhone"/>
+
+
+                        <!-- Share Media -->
+                        <StackPanel x:Name="spOptionsSharedMedia"
+                                    Margin="0,0,0,24"
+                                    Orientation="Vertical"
+                                    RelativePanel.Below="tsOptionsNotifications"
+                                    Visibility="Collapsed">
+                            <TextBlock x:Uid="ChatInfo-Options-SharedMedia-Title"
+                                       Text="Shared media"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                       FontWeight="Normal"
+                                       Margin="0,0,0,2"
+                                       Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                            <Button x:Name="btnOptionsPhotos"
+                                    Visibility="Visible"
+                                    Padding="0,4"
+                                    Content="x photos"
+                                    Style="{ThemeResource TextBlockButtonStyle}"/>
+                        </StackPanel>
+
+
+                        <!-- Search for messages (Personal + Group) -->
+                        <Button x:Name="btnOptionsSearch"
+                                Background="Transparent"
+                                Padding="0,8"
+                                RelativePanel.Below="spOptionsSharedMedia"
+                                Visibility="Collapsed">
+                            <Button.Content>
+                                <TextBlock x:Uid="ChatInfo-Options-Search-Title"
+                                           Text="Search for messages"
+                                           FontWeight="Normal"
+                                           Style="{ThemeResource SubtitleTextBlockStyle}" />
+                            </Button.Content>
+                        </Button>
+
+                        <!-- Clear History button (Personal + Group) -->
+                        <Button x:Name="btnOptionsClearHistory"
+                                Background="Transparent"
+                                Padding="0,8"
+                                RelativePanel.Below="btnOptionsSearch"
+                                Visibility="Collapsed">
+                            <Button.Content>
+                                <TextBlock x:Uid="ChatInfo-Options-ClearHistory-Title"
+                                           Text="Clear History"
+                                           FontWeight="Normal"
+                                           Style="{ThemeResource SubtitleTextBlockStyle}" />
+                            </Button.Content>
+                        </Button>
+
+
+
+                        <!-- Delete chat (Personal only) -->
+                        <Button x:Name="btnOptionsDeleteChat"
+                                Margin="0,0,0,12"
+                                Background="Transparent"
+                                Padding="0,8"
+                                RelativePanel.Below="btnOptionsClearHistory"
+                                Visibility="Collapsed">
+                            <Button.Content>
+                                <TextBlock x:Uid="ChatInfo-Options-DeleteChat-Title"
+                                           Text="Delete conversation"
+                                           FontWeight="Normal"
+                                           Style="{ThemeResource SubtitleTextBlockStyle}" />
+                            </Button.Content>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+
+
+            <!-- Profile - Commandbar-->
+            <CommandBar x:Name="cbarInfo"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.AlignTopWithPanel="False"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        Grid.Row="2">
+                <!-- Primary commands -> Visible with icon -->
+                <CommandBar.PrimaryCommands>
+                    <AppBarButton x:Name="cbtnEdit"
+                                  x:Uid="CBTN-Edit"
+                                  Icon="Edit"
+                                  Label="Edit" />
+                    <AppBarButton x:Name="cbtnSendMessage"
+                                  x:Uid="CBTN-SendMessage"
+                                  Icon="Send"
+                                  Label="Send message" 
+                                  Visibility="Collapsed"/>
+                </CommandBar.PrimaryCommands>
+                <!-- Secondary commands -> Hidden in the menu -->
+                <CommandBar.SecondaryCommands>
+
+                </CommandBar.SecondaryCommands>
+            </CommandBar>
+            <!-- END OF Profile - Commandbar -->
+        </Grid>
+    </Grid>
+</Page>

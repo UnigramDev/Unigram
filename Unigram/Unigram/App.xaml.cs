@@ -1,109 +1,166 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.HockeyApp;
+using Telegram.Api.Helpers;
+using Telegram.Api.Services;
+using Telegram.Api.Services.Cache;
+using Telegram.Api.Services.Updates;
+using Template10.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using Unigram.Core.Dependency;
+using Unigram.Core.Notifications;
 
 namespace Unigram
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    sealed partial class App : BootStrapper
     {
+        public IHockeyClient HockeyClient { get; private set; }
+
         /// <summary>
+        /// Initializes a new instance of the <see cref="App"/> class.
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
-            Microsoft.ApplicationInsights.WindowsAppInitializer.InitializeAsync(
-                Microsoft.ApplicationInsights.WindowsCollectors.Metadata |
-                Microsoft.ApplicationInsights.WindowsCollectors.Session);
-            this.InitializeComponent();
-            this.Suspending += OnSuspending;
-        }
+            InitializeComponent();
 
-        /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used such as when the application is launched to open a specific file.
-        /// </summary>
-        /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
-        {
-#if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                this.DebugSettings.EnableFrameRateCounter = true;
-            }
+#if RELEASE
+
+            Microsoft.HockeyApp.HockeyClient.Current.Configure("0abc51f4bcaf409a9b86fc9b1cb21eeb",
+                        new TelemetryConfiguration()
+                        {
+                            EnableDiagnostics = true,
+                            Collectors = Microsoft.HockeyApp.WindowsCollectors.Metadata |
+                                         Microsoft.HockeyApp.WindowsCollectors.PageView |
+                                         Microsoft.HockeyApp.WindowsCollectors.Session |
+                                         Microsoft.HockeyApp.WindowsCollectors.UnhandledException |
+                                         Microsoft.HockeyApp.WindowsCollectors.WatsonData
+                        });
+
 #endif
-            Frame rootFrame = Window.Current.Content as Frame;
+        }
 
-            // Do not repeat app initialization when the Window already has content,
-            // just ensure that the window is active
-            if (rootFrame == null)
+        //protected override void OnActivated(IActivatedEventArgs args)
+        //{
+        //    Frame rootFrame = Window.Current.Content as Frame;
+        //    var data = Toast.GetData(args);
+        //    if (data != null)
+        //    {
+        //        if (data.ContainsKey("messageId"))
+        //        {
+        //            string messageId = data["messageId"];
+        //        }
+        //    }
+
+        //    if (rootFrame.BackStack.Count == 0)
+        //    {
+        //        rootFrame.BackStack.Add(new PageStackEntry(typeof(Views.Home), null, null));
+        //    }
+
+        //    Window.Current.Activate();
+        //}
+
+        public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
+        {
+            new Bootstrapper().Configure();
+
+            if (SettingsHelper.IsAuthorized)
             {
-                // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
+                var activate = args as ToastNotificationActivatedEventArgs;
+                var launch = activate?.Argument ?? null;
 
-                rootFrame.NavigationFailed += OnNavigationFailed;
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Load state from previously suspended application
-                }
-
-                // Place the frame in the current Window
-                Window.Current.Content = rootFrame;
+                MTProtoService.Instance.CurrentUserId = SettingsHelper.UserId;
+                NavigationService.Navigate(typeof(Views.MainPage), launch);
+            }
+            else
+            {
+                NavigationService.Navigate(typeof(Views.LoginPhoneNumberPage));
             }
 
-            if (e.PrelaunchActivated == false)
+            ShowStatusBar();
+            ColourTitleBar();
+
+            await Toast.RegisterBackgroundTasks();
+        }
+
+        public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
+        {
+            var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
+            cacheService.TryCommit();
+
+            var updatesService = UnigramContainer.Instance.ResolverType<IUpdatesService>();
+            updatesService.SaveState();
+            updatesService.CancelUpdating();
+
+            return base.OnSuspendingAsync(s, e, prelaunchActivated);
+        }
+
+        private void ShowStatusBar()
+        {
+            // Show StatusBar on Win10 Mobile, in theme of the pass
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                if (rootFrame.Content == null)
-                {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
-                }
-                // Ensure the current window is active
-                Window.Current.Activate();
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.BackgroundOpacity = 0;
+
+                // Foreground
+                //statusBar.ForegroundColor = Colors.White;
+
+                // Branding colour
+                //statusBar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);
+
+                // Accent colour
+                //var accentColour = Application.Current.Resources["SystemControlHighlightAccentBrush"] as SolidColorBrush;
+                //statusBar.BackgroundColor = accentColour.Color;
             }
         }
 
-        /// <summary>
-        /// Invoked when Navigation to a certain page fails
-        /// </summary>
-        /// <param name="sender">The Frame which failed navigation</param>
-        /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void ColourTitleBar()
         {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
-        }
+            try
+            {
+                // Changes to the titlebar (colour, and such)
+                ApplicationViewTitleBar titlebar = ApplicationView.GetForCurrentView().TitleBar;
 
-        /// <summary>
-        /// Invoked when application execution is being suspended.  Application state is saved
-        /// without knowing whether the application will be terminated or resumed with the contents
-        /// of memory still intact.
-        /// </summary>
-        /// <param name="sender">The source of the suspend request.</param>
-        /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
-            var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
-            deferral.Complete();
+                // Accent Color
+                var accentColour = Application.Current.Resources["SystemControlHighlightAccentBrush"] as SolidColorBrush;
+
+                // Foreground
+                titlebar.ButtonForegroundColor = Colors.White;
+                titlebar.ButtonHoverForegroundColor = Colors.White;
+                titlebar.ButtonInactiveForegroundColor = Colors.LightGray;
+                titlebar.ButtonPressedForegroundColor = Colors.White;
+                titlebar.ForegroundColor = Colors.White;
+                titlebar.InactiveForegroundColor = Colors.LightGray;
+
+                // Background
+                titlebar.BackgroundColor = accentColour.Color;
+                titlebar.ButtonBackgroundColor = accentColour.Color;
+                titlebar.ButtonInactiveBackgroundColor = accentColour.Color;
+                titlebar.ButtonHoverBackgroundColor = Helpers.ColorHelper.ChangeShade(accentColour.Color, -0.06f);   // TO-DO: needs to be a bit darker
+                titlebar.ButtonPressedBackgroundColor = Helpers.ColorHelper.ChangeShade(accentColour.Color, -0.09f); // TO-DO: needs to be even darker
+                titlebar.InactiveBackgroundColor = accentColour.Color;
+
+                // Branding colours
+                //titlebar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);
+                //titlebar.ButtonBackgroundColor = Color.FromArgb(255, 54, 173, 225);
+                //titlebar.ButtonHoverBackgroundColor = Color.FromArgb(255, 69, 179, 227);
+                //titlebar.ButtonPressedBackgroundColor = Color.FromArgb(255, 84, 185, 229);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Device does not have a Titlebar");
+            }
         }
     }
 }

@@ -1,0 +1,167 @@
+﻿<Page x:Class="Unigram.Views.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Unigram.Views"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+      xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+      mc:Ignorable="d">
+    <Page.Transitions>
+        <TransitionCollection>
+            <EdgeUIThemeTransition Edge="Right"/>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <RelativePanel>
+            <!-- Master - Titlebar -->
+            <RelativePanel x:Name="rpMasterTitlebar"
+                           Style="{StaticResource StyleRPMasterTitleBar}">
+                <TextBlock x:Name="tblMasterTitle"
+                           x:Uid="Settings-Titlebar-Title"
+                           Text="SETTINGS"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           RequestedTheme="Dark"
+                           Padding="16,0"
+                           RelativePanel.AlignVerticalCenterWithPanel="True" />
+            </RelativePanel>
+            <!-- Master - Main content -->
+            <RelativePanel x:Name="rpMasterContent"
+                           VerticalAlignment="Stretch"
+                           HorizontalAlignment="Stretch"
+                           RelativePanel.AlignLeftWithPanel="True"
+                           RelativePanel.AlignRightWithPanel="True"
+                           RelativePanel.AlignBottomWithPanel="True"
+                           RelativePanel.Below="rpMasterTitlebar">
+                <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
+                              RelativePanel.AlignRightWithPanel="True"
+                              RelativePanel.AlignTopWithPanel="True"
+                              RelativePanel.AlignBottomWithPanel="True">              
+                    <RelativePanel>
+                        <!-- Relative panel for user info -->
+                        <RelativePanel x:Name="rpUserInfo"
+                                       Margin="12,24"
+                                       Padding="0,0,0,24"
+                                       BorderBrush="{StaticResource SystemControlHighlightBaseMediumBrush}"
+                                       BorderThickness="0,0,0,2"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch"
+                                       RelativePanel.AlignLeftWithPanel="True"
+                                       RelativePanel.AlignTopWithPanel="True"
+                                       RelativePanel.AlignRightWithPanel="True">
+                            <!--User icon-->
+                            <Ellipse x:Name="elpUserIcon"
+                                     Width="108"
+                                     Height="108"
+                                     RelativePanel.AlignVerticalCenterWithPanel="True"
+                                     RelativePanel.AlignLeftWithPanel="True">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
+                                </Ellipse.Fill>
+                            </Ellipse>
+
+                            <!--User details-->
+                            <StackPanel x:Name="spUserInfo"
+                                        Margin="12,0"
+                                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                                        RelativePanel.RightOf="elpUserIcon">
+                                <TextBlock x:Name="tblUserInfoName"
+                                           Text="ArthurCurry"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           FontWeight="SemiBold" />
+                                <TextBlock x:Name="tblUserInfoUsername"
+                                           Text="@aquaman"
+                                           Margin="0,4,0,0"
+                                           Style="{StaticResource BaseTextBlockStyle}"
+                                           FontWeight="Normal" />
+                                <TextBlock x:Name="tblUserInfoPhoneNumber"
+                                           Text="9876599892"
+                                           Margin="0,4,0,0"
+                                           Style="{StaticResource BaseTextBlockStyle}"
+                                           FontWeight="Normal" />
+                                <Button x:Name="btnUserInfoEditProfile" 
+                                        x:Uid="Settings-User-EditProfile"
+                                        Content="Tap to edit profile"
+                                        FontSize="14"
+                                        Padding="0,4"
+                                        Margin="0,4,0,0"
+                                        Foreground="{StaticResource defaultHeaderLightBlue }"
+                                        Style="{StaticResource TextBlockButtonStyle}"/>
+                            </StackPanel>
+                        </RelativePanel>
+
+                        <!--Settings for user-->
+                        <RelativePanel x:Name="rpSettings"
+                                       Margin="12"
+                                       RelativePanel.Below="rpUserInfo"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch"
+                                       RelativePanel.AlignLeftWithPanel="True"
+                                       RelativePanel.AlignRightWithPanel="True"
+                                       RelativePanel.AlignBottomWithPanel="True">
+                            <!-- switch to toggle location permissions-->
+                            <StackPanel x:Name="spSettingsLocationPermission">
+                                <ToggleSwitch x:Name="tsSettingsLocationPermission"
+                                              x:Uid="Settings-Settings-LocationPermission"
+                                              Header="Let Unigram use your location"/>
+                            </StackPanel>
+                            <!-- switch to toggle sync with people hub permisson-->
+                            <StackPanel x:Name="spSettingsSyncPeopleHub"
+                                        RelativePanel.Below="spSettingsLocationPermission"
+                                        Margin="0,24">
+                                <ToggleSwitch x:Name="tsSyncPeopleHub"
+                                              x:Uid="Settings-Settings-SyncPeopleHub"
+                                              Header="Sync with People Hub"/>
+                            </StackPanel>
+                            <!-- Takes to notification and sounds-->
+                            <Button x:Name="btnSettingsNotificationSounds"
+                                    Background="Transparent"
+                                    Padding="0,4"
+                                    RelativePanel.Below="spSettingsSyncPeopleHub">
+                                <Button.Content>
+                                    <TextBlock x:Uid="Settings-Settings-NotificationsSounds-Title"
+                                               Text="Notification and sounds"
+                                               FontWeight="Normal"
+                                               TextTrimming="CharacterEllipsis"
+                                               Style="{StaticResource SubtitleTextBlockStyle}" />
+                                </Button.Content>
+                            </Button>
+
+                            <!-- Takes to privacy and security-->
+                            <Button x:Name="btnSettingsPrivacySecurity"
+                                    Background="Transparent"
+                                    Margin="0,8,0,0"
+                                    Padding="0,4"
+                                    RelativePanel.Below="btnSettingsNotificationSounds">
+                                <Button.Content>
+                                    <TextBlock x:Uid="Settings-Settings-PrivacySecurity-Title"
+                                               Text="Privacy and security"
+                                               FontWeight="Normal"
+                                               Style="{StaticResource SubtitleTextBlockStyle}" />
+                                </Button.Content>                                
+                            </Button>
+
+                            <!--Takes to chat settings-->
+                            <Button x:Name="btnSettingsChatSettings"
+                                    Background="Transparent"
+                                    Margin="0,8,0,0"
+                                    Padding="0,4"
+                                    RelativePanel.Below="btnSettingsPrivacySecurity">
+                                <Button.Content>
+                                    <TextBlock x:Uid="Settings-Settings-ChatSettings-Title"
+                                               Text="Chat settings"
+                                               FontWeight="Normal"
+                                               Style="{StaticResource SubtitleTextBlockStyle}" />
+                                </Button.Content>
+                            </Button>
+                        </RelativePanel>
+                        <!-- End of Master - Settings -->
+                    </RelativePanel>                                   
+                </ScrollViewer>             
+            </RelativePanel>
+            <!-- END OF Master - Main Content -->
+        </RelativePanel>
+
+    </Grid>
+</Page>
