@@ -809,17 +809,31 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Border Background="{ThemeResource SystemControlBackgroundListMediumBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
-                <Border Margin="12,8"
-                        RelativePanel.AlignLeftWithPanel="True"
-                        RelativePanel.AlignRightWithPanel="True"
-                        RelativePanel.AlignHorizontalCenterWithPanel="True"
-                        Background="White">
-                    <TextBox PlaceholderText="Search..." RequestedTheme="Light"/>
-                </Border>
-            </Border>
+            <Grid Background="{ThemeResource SystemControlBackgroundListMediumBrush}"
+                  Height="{ThemeResource AppBarThemeCompactHeight}"
+                  Canvas.ZIndex="2"
+                  Grid.Row="0">
+                <TextBlock x:Name="tblPivotTitle"
+                           Text="UNIGRAM"
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Margin="12,0" />
+                <Button x:Name="btnSearch"
+                        Background="Transparent"
+                        Content="&#xE11A;"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="18"
+                        Height="48"
+                        Width="48"
+                        HorizontalAlignment="Right" />
+            </Grid>
 
-            <Pivot x:Name="ScrollingHost" SelectedIndex="1" Grid.RowSpan="2">
+            <Pivot x:Name="ScrollingHost" 
+                   SelectedIndex="1" 
+                   Margin="0,-48,0,48"
+                   Grid.Row="1" 
+                   Grid.RowSpan="2">
                 <PivotItem/>
                 <PivotItem>
                     <ListView x:Name="lvMasterChats"
@@ -856,9 +870,9 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Index="0" Label="Contacts" Glyph="&#xE125;"/>
+                    <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Index="2" Label="Contacts" Glyph="&#xE125;" Grid.Column="2"/>
                     <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Index="1" Label="Chats" Glyph="&#xE15F;" Grid.Column="1"/>
-                    <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Index="2" Label="Settings" Glyph="&#xE115;" Grid.Column="2"/>
+                    <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Index="0" Label="Settings" Glyph="&#xE115;" Grid.Column="0"/>
                 </Grid>
             </Border>
 
