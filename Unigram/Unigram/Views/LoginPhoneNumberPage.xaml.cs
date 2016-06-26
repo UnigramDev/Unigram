@@ -33,7 +33,6 @@ namespace Unigram.Views
         {
             if (e.Key == Windows.System.VirtualKey.Enter && txtMasterPhoneInputPhoneNumber.Text != null)
             {
-                //var vm = (LoginPhoneNumberViewModel)DataContext;
                 ViewModel.PhoneNumber = txtMasterPhoneInputPhoneNumber.Text;
                 ViewModel.SendCommand.Execute(sender);
                 e.Handled = true;

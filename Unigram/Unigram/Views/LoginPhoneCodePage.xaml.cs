@@ -29,17 +29,6 @@ namespace Unigram.Views
             InitializeComponent();
 
             DataContext = UnigramContainer.Instance.ResolverType<LoginPhoneCodeViewModel>();
-            txtMasterCodeInputInput.TextChanged += OnTextChanged;
-        }
-
-        private void OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (txtMasterCodeInputInput.Text.Length == 5)
-            {
-                //var vm = (LoginPhoneCodeViewModel)DataContext;
-                ViewModel.PhoneCode = txtMasterCodeInputInput.Text;
-                ViewModel.SendCommand.Execute(sender);
-            }
         }
     }
 }
