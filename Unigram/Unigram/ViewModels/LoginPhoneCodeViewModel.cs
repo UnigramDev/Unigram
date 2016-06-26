@@ -41,6 +41,10 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _phoneCode, value);
+                if (_phoneCode.Length == 5)
+                {
+                    SendExecute();
+                }
             }
         }
 

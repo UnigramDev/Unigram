@@ -117,6 +117,7 @@
       <DependentUpon>PhotosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PivotRadioButton.cs" />
+    <Compile Include="Controls\UpdateTextBox.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DefaultPhotoConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
