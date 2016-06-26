@@ -91,6 +91,7 @@
                                          x:Uid="Login-Code-Code"
                                          Text="{x:Bind ViewModel.PhoneCode, Mode=TwoWay}"
                                          Margin="0,16,0,0"
+                                         InputScope="Digits"
                                          Header="Enter your code:"
                                          PlaceholderText="Your code" 
                                          RelativePanel.AlignLeftWithPanel="True"
