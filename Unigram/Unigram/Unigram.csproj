@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{3A380D3E-405B-4707-9187-FE03CCF5F535}</ProjectGuid>
+    <ProjectGuid>{2235E8EE-374A-4E49-8050-9B701467775D}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Unigram</RootNamespace>
@@ -12,11 +12,16 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>Unigram_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>Unigram_StoreKey.pfx</PackageCertificateKeyFile>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>065F0B2E6BD36F1FD48AEA0B5546196B98A1546C</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -89,45 +94,284 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <Content Include="ApplicationInsights.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Assets\Fonts\Telegram.ttf" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainPage.xaml.cs">
+    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Collections\DialogCollection.cs" />
+    <Compile Include="Common\KeyedList.cs" />
+    <Compile Include="Common\LinqToVisualTree.cs" />
+    <Compile Include="Controls\DialogListViewItem.xaml.cs">
+      <DependentUpon>DialogListViewItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HyperButton.cs" />
+    <Compile Include="Controls\InputDialog.xaml.cs">
+      <DependentUpon>InputDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MasterDetailView.cs" />
+    <Compile Include="Controls\PhotosView.xaml.cs">
+      <DependentUpon>PhotosView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PivotRadioButton.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\DefaultPhotoConverter.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Helpers\ColorHelper.cs" />
+    <Compile Include="Helpers\ResourceHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
+    <Compile Include="ViewModels\LoginPasswordViewModel.cs" />
+    <Compile Include="ViewModels\LoginPhoneCodeViewModel.cs" />
+    <Compile Include="ViewModels\LoginPhoneNumberViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\UnigramViewModelBase.cs" />
+    <Compile Include="ViewModels\UserInfoViewModel.cs" />
+    <Compile Include="ViewModels\UserPhotosViewModel.cs" />
+    <Compile Include="Views\AboutPage.xaml.cs">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\BlankPage.xaml.cs">
+      <DependentUpon>BlankPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatInfoPage.xaml.cs">
+      <DependentUpon>ChatInfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatPage.xaml.cs">
+      <DependentUpon>ChatPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DialogInfoAdminsPage.xaml.cs">
+      <DependentUpon>DialogInfoAdminsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DialogSendLocationPage.xaml.cs">
+      <DependentUpon>DialogSendLocationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HomePage.xaml.cs">
+      <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HomeNewChatPage.xaml.cs">
+      <DependentUpon>HomeNewChatPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HomeSearchPage.xaml.cs">
+      <DependentUpon>HomeSearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoginPasswordPage.xaml.cs">
+      <DependentUpon>LoginPasswordPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoginPhoneCodePage.xaml.cs">
+      <DependentUpon>LoginPhoneCodePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoginPhoneNumberPage.xaml.cs">
+      <DependentUpon>LoginPhoneNumberPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserInfoPage.xaml.cs">
+      <DependentUpon>UserInfoPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <PRIResource Include="strings\en-US\Resources.resw" />
+    <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Icons\MessageStatus\ic_double_tick.png" />
+    <Content Include="Assets\Icons\MessageStatus\ic_double_tick_lightbg.png" />
+    <Content Include="Assets\Icons\MessageStatus\ic_single_tick.png" />
+    <Content Include="Assets\Icons\MessageStatus\ic_single_tick_lightbg.png" />
+    <Content Include="Assets\Icons\MessageStatus\ic_unsent_message.png" />
+    <Content Include="Assets\Icons\MessageStatus\ic_unsent_message_lightbg.png" />
+    <Content Include="Assets\Icons\Toast\Send.png" />
+    <Content Include="Assets\Icons\userPos32.png" />
+    <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-100.png" />
+    <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-125.png" />
+    <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-150.png" />
+    <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-200.png" />
+    <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-400.png" />
+    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-100.png" />
+    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-125.png" />
+    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-150.png" />
+    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-400.png" />
+    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-400.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-16_altform-unplated.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-256_altform-unplated.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-48_altform-unplated.png" />
+    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-400.png" />
+    <Content Include="Assets\Logos\StoreLogo\StoreLogo.scale-100.png" />
+    <Content Include="Assets\Logos\StoreLogo\StoreLogo.scale-125.png" />
+    <Content Include="Assets\Logos\StoreLogo\StoreLogo.scale-150.png" />
+    <Content Include="Assets\Logos\StoreLogo\StoreLogo.scale-200.png" />
+    <Content Include="Assets\Logos\StoreLogo\StoreLogo.scale-400.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-400.png" />
+    <Content Include="Assets\Mockups\Images\userPhoto.jpg" />
+    <Content Include="Assets\Mockups\Logos\logo-transparent.png" />
+    <Content Include="Assets\Mockups\Logos\logo.png" />
+    <Content Include="Assets\Mockups\README.txt" />
+    <Content Include="Assets\Mockups\UserIcons\user_batman.png" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainPage.xaml">
+    <Content Include="Common\CommonStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Page Include="Controls\DialogListViewItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\InputDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PhotosView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Accent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Themes\Brand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Views\AboutPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\BlankPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ChatInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ChatPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DialogInfoAdminsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DialogSendLocationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HomePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\HomeNewChatPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HomeSearchPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoginPasswordPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoginPhoneCodePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\LoginPhoneNumberPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UserInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Unigram.Api\Unigram.Api.csproj">
+      <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
+      <Name>Unigram.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Unigram.Core\Unigram.Core.csproj">
+      <Project>{580d2885-8129-499e-9ffd-39ff1b586f18}</Project>
+      <Name>Unigram.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Unigram.Tasks\Unigram.Tasks.csproj">
+      <Project>{cf4c1fc3-bc51-4297-a7e1-493fcffe940b}</Project>
+      <Name>Unigram.Tasks</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0">
+      <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsDesktop, Version=10.0.10586.0">
+      <Name>Windows Desktop Extensions for the UWP</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\Auth\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

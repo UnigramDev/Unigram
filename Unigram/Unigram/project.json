@@ -1,9 +1,10 @@
 ﻿{
   "dependencies": {
-    "Microsoft.ApplicationInsights": "1.0.0",
-    "Microsoft.ApplicationInsights.PersistenceChannel": "1.0.0",
-    "Microsoft.ApplicationInsights.WindowsApps": "1.0.0",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0"
+    "HockeySDK.UWP": "4.0.0",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
+    "MvvmLight": "5.3.0",
+    "MvvmLightLibs": "5.3.0",
+    "Template10": "1.1.11"
   },
   "frameworks": {
     "uap10.0": {}

@@ -163,7 +163,7 @@ ecf/
 rcf/
 
 # Microsoft Azure ApplicationInsights config file
-ApplicationInsights.config
+#ApplicationInsights.config
 
 # Windows Store app package directory
 AppPackages/
@@ -181,7 +181,7 @@ ClientBin/
 *~
 *.dbmdl
 *.dbproj.schemaview
-*.pfx
+#*.pfx
 *.publishsettings
 node_modules/
 orleans.codegen.cs
@@ -234,3 +234,9 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+/Unigram/Unigram/_scale-400.appx
+/Unigram/Unigram/_scale-150.appx
+/Unigram/Unigram/_scale-125.appx
+/Unigram/Unigram/_scale-100.appx
+/Unigram/Unigram/_pkginfo.txt
+/Unigram/Unigram.Api/Constants.Secret.cs
