@@ -5,7 +5,7 @@
         static Constants()
         {
 #error PLACE YOUR DATA
-            ApiId = 1;
+            ApiId = 0;
             ApiHash = "";
 
             FirstServerIpAddress = "";
