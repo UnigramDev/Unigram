@@ -7,6 +7,7 @@ using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -27,6 +28,12 @@ namespace Unigram.Views
             InitializeComponent();
 
             DataContext = UnigramContainer.Instance.ResolverType<LoginPhoneNumberViewModel>();
+
+            if (!Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                txtMasterTitle.Visibility = Visibility.Visible;
+                rpMasterTitlebar.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void PhoneNumber_KeyDown(object sender, KeyRoutedEventArgs e)

@@ -29,6 +29,12 @@ namespace Unigram.Views
             InitializeComponent();
 
             DataContext = UnigramContainer.Instance.ResolverType<LoginPhoneCodeViewModel>();
+
+            if (!Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                txtMasterTitle.Visibility = Visibility.Visible;
+                rpMasterTitlebar.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }
