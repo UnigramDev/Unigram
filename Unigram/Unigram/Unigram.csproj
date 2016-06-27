@@ -127,6 +127,7 @@
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
+    <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\LoginPasswordViewModel.cs" />
     <Compile Include="ViewModels\LoginPhoneCodeViewModel.cs" />
     <Compile Include="ViewModels\LoginPhoneNumberViewModel.cs" />
@@ -152,6 +153,9 @@
     </Compile>
     <Compile Include="Views\DialogSendLocationPage.xaml.cs">
       <DependentUpon>DialogSendLocationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DialogSharedMediaPage.xaml.cs">
+      <DependentUpon>DialogSharedMediaPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
@@ -311,6 +315,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DialogSendLocationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DialogSharedMediaPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
