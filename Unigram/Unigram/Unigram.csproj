@@ -108,6 +108,7 @@
     <Compile Include="Controls\DialogListViewItem.xaml.cs">
       <DependentUpon>DialogListViewItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GlyphButton.cs" />
     <Compile Include="Controls\HyperButton.cs" />
     <Compile Include="Controls\InputDialog.xaml.cs">
       <DependentUpon>InputDialog.xaml</DependentUpon>
