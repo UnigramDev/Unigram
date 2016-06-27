@@ -27,11 +27,19 @@
                            RelativePanel.AlignVerticalCenterWithPanel="True"/>
             </RelativePanel>
 
+            <!-- Master - Title (for desktop) -->
+            <TextBlock x:Name="txtMasterTitle"
+                       Padding="16"
+                       Text="Welcome to Unigram"
+                       RelativePanel.Below="rpMasterTitlebar"
+                       Style="{ThemeResource TitleTextBlockStyle}"
+                       Visibility="Collapsed"/>
+
             <!-- Master - Main content -->
             <RelativePanel x:Name="rpMasterContent"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.Below="rpMasterTitlebar"
+                           RelativePanel.Below="txtMasterTitle"
                            RelativePanel.AlignBottomWithPanel="True">
                 <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
                               RelativePanel.AlignRightWithPanel="True"
@@ -42,10 +50,15 @@
                         <RelativePanel x:Name="rpMasterWelcomeIntro"
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True">
-                            <Image x:Name="imgMasterWelcomeLogo"
+                            <Canvas Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                    Height="96"
+                                    Width="96"
+                                    x:Name="imgMasterWelcomeLogo">
+                                <Image 
                                    Height="96"
-                                   Width="96"                                   
-                                   Source="ms-appx:///Assets/Mockups/Logos/logo.png" />
+                                   Width="96"  
+                                   Source="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.scale-200.png" />
+                            </Canvas>
                             <TextBlock x:Name="tblMasterWelcomeIntroText"
                                        x:Uid="Login-Intro-Intro"
                                        Padding="16,0"
