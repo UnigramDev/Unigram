@@ -29,12 +29,14 @@ namespace Unigram.ViewModels
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var password = parameter as TLAccountPasswordBase;
-            if (password == null) return Task.CompletedTask;
-
-            _password = password as TLAccountPassword;
-            if (_password != null)
+            if (password != null)
             {
-                PasswordHint = _password.Hint;
+                _password = password as TLAccountPassword;
+
+                if (_password != null)
+                {
+                    PasswordHint = _password.Hint;
+                }
             }
 
             return Task.CompletedTask;
@@ -65,7 +67,6 @@ namespace Unigram.ViewModels
                 Set(ref _code, value);
             }
         }
-
 
         public RelayCommand SendCommand => new RelayCommand(SendExecute);
         private async void SendExecute()
