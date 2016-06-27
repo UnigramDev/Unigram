@@ -373,9 +373,11 @@
                             <Rectangle x:Name="Separator" Height="1" Fill="{ThemeResource SystemControlBackgroundAccentBrush}"/>
                             <controls:HyperButton
                                 Tag="Call" 
+                                Command="{Binding CallCommand}"
+                                Visibility="{Binding PhoneVisibility}"
                                 Style="{StaticResource SubtitleButtonStyle}">
                                 <TextBlock>
-                                    <Run Text="+"/><Run Text="{Binding Phone}"/>
+                                    <Run Text="+"/><Run Text="{Binding Item.Phone}"/>
                                 </TextBlock>
                             </controls:HyperButton>
 
