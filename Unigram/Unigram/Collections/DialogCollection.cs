@@ -40,6 +40,9 @@ namespace Unigram.Collections
         {
             _protoService = protoService;
             _cacheService = cacheService;
+
+            HasMoreItems = false;
+            InitializeAsync();
         }
 
         #region Handles
@@ -538,11 +541,11 @@ namespace Unigram.Collections
                             }
                         }
 
-                        HasMoreItems = Count > 0;
+                        //HasMoreItems = Count > 0;
                     }
                     else
                     {
-                        HasMoreItems = Count > 0;
+                        //HasMoreItems = Count > 0;
                     }
                     //this.IsWorking = false;
                 });
