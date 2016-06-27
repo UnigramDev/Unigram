@@ -15,6 +15,8 @@ using Unigram.Controls;
 using Template10.Common;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
+using Windows.Foundation.Metadata;
+using Windows.ApplicationModel.Calls;
 
 namespace Unigram.ViewModels
 {
@@ -60,6 +62,7 @@ namespace Unigram.ViewModels
             if (user != null)
             {
                 Item = user;
+                RaisePropertyChanged(() => PhoneVisibility);
                 RaisePropertyChanged(() => AddToGroupVisibility);
                 RaisePropertyChanged(() => HelpVisibility);
                 RaisePropertyChanged(() => ReportVisibility);
@@ -124,6 +127,23 @@ namespace Unigram.ViewModels
                 dialog.IsModal = true;
 
                 await test.OnNavigatedToAsync(Item, NavigationMode.New, new Dictionary<string, object>());
+            }
+        }
+
+        public RelayCommand CallCommand => new RelayCommand(CallExecute);
+        private void CallExecute()
+        {
+            var user = Item as TLUser;
+            if (user != null)
+            {
+                if (ApiInformation.IsTypePresent("Windows.ApplicationModel.Calls.PhoneCallManager"))
+                {
+                    PhoneCallManager.ShowPhoneCallUI($"+{user.Phone}", user.FullName);
+                }
+                else
+                {
+                    // TODO
+                }
             }
         }
 
@@ -284,6 +304,20 @@ namespace Unigram.ViewModels
             }
         }
         #endregion
+
+        public Visibility PhoneVisibility
+        {
+            get
+            {
+                var user = Item as TLUser;
+                if (user != null && (user.HasPhone || !string.IsNullOrWhiteSpace(user.Phone)))
+                {
+                    return Visibility.Visible;
+                }
+
+                return Visibility.Collapsed;
+            }
+        }
 
         public Visibility BlockVisibility
         {
