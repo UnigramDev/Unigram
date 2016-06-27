@@ -49,6 +49,7 @@
             container.ContainerBuilder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
 
             // ViewModels
+            container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();
             container.ContainerBuilder.RegisterType<LoginPhoneNumberViewModel>();
             container.ContainerBuilder.RegisterType<LoginPhoneCodeViewModel>();
             container.ContainerBuilder.RegisterType<LoginPasswordViewModel>();

@@ -29,11 +29,14 @@ namespace Unigram.Views
 
             DataContext = UnigramContainer.Instance.ResolverType<LoginPhoneNumberViewModel>();
 
-            if (!Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                txtMasterTitle.Visibility = Visibility.Visible;
-                rpMasterTitlebar.Visibility = Visibility.Collapsed;
-            }
+            // Used to hide the app gray bar on desktop.
+            // Currently this is always hidden on both family devices.
+            //
+            //if (!Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            //{
+            //    //txtMasterTitle.Visibility = Visibility.Visible;
+            //    rpMasterTitlebar.Visibility = Visibility.Collapsed;
+            //}
         }
 
         private void PhoneNumber_KeyDown(object sender, KeyRoutedEventArgs e)

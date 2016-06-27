@@ -130,6 +130,7 @@
     <Compile Include="ViewModels\LoginPasswordViewModel.cs" />
     <Compile Include="ViewModels\LoginPhoneCodeViewModel.cs" />
     <Compile Include="ViewModels\LoginPhoneNumberViewModel.cs" />
+    <Compile Include="ViewModels\LoginWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\UserInfoViewModel.cs" />
@@ -169,6 +170,9 @@
     </Compile>
     <Compile Include="Views\LoginPhoneNumberPage.xaml.cs">
       <DependentUpon>LoginPhoneNumberPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoginWelcomePage.xaml.cs">
+      <DependentUpon>LoginWelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -331,6 +335,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\LoginPhoneNumberPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoginWelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
