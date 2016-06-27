@@ -171,7 +171,8 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <RelativePanel>
+
+        <RelativePanel x:Name="rpMain" >
             <!-- Master - Titlebar -->
             <RelativePanel x:Name="rpMasterTitlebar"
                            Background="{ThemeResource SystemControlBackgroundListMediumBrush}"
@@ -183,39 +184,41 @@
                            Padding="12,0"
                            RelativePanel.AlignVerticalCenterWithPanel="True"/>
             </RelativePanel>
-            
-            <!-- Master - Title (for desktop) -->
-            <TextBlock x:Name="txtMasterTitle"
-                       Padding="16"
-                       Text="Welcome to Unigram"
-                       RelativePanel.Below="rpMasterTitlebar"
-                       Style="{ThemeResource TitleTextBlockStyle}"
-                       Visibility="Collapsed"/>
 
             <!-- Master - Main content -->
             <RelativePanel x:Name="rpMasterContent"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.Below="txtMasterTitle"
+                           RelativePanel.Below="rpMasterTitlebar"
                            RelativePanel.AlignBottomWithPanel="True">
                 <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
                               RelativePanel.AlignRightWithPanel="True"
                               RelativePanel.AlignBottomWithPanel="True"
                               RelativePanel.AlignTopWithPanel="True">
-                    <RelativePanel Padding="16">
+                    <RelativePanel Padding="16" x:Name="rpScrollContent">
+                        <!-- Master - Title (for desktop) -->
+                        <TextBlock x:Name="txtMasterTitle"
+                                   Padding="0,0,0,16"
+                                   Text="Welcome to Unigram"
+                                   Style="{ThemeResource TitleTextBlockStyle}"
+                                   Visibility="Collapsed"/>
                         <!-- Master - Logo and intro -->
                         <RelativePanel x:Name="rpMasterWelcomeIntro"
                                        RelativePanel.AlignLeftWithPanel="True"
-                                       RelativePanel.AlignRightWithPanel="True">
-                            <Canvas Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                    Height="96"
-                                    Width="96"
-                                    x:Name="imgMasterWelcomeLogo">
-                                <Image 
-                                   Height="96"
-                                   Width="96"  
-                                   Source="ms-appx:///Assets/Logos/Square71x71Logo/Square71x71Logo.scale-200.png" />
-                            </Canvas>
+                                       RelativePanel.AlignRightWithPanel="True"
+                                       RelativePanel.Below="txtMasterTitle">
+                            <Ellipse Height="96" 
+                                     Width="96" 
+                                     Fill="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                     RelativePanel.AlignBottomWith="imgMasterWelcomeLogo"
+                                     RelativePanel.AlignLeftWith="imgMasterWelcomeLogo"/>
+                            <Ellipse x:Name="imgMasterWelcomeLogo"
+                                     Height="96"
+                                     Width="96">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
+                                </Ellipse.Fill>
+                            </Ellipse>
                             <TextBlock x:Name="tblMasterWelcomeIntroText"
                                        x:Uid="Login-Intro-Intro"
                                        Padding="16,0"
@@ -226,7 +229,6 @@
                                        RelativePanel.AlignVerticalCenterWithPanel="True"
                                        RelativePanel.RightOf="imgMasterWelcomeLogo"/>
                         </RelativePanel>
-
 
                         <!-- Master - Phone Number -->
                         <RelativePanel x:Name="rpMasterPhone"
@@ -275,7 +277,6 @@
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
 
-
                                 <!-- The user can enter their phone number here -->
                                 <TextBox x:Name="txtMasterPhoneInputCountryCode"
                                          x:Uid="Login-PhoneNumber-CountryCode"
@@ -315,5 +316,34 @@
             </RelativePanel>
             <!-- END OF Master - Main content-->
         </RelativePanel>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="DisplayModeStates">
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
+                        <Setter Target="rpScrollContent.HorizontalAlignment" Value="Center"/>
+                        <Setter Target="rpScrollContent.Width" Value="400"/>
+                        <Setter Target="rpScrollContent.VerticalAlignment" Value="Center"/>
+                        <Setter Target="rpMasterWelcomeIntro.Margin" Value="0,0,0,32"/>
+                        <Setter Target="rpMasterPhoneInput.HorizontalAlignment" Value="Center"/>
+                        <Setter Target="btnMasterPhoneInputConfirm.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
+                        <Setter Target="btnMasterPhoneInputConfirm.Width" Value="200"/>
+                        <Setter Target="btnMasterPhoneInputConfirm.Margin" Value="0,24,0,0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Compact">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

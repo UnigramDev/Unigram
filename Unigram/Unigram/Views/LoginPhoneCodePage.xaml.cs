@@ -32,7 +32,6 @@ namespace Unigram.Views
 
             if (!Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                txtMasterTitle.Visibility = Visibility.Visible;
                 rpMasterTitlebar.Visibility = Visibility.Collapsed;
             }
         }
