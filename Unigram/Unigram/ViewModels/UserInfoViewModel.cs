@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.Foundation.Metadata;
 using Windows.ApplicationModel.Calls;
+using System.Diagnostics;
 
 namespace Unigram.ViewModels
 {
@@ -108,7 +109,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateNotifySettings message)
         {
-
+            Debugger.Break();
         }
 
         public RelayCommand PhotoCommand => new RelayCommand(PhotoExecute);

@@ -56,6 +56,7 @@
             container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<UserInfoViewModel>(); // .SingleInstance();
+            container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
 
             container.Build();
 

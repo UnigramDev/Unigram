@@ -84,6 +84,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
+                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                        TextTrimming="CharacterEllipsis" 
                        TextWrapping="NoWrap" 
                        MaxLines="1">
