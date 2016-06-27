@@ -113,7 +113,7 @@
             </Setter>
         </Style>
 
-        <Style x:Key="PickerButtonStyle" TargetType="controls:HyperButton">
+        <Style x:Key="CheckButtonStyle" TargetType="controls:HyperCheckButton">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
@@ -128,11 +128,10 @@
             <Setter Property="UseSystemFocusVisuals" Value="True"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="controls:HyperButton">
+                    <ControlTemplate TargetType="controls:HyperCheckButton">
                         <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -166,25 +165,8 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <ContentPresenter AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Content="{TemplateBinding Tag}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" Grid.Column="1">
-                                <FlyoutBase.AttachedFlyout>
-                                    <Flyout Placement="Bottom">
-                                        <ListView x:Name="ItemsRoot" ItemsSource="{Binding DataContext.Spans, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
-                                    </Flyout>
-                                </FlyoutBase.AttachedFlyout>
-                            </ContentPresenter>
 
-                            <FontIcon x:Name="DropDownGlyph"
-                                      Grid.Column="2"
-                                      IsHitTestVisible="False"
-                                      Margin="0,10,12,10"
-                                      Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      FontSize="12"
-                                      Glyph="&#xE0E5;"
-                                      HorizontalAlignment="Right"
-                                      VerticalAlignment="Center"
-                                      AutomationProperties.AccessibilityView="Raw" />
+                            <ToggleSwitch IsOn="{TemplateBinding IsOn}" OnContent="{x:Null}" OffContent="{x:Null}" MinWidth="0" Grid.Column="1"/>
 
                             <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="12,0,0,0" Grid.Row="1" Grid.ColumnSpan="3"/>
                         </Grid>
@@ -438,10 +420,10 @@
                                 Style="{StaticResource HyperButtonStyle}" 
                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
-                            <controls:HyperButton 
+                            <controls:HyperCheckButton 
                                 Content="Enabled" 
                                 Tag="Notifications and sounds" 
-                                Style="{ThemeResource PickerButtonStyle}"/>
+                                Style="{ThemeResource CheckButtonStyle}"/>
                         </local:TableStackPanel>
 
                         <local:TableStackPanel
