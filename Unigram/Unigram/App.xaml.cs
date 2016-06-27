@@ -84,7 +84,7 @@ namespace Unigram
             }
             else
             {
-                NavigationService.Navigate(typeof(Views.LoginPhoneNumberPage));
+                NavigationService.Navigate(typeof(Views.LoginWelcomePage));
             }
 
             ShowStatusBar();
