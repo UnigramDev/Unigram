@@ -809,7 +809,35 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid Background="{ThemeResource SystemControlBackgroundListMediumBrush}"
+            <Border x:Name="ContentRoot" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.RowSpan="2">
+                <Pivot x:Name="ScrollingHost" SelectedIndex="1">
+                    <PivotItem/>
+                    <PivotItem>
+                        <ListView x:Name="lvMasterChats"
+                                  ItemsSource="{x:Bind ViewModel.Dialogs}"
+                                  IsItemClickEnabled="True"
+                                  SelectionMode="None"
+                                  ItemClick="ListView_ItemClick"
+                                  SelectionChanged="ListView_SelectionChanged"
+                                  Grid.Row="1">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <controls:DialogListViewItem/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </PivotItem>
+                    <PivotItem/>
+                </Pivot>
+            </Border>
+
+            <Grid x:Name="Header"
+                  Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
                   Height="{ThemeResource AppBarThemeCompactHeight}"
                   Canvas.ZIndex="2"
                   Grid.Row="0">
@@ -819,51 +847,18 @@
                            HorizontalAlignment="Left"
                            VerticalAlignment="Center"
                            Margin="12,0" />
-                <Button x:Name="btnSearch"
-                        Background="Transparent"
-                        Content="&#xE11A;"
-                        FontFamily="Segoe MDL2 Assets"
-                        FontSize="18"
-                        Height="48"
-                        Width="48"
-                        HorizontalAlignment="Right" />
+                <controls:GlyphButton
+                    x:Name="btnSearch"
+                    Glyph="&#xE11A;"
+                    HorizontalAlignment="Right"/>
             </Grid>
 
-            <Pivot x:Name="ScrollingHost" 
-                   SelectedIndex="1" 
-                   Margin="0,-48,0,48"
-                   Grid.Row="1" 
-                   Grid.RowSpan="2">
-                <PivotItem/>
-                <PivotItem>
-                    <ListView x:Name="lvMasterChats"
-                              ItemsSource="{x:Bind ViewModel.Dialogs}"
-                              IsItemClickEnabled="True"
-                              SelectionMode="None"
-                              ItemClick="ListView_ItemClick"
-                              SelectionChanged="ListView_SelectionChanged"
-                              Grid.Row="1">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <controls:DialogListViewItem/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </PivotItem>
-                <PivotItem/>
-            </Pivot>
-
             <Border x:Name="Footer"
-                Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
-                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                Height="{ThemeResource AppBarThemeCompactHeight}"
-                BorderThickness="0,1,0,0" 
-                Grid.Row="2">
+                    Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    Height="{ThemeResource AppBarThemeCompactHeight}"
+                    BorderThickness="0,1,0,0" 
+                    Grid.Row="2">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
