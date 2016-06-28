@@ -2,18 +2,30 @@
 
 namespace Telegram.Api
 {
-    public static partial class Constants
+    public static class Constants
     {
-        public static readonly string FirstServerIpAddress;
-
-        public static readonly int ApiId;
-        public static readonly string ApiHash;
-
-
-
         public const int FirstServerDCId = 2; // from 1, 2, 3, 4, 5
         public const int FirstServerPort = 443;
+        public const string FirstServerIpAddress =
 
+#if TEST_SERVER //test
+            "149.154.175.10"; //dc1
+#else   //prod
+            //"149.154.175.50";     // dc1
+            //"149.154.167.51";       // dc2
+            //"174.140.142.6";      // dc3
+            //"149.154.167.90";     // dc4
+            //"149.154.171.5";      // dc5
+            //"149.154.175.10";
+
+            //OFFICIAL 
+            "149.154.167.51";
+#endif
+
+        public const int ApiId = 1429;
+        public const string ApiHash = "2bd96732edd02ee97089bf74ca94cc9f";
+        //public const int ApiId = 38;
+        //public const string ApiHash = "";
         public const int SupportedLayer = 53;
 
         public const int SecretSupportedLayer = 23;

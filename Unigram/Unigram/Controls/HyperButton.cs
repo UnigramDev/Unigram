@@ -24,21 +24,4 @@ namespace Unigram.Controls
         public static readonly DependencyProperty CornerRadiusProperty =
             DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(HyperButton), new PropertyMetadata(default(CornerRadius)));
     }
-
-    public class HyperCheckButton : HyperButton
-    {
-        public HyperCheckButton()
-        {
-            DefaultStyleKey = typeof(HyperCheckButton);
-        }
-
-        public bool IsOn
-        {
-            get { return (bool)GetValue(IsOnProperty); }
-            set { SetValue(IsOnProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsOnProperty =
-            DependencyProperty.Register("IsOn", typeof(bool), typeof(HyperCheckButton), new PropertyMetadata(false));
-    }
 }

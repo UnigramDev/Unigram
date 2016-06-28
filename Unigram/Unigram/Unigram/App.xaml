@@ -1,0 +1,36 @@
+﻿<template:BootStrapper
+    x:Class="Unigram.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:template="using:Template10.Common"
+    xmlns:converters="using:Unigram.Converters"
+    xmlns:local="using:Unigram">
+    
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
+                <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
+                <!--<ResourceDictionary Source="ms-appx:///Themes/Brand.xaml"/>-->
+            </ResourceDictionary.MergedDictionaries>
+
+            <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
+            
+            <!-- Temp -->
+            <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter"/>
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+
+            <SolidColorBrush x:Key="BlueBrush" Color="#348cd4"/>
+            <SolidColorBrush x:Key="CyanBrush" Color="#2996ad"/>
+            <SolidColorBrush x:Key="GreenBrush" Color="#4fad2d"/>
+            <SolidColorBrush x:Key="OrangeBrush" Color="#ce671b"/>
+            <SolidColorBrush x:Key="PinkBrush" Color="#cd4073"/>
+            <SolidColorBrush x:Key="PurpleBrush" Color="#8544d6"/>
+            <SolidColorBrush x:Key="RedBrush" Color="#c03d33"/>
+            <SolidColorBrush x:Key="YellowBrush" Color="#d09306"/>
+
+        </ResourceDictionary>
+    </Application.Resources>
+
+</template:BootStrapper>

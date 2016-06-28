@@ -16,28 +16,28 @@
 
     <Page.Resources>
         <Style TargetType="PivotItem">
-            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Margin" Value="0" />
         </Style>
     </Page.Resources>
 
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged">
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Border x:Name="ContentRoot" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.RowSpan="2">
-                <Pivot x:Name="ScrollingHost" SelectedIndex="1">
-                    <PivotItem/>
+            <RelativePanel x:Name="rpMaster"
+                           Grid.Column="0"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch">
+                <Pivot x:Name="rpMasterTitlebar" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True" Margin="0,0,0,48" Style="{StaticResource TabStylePivotStyle}">
                     <PivotItem>
+                        <PivotItem.Header>
+                            <controls:TabHeaderStyle Glyph="&#xE15F;" />
+                        </PivotItem.Header>
                         <ListView x:Name="lvMasterChats"
-                                  ItemsSource="{x:Bind ViewModel.Dialogs}"
-                                  IsItemClickEnabled="True"
-                                  SelectionMode="None"
-                                  ItemClick="ListView_ItemClick"
-                                  SelectionChanged="ListView_SelectionChanged"
-                                  Grid.Row="1">
+                            ItemsSource="{x:Bind ViewModel.Dialogs}"
+                            IsItemClickEnabled="True"
+                            SelectionMode="None"
+                            ItemClick="ListView_ItemClick"
+                            SelectionChanged="ListView_SelectionChanged"
+                            Grid.Row="1">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -45,100 +45,84 @@
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <controls:DialogListViewItem/>
+                                    <controls:DialogListViewItem />
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
                     </PivotItem>
-                    <PivotItem/>
+                    <PivotItem>
+                        <PivotItem.Header>
+                            <controls:TabHeaderStyle Glyph="&#xE125;" />
+                        </PivotItem.Header>
+                    </PivotItem>
+                    <PivotItem>
+                        <PivotItem.Header>
+                            <controls:TabHeaderStyle Glyph="&#xE11A;" />
+                        </PivotItem.Header>
+                    </PivotItem>
                 </Pivot>
-            </Border>
 
-            <Grid x:Name="Header"
-                  Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
-                  Height="{ThemeResource AppBarThemeCompactHeight}"
-                  Canvas.ZIndex="2"
-                  Grid.Row="0">
-                <TextBlock x:Name="tblPivotTitle"
-                           Text="UNIGRAM"
-                           Style="{ThemeResource BaseTextBlockStyle}"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Center"
-                           Margin="12,0" />
-                <controls:GlyphButton
-                    x:Name="btnSearch"
-                    Glyph="&#xE11A;"
-                    HorizontalAlignment="Right"/>
-            </Grid>
+                <StackPanel Orientation="Horizontal">
+                    <controls:UnigramLogo VerticalAlignment="Center" Margin="12,0,0,0" Width="36" Height="36" LogoColor="{ThemeResource ButtonForegroundThemeBrush}"/>
+                    <TextBlock x:Name="tblMasterTitle"
+                               Text="UNIGRAM"
+                               Foreground="{ThemeResource ButtonForegroundThemeBrush}"
+                               HorizontalAlignment="Center"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Padding="7,14" 
+                               />
+                </StackPanel>
 
-            <Border x:Name="Footer"
-                    Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                    Height="{ThemeResource AppBarThemeCompactHeight}"
-                    BorderThickness="0,1,0,0" 
-                    Grid.Row="2">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Index="2" Label="Contacts" Glyph="&#xE125;" Grid.Column="2"/>
-                    <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Index="1" Label="Chats" Glyph="&#xE15F;" Grid.Column="1"/>
-                    <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Index="0" Label="Settings" Glyph="&#xE115;" Grid.Column="0"/>
-                </Grid>
-            </Border>
+                <!-- Master - Command Bar -->
+                <CommandBar x:Name="cmbarMaster"
+                                RelativePanel.AlignLeftWithPanel="True"
+                                RelativePanel.AlignRightWithPanel="True"
+                                RelativePanel.AlignBottomWithPanel="True">
+                    <!-- Commands visible on commandbar-->
+                    <CommandBar.PrimaryCommands>
+                        <AppBarButton x:Name="cbtnMasterNewChat"
+                                          x:Uid="CBTN-NewChat"
+                                          Icon="Add"
+                                          Label="New chat">
+                        </AppBarButton>
+                        <AppBarButton x:Name="cbtnMasterSelectAll"
+                                          x:Uid="CBTN-SelectAll"
+                                          Icon="SelectAll"
+                                          Label="Select all"
+                                          Click="cbtnMasterSelectAll_Click">
+                        </AppBarButton>
+                        <AppBarButton x:Name="cbtnMasterDeleteSelected" 
+                                          x:Uid="CBTN-SelectAll"
+                                          Icon="Delete"
+                                          Label="Delete selected"
+                                      Visibility="Collapsed">
+                        </AppBarButton>
+                        <AppBarButton x:Name="cbtnMasterMuteSelected" 
+                                          x:Uid="CBTN-MuteSelected"
+                                          Icon="Mute"
+                                          Label="Mute selected"
+                                      Visibility="Collapsed">
+                        </AppBarButton>
+                    </CommandBar.PrimaryCommands>
 
-
-            <!--<CommandBar x:Name="cmbarMaster" Grid.Row="2">
-                <CommandBar.PrimaryCommands>
-                    <AppBarToggleButton x:Name="cbtnMasterNewChat"
-                                        x:Uid="CBTN-NewChat"
-                                        Icon="People"
-                                        Label="Contacts" 
-                                        Width="Auto"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Top"
-                                        Height="60">
-                    </AppBarToggleButton>
-                    <AppBarToggleButton x:Name="cbtnMasterFilter"
-                                        x:Uid="CBTN-Filter"
-                                        Icon="Message"
-                                        Label="Chats"
-                                        Width="Auto"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Top"
-                                        Height="60"
-                                        IsChecked="True"/>
-                    <AppBarToggleButton x:Name="cbtnMasterSearch"
-                                        x:Uid="CBTN-Search"
-                                        Icon="Setting"
-                                        Label="Settings"
-                                        Width="Auto"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Top"
-                                        Height="60">
-                    </AppBarToggleButton>
-                </CommandBar.PrimaryCommands>
-                <CommandBar.SecondaryCommands>
-                    <AppBarButton x:Name="cbtnMasterSelect"
-                                  x:Uid="CBTN-Select"
-                                  Icon="Bullets"
-                                  Label="Select" />
-                    <AppBarButton x:Name="cbtnMasterSettings"
-                                  x:Uid="CBTN-Settings"
-                                  Icon="Setting"
-                                  Label="Settings">
-                    </AppBarButton>
-                    <AppBarButton x:Name="cbtnMasterAbout"
-                                  x:Uid="CBTN-About"
-                                  Label="About">
-                        <AppBarButton.Icon>
-                            <FontIcon Glyph="&#xE946;" />
-                        </AppBarButton.Icon>
-                    </AppBarButton>
-                </CommandBar.SecondaryCommands>
-            </CommandBar>-->
+                    <!-- Commands hidden in the ellipse-menu -->
+                    <CommandBar.SecondaryCommands>
+                        <AppBarButton x:Name="cbtnMasterSettings"
+                                          x:Uid="CBTN-Settings"
+                                          Icon="Setting"
+                                          Label="Settings">
+                        </AppBarButton>
+                        <AppBarButton x:Name="cbtnMasterAbout"
+                                          x:Uid="CBTN-About"
+                                          Label="About"
+                                          Click="cbtnMasterAbout_Click">
+                            <AppBarButton.Icon>
+                                <FontIcon Glyph="&#xE946;" />
+                            </AppBarButton.Icon>
+                        </AppBarButton>
+                    </CommandBar.SecondaryCommands>
+                </CommandBar>
+            </RelativePanel>
         </Grid>
     </controls:MasterDetailView>
 </Page>

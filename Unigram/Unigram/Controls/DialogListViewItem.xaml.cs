@@ -118,6 +118,19 @@ namespace Unigram.Controls
                     Placeholder.Fill = Application.Current.Resources["ListViewItemPlaceholderBackgroundThemeBrush"] as SolidColorBrush;
                     break;
             }
+
+            if (ViewModel.FullName.Length > 0)
+            {
+                foreach (var item in ViewModel.FullName.Split(' '))
+                {
+                    if (InitialName.Text.Length >= 2) break;
+                    InitialName.Text += item[0];
+                }
+            }
+            else //This mean the account is deleted
+            {
+                InitialName.Text = "\\";
+            }
         }
 
         private int GetColorIndex(int id)
