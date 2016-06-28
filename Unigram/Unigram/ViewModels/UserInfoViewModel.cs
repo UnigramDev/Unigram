@@ -63,6 +63,7 @@ namespace Unigram.ViewModels
             if (user != null)
             {
                 Item = user;
+                RaisePropertyChanged(() => AreNotificationsEnabled);
                 RaisePropertyChanged(() => PhoneVisibility);
                 RaisePropertyChanged(() => AddToGroupVisibility);
                 RaisePropertyChanged(() => HelpVisibility);
@@ -245,6 +246,20 @@ namespace Unigram.ViewModels
                         await new MessageDialog("Resources.ReportSpamNotification", "Unigram").ShowAsync();
                     }
                 }
+            }
+        }
+
+        public bool AreNotificationsEnabled
+        {
+            get
+            {
+                var settings = Item.NotifySettings as TLPeerNotifySettings;
+                if (settings != null)
+                {
+                    return settings.MuteUntil == 0;
+                }
+
+                return false;
             }
         }
 
