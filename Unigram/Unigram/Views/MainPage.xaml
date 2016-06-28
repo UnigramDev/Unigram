@@ -48,6 +48,9 @@
                                     <controls:DialogListViewItem/>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
+                            <ListView.Header>
+                                <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                            </ListView.Header>
                         </ListView>
                     </PivotItem>
                     <PivotItem/>

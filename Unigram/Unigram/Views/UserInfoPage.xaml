@@ -423,6 +423,7 @@
                             <controls:HyperCheckButton 
                                 Content="Enabled" 
                                 Tag="Notifications and sounds" 
+                                IsOn="{Binding AreNotificationsEnabled}"
                                 Style="{ThemeResource CheckButtonStyle}"/>
                         </local:TableStackPanel>
 
