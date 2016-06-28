@@ -307,7 +307,7 @@ namespace Unigram.Controls
 
             if (message.ShowFrom || IsOut(ViewModel))
             {
-                FromLabel.Foreground = Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+                FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelFromBrush"] as SolidColorBrush;
 
                 var from = message.FromId;
                 if (from != null)
