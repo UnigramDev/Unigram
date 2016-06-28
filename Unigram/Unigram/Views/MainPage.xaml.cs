@@ -11,6 +11,9 @@ using Unigram.Core.Notifications;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -87,6 +90,11 @@ namespace Unigram.Views
 
         private void OnStateChanged(object sender, EventArgs e)
         {
+            if (lvMasterChats.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                ChangeListState();
+            }
+
             if (MasterDetail.CurrentState == MasterDetailState.Narrow)
             {
                 lvMasterChats.IsItemClickEnabled = true;
@@ -103,18 +111,21 @@ namespace Unigram.Views
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            _lastSelected = e.ClickedItem;
-
-            var dialog = e.ClickedItem as TLDialog;
-            if (dialog.With is TLUserBase)
+            if (lvMasterChats.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), dialog.With);
+                _lastSelected = e.ClickedItem;
+
+                var dialog = e.ClickedItem as TLDialog;
+                if (dialog.With is TLUserBase)
+                {
+                    ViewModel.NavigationService.Navigate(typeof(UserInfoPage), dialog.With);
+                }
             }
         }
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (lvMasterChats.SelectedItem != null && _lastSelected != lvMasterChats.SelectedItem)
+            if (lvMasterChats.SelectedItem != null && _lastSelected != lvMasterChats.SelectedItem && lvMasterChats.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 _lastSelected = lvMasterChats.SelectedItem;
 
@@ -125,81 +136,52 @@ namespace Unigram.Views
                 }
             }
         }
-    }
 
-    // TEST
-    public class PivotItemsPanel : Panel
-    {
-        protected override Size MeasureOverride(Size availableSize)
+        private void cbtnMasterSelectAll_Click(object sender, RoutedEventArgs e)
         {
-            var items = 0d;
+            lvMasterChats.SelectionMode = ListViewSelectionMode.Multiple;
+            cbtnMasterDeleteSelected.Visibility = Visibility.Visible;
+            cbtnMasterMuteSelected.Visibility = Visibility.Visible;
+            cbtnMasterSelectAll.Visibility = Visibility.Collapsed;
+            cbtnMasterNewChat.Visibility = Visibility.Collapsed;
 
-            for (int i = 0; i < Children.Count; i++)
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            SystemNavigationManager.GetForCurrentView().BackRequested += (s, _) =>
             {
-                var child = Children[i];
-                if (child.Visibility == Visibility.Visible)
-                {
-                    items += 1;
-                }
-            }
-
-            var width = (availableSize.Width + 48) / items;
-            var height = 0d;
-
-            for (int i = 0; i < Children.Count; i++)
-            {
-                var childWidth = width;
-                var child = Children[i];
-                if (child.Visibility == Visibility.Visible)
-                {
-                    //if (i == items + 1)
-                    //{
-                    //    childWidth -= 48; // Ellipse button
-                    //}
-
-                    child.Measure(new Size(childWidth, availableSize.Height));
-                    height = Math.Max(height, child.DesiredSize.Height);
-                }
-            }
-
-            return new Size(availableSize.Width, height);
+                ChangeListState();
+            };
         }
 
-        protected override Size ArrangeOverride(Size finalSize)
+        private void cbtnMasterAbout_Click(object sender, RoutedEventArgs e)
         {
-            var items = 0d;
+            ViewModel.NavigationService.Navigate(typeof(AboutPage));
+        }
 
-            for (int i = 0; i < Children.Count; i++)
+        private void ChangeListState(bool FromOnState = false)
+        {
+            Visibility act;
+            Visibility act1;
+
+            if (FromOnState)
             {
-                var child = Children[i];
-                if (child.Visibility == Visibility.Visible)
-                {
-                    items += 1;
-                }
+                act = Visibility.Visible;
+                act1 = Visibility.Collapsed;
+            }
+            else
+            {
+                act = Visibility.Collapsed;
+                act1 = Visibility.Visible;
             }
 
-            var width = (finalSize.Width + 48) / items;
-            var height = 0d;
-            var x = 0d;
-
-            for (int i = 0; i < Children.Count; i++)
+            cbtnMasterDeleteSelected.Visibility = act;
+            cbtnMasterMuteSelected.Visibility = act;
+            cbtnMasterSelectAll.Visibility = act1;
+            cbtnMasterNewChat.Visibility = act1;
+            lvMasterChats.SelectionMode = ListViewSelectionMode.Single;
+            if (!ViewModel.NavigationService.CanGoBack)
             {
-                var childWidth = width;
-                var child = Children[i];
-                if (child.Visibility == Visibility.Visible)
-                {
-                    //if (i == items + 1)
-                    //{
-                    //    childWidth -= 48; // Ellipse button
-                    //}
-
-                    child.Arrange(new Rect(x, 0, childWidth, finalSize.Height));
-                    height = Math.Max(height, child.DesiredSize.Height);
-                    x += childWidth;
-                }
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             }
-
-            return new Size(finalSize.Width, height);
         }
     }
 }

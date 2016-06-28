@@ -30,13 +30,10 @@ namespace Unigram.Views
 
             DataContext = UnigramContainer.Instance.ResolverType<LoginPhoneCodeViewModel>();
 
-            // Used to hide the app gray bar on desktop.
-            // Currently this is always hidden on both family devices.
-            //
-            //if (!Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            //{
-            //    rpMasterTitlebar.Visibility = Visibility.Collapsed;
-            //}
+            if (!Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                rpMasterTitlebar.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

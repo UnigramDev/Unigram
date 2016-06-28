@@ -16,7 +16,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <RelativePanel x:Name="rpMain">
             <!-- Master - Titlebar -->
-            <!--<RelativePanel x:Name="rpMasterTitlebar"
+            <RelativePanel x:Name="rpMasterTitlebar"
                            Style="{StaticResource StyleRPMasterTitleBar}">
                 <TextBlock x:Name="tblMasterTitle"
                            x:Uid="Login-Titlebar-Title"
@@ -25,13 +25,13 @@
                            RequestedTheme="Dark"
                            Padding="16,0"
                            RelativePanel.AlignVerticalCenterWithPanel="True"/>
-            </RelativePanel>-->
+            </RelativePanel>
 
             <!-- Master - Main content -->
             <RelativePanel x:Name="rpMasterContent"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.AlignTopWithPanel="True"
+                           RelativePanel.Below="rpMasterTitlebar"
                            RelativePanel.AlignBottomWithPanel="True">
                 <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
                               RelativePanel.AlignRightWithPanel="True"
