@@ -110,7 +110,28 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateNotifySettings message)
         {
-            Debugger.Break();
+            var notifyPeer = message.Peer as TLNotifyPeer;
+            if (notifyPeer != null)
+            {
+                var peer = notifyPeer.Peer;
+                if (peer is TLPeerChat && peer.Id == Item.Id)
+                {
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        Item.NotifySettings = message.NotifySettings;
+                        Item.RaisePropertyChanged(() => Item.NotifySettings);
+                        RaisePropertyChanged(() => AreNotificationsEnabled);
+
+                        //var notifySettings = updateNotifySettings.NotifySettings as TLPeerNotifySettings;
+                        //if (notifySettings != null)
+                        //{
+                        //    _suppressUpdating = true;
+                        //    MuteUntil = notifySettings.MuteUntil.Value;
+                        //    _suppressUpdating = false;
+                        //}
+                    });
+                }
+            }
         }
 
         public RelayCommand PhotoCommand => new RelayCommand(PhotoExecute);
