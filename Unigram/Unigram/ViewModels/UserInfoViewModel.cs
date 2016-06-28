@@ -114,7 +114,7 @@ namespace Unigram.ViewModels
             if (notifyPeer != null)
             {
                 var peer = notifyPeer.Peer;
-                if (peer is TLPeerChat && peer.Id == Item.Id)
+                if (peer is TLPeerUser && peer.Id == Item.Id)
                 {
                     Execute.BeginOnUIThread(() =>
                     {
@@ -274,7 +274,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                var settings = Item.NotifySettings as TLPeerNotifySettings;
+                var settings = Item?.NotifySettings as TLPeerNotifySettings;
                 if (settings != null)
                 {
                     return settings.MuteUntil == 0;
