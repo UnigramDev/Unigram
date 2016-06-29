@@ -110,18 +110,18 @@ namespace Unigram
             // Show StatusBar on Win10 Mobile, in theme of the pass
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
-                statusBar.BackgroundOpacity = 0;
+                var statusBar = StatusBar.GetForCurrentView();
 
-                // Foreground
-                //statusBar.ForegroundColor = Colors.White;
+                var bgcolor = Application.Current.Resources["SystemControlBackgroundChromeMediumBrush"] as SolidColorBrush;
+
+                // Background
+                statusBar.BackgroundColor = bgcolor.Color;
+                statusBar.BackgroundOpacity = 1;
 
                 // Branding colour
                 //statusBar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);
-
-                // Accent colour
-                //var accentColour = Application.Current.Resources["SystemControlHighlightAccentBrush"] as SolidColorBrush;
-                //statusBar.BackgroundColor = accentColour.Color;
+                //statusBar.ForegroundColor = Colors.White;
+                //statusBar.BackgroundOpacity = 1;
             }
         }
 
@@ -147,8 +147,8 @@ namespace Unigram
                 titlebar.BackgroundColor = accentColour.Color;
                 titlebar.ButtonBackgroundColor = accentColour.Color;
                 titlebar.ButtonInactiveBackgroundColor = accentColour.Color;
-                titlebar.ButtonHoverBackgroundColor = Helpers.ColorHelper.ChangeShade(accentColour.Color, -0.06f);   // TO-DO: needs to be a bit darker
-                titlebar.ButtonPressedBackgroundColor = Helpers.ColorHelper.ChangeShade(accentColour.Color, -0.09f); // TO-DO: needs to be even darker
+                titlebar.ButtonHoverBackgroundColor = Helpers.ColorHelper.ChangeShade(accentColour.Color, -0.06f);
+                titlebar.ButtonPressedBackgroundColor = Helpers.ColorHelper.ChangeShade(accentColour.Color, -0.09f);
                 titlebar.InactiveBackgroundColor = accentColour.Color;
 
                 // Branding colours
