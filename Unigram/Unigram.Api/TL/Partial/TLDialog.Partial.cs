@@ -294,6 +294,23 @@ namespace Telegram.Api.TL
             }
         }
 
+        public Visibility GroupChat
+        {
+            get
+            {
+                var chatType = Peer as TLPeerBase;
+                if (Peer.TypeId == TLType.PeerChat || 
+                    Peer.TypeId == TLType.PeerChannel)
+                {
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    return Visibility.Collapsed;
+                }
+            }
+        }
+
         public Visibility MutedVisibility
         {
             get
