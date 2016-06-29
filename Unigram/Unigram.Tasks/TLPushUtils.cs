@@ -234,7 +234,7 @@ namespace Unigram.Tasks
                 actions = $@"
                 <actions>
                   <input id='QuickMessage' type='text' placeHolderContent='Type a message...' />
-                  <action activationType='background' arguments='{WebUtility.HtmlEncode(launch)}' hint-inputId='QuickMessage' content='' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/>
+                  <action activationType='background' arguments='{WebUtility.HtmlEncode(launch)}' hint-inputId='QuickMessage' content='Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/>
                 </actions>";
 
             }
