@@ -9,7 +9,7 @@
 
     <Page.Transitions>
         <TransitionCollection>
-            <EdgeUIThemeTransition Edge="Right"/>
+            <EntranceThemeTransition FromHorizontalOffset="75"/>
         </TransitionCollection>
     </Page.Transitions>
 
@@ -274,7 +274,15 @@
                                         Content="Next"
                                         Padding="24,4"
                                         Margin="0,16,0,0"
-                                        RelativePanel.Below="txtMasterPhoneInputPhoneNumber"/>
+                                        RelativePanel.Below="txtMasterPhoneInputPhoneNumber" Click="btnMasterPhoneInputConfirm_Click"/>
+                                <ProgressBar x:Name="pbarLoadingBar" 
+                                             Width="{Binding ElementName=rpMasterPhoneInput, Path=ActualWidth}"
+                                             Margin="0,10,0,0"
+                                             RelativePanel.Below="btnMasterPhoneInputConfirm" 
+                                             IsIndeterminate="True"
+                                             Background="{ThemeResource FocusVisualBlackStrokeThemeBrush}"
+                                             Visibility="Collapsed">
+                                </ProgressBar>
                             </RelativePanel>
                         </RelativePanel>
                         <!-- END OF Master - Phone Number -->

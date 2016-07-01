@@ -3,11 +3,290 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
+    xmlns:controls ="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border x:Name="ContentRoot" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.RowSpan="2">
+            <Pivot x:Name="ScrollingHost" SelectedIndex="1">
+                <PivotItem>
+                    <GridView x:Name="gridView" Margin="5,15,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" HorizontalContentAlignment="Left">
+                        <Border Height="75" Width="75" Background="#FF272727" >
+                            <Image Source="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" Margin="5,5,5,5"/>
+                        </Border>
+                        <Border Height="75" Width="75" Background="#FF272727">
+                            <Image Source="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" Margin="5,5,5,5"/>
+                        </Border>
+                        <Border Height="75" Width="75" Background="#FF272727">
+                            <Image Source="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" Margin="5,5,5,5"/>
+                        </Border>
+                        <Border Height="75" Width="75" Background="#FF272727">
+                            <Image Source="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" Margin="5,5,5,5"/>
+                        </Border>
+                        <Border Height="75" Width="75" Background="#FF272727">
+                            <Image Source="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" Margin="5,5,5,5"/>
+                        </Border>
+                    </GridView>
+                </PivotItem>
+                <PivotItem>
+                    <ListView x:Name="lbAudio" HorizontalContentAlignment="Stretch" Margin="0,15,0,0" SelectionMode="None">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <RelativePanel Height="72"
+                       Margin="0,4"
+                       VerticalAlignment="Center">
+                            <!-- ChatIcon -->
+                            <Button Name="elpPlayIcon" Width="50" Height="50"
+                     RelativePanel.AlignVerticalCenterWithPanel="True"
+                     RelativePanel.AlignLeftWithPanel="True">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid>
+                                            <Ellipse Fill="{StaticResource SystemControlBackgroundAccentBrush}"/>
+                                            <FontIcon Glyph="&#xE768;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </ControlTemplate>                                
+                                </Button.Template>
+                            </Button>
+                            <!-- Chat Info -->
+                            <Grid x:Name="gridAudioInfo"
+                  Margin="16,0,0,0"
+                  RelativePanel.AlignVerticalCenterWithPanel="True"
+                  RelativePanel.AlignRightWithPanel="True"
+                  RelativePanel.RightOf="elpPlayIcon">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="tblSenderName"
+                           Grid.Column="0"
+                           Grid.Row="0"
+                           Text="Batman"
+                           TextWrapping="NoWrap"
+                           FontWeight="SemiBold"
+                           FontSize="20"
+                           Margin="0,4"
+                           VerticalAlignment="Center" />
+                           <TextBlock x:Name="tblSentTime"
+                           Grid.Column="2"
+                           Grid.Row="0"
+                           Text="10:11 pm"
+                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                           Margin="8,6,0,6"
+                                      HorizontalAlignment="Right"
+                           FontSize="14"/>
+                                <RelativePanel x:Name="rpAudioInfoData"
+                               Grid.Row="1"
+                               Grid.ColumnSpan="2">
+                                    <TextBlock x:Name="tblAudioFileName"
+                               Text="AUDIO_001.wav"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               TextTrimming="CharacterEllipsis"
+                               FontSize="16"
+                               Margin="0,0,0,4"
+                               VerticalAlignment="Center"
+                               RelativePanel.AlignLeftWithPanel="True"/>                                   
+                                </RelativePanel>
+                            </Grid>
+                        </RelativePanel>
+                        <!-- End of one element -->                        
+                    </ListView>                    
+                </PivotItem>
+                <PivotItem>
+                    <ListView x:Name="lbFiles" HorizontalContentAlignment="Stretch" Margin="0,15,0,0" SelectionMode="None">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <RelativePanel Height="72"
+                       Margin="0,4"
+                       VerticalAlignment="Center">
+                            <!-- ChatIcon -->
+                            <Button Name="elpFileIcon" Width="50" Height="50"
+                     RelativePanel.AlignVerticalCenterWithPanel="True"
+                     RelativePanel.AlignLeftWithPanel="True">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid>
+                                            <Ellipse Fill="{StaticResource SystemControlBackgroundAccentBrush}"/>
+                                            <FontIcon Glyph="&#xE8C8;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                            <!-- Chat Info -->
+                            <Grid x:Name="gridFileInfo"
+                  Margin="16,0,0,0"
+                  RelativePanel.AlignVerticalCenterWithPanel="True"
+                  RelativePanel.AlignRightWithPanel="True"
+                  RelativePanel.RightOf="elpFileIcon">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="tblFileSenderName"
+                           Grid.Column="0"
+                           Grid.Row="0"
+                           Text="Superman"
+                           TextWrapping="NoWrap"
+                           FontWeight="SemiBold"
+                           FontSize="20"
+                           Margin="0,4"
+                           VerticalAlignment="Center" />
+                                <TextBlock x:Name="tblFileSentTime"
+                           Grid.Column="2"
+                           Grid.Row="0"
+                           Text="10:11 pm"
+                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                           Margin="8,6,0,6"
+                                      HorizontalAlignment="Right"
+                           FontSize="14"/>
+                                <RelativePanel x:Name="rpFileInfoData"
+                               Grid.Row="1"
+                               Grid.ColumnSpan="2">
+                                    <TextBlock x:Name="tblFileFileName"
+                               Text="Wikileaks.doc"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               TextTrimming="CharacterEllipsis"
+                               FontSize="16"
+                               Margin="0,0,0,4"
+                               VerticalAlignment="Center"
+                               RelativePanel.AlignLeftWithPanel="True"/>
+                                </RelativePanel>
+                            </Grid>
+                        </RelativePanel>
+                        <!-- End of one element -->
+                    </ListView>
+                </PivotItem>
+                <PivotItem>
+                    <ListView x:Name="lbLinks" HorizontalContentAlignment="Stretch" Margin="0,15,0,0" SelectionMode="None">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>                                                   
+                            <!-- Chat Info -->
+                        <Grid x:Name="gridLinkInfo"
+                  RelativePanel.AlignVerticalCenterWithPanel="True"
+                  RelativePanel.AlignLeftWithPanel="True">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="tblLinkSenderName"
+                           Grid.Column="0"
+                           Grid.Row="0"
+                           Text="Superman"
+                           TextWrapping="NoWrap"
+                           FontWeight="SemiBold"
+                           FontSize="20"
+                           Margin="0,4"
+                           VerticalAlignment="Center" />
+                            <TextBlock x:Name="tblLinkSentTime"
+                           Grid.Column="2"
+                           Grid.Row="0"
+                           Text="10:11 pm"
+                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                           Margin="8,6,0,6"
+                                      HorizontalAlignment="Right"
+                           FontSize="14"/>
+                            <RelativePanel x:Name="rpLinkInfoData"
+                               Grid.Row="1"
+                               Grid.ColumnSpan="3">
+                                <TextBlock x:Name="tblLinkTitle" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                               Text="MSPoweruser - Unigram for UWP"
+                               TextTrimming="WordEllipsis"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               RelativePanel.AlignLeftWithPanel="True"
+                                TextWrapping="WrapWholeWords"/>
+                                <HyperlinkButton x:Name="tblLinkName" Content="www.mspoweruser.com" NavigateUri="http://www.mspoweruser.com" Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"               
+                               FontSize="16"
+                               Margin="0,0,0,4"
+                               VerticalAlignment="Center"
+                               RelativePanel.AlignLeftWithPanel="True"
+                                                 RelativePanel.Below="tblLinkTitle"/>
+                                <TextBlock x:Name="tblLinkDes"
+                               Text="Lorem ipsum dolor sit amet, et consul adipiscing vix, ei vis tamquam propriae accommodare, meis patrioque duo ei. Qui tibique corrumpit eu, cu vel esse laoreet. In duo diam soleat facilisis, aliquid legimus et vis. At nullam iracundia vix. Vis ex legere adipisci assentior, eam cu illud dolorum, volutpat torquatos cu nec."
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               TextTrimming="WordEllipsis"
+                               FontSize="16"
+                               Margin="0,0,0,4"
+                               VerticalAlignment="Center"
+                               RelativePanel.AlignLeftWithPanel="True"
+                               RelativePanel.Below="tblLinkName" TextWrapping="WrapWholeWords"/>
+                                
+                            </RelativePanel>
+                        </Grid>
+                        <!-- End of one element -->
+                    </ListView>
+                </PivotItem>
+            </Pivot>
+        </Border>
 
+        <Grid x:Name="Header"
+                  Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+                  Height="{ThemeResource AppBarThemeCompactHeight}"
+                  Canvas.ZIndex="2"
+                  Grid.Row="0">
+            <TextBlock x:Name="tblPivotTitle"
+                           Text="SHARED MEDIA"
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Margin="12,0" />
+
+        </Grid>
+
+        <Border x:Name="Footer"
+                    Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    Height="{ThemeResource AppBarThemeCompactHeight}"
+                    BorderThickness="0,0,0,0" 
+                    Grid.Row="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="3" Label="Links" Glyph="&#xE71B;" Grid.Column="4"/>
+                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="2" Label="Files" Glyph="&#xE8C8;" Grid.Column="3"/>
+                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="1" Label="Audio" Glyph="&#xE189;" Grid.Column="2"/>
+                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="0" Label="Photos" Glyph="&#xE158;" Grid.Column="1"/>
+            </Grid>
+        </Border>
     </Grid>
 </Page>
