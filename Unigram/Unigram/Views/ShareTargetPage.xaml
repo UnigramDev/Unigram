@@ -9,37 +9,55 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel>
+        <RelativePanel x:Name="rpMain"
+                       Visibility="Visible">
+            <Grid x:Name="Header"
+                  Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+                  Height="{ThemeResource AppBarThemeCompactHeight}"
+                  RelativePanel.AlignLeftWithPanel="True"
+                  RelativePanel.AlignRightWithPanel="True"
+                  RelativePanel.AlignTopWithPanel="True">
+                <TextBlock x:Name="tblPivotTitle"
+                           Text="SHARE"
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Margin="12,0" />
+            </Grid>
             <ProgressBar x:Name="prgSendStatus"
                          HorizontalAlignment="Stretch"
-                         Height="10" 
+                         Height="4" 
                          Margin="0" 
                          IsEnabled="True"
-                         VerticalAlignment="Top" 
-                         IsIndeterminate="True" 
-                         Visibility="Collapsed"/>
-
-            <ListView x:Name="lvMasterChats"
-                      Margin="0,10,0,0"
-                      ItemsSource="{x:Bind ViewModel.Dialogs}"
-                      IsItemClickEnabled="True"
-                      SelectionMode="None"
-                      ItemClick="lvMasterChats_ItemClick">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <controls:DialogListViewItem/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-                <!--<ListView.Header>
-                <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
-            </ListView.Header>-->
-            </ListView>
-        </StackPanel>
-
+                         Visibility="Visible"
+                         RelativePanel.AlignLeftWithPanel="True"
+                         RelativePanel.AlignRightWithPanel="True"
+                         RelativePanel.Below="Header"/>
+            <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
+                          RelativePanel.AlignRightWithPanel="True"
+                          RelativePanel.Below="prgSendStatus"
+                          RelativePanel.AlignBottomWithPanel="True">
+                <ListView x:Name="lvMasterChats"
+                          Margin="0"
+                          ItemsSource="{x:Bind ViewModel.Dialogs}"
+                          IsItemClickEnabled="True"
+                          SelectionMode="None"
+                          ItemClick="lvMasterChats_ItemClick">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <controls:SimpleDialogListViewItem/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.Header>
+                        <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                    </ListView.Header>
+                </ListView>
+            </ScrollViewer>
+        </RelativePanel>
     </Grid>
 </Page>

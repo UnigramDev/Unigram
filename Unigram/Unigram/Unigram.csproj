@@ -119,6 +119,9 @@
     </Compile>
     <Compile Include="Controls\PivotRadioButton.cs" />
     <Compile Include="Controls\SearchTextBox.cs" />
+    <Compile Include="Controls\SimpleDialogListViewItem.xaml.cs">
+      <DependentUpon>SimpleDialogListViewItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UpdateTextBox.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DefaultPhotoConverter.cs" />
@@ -126,6 +129,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\ColorHelper.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
+    <Compile Include="Helpers\ShareTargetHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
     <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />
@@ -280,6 +284,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PhotosView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SimpleDialogListViewItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

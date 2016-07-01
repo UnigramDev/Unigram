@@ -43,6 +43,7 @@
         <uap:Extension Category="windows.shareTarget">
           <uap:ShareTarget>
             <uap:DataFormat>Text</uap:DataFormat>
+            <uap:DataFormat>URI</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
       </Extensions>
