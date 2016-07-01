@@ -9,7 +9,7 @@
     mc:Ignorable="d">
     <Page.Transitions>
         <TransitionCollection>
-            <EdgeUIThemeTransition Edge="Right"/>
+            <EntranceThemeTransition FromHorizontalOffset="75"/>
         </TransitionCollection>
     </Page.Transitions>
 
@@ -104,7 +104,14 @@
                                          PlaceholderText="Your code" 
                                          RelativePanel.AlignLeftWithPanel="True"
                                          RelativePanel.AlignRightWithPanel="True"
-                                         RelativePanel.AlignTopWithPanel="True"/>
+                                         RelativePanel.AlignTopWithPanel="True" TextChanged="txtMasterCodeInputInput_TextChanged"/>
+                                <ProgressBar x:Name="pbarLoading" 
+                                             IsIndeterminate="True"
+                                             Background="{ThemeResource FocusVisualBlackStrokeThemeBrush}"
+                                             Width="{Binding ElementName=rpMasterCodeInput, Path=ActualWidth}"
+                                             Margin="0,5,0,0"
+                                             RelativePanel.Below="txtMasterCodeInputInput"
+                                             Visibility="Collapsed"/>
                                 <!-- Button to take the user to the next page -->
                                 <Button x:Name="btnMasterCodeInputConfirm"
                                         x:Uid="BTN-Next"
@@ -114,7 +121,7 @@
                                         Content="Next"
                                         Padding="24,6"
                                         Margin="0,16,0,0"
-                                        RelativePanel.Below="txtMasterCodeInputInput"/>
+                                        RelativePanel.Below="pbarLoading" Click="btnMasterCodeInputConfirm_Click"/>
                                 <!-- Button in case the user did not recieve a code -->
                                 <Button x:Name="btnMasterCodeInputNoCode"
                                         x:Uid="BTN-CodeNotRecieved"
