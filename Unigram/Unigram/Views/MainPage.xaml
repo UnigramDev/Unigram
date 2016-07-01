@@ -27,7 +27,9 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Border x:Name="ContentRoot" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.RowSpan="2">
+            <Border x:Name="ContentRoot" 
+                    BorderBrush="Red"
+                    Grid.RowSpan="2">
                 <Pivot x:Name="ScrollingHost" SelectedIndex="1">
                     <PivotItem/>
                     <PivotItem>
