@@ -27,28 +27,24 @@
         <uap:SplashScreen Image="Assets\Logos\SplashScreen\SplashScreen.png" BackgroundColor="#36ADE1" />
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.shareTarget">
-          <uap:ShareTarget>
-            <uap:SupportedFileTypes>
-              <uap:SupportsAnyFileType />
-            </uap:SupportedFileTypes>
-            <uap:DataFormat>URI</uap:DataFormat>
-            <uap:DataFormat>Text</uap:DataFormat>
-          </uap:ShareTarget>
-        </uap:Extension>
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="tg" />
-        </uap:Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
-          <BackgroundTasks>
-            <Task Type="systemEvent" />
-          </BackgroundTasks>
-        </Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.NotificationTask">
           <BackgroundTasks>
             <Task Type="pushNotification" />
           </BackgroundTasks>
         </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
+          <BackgroundTasks>
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="tg" />
+        </uap:Extension>
+        <uap:Extension Category="windows.shareTarget">
+          <uap:ShareTarget>
+            <uap:DataFormat>Text</uap:DataFormat>
+          </uap:ShareTarget>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

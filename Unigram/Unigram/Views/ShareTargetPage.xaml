@@ -1,0 +1,45 @@
+﻿<Page
+    x:Class="Unigram.Views.ShareTargetPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Unigram.Controls"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel>
+            <ProgressBar x:Name="prgSendStatus"
+                         HorizontalAlignment="Stretch"
+                         Height="10" 
+                         Margin="0" 
+                         IsEnabled="True"
+                         VerticalAlignment="Top" 
+                         IsIndeterminate="True" 
+                         Visibility="Collapsed"/>
+
+            <ListView x:Name="lvMasterChats"
+                      Margin="0,10,0,0"
+                      ItemsSource="{x:Bind ViewModel.Dialogs}"
+                      IsItemClickEnabled="True"
+                      SelectionMode="None"
+                      ItemClick="lvMasterChats_ItemClick">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <controls:DialogListViewItem/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <!--<ListView.Header>
+                <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+            </ListView.Header>-->
+            </ListView>
+        </StackPanel>
+
+    </Grid>
+</Page>

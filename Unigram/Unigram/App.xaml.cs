@@ -15,6 +15,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Unigram.Core.Dependency;
 using Unigram.Core.Notifications;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram
 {
@@ -74,6 +75,11 @@ namespace Unigram
         {
             new Bootstrapper().Configure();
 
+            if (args.Kind == ActivationKind.ShareTarget)
+            {
+                OnShareTargetActivated((ShareTargetActivatedEventArgs)args);
+            }
+
             if (SettingsHelper.IsAuthorized)
             {
                 var activate = args as ToastNotificationActivatedEventArgs;
@@ -105,6 +111,22 @@ namespace Unigram
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }
 
+        protected void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        {
+            // Stuff totally not copied and slightly edited from above :P
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame == null)
+            {
+                rootFrame = new Frame();
+                Window.Current.Content = rootFrame;
+            }
+            rootFrame.Navigate(typeof(Views.ShareTargetPage), args.ShareOperation);
+            Window.Current.Activate();
+
+            ShowStatusBar();
+        }
+
+        // Methods
         private void ShowStatusBar()
         {
             // Show StatusBar on Win10 Mobile, in theme of the pass
