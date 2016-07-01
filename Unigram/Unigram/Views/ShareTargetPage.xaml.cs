@@ -139,11 +139,13 @@ namespace Unigram.Views
             answerDirty = false;
 
             // Show Error dialog
-            var updatedDialog = new MessageDialog("Do you want to send a message to this person?", "Share text");
+            var updatedDialog = new MessageDialog("Share content with this chat?", "Share");
             updatedDialog.Commands.Add(new UICommand("Yes", new UICommandInvokedHandler(this.CommandInvokedHandlerAnswerYes)));
             updatedDialog.Commands.Add(new UICommand("No", new UICommandInvokedHandler(this.CommandInvokedHandlerAnswerNo)));
+
             // Extra code to select the Close-option when an user presses on the Escape-button
             updatedDialog.CancelCommandIndex = 1;
+
             // Show Dialog
             await updatedDialog.ShowAsync();
             answer = answerDirty;
@@ -158,5 +160,15 @@ namespace Unigram.Views
         {
             answerDirty = false;
         }
+
+        //private void btnNo_Click(object sender, RoutedEventArgs e)
+        //{
+
+        //}
+
+        //private void btnYes_Click(object sender, RoutedEventArgs e)
+        //{
+
+        //}
     }
 }
