@@ -48,5 +48,13 @@ namespace Unigram.Views
                 e.Handled = true;
             }
         }
+
+        private void btnMasterPhoneInputConfirm_Click(object sender, RoutedEventArgs e)
+        {
+            btnMasterPhoneInputConfirm.IsEnabled = false;
+            txtMasterPhoneInputCountryCode.IsEnabled = false;
+            txtMasterPhoneInputPhoneNumber.IsEnabled = false;
+            pbarLoadingBar.Visibility = Visibility.Visible;
+        }
     }
 }

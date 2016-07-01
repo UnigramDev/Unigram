@@ -38,5 +38,22 @@ namespace Unigram.Views
             //    rpMasterTitlebar.Visibility = Visibility.Collapsed;
             //}
         }
+
+        private void btnMasterCodeInputConfirm_Click(object sender, RoutedEventArgs e)
+        {
+            btnMasterCodeInputConfirm.IsEnabled = false;
+            txtMasterCodeInputInput.IsEnabled = false;
+            pbarLoading.Visibility = Visibility.Visible;
+        }
+
+        private void txtMasterCodeInputInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (txtMasterCodeInputInput.Text.Length == 5)
+            {
+                btnMasterCodeInputConfirm.IsEnabled = false;
+                txtMasterCodeInputInput.IsEnabled = false;
+                pbarLoading.Visibility = Visibility.Visible;
+            }
+        }
     }
 }

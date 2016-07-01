@@ -125,6 +125,12 @@ namespace Unigram.Views
                 }
             }
         }
+
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            //PLEASE REMOVE THE BELOW LINE ONCE THE CHATPAGE HAS BEEN IMPLEMENTED
+            ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage));
+        }
     }
 
     // TEST
