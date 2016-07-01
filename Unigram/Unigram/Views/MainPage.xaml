@@ -71,7 +71,7 @@
                 <controls:GlyphButton
                     x:Name="btnSearch"
                     Glyph="&#xE11A;"
-                    HorizontalAlignment="Right"/>
+                    HorizontalAlignment="Right" Click="btnSearch_Click"/>
             </Grid>
 
             <Border x:Name="Footer"
