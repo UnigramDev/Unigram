@@ -9,7 +9,7 @@
 
     <Page.Transitions>
         <TransitionCollection>
-            <EdgeUIThemeTransition Edge="Right"/>
+            <EntranceThemeTransition FromVerticalOffset="75"/>
         </TransitionCollection>
     </Page.Transitions>
 
@@ -93,7 +93,7 @@
                                    x:Uid="Login-Intro-Intro"
                                    Padding="16,0"
                                    Margin="0,0,0,0"
-                                   Text="Unigram is an UWP Telegram-app built by the Windows Community, for the Windows community"
+                                   Text="Unigram is an UWP Telegram-app built by the Windows Community, for the Windows Community"
                                    TextWrapping="Wrap"
                                    TextAlignment="Center"
                                    Style="{ThemeResource BodyTextBlockStyle}"                       
