@@ -118,6 +118,19 @@ namespace Unigram.Controls
                     Placeholder.Fill = Application.Current.Resources["ListViewItemPlaceholderBackgroundThemeBrush"] as SolidColorBrush;
                     break;
             }
+
+            if (ViewModel.FullName.Length > 0) //TESTING, a better one is incoming....
+            {
+                foreach (var item in ViewModel.FullName.Split(' '))
+                {
+                    if (InitialName.Text.Length >= 2) break;
+                    InitialName.Text += item[0];
+                }
+            }
+            else //This mean the account is deleted
+            {
+                InitialName.Text = "\\";
+            }
         }
 
         private int GetColorIndex(int id)
@@ -433,6 +446,7 @@ namespace Unigram.Controls
         private void UpdateUnreadCount()
         {
             UnreadLabel.Visibility = ViewModel?.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            Highlight.Visibility = ViewModel?.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #region Context menu
