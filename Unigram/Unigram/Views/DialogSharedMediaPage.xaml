@@ -138,7 +138,7 @@
                     </ListView>                    
                 </PivotItem>
                 <PivotItem>
-                    <ListView x:Name="lbFiles" HorizontalContentAlignment="Stretch" Margin="0,15,0,0" SelectionMode="None">
+                    <ListView x:Name="lbFiles" HorizontalContentAlignment="Stretch" SelectionMode="None">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -280,41 +280,28 @@
                     </ListView>
                 </PivotItem>
             </Pivot>
-        </Border>
-
-        <Grid x:Name="Header"
-              Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
-              Height="{ThemeResource AppBarThemeCompactHeight}"
-              Canvas.ZIndex="2"
-              Grid.Row="0">
-            <TextBlock x:Name="tblPivotTitle"
-                       Text="SHARED MEDIA"
-                       Style="{ThemeResource BaseTextBlockStyle}"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       Margin="12,0" />
-
-        </Grid>
+        </Border>       
 
         <Border x:Name="Footer"
                 Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
                 BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                 Height="{ThemeResource AppBarThemeCompactHeight}"
-                BorderThickness="0,1,0,0" 
-                Grid.Row="2">
+                BorderThickness="0,0,0,1" 
+                Grid.Row="0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="48"/>
-                    <ColumnDefinition Width="48"/>
-                    <ColumnDefinition Width="48"/>
-                    <ColumnDefinition Width="48"/>
                     <ColumnDefinition/>
+                    <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="48"/>                    
                 </Grid.ColumnDefinitions>
-                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="3" Label="Links" Glyph="&#xE71B;" Grid.Column="4"/>
-                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="2" Label="Files" Glyph="&#xE8C8;" Grid.Column="3"/>
-                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="1" Label="Audio" Glyph="&#xE189;" Grid.Column="2"/>
-                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="0" Label="Photos" Glyph="&#xE158;" Grid.Column="1"/>
+                <TextBlock Text="SHARED MEDIA" FontWeight="SemiBold" VerticalAlignment="Center" Margin="12,0,0,0" Grid.Column="0" Grid.ColumnSpan="2"/>
+                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="3" Label="Links" Glyph="&#xE71B;" Grid.Column="5"/>
+                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="2" Label="Files" Glyph="&#xE8C8;" Grid.Column="4"/>
+                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="1" Label="Audio" Glyph="&#xE189;" Grid.Column="3"/>
+                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="0" Label="Photos" Glyph="&#xE158;" Grid.Column="2"/>
             </Grid>
         </Border>
     </Grid>
