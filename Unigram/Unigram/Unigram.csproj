@@ -123,6 +123,12 @@
     <Compile Include="Controls\SimpleDialogListViewItem.xaml.cs">
       <DependentUpon>SimpleDialogListViewItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TabHeaderStyle.xaml.cs">
+      <DependentUpon>TabHeaderStyle.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UnigramLogo.xaml.cs">
+      <DependentUpon>UnigramLogo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UpdateTextBox.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DefaultPhotoConverter.cs" />
@@ -291,6 +297,14 @@
     <Page Include="Controls\SimpleDialogListViewItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TabHeaderStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\UnigramLogo.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Accent.xaml">
       <SubType>Designer</SubType>
