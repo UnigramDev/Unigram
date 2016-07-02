@@ -171,8 +171,23 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-        <RelativePanel x:Name="rpMain" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="Header"
+                  Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+                  Height="{ThemeResource AppBarThemeCompactHeight}"
+                  Canvas.ZIndex="2"
+                  Grid.Row="0">
+            <TextBlock x:Name="tblPivotTitle"
+                           Text="UNIGRAM"
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Margin="12,0" />
+        </Grid>
+        <RelativePanel x:Name="rpMain" Grid.Row="1" >
             <!-- Master - Titlebar -->
             <!--<RelativePanel x:Name="rpMasterTitlebar"
                            Background="{ThemeResource SystemControlBackgroundListMediumBrush}"
@@ -194,7 +209,8 @@
                 <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
                               RelativePanel.AlignRightWithPanel="True"
                               RelativePanel.AlignBottomWithPanel="True"
-                              RelativePanel.AlignTopWithPanel="True">
+                              RelativePanel.AlignTopWithPanel="True"
+                              VerticalAlignment="Stretch">
                     <RelativePanel Padding="16" x:Name="rpScrollContent">
                         
 
@@ -203,7 +219,10 @@
                                        Visibility="Visible"
                                        Padding="0,16,0,0"
                                        RelativePanel.AlignLeftWithPanel="True"
-                                       RelativePanel.AlignRightWithPanel="True">
+                                       RelativePanel.AlignRightWithPanel="True" 
+                                       RelativePanel.AlignBottomWithPanel="True"
+                                       RelativePanel.AlignTopWithPanel="True"
+                                       VerticalAlignment="Stretch">
                             <TextBlock x:Name="tblMasterPhoneTitle"
                                        x:Uid="Login-PhoneNumber-Title"
                                        Text="Your phone number"
@@ -224,16 +243,18 @@
                                            Padding="0,0,0,0"
                                            RelativePanel.AlignLeftWithPanel="True"
                                            RelativePanel.AlignRightWithPanel="True"
-                                           RelativePanel.Below="tblMasterPhoneIntro">
+                                           RelativePanel.AlignBottomWithPanel="True"
+                                           RelativePanel.Below="tblMasterPhoneIntro" VerticalAlignment="Stretch">
                                 <!-- The user can select his/her country here -->
                                 <ComboBox x:Name="cboxMasterPhoneInputCounty"
                                           x:Uid="Login-PhoneNumber-CountryInput"
                                           ItemsSource="{Binding Source={StaticResource Countries}}"
                                           SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
                                           Header="Country:"
-                                          Width="300"
+                                          MinWidth="300"
                                           PlaceholderText="Select your country..."
                                           Margin="0,16,0,0"
+                                          HorizontalAlignment="Stretch"
                                           RelativePanel.AlignLeftWithPanel="True"
                                           RelativePanel.AlignRightWithPanel="True"
                                           RelativePanel.AlignTopWithPanel="True">
@@ -258,12 +279,14 @@
                                          x:Uid="Login-PhoneNumber-PhoneNumber"
                                          Text="{Binding PhoneNumber, Mode=TwoWay}"
                                          Margin="80,12,0,0"
-                                         Width="220"
+                                         MinWidth="220"
                                          InputScope="TelephoneNumber"
                                          IsTextPredictionEnabled="False"
                                          KeyDown="PhoneNumber_KeyDown"
                                          Header="Phone number:"
                                          PlaceholderText="What's your phone number?" 
+                                         HorizontalAlignment="Stretch"
+                                         RelativePanel.AlignRightWithPanel="True"
                                          RelativePanel.AlignLeftWithPanel="True"
                                          RelativePanel.Below="cboxMasterPhoneInputCounty"/>
                                 <Button x:Name="btnMasterPhoneInputConfirm"
@@ -273,12 +296,15 @@
                                         RequestedTheme="Dark"
                                         Content="Next"
                                         Padding="24,4"
-                                        Margin="0,16,0,0"
-                                        RelativePanel.Below="txtMasterPhoneInputPhoneNumber" Click="btnMasterPhoneInputConfirm_Click"/>
+                                        MinWidth="160"
+                                        Margin="0,16,16,16"         
+                                        RelativePanel.AlignBottomWithPanel="True"
+                                        RelativePanel.AlignRightWithPanel="True"                                        
+                                        Click="btnMasterPhoneInputConfirm_Click"/>
                                 <ProgressBar x:Name="pbarLoadingBar" 
                                              Width="{Binding ElementName=rpMasterPhoneInput, Path=ActualWidth}"
                                              Margin="0,10,0,0"
-                                             RelativePanel.Below="btnMasterPhoneInputConfirm" 
+                                             RelativePanel.Below="txtMasterPhoneInputPhoneNumber" 
                                              IsIndeterminate="True"
                                              Background="{ThemeResource FocusVisualBlackStrokeThemeBrush}"
                                              Visibility="Collapsed">
@@ -307,6 +333,9 @@
                         <Setter Target="btnMasterPhoneInputConfirm.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
                         <Setter Target="btnMasterPhoneInputConfirm.Width" Value="200"/>
                         <Setter Target="btnMasterPhoneInputConfirm.Margin" Value="0,24,0,0"/>
+                        <Setter Target="btnMasterPhoneInputConfirm.(RelativePanel.Below)" Value="txtMasterPhoneInputPhoneNumber"/>
+                        <Setter Target="btnMasterPhoneInputConfirm.(RelativePanel.AlignRightWithPanel)" Value="False"/>
+                        <Setter Target="Header.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Compact">

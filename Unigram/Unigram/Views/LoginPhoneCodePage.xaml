@@ -14,7 +14,23 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <RelativePanel x:Name="rpMain">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="Header"
+                  Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+                  Height="{ThemeResource AppBarThemeCompactHeight}"
+                  Canvas.ZIndex="2"
+                  Grid.Row="0">
+            <TextBlock x:Name="tblPivotTitle"
+                           Text="UNIGRAM"
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Margin="12,0" />
+        </Grid>
+        <RelativePanel x:Name="rpMain" Grid.Row="1">
             <!-- Master - Titlebar -->
             <!--<RelativePanel x:Name="rpMasterTitlebar"
                            Style="{StaticResource StyleRPMasterTitleBar}">
@@ -70,7 +86,10 @@
                                        Visibility="Visible"
                                        Padding="0,16,0,0"
                                        RelativePanel.AlignLeftWithPanel="True"
-                                       RelativePanel.AlignRightWithPanel="True">
+                                       RelativePanel.AlignRightWithPanel="True"
+                                       RelativePanel.AlignBottomWithPanel="True"
+                                       RelativePanel.AlignTopWithPanel="True"
+                                       VerticalAlignment="Stretch">
                             <!-- Title of this block and stuff -->
                             <TextBlock x:Name="tblMasterCodeTitle"
                                        x:Uid="Login-Code-Title"
@@ -92,6 +111,7 @@
                                            Padding="0,0,0,0"
                                            RelativePanel.AlignLeftWithPanel="True"
                                            RelativePanel.AlignRightWithPanel="True"
+                                           RelativePanel.AlignBottomWithPanel="True"
                                            RelativePanel.Below="tblMasterCodeIntro">
                                 <!-- Input for the user to fill in the recieved code -->
                                 <controls:UpdateTextBox x:Name="txtMasterCodeInputInput"
@@ -120,15 +140,19 @@
                                         RequestedTheme="Dark"
                                         Content="Next"
                                         Padding="24,6"
-                                        Margin="0,16,0,0"
-                                        RelativePanel.Below="pbarLoading" Click="btnMasterCodeInputConfirm_Click"/>
+                                        Margin="0,16,16,0"
+                                        MinWidth="160"
+                                        RelativePanel.AlignRightWithPanel="True"
+                                        RelativePanel.Above="btnMasterCodeInputNoCode" Click="btnMasterCodeInputConfirm_Click"/>
                                 <!-- Button in case the user did not recieve a code -->
                                 <Button x:Name="btnMasterCodeInputNoCode"
                                         x:Uid="BTN-CodeNotRecieved"
-                                        Content="I have not recieved a code"
+                                        Content="I haven't received a code"
                                         Style="{StaticResource TextBlockButtonStyle}"
-                                        Margin="0,8,0,0"
-                                        RelativePanel.Below="btnMasterCodeInputConfirm"/>
+                                        Margin="0,8,4,0"
+                                        RelativePanel.AlignRightWithPanel="True"
+                                        RelativePanel.AlignBottomWithPanel="True"
+                                        RelativePanel.AlignHorizontalCenterWithPanel="True"/>
                             </RelativePanel>
                         </RelativePanel>
                         <!-- END OF Master - Code -->
@@ -154,9 +178,13 @@
                         <Setter Target="btnMasterCodeInputConfirm.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
                         <Setter Target="btnMasterCodeInputConfirm.Width" Value="200"/>
                         <Setter Target="btnMasterCodeInputConfirm.Margin" Value="0,24,0,0"/>
+                        <Setter Target="btnMasterCodeInputConfirm.(RelativePanel.Below)" Value="txtMasterCodeInputInput"/>
+                        <Setter Target="btnMasterCodeInputConfirm.(RelativePanel.AlignRightWithPanel)" Value="False"/>
+                        <Setter Target="btnMasterCodeInputNoCode.(RelativePanel.AlignRightWithPanel)" Value="False"/>
                         <Setter Target="tblMasterCodeIntro.HorizontalAlignment" Value="Center"/>
                         <Setter Target="tblMasterCodeIntro.Margin" Value="0,0,0,32"/>
                         <Setter Target="tblMasterCodeTitle.HorizontalAlignment" Value="Center"/>
+                        <Setter Target="Header.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Compact">
