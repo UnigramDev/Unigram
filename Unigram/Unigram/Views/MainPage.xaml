@@ -62,14 +62,15 @@
                     </PivotItem>
                 </Pivot>
 
-                <StackPanel Orientation="Horizontal">
-                    <controls:UnigramLogo VerticalAlignment="Center" Margin="12,0,0,0" Width="36" Height="36" LogoColor="{ThemeResource ButtonForegroundThemeBrush}"/>
+                <StackPanel Orientation="Horizontal" Height="48">
+                    <controls:UnigramLogo VerticalAlignment="Center" Margin="12,0,0,0" Width="24" Height="24" LogoColor="{ThemeResource ButtonForegroundThemeBrush}"/>
                     <TextBlock x:Name="tblMasterTitle"
-                               Text="UNIGRAM"
+                               Text="Unigram"
                                Foreground="{ThemeResource ButtonForegroundThemeBrush}"
-                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
                                Style="{StaticResource BaseTextBlockStyle}"
-                               Padding="7,14" 
+                               FontSize="18"
+                               Padding="12,0" 
                                />
                 </StackPanel>
 
@@ -93,9 +94,9 @@
                                           Click="cbtnMasterSelectAll_Click">
                         </AppBarButton>
                         <AppBarButton x:Name="cbtnMasterSearch"
-                                          x:Uid="CBTN-NewChat"
+                                          x:Uid="CBTN-SearchMedia"
                                           Icon="Find"
-                                          Label="Search TEST"
+                                          Label="Search Media"
                                           Click="cbtnMasterSearch_Click">
                         </AppBarButton>
                         <AppBarButton x:Name="cbtnMasterDeleteSelected" 

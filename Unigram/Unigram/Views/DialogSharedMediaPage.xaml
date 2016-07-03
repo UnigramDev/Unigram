@@ -65,7 +65,7 @@
                 </PivotItem>
                 <PivotItem>
                     <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE8C8;" />
+                        <controls:TabHeaderStyle Glyph="&#xE189;" />
                     </PivotItem.Header>
                     <ListView x:Name="lbAudio"
                               HorizontalContentAlignment="Stretch" 
@@ -111,6 +111,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock x:Name="tblSenderName"
                                            Grid.Column="0"
+                                           Grid.ColumnSpan="2"
                                            Grid.Row="0"
                                            Text="Batman"
                                            TextWrapping="NoWrap"
@@ -145,7 +146,7 @@
                 </PivotItem>
                 <PivotItem>
                     <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE189;" />
+                        <controls:TabHeaderStyle Glyph="&#xE8C8;" />
                     </PivotItem.Header>
                     <ListView x:Name="lbFiles" HorizontalContentAlignment="Stretch" SelectionMode="None">
                         <ListView.ItemContainerStyle>
@@ -187,6 +188,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock x:Name="tblFileSenderName"
                                            Grid.Column="0"
+                                           Grid.ColumnSpan="2"
                                            Grid.Row="0"
                                            Text="Superman"
                                            TextWrapping="NoWrap"
@@ -245,6 +247,7 @@
                             <TextBlock x:Name="tblLinkSenderName"
                                        Grid.Column="0"
                                        Grid.Row="0"
+                                       Grid.ColumnSpan="2"
                                        Text="Superman"
                                        TextWrapping="NoWrap"
                                        FontWeight="SemiBold"
@@ -293,13 +296,15 @@
                 </PivotItem>
             </Pivot>
         </Border>
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal" Height="48">
             <TextBlock x:Name="tblMasterTitle"
                                Text="SHARED MEDIA"
                                Foreground="{ThemeResource ButtonForegroundThemeBrush}"
                                HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Padding="12,0,0,0"
                                Style="{StaticResource BaseTextBlockStyle}"
-                               Padding="7,14" 
+                               FontSize="18"
                                />
         </StackPanel>
     </Grid>
