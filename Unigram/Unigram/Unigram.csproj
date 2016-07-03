@@ -132,6 +132,7 @@
     <Compile Include="Controls\UpdateTextBox.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DefaultPhotoConverter.cs" />
+    <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\ColorHelper.cs" />
