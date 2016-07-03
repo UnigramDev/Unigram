@@ -15,6 +15,7 @@ using Windows.Foundation.Collections;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -117,19 +118,6 @@ namespace Unigram.Controls
                 default:
                     Placeholder.Fill = Application.Current.Resources["ListViewItemPlaceholderBackgroundThemeBrush"] as SolidColorBrush;
                     break;
-            }
-
-            if (ViewModel.FullName.Length > 0) //TESTING, a better one is incoming....
-            {
-                foreach (var item in ViewModel.FullName.Split(' '))
-                {
-                    if (InitialName.Text.Length >= 2) break;
-                    InitialName.Text += item[0];
-                }
-            }
-            else //This mean the account is deleted
-            {
-                InitialName.Text = "\\";
             }
         }
 
@@ -554,6 +542,7 @@ namespace Unigram.Controls
             {
                 var user = ViewModel.With as TLUser;
                 return user != null && user.IsBot;
+
                 //menuItem.set_Visibility((user != null && user.IsBot && (user.Blocked == null || !user.Blocked)) ? 0 : 1);
             }
 

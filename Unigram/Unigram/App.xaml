@@ -20,6 +20,7 @@
             <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter"/>
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+            <converters:InitialNameStringConverter x:Key="InitialNameStringConverter" />
 
             <SolidColorBrush x:Key="BlueBrush" Color="#348cd4"/>
             <SolidColorBrush x:Key="CyanBrush" Color="#2996ad"/>
