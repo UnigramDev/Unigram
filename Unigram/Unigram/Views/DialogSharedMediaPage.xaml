@@ -22,8 +22,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Border x:Name="ContentRoot" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.RowSpan="2">
-            <Pivot x:Name="ScrollingHost" SelectedIndex="1">
+            <Pivot x:Name="ScrollingHost" SelectedIndex="1"  Style="{StaticResource TabStylePivotStyle}">
                 <PivotItem>
+                    <PivotItem.Header>
+                        <controls:TabHeaderStyle Glyph="&#xE71B;" />
+                    </PivotItem.Header>
                     <GridView x:Name="gridView" 
                               Padding="6"
                               VerticalAlignment="Stretch" 
@@ -61,6 +64,9 @@
                     </GridView>
                 </PivotItem>
                 <PivotItem>
+                    <PivotItem.Header>
+                        <controls:TabHeaderStyle Glyph="&#xE189;" />
+                    </PivotItem.Header>
                     <ListView x:Name="lbAudio"
                               HorizontalContentAlignment="Stretch" 
                               SelectionMode="None">
@@ -85,7 +91,7 @@
                                             <FontIcon Glyph="&#xE768;" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4,0,0,0"/>
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Grid>
-                                    </ControlTemplate>                                
+                                    </ControlTemplate>
                                 </Button.Template>
                             </Button>
                             <!-- Chat Info -->
@@ -105,6 +111,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock x:Name="tblSenderName"
                                            Grid.Column="0"
+                                           Grid.ColumnSpan="2"
                                            Grid.Row="0"
                                            Text="Batman"
                                            TextWrapping="NoWrap"
@@ -130,14 +137,17 @@
                                                FontSize="16"
                                                Margin="0,0,0,4"
                                                VerticalAlignment="Center"
-                                               RelativePanel.AlignLeftWithPanel="True"/>                                   
+                                               RelativePanel.AlignLeftWithPanel="True"/>
                                 </RelativePanel>
                             </Grid>
                         </RelativePanel>
-                        <!-- End of one element -->                        
-                    </ListView>                    
+                        <!-- End of one element -->
+                    </ListView>
                 </PivotItem>
                 <PivotItem>
+                    <PivotItem.Header>
+                        <controls:TabHeaderStyle Glyph="&#xE8C8;" />
+                    </PivotItem.Header>
                     <ListView x:Name="lbFiles" HorizontalContentAlignment="Stretch" SelectionMode="None">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
@@ -178,6 +188,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock x:Name="tblFileSenderName"
                                            Grid.Column="0"
+                                           Grid.ColumnSpan="2"
                                            Grid.Row="0"
                                            Text="Superman"
                                            TextWrapping="NoWrap"
@@ -211,12 +222,15 @@
                     </ListView>
                 </PivotItem>
                 <PivotItem>
+                    <PivotItem.Header>
+                        <controls:TabHeaderStyle Glyph="&#xE158;" />
+                    </PivotItem.Header>
                     <ListView x:Name="lbLinks" HorizontalContentAlignment="Stretch" Margin="0,15,0,0" SelectionMode="None">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                             </Style>
-                        </ListView.ItemContainerStyle>                                                   
+                        </ListView.ItemContainerStyle>
                         <!-- Chat Info -->
                         <Grid x:Name="gridLinkInfo"
                               RelativePanel.AlignVerticalCenterWithPanel="True"
@@ -233,6 +247,7 @@
                             <TextBlock x:Name="tblLinkSenderName"
                                        Grid.Column="0"
                                        Grid.Row="0"
+                                       Grid.ColumnSpan="2"
                                        Text="Superman"
                                        TextWrapping="NoWrap"
                                        FontWeight="SemiBold"
@@ -273,36 +288,24 @@
                                            VerticalAlignment="Center"
                                            RelativePanel.AlignLeftWithPanel="True"
                                            RelativePanel.Below="tblLinkName" TextWrapping="WrapWholeWords"/>
-                                
+
                             </RelativePanel>
                         </Grid>
                         <!-- End of one element -->
                     </ListView>
                 </PivotItem>
             </Pivot>
-        </Border>       
-
-        <Border x:Name="Footer"
-                Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
-                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                Height="{ThemeResource AppBarThemeCompactHeight}"
-                BorderThickness="0,0,0,1" 
-                Grid.Row="0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="48"/>
-                    <ColumnDefinition Width="48"/>
-                    <ColumnDefinition Width="48"/>
-                    <ColumnDefinition Width="48"/>                    
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="SHARED MEDIA" FontWeight="SemiBold" VerticalAlignment="Center" Margin="12,0,0,0" Grid.Column="0" Grid.ColumnSpan="2"/>
-                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="3" Label="Links" Glyph="&#xE71B;" Grid.Column="5"/>
-                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="2" Label="Files" Glyph="&#xE8C8;" Grid.Column="4"/>
-                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="1" Label="Audio" Glyph="&#xE189;" Grid.Column="3"/>
-                <controls:PivotRadioButton SelectedValue="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}" Height="30" Index="0" Label="Photos" Glyph="&#xE158;" Grid.Column="2"/>
-            </Grid>
         </Border>
+        <StackPanel Orientation="Horizontal" Height="48">
+            <TextBlock x:Name="tblMasterTitle"
+                               Text="SHARED MEDIA"
+                               Foreground="{ThemeResource ButtonForegroundThemeBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Padding="12,0,0,0"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               FontSize="18"
+                               />
+        </StackPanel>
     </Grid>
 </Page>
