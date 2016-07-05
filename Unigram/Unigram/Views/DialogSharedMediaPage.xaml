@@ -288,6 +288,7 @@
             <TextBlock Text="Shared media"
                        Foreground="{ThemeResource ButtonForegroundThemeBrush}"
                        VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
                        Style="{StaticResource BaseTextBlockStyle}"/>
         </Border>
     </Grid>
