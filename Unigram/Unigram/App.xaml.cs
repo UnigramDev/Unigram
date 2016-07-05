@@ -75,18 +75,22 @@ namespace Unigram
         {
             new Bootstrapper().Configure();
 
-            if (args.Kind == ActivationKind.ShareTarget)
-            {
-                OnShareTargetActivated((ShareTargetActivatedEventArgs)args);
-            }
-
             if (SettingsHelper.IsAuthorized)
             {
-                var activate = args as ToastNotificationActivatedEventArgs;
-                var launch = activate?.Argument ?? null;
-
                 MTProtoService.Instance.CurrentUserId = SettingsHelper.UserId;
-                NavigationService.Navigate(typeof(Views.MainPage), launch);
+
+                var share = args as ShareTargetActivatedEventArgs;
+                if (share != null)
+                {
+                    OnShareTargetActivated((ShareTargetActivatedEventArgs)args);
+                }
+                else
+                {
+                    var activate = args as ToastNotificationActivatedEventArgs;
+                    var launch = activate?.Argument ?? null;
+
+                    NavigationService.Navigate(typeof(Views.MainPage), launch);
+                }
             }
             else
             {
