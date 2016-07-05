@@ -11,17 +11,17 @@ namespace Unigram.Helpers
 {
     public class ShareTargetHelper
     {
-        ShareOperation shareOperation;
-        public string sharedTitle;
-        public string sharedDescription;
-        public string sharedText;
-        public Uri sharedWebLink;
+        public ShareOperation ShareOperation { get; private set; }
+        public string SharedTitle { get; private set; }
+        public string SharedDescription { get; private set; }
+        public string SharedText { get; private set; }
+        public Uri SharedWebLink { get; private set; }
 
 
 
         public ShareTargetHelper(ShareOperation newShareOperation)
         {
-            shareOperation = newShareOperation;
+            ShareOperation = newShareOperation;
             this.GetStuffFromContract();
 
         }
@@ -33,16 +33,16 @@ namespace Unigram.Helpers
             await Task.Factory.StartNew(async () =>
             {
                 // Get the properties of the shared package
-                this.sharedTitle = this.shareOperation.Data.Properties.Title;
-                this.sharedDescription = this.shareOperation.Data.Properties.Description;
+                this.SharedTitle = this.ShareOperation.Data.Properties.Title;
+                this.SharedDescription = this.ShareOperation.Data.Properties.Description;
 
                 // Now let's get the content! :)
                 // Text
-                if (this.shareOperation.Data.Contains(StandardDataFormats.Text))
+                if (this.ShareOperation.Data.Contains(StandardDataFormats.Text))
                 {
                     try
                     {
-                        this.sharedText = await this.shareOperation.Data.GetTextAsync();
+                        this.SharedText = await this.ShareOperation.Data.GetTextAsync();
                     }
                     catch (Exception ex)
                     {
@@ -51,11 +51,11 @@ namespace Unigram.Helpers
                 }
 
                 // Web-link
-                if (this.shareOperation.Data.Contains(StandardDataFormats.WebLink))
+                if (this.ShareOperation.Data.Contains(StandardDataFormats.WebLink))
                 {
                     try
                     {
-                        this.sharedWebLink = await this.shareOperation.Data.GetWebLinkAsync();
+                        this.SharedWebLink = await this.ShareOperation.Data.GetWebLinkAsync();
                     }
                     catch (Exception ex)
                     {
@@ -67,7 +67,7 @@ namespace Unigram.Helpers
 
         public void CloseShareTarget()
         {
-            this.shareOperation.ReportCompleted();
+            this.ShareOperation.ReportCompleted();
         }
     }
 }

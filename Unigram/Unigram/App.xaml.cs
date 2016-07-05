@@ -71,10 +71,14 @@ namespace Unigram
         //    Window.Current.Activate();
         //}
 
-        public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
+        public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             new Bootstrapper().Configure();
+            return base.OnInitializeAsync(args);
+        }
 
+        public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
+        {
             if (SettingsHelper.IsAuthorized)
             {
                 MTProtoService.Instance.CurrentUserId = SettingsHelper.UserId;
@@ -82,7 +86,8 @@ namespace Unigram
                 var share = args as ShareTargetActivatedEventArgs;
                 if (share != null)
                 {
-                    OnShareTargetActivated((ShareTargetActivatedEventArgs)args);
+                    var rootFrame = Window.Current.Content as Frame;
+                    rootFrame.Navigate(typeof(Views.ShareTargetPage), share.ShareOperation);
                 }
                 else
                 {
@@ -113,21 +118,6 @@ namespace Unigram
             updatesService.CancelUpdating();
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
-        }
-
-        protected void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
-        {
-            // Stuff totally not copied and slightly edited from above :P
-            Frame rootFrame = Window.Current.Content as Frame;
-            if (rootFrame == null)
-            {
-                rootFrame = new Frame();
-                Window.Current.Content = rootFrame;
-            }
-            rootFrame.Navigate(typeof(Views.ShareTargetPage), args.ShareOperation);
-            Window.Current.Activate();
-
-            ShowStatusBar();
         }
 
         // Methods

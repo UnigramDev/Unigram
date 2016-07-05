@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="300"
+    d:DesignHeight="52"
     d:DesignWidth="400">
 
     <Grid Margin="0,8">
@@ -14,20 +14,16 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="48" />
-        </Grid.RowDefinitions>
-
+        
         <!-- User photo -->
         <Ellipse x:Name="Placeholder" 
-                 Width="48" 
-                 Height="48" 
+                 Width="36" 
+                 Height="36" 
                  VerticalAlignment="Top" 
-                 Grid.Column="0"/>
-        <Ellipse Width="48" 
-                 Height="48" 
-                 VerticalAlignment="Top" 
-                 Grid.Column="0">
+                 Fill="Red"/>
+        <Ellipse Width="36" 
+                 Height="36" 
+                 VerticalAlignment="Top">
             <Ellipse.Fill>
                 <ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
             </Ellipse.Fill>
