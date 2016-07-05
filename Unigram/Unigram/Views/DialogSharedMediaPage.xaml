@@ -67,80 +67,68 @@
                     <PivotItem.Header>
                         <controls:TabHeaderStyle Glyph="&#xE189;" />
                     </PivotItem.Header>
-                    <ListView x:Name="lbAudio"
-                              HorizontalContentAlignment="Stretch" 
-                              SelectionMode="None">
+                    <ListView x:Name="lbAudio" SelectionMode="None">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                             </Style>
                         </ListView.ItemContainerStyle>
-                        <RelativePanel Height="72"
-                                       Margin="0,4"
-                                       VerticalAlignment="Center">
+                        <ListView.Header>
+                            <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                        </ListView.Header>
+                        <ListView.Footer>
+                            <Border Height="6"/>
+                        </ListView.Footer>
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
                             <!-- ChatIcon -->
-                            <Button Name="elpPlayIcon"
-                                    Width="48" 
-                                    Height="48"
-                                    RelativePanel.AlignVerticalCenterWithPanel="True"
-                                    RelativePanel.AlignLeftWithPanel="True">
+                            <Button Width="48" Height="48">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Grid>
                                             <Ellipse Fill="{StaticResource SystemControlBackgroundAccentBrush}"/>
-                                            <FontIcon Glyph="&#xE768;" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4,0,0,0"/>
+                                            <FontIcon Glyph="&#xE768;" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4,0,0,0" Foreground="White"/>
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Grid>
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
                             <!-- Chat Info -->
-                            <Grid x:Name="gridAudioInfo"
-                                  Margin="12,0,0,0"
-                                  RelativePanel.AlignVerticalCenterWithPanel="True"
-                                  RelativePanel.AlignRightWithPanel="True"
-                                  RelativePanel.RightOf="elpPlayIcon">
+                            <Grid Margin="12,0,0,0" VerticalAlignment="Center" Grid.Column="1">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
                                     <ColumnDefinition/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="tblSenderName"
-                                           Grid.Column="0"
-                                           Grid.ColumnSpan="2"
-                                           Grid.Row="0"
-                                           Text="Batman"
+                                <TextBlock Text="Batman" 
+                                           MaxLines="1"
                                            TextWrapping="NoWrap"
-                                           FontWeight="SemiBold"
-                                           FontSize="20"
-                                           Margin="0,4"
-                                           VerticalAlignment="Center" />
-                                <TextBlock x:Name="tblSentTime"
-                                           Grid.Column="2"
-                                           Grid.Row="0"
-                                           Text="10:11 pm"
-                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                           Margin="8,6,0,6"
-                                           HorizontalAlignment="Right"
-                                           FontSize="14"/>
-                                <RelativePanel x:Name="rpAudioInfoData"
-                                               Grid.Row="1"
-                                               Grid.ColumnSpan="2">
-                                    <TextBlock x:Name="tblAudioFileName"
-                                               Text="AUDIO_001.wav"
-                                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                               TextTrimming="CharacterEllipsis"
-                                               FontSize="16"
-                                               Margin="0,0,0,4"
-                                               VerticalAlignment="Center"
-                                               RelativePanel.AlignLeftWithPanel="True"/>
-                                </RelativePanel>
+                                           TextTrimming="CharacterEllipsis"
+                                           Style="{StaticResource BaseTextBlockStyle}"/>
+
+                                <TextBlock Text="11:10 pm" 
+                                           Style="{ThemeResource CaptionTextBlockStyle}" 
+                                           Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" 
+                                           VerticalAlignment="Bottom" 
+                                           Margin="0,0,0,1" 
+                                           Grid.Column="1"/>
+
+                                <TextBlock Text="AUDIO_001.wav"
+                                           Style="{ThemeResource BodyTextBlockStyle}" 
+                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                           TextTrimming="CharacterEllipsis" 
+                                           TextWrapping="NoWrap" 
+                                           MaxLines="1"
+                                           Grid.ColumnSpan="2"
+                                           Grid.Row="1"/>
                             </Grid>
-                        </RelativePanel>
+                        </Grid>
                         <!-- End of one element -->
                     </ListView>
                 </PivotItem>
@@ -296,16 +284,11 @@
                 </PivotItem>
             </Pivot>
         </Border>
-        <StackPanel Orientation="Horizontal" Height="48">
-            <TextBlock x:Name="tblMasterTitle"
-                               Text="SHARED MEDIA"
-                               Foreground="{ThemeResource ButtonForegroundThemeBrush}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Padding="12,0,0,0"
-                               Style="{StaticResource BaseTextBlockStyle}"
-                               FontSize="18"
-                               />
-        </StackPanel>
+        <Border Height="{ThemeResource AppBarThemeCompactHeight}" Padding="12,0">
+            <TextBlock Text="Shared media"
+                       Foreground="{ThemeResource ButtonForegroundThemeBrush}"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource BaseTextBlockStyle}"/>
+        </Border>
     </Grid>
 </Page>

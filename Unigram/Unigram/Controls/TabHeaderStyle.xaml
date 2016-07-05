@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Height="48"
     Width="Auto">
-    <Grid>
-        <FontIcon Glyph="{Binding Glyph}" FontSize="24" />
+    <Grid Background="Transparent">
+        <FontIcon Glyph="{Binding Glyph}" IsHitTestVisible="False"/>
     </Grid>
 </UserControl>

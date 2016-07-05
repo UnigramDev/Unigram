@@ -126,9 +126,7 @@
     <Compile Include="Controls\TabHeaderStyle.xaml.cs">
       <DependentUpon>TabHeaderStyle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\UnigramLogo.xaml.cs">
-      <DependentUpon>UnigramLogo.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Controls\UnigramLogo.cs" />
     <Compile Include="Controls\UpdateTextBox.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DefaultPhotoConverter.cs" />
@@ -300,10 +298,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\TabHeaderStyle.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\UnigramLogo.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

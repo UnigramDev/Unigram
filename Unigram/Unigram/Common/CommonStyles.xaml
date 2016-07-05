@@ -663,7 +663,7 @@
                                         <Grid.RenderTransform>
                                             <CompositeTransform x:Name="PivotLayoutElementTranslateTransform"/>
                                         </Grid.RenderTransform>
-                                        <Border Grid.ColumnSpan="3" Background="{ThemeResource SystemControlBackgroundListMediumBrush}" />
+                                        <Border Grid.ColumnSpan="3" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" />
                                         <ContentPresenter x:Name="LeftHeaderPresenter" ContentTemplate="{TemplateBinding LeftHeaderTemplate}" Content="{TemplateBinding LeftHeader}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                         <ContentControl x:Name="HeaderClipper" Grid.Column="1" HorizontalContentAlignment="Stretch" UseSystemFocusVisuals="True">
                                             <ContentControl.Clip>
