@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Media;
 using Unigram.Core.Dependency;
 using Unigram.Core.Notifications;
 using Windows.UI.Xaml.Controls;
+using Windows.ApplicationModel.DataTransfer.ShareTarget;
 
 namespace Unigram
 {
@@ -25,6 +26,8 @@ namespace Unigram
     sealed partial class App : BootStrapper
     {
         public IHockeyClient HockeyClient { get; private set; }
+
+        public static ShareOperation ShareOperation { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
@@ -86,8 +89,8 @@ namespace Unigram
                 var share = args as ShareTargetActivatedEventArgs;
                 if (share != null)
                 {
-                    var rootFrame = Window.Current.Content as Frame;
-                    rootFrame.Navigate(typeof(Views.ShareTargetPage), share.ShareOperation);
+                    ShareOperation = share.ShareOperation;
+                    NavigationService.Navigate(typeof(Views.ShareTargetPage));
                 }
                 else
                 {

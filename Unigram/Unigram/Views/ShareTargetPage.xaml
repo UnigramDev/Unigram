@@ -169,36 +169,41 @@
                   ItemClick="lvMasterChats_ItemClick"
                   Grid.Row="1">
             <ListView.Header>
-                <Grid x:Name="ListHeader"
-                      Margin="0,0,0,8"
-                      BorderThickness="0,0,0,1"
-                      BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid x:Name="Thumbnails" Width="88" Padding="12,12,0,12" Visibility="Collapsed">
-                        <Border x:Name="Thumb3" Background="White" Margin="8,24,8,0" VerticalAlignment="Top" Height="60" Visibility="Collapsed">
-                            <Border BorderBrush="#19000000" BorderThickness="1"/>
-                        </Border>
-                        <Border x:Name="Thumb2" Background="White" Margin="4,12,4,0" VerticalAlignment="Top" Height="68" Visibility="Collapsed">
-                            <Border BorderBrush="#19000000" BorderThickness="1"/>
-                        </Border>
-                        <Grid x:Name="Thumb1" Background="White" VerticalAlignment="Top" Height="76" Visibility="Collapsed">
-                            <Border BorderBrush="#19000000" BorderThickness="1"/>
+                <StackPanel>
+                    <Grid x:Name="ListHeader"
+                          BorderThickness="0,0,0,1"
+                          BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid x:Name="Thumbnails" Width="88" Padding="12,12,0,12" Visibility="Collapsed">
+                            <Border x:Name="Thumb3" Background="White" Margin="8,24,8,0" VerticalAlignment="Top" Height="60" Visibility="Collapsed">
+                                <Border BorderBrush="#19000000" BorderThickness="1"/>
+                            </Border>
+                            <Border x:Name="Thumb2" Background="White" Margin="4,12,4,0" VerticalAlignment="Top" Height="68" Visibility="Collapsed">
+                                <Border BorderBrush="#19000000" BorderThickness="1"/>
+                            </Border>
+                            <Grid x:Name="Thumb1" Background="White" VerticalAlignment="Top" Height="76" Visibility="Collapsed">
+                                <Border BorderBrush="#19000000" BorderThickness="1"/>
+                            </Grid>
                         </Grid>
-                    </Grid>
 
-                    <TextBox x:Name="txtMessage" 
-                             PlaceholderText="Write a message..."
-                             Style="{StaticResource MessageTextBoxStyle}"
-                             Height="100"
-                             Grid.Column="1"/>
-                </Grid>
+                        <TextBox x:Name="txtMessage" 
+                                 PlaceholderText="Write a message..."
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 Style="{StaticResource MessageTextBoxStyle}"
+                                 Height="100"
+                                 Grid.Column="1"/>
+                    </Grid>
+                    
+                    <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
@@ -211,7 +216,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <!--<ListView.Header>
-                <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
             </ListView.Header>-->
         </ListView>
     </Grid>

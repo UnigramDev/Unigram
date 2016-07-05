@@ -47,7 +47,7 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            sth = new ShareTargetHelper((ShareOperation)e.Parameter);
+            sth = new ShareTargetHelper(App.ShareOperation);
         }
 
         public void Handle(TLUpdateWebPage message)
@@ -161,7 +161,7 @@ namespace Unigram.Views
                     prgSendStatus.Value = 40;
 
                     // Send the correct message according to the send content
-                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.Peer, TLMessageState.Sending, true, true, date, txtMessage.Text, new TLMessageMediaEmpty(), TLLong.Random(), 0);
+                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.Peer, TLMessageState.Sending, true, true, date, txtMessage.Text.Trim(), new TLMessageMediaEmpty(), TLLong.Random(), 0);
                     prgSendStatus.Value = 50;
                     cacheService.SyncSendingMessage(message, null, dialog.Peer, async (m) =>
                     {
