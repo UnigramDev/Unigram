@@ -135,7 +135,12 @@ namespace Unigram.Views
                 else if (dialog.With is TLChat)
                 {
                     var ciccio = dialog.With as TLChat;
-                    ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerSelf());
+                    ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerChat { ChatId = ciccio.Id });
+                }
+                else if (dialog.With is TLChannel)
+                {
+                    var ciccio = dialog.With as TLChannel;
+                    ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerChannel { ChannelId = ciccio.Id, AccessHash = ciccio.AccessHash.Value });
                 }
             }
         }

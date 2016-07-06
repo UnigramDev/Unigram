@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Unigram.Common;
 
 namespace Unigram.Collections
 {
-    public class MediaCollection : IncrementalCollection<TLMessage>
+    public class MediaCollection : IncrementalCollection<KeyedList<DateTime, TLMessage>>
     {
         private readonly IMTProtoService _protoService;
         private readonly TLMessagesFilterBase _filter;
         private readonly TLInputPeerBase _peer;
+
+        private int _lastMaxId;
 
         public MediaCollection(IMTProtoService protoService, TLInputPeerBase peer, TLMessagesFilterBase filter)
         {
@@ -22,26 +25,53 @@ namespace Unigram.Collections
             _filter = filter;
         }
 
-        public override async Task<IEnumerable<TLMessage>> LoadDataAsync()
+        public override async Task<IEnumerable<KeyedList<DateTime, TLMessage>>> LoadDataAsync()
         {
             try
             {
-                var maxId = 0;
-                var last = this.LastOrDefault();
-                if (last != null)
-                {
-                    maxId = last.Id;
-                }
-
-                var result = await _protoService.SearchAsync(_peer, string.Empty, _filter, 0, 0, 0, maxId, 50);
+                var result = await _protoService.SearchAsync(_peer, string.Empty, _filter, 0, 0, 0, _lastMaxId, 50);
                 if (result.IsSucceeded)
                 {
-                    return result.Value.Messages.OfType<TLMessage>();
+                    if (result.Value.Messages.Count > 0)
+                    {
+                        _lastMaxId = result.Value.Messages.Min(x => x.Id);
+                    }
+
+                    return result.Value.Messages.OfType<TLMessage>().GroupBy(x =>
+                    {
+                        var clientDelta = MTProtoService.Instance.ClientTicksDelta;
+                        var utc0SecsLong = x.Date * 4294967296 - clientDelta;
+                        var utc0SecsInt = utc0SecsLong / 4294967296.0;
+                        var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
+
+                        return new DateTime(dateTime.Year, dateTime.Month, 1);
+
+                    }).Select(x => new KeyedList<DateTime, TLMessage>(x));
                 }
             }
             catch { }
 
-            return new TLMessage[0];
+            return new KeyedList<DateTime, TLMessage>[0];
+        }
+
+        protected override void Merge(IEnumerable<KeyedList<DateTime, TLMessage>> result)
+        {
+            var last = this.LastOrDefault();
+
+            foreach (var group in result)
+            {
+                if (last != null && last.Key.Date == group.Key.Date)
+                {
+                    foreach (var item in group)
+                    {
+                        last.Add(item);
+                    }
+                }
+                else
+                {
+                    Add(group);
+                }
+            }
         }
     }
 }

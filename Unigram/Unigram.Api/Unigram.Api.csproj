@@ -318,10 +318,11 @@
     <Compile Include="TL\Partial\TLContactsImportedContacts.Partial.cs" />
     <Compile Include="TL\Partial\TLDCOption.Partial.cs" />
     <Compile Include="TL\Partial\TLDialog.Partial.cs" />
+    <Compile Include="TL\Partial\TLDocument.Partial.cs" />
     <Compile Include="TL\Partial\TLFileLocation.Partial.cs" />
     <Compile Include="TL\Partial\TLFileLocationBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesDialogsBase.Partial.cs" />
-    <Compile Include="TL\Partial\TLMessagesMessagesBase.cs" />
+    <Compile Include="TL\Partial\TLMessagesMessagesBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdateBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdatesBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdatesDifferenceBase.Partial.cs" />

@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using LinqToVisualTree;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -31,6 +33,24 @@ namespace Unigram.Views
             InitializeComponent();
 
             DataContext = UnigramContainer.Instance.ResolverType<DialogSharedMediaViewModel>();
+
+            // Used to get semi-transparent background for headers.
+            // TODO: Check for performance issues on mobile.
+            ScrollingMedia.Loaded += Host_Loaded;
+            ScrollingFiles.Loaded += Host_Loaded;
+            ScrollingMusic.Loaded += Host_Loaded;
+        }
+
+        private void Host_Loaded(object sender, RoutedEventArgs e)
+        {
+            var list = sender as ListViewBase;
+            if (list != null)
+            {
+                if (list.ItemsPanelRoot != null)
+                {
+                    list.ItemsPanelRoot.RegisterPropertyChangedCallback(ClipProperty, new DependencyPropertyChangedCallback((s, dp) => list.ItemsPanelRoot.Clip = null));
+                }
+            }
         }
     }
 }

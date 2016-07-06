@@ -22,17 +22,15 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Border x:Name="ContentRoot" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.RowSpan="2">
-            <Pivot x:Name="ScrollingHost" SelectedIndex="1"  Style="{StaticResource TabStylePivotStyle}">
+            <Pivot x:Name="ScrollingHost" Style="{StaticResource TabStylePivotStyle}">
                 <PivotItem>
                     <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE71B;" />
+                        <controls:TabHeaderStyle Glyph="&#xE114;" />
                     </PivotItem.Header>
-                    <GridView x:Name="gridView" 
-                              Padding="6"
-                              VerticalAlignment="Stretch" 
-                              HorizontalAlignment="Stretch" 
-                              VerticalContentAlignment="Top"
-                              HorizontalContentAlignment="Left"
+                    <GridView x:Name="ScrollingMedia" 
+                              ItemsSource="{Binding MediaCollection}"
+                              SelectionMode="None"
+                              Padding="6,0,6,6"
                               common:FluidGridView.OrientationOnly="False"
                               common:FluidGridView.UseWindowSize="True">
                         <common:FluidGridView.Triggers>
@@ -46,29 +44,80 @@
                                 <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                             </Style>
                         </GridView.ItemContainerStyle>
-                        <Border Background="#FF272727">
-                            <Image Source="ms-appx:///Assets/Mockups/UserIcons/user_batman.png"/>
-                        </Border>
-                        <Border Background="#FF272727">
-                            <Image Source="ms-appx:///Assets/Mockups/UserIcons/user_batman.png"/>
-                        </Border>
-                        <Border Background="#FF272727">
-                            <Image Source="ms-appx:///Assets/Mockups/UserIcons/user_batman.png"/>
-                        </Border>
-                        <Border Background="#FF272727">
-                            <Image Source="ms-appx:///Assets/Mockups/UserIcons/user_batman.png"/>
-                        </Border>
-                        <Border Background="#FF272727">
-                            <Image Source="ms-appx:///Assets/Mockups/UserIcons/user_batman.png"/>
-                        </Border>
+                        <GridView.Header>
+                            <controls:SearchTextBox PlaceholderText="Search..." Margin="6,8" InputScope="Search"/>
+                        </GridView.Header>
+                        <GridView.Footer>
+                            <Border Height="6"/>
+                        </GridView.Footer>
+                        <GridView.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderContainerStyle>
+                                    <Style TargetType="GridViewHeaderItem">
+                                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
+                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                        <Setter Property="Margin" Value="0,0,0,0"/>
+                                        <Setter Property="Padding" Value="6,8,6,9"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="VerticalContentAlignment" Value="Top" />
+                                        <Setter Property="MinHeight" Value="0"/>
+                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="GridViewHeaderItem">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                                        <ContentPresenter x:Name="ContentPresenter"
+                                                                          Margin="{TemplateBinding Padding}"
+                                                                          Content="{TemplateBinding Content}"
+                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.HeaderContainerStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" 
+                                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" 
+                                                       VerticalAlignment="Bottom" 
+                                                       Margin="0,0,0,1" 
+                                                       Grid.Column="1">
+                                                <Run Text="{Binding Count}"/>
+                                                <Run Text="files"/>
+                                            </TextBlock>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </GridView.GroupStyle>
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                    <Image/>
+                                </Border>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
                     </GridView>
                 </PivotItem>
                 <PivotItem>
                     <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE189;" />
+                        <controls:TabHeaderStyle Glyph="&#xE8C8;" />
                     </PivotItem.Header>
-                    <ListView x:Name="lbAudio" 
-                              ItemsSource="{Binding Music}"
+                    <ListView x:Name="ScrollingFiles"
+                              ItemsSource="{Binding FilesCollection}"      
                               SelectionMode="None">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
@@ -81,139 +130,118 @@
                         <ListView.Footer>
                             <Border Height="6"/>
                         </ListView.Footer>
-                        <!--<Grid Margin="0,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            --><!-- ChatIcon --><!--
-                            <Button Width="48" Height="48">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
+                        <ListView.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderContainerStyle>
+                                    <Style TargetType="ListViewHeaderItem">
+                                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
+                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                        <Setter Property="Margin" Value="0,0,0,0"/>
+                                        <Setter Property="Padding" Value="12,8,12,9"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="VerticalContentAlignment" Value="Top" />
+                                        <Setter Property="MinHeight" Value="0"/>
+                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListViewHeaderItem">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                                        <ContentPresenter x:Name="ContentPresenter"
+                                                                          Margin="{TemplateBinding Padding}"
+                                                                          Content="{TemplateBinding Content}"
+                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.HeaderContainerStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
                                         <Grid>
-                                            <Ellipse Fill="{StaticResource SystemControlBackgroundAccentBrush}"/>
-                                            <FontIcon Glyph="&#xE768;" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4,0,0,0" Foreground="White"/>
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" 
+                                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" 
+                                                       VerticalAlignment="Bottom" 
+                                                       Margin="0,0,0,1" 
+                                                       Grid.Column="1">
+                                                <Run Text="{Binding Count}"/>
+                                                <Run Text="files"/>
+                                            </TextBlock>
                                         </Grid>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-                            --><!-- Chat Info --><!--
-                            <Grid Margin="12,0,0,0" VerticalAlignment="Center" Grid.Column="1">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="Batman" 
-                                           MaxLines="1"
-                                           TextWrapping="NoWrap"
-                                           TextTrimming="CharacterEllipsis"
-                                           Style="{StaticResource BaseTextBlockStyle}"/>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ListView.GroupStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <!--ChatIcon-->
+                                    <Button Width="48" Height="48">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid>
+                                                    <Ellipse Fill="{StaticResource SystemControlBackgroundAccentBrush}"/>
+                                                    <FontIcon Glyph="&#xE768;" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4,0,0,0" Foreground="White"/>
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <!--Chat Info-->
+                                    <Grid Margin="12,0,0,0" VerticalAlignment="Center" Grid.Column="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Media.Document.FileName}" 
+                                                   MaxLines="1"
+                                                   TextWrapping="NoWrap"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Style="{StaticResource BaseTextBlockStyle}"/>
 
-                                <TextBlock Text="11:10 pm" 
-                                           Style="{ThemeResource CaptionTextBlockStyle}" 
-                                           Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" 
-                                           VerticalAlignment="Bottom" 
-                                           Margin="0,0,0,1" 
-                                           Grid.Column="1"/>
+                                        <TextBlock Text="11:10 pm" 
+                                                   Style="{ThemeResource CaptionTextBlockStyle}" 
+                                                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" 
+                                                   VerticalAlignment="Bottom" 
+                                                   Margin="0,0,0,1" 
+                                                   Grid.Column="1"/>
 
-                                <TextBlock Text="AUDIO_001.wav"
-                                           Style="{ThemeResource BodyTextBlockStyle}" 
-                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                           TextTrimming="CharacterEllipsis" 
-                                           TextWrapping="NoWrap" 
-                                           MaxLines="1"
-                                           Grid.ColumnSpan="2"
-                                           Grid.Row="1"/>
-                            </Grid>
-                        </Grid>-->
-                        <!-- End of one element -->
+                                        <TextBlock Text="AUDIO_001.wav"
+                                                   Style="{ThemeResource BodyTextBlockStyle}" 
+                                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                   TextTrimming="CharacterEllipsis" 
+                                                   TextWrapping="NoWrap" 
+                                                   MaxLines="1"
+                                                   Grid.ColumnSpan="2"
+                                                   Grid.Row="1"/>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </ListView>
                 </PivotItem>
                 <PivotItem>
                     <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE8C8;" />
-                    </PivotItem.Header>
-                    <ListView x:Name="lbFiles" HorizontalContentAlignment="Stretch" SelectionMode="None">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <RelativePanel Height="72"
-                                       Margin="0,4"
-                                       VerticalAlignment="Center">
-                            <!-- ChatIcon -->
-                            <Button Name="elpFileIcon" Width="50" Height="50"
-                                    RelativePanel.AlignVerticalCenterWithPanel="True"
-                                    RelativePanel.AlignLeftWithPanel="True">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Grid>
-                                            <Ellipse Fill="{StaticResource SystemControlBackgroundAccentBrush}"/>
-                                            <FontIcon Glyph="&#xE8C8;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-                            <!-- Chat Info -->
-                            <Grid x:Name="gridFileInfo"
-                                  Margin="16,0,0,0"
-                                  RelativePanel.AlignVerticalCenterWithPanel="True"
-                                  RelativePanel.AlignRightWithPanel="True"
-                                  RelativePanel.RightOf="elpFileIcon">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="tblFileSenderName"
-                                           Grid.Column="0"
-                                           Grid.ColumnSpan="2"
-                                           Grid.Row="0"
-                                           Text="Superman"
-                                           TextWrapping="NoWrap"
-                                           FontWeight="SemiBold"
-                                           FontSize="20"
-                                           Margin="0,4"
-                                           VerticalAlignment="Center" />
-                                <TextBlock x:Name="tblFileSentTime"
-                                           Grid.Column="2"
-                                           Grid.Row="0"
-                                           Text="10:11 pm"
-                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                           Margin="8,6,0,6"
-                                           HorizontalAlignment="Right"
-                                           FontSize="14"/>
-                                <RelativePanel x:Name="rpFileInfoData"
-                                               Grid.Row="1"
-                                               Grid.ColumnSpan="2">
-                                    <TextBlock x:Name="tblFileFileName"
-                                               Text="Wikileaks.doc"
-                                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                               TextTrimming="CharacterEllipsis"
-                                               FontSize="16"
-                                               Margin="0,0,0,4"
-                                               VerticalAlignment="Center"
-                                               RelativePanel.AlignLeftWithPanel="True"/>
-                                </RelativePanel>
-                            </Grid>
-                        </RelativePanel>
-                        <!-- End of one element -->
-                    </ListView>
-                </PivotItem>
-                <PivotItem>
-                    <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE158;" />
+                        <controls:TabHeaderStyle Glyph="&#xE71B;" />
                     </PivotItem.Header>
                     <ListView x:Name="lbLinks" HorizontalContentAlignment="Stretch" Margin="0,15,0,0" SelectionMode="None">
                         <ListView.ItemContainerStyle>
@@ -282,6 +310,80 @@
                             </RelativePanel>
                         </Grid>
                         <!-- End of one element -->
+                    </ListView>
+                </PivotItem>
+                <PivotItem>
+                    <PivotItem.Header>
+                        <controls:TabHeaderStyle Glyph="&#xE189;" />
+                    </PivotItem.Header>
+                    <ListView x:Name="ScrollingMusic"
+                              ItemsSource="{Binding MusicCollection}"
+                              SelectionMode="None">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.Header>
+                            <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                        </ListView.Header>
+                        <ListView.Footer>
+                            <Border Height="6"/>
+                        </ListView.Footer>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <!--ChatIcon--> 
+                                    <Button Width="48" Height="48">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid>
+                                                    <Ellipse Fill="{StaticResource SystemControlBackgroundAccentBrush}"/>
+                                                    <FontIcon Glyph="&#xE768;" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4,0,0,0" Foreground="White"/>
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <!--Chat Info--> 
+                                    <Grid Margin="12,0,0,0" VerticalAlignment="Center" Grid.Column="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Media.Document.FileName}" 
+                                                   MaxLines="1"
+                                                   TextWrapping="NoWrap"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Style="{StaticResource BaseTextBlockStyle}"/>
+
+                                        <TextBlock Text="11:10 pm" 
+                                                   Style="{ThemeResource CaptionTextBlockStyle}" 
+                                                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" 
+                                                   VerticalAlignment="Bottom" 
+                                                   Margin="0,0,0,1" 
+                                                   Grid.Column="1"/>
+
+                                        <TextBlock Text="AUDIO_001.wav"
+                                                   Style="{ThemeResource BodyTextBlockStyle}" 
+                                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                   TextTrimming="CharacterEllipsis" 
+                                                   TextWrapping="NoWrap" 
+                                                   MaxLines="1"
+                                                   Grid.ColumnSpan="2"
+                                                   Grid.Row="1"/>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </ListView>
                 </PivotItem>
             </Pivot>

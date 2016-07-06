@@ -19,14 +19,12 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-
-namespace Unigram.Controls
+namespace Unigram.Controls.Items
 {
     public sealed partial class SimpleDialogListViewItem : UserControl
     {
         public TLDialog ViewModel => DataContext as TLDialog;
         private TLDialog _oldViewModel;
-
 
         public SimpleDialogListViewItem()
         {

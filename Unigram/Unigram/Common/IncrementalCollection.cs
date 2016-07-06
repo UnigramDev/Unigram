@@ -11,6 +11,11 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.Common
 {
+    public interface IGroupSupportIncrementalLoading : ISupportIncrementalLoading
+    {
+
+    }
+
     public abstract class IncrementalCollection<T> : ObservableCollection<T>, ISupportIncrementalLoading, INotifyPropertyChanged
     {
         private bool _hasMoreItems = true;
@@ -73,9 +78,7 @@ namespace Unigram.Common
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     var oldCount = Count;
-                    foreach (T item in result)
-                        this.Add(item);
-
+                    Merge(result);
                     HasMoreItems = Count > 0 && Count > oldCount && GetHasMoreItems();
                     IsLoading = false;
                 });
@@ -90,6 +93,14 @@ namespace Unigram.Common
         protected virtual bool GetHasMoreItems()
         {
             return true;
+        }
+
+        protected virtual void Merge(IEnumerable<T> result)
+        {
+            foreach (T item in result)
+            {
+                this.Add(item);
+            }
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;

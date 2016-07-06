@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:items="using:Unigram.Controls.Items"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -48,7 +49,7 @@
                         </ListView.ItemContainerStyle>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <controls:DialogListViewItem />
+                                <items:DialogListViewItem />
                             </DataTemplate>
                         </ListView.ItemTemplate>
                         <ListView.Header>
