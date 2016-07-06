@@ -9,7 +9,7 @@ namespace Telegram.Api.TL.Methods.Channels
 	public partial class TLChannelsCreateChannel : TLObject
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Broadcast = (1 << 0),
 			Megagroup = (1 << 1),

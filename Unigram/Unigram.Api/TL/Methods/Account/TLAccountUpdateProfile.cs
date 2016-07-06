@@ -9,7 +9,7 @@ namespace Telegram.Api.TL.Methods.Account
 	public partial class TLAccountUpdateProfile : TLObject
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			FirstName = (1 << 0),
 			LastName = (1 << 1),

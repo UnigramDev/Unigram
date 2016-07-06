@@ -9,7 +9,7 @@ namespace Telegram.Api.TL.Methods.Messages
 	public partial class TLMessagesSendMedia : TLObject
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Silent = (1 << 5),
 			Background = (1 << 6),

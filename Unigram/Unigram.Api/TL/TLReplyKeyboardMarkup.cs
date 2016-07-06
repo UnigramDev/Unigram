@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLReplyKeyboardMarkup : TLReplyMarkupBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Resize = (1 << 0),
 			SingleUse = (1 << 1),

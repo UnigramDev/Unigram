@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLChat : TLChatBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Creator = (1 << 0),
 			Kicked = (1 << 1),

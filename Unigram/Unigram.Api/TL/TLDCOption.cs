@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLDCOption : TLObject 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Ipv6 = (1 << 0),
 			MediaOnly = (1 << 1),

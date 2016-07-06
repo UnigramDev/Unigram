@@ -9,7 +9,7 @@ namespace Telegram.Api.TL.Methods.Messages
 	public partial class TLMessagesEditMessage : TLObject
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			NoWebpage = (1 << 1),
 			Message = (1 << 11),

@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLReplyKeyboardHide : TLReplyMarkupBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Selective = (1 << 2),
 		}

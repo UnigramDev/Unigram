@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLPeerSettings : TLObject 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			ReportSpam = (1 << 0),
 		}

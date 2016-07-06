@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLChannelMessagesFilter : TLChannelMessagesFilterBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			ExcludeNewMessages = (1 << 1),
 		}

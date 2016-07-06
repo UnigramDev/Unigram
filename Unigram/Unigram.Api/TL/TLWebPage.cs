@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLWebPage : TLWebPageBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Type = (1 << 0),
 			SiteName = (1 << 1),

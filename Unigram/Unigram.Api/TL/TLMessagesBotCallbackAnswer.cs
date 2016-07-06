@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLMessagesBotCallbackAnswer : TLObject 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Alert = (1 << 1),
 			Message = (1 << 0),

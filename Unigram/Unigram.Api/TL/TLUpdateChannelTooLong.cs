@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLUpdateChannelTooLong : TLUpdateBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Pts = (1 << 0),
 		}

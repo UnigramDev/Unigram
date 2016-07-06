@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLUpdateBotInlineSend : TLUpdateBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Geo = (1 << 0),
 			MsgId = (1 << 1),

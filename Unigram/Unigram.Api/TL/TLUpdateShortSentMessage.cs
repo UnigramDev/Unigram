@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLUpdateShortSentMessage : TLUpdatesBase, ITLMultiPts 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Out = (1 << 1),
 			Media = (1 << 9),

@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLStickerSet : TLObject 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Installed = (1 << 0),
 			Disabled = (1 << 1),

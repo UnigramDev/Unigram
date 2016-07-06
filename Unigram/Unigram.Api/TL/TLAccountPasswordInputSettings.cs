@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLAccountPasswordInputSettings : TLObject 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			NewSalt = (1 << 0),
 			NewPasswordHash = (1 << 0),

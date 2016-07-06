@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLDialog : TLObject 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Pts = (1 << 0),
 			Draft = (1 << 1),

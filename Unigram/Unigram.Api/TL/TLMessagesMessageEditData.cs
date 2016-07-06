@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLMessagesMessageEditData : TLObject 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Caption = (1 << 0),
 		}

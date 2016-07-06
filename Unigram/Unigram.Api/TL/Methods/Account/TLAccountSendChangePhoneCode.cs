@@ -9,7 +9,7 @@ namespace Telegram.Api.TL.Methods.Account
 	public partial class TLAccountSendChangePhoneCode : TLObject
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			AllowFlashcall = (1 << 0),
 			CurrentNumber = (1 << 0),

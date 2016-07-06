@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLPeerNotifySettings : TLPeerNotifySettingsBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			ShowPreviews = (1 << 0),
 			Silent = (1 << 1),

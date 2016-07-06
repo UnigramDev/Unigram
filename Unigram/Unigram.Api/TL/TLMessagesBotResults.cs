@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLMessagesBotResults : TLObject 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Gallery = (1 << 0),
 			NextOffset = (1 << 1),

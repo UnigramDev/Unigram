@@ -9,7 +9,7 @@ namespace Telegram.Api.TL.Methods.Contacts
 	public partial class TLContactsGetTopPeers : TLObject
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Correspondents = (1 << 0),
 			BotsPm = (1 << 1),

@@ -9,7 +9,7 @@ namespace Telegram.Api.TL.Methods.Messages
 	public partial class TLMessagesDeleteHistory : TLObject
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			JustClear = (1 << 0),
 		}

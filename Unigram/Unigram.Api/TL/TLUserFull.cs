@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLUserFull : TLObject 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Blocked = (1 << 0),
 			About = (1 << 1),

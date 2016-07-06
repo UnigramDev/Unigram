@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLUpdatesChannelDifferenceEmpty : TLUpdatesChannelDifferenceBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Final = (1 << 0),
 			Timeout = (1 << 1),

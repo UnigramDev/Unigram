@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLChatInvite : TLChatInviteBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Channel = (1 << 0),
 			Broadcast = (1 << 1),

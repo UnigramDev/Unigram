@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLDocumentAttributeAudio : TLDocumentAttributeBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Voice = (1 << 10),
 			Title = (1 << 0),

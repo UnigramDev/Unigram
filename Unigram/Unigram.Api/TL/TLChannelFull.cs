@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLChannelFull : TLChatFullBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			CanViewParticipants = (1 << 3),
 			CanSetUsername = (1 << 6),

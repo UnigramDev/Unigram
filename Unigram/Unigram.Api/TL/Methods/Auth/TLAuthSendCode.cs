@@ -9,7 +9,7 @@ namespace Telegram.Api.TL.Methods.Auth
 	public partial class TLAuthSendCode : TLObject
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			AllowFlashcall = (1 << 0),
 			CurrentNumber = (1 << 0),

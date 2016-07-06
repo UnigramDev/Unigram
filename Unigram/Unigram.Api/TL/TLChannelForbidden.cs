@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLChannelForbidden : TLChatBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Broadcast = (1 << 5),
 			Megagroup = (1 << 8),

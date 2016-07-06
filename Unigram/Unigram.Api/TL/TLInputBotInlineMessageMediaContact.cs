@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLInputBotInlineMessageMediaContact : TLInputBotInlineMessageBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			ReplyMarkup = (1 << 2),
 		}

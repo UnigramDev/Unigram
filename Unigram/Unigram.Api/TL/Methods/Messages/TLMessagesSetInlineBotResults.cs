@@ -9,7 +9,7 @@ namespace Telegram.Api.TL.Methods.Messages
 	public partial class TLMessagesSetInlineBotResults : TLObject
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Gallery = (1 << 0),
 			Private = (1 << 1),

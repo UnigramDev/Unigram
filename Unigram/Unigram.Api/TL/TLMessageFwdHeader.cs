@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLMessageFwdHeader : TLObject 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			FromId = (1 << 0),
 			ChannelId = (1 << 1),

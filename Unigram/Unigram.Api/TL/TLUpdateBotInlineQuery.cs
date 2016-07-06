@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLUpdateBotInlineQuery : TLUpdateBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Geo = (1 << 0),
 		}

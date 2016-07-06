@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLUser : TLUserBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Self = (1 << 10),
 			Contact = (1 << 11),

@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLChatParticipantsForbidden : TLChatParticipantsBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			SelfParticipant = (1 << 0),
 		}

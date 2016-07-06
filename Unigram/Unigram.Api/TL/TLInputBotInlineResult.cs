@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLInputBotInlineResult : TLInputBotInlineResultBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Title = (1 << 1),
 			Description = (1 << 2),

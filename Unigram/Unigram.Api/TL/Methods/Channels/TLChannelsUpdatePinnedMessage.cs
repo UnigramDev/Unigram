@@ -9,7 +9,7 @@ namespace Telegram.Api.TL.Methods.Channels
 	public partial class TLChannelsUpdatePinnedMessage : TLObject
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Silent = (1 << 0),
 		}

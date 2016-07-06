@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLDraftMessage : TLDraftMessageBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			NoWebpage = (1 << 1),
 			ReplyToMsgId = (1 << 0),

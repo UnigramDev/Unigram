@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLAuthSentCode : TLObject 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			PhoneRegistered = (1 << 0),
 			NextType = (1 << 1),

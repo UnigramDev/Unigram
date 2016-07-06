@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLMessagesChannelMessages : TLMessagesMessagesBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			None = 0
 		}

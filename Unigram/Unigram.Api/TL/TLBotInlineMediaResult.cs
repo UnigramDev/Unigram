@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLBotInlineMediaResult : TLBotInlineResultBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			Photo = (1 << 0),
 			Document = (1 << 1),

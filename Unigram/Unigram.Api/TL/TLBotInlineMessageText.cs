@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLBotInlineMessageText : TLBotInlineMessageBase 
 	{
 		[Flags]
-		public enum Flag : int
+		public enum Flag : Int32
 		{
 			NoWebpage = (1 << 0),
 			Entities = (1 << 1),
