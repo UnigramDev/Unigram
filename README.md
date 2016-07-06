@@ -3,6 +3,10 @@ Unigram – An Universal take on Telegram. Made by the community, for the commun
 
 Windows 10 (Mobile) introduced with the Universal Windows Platform a whole list of features to make your (chatting) life easier. However, the current official Telegram-app has no signs of releasing an UWP-version with these capabilities soon. That’s why we decided to build our own.
 
+Build instructions:
+-
+* Go to https://my.telegram.org/apps and register a new app.
+* Open `Unigram/Unigram/Unigram.Api/Constants.Secret.cs` file and set your api_id and api_hash.
 
 Our main goal:
 -
