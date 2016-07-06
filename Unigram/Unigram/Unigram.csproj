@@ -103,7 +103,9 @@
     </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Collections\DialogCollection.cs" />
+    <Compile Include="Collections\MediaCollection.cs" />
     <Compile Include="Common\FluidGridView.cs" />
+    <Compile Include="Common\IncrementalCollection.cs" />
     <Compile Include="Common\KeyedList.cs" />
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Controls\DialogListViewItem.xaml.cs">

@@ -5,6 +5,13 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessagesChannelMessages : TLMessagesMessagesBase 
 	{
+		[Flags]
+		public enum Flag : int
+		{
+			None = 0
+		}
+
+		public Flag Flags { get; set; }
 		public Int32 Pts { get; set; }
 
 		public TLMessagesChannelMessages() { }
@@ -17,6 +24,7 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesChannelMessages)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Pts = from.ReadInt32();
 			Count = from.ReadInt32();
 			Messages = TLFactory.Read<TLVector<TLMessageBase>>(from);
@@ -27,6 +35,7 @@ namespace Telegram.Api.TL
 		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x99262E37);
+			to.Write((Int32)Flags);
 			to.Write(Pts);
 			to.Write(Count);
 			to.WriteObject(Messages);

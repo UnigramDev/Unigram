@@ -8,6 +8,13 @@ namespace Telegram.Api.TL.Methods.Messages
 	/// </summary>
 	public partial class TLMessagesSearch : TLObject
 	{
+		[Flags]
+		public enum Flag : int
+		{
+			None = 0
+		}
+
+		public Flag Flags { get; set; }
 		public TLInputPeerBase Peer { get; set; }
 		public String Q { get; set; }
 		public TLMessagesFilterBase Filter { get; set; }
@@ -27,6 +34,7 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesSearch)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Peer = TLFactory.Read<TLInputPeerBase>(from);
 			Q = from.ReadString();
 			Filter = TLFactory.Read<TLMessagesFilterBase>(from);
@@ -40,6 +48,7 @@ namespace Telegram.Api.TL.Methods.Messages
 		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xD4569248);
+			to.Write((Int32)Flags);
 			to.WriteObject(Peer);
 			to.Write(Q);
 			to.WriteObject(Filter);

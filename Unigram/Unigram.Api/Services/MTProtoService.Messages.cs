@@ -863,7 +863,6 @@ namespace Telegram.Api.Services
         {
             var obj = new TLMessagesSearch { Peer = peer, Q = query, Filter = filter, MinDate = minDate, MaxDate = maxDate, Offset = offset, MaxId = maxId, Limit = limit };
 
-
             return SendInformativeMessage<TLMessagesMessagesBase>("messages.search", obj);
         }
 

@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Media;
 using Windows.Foundation.Metadata;
 using Windows.ApplicationModel.Calls;
 using System.Diagnostics;
+using Unigram.Views;
 
 namespace Unigram.ViewModels
 {
@@ -150,6 +151,16 @@ namespace Unigram.ViewModels
                 dialog.IsModal = true;
 
                 await test.OnNavigatedToAsync(Item, NavigationMode.New, new Dictionary<string, object>());
+            }
+        }
+
+        public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
+        private void MediaExecute()
+        {
+            var user = Item as TLUser;
+            if (user != null)
+            {
+                NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
             }
         }
 

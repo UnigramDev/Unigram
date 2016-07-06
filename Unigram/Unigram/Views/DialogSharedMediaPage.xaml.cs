@@ -29,13 +29,8 @@ namespace Unigram.Views
         public DialogSharedMediaPage()
         {
             InitializeComponent();
-            this.SizeChanged += DialogSharedMediaPage_SizeChanged;
+
             DataContext = UnigramContainer.Instance.ResolverType<DialogSharedMediaViewModel>();
         }
-
-        private void DialogSharedMediaPage_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            this.UpdateLayout();
-         }
     }
 }
