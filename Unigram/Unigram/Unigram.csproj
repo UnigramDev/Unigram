@@ -118,6 +118,9 @@
     <Compile Include="Controls\InputDialog.xaml.cs">
       <DependentUpon>InputDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Items\SharedFileListViewItem.xaml.cs">
+      <DependentUpon>SharedFileListViewItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MasterDetailView.cs" />
     <Compile Include="Controls\PhotosView.xaml.cs">
       <DependentUpon>PhotosView.xaml</DependentUpon>
@@ -291,6 +294,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\InputDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Items\SharedFileListViewItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
