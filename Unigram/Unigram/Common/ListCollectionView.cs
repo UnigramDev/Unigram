@@ -245,21 +245,38 @@ namespace Unigram.Common
             var currentItem = CurrentItem;
 
             // re-create view
-            _view.Clear();
+            _groups.Clear();
             var ie = Source as IEnumerable;
             if (ie != null)
             {
                 foreach (var item in ie)
                 {
-                    _view.Add(item);
+                    _groups.Add(new ListCollectionViewGroup(item));
                 }
             }
 
-            // notify listeners
-            RaiseVectorChanged(VectorChangedEventArgs.Reset);
+            _groups.RaiseVectorChanged(new VectorChangedEventArgs(CollectionChange.Reset));
+            RaiseVectorChanged(new VectorChangedEventArgs(CollectionChange.Reset));
 
-            // restore selection if possible
-            MoveCurrentTo(currentItem);
+            ////// keep selection if possible
+            ////var currentItem = CurrentItem;
+
+            ////// re-create view
+            ////_view.Clear();
+            ////var ie = Source as IEnumerable;
+            ////if (ie != null)
+            ////{
+            ////    foreach (var item in ie)
+            ////    {
+            ////        _view.Add(item);
+            ////    }
+            ////}
+
+            ////// notify listeners
+            ////RaiseVectorChanged(VectorChangedEventArgs.Reset);
+
+            ////// restore selection if possible
+            ////MoveCurrentTo(currentItem);
         }
 
         // update view after an item changes (apply filter/sort if necessary)

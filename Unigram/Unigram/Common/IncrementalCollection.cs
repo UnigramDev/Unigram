@@ -43,7 +43,7 @@ namespace Unigram.Common
                 if (value != _isLoading)
                 {
                     _isLoading = value;
-                    NotifyPropertyChanged("IsLoading");
+                    RaisePropertyChanged("IsLoading");
                 }
             }
         }
@@ -104,13 +104,9 @@ namespace Unigram.Common
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(string propertyName)
+        protected void RaisePropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (null != handler)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

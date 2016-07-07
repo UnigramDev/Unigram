@@ -46,7 +46,7 @@
                             </Style>
                         </GridView.ItemContainerStyle>
                         <GridView.Header>
-                            <controls:SearchTextBox PlaceholderText="Search..." Margin="6,8" InputScope="Search"/>
+                            <controls:SearchTextBox Text="{Binding Media.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="6,8" InputScope="Search"/>
                         </GridView.Header>
                         <GridView.Footer>
                             <Border Height="6"/>
@@ -126,7 +126,7 @@
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.Header>
-                            <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                            <controls:SearchTextBox Text="{Binding Files.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
                         </ListView.Header>
                         <ListView.Footer>
                             <Border Height="6"/>
@@ -277,7 +277,7 @@
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.Header>
-                            <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                            <controls:SearchTextBox Text="{Binding Music.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
                         </ListView.Header>
                         <ListView.Footer>
                             <Border Height="6"/>

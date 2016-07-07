@@ -25,11 +25,33 @@ namespace Unigram.Collections
             _filter = filter;
         }
 
+        private string _query = string.Empty;
+        public string Query
+        {
+            get
+            {
+                return _query;
+            }
+            set
+            {
+                if (_query != value)
+                {
+                    _query = value;
+                    _lastMaxId = 0;
+                    RaisePropertyChanged("Query");
+
+                    Clear();
+
+                    HasMoreItems = true;
+                }
+            }
+        }
+
         public override async Task<IEnumerable<KeyedList<DateTime, TLMessage>>> LoadDataAsync()
         {
             try
             {
-                var result = await _protoService.SearchAsync(_peer, string.Empty, _filter, 0, 0, 0, _lastMaxId, 50);
+                var result = await _protoService.SearchAsync(_peer, _query, _filter, 0, 0, 0, _lastMaxId, 50);
                 if (result.IsSucceeded)
                 {
                     if (result.Value.Messages.Count > 0)
