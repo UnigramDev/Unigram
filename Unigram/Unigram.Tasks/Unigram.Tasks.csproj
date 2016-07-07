@@ -108,7 +108,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="NotificationTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InteractiveTask.cs" />

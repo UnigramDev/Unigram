@@ -140,7 +140,6 @@
     <Compile Include="Converters\DefaultPhotoConverter.cs" />
     <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\ColorHelper.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\ShareTargetHelper.cs" />
