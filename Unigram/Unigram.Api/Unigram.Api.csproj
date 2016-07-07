@@ -106,6 +106,7 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="project.json" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Constants.Secret.cs" />
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadableItem.cs" />
     <Compile Include="Services\FileManager\DownloadablePart.cs" />
@@ -974,6 +975,9 @@
     <Folder Include="Compression\" />
     <Folder Include="MD5\" />
     <Folder Include="Services\Updates\EventArgs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
