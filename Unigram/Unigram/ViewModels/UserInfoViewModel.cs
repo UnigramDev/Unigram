@@ -301,7 +301,7 @@ namespace Unigram.ViewModels
             get
             {
                 var user = Item as TLUser;
-                if (user != null && user.IsBot && Full != null && Full.BotInfo.Description != null)
+                if (user != null && user.IsBot && Full != null && !string.IsNullOrWhiteSpace(Full.BotInfo.Description))
                 {
                     return Visibility.Visible;
                 }

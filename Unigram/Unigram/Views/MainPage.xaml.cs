@@ -98,12 +98,14 @@ namespace Unigram.Views
                 lvMasterChats.IsItemClickEnabled = true;
                 lvMasterChats.SelectionMode = ListViewSelectionMode.None;
                 lvMasterChats.SelectedItem = null;
+                Separator.BorderThickness = new Thickness(0);
             }
             else
             {
                 lvMasterChats.IsItemClickEnabled = false;
                 lvMasterChats.SelectionMode = ListViewSelectionMode.Single;
                 lvMasterChats.SelectedItem = _lastSelected;
+                Separator.BorderThickness = new Thickness(0, 0, 1, 0);
             }
         }
 

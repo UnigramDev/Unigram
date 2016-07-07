@@ -9,7 +9,38 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
+    <Grid Margin="0,6">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <!--ChatIcon-->
+        <Border x:Name="EllipseIcon" Width="48" Height="48" CornerRadius="24">
+            <FontIcon Glyph="&#xE768;" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4,0,0,0" Foreground="White"/>
+        </Border>
+        <!--Chat Info-->
+        <Grid Margin="12,0,0,0" VerticalAlignment="Center" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="{Binding Media.Document.FileName}" 
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"
+                       Style="{StaticResource BaseTextBlockStyle}"/>
 
+            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
+                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                       TextTrimming="CharacterEllipsis" 
+                       TextWrapping="NoWrap" 
+                       MaxLines="1"
+                       Grid.ColumnSpan="2"
+                       Grid.Row="1">
+                <Run x:Name="SizeLabel"/>
+                <Run Text="•"/>
+                <Run x:Name="TimeLabel"/>
+            </TextBlock>
+        </Grid>
     </Grid>
 </UserControl>

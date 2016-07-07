@@ -28,6 +28,7 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.Row="1"/>
             <Pivot x:Name="rpMasterTitlebar" 
                    Style="{StaticResource TabStylePivotStyle}"
                    Grid.RowSpan="2">
@@ -53,7 +54,7 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                         <ListView.Header>
-                            <Border Height="6"/>
+                            <controls:SearchTextBox Margin="12,8" PlaceholderText="Search messages or users"/>
                         </ListView.Header>
                         <ListView.Footer>
                             <Border Height="6"/>
@@ -63,11 +64,6 @@
                 <PivotItem>
                     <PivotItem.Header>
                         <controls:TabHeaderStyle Glyph="&#xE125;"/>
-                    </PivotItem.Header>
-                </PivotItem>
-                <PivotItem>
-                    <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE11A;"/>
                     </PivotItem.Header>
                 </PivotItem>
             </Pivot>
@@ -101,12 +97,6 @@
                                         Icon="SelectAll"
                                         Label="Select all"
                                         Click="cbtnMasterSelectAll_Click">
-                    </AppBarButton>
-                    <AppBarButton x:Name="cbtnMasterSearch"
-                                        x:Uid="CBTN-SearchMedia"
-                                        Icon="Find"
-                                        Label="Search Media"
-                                        Click="cbtnMasterSearch_Click">
                     </AppBarButton>
                     <AppBarButton x:Name="cbtnMasterDeleteSelected" 
                                         x:Uid="CBTN-SelectAll"
