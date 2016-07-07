@@ -8,6 +8,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.FileManager;
+using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
 using Windows.UI.Xaml.Navigation;
 

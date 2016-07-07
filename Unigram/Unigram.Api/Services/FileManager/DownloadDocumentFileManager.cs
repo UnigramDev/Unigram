@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.FileManager

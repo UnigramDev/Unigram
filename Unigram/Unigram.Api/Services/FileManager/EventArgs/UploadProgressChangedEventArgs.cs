@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Telegram.Api.Services.FileManager
+namespace Telegram.Api.Services.FileManager.EventArgs
 {
     public class UploadProgressChangedEventArgs
     {
