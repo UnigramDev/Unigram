@@ -4,19 +4,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Reflection;
-using Windows.UI.Xaml.Data;
+using System.Linq;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml;
-using System.Linq;
+using Windows.UI.Xaml.Data;
 
 namespace Unigram.Common
 {
     public class ListCollectionView : ICollectionView, INotifyPropertyChanged
     {
-        //------------------------------------------------------------------------------------
         #region ** fields
 
         private object _source;                                 // original data source
@@ -31,7 +27,6 @@ namespace Unigram.Common
 
         #endregion
 
-        //------------------------------------------------------------------------------------
         #region ** ctor
 
         public ListCollectionView(object source)
@@ -52,7 +47,6 @@ namespace Unigram.Common
 
         #endregion
 
-        //------------------------------------------------------------------------------------
         #region ** object model
 
         /// <summary>
@@ -145,7 +139,6 @@ namespace Unigram.Common
 
         #endregion
 
-        //------------------------------------------------------------------------------------
         #region ** event handlers
 
         // the original source has changed, update our source list
@@ -190,7 +183,6 @@ namespace Unigram.Common
 
         #endregion
 
-        //------------------------------------------------------------------------------------
         #region ** implementation
 
         // add item to view
@@ -378,7 +370,6 @@ namespace Unigram.Common
 
         #endregion
 
-        //------------------------------------------------------------------------------------
         #region ** nested classes
 
         /// <summary>
@@ -401,7 +392,6 @@ namespace Unigram.Common
 
         #endregion
 
-        //------------------------------------------------------------------------------------
         #region ** ICollectionView
 
         /// <summary>
@@ -597,15 +587,11 @@ namespace Unigram.Common
 
         #endregion
 
-        //------------------------------------------------------------------------------------
-        #region ** INotifyPropertyChanged
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
-        #endregion
     }
 
     public class ObservableVector<T> : ObservableCollection<T>, IObservableVector<T>
