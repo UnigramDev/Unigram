@@ -12,6 +12,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services.FileManager;
 using Windows.Foundation;
 using Telegram.Api.TL;
+using Telegram.Api.Services.FileManager.EventArgs;
 
 namespace Telegram.Api.Helpers
 {
