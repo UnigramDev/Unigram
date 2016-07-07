@@ -38,7 +38,11 @@ namespace Telegram.Api.Services
             var obj = new TLAuthSignUp { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode, FirstName = firstName, LastName = lastName };
 
             var result = await SendInformativeMessage<TLAuthAuthorization>("auth.signUp", obj);
-            _cacheService.SyncUser(result.Value.User, (callback) => { });
+            if (result.IsSucceeded)
+            {
+                // TODO: sync
+                _cacheService.SyncUser(result.Value.User, (callback) => { });
+            }
             return result;
         }
 
@@ -46,8 +50,12 @@ namespace Telegram.Api.Services
         {
             var obj = new TLAuthSignIn { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode };
 
-            var result = await SendInformativeMessage<TLAuthAuthorization>("auth.signUp", obj);
-            _cacheService.SyncUser(result.Value.User, (callback) => { });
+            var result = await SendInformativeMessage<TLAuthAuthorization>("auth.signIn", obj);
+            if (result.IsSucceeded)
+            {
+                // TODO: sync
+                _cacheService.SyncUser(result.Value.User, (callback) => { });
+            }
             return result;
         }
 

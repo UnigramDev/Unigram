@@ -90,9 +90,9 @@ namespace Unigram.ViewModels
                 {
                     //this.IsWorking = true;
                     var password = await ProtoService.GetPasswordAsync();
-                    if (result?.IsSucceeded == true)
+                    if (password?.IsSucceeded == true)
                     {
-                        //NavigationService.Navigate(typeof(PasswordPage), password);
+                        NavigationService.Navigate(typeof(LoginPasswordPage), password.Value);
                     }
                     else
                     {
