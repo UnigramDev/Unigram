@@ -52,26 +52,6 @@ namespace Unigram
 #endif
         }
 
-        //protected override void OnActivated(IActivatedEventArgs args)
-        //{
-        //    Frame rootFrame = Window.Current.Content as Frame;
-        //    var data = Toast.GetData(args);
-        //    if (data != null)
-        //    {
-        //        if (data.ContainsKey("messageId"))
-        //        {
-        //            string messageId = data["messageId"];
-        //        }
-        //    }
-
-        //    if (rootFrame.BackStack.Count == 0)
-        //    {
-        //        rootFrame.BackStack.Add(new PageStackEntry(typeof(Views.Home), null, null));
-        //    }
-
-        //    Window.Current.Activate();
-        //}
-
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             new Bootstrapper().Configure();
