@@ -53,7 +53,8 @@ namespace Unigram.Controls.Items
                 _oldViewModel = ViewModel;
                 ViewModel.PropertyChanged += OnPropertyChanged;
 
-                UpdateSnippet();
+                FromLabel.Text = UpdateFromLabel(ViewModel);
+                BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
                 UpdateStateIcon();
                 UpdateUnreadCount();
@@ -65,14 +66,16 @@ namespace Unigram.Controls.Items
         {
             if (e.PropertyName == "Self")
             {
-                UpdateSnippet();
+                FromLabel.Text = UpdateFromLabel(ViewModel);
+                BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
                 UpdateStateIcon();
                 UpdateUnreadCount();
             }
             else if (e.PropertyName == "TopMessageItem")
             {
-                UpdateSnippet();
+                FromLabel.Text = UpdateFromLabel(ViewModel);
+                BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
                 UpdateStateIcon();
                 UpdateUnreadCount();
@@ -151,7 +154,7 @@ namespace Unigram.Controls.Items
             return id % 8;
         }
 
-        private void UpdateSnippet()
+        private string UpdateBriefLabel(TLDialog dialog)
         {
             var topMessage = ViewModel?.TopMessageItem as TLMessageBase;
             if (topMessage != null)
@@ -159,11 +162,11 @@ namespace Unigram.Controls.Items
                 var message = topMessage as TLMessage;
                 if (message != null)
                 {
-                    FromLabel.Text = GetFromLabel(message);
+                    return GetBriefLabel(message, true);
                 }
-
-                BriefLabel.Text = GetBriefLabel(topMessage, true);
             }
+
+            return string.Empty;
         }
 
         private string GetBriefLabel(TLMessageBase value, bool showContent)
@@ -297,34 +300,43 @@ namespace Unigram.Controls.Items
             return string.Empty;
         }
 
-        private string GetFromLabel(TLMessage message)
+        private string UpdateFromLabel(TLDialog dialog)
         {
-            var draft = ViewModel.Draft as TLDraftMessage;
-            if (draft != null)
+            var topMessage = dialog.TopMessageItem as TLMessageBase;
+            if (topMessage != null)
             {
-                FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelDraftBrush"] as SolidColorBrush;
-                return "Draft: ";
-            }
-
-            if (message.ShowFrom || IsOut(ViewModel))
-            {
-                FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelFromBrush"] as SolidColorBrush;
-
-                var from = message.FromId;
-                if (from != null)
+                var message = topMessage as TLMessage;
+                if (message != null)
                 {
-                    int currentUserId = MTProtoService.Instance.CurrentUserId;
-                    if (currentUserId == from)
+
+                    var draft = ViewModel.Draft as TLDraftMessage;
+                    if (draft != null)
                     {
-                        return "You: ";
-                        //return Resources.You + ": ";
+                        FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelDraftBrush"] as SolidColorBrush;
+                        return "Draft: ";
                     }
-                    else
+
+                    if (message.ShowFrom || IsOut(ViewModel))
                     {
-                        var user = InMemoryCacheService.Instance.GetUser(from.Value) as TLUser;
-                        if (user != null)
+                        FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelFromBrush"] as SolidColorBrush;
+
+                        var from = message.FromId;
+                        if (from != null)
                         {
-                            return $"{user.FirstName.Trim()}: ";
+                            int currentUserId = MTProtoService.Instance.CurrentUserId;
+                            if (currentUserId == from)
+                            {
+                                return "You: ";
+                                //return Resources.You + ": ";
+                            }
+                            else
+                            {
+                                var user = InMemoryCacheService.Instance.GetUser(from.Value) as TLUser;
+                                if (user != null)
+                                {
+                                    return $"{user.FirstName.Trim()}: ";
+                                }
+                            }
                         }
                     }
                 }
