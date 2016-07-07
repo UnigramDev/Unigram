@@ -25,8 +25,6 @@ namespace Unigram
     /// </summary>
     sealed partial class App : BootStrapper
     {
-        public IHockeyClient HockeyClient { get; private set; }
-
         public static ShareOperation ShareOperation { get; private set; }
 
         /// <summary>
@@ -40,16 +38,16 @@ namespace Unigram
 
 #if RELEASE
 
-            Microsoft.HockeyApp.HockeyClient.Current.Configure("0abc51f4bcaf409a9b86fc9b1cb21eeb",
-                        new TelemetryConfiguration()
-                        {
-                            EnableDiagnostics = true,
-                            Collectors = Microsoft.HockeyApp.WindowsCollectors.Metadata |
-                                         Microsoft.HockeyApp.WindowsCollectors.PageView |
-                                         Microsoft.HockeyApp.WindowsCollectors.Session |
-                                         Microsoft.HockeyApp.WindowsCollectors.UnhandledException |
-                                         Microsoft.HockeyApp.WindowsCollectors.WatsonData
-                        });
+            Microsoft.HockeyApp.HockeyClient.Current.Configure("f914027fdbf04179b2a84bb0ab6ff0b9",
+                new TelemetryConfiguration()
+                {
+                    EnableDiagnostics = true,
+                    Collectors = Microsoft.HockeyApp.WindowsCollectors.Metadata |
+                                    Microsoft.HockeyApp.WindowsCollectors.PageView |
+                                    Microsoft.HockeyApp.WindowsCollectors.Session |
+                                    Microsoft.HockeyApp.WindowsCollectors.UnhandledException |
+                                    Microsoft.HockeyApp.WindowsCollectors.WatsonData
+                });
 
 #endif
         }
