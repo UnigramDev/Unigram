@@ -6,7 +6,22 @@ Windows 10 (Mobile) introduced with the Universal Windows Platform a whole list 
 Build instructions:
 -
 * Go to https://my.telegram.org/apps and register a new app.
-* Open `Unigram/Unigram/Unigram.Api/Constants.Secret.cs` file and set your api_id and api_hash.
+* Create a new file inside `Unigram/Unigram/Unigram.Api/Constants.Secret.cs` called `Constants.Secret.cs`:
+```csharp
+namespace Telegram.Api
+{
+    public static partial class Constants
+    {
+        static Constants()
+        {
+            FirstServerIpAddress = "your_server_ip";
+
+            ApiId = your_api_id;
+            ApiHash = "your_api_hash";
+        }
+    }
+}
+```
 
 Our main goal:
 -
