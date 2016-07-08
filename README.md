@@ -6,7 +6,7 @@ Windows 10 (Mobile) introduced with the Universal Windows Platform a whole list 
 Build instructions:
 -
 * Go to https://my.telegram.org/apps and register a new app.
-* Create a new file inside `Unigram/Unigram/Unigram.Api/Constants.Secret.cs` called `Constants.Secret.cs`:
+* Create a new file inside `Unigram/Unigram/Unigram.Api` called `Constants.Secret.cs`:
 ```csharp
 namespace Telegram.Api
 {
