@@ -292,7 +292,7 @@
             </Pivot>
         </Border>
         <Border Height="{ThemeResource AppBarThemeCompactHeight}" Padding="12,0">
-            <TextBlock Text="Shared media"
+            <TextBlock Text="SHARED MEDIA"
                        Foreground="{ThemeResource ButtonForegroundThemeBrush}"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Left"
