@@ -13,99 +13,108 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <RelativePanel>
-            <!-- Master - Titlebar -->
-            <RelativePanel x:Name="rpMasterTitlebar"
+        <ScrollViewer>
+            <RelativePanel>
+                <!-- Master - Titlebar -->
+                <RelativePanel x:Name="rpMasterTitlebar"
                            Style="{StaticResource StyleRPMasterTitleBar}">
-                <TextBlock x:Name="tblMasterTitle"
+                    <TextBlock x:Name="tblMasterTitle"
                            x:Uid="About-Titlebar-Title"
                            Text="ABOUT"
                            Style="{StaticResource BaseTextBlockStyle}"
                            RequestedTheme="Dark"
                            Padding="16,0"
                            RelativePanel.AlignVerticalCenterWithPanel="True"/>
-            </RelativePanel>
+                </RelativePanel>
 
-            <!-- Master - Main content -->
-            <RelativePanel x:Name="rpMasterContent"
-                           Padding="16"
+                <!-- Master - Main content -->
+                <RelativePanel x:Name="rpMasterContent"
+                           Padding="12"
+                           ScrollViewer.VerticalScrollMode="Auto"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignRightWithPanel="True"
                            RelativePanel.Below="rpMasterTitlebar"
                            RelativePanel.AlignBottomWithPanel="True">
-                
-                <!-- Master - App info and logo -->
-                <RelativePanel x:Name="rpMasterAppInfo"
+
+                    <!-- Master - App info and logo -->
+                    <RelativePanel x:Name="rpMasterAppInfo"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.AlignRightWithPanel="True">
-                    <Image x:Name="imgMasterAppLogo"
-                           Height="96"
-                           Width="96"                                   
-                           Source="ms-appx:///Assets/Mockups/Logos/logo.png" />
-                    <TextBlock x:Name="tblMasterAppTitle"
+                        <!-- Logo background -->
+                        <Ellipse x:Name="imgMasterWelcomeLogoBackground"
+                             Height="120" 
+                             Width="120"                              
+                             Fill="{ThemeResource SystemControlBackgroundAccentBrush}"
+                             Margin="0,0,0,6"/>
+                        <!-- Logo -->
+                        <Ellipse x:Name="imgMasterWelcomeLogo"
+                             Height="120"
+                             Width="120"
+                             Margin="0,0,0,0"
+                             RelativePanel.AlignBottomWith="imgMasterWelcomeLogoBackground"
+                             RelativePanel.AlignHorizontalCenterWith="imgMasterWelcomeLogoBackground">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+
+                        <!-- App info -->
+                        <TextBlock x:Name="tblMasterAppTitle"
                                x:Uid="About-App-Title"
                                Padding="16,0"
                                Text="Unigram"
                                Style="{StaticResource TitleTextBlockStyle}"
-                               RelativePanel.RightOf="imgMasterAppLogo"/>
-                    <TextBlock x:Name="tblMasterAppVersion"
+                               RelativePanel.RightOf="imgMasterWelcomeLogoBackground"/>
+                        <TextBlock x:Name="tblMasterAppVersion"
                                x:Uid="About-App-Version"
                                Padding="16,0,0,0"
                                Text="Version"
                                Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
                                Style="{StaticResource BodyTextBlockStyle}"
-                               RelativePanel.RightOf="imgMasterAppLogo"
+                               RelativePanel.RightOf="imgMasterWelcomeLogoBackground"
                                RelativePanel.Below="tblMasterAppTitle"/>
-                    <TextBlock x:Name="tblMasterAppVersionNumber"
+                        <TextBlock x:Name="tblMasterAppVersionNumber"
                                Padding="4,0,16,0"
                                Text="Prototype"
                                Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
                                Style="{StaticResource BodyTextBlockStyle}"
                                RelativePanel.RightOf="tblMasterAppVersion"
                                RelativePanel.Below="tblMasterAppTitle"/>
-                </RelativePanel>
+                    </RelativePanel>
 
-                
-                <!-- Master - Made possible by -->
-                <RelativePanel x:Name="rpMasterAppThanks"
-                               Padding="0,16,0,0"
-                               RelativePanel.AlignLeftWithPanel="True"
-                               RelativePanel.AlignRightWithPanel="True"
-                               RelativePanel.Below="rpMasterAppInfo">
-                    <TextBlock x:Name="tblMasterAppThanksTitle"
-                               x:Uid="About-Thanks-Title"
+
+                    <!-- Master - Made possible by -->
+                    <StackPanel x:Name="spThanks"
+                            Orientation="Vertical"
+                            Margin="0,12,0,0"
+                            RelativePanel.AlignLeftWithPanel="True"
+                            RelativePanel.AlignRightWithPanel="True"
+                            RelativePanel.Below="rpMasterAppInfo">
+                        <TextBlock x:Uid="About-Thanks-Title"
                                Text="Special Thanks"
-                               Style="{StaticResource TitleTextBlockStyle}"
-                               RelativePanel.AlignLeftWithPanel="True"
-                               RelativePanel.AlignRightWithPanel="True"
-                               RelativePanel.AlignTopWithPanel="True"/>
-                    <TextBlock x:Name="tblMasterAppThanksIntro"
-                               x:Uid="About-Thanks-Intro"
+                               Style="{StaticResource TitleTextBlockStyle}"/>
+                        <TextBlock x:Uid="About-Thanks-Intro"
                                Text="Building this app has not been possible without the help of all these awesome people:"
                                TextWrapping="Wrap"
                                FontSize="14"
-                               Padding="0,8,0,0"
-                               RelativePanel.AlignLeftWithPanel="True"
-                               RelativePanel.AlignRightWithPanel="True"
-                               RelativePanel.Below="tblMasterAppThanksTitle" />
-                    <TextBlock x:Name="tblMasterAppThanksPeople"
-                               x:Uid="About-Thanks-People"
-                               Text=""
-                               TextWrapping="Wrap"
-                               FontSize="14"
-                               Padding="0,16,0,0"
-                               RelativePanel.AlignLeftWithPanel="True"
-                               RelativePanel.AlignRightWithPanel="True"
-                               RelativePanel.Below="tblMasterAppThanksIntro" />
+                               Padding="0,8,0,0" />
+                        <!-- Core-team -->
+                        <TextBlock 
+                               Margin="0,12,0,6"
+                               Text="Unigram Core-team:"
+                               Style="{StaticResource SubtitleTextBlockStyle}" />
+                        <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               TextWrapping="Wrap">
+                        - Rick <LineBreak />- Saurav <LineBreak />- Luis <LineBreak />- Fela <LineBreak />- Matei <LineBreak />- Kesava <LineBreak />- Abdel
+                        </TextBlock>
+                        <!-- Insiders -->
+                        <TextBlock Text="... and all the Unigram Insiders!" 
+                               Margin="0,6,0,0"/>
 
+                    </StackPanel>
                 </RelativePanel>
-
-
-
-
             </RelativePanel>
-
-
-        </RelativePanel>
+        </ScrollViewer>
+        
     </Grid>
 </Page>

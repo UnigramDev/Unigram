@@ -41,7 +41,7 @@
                 </Grid.ColumnDefinitions>
                 <FontIcon Glyph="&#xE125;" 
                           Visibility="{Binding GroupChat}"
-                          Foreground="{ThemeResource TelegramDialogLabelFromBrush}"
+                          Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                           VerticalAlignment="Bottom"
                           FontSize="16"
                           Margin="0,0,4,1"

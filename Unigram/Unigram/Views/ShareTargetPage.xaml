@@ -156,7 +156,7 @@
               Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}">
             <TextBlock x:Name="tblPivotTitle"
-                       Text="Share"
+                       Text="SHARE"
                        Style="{ThemeResource BaseTextBlockStyle}"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
