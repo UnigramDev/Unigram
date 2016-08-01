@@ -83,6 +83,15 @@ namespace Unigram
                     {
                         NavigationService.Navigate(typeof(Views.MainPage));
                     }
+                    if (command == "ShowSpecificDialog")
+                    {
+                        //#TODO: Fix that this'll open a specific dialog
+                        NavigationService.Navigate(typeof(Views.MainPage));
+                    }
+                    else
+                    {
+                        NavigationService.Navigate(typeof(Views.MainPage));
+                    }
                 }
                 else
                 {

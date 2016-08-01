@@ -141,6 +141,7 @@
     <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Helpers\ColorHelper.cs" />
+    <Compile Include="Helpers\PhraseListHelper.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\ShareTargetHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -24,9 +24,22 @@
             <uap:ShowOn Tile="square310x310Logo" />
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
-        <uap:SplashScreen Image="Assets\Logos\SplashScreen\SplashScreen.png" BackgroundColor="#36ADE1" />
+        <uap:SplashScreen Image="Assets\Logos\SplashScreen\SplashScreen.png" BackgroundColor="transparent" />
       </uap:VisualElements>
       <Extensions>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.NotificationTask">
+          <BackgroundTasks>
+            <Task Type="pushNotification" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
+          <BackgroundTasks>
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="tg" />
+        </uap:Extension>
         <uap:Extension Category="windows.shareTarget">
           <uap:ShareTarget>
             <uap:DataFormat>Text</uap:DataFormat>
@@ -34,19 +47,6 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="tg" />
-        </uap:Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
-          <BackgroundTasks>
-            <Task Type="systemEvent" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.NotificationTask">
-          <BackgroundTasks>
-            <Task Type="pushNotification" />
-          </BackgroundTasks>
-        </Extension>
       </Extensions>
     </Application>
   </Applications>
