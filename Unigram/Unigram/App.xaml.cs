@@ -17,6 +17,8 @@ using Unigram.Core.Dependency;
 using Unigram.Core.Notifications;
 using Windows.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
+using Windows.Media.SpeechRecognition;
+using Windows.ApplicationModel.VoiceCommands;
 
 namespace Unigram
 {
@@ -65,15 +67,31 @@ namespace Unigram
                 MTProtoService.Instance.CurrentUserId = SettingsHelper.UserId;
 
                 var share = args as ShareTargetActivatedEventArgs;
+                var voice = args as VoiceCommandActivatedEventArgs;
+
                 if (share != null)
                 {
                     ShareOperation = share.ShareOperation;
                     NavigationService.Navigate(typeof(Views.ShareTargetPage));
                 }
+                else if (voice != null)
+                {
+                    SpeechRecognitionResult speechResult = voice.Result;
+                    string command = speechResult.RulePath[0];
+
+                    if (command == "ShowAllDialogs")
+                    {
+                        NavigationService.Navigate(typeof(Views.MainPage));
+                    }
+                }
                 else
                 {
                     var activate = args as ToastNotificationActivatedEventArgs;
                     var launch = activate?.Argument ?? null;
+
+                    // Prepare stuff for Cortana
+                    var localVoiceCommands = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///VoiceCommands/VoiceCommands.xml"));
+                    await VoiceCommandDefinitionManager.InstallCommandDefinitionsFromStorageFileAsync(localVoiceCommands);
 
                     NavigationService.Navigate(typeof(Views.MainPage), launch);
                 }

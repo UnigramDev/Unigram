@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<VoiceCommands xmlns="http://schemas.microsoft.com/voicecommands/1.2">
+  <!-- en-US commands -->
+  <CommandSet xml:lang="en-us" Name="CommandSet_en-us">
+    <!-- App info -->
+    <CommandPrefix> Unigram </CommandPrefix>
+    <Example> Ask me to show info of your Unigram chats </Example>
+
+    <!-- Command 1 - Show all dialogs -->
+    <Command Name="ShowAllDialogs">
+      <Example> Show me my messages </Example>
+      <ListenFor RequireAppName="AfterPhrase"> Show [me] [all] [my] messages </ListenFor>
+      <ListenFor RequireAppName="AfterPhrase"> Show [me] [all] [my] chats </ListenFor>
+      <ListenFor RequireAppName="AfterPhrase"> Show [me] [all] [my] dialogs </ListenFor>
+
+
+      <Feedback> Hunting for your chats </Feedback>
+      <Navigate />
+    </Command>
+    
+    
+    
+  </CommandSet>
+  
+  <!-- Other languages -->
+  
+  
+</VoiceCommands>
