@@ -91,30 +91,32 @@
             <CommandBar x:Name="cmbarMaster" Grid.Row="2">
                 <!-- Commands visible on commandbar-->
                 <CommandBar.PrimaryCommands>
-                        
                     <AppBarButton x:Name="cbtnMasterNewChat"
-                                        x:Uid="CBTN-NewChat"
-                                        Icon="Add"
-                                        Label="New chat">
-                    </AppBarButton>
-                    <AppBarButton x:Name="cbtnMasterSelectAll"
-                                        x:Uid="CBTN-SelectAll"
-                                        Icon="SelectAll"
-                                        Label="Select all"
-                                        Click="cbtnMasterSelectAll_Click">
-                    </AppBarButton>
-                    <AppBarButton x:Name="cbtnMasterDeleteSelected" 
-                                        x:Uid="CBTN-SelectAll"
-                                        Icon="Delete"
-                                        Label="Delete selected"
-                                    Visibility="Collapsed">
-                    </AppBarButton>
+                                  x:Uid="CBTN-NewChat"
+                                  Icon="Add"
+                                  Label="New chat" />
+                    <AppBarButton x:Name="cbtnMasterSelect"
+                                  x:Uid="CBTN-Select"
+                                  Icon="Bullets"
+                                  Label="Select"
+                                  Click="cbtnMasterSelect_Click" />
+                    <!-- Selection Mode: Multiple buttons -->
                     <AppBarButton x:Name="cbtnMasterMuteSelected" 
-                                        x:Uid="CBTN-MuteSelected"
-                                        Icon="Mute"
-                                        Label="Mute selected"
-                                    Visibility="Collapsed">
-                    </AppBarButton>
+                                  x:Uid="CBTN-MuteSelected"
+                                  Icon="Mute"
+                                  Label="Mute selected"
+                                  Visibility="Collapsed" />
+                    <AppBarButton x:Name="cbtnMasterDeleteSelected" 
+                                  x:Uid="CBTN-DeleteSelected"
+                                  Icon="Delete"
+                                  Label="Delete selected chats"
+                                  Visibility="Collapsed" />
+                    <AppBarButton x:Name="cbtnCancelSelection"
+                                  x:Uid="CBTN-Cancel"
+                                  Visibility="Collapsed"
+                                  Icon="Cancel"
+                                  Label="Cancel"
+                                  Click="cbtnCancelSelection_Click"/>
                 </CommandBar.PrimaryCommands>
 
                 <!-- Commands hidden in the ellipse-menu -->

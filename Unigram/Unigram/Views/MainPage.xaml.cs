@@ -147,19 +147,17 @@ namespace Unigram.Views
             }
         }
 
-        private void cbtnMasterSelectAll_Click(object sender, RoutedEventArgs e)
+        private void cbtnMasterSelect_Click(object sender, RoutedEventArgs e)
         {
             lvMasterChats.SelectionMode = ListViewSelectionMode.Multiple;
             cbtnMasterDeleteSelected.Visibility = Visibility.Visible;
             cbtnMasterMuteSelected.Visibility = Visibility.Visible;
-            cbtnMasterSelectAll.Visibility = Visibility.Collapsed;
+            cbtnCancelSelection.Visibility = Visibility.Visible;
+            cbtnMasterSelect.Visibility = Visibility.Collapsed;
             cbtnMasterNewChat.Visibility = Visibility.Collapsed;
 
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            SystemNavigationManager.GetForCurrentView().BackRequested += (s, _) =>
-            {
-                ChangeListState();
-            };
+            SystemNavigationManager.GetForCurrentView().BackRequested += Select_BackRequested;
         }
 
         private void cbtnMasterAbout_Click(object sender, RoutedEventArgs e)
@@ -173,6 +171,13 @@ namespace Unigram.Views
             ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage));
         }
 
+        private void Select_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            // Mark event as handled so we don't get bounced out of the app.
+            e.Handled = true;
+            ChangeListState();
+        }
+
         private void ChangeListState()
         {
             Visibility act = Visibility.Collapsed;
@@ -180,13 +185,21 @@ namespace Unigram.Views
 
             cbtnMasterDeleteSelected.Visibility = act;
             cbtnMasterMuteSelected.Visibility = act;
-            cbtnMasterSelectAll.Visibility = act1;
+            cbtnCancelSelection.Visibility = act;
+            cbtnMasterSelect.Visibility = act1;
             cbtnMasterNewChat.Visibility = act1;
             lvMasterChats.SelectionMode = ListViewSelectionMode.Single;
+            SystemNavigationManager.GetForCurrentView().BackRequested -= Select_BackRequested;
+
             if (!ViewModel.NavigationService.CanGoBack)
             {
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             }
+        }
+
+        private void cbtnCancelSelection_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeListState();
         }
     }
 }

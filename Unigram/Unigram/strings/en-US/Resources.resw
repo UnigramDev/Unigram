@@ -409,4 +409,16 @@
     <value>Delete</value>
     <comment>MenuFlyoutButton - Delete</comment>
   </data>
+  <data name="CBTN-Cancel.Label" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>AppBarButton - Label - Cancel</comment>
+  </data>
+  <data name="CBTN-DeleteSelected.Label" xml:space="preserve">
+    <value>Delete selected chats</value>
+    <comment>AppBarButton - Label - Delete selected chats</comment>
+  </data>
+  <data name="CBTN-MuteSelected.Label" xml:space="preserve">
+    <value>Mute selected chats</value>
+    <comment>AppBarButton - Label - Mute selected chats</comment>
+  </data>
 </root>
