@@ -4,11 +4,11 @@
   <CommandSet xml:lang="en-us" Name="CommandSet_en-us">
     <!-- App info -->
     <AppName> Unigram </AppName>
-    <Example> Ask me to show your Unigram chats </Example>
+    <Example> Show my chats </Example>
 
     <!-- Command 1 - Show all dialogs -->
     <Command Name="ShowAllDialogs">
-      <Example> Show me my messages </Example>
+      <Example> Show my messages </Example>
       <ListenFor RequireAppName="AfterPhrase"> Show [me] [all] [my] chats </ListenFor>
       <ListenFor RequireAppName="AfterPhrase"> Show [me] [all] [my] conversations </ListenFor>
       <ListenFor RequireAppName="AfterPhrase"> Show [me] [all] [my] messages </ListenFor>
