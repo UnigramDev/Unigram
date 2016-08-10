@@ -170,6 +170,9 @@
     <Compile Include="Views\DialogInfoAdminsPage.xaml.cs">
       <DependentUpon>DialogInfoAdminsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DialogPage.xaml.cs">
+      <DependentUpon>DialogPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DialogSendLocationPage.xaml.cs">
       <DependentUpon>DialogSendLocationPage.xaml</DependentUpon>
     </Compile>
@@ -346,6 +349,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DialogInfoAdminsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DialogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputDocumentFileLocation : TLInputFileLocationBase 
 	{
+		public Int32 Version { get; set; }
 
 		public TLInputDocumentFileLocation() { }
 		public TLInputDocumentFileLocation(TLBinaryReader from, TLType type = TLType.InputDocumentFileLocation)
@@ -18,13 +19,15 @@ namespace Telegram.Api.TL
 		{
 			Id = from.ReadInt64();
 			AccessHash = from.ReadInt64();
+			Version = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x4E45ABE9);
+			to.Write(0x430F0724);
 			to.Write(Id);
 			to.Write(AccessHash);
+			to.Write(Version);
 		}
 	}
 }

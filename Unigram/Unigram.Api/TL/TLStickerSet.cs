@@ -9,12 +9,12 @@ namespace Telegram.Api.TL
 		public enum Flag : Int32
 		{
 			Installed = (1 << 0),
-			Disabled = (1 << 1),
+			Archived = (1 << 1),
 			Official = (1 << 2),
 		}
 
 		public bool IsInstalled { get { return Flags.HasFlag(Flag.Installed); } set { Flags = value ? (Flags | Flag.Installed) : (Flags & ~Flag.Installed); } }
-		public bool IsDisabled { get { return Flags.HasFlag(Flag.Disabled); } set { Flags = value ? (Flags | Flag.Disabled) : (Flags & ~Flag.Disabled); } }
+		public bool IsArchived { get { return Flags.HasFlag(Flag.Archived); } set { Flags = value ? (Flags | Flag.Archived) : (Flags & ~Flag.Archived); } }
 		public bool IsOfficial { get { return Flags.HasFlag(Flag.Official); } set { Flags = value ? (Flags | Flag.Official) : (Flags & ~Flag.Official); } }
 
 		public Flag Flags { get; set; }

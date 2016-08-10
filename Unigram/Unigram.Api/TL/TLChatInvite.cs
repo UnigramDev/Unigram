@@ -12,15 +12,20 @@ namespace Telegram.Api.TL
 			Broadcast = (1 << 1),
 			Public = (1 << 2),
 			Megagroup = (1 << 3),
+			Participants = (1 << 4),
 		}
 
 		public bool IsChannel { get { return Flags.HasFlag(Flag.Channel); } set { Flags = value ? (Flags | Flag.Channel) : (Flags & ~Flag.Channel); } }
 		public bool IsBroadcast { get { return Flags.HasFlag(Flag.Broadcast); } set { Flags = value ? (Flags | Flag.Broadcast) : (Flags & ~Flag.Broadcast); } }
 		public bool IsPublic { get { return Flags.HasFlag(Flag.Public); } set { Flags = value ? (Flags | Flag.Public) : (Flags & ~Flag.Public); } }
 		public bool IsMegagroup { get { return Flags.HasFlag(Flag.Megagroup); } set { Flags = value ? (Flags | Flag.Megagroup) : (Flags & ~Flag.Megagroup); } }
+		public bool HasParticipants { get { return Flags.HasFlag(Flag.Participants); } set { Flags = value ? (Flags | Flag.Participants) : (Flags & ~Flag.Participants); } }
 
 		public Flag Flags { get; set; }
 		public String Title { get; set; }
+		public TLChatPhotoBase Photo { get; set; }
+		public Int32 ParticipantsCount { get; set; }
+		public TLVector<TLUserBase> Participants { get; set; }
 
 		public TLChatInvite() { }
 		public TLChatInvite(TLBinaryReader from, TLType type = TLType.ChatInvite)
@@ -34,13 +39,19 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			Title = from.ReadString();
+			Photo = TLFactory.Read<TLChatPhotoBase>(from);
+			ParticipantsCount = from.ReadInt32();
+			if (HasParticipants) { Participants = TLFactory.Read<TLVector<TLUserBase>>(from); }
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x93E99B60);
+			to.Write(0xDB74F558);
 			to.Write((Int32)Flags);
 			to.Write(Title);
+			to.WriteObject(Photo);
+			to.Write(ParticipantsCount);
+			if (HasParticipants) to.WriteObject(Participants);
 		}
 	}
 }

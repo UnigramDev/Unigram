@@ -129,6 +129,7 @@
     <Compile Include="TL\Core\TLActionInfo.cs" />
     <Compile Include="TL\Methods\Account\TLAccountChangePhone.cs" />
     <Compile Include="TL\Methods\Account\TLAccountCheckUsername.cs" />
+    <Compile Include="TL\Methods\Account\TLAccountConfirmPhone.cs" />
     <Compile Include="TL\Methods\Account\TLAccountDeleteAccount.cs" />
     <Compile Include="TL\Methods\Account\TLAccountGetAccountTTL.cs" />
     <Compile Include="TL\Methods\Account\TLAccountGetAuthorizations.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="TL\Methods\Account\TLAccountResetAuthorization.cs" />
     <Compile Include="TL\Methods\Account\TLAccountResetNotifySettings.cs" />
     <Compile Include="TL\Methods\Account\TLAccountSendChangePhoneCode.cs" />
+    <Compile Include="TL\Methods\Account\TLAccountSendConfirmPhoneCode.cs" />
     <Compile Include="TL\Methods\Account\TLAccountSetAccountTTL.cs" />
     <Compile Include="TL\Methods\Account\TLAccountSetPrivacy.cs" />
     <Compile Include="TL\Methods\Account\TLAccountUnregisterDevice.cs" />
@@ -207,6 +209,7 @@
     <Compile Include="TL\Methods\Contacts\TLContactsResolveUsername.cs" />
     <Compile Include="TL\Methods\Contacts\TLContactsSearch.cs" />
     <Compile Include="TL\Methods\Contacts\TLContactsUnblock.cs" />
+    <Compile Include="TL\Methods\Contest\TLContestSaveDeveloperInfo.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetAppChangelog.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetAppUpdate.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetConfig.cs" />
@@ -218,6 +221,7 @@
     <Compile Include="TL\Methods\Messages\TLMessagesAcceptEncryption.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesAddChatUser.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesCheckChatInvite.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesClearRecentStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesCreateChat.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesDeleteChatUser.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesDeleteHistory.cs" />
@@ -233,11 +237,13 @@
     <Compile Include="TL\Methods\Messages\TLMessagesForwardMessages.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetAllDrafts.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetAllStickers.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesGetArchivedStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetBotCallbackAnswer.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetChats.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetDHConfig.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetDialogs.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetDocumentByHash.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesGetFeaturedStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetFullChat.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetHistory.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetInlineBotResults.cs" />
@@ -246,15 +252,18 @@
     <Compile Include="TL\Methods\Messages\TLMessagesGetMessagesViews.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetPeerDialogs.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetPeerSettings.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesGetRecentStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetSavedGifs.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetStickerSet.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesGetUnusedStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetWebPagePreview.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesHideReportSpam.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesImportChatInvite.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesInstallStickerSet.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesMigrateChat.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesReadEncryptedHistory.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesReadFeaturedStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesReadHistory.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesReadMessageContents.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesReceivedMessages.cs" />
@@ -264,6 +273,7 @@
     <Compile Include="TL\Methods\Messages\TLMessagesRequestEncryption.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSaveDraft.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSaveGif.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesSaveRecentSticker.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSearch.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSearchGifs.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSearchGlobal.cs" />
@@ -285,7 +295,6 @@
     <Compile Include="TL\Methods\Photos\TLPhotosGetUserPhotos.cs" />
     <Compile Include="TL\Methods\Photos\TLPhotosUpdateProfilePhoto.cs" />
     <Compile Include="TL\Methods\Photos\TLPhotosUploadProfilePhoto.cs" />
-    <Compile Include="TL\Methods\Register\TLRegisterSaveDeveloperInfo.cs" />
     <Compile Include="TL\Methods\TLDestroySession.cs" />
     <Compile Include="TL\Methods\TLGetFutureSalts.cs" />
     <Compile Include="TL\Methods\TLInitConnection.cs" />
@@ -741,6 +750,7 @@
     <Compile Include="TL\TLMessagesAllStickers.cs" />
     <Compile Include="TL\TLMessagesAllStickersBase.cs" />
     <Compile Include="TL\TLMessagesAllStickersNotModified.cs" />
+    <Compile Include="TL\TLMessagesArchivedStickers.cs" />
     <Compile Include="TL\TLMessagesBotCallbackAnswer.cs" />
     <Compile Include="TL\TLMessagesBotResults.cs" />
     <Compile Include="TL\TLMessagesChannelMessages.cs" />
@@ -753,6 +763,9 @@
     <Compile Include="TL\TLMessagesDialogsBase.cs" />
     <Compile Include="TL\TLMessagesDialogsSlice.cs" />
     <Compile Include="TL\TLMessageService.cs" />
+    <Compile Include="TL\TLMessagesFeaturedStickers.cs" />
+    <Compile Include="TL\TLMessagesFeaturedStickersBase.cs" />
+    <Compile Include="TL\TLMessagesFeaturedStickersNotModified.cs" />
     <Compile Include="TL\TLMessagesFilterBase.cs" />
     <Compile Include="TL\TLMessagesFoundGifs.cs" />
     <Compile Include="TL\TLMessagesMessageEditData.cs" />
@@ -760,6 +773,9 @@
     <Compile Include="TL\TLMessagesMessagesBase.cs" />
     <Compile Include="TL\TLMessagesMessagesSlice.cs" />
     <Compile Include="TL\TLMessagesPeerDialogs.cs" />
+    <Compile Include="TL\TLMessagesRecentStickers.cs" />
+    <Compile Include="TL\TLMessagesRecentStickersBase.cs" />
+    <Compile Include="TL\TLMessagesRecentStickersNotModified.cs" />
     <Compile Include="TL\TLMessagesSavedGifs.cs" />
     <Compile Include="TL\TLMessagesSavedGifsBase.cs" />
     <Compile Include="TL\TLMessagesSavedGifsNotModified.cs" />
@@ -769,6 +785,9 @@
     <Compile Include="TL\TLMessagesStickers.cs" />
     <Compile Include="TL\TLMessagesStickersBase.cs" />
     <Compile Include="TL\TLMessagesStickerSet.cs" />
+    <Compile Include="TL\TLMessagesStickerSetInstallResultArchive.cs" />
+    <Compile Include="TL\TLMessagesStickerSetInstallResultBase.cs" />
+    <Compile Include="TL\TLMessagesStickerSetInstallResultSuccess.cs" />
     <Compile Include="TL\TLMessagesStickersNotModified.cs" />
     <Compile Include="TL\TLMsgDetailedInfo.cs" />
     <Compile Include="TL\TLMsgDetailedInfoBase.cs" />
@@ -851,6 +870,7 @@
     <Compile Include="TL\TLSetClientDHParamsAnswerBase.cs" />
     <Compile Include="TL\TLStickerPack.cs" />
     <Compile Include="TL\TLStickerSet.cs" />
+    <Compile Include="TL\TLStickerSetCovered.cs" />
     <Compile Include="TL\TLStorageFileGif.cs" />
     <Compile Include="TL\TLStorageFileJpeg.cs" />
     <Compile Include="TL\TLStorageFileMov.cs" />
@@ -908,9 +928,11 @@
     <Compile Include="TL\TLUpdatePrivacy.cs" />
     <Compile Include="TL\TLUpdateReadChannelInbox.cs" />
     <Compile Include="TL\TLUpdateReadChannelOutbox.cs" />
+    <Compile Include="TL\TLUpdateReadFeaturedStickers.cs" />
     <Compile Include="TL\TLUpdateReadHistoryInbox.cs" />
     <Compile Include="TL\TLUpdateReadHistoryOutbox.cs" />
     <Compile Include="TL\TLUpdateReadMessagesContents.cs" />
+    <Compile Include="TL\TLUpdateRecentStickers.cs" />
     <Compile Include="TL\TLUpdates.cs" />
     <Compile Include="TL\TLUpdateSavedGifs.cs" />
     <Compile Include="TL\TLUpdatesBase.cs" />

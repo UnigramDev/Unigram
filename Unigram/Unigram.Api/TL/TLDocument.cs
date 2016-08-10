@@ -11,6 +11,7 @@ namespace Telegram.Api.TL
 		public Int32 Size { get; set; }
 		public TLPhotoSizeBase Thumb { get; set; }
 		public Int32 DCId { get; set; }
+		public Int32 Version { get; set; }
 		public TLVector<TLDocumentAttributeBase> Attributes { get; set; }
 
 		public TLDocument() { }
@@ -30,12 +31,13 @@ namespace Telegram.Api.TL
 			Size = from.ReadInt32();
 			Thumb = TLFactory.Read<TLPhotoSizeBase>(from);
 			DCId = from.ReadInt32();
+			Version = from.ReadInt32();
 			Attributes = TLFactory.Read<TLVector<TLDocumentAttributeBase>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0xF9A39F4F);
+			to.Write(0x87232BC7);
 			to.Write(Id);
 			to.Write(AccessHash);
 			to.Write(Date);
@@ -43,6 +45,7 @@ namespace Telegram.Api.TL
 			to.Write(Size);
 			to.WriteObject(Thumb);
 			to.Write(DCId);
+			to.Write(Version);
 			to.WriteObject(Attributes);
 		}
 	}

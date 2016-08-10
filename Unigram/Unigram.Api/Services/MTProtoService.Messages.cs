@@ -211,7 +211,7 @@ namespace Telegram.Api.Services
 
         public Task<MTProtoResponse<bool>> InstallStickerSetAsync(TLInputStickerSetBase stickerset)
         {
-            return SendInformativeMessage<bool>("messages.installStickerSet", new TLMessagesInstallStickerSet { Stickerset = stickerset, Disabled = false });
+            return SendInformativeMessage<bool>("messages.installStickerSet", new TLMessagesInstallStickerSet { Stickerset = stickerset, Archived = false });
         }
 
         public Task<MTProtoResponse<bool>> UninstallStickerSetAsync(TLInputStickerSetBase stickerset)

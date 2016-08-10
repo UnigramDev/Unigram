@@ -13,14 +13,17 @@ namespace Telegram.Api.TL.Methods.Messages
 		{
 			Alert = (1 << 1),
 			Message = (1 << 0),
+			Url = (1 << 2),
 		}
 
 		public bool IsAlert { get { return Flags.HasFlag(Flag.Alert); } set { Flags = value ? (Flags | Flag.Alert) : (Flags & ~Flag.Alert); } }
 		public bool HasMessage { get { return Flags.HasFlag(Flag.Message); } set { Flags = value ? (Flags | Flag.Message) : (Flags & ~Flag.Message); } }
+		public bool HasUrl { get { return Flags.HasFlag(Flag.Url); } set { Flags = value ? (Flags | Flag.Url) : (Flags & ~Flag.Url); } }
 
 		public Flag Flags { get; set; }
 		public Int64 QueryId { get; set; }
 		public String Message { get; set; }
+		public String Url { get; set; }
 
 		public TLMessagesSetBotCallbackAnswer() { }
 		public TLMessagesSetBotCallbackAnswer(TLBinaryReader from, TLType type = TLType.MessagesSetBotCallbackAnswer)
@@ -35,14 +38,16 @@ namespace Telegram.Api.TL.Methods.Messages
 			Flags = (Flag)from.ReadInt32();
 			QueryId = from.ReadInt64();
 			if (HasMessage) { Message = from.ReadString(); }
+			if (HasUrl) { Url = from.ReadString(); }
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x481C591A);
+			to.Write(0xC927D44B);
 			to.Write((Int32)Flags);
 			to.Write(QueryId);
 			if (HasMessage) to.Write(Message);
+			if (HasUrl) to.Write(Url);
 		}
 	}
 }

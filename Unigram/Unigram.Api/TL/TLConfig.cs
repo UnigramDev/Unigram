@@ -25,6 +25,7 @@ namespace Telegram.Api.TL
 		public Int32 SavedGifsLimit { get; set; }
 		public Int32 EditTimeLimit { get; set; }
 		public Int32 RatingEDecay { get; set; }
+		public Int32 StickersRecentLimit { get; set; }
 		public TLVector<TLDisabledFeature> DisabledFeatures { get; set; }
 
 		public TLConfig() { }
@@ -57,12 +58,13 @@ namespace Telegram.Api.TL
 			SavedGifsLimit = from.ReadInt32();
 			EditTimeLimit = from.ReadInt32();
 			RatingEDecay = from.ReadInt32();
+			StickersRecentLimit = from.ReadInt32();
 			DisabledFeatures = TLFactory.Read<TLVector<TLDisabledFeature>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0xC9411388);
+			to.Write(0xF401A4BF);
 			to.Write(Date);
 			to.Write(Expires);
 			to.Write(TestMode);
@@ -83,6 +85,7 @@ namespace Telegram.Api.TL
 			to.Write(SavedGifsLimit);
 			to.Write(EditTimeLimit);
 			to.Write(RatingEDecay);
+			to.Write(StickersRecentLimit);
 			to.WriteObject(DisabledFeatures);
 		}
 	}

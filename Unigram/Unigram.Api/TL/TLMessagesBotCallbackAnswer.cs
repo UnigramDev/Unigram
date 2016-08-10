@@ -10,13 +10,16 @@ namespace Telegram.Api.TL
 		{
 			Alert = (1 << 1),
 			Message = (1 << 0),
+			Url = (1 << 2),
 		}
 
 		public bool IsAlert { get { return Flags.HasFlag(Flag.Alert); } set { Flags = value ? (Flags | Flag.Alert) : (Flags & ~Flag.Alert); } }
 		public bool HasMessage { get { return Flags.HasFlag(Flag.Message); } set { Flags = value ? (Flags | Flag.Message) : (Flags & ~Flag.Message); } }
+		public bool HasUrl { get { return Flags.HasFlag(Flag.Url); } set { Flags = value ? (Flags | Flag.Url) : (Flags & ~Flag.Url); } }
 
 		public Flag Flags { get; set; }
 		public String Message { get; set; }
+		public String Url { get; set; }
 
 		public TLMessagesBotCallbackAnswer() { }
 		public TLMessagesBotCallbackAnswer(TLBinaryReader from, TLType type = TLType.MessagesBotCallbackAnswer)
@@ -30,13 +33,15 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			if (HasMessage) { Message = from.ReadString(); }
+			if (HasUrl) { Url = from.ReadString(); }
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x1264F1C6);
+			to.Write(0xB10DF1FB);
 			to.Write((Int32)Flags);
 			if (HasMessage) to.Write(Message);
+			if (HasUrl) to.Write(Url);
 		}
 	}
 }
