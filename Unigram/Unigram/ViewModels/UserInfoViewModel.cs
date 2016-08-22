@@ -19,6 +19,7 @@ using Windows.Foundation.Metadata;
 using Windows.ApplicationModel.Calls;
 using System.Diagnostics;
 using Unigram.Views;
+using Windows.ApplicationModel.Contacts;
 
 namespace Unigram.ViewModels
 {
@@ -180,6 +181,68 @@ namespace Unigram.ViewModels
                 }
             }
         }
+
+        /// <summary>
+        /// Opens People Hub-dialog to the add selected user as a new Contact
+        /// </summary>
+        public RelayCommand AddContactCommand => new RelayCommand(AddContact);
+        private void AddContact()
+        {
+            var user = Item as TLUser;
+            if (user != null)
+            {
+                // Create the contact-card
+                Contact userContact = new Contact();
+                
+                // Check if the user has a normal name
+                if (user.FullName != "" || user.FullName != null)
+                {
+                    if (user.FirstName != null)
+                    {
+                        userContact.FirstName = user.FirstName;
+                    }
+                    if (user.LastName != null)
+                    {
+                        userContact.LastName = user.LastName;
+                    }
+                }
+                // if not, use username
+                else if (user.HasUsername != false)
+                {
+                    if (user.Username != null)
+                    {
+                        userContact.LastName = user.Username;
+                    }
+                }
+                // if all else fails, use phone number (where possible)
+                else if (user.HasPhone != false)
+                {
+                    if (user.Username != null)
+                    {
+                        userContact.LastName = user.Phone;
+                    }
+                }
+                // TODO Check why phone numbers are not being shown when the contact is not yet in the users People Hub
+                if (user.Phone != null)
+                {
+                    ContactPhone userPhone = new ContactPhone();
+                    userPhone.Number = user.Phone;
+                    userContact.Phones.Add(userPhone);
+                }
+                if (user.ProfilePhoto != null)
+                {
+                    // TODO Add user profile picture
+                }
+
+                // Set options for the Dialog-window
+                FullContactCardOptions options = new FullContactCardOptions();
+                options.DesiredRemainingView = Windows.UI.ViewManagement.ViewSizePreference.Default;
+
+                // Show the card
+                ContactManager.ShowFullContactCard(userContact, options);
+            }
+        }
+
 
         public RelayCommand BlockCommand => new RelayCommand(BlockExecute);
         private async void BlockExecute()

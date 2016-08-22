@@ -392,6 +392,7 @@
 
                             <controls:HyperButton
                                 Content="Add contact" 
+                                Command="{Binding AddContactCommand}"
                                 Style="{StaticResource HyperButtonStyle}"/>
 
                             <controls:HyperButton
