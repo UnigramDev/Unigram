@@ -25,6 +25,7 @@ using Windows.Foundation.Metadata;
 using LinqToVisualTree;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
+using Windows.Services.Maps;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -132,6 +133,18 @@ namespace Unigram.Views
                 userPos.Visible = true;
                 mMap.MapElements.Remove(userPos);
                 mMap.MapElements.Add(userPos);
+
+                // Get address for current location
+                var result = await MapLocationFinder.FindLocationsAtAsync(new Geopoint(new BasicGeoposition
+                {
+                    Latitude = pos.Coordinate.Latitude,
+                    Longitude = pos.Coordinate.Longitude
+                }));
+                if (result.Status == MapLocationFinderStatus.Success)
+                {
+                    string selectedAddress = result.Locations[0].Address.FormattedAddress;
+                    tblCurrentLocation.Text = selectedAddress;
+                }
 
                 // Other cases
                 // TO-DO When shit gets serious

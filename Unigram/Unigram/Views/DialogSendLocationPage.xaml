@@ -69,9 +69,9 @@
                                            TextAlignment="Center"
                                            FontSize="24"/>
                             </Border>
-                            <StackPanel Orientation="Vertical" Margin="0,3,0,0">
+                            <StackPanel Orientation="Vertical" Margin="0,4,12,0">
                                 <TextBlock Text="Send current position" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="Latitude, Longitude" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock x:Name="tblCurrentLocation" Text="Latitude, Longitude" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
                             </StackPanel>
                         </StackPanel>
 
