@@ -15,30 +15,39 @@
         </Grid.RowDefinitions>
         
         <!-- Titlebar -->
-        <StackPanel Orientation="Horizontal"
-                    Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-            <!--User icon-->
-            <Ellipse x:Name="elpTitleDialogIcon"
-                     Width="40"
-                     Height="40"
-                     Margin="8,0,8,0">
-                <Ellipse.Fill>
-                    <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
-                </Ellipse.Fill>
-            </Ellipse>
-            <StackPanel Orientation="Vertical"
-                        VerticalAlignment="Center">
-                <TextBlock x:Name="tblTitleDialogName"
-                           Text="BATMAN" 
-                           FontSize="16"
-                           Style="{StaticResource BaseTextBlockStyle}"/>
-                <TextBlock x:Name="tblTitleDialogStatus"
-                           Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
-                           FontSize="12"
-                           Text="Online" />
-            </StackPanel>
-        </StackPanel>
-        <!-- ENF OF Titlebar -->
+        <Button x:Name="btnDialogInfo"
+                Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                Padding="0"
+                Grid.Row="0">
+            <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                    <!--User icon-->
+                    <Ellipse x:Name="elpDialogIcon"
+                             Width="40"
+                             Height="40"
+                             Margin="12,0">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <StackPanel Orientation="Vertical"
+                                VerticalAlignment="Center">
+                        <TextBlock x:Name="tblDialogName"
+                                   Text="BATMAN" 
+                                   FontSize="16"
+                                   Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock x:Name="tblDialogStatus"
+                                   Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
+                                   FontSize="12"
+                                   Text="Online" />
+                    </StackPanel>
+                </StackPanel>
+            </Button.Content>
+        </Button>
+        <!-- END OF Titlebar -->
         
         <!-- Main content -->
         <RelativePanel Grid.Row="1">
@@ -50,8 +59,8 @@
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel GroupHeaderPlacement="Left"
-                                     ItemsUpdatingScrollMode="KeepLastItemInView"
-                                     VerticalAlignment="Bottom"/>
+                                         ItemsUpdatingScrollMode="KeepLastItemInView"
+                                         VerticalAlignment="Bottom"/>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
             </ListView>
