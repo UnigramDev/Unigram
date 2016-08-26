@@ -60,20 +60,31 @@
                                 BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                 BorderThickness="0,1,0,0">
                         <!-- Current Location -->
-                        <StackPanel Height="48" Orientation="Horizontal" Margin="0,8">
-                            <Border Height="40" Width="40" CornerRadius="36" Margin="12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-                                <TextBlock Text="" 
-                                           Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                           FontFamily="Segoe MDL2 Assets"
-                                           VerticalAlignment="Center"
-                                           TextAlignment="Center"
-                                           FontSize="24"/>
-                            </Border>
-                            <StackPanel Orientation="Vertical" Margin="0,4,12,0">
-                                <TextBlock Text="Send current position" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock x:Name="tblCurrentLocation" Text="Latitude, Longitude" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
-                            </StackPanel>
-                        </StackPanel>
+                        <Button x:Name="btnCurrentLocation"
+                                Background="Transparent"
+                                Padding="0"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch">
+                            <Button.Content>
+                                <StackPanel Height="48" Orientation="Horizontal" Margin="0,8">
+                                    <Border Height="40" Width="40" CornerRadius="36" Margin="12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                                        <TextBlock Text="" 
+                                                   Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                   FontFamily="Segoe MDL2 Assets"
+                                                   VerticalAlignment="Center"
+                                                   TextAlignment="Center"
+                                                   FontSize="24"/>
+                                    </Border>
+                                    <StackPanel Orientation="Vertical"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="Send current position" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                                        <TextBlock x:Name="tblCurrentLocation" Text="Getting your location..." TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+
 
                         <!-- Nearby header -->
                         <Border Height="32" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
