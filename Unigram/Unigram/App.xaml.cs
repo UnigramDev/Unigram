@@ -102,7 +102,7 @@ namespace Unigram
                     var localVoiceCommands = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///VoiceCommands/VoiceCommands.xml"));
                     await VoiceCommandDefinitionManager.InstallCommandDefinitionsFromStorageFileAsync(localVoiceCommands);
 
-                    NavigationService.Navigate(typeof(Views.MainPage), launch);
+                    NavigationService.Navigate(typeof(Views.DialogPage), launch);
                 }
             }
             else

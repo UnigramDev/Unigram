@@ -8,14 +8,184 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListView>
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel GroupHeaderPlacement="Left"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Titlebar -->
+        <StackPanel Orientation="Horizontal"
+                    Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+            <!--User icon-->
+            <Ellipse x:Name="elpTitleDialogIcon"
+                     Width="40"
+                     Height="40"
+                     Margin="8,0,8,0">
+                <Ellipse.Fill>
+                    <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
+                </Ellipse.Fill>
+            </Ellipse>
+            <StackPanel Orientation="Vertical"
+                        VerticalAlignment="Center">
+                <TextBlock x:Name="tblTitleDialogName"
+                           Text="BATMAN" 
+                           FontSize="16"
+                           Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock x:Name="tblTitleDialogStatus"
+                           Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
+                           FontSize="12"
+                           Text="Online" />
+            </StackPanel>
+        </StackPanel>
+        <!-- ENF OF Titlebar -->
+        
+        <!-- Main content -->
+        <RelativePanel Grid.Row="1">
+            <ListView x:Name="lvDialogs"
+                      RelativePanel.AlignLeftWithPanel="True"
+                      RelativePanel.AlignRightWithPanel="True"
+                      RelativePanel.AlignTopWithPanel="True"
+                      RelativePanel.Above="rpInput">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel GroupHeaderPlacement="Left"
                                      ItemsUpdatingScrollMode="KeepLastItemInView"
                                      VerticalAlignment="Bottom"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-        </ListView>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+            
+            
+            <!-- Input pane -->
+            <RelativePanel x:Name="rpInput"
+                           MinHeight="48"
+                           BorderThickness="0,2,0,0"
+                           BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
+                           Visibility="Visible"
+                           RelativePanel.AlignLeftWithPanel="True"
+                           RelativePanel.AlignRightWithPanel="True"
+                           RelativePanel.AlignBottomWithPanel="True">
+                <!-- Message input -->
+                <TextBox x:Name="txtMessage" 
+                         x:Uid="Chat-Input-Message"
+                         PlaceholderText="Type your message..."
+                         BorderThickness="0" 
+                         Padding="14" 
+                         TextWrapping="Wrap" 
+                         InputScope="Text" 
+                         IsSpellCheckEnabled="True"
+                         VerticalAlignment="Bottom" 
+                         VerticalContentAlignment="Bottom"
+                         MinHeight="48"
+                         MaxHeight="84"
+                         AcceptsReturn="True"
+                         TextChanging="txtMessage_TextChanging"
+                         RelativePanel.AlignLeftWithPanel="True"
+                         RelativePanel.AlignBottomWithPanel="True"
+                         RelativePanel.LeftOf="btnSendMessage" />
+                <!-- Send-button -->
+                <Button x:Name="btnSendMessage"  
+                        Visibility="Collapsed"
+                        IsEnabled="True"
+                        Width="48"
+                        MinHeight="48" 
+                        Background="{ThemeResource TelegramBackgroundAccentBrush}"                                      
+                        VerticalAlignment="Stretch"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        RelativePanel.AlignTopWithPanel="True"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True">
+                    <Button.Content>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" 
+                                   FontSize="20"
+                                   Text="&#xE122;"
+                                   RequestedTheme="Dark"/>
+                    </Button.Content>
+                </Button>
+
+                <!-- Voice Record-button -->
+                <Button x:Name="btnVoiceMessage"
+                        Visibility="Visible"
+                        Width="48"
+                        MinHeight="48" 
+                        Background="Transparent"                                      
+                        VerticalAlignment="Stretch"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        RelativePanel.AlignTopWithPanel="True"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True">
+                    <Button.Content>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" 
+                                   FontSize="20"
+                                   Text="&#xE1D6;"
+                                   RequestedTheme="Dark"/>
+                    </Button.Content>
+                </Button>
+            </RelativePanel>
+        </RelativePanel>
+        <!-- END OF Main content -->        
+        
+        <!-- Commandbar -->
+        <CommandBar x:Name="commandbar"
+                    Grid.Row="2">
+            <!-- Primary commands (visible in bar) -->
+            <CommandBar.PrimaryCommands>
+                <AppBarButton x:Name="cbtnAttachment"
+                              x:Uid="CBTN-Attachment"
+                              Icon="Attach"
+                              Label="Attachment">
+                    <!-- Attachment options -->
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <!-- Please try to add camera capabilities with the W10 file picker first
+                                        if that's not possible for all platforms, then enable the Camera-button here and 
+                                            write something for that -->
+                            <!--<MenuFlyoutItem x:Name="fcbtnAttachCamera"
+                                                x:Uid="FCBTN-Camera"
+                                                Text="Camera" />-->
+                            <MenuFlyoutItem x:Name="fcbtnAttachPhoto"
+                                            x:Uid="FCBTN-Photo"
+                                            Text="Photo" 
+                                            MinWidth="180"/>
+                            <MenuFlyoutItem x:Name="fcbtnAttachVideo"
+                                            x:Uid="FCBTN-Video"
+                                            Text="Video" />
+                            <MenuFlyoutItem x:Name="fcbtnAttachLocation"
+                                            x:Uid="FCBTN-Location"
+                                            Text="Location" />
+                            <MenuFlyoutItem x:Name="fcbtnAttachFile"
+                                            x:Uid="FCBTN-File"
+                                            Text="File" />
+                            <MenuFlyoutItem x:Name="fcbtnAttachContact"
+                                            x:Uid="FCBTN-Contact"
+                                            Text="Contact" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton x:Name="cbtnStickers"
+                              x:Uid="CBTN-Stickers"
+                              Icon="Emoji2"
+                              Label="Stickers" />
+            </CommandBar.PrimaryCommands>
+
+            <!-- Secondary Commands (hidden in sub menu) -->
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="cbtnReportSpam"
+                              x:Uid="CBTN-ReportSpam"
+                              Icon="ReportHacked"
+                              Label="Report spam" />
+                <AppBarButton x:Name="cbtnSearch"
+                              x:Uid="CBTN-Search"
+                              Icon="Find"
+                              Label="Search" />
+                <AppBarButton x:Name="cbtnPinToStart"
+                              x:Uid="CBTN-Pin"
+                              Icon="Pin"
+                              Label="Pin to Start"/>
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+        <!-- END OF - Commandbar -->
+
     </Grid>
 </Page>

@@ -13,18 +13,31 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
+
     public sealed partial class DialogPage : Page
     {
         public DialogPage()
         {
             this.InitializeComponent();
+        }
+
+        private void txtMessage_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
+        {
+            if (txtMessage.Text == "" || txtMessage.Text == null)
+            {
+                btnSendMessage.Visibility = Visibility.Collapsed;
+                btnVoiceMessage.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                btnVoiceMessage.Visibility = Visibility.Collapsed;
+                btnSendMessage.Visibility = Visibility.Visible;
+            }
+
+            // TODO Save text to draft if not being send
+
         }
     }
 }
