@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Core.Dependency;
+using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -18,8 +20,11 @@ namespace Unigram.Views
 
     public sealed partial class DialogPage : Page
     {
+        public DialogPageViewModel ViewModel => DataContext as DialogPageViewModel;
         public DialogPage()
         {
+            DataContext = UnigramContainer.Instance.ResolverType<DialogPageViewModel>();
+            
             this.InitializeComponent();
         }
 
@@ -38,6 +43,22 @@ namespace Unigram.Views
 
             // TODO Save text to draft if not being send
 
+        }
+
+        private void btnVoiceMessage_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnSendMessage_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.SendTextHolder = txtMessage.Text;
+        }
+
+        private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
+        {
+            var user = ViewModel.user;
+            ViewModel.NavigationService.Navigate(typeof(UserInfoPage), user);
         }
     }
 }
