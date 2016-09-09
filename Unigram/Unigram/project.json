@@ -1,6 +1,7 @@
 ﻿{
   "dependencies": {
     "HockeySDK.UWP": "4.1.1",
+    "Autofac": "3.5.2",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
     "MvvmLight": "5.3.0",
     "MvvmLightLibs": "5.3.0",
