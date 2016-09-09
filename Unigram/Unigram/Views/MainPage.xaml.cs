@@ -132,12 +132,12 @@ namespace Unigram.Views
                 var dialog = lvMasterChats.SelectedItem as TLDialog;
                 if (dialog.With is TLUserBase)
                 {
-                    ViewModel.NavigationService.Navigate(typeof(UserInfoPage), dialog.With);
+                    ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.With);
                 }
                 else if (dialog.With is TLChat)
                 {
                     var ciccio = dialog.With as TLChat;
-                    ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerChat { ChatId = ciccio.Id });
+                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChat { ChatId = ciccio.Id });
                 }
                 else if (dialog.With is TLChannel)
                 {

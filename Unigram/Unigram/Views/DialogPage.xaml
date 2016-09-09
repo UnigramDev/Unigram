@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
+    xmlns:vm="using:Unigram.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -21,7 +22,7 @@
                 VerticalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 Padding="0"
-                Grid.Row="0">
+                Grid.Row="0" Click="btnDialogInfo_Click">
             <Button.Content>
                 <StackPanel Orientation="Horizontal">
                     <!--User icon-->
@@ -36,7 +37,7 @@
                     <StackPanel Orientation="Vertical"
                                 VerticalAlignment="Center">
                         <TextBlock x:Name="tblDialogName"
-                                   Text="BATMAN" 
+                                   Text="{Binding Item.FullName}"
                                    FontSize="16"
                                    Style="{StaticResource BaseTextBlockStyle}"/>
                         <TextBlock x:Name="tblDialogStatus"
@@ -79,6 +80,7 @@
                 <TextBox x:Name="txtMessage" 
                          x:Uid="Chat-Input-Message"
                          PlaceholderText="Type your message..."
+                         Text="{Binding SendTextHolder, Mode=TwoWay}"
                          BorderThickness="0" 
                          Padding="14" 
                          TextWrapping="Wrap" 
@@ -95,16 +97,17 @@
                          RelativePanel.LeftOf="btnSendMessage" />
                 <!-- Send-button -->
                 <Button x:Name="btnSendMessage"  
-                        Visibility="Collapsed"
+                        Visibility="Visible"
                         IsEnabled="True"
                         Width="48"
+                       Command="{Binding SendCommand}"
                         MinHeight="48" 
                         Background="{ThemeResource TelegramBackgroundAccentBrush}"                                      
                         VerticalAlignment="Stretch"
                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
                         RelativePanel.AlignTopWithPanel="True"
                         RelativePanel.AlignBottomWithPanel="True"
-                        RelativePanel.AlignRightWithPanel="True">
+                        RelativePanel.AlignRightWithPanel="True" Click="btnSendMessage_Click">
                     <Button.Content>
                         <TextBlock FontFamily="Segoe MDL2 Assets" 
                                    FontSize="20"
@@ -115,19 +118,19 @@
 
                 <!-- Voice Record-button -->
                 <Button x:Name="btnVoiceMessage"
-                        Visibility="Visible"
+                        Visibility="Collapsed"
                         Width="48"
                         MinHeight="48" 
                         Background="Transparent"                                      
                         VerticalAlignment="Stretch"
                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
                         RelativePanel.AlignTopWithPanel="True"
-                        RelativePanel.AlignBottomWithPanel="True"
-                        RelativePanel.AlignRightWithPanel="True">
+                        RelativePanel.AlignBottomWithPanel="True"                        
+                        RelativePanel.AlignRightWithPanel="True" Click="btnVoiceMessage_Click">
                     <Button.Content>
                         <TextBlock FontFamily="Segoe MDL2 Assets" 
                                    FontSize="20"
-                                   Text="&#xE1D6;"
+                                   Text="&#xE720;"
                                    RequestedTheme="Dark"/>
                     </Button.Content>
                 </Button>
