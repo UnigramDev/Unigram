@@ -24,8 +24,13 @@ namespace Unigram.Views
         public DialogPage()
         {
             DataContext = UnigramContainer.Instance.ResolverType<DialogPageViewModel>();
-            
             this.InitializeComponent();
+            //         tblDialogName.Text = ViewModel.DialogTitle;
+
+        }
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
         }
 
         private void txtMessage_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
