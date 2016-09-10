@@ -53,6 +53,7 @@
         <!-- Main content -->
         <RelativePanel Grid.Row="1">
             <ListView x:Name="lvDialogs"
+                      ItemsSource="{x:Bind Path=ViewModel.ListX}"
                       RelativePanel.AlignLeftWithPanel="True"
                       RelativePanel.AlignRightWithPanel="True"
                       RelativePanel.AlignTopWithPanel="True"

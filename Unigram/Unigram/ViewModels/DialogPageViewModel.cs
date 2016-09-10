@@ -27,7 +27,9 @@ namespace Unigram.ViewModels
         int ChatType=-1;
         //0 if private, 1 if group, 2 if supergroup/channel
         int date;
+        public List<string> ListX= new List<string>();
         public string DialogTitle;
+        public string debug;
         public DialogPageViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
@@ -37,6 +39,17 @@ namespace Unigram.ViewModels
         public TLUser user;
         private TLUserBase _item;
         public TLUserBase Item
+        {
+            get
+            {
+                return _item;
+            }
+            set
+            {
+                Set(ref _item, value);
+            }
+        }
+        public TLUserBase Self
         {
             get
             {
@@ -74,6 +87,31 @@ namespace Unigram.ViewModels
             }
         }
 
+        private TLInputPeerBase _peerBase;
+        public TLInputPeerBase selfPeerBase
+        {
+            get
+            {
+                return _peerBase;
+            }
+            set
+            {
+                Set(ref _peerBase, value);
+            }
+        }
+        private TLPeerBase _inputpeerBase;
+        public TLPeerBase idPeerBase
+        {
+            get
+            {
+                return _inputpeerBase;
+            }
+            set
+            {
+                Set(ref _inputpeerBase, value);
+            }
+        }
+
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             channel = parameter as TLInputPeerChannel;
@@ -81,18 +119,31 @@ namespace Unigram.ViewModels
             user = parameter as TLUser;
             if (user != null)
             {
+                //Happy Birthday Alexmitter xD
+                ListX.Clear();
                 Item = user;
                 DialogTitle = Item.FullName;
+                TLPeerBase peer = new TLPeerUser { Id = SettingsHelper.UserId };
+                TLInputPeerBase inputPeer = new TLInputPeerUser { UserId = user.Id };
+                var x =await ProtoService.GetHistoryAsync(null, inputPeer, peer, false, 0,int.MaxValue, 10);
+                TLVector<TLMessageBase> y = x.Value.Messages;
+                string[] yy = new string[10];
+                foreach (var item in y)
+                {
+                    var xy = (TLMessage)item;
+                    ListX.Add(xy.Message);
+                }
                 ChatType = 0;
             }
             else if (channel != null)
             {
+
                 TLInputChannel x=new TLInputChannel();
                 x.ChannelId = channel.ChannelId;
                 x.AccessHash = channel.AccessHash;
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);
                 DialogTitle = channelDetails.Value.Chats[0].FullName;
-                channelItem = new TLPeerChannel { Id = channel.ChannelId};
+                channelItem = new TLPeerChannel { Id = channel.ChannelId };
                 ChatType = 2;
             }
             else if (chat != null)
@@ -102,6 +153,7 @@ namespace Unigram.ViewModels
                 chatItem = new TLPeerChat { Id = chat.ChatId };
                 ChatType = 1;
             }
+            ListX.Reverse();
         }
 
 
