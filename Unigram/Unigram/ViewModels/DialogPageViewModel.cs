@@ -126,13 +126,17 @@ namespace Unigram.ViewModels
                 DialogTitle = Item.FullName;
                 TLPeerBase peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 TLInputPeerBase inputPeer = new TLInputPeerUser { UserId = user.Id };
-                var x =await ProtoService.GetHistoryAsync(null, inputPeer, peer, false, 0,int.MaxValue, 10);
+                var x =await ProtoService.GetHistoryAsync(null, inputPeer, peer, false, 0,int.MaxValue, 35);
                 TLVector<TLMessageBase> y = x.Value.Messages;
                 string[] yy = new string[10];
                 foreach (var item in y)
                 {
                     var xy = (TLMessage)item;
-                    ListX.Add(xy.Message);
+                    var msg = xy.Message;
+                    var time = TLUtils.ToDateTime(xy.Date);
+                    var rec = xy.FromId; 
+                    ListX.Add(msg+"\n"+time.ToString()+"\n "+rec+"\n");
+
                 }
                 ChatType = 0;
             }
@@ -154,7 +158,7 @@ namespace Unigram.ViewModels
                 chatItem = new TLPeerChat { Id = chat.ChatId };
                 ChatType = 1;
             }
-            ListX.Reverse();
+            ListX = new ObservableCollection<string>(ListX.Reverse());
         }
 
 
