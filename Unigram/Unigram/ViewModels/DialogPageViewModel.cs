@@ -18,6 +18,7 @@ using Telegram.Api.Transport;
 using Telegram.Api.Services.Connection;
 using System.Threading;
 using GalaSoft.MvvmLight.Command;
+using System.Collections.ObjectModel;
 
 namespace Unigram.ViewModels
 {
@@ -27,7 +28,7 @@ namespace Unigram.ViewModels
         int ChatType=-1;
         //0 if private, 1 if group, 2 if supergroup/channel
         int date;
-        public List<string> ListX= new List<string>();
+        public ObservableCollection<string> ListX= new ObservableCollection<string>();
         public string DialogTitle;
         public string debug;
         public DialogPageViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
