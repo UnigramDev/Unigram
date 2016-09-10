@@ -37,7 +37,7 @@
                     <StackPanel Orientation="Vertical"
                                 VerticalAlignment="Center">
                         <TextBlock x:Name="tblDialogName"
-                                   Text="{Binding Item.FullName}"
+                                   Text="{x:Bind Path=ViewModel.DialogTitle}"
                                    FontSize="16"
                                    Style="{StaticResource BaseTextBlockStyle}"/>
                         <TextBlock x:Name="tblDialogStatus"

@@ -27,10 +27,11 @@ namespace Unigram.ViewModels
         int ChatType=-1;
         //0 if private, 1 if group, 2 if supergroup/channel
         int date;
+        public string DialogTitle;
         public DialogPageViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-
+            
         }
         public string SendTextHolder;
         public TLUser user;
@@ -81,20 +82,28 @@ namespace Unigram.ViewModels
             if (user != null)
             {
                 Item = user;
+                DialogTitle = Item.FullName;
                 ChatType = 0;
             }
             else if (channel != null)
             {
-                channelItem = new TLPeerChannel { Id = channel.ChannelId };
+                TLInputChannel x=new TLInputChannel();
+                x.ChannelId = channel.ChannelId;
+                x.AccessHash = channel.AccessHash;
+                var channelDetails = await ProtoService.GetFullChannelAsync(x);
+                DialogTitle = channelDetails.Value.Chats[0].FullName;
+                channelItem = new TLPeerChannel { Id = channel.ChannelId};
                 ChatType = 2;
             }
             else if (chat != null)
             {
+                var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
+                DialogTitle = chatDetails.Value.Chats[0].FullName;
                 chatItem = new TLPeerChat { Id = chat.ChatId };
                 ChatType = 1;
             }
-
         }
+
 
         public RelayCommand SendCommand => new RelayCommand(SendMessage);
         private async void SendMessage()
@@ -109,9 +118,6 @@ namespace Unigram.ViewModels
             var manualResetEvent = new ManualResetEvent(false);
             var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService);
             date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
-            //var toId = new TLPeerUser { Id = int.Parse(Item.Id.ToString()) };            
-            //   var toId1 = new TLPeerChat { Id=int.Parse(channelItem.Id.ToString())};
-            //TLPeerBase toId = null;
             TLMessage message = new TLMessage();
             switch (ChatType)
             {               
@@ -126,6 +132,7 @@ namespace Unigram.ViewModels
                     break;
             }
             await protoService.SendMessageAsync(message);
+            
         }
     }
 }
