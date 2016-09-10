@@ -52,20 +52,20 @@
         
         <!-- Main content -->
         <RelativePanel Grid.Row="1">
-            <ListView x:Name="lvDialogs"
+            <GridView x:Name="gvDialogs"
                       ItemsSource="{x:Bind Path=ViewModel.ListX}"
                       RelativePanel.AlignLeftWithPanel="True"
                       RelativePanel.AlignRightWithPanel="True"
                       RelativePanel.AlignTopWithPanel="True"
                       RelativePanel.Above="rpInput">
-                <ListView.ItemsPanel>
+                <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel GroupHeaderPlacement="Left"
                                          ItemsUpdatingScrollMode="KeepLastItemInView"
                                          VerticalAlignment="Bottom"/>
                     </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-            </ListView>
+                </GridView.ItemsPanel>
+            </GridView>
             
             
             <!-- Input pane -->
