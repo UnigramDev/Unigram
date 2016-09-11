@@ -58,6 +58,7 @@ namespace Unigram.Views
         private void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.SendTextHolder = txtMessage.Text;
+            txtMessage.Text = "";
         }
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)

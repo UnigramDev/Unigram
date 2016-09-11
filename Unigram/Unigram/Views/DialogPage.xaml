@@ -8,6 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <ContinuumNavigationTransitionInfo />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
@@ -53,6 +61,7 @@
         <!-- Main content -->
         <RelativePanel Grid.Row="1">
             <ListView x:Name="lvDialogs"
+                      ItemsSource="{x:Bind Path=ViewModel.ListX}"
                       RelativePanel.AlignLeftWithPanel="True"
                       RelativePanel.AlignRightWithPanel="True"
                       RelativePanel.AlignTopWithPanel="True"
@@ -61,7 +70,7 @@
                     <ItemsPanelTemplate>
                         <ItemsStackPanel GroupHeaderPlacement="Left"
                                          ItemsUpdatingScrollMode="KeepLastItemInView"
-                                         VerticalAlignment="Bottom"/>
+                                         VerticalAlignment="Bottom" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
             </ListView>
