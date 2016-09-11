@@ -25,19 +25,16 @@ namespace Telegram.Api.Services
 
             if (result.Error == null)
             {
-                if (channel.AdminsCount != null)
+                if (role is TLChannelRoleEmpty)
                 {
-                    if (role is TLChannelRoleEmpty)
-                    {
-                        channel.AdminsCount = channel.AdminsCount - 1;
-                    }
-                    else
-                    {
-                        channel.AdminsCount = channel.AdminsCount + 1;
-                    }
-
-                    _cacheService.Commit();
+                    channel.AdminsCount = channel.AdminsCount - 1;
                 }
+                else
+                {
+                    channel.AdminsCount = channel.AdminsCount + 1;
+                }
+
+                _cacheService.Commit();
             }
 
             return result;

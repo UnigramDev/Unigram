@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 using System.IO;
