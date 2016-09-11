@@ -160,6 +160,9 @@ namespace Unigram.ViewModels
                 x.AccessHash = channel.AccessHash;
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);
                 DialogTitle = channelDetails.Value.Chats[0].FullName;
+                peer = new TLPeerUser { Id = SettingsHelper.UserId };
+                inputPeer = new TLInputPeerChannel {ChannelId=x.ChannelId,AccessHash=x.AccessHash };
+                await FetchMessages(peer, inputPeer);
                 channelItem = new TLPeerChannel { Id = channel.ChannelId };
                 ChatType = 2;
             }
@@ -167,6 +170,9 @@ namespace Unigram.ViewModels
             {
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
                 DialogTitle = chatDetails.Value.Chats[0].FullName;
+                peer = new TLPeerUser { Id = SettingsHelper.UserId };
+                inputPeer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };
+                await FetchMessages(peer, inputPeer);
                 chatItem = new TLPeerChat { Id = chat.ChatId };
                 ChatType = 1;
             }
