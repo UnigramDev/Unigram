@@ -112,6 +112,7 @@ namespace Unigram
 
             ShowStatusBar();
             ColourTitleBar();
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
 
             await Toast.RegisterBackgroundTasks();
         }
