@@ -26,16 +26,21 @@ namespace Unigram.ViewModels
     public class DialogPageViewModel : UnigramViewModelBase
     {
         int ChatType=-1;
+        int counter = 0;
         //0 if private, 1 if group, 2 if supergroup/channel
         int date;
+        int loadCount =15;
+        int loaded = 0;
+        public TLPeerBase peer;
+        public TLInputPeerBase inputPeer;
         public ObservableCollection<string> ListX= new ObservableCollection<string>();
         public string DialogTitle;
         public string debug;
         public DialogPageViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            
         }
+
         public string SendTextHolder;
         public TLUser user;
         private TLUserBase _item;
@@ -112,9 +117,32 @@ namespace Unigram.ViewModels
                 Set(ref _inputpeerBase, value);
             }
         }
+       // public RelayCommand GetMessages => new RelayCommand(FetchMessages(TLPeerBase peer, TLInputPeerBase inputPeer));
+        public async Task FetchMessages(TLPeerBase peer, TLInputPeerBase inputPeer)
+        {
+            List<string> fetchedList = new List<string>();
+            var x = await ProtoService.GetHistoryAsync(null, inputPeer, peer, false, loaded, int.MaxValue, loadCount);
+            TLVector<TLMessageBase> y = x.Value.Messages;
+            foreach (var item in y)
+            {
+                
+                var xy = (TLMessage)item;
+                var msg = xy.Message;
+                var time = TLUtils.ToDateTime(xy.Date);
+                var rec = xy.FromId;
+                ListX.Insert(0, msg + "\n" + counter + "\n");
+                fetchedList.Add(msg + "\n" + counter + "\n");
+                counter++;
+            }
+            fetchedList.Reverse();
+            fetchedList =new List<string>(fetchedList.Concat(ListX));
+           // ListX = new ObservableCollection<string>(fetchedList);
+            loaded += loadCount;
+        }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            loaded = 0;
             channel = parameter as TLInputPeerChannel;
             chat = parameter as TLInputPeerChat;
             user = parameter as TLUser;
@@ -124,20 +152,10 @@ namespace Unigram.ViewModels
                 ListX.Clear();
                 Item = user;
                 DialogTitle = Item.FullName;
-                TLPeerBase peer = new TLPeerUser { Id = SettingsHelper.UserId };
-                TLInputPeerBase inputPeer = new TLInputPeerUser { UserId = user.Id };
-                var x =await ProtoService.GetHistoryAsync(null, inputPeer, peer, false, 0,int.MaxValue, 35);
-                TLVector<TLMessageBase> y = x.Value.Messages;
-                string[] yy = new string[10];
-                foreach (var item in y)
-                {
-                    var xy = (TLMessage)item;
-                    var msg = xy.Message;
-                    var time = TLUtils.ToDateTime(xy.Date);
-                    var rec = xy.FromId; 
-                    ListX.Add(msg+"\n"+time.ToString()+"\n "+rec+"\n");
-
-                }
+                peer = new TLPeerUser { Id = SettingsHelper.UserId };
+                inputPeer = new TLInputPeerUser { UserId = user.Id };
+                await FetchMessages(peer,inputPeer);
+                ListX = new ObservableCollection<string>(ListX.Reverse());
                 ChatType = 0;
             }
             else if (channel != null)

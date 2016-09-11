@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -21,16 +22,38 @@ namespace Unigram.Views
     public sealed partial class DialogPage : Page
     {
         public DialogPageViewModel ViewModel => DataContext as DialogPageViewModel;
+        public bool isLoading = false;
         public DialogPage()
         {
             DataContext = UnigramContainer.Instance.ResolverType<DialogPageViewModel>();
             this.InitializeComponent();
-            //         tblDialogName.Text = ViewModel.DialogTitle;
-
+            this.Loaded += DialogPage_Loaded;
+            
         }
+
+        private void DialogPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
+        }
+
+        private void LvScroller_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (lvDialogs.ScrollingHost.VerticalOffset == 0)
+                UpdateTask();
+            lvDialogs.ScrollingHost.UpdateLayout();
+        }
+
+        public async Task UpdateTask()
+        {
+            isLoading = true;
+            await ViewModel.FetchMessages(ViewModel.peer, ViewModel.inputPeer);
+            isLoading = false;
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+
         }
 
         private void txtMessage_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)

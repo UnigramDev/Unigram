@@ -110,6 +110,7 @@
     <Compile Include="Common\KeyedList.cs" />
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\ListCollectionView.cs" />
+    <Compile Include="Controls\CustomListViewer.cs" />
     <Compile Include="Controls\Items\DialogListViewItem.xaml.cs">
       <DependentUpon>DialogListViewItem.xaml</DependentUpon>
     </Compile>
