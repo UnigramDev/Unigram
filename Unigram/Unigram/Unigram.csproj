@@ -20,7 +20,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
     <PackageCertificateThumbprint>065F0B2E6BD36F1FD48AEA0B5546196B98A1546C</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -282,6 +282,7 @@
     <Content Include="Assets\Mockups\README.txt" />
     <Content Include="Assets\Mockups\UserIcons\user_batman.png" />
     <None Include="Package.StoreAssociation.xml" />
+    <Compile Include="ViewModels\TextFile1.cs" />
     <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>

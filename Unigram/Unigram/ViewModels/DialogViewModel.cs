@@ -117,7 +117,6 @@ namespace Unigram.ViewModels
                 Set(ref _inputpeerBase, value);
             }
         }
-       // public RelayCommand GetMessages => new RelayCommand(FetchMessages(TLPeerBase peer, TLInputPeerBase inputPeer));
         public async Task FetchMessages(TLPeerBase peer, TLInputPeerBase inputPeer)
         {
             List<string> fetchedList = new List<string>();
@@ -130,13 +129,9 @@ namespace Unigram.ViewModels
                 var msg = xy.Message;
                 var time = TLUtils.ToDateTime(xy.Date);
                 var rec = xy.FromId;
-                ListX.Insert(0, msg + "\n" + counter + "\n");
-                fetchedList.Add(msg + "\n" + counter + "\n");
+                ListX.Insert(0, msg + "\n" + time + "\n" + rec + "\n");
                 counter++;
             }
-            fetchedList.Reverse();
-            fetchedList =new List<string>(fetchedList.Concat(ListX));
-           // ListX = new ObservableCollection<string>(fetchedList);
             loaded += loadCount;
         }
 
@@ -155,7 +150,6 @@ namespace Unigram.ViewModels
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerUser { UserId = user.Id };
                 await FetchMessages(peer,inputPeer);
-                //ListX = new ObservableCollection<string>(ListX.Reverse());
                 ChatType = 0;
             }
             else if (channel != null)
@@ -176,7 +170,6 @@ namespace Unigram.ViewModels
                 chatItem = new TLPeerChat { Id = chat.ChatId };
                 ChatType = 1;
             }
-            //ListX = new ObservableCollection<string>(ListX.Reverse());
         }
 
 
@@ -184,10 +177,20 @@ namespace Unigram.ViewModels
         private async void SendMessage()
         {
             var messageText = SendTextHolder;
-            date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var deviceInfoService = new DeviceInfoService();
+            var eventAggregator = new TelegramEventAggregator();
+            var cacheService = new InMemoryCacheService(eventAggregator);
+            var updatesService = new UpdatesService(cacheService, eventAggregator);
+            var transportService = new TransportService();
+            var connectionService = new ConnectionService(deviceInfoService);
+            var manualResetEvent = new ManualResetEvent(false);
+            var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService);
+            date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
+            ListX.Insert(ListX.Count, messageText + "\n" + DateTime.Now.ToString() + "\n" + SettingsHelper.UserId+"\n");
             TLMessage message = new TLMessage();
             switch (ChatType)
-            {               
+            {
                 case 0:
                     message = TLUtils.GetMessage(SettingsHelper.UserId, new TLPeerUser { Id = int.Parse(Item.Id.ToString()) }, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
                     break;
@@ -195,11 +198,13 @@ namespace Unigram.ViewModels
                     message = TLUtils.GetMessage(SettingsHelper.UserId, new TLPeerChat { Id = int.Parse(chatItem.Id.ToString()) }, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
                     break;
                 case 2:
-                     message = TLUtils.GetMessage(SettingsHelper.UserId, new TLPeerChannel { Id = int.Parse(channelItem.Id.ToString()) }, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
+                    message = TLUtils.GetMessage(SettingsHelper.UserId, new TLPeerChannel { Id = int.Parse(channelItem.Id.ToString()) }, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
                     break;
             }
-            await ProtoService.SendMessageAsync(message);
-            
+
+
+            await protoService.SendMessageAsync(message);
+
         }
     }
 }
