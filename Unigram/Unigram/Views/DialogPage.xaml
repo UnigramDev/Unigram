@@ -80,17 +80,15 @@
                       RelativePanel.AlignRightWithPanel="True"
                       RelativePanel.AlignTopWithPanel="True"
                       RelativePanel.Above="rpInput">
-                <controls:CustomListViewer x:Name="lvDialogs"
-                      ItemsSource="{x:Bind Path=ViewModel.ListX}"
-                      >                    
+                <controls:BubbleListView x:Name="lvDialogs" ItemsSource="{x:Bind ViewModel.ListX}" >                    
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel GroupHeaderPlacement="Left"
-                                                  
-                                         VerticalAlignment="Bottom" />
+                                             ItemsUpdatingScrollMode="KeepLastItemInView"
+                                             VerticalAlignment="Bottom" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
-                </controls:CustomListViewer>
+                </controls:BubbleListView>
             </Grid>
             
             <!-- Input pane -->

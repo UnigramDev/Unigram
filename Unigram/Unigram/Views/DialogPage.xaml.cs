@@ -21,11 +21,11 @@ namespace Unigram.Views
 
     public sealed partial class DialogPage : Page
     {
-        public DialogPageViewModel ViewModel => DataContext as DialogPageViewModel;
+        public DialogViewModel ViewModel => DataContext as DialogViewModel;
         public bool isLoading = false;
         public DialogPage()
         {
-            DataContext = UnigramContainer.Instance.ResolverType<DialogPageViewModel>();
+            DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
             this.InitializeComponent();
             this.Loaded += DialogPage_Loaded;
             

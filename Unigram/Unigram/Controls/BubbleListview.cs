@@ -7,19 +7,19 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-   public class CustomListViewer: ListView
+   public class BubbleListView: ListView
     {
+        public ScrollViewer ScrollingHost { get; private set; }
 
-        public CustomListViewer()
+        public BubbleListView()
         {
             DefaultStyleKey = typeof(ListView);
-
         }
 
-        public ScrollViewer ScrollingHost { get; private set; }
         protected override void OnApplyTemplate()
         {
             ScrollingHost = (ScrollViewer)GetTemplateChild("ScrollViewer");
+
             base.OnApplyTemplate();
         }
     }

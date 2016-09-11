@@ -23,7 +23,7 @@ using System.Collections.ObjectModel;
 namespace Unigram.ViewModels
 {
 
-    public class DialogPageViewModel : UnigramViewModelBase
+    public class DialogViewModel : UnigramViewModelBase
     {
         int ChatType=-1;
         int counter = 0;
@@ -36,7 +36,7 @@ namespace Unigram.ViewModels
         public ObservableCollection<string> ListX= new ObservableCollection<string>();
         public string DialogTitle;
         public string debug;
-        public DialogPageViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
@@ -155,7 +155,7 @@ namespace Unigram.ViewModels
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerUser { UserId = user.Id };
                 await FetchMessages(peer,inputPeer);
-                ListX = new ObservableCollection<string>(ListX.Reverse());
+                //ListX = new ObservableCollection<string>(ListX.Reverse());
                 ChatType = 0;
             }
             else if (channel != null)
@@ -176,7 +176,7 @@ namespace Unigram.ViewModels
                 chatItem = new TLPeerChat { Id = chat.ChatId };
                 ChatType = 1;
             }
-            ListX = new ObservableCollection<string>(ListX.Reverse());
+            //ListX = new ObservableCollection<string>(ListX.Reverse());
         }
 
 
@@ -184,15 +184,7 @@ namespace Unigram.ViewModels
         private async void SendMessage()
         {
             var messageText = SendTextHolder;
-            var deviceInfoService = new DeviceInfoService();
-            var eventAggregator = new TelegramEventAggregator();
-            var cacheService = new InMemoryCacheService(eventAggregator);
-            var updatesService = new UpdatesService(cacheService, eventAggregator);
-            var transportService = new TransportService();
-            var connectionService = new ConnectionService(deviceInfoService);
-            var manualResetEvent = new ManualResetEvent(false);
-            var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService);
-            date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
+            date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             TLMessage message = new TLMessage();
             switch (ChatType)
             {               
@@ -206,7 +198,7 @@ namespace Unigram.ViewModels
                      message = TLUtils.GetMessage(SettingsHelper.UserId, new TLPeerChannel { Id = int.Parse(channelItem.Id.ToString()) }, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
                     break;
             }
-            await protoService.SendMessageAsync(message);
+            await ProtoService.SendMessageAsync(message);
             
         }
     }
