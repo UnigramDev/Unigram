@@ -76,11 +76,10 @@
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
             </GridView>-->
-            <Grid
-                RelativePanel.AlignLeftWithPanel="True"
-                      RelativePanel.AlignRightWithPanel="True"
-                      RelativePanel.AlignTopWithPanel="True"
-                      RelativePanel.Above="rpInput">
+            <Grid RelativePanel.AlignLeftWithPanel="True"
+                  RelativePanel.AlignRightWithPanel="True"
+                  RelativePanel.AlignTopWithPanel="True"
+                  RelativePanel.Above="rpInput">
                 <controls:BubbleListView x:Name="lvDialogs" ItemsSource="{x:Bind ViewModel.ListX}" >                    
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -98,16 +97,17 @@
                                     MaxWidth="450">
                                 <StackPanel Orientation="Vertical"
                                             Padding="8,6">
-                                    <Image Margin="0,0,0,6"
+                                    <TextBlock Text="{x:Bind FromId, Mode=OneWay, FallbackValue='from id'}"
+                                               Visibility="Visible"
+                                               TextWrapping="Wrap"
+                                               Margin="0,0,0,4"
+                                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                               RequestedTheme="Dark"/>
+                                    <Image Margin="0,0,0,4"
                                            Visibility="Collapsed"
                                            Source="ms-appx:///Assets/Mockups/Images/userPhoto.jpg"/>
                                     <TextBlock Text="{x:Bind Message, Mode=OneWay, FallbackValue='message'}"
                                                TextWrapping="Wrap"
-                                               RequestedTheme="Dark"/>
-                                    <TextBlock Text="{x:Bind FromId, Mode=OneWay, FallbackValue='from id'}"
-                                               Visibility="Collapsed"
-                                               TextWrapping="Wrap"
-                                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                                RequestedTheme="Dark"/>
                                     <StackPanel Orientation="Horizontal" 
                                                 HorizontalAlignment="Right">
