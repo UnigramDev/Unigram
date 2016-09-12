@@ -24,20 +24,19 @@
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
             <StackPanel Margin="0,12">
-                <Border Background="#7f89a0b4" HorizontalAlignment="Center" Padding="12,5,12,6">
-                    <!--<TextBlock Text="{Binding Converter={StaticResource ServiceMessageToTextConverter}}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>-->
+                <!--<Border Background="#7f89a0b4" HorizontalAlignment="Center" Padding="12,5,12,6">
                     <RichTextBlock common:ServiceHelper.Message="{Binding}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
                 </Border>
 
                 <Border Visibility="{Binding Action.Photo, Converter={StaticResource ExistsToVisibilityConverter}}" Width="96" Height="96" Margin="0,8,0,0">
                     <controls:ImageControl TelegramSource="{Binding Action.Photo}" Stretch="UniformToFill"/>
-                </Border>
+                </Border>-->
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="UnreadMessageTemplate">
             <Border Background="#7f89a0b4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12" RenderTransformOrigin="0.5,0.5">
-                <TextBlock Text="{Binding Converter={StaticResource ServiceMessageToTextConverter}}" Foreground="White" Style="{ThemeResource BodyTextBlockStyle}"/>
+                <!--<TextBlock Text="{Binding Converter={StaticResource ServiceMessageToTextConverter}}" Foreground="White" Style="{ThemeResource BodyTextBlockStyle}"/>-->
             </Border>
         </DataTemplate>
         <!-- EndRegion -->
