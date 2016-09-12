@@ -154,6 +154,7 @@
     <Compile Include="ViewModels\LoginPhoneNumberViewModel.cs" />
     <Compile Include="ViewModels\LoginWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\MessageModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\UserInfoViewModel.cs" />
     <Compile Include="ViewModels\UserPhotosViewModel.cs" />

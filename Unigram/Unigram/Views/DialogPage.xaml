@@ -88,6 +88,13 @@
                                              VerticalAlignment="Bottom" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:MessageModel">
+                            <Grid>
+                                <TextBlock Text="{x:Bind Message, Mode=OneWay, FallbackValue='message'}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </controls:BubbleListView>
             </Grid>
             
