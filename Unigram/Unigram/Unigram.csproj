@@ -148,6 +148,7 @@
     <Compile Include="Helpers\ShareTargetHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Selectors\MessageStyleSelector.cs" />
+    <Compile Include="Selectors\MessageTemplateSelector.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
     <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />
