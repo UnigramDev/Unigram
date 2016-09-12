@@ -5,6 +5,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:local="using:Unigram.Views"
     xmlns:vm="using:Unigram.ViewModels"
+    xmlns:vmc="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -89,7 +90,7 @@
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="vm:MessageModel">
+                        <DataTemplate x:DataType="vmc:TLMessage">
                             <Border Background="{StaticResource TelegramBackgroundMessageBubbleBrush}"
                                     Margin="8"
                                     MinHeight="36"
@@ -103,7 +104,8 @@
                                     <TextBlock Text="{x:Bind Message, Mode=OneWay, FallbackValue='message'}"
                                                TextWrapping="Wrap"
                                                RequestedTheme="Dark"/>
-                                    <TextBlock Text="{x:Bind SenderId, Mode=OneWay, FallbackValue='sender id'}"
+                                    <TextBlock Text="{x:Bind FromId, Mode=OneWay, FallbackValue='from id'}"
+                                               Visibility="Collapsed"
                                                TextWrapping="Wrap"
                                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                                RequestedTheme="Dark"/>
