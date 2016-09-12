@@ -202,7 +202,6 @@ namespace Unigram.ViewModels
             var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
 
             ListX.Insert(ListX.Count, message);
-            await ProtoService.SendMessageAsync(message);
 
             CacheService.SyncSendingMessage(message, null, toId, async (m) =>
             {
