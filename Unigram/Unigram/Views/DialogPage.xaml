@@ -83,7 +83,6 @@
                 <controls:BubbleListView x:Name="lvDialogs" ItemsSource="{x:Bind ViewModel.ListX}" >
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         </Style>
                     </ListView.ItemContainerStyle>
@@ -96,31 +95,29 @@
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="vmc:TLMessage">
-                            <Grid
-                                MinHeight="36"
-                                MinWidth="200"
-                                MaxWidth="400"
-                                HorizontalAlignment="Right">
-                                <Border Background="{StaticResource TelegramBackgroundMessageBubbleBrush}"
+                            <Border Background="{StaticResource TelegramBackgroundMessageBubbleBrush}"
                                     Margin="8"
+                                    MinHeight="36"
+                                    MinWidth="200"
+                                    MaxWidth="400"
                                     >
-                                    <StackPanel Orientation="Vertical"
+                                <StackPanel Orientation="Vertical"
                                             Padding="8,6">
-                                        <TextBlock Text="{x:Bind FromId, Mode=OneWay, FallbackValue='from id'}"
+                                    <TextBlock Text="{x:Bind FromId, Mode=OneWay, FallbackValue='from id'}"
                                                Visibility="Visible"
                                                TextWrapping="Wrap"
                                                Margin="0,0,0,4"
                                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                                RequestedTheme="Dark"/>
-                                        <Image Margin="0,0,0,4"
+                                    <Image Margin="0,0,0,4"
                                            Visibility="Collapsed"
                                            Source="ms-appx:///Assets/Mockups/Images/userPhoto.jpg"/>
-                                        <TextBlock Text="{x:Bind Message, Mode=OneWay, FallbackValue='message'}"
+                                    <TextBlock Text="{x:Bind Message, Mode=OneWay, FallbackValue='message'}"
                                                TextWrapping="Wrap"
                                                RequestedTheme="Dark"/>
-                                        <StackPanel Orientation="Horizontal" 
+                                    <StackPanel Orientation="Horizontal" 
                                                 HorizontalAlignment="Right">
-                                            <FontIcon x:Name="StateIcon"
+                                        <FontIcon x:Name="StateIcon"
                                                   Visibility="Collapsed"
                                                   Glyph="&#xE601;" 
                                                   FontFamily="{ThemeResource TelegramThemeFontFamily}"
@@ -129,13 +126,12 @@
                                                   Height="10"
                                                   Width="18"
                                                   Margin="0,0,4,0"/>
-                                            <TextBlock Text="{x:Bind Date, Mode=OneWay, FallbackValue='date'}"
+                                        <TextBlock Text="{x:Bind Date, Mode=OneWay, FallbackValue='date'}"
                                                    RequestedTheme="Dark"
                                                    Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        </StackPanel>
                                     </StackPanel>
-                                </Border>
-                            </Grid>
+                                </StackPanel>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </controls:BubbleListView>
