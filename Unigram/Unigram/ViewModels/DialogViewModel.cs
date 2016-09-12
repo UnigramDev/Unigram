@@ -28,7 +28,6 @@ namespace Unigram.ViewModels
         int ChatType=-1;
         int counter = 0;
         //0 if private, 1 if group, 2 if supergroup/channel
-        int date;
         int loadCount =15;
         int loaded = 0;
         public TLPeerBase peer;
@@ -184,31 +183,31 @@ namespace Unigram.ViewModels
         {
             var messageText = SendTextHolder;
 
-            var deviceInfoService = new DeviceInfoService();
-            var eventAggregator = new TelegramEventAggregator();
-            var cacheService = new InMemoryCacheService(eventAggregator);
-            var updatesService = new UpdatesService(cacheService, eventAggregator);
-            var transportService = new TransportService();
-            var connectionService = new ConnectionService(deviceInfoService);
-            var manualResetEvent = new ManualResetEvent(false);
-            var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService);
-            date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
-            TLMessage message = new TLMessage();
+            TLPeerBase toId = null;
+
             switch (ChatType)
             {
                 case 0:
-                    message = TLUtils.GetMessage(SettingsHelper.UserId, new TLPeerUser { Id = int.Parse(Item.Id.ToString()) }, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
+                    toId = new TLPeerUser { Id = int.Parse(Item.Id.ToString()) };
                     break;
                 case 1:
-                    message = TLUtils.GetMessage(SettingsHelper.UserId, new TLPeerChat { Id = int.Parse(chatItem.Id.ToString()) }, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
+                    toId = new TLPeerChat { Id = int.Parse(chatItem.Id.ToString()) };
                     break;
                 case 2:
-                    message = TLUtils.GetMessage(SettingsHelper.UserId, new TLPeerChannel { Id = int.Parse(channelItem.Id.ToString()) }, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
+                    toId = new TLPeerChannel { Id = int.Parse(channelItem.Id.ToString()) };
                     break;
             }
-            ListX.Insert(ListX.Count, message);
-            await protoService.SendMessageAsync(message);
 
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
+
+            ListX.Insert(ListX.Count, message);
+            await ProtoService.SendMessageAsync(message);
+
+            CacheService.SyncSendingMessage(message, null, toId, async (m) =>
+            {
+                await ProtoService.SendMessageAsync(message);
+            });
         }
     }
 }
