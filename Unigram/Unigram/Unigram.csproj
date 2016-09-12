@@ -111,6 +111,7 @@
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\ListCollectionView.cs" />
     <Compile Include="Controls\BubbleListView.cs" />
+    <Compile Include="Controls\BubbleListViewItem.cs" />
     <Compile Include="Controls\Items\DialogListViewItem.xaml.cs">
       <DependentUpon>DialogListViewItem.xaml</DependentUpon>
     </Compile>
@@ -146,6 +147,7 @@
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\ShareTargetHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Selectors\MessageStyleSelector.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
     <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />

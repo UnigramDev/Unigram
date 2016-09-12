@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
@@ -21,6 +22,11 @@ namespace Unigram.Controls
             ScrollingHost = (ScrollViewer)GetTemplateChild("ScrollViewer");
 
             base.OnApplyTemplate();
+        }
+
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new BubbleListViewItem(this);
         }
     }
 }
