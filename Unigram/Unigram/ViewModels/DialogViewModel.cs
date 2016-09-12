@@ -32,7 +32,7 @@ namespace Unigram.ViewModels
         int loaded = 0;
         public TLPeerBase peer;
         public TLInputPeerBase inputPeer;
-        public ObservableCollection<TLMessage> ListX= new ObservableCollection<TLMessage>();
+        public ObservableCollection<TLMessageBase> Messages= new ObservableCollection<TLMessageBase>();
         public string DialogTitle;
         public string debug;
         public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
@@ -104,16 +104,16 @@ namespace Unigram.ViewModels
                 Set(ref _peerBase, value);
             }
         }
-        private TLPeerBase _inputpeerBase;
-        public TLPeerBase idPeerBase
+        private TLInputPeerBase _peer;
+        public TLInputPeerBase Peer
         {
             get
             {
-                return _inputpeerBase;
+                return _peer;
             }
             set
             {
-                Set(ref _inputpeerBase, value);
+                Set(ref _peer, value);
             }
         }
         public async Task FetchMessages(TLPeerBase peer, TLInputPeerBase inputPeer)
@@ -127,7 +127,7 @@ namespace Unigram.ViewModels
                // if (xy.Id == SettingsHelper.UserId)
                     //set the thing to right alignment
                 //var time = TLUtils.ToDateTime(xy.Date);
-                ListX.Insert(0, xy);
+                Messages.Insert(0, xy);
 
                 counter++;
             }
@@ -143,11 +143,12 @@ namespace Unigram.ViewModels
             if (user != null)
             {
                 //Happy Birthday Alexmitter xD
-                ListX.Clear();
+                Messages.Clear();
                 Item = user;
                 DialogTitle = Item.FullName;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerUser { UserId = user.Id };
+                Peer = new TLInputPeerUser { UserId = user.Id };
                 await FetchMessages(peer,inputPeer);
                 ChatType = 0;
             }
@@ -160,7 +161,8 @@ namespace Unigram.ViewModels
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);
                 DialogTitle = channelDetails.Value.Chats[0].FullName;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
-                inputPeer = new TLInputPeerChannel {ChannelId=x.ChannelId,AccessHash=x.AccessHash };
+                inputPeer = new TLInputPeerChannel { ChannelId = x.ChannelId, AccessHash = x.AccessHash };
+                Peer = new TLInputPeerChannel { ChannelId = x.ChannelId, AccessHash = x.AccessHash };
                 await FetchMessages(peer, inputPeer);
                 channelItem = new TLPeerChannel { Id = channel.ChannelId };
                 ChatType = 2;
@@ -171,6 +173,7 @@ namespace Unigram.ViewModels
                 DialogTitle = chatDetails.Value.Chats[0].FullName;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };
+                Peer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };
                 await FetchMessages(peer, inputPeer);
                 chatItem = new TLPeerChat { Id = chat.ChatId };
                 ChatType = 1;
@@ -179,7 +182,7 @@ namespace Unigram.ViewModels
 
 
         public RelayCommand SendCommand => new RelayCommand(SendMessage);
-        private async void SendMessage()
+        private void SendMessage()
         {
             var messageText = SendTextHolder;
 
@@ -200,13 +203,143 @@ namespace Unigram.ViewModels
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
+            var previousMessage = InsertSendingMessage(message);
 
-            ListX.Insert(ListX.Count, message);
-
-            CacheService.SyncSendingMessage(message, null, toId, async (m) =>
+            CacheService.SyncSendingMessage(message, previousMessage, toId, async (m) =>
             {
                 await ProtoService.SendMessageAsync(message);
             });
+        }
+
+        private TLMessageBase InsertSendingMessage(TLMessage message, bool useReplyMarkup = false)
+        {
+            TLMessageBase result;
+            if (Messages.Count > 0)
+            {
+                //if (useReplyMarkup && _replyMarkupMessage != null)
+                //{
+                //    var chat = With as TLChatBase;
+                //    if (chat != null)
+                //    {
+                //        message.ReplyToMsgId = _replyMarkupMessage.Id;
+                //        message.Reply = _replyMarkupMessage;
+                //    }
+
+                //    Execute.BeginOnUIThread(() =>
+                //    {
+                //        if (Reply != null)
+                //        {
+                //            Reply = null;
+                //            SetReplyMarkup(null);
+                //        }
+                //    });
+                //}
+
+                //var messagesContainer = Reply as TLMessagesContainter;
+                //if (Reply != null)
+                //{
+                //    if (Reply.Index != 0)
+                //    {
+                //        message.ReplyToMsgId = Reply.Id;
+                //        message.Reply = Reply;
+                //    }
+                //    else if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
+                //    {
+                //        message.Reply = Reply;
+                //    }
+
+                //    var tLMessage = Reply as TLMessage31;
+                //    if (tLMessage != null)
+                //    {
+                //        var replyMarkup = tLMessage.ReplyMarkup;
+                //        if (replyMarkup != null)
+                //        {
+                //            replyMarkup.HasResponse = true;
+                //        }
+                //    }
+
+                //    Execute.BeginOnUIThread(delegate
+                //    {
+                //        Reply = null;
+                //    });
+                //}
+
+                result = Messages.LastOrDefault();
+                Messages.Add(message);
+
+                //if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
+                //{
+                //    foreach (var fwdMessage in messagesContainer.FwdMessages)
+                //    {
+                //        Messages.Insert(0, fwdMessage);
+                //    }
+                //}
+
+                //for (int i = 1; i < Messages.Count; i++)
+                //{
+                //    var serviceMessage = Messages[i] as TLMessageService;
+                //    if (serviceMessage != null)
+                //    {
+                //        var unreadAction = serviceMessage.Action as TLMessageActionUnreadMessages;
+                //        if (unreadAction != null)
+                //        {
+                //            Messages.RemoveAt(i);
+                //            break;
+                //        }
+                //    }
+                //}
+            }
+            else
+            {
+                //var messagesContainer = Reply as TLMessagesContainter;
+                //if (Reply != null)
+                //{
+                //    if (Reply.Index != 0)
+                //    {
+                //        message.ReplyToMsgId = Reply.Id;
+                //        message.Reply = Reply;
+                //    }
+                //    else if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
+                //    {
+                //        message.Reply = Reply;
+                //    }
+                //    Reply = null;
+                //}
+
+                Messages.Clear();
+                Messages.Add(message);
+
+                var history = CacheService.GetHistory(ProtoService.CurrentUserId, TLUtils.InputPeerToPeer(Peer, ProtoService.CurrentUserId), 15);
+                result = history.FirstOrDefault();
+
+                for (int j = 0; j < history.Count; j++)
+                {
+                    Messages.Add(history[j]);
+                }
+
+                //if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
+                //{
+                //    foreach (var fwdMessage in messagesContainer.FwdMessages)
+                //    {
+                //        Messages.Insert(0, fwdMessage);
+                //    }
+                //}
+
+                //for (int k = 1; k < Messages.Count; k++)
+                //{
+                //    var serviceMessage = Messages[k] as TLMessageService;
+                //    if (serviceMessage != null)
+                //    {
+                //        var unreadAction = serviceMessage.Action as TLMessageActionUnreadMessages;
+                //        if (unreadAction != null)
+                //        {
+                //            Messages.RemoveAt(k);
+                //            break;
+                //        }
+                //    }
+                //}
+            }
+            return result;
         }
     }
 }

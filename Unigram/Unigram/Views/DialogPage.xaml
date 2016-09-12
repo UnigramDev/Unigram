@@ -80,7 +80,7 @@
                   RelativePanel.AlignRightWithPanel="True"
                   RelativePanel.AlignTopWithPanel="True"
                   RelativePanel.Above="rpInput">
-                <controls:BubbleListView x:Name="lvDialogs" ItemsSource="{x:Bind ViewModel.ListX}" >
+                <controls:BubbleListView x:Name="lvDialogs" ItemsSource="{x:Bind ViewModel.Messages}" >
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
