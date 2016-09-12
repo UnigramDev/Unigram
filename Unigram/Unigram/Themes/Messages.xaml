@@ -1,0 +1,118 @@
+﻿<ResourceDictionary
+    x:Class="Unigram.Themes.Messages"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Themes"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <DataTemplate x:Key="UserStickerTemplate">
+        <Grid Margin="0,8">
+            <!--<Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Border Visibility="{Binding ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,0" Margin="0,0,12,0">
+                <ContentControl
+                    Content="{Binding ReplyInfo}" 
+                    ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                    common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
+                    common:Attached.RequestedTheme="HighContrast"
+                    RequestedTheme="Dark"/>
+            </Border>
+
+            <Grid Grid.Column="1">
+                <common:FlyoutHelper.AttachedFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Command="{Binding Dialog.MessageReplyCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Reply, Source={StaticResource Resources}}"/>
+                        <MenuFlyoutItem Text="{Binding Strings.Forward, Source={StaticResource Resources}}"/>
+                        <MenuFlyoutItem Command="{Binding Dialog.MessageDeleteCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Delete, Source={StaticResource Resources}}"/>
+                        <MenuFlyoutItem Command="{Binding Dialog.StickerAddCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.AddToStickers, Source={StaticResource Resources}}" common:FlyoutHelper.IsSticker="True"/>
+                    </MenuFlyout>
+                </common:FlyoutHelper.AttachedFlyout>
+                <controls:StickerControl TelegramSource="{Binding Media.Document}" MaxWidth="256" MaxHeight="256" Margin="2"/>
+
+                <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                        <FontIcon Glyph="{Binding Status, Converter={StaticResource StatusToImageConverter}}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="White" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
+                    </StackPanel>
+                </Border>
+            </Grid>-->
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FriendStickerTemplate">
+        <Grid Margin="0,8">
+            <!--<Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <common:FlyoutHelper.AttachedFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Command="{Binding Dialog.MessageReplyCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Reply, Source={StaticResource Resources}}"/>
+                        <MenuFlyoutItem Text="{Binding Strings.Forward, Source={StaticResource Resources}}"/>
+                        <MenuFlyoutItem Command="{Binding Dialog.MessageDeleteCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Delete, Source={StaticResource Resources}}"/>
+                        <MenuFlyoutItem Command="{Binding Dialog.StickerAddCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.AddToStickers, Source={StaticResource Resources}}" common:FlyoutHelper.IsSticker="True"/>
+                    </MenuFlyout>
+                </common:FlyoutHelper.AttachedFlyout>
+                <controls:StickerControl TelegramSource="{Binding Media.Document}" MaxWidth="256" MaxHeight="256" Margin="2"/>
+
+                <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                    <TextBlock Text="{Binding Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                </Border>
+            </Grid>
+
+            <Border Visibility="{Binding ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
+                <ContentControl
+                    Content="{Binding ReplyInfo}" 
+                    ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                    common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
+                    common:Attached.RequestedTheme="HighContrast"
+                    RequestedTheme="Dark"/>
+            </Border>-->
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ChatFriendStickerTemplate">
+        <Grid Margin="0,8">
+            <!--<Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Background="{Binding From.Index, Converter={StaticResource IndexToBackgroundConverter}}" Width="32" Height="32" VerticalAlignment="Bottom" Margin="0,0,8,2">
+                <TextBlock Text="{Binding From, Converter={StaticResource UserToBackgroundConverter}}" Foreground="White" TextAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0" TextWrapping="NoWrap" FontSize="18" Style="{ThemeResource TitleTextBlockStyle}"/>
+                <controls:ImageControl TelegramSource="{Binding From.Photo}"/>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <common:FlyoutHelper.AttachedFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Command="{Binding Dialog.MessageReplyCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Reply, Source={StaticResource Resources}}"/>
+                        <MenuFlyoutItem Text="{Binding Strings.Forward, Source={StaticResource Resources}}"/>
+                        <MenuFlyoutItem Command="{Binding Dialog.MessageDeleteCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Delete, Source={StaticResource Resources}}"/>
+                        <MenuFlyoutItem Command="{Binding Dialog.StickerAddCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.AddToStickers, Source={StaticResource Resources}}" common:FlyoutHelper.IsSticker="True"/>
+                    </MenuFlyout>
+                </common:FlyoutHelper.AttachedFlyout>
+                <controls:StickerControl TelegramSource="{Binding Media.Document}" MaxWidth="256" MaxHeight="256" Margin="2"/>
+
+                <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                    <TextBlock Text="{Binding Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                </Border>
+            </Grid>
+
+            <Border Visibility="{Binding ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="2">
+                <ContentControl
+                    Content="{Binding ReplyInfo}" 
+                    ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                    common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
+                    common:Attached.RequestedTheme="HighContrast"
+                    RequestedTheme="Dark"/>
+            </Border>-->
+        </Grid>
+    </DataTemplate>
+
+</ResourceDictionary>

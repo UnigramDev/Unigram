@@ -112,6 +112,9 @@
     <Compile Include="Common\ListCollectionView.cs" />
     <Compile Include="Controls\BubbleListView.cs" />
     <Compile Include="Controls\BubbleListViewItem.cs" />
+    <Compile Include="Controls\Items\ChatFriendMessageControl.xaml.cs">
+      <DependentUpon>ChatFriendMessageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Items\DialogListViewItem.xaml.cs">
       <DependentUpon>DialogListViewItem.xaml</DependentUpon>
     </Compile>
@@ -120,8 +123,14 @@
     <Compile Include="Controls\InputDialog.xaml.cs">
       <DependentUpon>InputDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Items\FriendMessageControl.xaml.cs">
+      <DependentUpon>FriendMessageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Items\SharedFileListViewItem.xaml.cs">
       <DependentUpon>SharedFileListViewItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Items\UserMessageControl.xaml.cs">
+      <DependentUpon>UserMessageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MasterDetailView.cs" />
     <Compile Include="Controls\PhotosView.xaml.cs">
@@ -149,6 +158,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Selectors\MessageStyleSelector.cs" />
     <Compile Include="Selectors\MessageTemplateSelector.cs" />
+    <Compile Include="Themes\Messages.xaml.cs">
+      <DependentUpon>Messages.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
     <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />
@@ -298,6 +310,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Page Include="Controls\Items\ChatFriendMessageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Items\DialogListViewItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -306,7 +322,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Items\FriendMessageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Items\SharedFileListViewItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Items\UserMessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -336,6 +360,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Themes\Messages.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\AboutPage.xaml">
       <Generator>MSBuild:Compile</Generator>

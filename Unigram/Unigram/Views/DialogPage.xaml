@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Unigram.Controls"
     xmlns:local="using:Unigram.Views"
+    xmlns:messages="using:Unigram.Controls.Items"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:vm="using:Unigram.ViewModels"
     xmlns:vmc="using:Telegram.Api.TL"
@@ -18,6 +19,51 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
+
+    <Page.Resources>
+        <!-- Region Service -->
+        <DataTemplate x:Key="ServiceMessageTemplate">
+            <StackPanel Margin="0,12">
+                <Border Background="#7f89a0b4" HorizontalAlignment="Center" Padding="12,5,12,6">
+                    <!--<TextBlock Text="{Binding Converter={StaticResource ServiceMessageToTextConverter}}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>-->
+                    <RichTextBlock common:ServiceHelper.Message="{Binding}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
+                </Border>
+
+                <Border Visibility="{Binding Action.Photo, Converter={StaticResource ExistsToVisibilityConverter}}" Width="96" Height="96" Margin="0,8,0,0">
+                    <controls:ImageControl TelegramSource="{Binding Action.Photo}" Stretch="UniformToFill"/>
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="UnreadMessageTemplate">
+            <Border Background="#7f89a0b4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12" RenderTransformOrigin="0.5,0.5">
+                <TextBlock Text="{Binding Converter={StaticResource ServiceMessageToTextConverter}}" Foreground="White" Style="{ThemeResource BodyTextBlockStyle}"/>
+            </Border>
+        </DataTemplate>
+        <!-- EndRegion -->
+
+        <DataTemplate x:Key="UserMessageTemplate">
+            <messages:UserMessageControl/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FriendMessageTemplate">
+            <messages:FriendMessageControl/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ChatFriendMessageTemplate">
+            <messages:ChatFriendMessageControl/>
+        </DataTemplate>
+
+        <selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
+            UserMessageTemplate="{StaticResource UserMessageTemplate}"
+            UserStickerTemplate="{StaticResource UserStickerTemplate}"
+            FriendMessageTemplate="{StaticResource FriendMessageTemplate}"
+            FriendStickerTemplate="{StaticResource FriendStickerTemplate}"
+            ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
+            ChatFriendStickerTemplate="{StaticResource ChatFriendStickerTemplate}"
+            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
+            UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -81,7 +127,9 @@
                   RelativePanel.AlignRightWithPanel="True"
                   RelativePanel.AlignTopWithPanel="True"
                   RelativePanel.Above="rpInput">
-                <controls:BubbleListView x:Name="lvDialogs" ItemsSource="{x:Bind ViewModel.Messages}" >
+                <controls:BubbleListView x:Name="lvDialogs" 
+                                         ItemsSource="{x:Bind ViewModel.Messages}"
+                                         ItemTemplate="{StaticResource MessageTemplateSelector}">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -94,47 +142,6 @@
                                              VerticalAlignment="Bottom" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="vmc:TLMessage">
-                            <Border Background="{StaticResource TelegramBackgroundMessageBubbleBrush}"
-                                    Margin="8"
-                                    MinHeight="36"
-                                    MinWidth="200"
-                                    MaxWidth="400"
-                                    >
-                                <StackPanel Orientation="Vertical"
-                                            Padding="8,6">
-                                    <TextBlock Text="{x:Bind FromId, Mode=OneWay, FallbackValue='from id'}"
-                                               Visibility="Visible"
-                                               TextWrapping="Wrap"
-                                               Margin="0,0,0,4"
-                                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                               RequestedTheme="Dark"/>
-                                    <Image Margin="0,0,0,4"
-                                           Visibility="Collapsed"
-                                           Source="ms-appx:///Assets/Mockups/Images/userPhoto.jpg"/>
-                                    <TextBlock Text="{x:Bind Message, Mode=OneWay, FallbackValue='message'}"
-                                               TextWrapping="Wrap"
-                                               RequestedTheme="Dark"/>
-                                    <StackPanel Orientation="Horizontal" 
-                                                HorizontalAlignment="Right">
-                                        <FontIcon x:Name="StateIcon"
-                                                  Visibility="Collapsed"
-                                                  Glyph="&#xE601;" 
-                                                  FontFamily="{ThemeResource TelegramThemeFontFamily}"
-                                                  Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" 
-                                                  FontSize="10" 
-                                                  Height="10"
-                                                  Width="18"
-                                                  Margin="0,0,4,0"/>
-                                        <TextBlock Text="{x:Bind Date, Mode=OneWay, FallbackValue='date'}"
-                                                   RequestedTheme="Dark"
-                                                   Style="{ThemeResource CaptionTextBlockStyle}" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
                     <controls:BubbleListView.ItemContainerStyleSelector>
                         <selectors:MessageStyleSelector>
                             <selectors:MessageStyleSelector.MessageStyle>

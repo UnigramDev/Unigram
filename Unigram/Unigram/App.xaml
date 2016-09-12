@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:template="using:Template10.Common"
+    xmlns:themes="using:Unigram.Themes"
     xmlns:converters="using:Unigram.Converters"
     xmlns:local="using:Unigram">
     
@@ -11,6 +12,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
                 <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
+                <themes:Messages/>
                 <!--<ResourceDictionary Source="ms-appx:///Themes/Brand.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>
 
