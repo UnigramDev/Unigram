@@ -55,7 +55,7 @@
             container.ContainerBuilder.RegisterType<LoginPasswordViewModel>();
             container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<DialogViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<DialogViewModel>();
             container.ContainerBuilder.RegisterType<UserInfoViewModel>(); // .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
 

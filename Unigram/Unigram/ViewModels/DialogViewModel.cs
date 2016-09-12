@@ -123,10 +123,10 @@ namespace Unigram.ViewModels
             var x = await ProtoService.GetHistoryAsync(null, inputPeer, peer, false, loaded, int.MaxValue, loadCount);
             TLVector<TLMessageBase> y = x.Value.Messages;
             foreach (var item in y)
-            {
-                
+            {                
                 var xy = (TLMessage)item;
-
+                if (xy.Id == SettingsHelper.UserId)
+                    //set the thing to right alignment
                 //var time = TLUtils.ToDateTime(xy.Date);
                 ListX.Insert(0, xy);
 
