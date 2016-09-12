@@ -6,6 +6,7 @@
         <ResourceDictionary x:Key="Default">
             <SolidColorBrush x:Key="TelegramDialogStateBrush" Color="#64BC54"/>
             <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
+            <SolidColorBrush x:Key="TelegramBackgroundMessageBubbleBrush" Color="{ThemeResource SystemAccentColor}"/>
             <SolidColorBrush x:Key="TelegramBackgroundTitlebarBrush" Color="{ThemeResource SystemChromeMediumColor}"/>
             <SolidColorBrush x:Key="TelegramDialogLabelFromBrush" Color="{ThemeResource SystemAccentColor}"/>
             <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>

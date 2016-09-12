@@ -90,9 +90,40 @@
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="vm:MessageModel">
-                            <Grid>
-                                <TextBlock Text="{x:Bind Message, Mode=OneWay, FallbackValue='message'}" />
-                            </Grid>
+                            <Border Background="{StaticResource TelegramBackgroundMessageBubbleBrush}"
+                                    Margin="8"
+                                    MinHeight="36"
+                                    MinWidth="200"
+                                    MaxWidth="450">
+                                <StackPanel Orientation="Vertical"
+                                            Padding="8,6">
+                                    <Image Margin="0,0,0,6"
+                                           Visibility="Collapsed"
+                                           Source="ms-appx:///Assets/Mockups/Images/userPhoto.jpg"/>
+                                    <TextBlock Text="{x:Bind Message, Mode=OneWay, FallbackValue='message'}"
+                                               TextWrapping="Wrap"
+                                               RequestedTheme="Dark"/>
+                                    <TextBlock Text="{x:Bind SenderId, Mode=OneWay, FallbackValue='sender id'}"
+                                               TextWrapping="Wrap"
+                                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                               RequestedTheme="Dark"/>
+                                    <StackPanel Orientation="Horizontal" 
+                                                HorizontalAlignment="Right">
+                                        <FontIcon x:Name="StateIcon"
+                                                  Visibility="Collapsed"
+                                                  Glyph="&#xE601;" 
+                                                  FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                                  Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" 
+                                                  FontSize="10" 
+                                                  Height="10"
+                                                  Width="18"
+                                                  Margin="0,0,4,0"/>
+                                        <TextBlock Text="{x:Bind Date, Mode=OneWay, FallbackValue='date'}"
+                                                   RequestedTheme="Dark"
+                                                   Style="{ThemeResource CaptionTextBlockStyle}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </controls:BubbleListView>
