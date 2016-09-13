@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.TL;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -19,6 +20,7 @@ namespace Unigram.Controls.Items
 {
     public sealed partial class ChatFriendMessageControl : UserControl
     {
+        public TLMessage ViewModel => DataContext as TLMessage;
         public ChatFriendMessageControl()
         {
             this.InitializeComponent();

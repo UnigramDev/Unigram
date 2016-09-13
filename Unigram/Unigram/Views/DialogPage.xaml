@@ -128,7 +128,7 @@
                   RelativePanel.Above="rpInput">
                 <controls:BubbleListView x:Name="lvDialogs" 
                                          ItemsSource="{x:Bind ViewModel.Messages}"
-                                         ItemTemplate="{StaticResource MessageTemplateSelector}">
+                                         ItemTemplateSelector="{StaticResource MessageTemplateSelector}">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

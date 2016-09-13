@@ -128,7 +128,6 @@ namespace Unigram.ViewModels
                     //set the thing to right alignment
                 //var time = TLUtils.ToDateTime(xy.Date);
                 Messages.Insert(0, xy);
-
                 counter++;
             }
             loaded += loadCount;
