@@ -56,7 +56,7 @@
             BorderBrush="{ThemeResource MessageBorderBrush}" 
             BorderThickness="0,0,0,2" 
             HorizontalAlignment="Right" 
-            Margin="40,4,0,4" 
+            Margin="4,4,0,4" 
             MaxWidth="430">
             <Grid>
                 <Grid.RowDefinitions>
