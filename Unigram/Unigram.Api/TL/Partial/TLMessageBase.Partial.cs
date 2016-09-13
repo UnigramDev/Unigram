@@ -218,6 +218,14 @@ namespace Telegram.Api.TL
         }
         #endregion
 
+        public TLMessage Self
+        {
+            get
+            {
+                return this;
+            }
+        }
+
         public override void Edit(TLMessageBase messageBase)
         {
             var message = messageBase as TLMessage;

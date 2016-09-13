@@ -110,6 +110,7 @@
     <Compile Include="Common\KeyedList.cs" />
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\ListCollectionView.cs" />
+    <Compile Include="Common\MessageHelper.cs" />
     <Compile Include="Controls\BubbleListView.cs" />
     <Compile Include="Controls\BubbleListViewItem.cs" />
     <Compile Include="Controls\Items\DialogListViewItem.xaml.cs">
