@@ -16,14 +16,13 @@ using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Unigram.Controls.Items
+namespace Unigram.Controls.Messages
 {
-    public sealed partial class FriendMessageControl : UserControl
+    public sealed partial class FriendMessageControl : MessageControlBase
     {
-        public TLMessage ViewModel => DataContext as TLMessage;
         public FriendMessageControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }

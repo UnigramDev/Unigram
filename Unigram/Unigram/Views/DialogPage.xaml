@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Unigram.Controls"
     xmlns:local="using:Unigram.Views"
-    xmlns:messages="using:Unigram.Controls.Items"
+    xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:vm="using:Unigram.ViewModels"
     xmlns:vmc="using:Telegram.Api.TL"
@@ -25,12 +25,12 @@
         <DataTemplate x:Key="ServiceMessageTemplate">
             <StackPanel Margin="0,12">
                 <!--<Border Background="#7f89a0b4" HorizontalAlignment="Center" Padding="12,5,12,6">
-                    <RichTextBlock common:ServiceHelper.Message="{Binding}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
-                </Border>
-
-                <Border Visibility="{Binding Action.Photo, Converter={StaticResource ExistsToVisibilityConverter}}" Width="96" Height="96" Margin="0,8,0,0">
-                    <controls:ImageControl TelegramSource="{Binding Action.Photo}" Stretch="UniformToFill"/>
-                </Border>-->
+                     <RichTextBlock common:ServiceHelper.Message="{Binding}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
+                     </Border>
+                     
+                     <Border Visibility="{Binding Action.Photo, Converter={StaticResource ExistsToVisibilityConverter}}" Width="96" Height="96" Margin="0,8,0,0">
+                     <controls:ImageControl TelegramSource="{Binding Action.Photo}" Stretch="UniformToFill"/>
+                     </Border>-->
             </StackPanel>
         </DataTemplate>
 
@@ -41,7 +41,7 @@
         </DataTemplate>
         <!-- EndRegion -->
 
-        <DataTemplate x:Key="UserMessageTemplate">
+        <DataTemplate x:Key="UserMessageTemplate" x:DataType="vmc:TLMessage">
             <messages:UserMessageControl/>
         </DataTemplate>
 
@@ -54,14 +54,14 @@
         </DataTemplate>
 
         <selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
-            UserMessageTemplate="{StaticResource UserMessageTemplate}"
-            UserStickerTemplate="{StaticResource UserStickerTemplate}"
-            FriendMessageTemplate="{StaticResource FriendMessageTemplate}"
-            FriendStickerTemplate="{StaticResource FriendStickerTemplate}"
-            ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
-            ChatFriendStickerTemplate="{StaticResource ChatFriendStickerTemplate}"
-            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
-            UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
+                                           UserMessageTemplate="{StaticResource UserMessageTemplate}"
+                                           UserStickerTemplate="{StaticResource UserStickerTemplate}"
+                                           FriendMessageTemplate="{StaticResource FriendMessageTemplate}"
+                                           FriendStickerTemplate="{StaticResource FriendStickerTemplate}"
+                                           ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
+                                           ChatFriendStickerTemplate="{StaticResource ChatFriendStickerTemplate}"
+                                           ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
+                                           UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -109,19 +109,19 @@
         <!-- Main content -->
         <RelativePanel Grid.Row="1">
             <!--<GridView x:Name="lvDialogs"
-                      ItemsSource="{x:Bind Path=ViewModel.ListX}"
-                      RelativePanel.AlignLeftWithPanel="True"
-                      RelativePanel.AlignRightWithPanel="True"
-                      RelativePanel.AlignTopWithPanel="True"
-                      RelativePanel.Above="rpInput">
-                <GridView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel GroupHeaderPlacement="Left"
-                                         ItemsUpdatingScrollMode="KeepLastItemInView"
-                                         VerticalAlignment="Bottom" />
-                    </ItemsPanelTemplate>
-                </GridView.ItemsPanel>
-            </GridView>-->
+                 ItemsSource="{x:Bind Path=ViewModel.ListX}"
+                 RelativePanel.AlignLeftWithPanel="True"
+                 RelativePanel.AlignRightWithPanel="True"
+                 RelativePanel.AlignTopWithPanel="True"
+                 RelativePanel.Above="rpInput">
+                 <GridView.ItemsPanel>
+                 <ItemsPanelTemplate>
+                 <ItemsStackPanel GroupHeaderPlacement="Left"
+                 ItemsUpdatingScrollMode="KeepLastItemInView"
+                 VerticalAlignment="Bottom" />
+                 </ItemsPanelTemplate>
+                 </GridView.ItemsPanel>
+                 </GridView>-->
             <Grid RelativePanel.AlignLeftWithPanel="True"
                   RelativePanel.AlignRightWithPanel="True"
                   RelativePanel.AlignTopWithPanel="True"
@@ -129,11 +129,6 @@
                 <controls:BubbleListView x:Name="lvDialogs" 
                                          ItemsSource="{x:Bind ViewModel.Messages}"
                                          ItemTemplateSelector="{StaticResource MessageTemplateSelector}">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        </Style>
-                    </ListView.ItemContainerStyle>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel GroupHeaderPlacement="Left"
@@ -160,34 +155,29 @@
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ListViewItem">
                                                 <ListViewItemPresenter
-                                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                                            SelectionCheckMarkVisualEnabled="True"
-                                            CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                            CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                            DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
-                                            DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                                            FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
-                                            FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                            PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                            PointerOverBackground="Transparent"
-                                            PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                            SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
-                                            SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                            SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
-                                            PressedBackground="Transparent"
-                                            SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
-                                            DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                            DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                            ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                            ContentMargin="{TemplateBinding Padding}"
-                                            CheckMode="Inline"
-                                            RenderTransformOrigin="0.5,0.5">
-                                                    <ListViewItemPresenter.RenderTransform>
-                                                        <ScaleTransform ScaleY="-1"/>
-                                                    </ListViewItemPresenter.RenderTransform>
-                                                </ListViewItemPresenter>
+                                                    ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                    SelectionCheckMarkVisualEnabled="True"
+                                                    CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                    CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                                    FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                    PointerOverBackground="Transparent"
+                                                    PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                    SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
+                                                    SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                    SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
+                                                    PressedBackground="Transparent"
+                                                    SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
+                                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                    ContentMargin="{TemplateBinding Padding}"
+                                                    CheckMode="Inline"/>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -210,34 +200,29 @@
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ListViewItem">
                                                 <ListViewItemPresenter
-                                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                                            SelectionCheckMarkVisualEnabled="False"
-                                            CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                            CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                            DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
-                                            DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                                            FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
-                                            FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                            PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                            PointerOverBackground="Transparent"
-                                            PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                            SelectedBackground="Transparent"
-                                            SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                            SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
-                                            PressedBackground="Transparent"
-                                            SelectedPressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
-                                            DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                            DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                            ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                            ContentMargin="{TemplateBinding Padding}"
-                                            CheckMode="Inline"
-                                            RenderTransformOrigin="0.5,0.5">
-                                                    <ListViewItemPresenter.RenderTransform>
-                                                        <ScaleTransform ScaleY="-1"/>
-                                                    </ListViewItemPresenter.RenderTransform>
-                                                </ListViewItemPresenter>
+                                                    ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                    SelectionCheckMarkVisualEnabled="False"
+                                                    CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                    CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                                    FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                    PointerOverBackground="Transparent"
+                                                    PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                    SelectedBackground="Transparent"
+                                                    SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                    SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
+                                                    PressedBackground="Transparent"
+                                                    SelectedPressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
+                                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                    ContentMargin="{TemplateBinding Padding}"
+                                                    CheckMode="Inline"/>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -281,7 +266,7 @@
                         Visibility="Visible"
                         IsEnabled="True"
                         Width="48"
-                       Command="{Binding SendCommand}"
+                        Command="{Binding SendCommand}"
                         MinHeight="48" 
                         Background="{ThemeResource TelegramBackgroundAccentBrush}"                                      
                         VerticalAlignment="Stretch"
@@ -332,11 +317,11 @@
                     <AppBarButton.Flyout>
                         <MenuFlyout>
                             <!-- Please try to add camera capabilities with the W10 file picker first
-                                        if that's not possible for all platforms, then enable the Camera-button here and 
-                                            write something for that -->
+                                 if that's not possible for all platforms, then enable the Camera-button here and 
+                                 write something for that -->
                             <!--<MenuFlyoutItem x:Name="fcbtnAttachCamera"
-                                                x:Uid="FCBTN-Camera"
-                                                Text="Camera" />-->
+                                 x:Uid="FCBTN-Camera"
+                                 Text="Camera" />-->
                             <MenuFlyoutItem x:Name="fcbtnAttachPhoto"
                                             x:Uid="FCBTN-Photo"
                                             Text="Photo" 

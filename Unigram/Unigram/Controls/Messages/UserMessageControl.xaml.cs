@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.Helpers;
+using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -16,14 +20,13 @@ using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Unigram.Controls.Items
+namespace Unigram.Controls.Messages
 {
-    public sealed partial class ChatFriendMessageControl : UserControl
+    public sealed partial class UserMessageControl : MessageControlBase
     {
-        public TLMessage ViewModel => DataContext as TLMessage;
-        public ChatFriendMessageControl()
+        public UserMessageControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }

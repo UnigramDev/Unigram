@@ -3,15 +3,49 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.ThemeDictionaries>
-        <ResourceDictionary x:Key="Default">
-            <SolidColorBrush x:Key="TelegramDialogStateBrush" Color="#64BC54"/>
-            <SolidColorBrush x:Key="TelegramDialogLabelFromBrush" Color="#4981AF"/>
-            <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>
-            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeBrush" Color="#009CE6"/>
-            <SolidColorBrush x:Key="TelegramDialogUnreadLabelBrush" Color="#FFFFFF"/>
-            <SolidColorBrush x:Key="TelegramDialogVerifiedForegroundBrush" Color="#33A8E6"/>
-            <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="#FFFFFF"/>
+        <!-- From -->
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#effdde"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="#403ac347"/>
+            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#6CC264"/>
+            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#64BC54"/>
+
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#3a8e26"/>
+            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#5dc452"/>
+
+            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#6aad60"/>
+            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#d4f1c2"/>
+
+            <!--<Thickness x:Key="MessageContentPadding">12,6</Thickness>-->
+            <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
+        </ResourceDictionary>
+
+        <!-- To -->
+        <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#ffffff"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="#29748ea2"/>
+            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
+            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
+
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
+            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
+
+            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#999999"/>
+            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#f2f2f2"/>
+
+            <!--<Thickness x:Key="MessageContentPadding">12,6</Thickness>-->
+            <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
+
+    <SolidColorBrush x:Key="TelegramDialogStateBrush" Color="#64BC54"/>
+    <SolidColorBrush x:Key="TelegramDialogLabelFromBrush" Color="#4981AF"/>
+    <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>
+    <SolidColorBrush x:Key="TelegramDialogUnreadBadgeBrush" Color="#009CE6"/>
+    <SolidColorBrush x:Key="TelegramDialogUnreadLabelBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="TelegramDialogVerifiedForegroundBrush" Color="#33A8E6"/>
+    <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="#FFFFFF"/>
 
 </ResourceDictionary>
