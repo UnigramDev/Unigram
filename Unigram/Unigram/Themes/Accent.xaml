@@ -12,7 +12,7 @@
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
 
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
-            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#5dc452"/>
+            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
 
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#6aad60"/>
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#d4f1c2"/>

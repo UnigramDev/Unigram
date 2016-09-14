@@ -54,19 +54,18 @@
                        Grid.Row="1">
                 <!--<Run Text="{Binding Strings.ForwardedFrom, Source={StaticResource Resources}}"/>
                 <Run x:Name="ForwardText" Text="{Binding}"/>-->
-                <Run Text="Forwarded from"/>
-                <Run Text="{x:Bind ViewModel.FwdFrom.Flags}"/>
+                    <Run Text="Forwarded from"/>
+                    <Run Text="{x:Bind ViewModel.FwdFrom.Flags}"/>
                 </TextBlock>
 
-                <!--<ContentControl
-                Content="{Binding ReplyInfo}" 
-                Visibility="{Binding ReplyVisibility}"
-                common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
-                ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
-                Grid.Row="1"/>-->
+                <ContentControl
+                    Content="{x:Bind ViewModel.ReplyInfo, Mode=OneWay}" 
+                    Visibility="{x:Bind ViewModel.ReplyVisibility}"
+                    ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                    Grid.Row="1"/>
 
                 <RichTextBlock x:Name="MessageControl"
-                           common:MessageHelper.Message="{x:Bind ViewModel.Self}" 
+                           common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}" 
                            Style="{ThemeResource BodyRichTextBlockStyle}"
                            Foreground="{ThemeResource MessageForegroundBrush}"
                            Margin="0,0,0,-1"

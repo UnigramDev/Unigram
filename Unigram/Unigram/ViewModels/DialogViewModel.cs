@@ -121,15 +121,106 @@ namespace Unigram.ViewModels
         }
         public async Task FetchMessages(TLPeerBase peer, TLInputPeerBase inputPeer)
         {
-            List<string> fetchedList = new List<string>();
-            var x = await ProtoService.GetHistoryAsync(null, inputPeer, peer, false, loaded, int.MaxValue, loadCount);
-            TLVector<TLMessageBase> y = x.Value.Messages;
-            foreach (var item in y)
-            {                
-                Messages.Insert(0, item);
-                counter++;
+            var result = await ProtoService.GetHistoryAsync(null, inputPeer, peer, false, loaded, int.MaxValue, loadCount);
+            if (result.IsSucceeded)
+            {
+                ProcessReplies(result.Value.Messages);
+
+                foreach (var item in result.Value.Messages)
+                {
+                    Messages.Insert(0, item);
+                    counter++;
+                }
             }
+
             loaded += loadCount;
+        }
+
+        public async void ProcessReplies(IList<TLMessageBase> messages)
+        {
+            var replyIds = new TLVector<int>();
+            var replyToMsgs = new List<TLMessage>();
+
+            for (int i = 0; i < messages.Count; i++)
+            {
+                var message = messages[i] as TLMessage;
+                if (message != null)
+                {
+                    var replyId = message.ReplyToMsgId;
+                    if (replyId != null && replyId.Value != 0)
+                    {
+                        var channelId = new int?();
+                        var channel = message.ToId as TLPeerChat;
+                        if (channel != null)
+                        {
+                            channelId = channel.Id;
+                        }
+
+                        var reply = CacheService.GetMessage(replyId.Value, channelId);
+                        if (reply != null)
+                        {
+                            messages[i].Reply = reply;
+                        }
+                        else
+                        {
+                            replyIds.Add(replyId.Value);
+                            replyToMsgs.Add(message);
+                        }
+                    }
+
+                    //if (message.NotListened && message.Media != null)
+                    //{
+                    //    message.Media.NotListened = true;
+                    //}
+                }
+            }
+
+            if (replyIds.Count > 0)
+            {
+                Task<MTProtoResponse<TLMessagesMessagesBase>> task = null;
+
+                if (Peer is TLInputPeerChannel)
+                {
+                    var first = replyToMsgs.FirstOrDefault();
+                    if (first.ToId is TLPeerChat)
+                    {
+                        task = ProtoService.GetMessagesAsync(replyIds);
+                    }
+                    else
+                    {
+                        var peer = Peer as TLInputPeerChannel;
+                        task = ProtoService.GetMessagesAsync(new TLInputChannel { ChannelId = peer.ChannelId, AccessHash = peer.AccessHash }, replyIds);
+                    }
+                }
+                else
+                {
+                    task = ProtoService.GetMessagesAsync(replyIds);
+                }
+
+                var result = await task;
+                if (result.IsSucceeded)
+                {
+                    CacheService.AddChats(result.Value.Chats, (results) => { });
+                    CacheService.AddUsers(result.Value.Users, (results) => { });
+
+                    for (int j = 0; j < result.Value.Messages.Count; j++)
+                    {
+                        for (int k = 0; k < replyToMsgs.Count; k++)
+                        {
+                            var message = replyToMsgs[k];
+                            if (message != null && message.ReplyToMsgId.Value == result.Value.Messages[j].Id)
+                            {
+                                replyToMsgs[k].Reply = result.Value.Messages[j];
+                                replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].ReplyInfo);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    Execute.ShowDebugMessage("messages.getMessages error " + result.Error);
+                }
+            }
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -352,11 +443,11 @@ namespace Unigram.ViewModels
             var group = GroupForIndex(index);
             if (group == null || group?.FromId != item.FromId)
             {
-                group = new MessageGroup(this, item.From, item.FromId, item.ToId);
-                Groups.Insert(0, group); // TODO: should not be 0 all the time
+                group = new MessageGroup(this, item.From, item.FromId, item.ToId, item is TLMessage ? ((TLMessage)item).IsOut : false);
+                Groups.Insert(index == 0 ? 0 : Groups.Count, group); // TODO: should not be 0 all the time
             }
 
-            group.Insert(index, item);
+            group.Insert(index - group.FirstIndex, item);
         }
 
         protected override void RemoveItem(int index)
@@ -366,7 +457,7 @@ namespace Unigram.ViewModels
             var group = GroupForIndex(index);
             if (group != null)
             {
-                group.RemoveAt(index);
+                group.RemoveAt(index - group.FirstIndex);
             }
         }
 
@@ -391,13 +482,14 @@ namespace Unigram.ViewModels
     {
         private ObservableCollection<MessageGroup> _parent;
 
-        public MessageGroup(MessageCollection parent, TLUser from, int? fromId, TLPeerBase toId)
+        public MessageGroup(MessageCollection parent, TLUser from, int? fromId, TLPeerBase toId, bool isOut)
         {
             _parent = parent.Groups;
 
             From = from;
             FromId = fromId;
             ToId = toId;
+            IsOut = isOut;
         }
 
         public TLUser From { get; private set; }
@@ -405,6 +497,8 @@ namespace Unigram.ViewModels
         public int? FromId { get; private set; }
 
         public TLPeerBase ToId { get; private set; }
+
+        public bool IsOut { get; private set; }
 
         public int FirstIndex
         {
@@ -414,7 +508,7 @@ namespace Unigram.ViewModels
                 var index = _parent.IndexOf(this);
                 if (index > 0)
                 {
-                    count = _parent[index - 1].LastIndex;
+                    count = _parent[index - 1].LastIndex + 1;
                 }
 
                 return count;
@@ -425,7 +519,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return FirstIndex + Count - 1;
+                return FirstIndex + Math.Max(0, Count - 1);
             }
         }
 
@@ -440,13 +534,11 @@ namespace Unigram.ViewModels
                 item.IsFirst = true;
             }
 
-            index -= FirstIndex;
             base.InsertItem(index, item);
         }
 
         protected override void RemoveItem(int index)
         {
-            index -= FirstIndex;
             base.RemoveItem(index);
         }
     }

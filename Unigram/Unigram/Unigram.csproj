@@ -20,7 +20,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>065F0B2E6BD36F1FD48AEA0B5546196B98A1546C</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -162,6 +162,7 @@
     <Compile Include="Selectors\MessageGroupTemplateSelector.cs" />
     <Compile Include="Selectors\MessageStyleSelector.cs" />
     <Compile Include="Selectors\MessageTemplateSelector.cs" />
+    <Compile Include="Selectors\ReplyTemplateSelector.cs" />
     <Compile Include="Themes\Messages.xaml.cs">
       <DependentUpon>Messages.xaml</DependentUpon>
     </Compile>

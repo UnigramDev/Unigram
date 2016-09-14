@@ -19,9 +19,12 @@ namespace Unigram.Selectors
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             var group = item as MessageGroup;
-            if (group.ToId is TLPeerChat || group.ToId is TLPeerChannel) // TODO: probably some addtional check needed for channels
+            if (group.IsOut == false)
             {
-                return ChatFriendMessageTemplate;
+                if (group.ToId is TLPeerChat || group.ToId is TLPeerChannel) // TODO: probably some addtional check needed for channels
+                {
+                    return ChatFriendMessageTemplate;
+                }
             }
 
             return EmptyMessageTemplate;

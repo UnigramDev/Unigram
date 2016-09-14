@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Services.Cache;
+using Windows.UI.Xaml;
 
 namespace Telegram.Api.TL
 {
@@ -110,10 +111,52 @@ namespace Telegram.Api.TL
             }
         }
 
+        //public TLMessageBase Reply { get; set; }
+
+        public ReplyInfo ReplyInfo
+        {
+            get
+            {
+                if (ReplyToMsgId == null)
+                {
+                    return null;
+                }
+
+                return new ReplyInfo
+                {
+                    ReplyToMsgId = ReplyToMsgId,
+                    Reply = Reply
+                };
+            }
+        }
+
+        public Visibility ReplyVisibility
+        {
+            get
+            {
+                return ReplyToMsgId == null || (ReplyToMsgId.HasValue && ReplyToMsgId == 0) ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         public override void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class ReplyInfo
+    {
+        public int? ReplyToMsgId
+        {
+            get;
+            set;
+        }
+
+        public TLMessageBase Reply
+        {
+            get;
+            set;
         }
     }
 

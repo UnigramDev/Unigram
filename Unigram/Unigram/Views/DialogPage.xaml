@@ -273,7 +273,14 @@
                                 <selectors:MessageGroupTemplateSelector>
                                     <selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
                                         <DataTemplate x:DataType="viewmodels:MessageGroup">
-                                            <Ellipse Width="32" Height="32" Fill="Red" Margin="12,12,0,0"/>
+                                            <Grid>
+                                                <Ellipse Width="32" Height="32" Fill="Red" Margin="12,12,0,0"/>
+                                                <Border CornerRadius="32" Width="32" Height="32" Margin="12,12,0,0">
+                                                    <Border.Background>
+                                                        <ImageBrush ImageSource="{x:Bind From.Photo, Converter={StaticResource DefaultPhotoConverter}, Mode=OneWay}"/>
+                                                    </Border.Background>
+                                                </Border>
+                                            </Grid>
                                         </DataTemplate>
                                     </selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
                                 </selectors:MessageGroupTemplateSelector>
@@ -285,9 +292,9 @@
             
             <!-- Input pane -->
             <RelativePanel x:Name="rpInput"
-                           MinHeight="48"
+                           MinHeight="{ThemeResource AppBarThemeCompactHeight}"
                            BorderThickness="0,2,0,0"
-                           BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
+                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                            Visibility="Visible"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignRightWithPanel="True"

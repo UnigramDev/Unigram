@@ -37,8 +37,6 @@ namespace Unigram.Converters
                 return null;
             }
 
-            return null;
-
             Stopwatch timer = Stopwatch.StartNew();
 
             //var encryptedFile = value as TLEncryptedFile;
@@ -442,7 +440,10 @@ namespace Unigram.Converters
 
             if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName)))
             {
-                return new BitmapImage(new Uri("ms-appdata:///local/" + fileName));
+                //return new BitmapImage(new Uri("ms-appdata:///local/" + fileName));
+                var bitmap = new BitmapImage();
+                LoadBitmapAsync(bitmap, new Uri("ms-appdata:///local/" + fileName));
+                return bitmap;
             }
 
             //using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
@@ -473,15 +474,12 @@ namespace Unigram.Converters
             return null;
         }
 
-        private static async Task<BitmapImage> LoadBitmapAsync(Uri uri)
+        private static async void LoadBitmapAsync(BitmapImage bitmap, Uri uri)
         {
             var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
             using (var stream = await file.OpenReadAsync())
             {
-                var bitmap = new BitmapImage();
                 await bitmap.SetSourceAsync(stream);
-
-                return bitmap;
             }
         }
 
@@ -560,7 +558,9 @@ namespace Unigram.Converters
 
             if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName)))
             {
-                var bitmap = new BitmapImage(new Uri("ms-appdata:///local/" + fileName));
+                //return new BitmapImage(new Uri("ms-appdata:///local/" + fileName));
+                var bitmap = new BitmapImage();
+                LoadBitmapAsync(bitmap, new Uri("ms-appdata:///local/" + fileName));
                 return bitmap;
             }
 
@@ -656,7 +656,9 @@ namespace Unigram.Converters
                 //var bitmap = new BitmapImage();
                 //bitmap.SetSource(stream.AsRandomAccessStream());
 
-                var bitmap = new BitmapImage(new Uri("ms-appdata:///local/" + fileName));
+                //return new BitmapImage(new Uri("ms-appdata:///local/" + fileName));
+                var bitmap = new BitmapImage();
+                LoadBitmapAsync(bitmap, new Uri("ms-appdata:///local/" + fileName));
                 _cachedSources[fileName] = new WeakReference(bitmap);
 
                 return bitmap;
