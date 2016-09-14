@@ -97,7 +97,7 @@ namespace Unigram.Selectors
 
                     return UserMessageTemplate ?? EmptyMessageTemplate;
                 }
-                if (message.ToId is TLPeerChat)
+                if (message.ToId is TLPeerChat || message.ToId is TLPeerChannel) // TODO: probably some addtional check needed for channels
                 {
                     if (!(message?.Media is TLMessageMediaEmpty))
                     {

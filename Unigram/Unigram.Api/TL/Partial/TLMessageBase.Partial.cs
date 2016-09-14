@@ -78,6 +78,18 @@ namespace Telegram.Api.TL
         {
 
         }
+
+        private TLUser _from;
+        public TLUser From
+        {
+            get
+            {
+                if (_from == null)
+                    _from = InMemoryCacheService.Instance.GetUser(FromId.Value) as TLUser;
+
+                return _from;
+            }
+        }
     }
 
     public partial class TLMessage

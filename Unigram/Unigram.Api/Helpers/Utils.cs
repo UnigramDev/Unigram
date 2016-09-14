@@ -15,6 +15,8 @@ using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
 using Telegram.Api.TL;
 using System.Globalization;
+using Telegram.Api.Services;
+using Windows.Security.Cryptography;
 
 namespace Telegram.Api.Helpers
 {
@@ -620,6 +622,34 @@ namespace Telegram.Api.Helpers
 #elif WINDOWS_PHONE
             return Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 #endif
+        }
+
+        public static int GetColorIndex(int id)
+        {
+            if (id < 0)
+            {
+                id += 256;
+            }
+
+            try
+            {
+                var str = string.Format("{0}{1}", id, MTProtoService.Instance.CurrentUserId);
+                if (str.Length > 15)
+                {
+                    str = str.Substring(0, 15);
+                }
+
+                var input = CryptographicBuffer.ConvertStringToBinary(str, BinaryStringEncoding.Utf8);
+                var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+                var hashed = hasher.HashData(input);
+                byte[] digest;
+                CryptographicBuffer.CopyToByteArray(hashed, out digest);
+
+                return digest[id % 0x0F] & (((id & 0x300000000) == 0x300000000) ? 0x07 : 0x03);
+            }
+            catch { }
+
+            return id % 8;
         }
     }
 }

@@ -28,6 +28,19 @@
                 <MenuFlyoutItem Command="{Binding Dialog.MessageDeleteCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Delete, Source={StaticResource Resources}}"/>
             </MenuFlyout>
         </common:FlyoutHelper.AttachedFlyout>-->
+        <Border.ContextFlyout>
+            <MenuFlyout>
+                <MenuFlyout.MenuFlyoutPresenterStyle>
+                    <Style TargetType="MenuFlyoutPresenter">
+                        <Setter Property="RequestedTheme" Value="Light"/>
+                    </Style>
+                </MenuFlyout.MenuFlyoutPresenterStyle>
+                <MenuFlyoutItem Text="Reply"/>
+                <MenuFlyoutItem Text="Copy"/>
+                <MenuFlyoutItem Text="Forward"/>
+                <MenuFlyoutItem Text="Delete"/>
+            </MenuFlyout>
+        </Border.ContextFlyout>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

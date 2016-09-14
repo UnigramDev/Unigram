@@ -16,6 +16,52 @@ namespace Telegram.Api.TL
             Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
+        public string FullName
+        {
+            get
+            {
+                //if (this is TLUserEmpty)
+                //{
+                //    return "Empty user";
+                //}
+
+                //if (this is TLUserDeleted)
+                //{
+                //    return "Deleted user";
+                //}
+
+                //if (ExtendedInfo != null)
+                //{
+                //    return string.Format("{0} {1}", ExtendedInfo.FirstName, ExtendedInfo.LastName);
+                //}
+
+                var firstName = FirstName != null ? FirstName.ToString() : string.Empty;
+                var lastName = LastName != null ? LastName.ToString() : string.Empty;
+
+                if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
+                {
+                    return Phone != null ? "+" + Phone : string.Empty;
+                }
+
+                if (string.Equals(firstName, lastName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return firstName;
+                }
+
+                if (string.IsNullOrEmpty(firstName))
+                {
+                    return lastName;
+                }
+
+                if (string.IsNullOrEmpty(lastName))
+                {
+                    return firstName;
+                }
+
+                return string.Format("{0} {1}", firstName, lastName);
+            }
+        }
+
         public override void Update(TLUserBase userBase)
         {
             base.Update(userBase);

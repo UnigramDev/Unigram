@@ -7,58 +7,40 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vmc="using:Telegram.Api.TL"
+    RequestedTheme="Light"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid HorizontalAlignment="Left">
-        <!--<Border Background="{StaticResource TelegramBackgroundMessageBubbleBrush}"
-                                    Margin="8"
-                                    MinHeight="36"
-                                    MinWidth="200"
-                                    MaxWidth="400"
-                                    >
-            <StackPanel Orientation="Vertical"
-                                            Padding="8,6">
-                <TextBlock Text="{Binding ViewModel.FromId, FallbackValue='from id'}"
-                                               Visibility="Visible"
-                                               TextWrapping="Wrap"
-                                               Margin="0,0,0,4"
-                                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                               RequestedTheme="Dark"/>
-                <Image Margin="0,0,0,4"
-                                           Visibility="Collapsed"
-                                           Source="ms-appx:///Assets/Mockups/Images/userPhoto.jpg"/>
-                <TextBlock Text="{Binding ViewModel.Message, FallbackValue='message'}"
-                                               TextWrapping="Wrap"
-                                               RequestedTheme="Dark"/>
-                <StackPanel Orientation="Horizontal" 
-                                                HorizontalAlignment="Right">
-                    <FontIcon x:Name="StateIcon"
-                                                  Visibility="Collapsed"
-                                                  Glyph="&#xE601;" 
-                                                  FontFamily="{ThemeResource TelegramThemeFontFamily}"
-                                                  Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" 
-                                                  FontSize="10" 
-                                                  Height="10"
-                                                  Width="18"
-                                                  Margin="0,0,4,0"/>
-                    <TextBlock Text="{x:Bind ViewModel.Date, FallbackValue='date'}"
-                                                   RequestedTheme="Dark"
-                                                   Style="{ThemeResource CaptionTextBlockStyle}" />
-                </StackPanel>
-            </StackPanel>
-
-        </Border>-->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Ellipse Fill="{x:Bind ConvertBubble(ViewModel.FromId)}" Width="32" Height="32" VerticalAlignment="Bottom" Margin="0,0,8,6"/>
 
         <Border x:Name="LayoutRoot"
-            Padding="{ThemeResource MessageContentPadding}" 
-            Background="{StaticResource TelegramBackgroundAccentBrush}" 
-            BorderBrush="{ThemeResource MessageBorderBrush}" 
-            BorderThickness="0,0,0,2" 
-            HorizontalAlignment="Right" 
-            Margin="4,4,0,4" 
-            MaxWidth="430">
+                Padding="{ThemeResource MessageContentPadding}" 
+                Background="{ThemeResource MessageBackgroundBrush}" 
+                BorderBrush="{ThemeResource MessageBorderBrush}" 
+                BorderThickness="0,0,0,2" 
+                HorizontalAlignment="Left" 
+                Margin="0,4,40,4" 
+                MaxWidth="430"
+                Grid.Column="1">
+            <Border.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyout.MenuFlyoutPresenterStyle>
+                        <Style TargetType="MenuFlyoutPresenter">
+                            <Setter Property="RequestedTheme" Value="Light"/>
+                        </Style>
+                    </MenuFlyout.MenuFlyoutPresenterStyle>
+                    <MenuFlyoutItem Text="Reply"/>
+                    <MenuFlyoutItem Text="Copy"/>
+                    <MenuFlyoutItem Text="Forward"/>
+                    <MenuFlyoutItem Text="Delete"/>
+                </MenuFlyout>
+            </Border.ContextFlyout>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -67,29 +49,30 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <!--<TextBlock x:Name="ForwardControl" 
-                       Margin="0,0,0,2"
-                       Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
-                       Visibility="Collapsed" 
-                       Style="{ThemeResource BaseTextBlockStyle}" 
-                       Grid.Row="1">
-                <Run Text="{Binding Strings.ForwardedFrom, Source={StaticResource Resources}}"/>
-                <Run x:Name="ForwardText" Text="{Binding}"/>
-            </TextBlock>
+                <TextBlock x:Name="FullNameLabel" Text="{x:Bind ViewModel.From.FullName}" Foreground="{x:Bind ConvertBubble(ViewModel.FromId)}" Margin="0,0,0,2" Style="{ThemeResource BaseTextBlockStyle}"/>
 
-            <ContentControl
+                <TextBlock x:Name="ForwardControl"
+                           Margin="0,0,0,2"
+                           Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
+                           Visibility="{x:Bind (Visibility)ViewModel.HasFwdFrom}" 
+                           Style="{ThemeResource BaseTextBlockStyle}" 
+                           Grid.Row="1">
+                    <Run Text="Forwarded from"/>
+                    <Run Text="{x:Bind ViewModel.FwdFrom.Flags}"/>
+                </TextBlock>
+
+                <!--<ContentControl
                 Content="{Binding ReplyInfo}" 
                 Visibility="{Binding ReplyVisibility}"
                 common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
                 ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
                 Grid.Row="1"/>-->
-                <TextBlock Text="{x:Bind ViewModel.FromId}" Grid.Row="0"/>
-                <RichTextBlock x:Name="MessageControl"
-                           common:MessageHelper.Message="{x:Bind ViewModel.Self}" 
-                           Style="{ThemeResource BodyRichTextBlockStyle}"
-                           Foreground="{ThemeResource MessageForegroundBrush}"
-                           Margin="0,0,0,-1"
-                           Grid.Row="2"/>
+
+                <RichTextBlock x:Name="MessageControl" 
+                               common:MessageHelper.Message="{Binding Self}" 
+                               Style="{ThemeResource BodyRichTextBlockStyle}"
+                               Margin="0,0,0,-1"
+                               Grid.Row="2"/>
 
                 <!--<controls:MediaControl 
                 x:Name="MediaControl" 
@@ -98,19 +81,15 @@
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}" 
                 Grid.Row="3"/>-->
 
-                <Border x:Name="StatusControl"
-                    VerticalAlignment="Bottom" 
-                    HorizontalAlignment="Right"
-                    Padding="0,0,6,0" 
-                    Margin="0,0,-6,0"
-                    Grid.Row="4">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="StatusText" Text="{x:Bind ConvertDate(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
-                        <!--<FontIcon x:Name="StatusGlyph" Glyph="{x:Bind ConvertState(ViewModel.State), Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="4,0,0,3" VerticalAlignment="Bottom"/>-->
-                    </StackPanel>
+                <Border x:Name="StatusControl" 
+                        VerticalAlignment="Bottom" 
+                        HorizontalAlignment="Right" 
+                        Padding="0,0,6,0" 
+                        Margin="0,0,-6,0"
+                        Grid.Row="2">
+                    <TextBlock x:Name="StatusText" Text="{x:Bind ConvertDate(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
                 </Border>
             </Grid>
-
         </Border>
     </Grid>
 </local:MessageControlBase>
