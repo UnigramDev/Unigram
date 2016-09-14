@@ -36,7 +36,8 @@
                         </Style>
                     </MenuFlyout.MenuFlyoutPresenterStyle>
                     <MenuFlyoutItem Text="Reply"/>
-                    <MenuFlyoutItem Text="Copy"/>
+                    <MenuFlyoutItem Text="Copy"
+                                    Click="mfbtnCopy_Click"/>
                     <MenuFlyoutItem Text="Forward"/>
                     <MenuFlyoutItem Text="Delete"/>
                 </MenuFlyout>

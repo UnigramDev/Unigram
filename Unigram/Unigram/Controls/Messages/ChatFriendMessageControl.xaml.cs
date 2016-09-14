@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using Telegram.Api.TL;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -31,6 +33,22 @@ namespace Unigram.Controls.Messages
                     Bindings.Update();
                 }
             };
+        }
+
+        private void mfbtnCopy_Click(object sender, RoutedEventArgs e)
+        {
+            // Create datapackage with the copy-operation
+            DataPackage copyContent = new DataPackage();
+            copyContent.RequestedOperation = DataPackageOperation.Copy;
+
+            // Now we just have to set the content and copy this to the clipboard! :)
+            StringBuilder copyText = new StringBuilder();
+
+            copyText.AppendLine(ViewModel.Message);
+
+            // Trim off the last space/enter in case there were multiple lines copied
+            copyContent.SetText(copyText.ToString().TrimEnd());
+            Clipboard.SetContent(copyContent);
         }
     }
 }
