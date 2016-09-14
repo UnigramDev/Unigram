@@ -4,12 +4,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram", "Unigram\Unigram.csproj", "{2235E8EE-374A-4E49-8050-9B701467775D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D} = {EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram.Api", "Unigram.Api\Unigram.Api.csproj", "{B1979F0B-11E6-4759-A54D-853B13139AA0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram.Core", "Unigram.Core\Unigram.Core.csproj", "{580D2885-8129-499E-9FFD-39FF1B586F18}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram.Tasks", "Unigram.Tasks\Unigram.Tasks.csproj", "{CF4C1FC3-BC51-4297-A7E1-493FCFFE940B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram.DesktopService", "Unigram.DesktopService\Unigram.DesktopService.csproj", "{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +98,22 @@ Global
 		{CF4C1FC3-BC51-4297-A7E1-493FCFFE940B}.Release|x64.Build.0 = Release|x64
 		{CF4C1FC3-BC51-4297-A7E1-493FCFFE940B}.Release|x86.ActiveCfg = Release|x86
 		{CF4C1FC3-BC51-4297-A7E1-493FCFFE940B}.Release|x86.Build.0 = Release|x86
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Debug|ARM.Build.0 = Debug|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Debug|x64.Build.0 = Debug|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Debug|x86.Build.0 = Debug|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Release|ARM.ActiveCfg = Release|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Release|ARM.Build.0 = Release|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Release|x64.ActiveCfg = Release|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Release|x64.Build.0 = Release|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Release|x86.ActiveCfg = Release|Any CPU
+		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

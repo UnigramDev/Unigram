@@ -19,6 +19,11 @@ using Windows.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Media.SpeechRecognition;
 using Windows.ApplicationModel.VoiceCommands;
+using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.Background;
+using Windows.Networking.PushNotifications;
+using Unigram.Tasks;
+using Windows.UI.Notifications;
 
 namespace Unigram
 {
@@ -28,6 +33,9 @@ namespace Unigram
     sealed partial class App : BootStrapper
     {
         public static ShareOperation ShareOperation { get; private set; }
+        public static AppServiceConnection Connection { get; private set; }
+
+        private BackgroundTaskDeferral appServiceDeferral = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
@@ -52,6 +60,32 @@ namespace Unigram
                 });
 
 #endif
+        }
+
+        /// <summary>
+        /// Initializes the app service on the host process 
+        /// </summary>
+        protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+        {
+            base.OnBackgroundActivated(args);
+
+            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails)
+            {
+                appServiceDeferral = args.TaskInstance.GetDeferral();
+                AppServiceTriggerDetails details = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
+                Connection = details.AppServiceConnection;
+            }
+            else if (args.TaskInstance.TriggerDetails is RawNotification)
+            {
+                var task = new NotificationTask();
+                task.Run(args.TaskInstance);
+            }
+            else if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail)
+            {
+                // TODO: upgrade the task to take advanges from in-process execution.
+                var task = new InteractiveTask();
+                task.Run(args.TaskInstance);
+            }
         }
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)

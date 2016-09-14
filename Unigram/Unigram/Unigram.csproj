@@ -478,6 +478,14 @@
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>xcopy /y /s "$(SolutionDir)Unigram.DesktopService\bin\$(ConfigurationName)\Unigram.DesktopService.exe" "$(SolutionDir)\Unigram\bin\x64\$(ConfigurationName)\AppX\"
+xcopy /y /s "$(SolutionDir)Unigram.DesktopService\bin\$(ConfigurationName)\Unigram.DesktopService.exe" "$(SolutionDir)\Unigram\bin\x86\$(ConfigurationName)\AppX\"</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y /s "$(SolutionDir)Unigram.DesktopService\bin\$(ConfigurationName)\Unigram.DesktopService.exe" "$(SolutionDir)\Unigram\bin\x64\$(ConfigurationName)\AppX\"
+xcopy /y /s "$(SolutionDir)Unigram.DesktopService\bin\$(ConfigurationName)\Unigram.DesktopService.exe" "$(SolutionDir)\Unigram\bin\x86\$(ConfigurationName)\AppX\"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
