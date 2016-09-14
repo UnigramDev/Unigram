@@ -54,17 +54,17 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
-        <uap:Extension Category="windows.appService">
+        <!--<uap:Extension Category="windows.appService">
           <uap:AppService Name="CommunicationService" />
-        </uap:Extension>
-        <desktop:Extension Category="windows.fullTrustProcess" Executable="Unigram.DesktopService.exe" />
+        </uap:Extension>-->
+        <!--<desktop:Extension Category="windows.fullTrustProcess" Executable="Unigram.DesktopService.exe" />-->
       </Extensions>
     </Application>
   </Applications>
   <Capabilities>
     <Capability Name="internetClient" />
     <Capability Name="internetClientServer" />
-    <rescap:Capability Name="runFullTrust" />
+    <!--<rescap:Capability Name="runFullTrust" />-->
     <DeviceCapability Name="location" />
   </Capabilities>
 </Package>

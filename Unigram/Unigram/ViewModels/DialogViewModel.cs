@@ -353,7 +353,7 @@ namespace Unigram.ViewModels
             if (group == null || group?.FromId != item.FromId)
             {
                 group = new MessageGroup(this, item.From, item.FromId, item.ToId);
-                Groups.Insert(0, group);
+                Groups.Insert(0, group); // TODO: should not be 0 all the time
             }
 
             group.Insert(index, item);
@@ -431,6 +431,15 @@ namespace Unigram.ViewModels
 
         protected override void InsertItem(int index, TLMessageBase item)
         {
+            // TODO: experimental
+            if (index == 0)
+            {
+                if (Count > 0)
+                    this[0].IsFirst = false;
+
+                item.IsFirst = true;
+            }
+
             index -= FirstIndex;
             base.InsertItem(index, item);
         }

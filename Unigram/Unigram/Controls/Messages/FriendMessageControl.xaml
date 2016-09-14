@@ -12,15 +12,19 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Border x:Name="LayoutRoot"
+    <StackPanel>
+        <!-- TODO: not the right way -->
+        <Border Height="10" Visibility="{x:Bind (Visibility)ViewModel.IsFirst}"/>
+
+        <Border x:Name="LayoutRoot"
             Padding="{ThemeResource MessageContentPadding}" 
             Background="{ThemeResource MessageBackgroundBrush}" 
             BorderBrush="{ThemeResource MessageBorderBrush}" 
             BorderThickness="0,0,0,2" 
             HorizontalAlignment="Left" 
-            Margin="0,4,40,4" 
+            Margin="0,2,40,2" 
             MaxWidth="430">
-        <!--<common:FlyoutHelper.AttachedFlyout>
+            <!--<common:FlyoutHelper.AttachedFlyout>
             <MenuFlyout>
                 <MenuFlyoutItem Command="{Binding Dialog.MessageReplyCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Reply, Source={StaticResource Resources}}"/>
                 <MenuFlyoutItem Command="{Binding Dialog.MessageCopyCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Copy, Source={StaticResource Resources}}"/>
@@ -28,28 +32,28 @@
                 <MenuFlyoutItem Command="{Binding Dialog.MessageDeleteCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Delete, Source={StaticResource Resources}}"/>
             </MenuFlyout>
         </common:FlyoutHelper.AttachedFlyout>-->
-        <Border.ContextFlyout>
-            <MenuFlyout>
-                <MenuFlyout.MenuFlyoutPresenterStyle>
-                    <Style TargetType="MenuFlyoutPresenter">
-                        <Setter Property="RequestedTheme" Value="Light"/>
-                    </Style>
-                </MenuFlyout.MenuFlyoutPresenterStyle>
-                <MenuFlyoutItem Text="Reply"/>
-                <MenuFlyoutItem Text="Copy"/>
-                <MenuFlyoutItem Text="Forward"/>
-                <MenuFlyoutItem Text="Delete"/>
-            </MenuFlyout>
-        </Border.ContextFlyout>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <TextBlock x:Name="ForwardControl"
+            <Border.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyout.MenuFlyoutPresenterStyle>
+                        <Style TargetType="MenuFlyoutPresenter">
+                            <Setter Property="RequestedTheme" Value="Light"/>
+                        </Style>
+                    </MenuFlyout.MenuFlyoutPresenterStyle>
+                    <MenuFlyoutItem Text="Reply"/>
+                    <MenuFlyoutItem Text="Copy"/>
+                    <MenuFlyoutItem Text="Forward"/>
+                    <MenuFlyoutItem Text="Delete"/>
+                </MenuFlyout>
+            </Border.ContextFlyout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="ForwardControl"
                        Margin="0,0,0,2"
                        Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
                        Visibility="{x:Bind (Visibility)ViewModel.HasFwdFrom}" 
@@ -57,36 +61,37 @@
                        Grid.Row="1">
                 <Run Text="Forwarded from"/>
                 <Run Text="{x:Bind ViewModel.FwdFrom.Flags}"/>
-            </TextBlock>
+                </TextBlock>
 
-            <!--<ContentControl
+                <!--<ContentControl
                 Content="{Binding ReplyInfo}" 
                 Visibility="{Binding ReplyVisibility}"
                 common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
                 ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
                 Grid.Row="1"/>-->
 
-            <RichTextBlock x:Name="MessageControl" 
+                <RichTextBlock x:Name="MessageControl" 
                            common:MessageHelper.Message="{Binding Self}" 
                            Style="{ThemeResource BodyRichTextBlockStyle}"
                            Margin="0,0,0,-1"
                            Grid.Row="2"/>
 
-            <!--<controls:MediaControl 
+                <!--<controls:MediaControl 
                 x:Name="MediaControl" 
                 Content="{Binding Media}"
                 common:Attached.Tapped="{Binding Dialog.MessageOpenMediaCommand, Source={StaticResource Locator}}"
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}" 
                 Grid.Row="3"/>-->
 
-            <Border x:Name="StatusControl" 
+                <Border x:Name="StatusControl" 
                     VerticalAlignment="Bottom" 
                     HorizontalAlignment="Right" 
                     Padding="0,0,6,0" 
                     Margin="0,0,-6,0"
                     Grid.Row="2">
-                <TextBlock x:Name="StatusText" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
-            </Border>
-        </Grid>
-    </Border>
+                    <TextBlock x:Name="StatusText" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
+                </Border>
+            </Grid>
+        </Border>
+    </StackPanel>
 </local:MessageControlBase>

@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Services.Cache;
 
 namespace Telegram.Api.TL
 {
-    public abstract partial class TLMessageBase : ITLRandomId
+    public abstract partial class TLMessageBase : ITLRandomId, INotifyPropertyChanged
     {
         // TODO:
         public bool IsUnread { get; set; } = false;
@@ -89,6 +91,29 @@ namespace Telegram.Api.TL
 
                 return _from;
             }
+        }
+
+        private bool _isFirst;
+        public bool IsFirst
+        {
+            get
+            {
+                return _isFirst;
+            }
+            set
+            {
+                if (_isFirst != value)
+                {
+                    _isFirst = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public override void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
