@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Messages"
+    xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vmc="using:Telegram.Api.TL"
@@ -11,7 +12,7 @@
     d:DesignWidth="400">
 
     <Grid HorizontalAlignment="Left">
-        <Border Background="{StaticResource TelegramBackgroundMessageBubbleBrush}"
+        <!--<Border Background="{StaticResource TelegramBackgroundMessageBubbleBrush}"
                                     Margin="8"
                                     MinHeight="36"
                                     MinWidth="200"
@@ -47,6 +48,69 @@
                                                    Style="{ThemeResource CaptionTextBlockStyle}" />
                 </StackPanel>
             </StackPanel>
+
+        </Border>-->
+
+        <Border x:Name="LayoutRoot"
+            Padding="{ThemeResource MessageContentPadding}" 
+            Background="{StaticResource TelegramBackgroundAccentBrush}" 
+            BorderBrush="{ThemeResource MessageBorderBrush}" 
+            BorderThickness="0,0,0,2" 
+            HorizontalAlignment="Right" 
+            Margin="4,4,0,4" 
+            MaxWidth="430">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!--<TextBlock x:Name="ForwardControl" 
+                       Margin="0,0,0,2"
+                       Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
+                       Visibility="Collapsed" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       Grid.Row="1">
+                <Run Text="{Binding Strings.ForwardedFrom, Source={StaticResource Resources}}"/>
+                <Run x:Name="ForwardText" Text="{Binding}"/>
+            </TextBlock>
+
+            <ContentControl
+                Content="{Binding ReplyInfo}" 
+                Visibility="{Binding ReplyVisibility}"
+                common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
+                ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                Grid.Row="1"/>-->
+                <TextBlock Text="{x:Bind ViewModel.FromId}" Grid.Row="0"/>
+                <RichTextBlock x:Name="MessageControl"
+                           common:MessageHelper.Message="{x:Bind ViewModel.Self}" 
+                           Style="{ThemeResource BodyRichTextBlockStyle}"
+                           Foreground="{ThemeResource MessageForegroundBrush}"
+                           Margin="0,0,0,-1"
+                           Grid.Row="2"/>
+
+                <!--<controls:MediaControl 
+                x:Name="MediaControl" 
+                Content="{Binding Media}"
+                common:Attached.Tapped="{Binding Dialog.MessageOpenMediaCommand, Source={StaticResource Locator}}"
+                ContentTemplateSelector="{StaticResource MediaTemplateSelector}" 
+                Grid.Row="3"/>-->
+
+                <Border x:Name="StatusControl"
+                    VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Right"
+                    Padding="0,0,6,0" 
+                    Margin="0,0,-6,0"
+                    Grid.Row="4">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="StatusText" Text="{x:Bind ConvertDate(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
+                        <!--<FontIcon x:Name="StatusGlyph" Glyph="{x:Bind ConvertState(ViewModel.State), Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="4,0,0,3" VerticalAlignment="Bottom"/>-->
+                    </StackPanel>
+                </Border>
+            </Grid>
+
         </Border>
     </Grid>
 </local:MessageControlBase>
