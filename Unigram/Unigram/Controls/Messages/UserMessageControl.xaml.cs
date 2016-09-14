@@ -27,6 +27,14 @@ namespace Unigram.Controls.Messages
         public UserMessageControl()
         {
             InitializeComponent();
+
+            DataContextChanged += (s, args) =>
+            {
+                if (ViewModel != null)
+                {
+                    Bindings.Update();
+                }
+            };
         }
     }
 }

@@ -5,13 +5,13 @@
     <ResourceDictionary.ThemeDictionaries>
         <!-- From -->
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource SystemAccentColorDark2}"/>
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="{ThemeResource SystemAccentColorDark2}"/>
-            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{StaticResource SystemBaseMediumColor}"/>
-            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{StaticResource SystemBaseMediumColor}"/>
+            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
 
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#3a8e26"/>
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#5dc452"/>
 
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#6aad60"/>
@@ -24,8 +24,8 @@
         <!-- To -->
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource SystemAccentColor}"/>
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="{ThemeResource SystemAccentColor}"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#ffffff"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="#29748ea2"/>
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
 

@@ -23,6 +23,14 @@ namespace Unigram.Controls.Messages
         public ChatFriendMessageControl()
         {
             InitializeComponent();
+
+            DataContextChanged += (s, args) =>
+            {
+                if (ViewModel != null)
+                {
+                    Bindings.Update();
+                }
+            };
         }
     }
 }

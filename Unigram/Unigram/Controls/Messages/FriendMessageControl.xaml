@@ -4,49 +4,76 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Messages"
     xmlns:vmc="using:Telegram.Api.TL"
+    xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    RequestedTheme="Light"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-    
-    <Grid HorizontalAlignment="Left">
-        <Border Background="{StaticResource TelegramBackgroundMessageBubbleBrush}"
-                                    Margin="8"
-                                    MinHeight="36"
-                                    MinWidth="200"
-                                    MaxWidth="400"
-                                    >
-            <StackPanel Orientation="Vertical"
-                                            Padding="8,6">
-                <TextBlock Text="{Binding ViewModel.FromId, FallbackValue='from id'}"
-                                               Visibility="Visible"
-                                               TextWrapping="Wrap"
-                                               Margin="0,0,0,4"
-                                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                               RequestedTheme="Dark"/>
-                <Image Margin="0,0,0,4"
-                                           Visibility="Collapsed"
-                                           Source="ms-appx:///Assets/Mockups/Images/userPhoto.jpg"/>
-                <TextBlock Text="{Binding ViewModel.Message, FallbackValue='message'}"
-                                               TextWrapping="Wrap"
-                                               RequestedTheme="Dark"/>
-                <StackPanel Orientation="Horizontal" 
-                                                HorizontalAlignment="Right">
-                    <FontIcon x:Name="StateIcon"
-                                                  Visibility="Collapsed"
-                                                  Glyph="&#xE601;" 
-                                                  FontFamily="{ThemeResource TelegramThemeFontFamily}"
-                                                  Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" 
-                                                  FontSize="10" 
-                                                  Height="10"
-                                                  Width="18"
-                                                  Margin="0,0,4,0"/>
-                    <TextBlock Text="{x:Bind ViewModel.Date, FallbackValue='date'}"
-                                                   RequestedTheme="Dark"
-                                                   Style="{ThemeResource CaptionTextBlockStyle}" />
-                </StackPanel>
-            </StackPanel>
-        </Border>
-    </Grid>
+
+    <Border x:Name="LayoutRoot"
+            Padding="{ThemeResource MessageContentPadding}" 
+            Background="{ThemeResource MessageBackgroundBrush}" 
+            BorderBrush="{ThemeResource MessageBorderBrush}" 
+            BorderThickness="0,0,0,2" 
+            HorizontalAlignment="Left" 
+            Margin="0,4,40,4" 
+            MaxWidth="430">
+        <!--<common:FlyoutHelper.AttachedFlyout>
+            <MenuFlyout>
+                <MenuFlyoutItem Command="{Binding Dialog.MessageReplyCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Reply, Source={StaticResource Resources}}"/>
+                <MenuFlyoutItem Command="{Binding Dialog.MessageCopyCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Copy, Source={StaticResource Resources}}"/>
+                <MenuFlyoutItem Command="{Binding Dialog.MessageForwardCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Forward, Source={StaticResource Resources}}"/>
+                <MenuFlyoutItem Command="{Binding Dialog.MessageDeleteCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Delete, Source={StaticResource Resources}}"/>
+            </MenuFlyout>
+        </common:FlyoutHelper.AttachedFlyout>-->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="ForwardControl"
+                       Margin="0,0,0,2"
+                       Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
+                       Visibility="{x:Bind (Visibility)ViewModel.HasFwdFrom}" 
+                       Style="{ThemeResource BaseTextBlockStyle}" 
+                       Grid.Row="1">
+                <Run Text="Forwarded from"/>
+                <Run Text="{x:Bind ViewModel.FwdFrom.Flags}"/>
+            </TextBlock>
+
+            <!--<ContentControl
+                Content="{Binding ReplyInfo}" 
+                Visibility="{Binding ReplyVisibility}"
+                common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
+                ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                Grid.Row="1"/>-->
+
+            <RichTextBlock x:Name="MessageControl" 
+                           common:MessageHelper.Message="{Binding Self}" 
+                           Style="{ThemeResource BodyRichTextBlockStyle}"
+                           Margin="0,0,0,-1"
+                           Grid.Row="2"/>
+
+            <!--<controls:MediaControl 
+                x:Name="MediaControl" 
+                Content="{Binding Media}"
+                common:Attached.Tapped="{Binding Dialog.MessageOpenMediaCommand, Source={StaticResource Locator}}"
+                ContentTemplateSelector="{StaticResource MediaTemplateSelector}" 
+                Grid.Row="3"/>-->
+
+            <Border x:Name="StatusControl" 
+                    VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Right" 
+                    Padding="0,0,6,0" 
+                    Margin="0,0,-6,0"
+                    Grid.Row="2">
+                <TextBlock x:Name="StatusText" Text="{x:Bind ConvertDate(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
+            </Border>
+        </Grid>
+    </Border>
 </local:MessageControlBase>

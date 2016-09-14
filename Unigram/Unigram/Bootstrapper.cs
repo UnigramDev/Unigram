@@ -47,6 +47,7 @@
             container.ContainerBuilder.RegisterType<UploadDocumentFileManager>().As<IUploadDocumentFileManager>().SingleInstance();
 
             container.ContainerBuilder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
 
             // ViewModels
             container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();

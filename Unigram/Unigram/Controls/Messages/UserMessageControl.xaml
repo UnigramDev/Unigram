@@ -29,17 +29,19 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <!--<TextBlock x:Name="ForwardControl" 
+            <TextBlock x:Name="ForwardControl" 
                        Margin="0,0,0,2"
                        Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
-                       Visibility="Collapsed" 
+                       Visibility="{x:Bind (Visibility)ViewModel.HasFwdFrom}" 
                        Style="{ThemeResource BaseTextBlockStyle}" 
                        Grid.Row="1">
-                <Run Text="{Binding Strings.ForwardedFrom, Source={StaticResource Resources}}"/>
-                <Run x:Name="ForwardText" Text="{Binding}"/>
+                <!--<Run Text="{Binding Strings.ForwardedFrom, Source={StaticResource Resources}}"/>
+                <Run x:Name="ForwardText" Text="{Binding}"/>-->
+                <Run Text="Forwarded from"/>
+                <Run Text="{x:Bind ViewModel.FwdFrom.Flags}"/>
             </TextBlock>
 
-            <ContentControl
+            <!--<ContentControl
                 Content="{Binding ReplyInfo}" 
                 Visibility="{Binding ReplyVisibility}"
                 common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
@@ -65,7 +67,7 @@
                     HorizontalAlignment="Right"
                     Padding="0,0,6,0" 
                     Margin="0,0,-6,0"
-                    Grid.Row="4">
+                    Grid.Row="2">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock x:Name="StatusText" Text="{x:Bind ConvertDate(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
                     <FontIcon x:Name="StatusGlyph" Glyph="{x:Bind ConvertState(ViewModel.State), Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="4,0,0,3" VerticalAlignment="Bottom"/>

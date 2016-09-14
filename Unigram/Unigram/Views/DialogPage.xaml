@@ -126,9 +126,11 @@
                   RelativePanel.AlignRightWithPanel="True"
                   RelativePanel.AlignTopWithPanel="True"
                   RelativePanel.Above="rpInput">
+                <Image Source="ms-appx:///Assets/Images/DefaultBackground.jpg" Stretch="UniformToFill"/>
                 <controls:BubbleListView x:Name="lvDialogs" 
                                          ItemsSource="{x:Bind ViewModel.Messages}"
-                                         ItemTemplateSelector="{StaticResource MessageTemplateSelector}">
+                                         ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
+                                         SelectionMode="None">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel GroupHeaderPlacement="Left"
@@ -230,6 +232,12 @@
                             </selectors:MessageStyleSelector.ServiceStyle>
                         </selectors:MessageStyleSelector>
                     </controls:BubbleListView.ItemContainerStyleSelector>
+                    <controls:BubbleListView.Header>
+                        <Border Height="6"/>
+                    </controls:BubbleListView.Header>
+                    <controls:BubbleListView.Footer>
+                        <Border Height="6"/>
+                    </controls:BubbleListView.Footer>
                 </controls:BubbleListView>
             </Grid>
             

@@ -58,7 +58,7 @@ namespace Unigram.Common
                 var paragraph = new Paragraph();
                 ReplaceAll(message, message.Message, paragraph, sender.Foreground, true);
 
-                if (message17?.Media is TLMessageMediaEmpty)
+                if (message17?.Media is TLMessageMediaEmpty || message17?.Media == null)
                 {
                     var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
                     var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);

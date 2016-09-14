@@ -107,6 +107,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Dependency\UnigramContainerBuilder.cs" />
     <Compile Include="Managers\BackgroundTaskManager.cs" />
     <Compile Include="Managers\ResourcesManager.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\IExtendedDeviceInfoService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
+    <Compile Include="Services\PushService.cs" />
     <EmbeddedResource Include="Properties\Unigram.Core.rd.xml" />
   </ItemGroup>
   <ItemGroup>
