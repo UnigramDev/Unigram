@@ -76,13 +76,13 @@ namespace Telegram.Api.Services.Cache
 
         private readonly ITelegramEventAggregator _eventAggregator;
 
-        public static ICacheService Instance { get; protected set; }
+        public static ICacheService Current { get; protected set; }
 
         public InMemoryCacheService(ITelegramEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
 
-            Instance = this;
+            Current = this;
         }
 
         public IList<TLDialog> GetDialogs()

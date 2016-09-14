@@ -235,10 +235,10 @@ namespace Telegram.Api.Services
                 Initialize();
             }
 
-            Instance = this;
+            Current = this;
         }
 
-        public static IMTProtoService Instance { get; protected set; }
+        public static IMTProtoService Current { get; protected set; }
 
         private void CheckTimeouts(object state)
         {

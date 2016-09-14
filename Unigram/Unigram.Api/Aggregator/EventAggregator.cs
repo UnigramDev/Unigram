@@ -86,7 +86,7 @@ namespace Telegram.Api.Aggregator {
         /// </summary>
         public static Action<object, object> HandlerResultProcessing = (target, result) => { };
 
-        public static ITelegramEventAggregator Instance { get; protected set; }
+        public static ITelegramEventAggregator Current { get; protected set; }
 
         /// <summary>
         ///   Initializes a new instance of the <see cref = "EventAggregator" /> class.
@@ -94,7 +94,7 @@ namespace Telegram.Api.Aggregator {
         public TelegramEventAggregator() {
             PublicationThreadMarshaller = DefaultPublicationThreadMarshaller;
 
-            Instance = this;
+            Current = this;
         }
 
         /// <summary>
