@@ -326,7 +326,7 @@ namespace Telegram.Api.TL
                     return Visibility.Visible;
                 }
 
-                var clientDelta = MTProtoService.Instance.ClientTicksDelta;
+                var clientDelta = MTProtoService.Current.ClientTicksDelta;
                 var utc0SecsLong = notifySettings.MuteUntil * 4294967296 - clientDelta;
                 var utc0SecsInt = utc0SecsLong / 4294967296.0;
 

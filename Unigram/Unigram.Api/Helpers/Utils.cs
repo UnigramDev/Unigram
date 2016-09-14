@@ -633,7 +633,7 @@ namespace Telegram.Api.Helpers
 
             try
             {
-                var str = string.Format("{0}{1}", id, MTProtoService.Instance.CurrentUserId);
+                var str = string.Format("{0}{1}", id, MTProtoService.Current.CurrentUserId);
                 if (str.Length > 15)
                 {
                     str = str.Substring(0, 15);

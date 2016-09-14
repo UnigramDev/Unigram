@@ -26,7 +26,7 @@ namespace Telegram.Api.TL
     {
         private static void LogBugsenseError(string caption, Exception e)
         {
-            var eventAggregator = TelegramEventAggregator.Instance;
+            var eventAggregator = TelegramEventAggregator.Current;
 
             eventAggregator.Publish(new ExceptionInfo{ Caption = caption, Exception = e });
         }

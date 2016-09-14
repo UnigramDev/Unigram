@@ -113,7 +113,7 @@ namespace Unigram.Controls.Items
 
             try
             {
-                var str = string.Format("{0}{1}", id, MTProtoService.Instance.CurrentUserId);
+                var str = string.Format("{0}{1}", id, MTProtoService.Current.CurrentUserId);
                 if (str.Length > 15)
                 {
                     str = str.Substring(0, 15);
@@ -139,7 +139,7 @@ namespace Unigram.Controls.Items
             var topMessage = ViewModel?.TopMessageItem as TLMessageBase;
             if (topMessage != null)
             {
-                var clientDelta = MTProtoService.Instance.ClientTicksDelta;
+                var clientDelta = MTProtoService.Current.ClientTicksDelta;
                 var utc0SecsLong = topMessage.Date * 4294967296 - clientDelta;
                 var utc0SecsInt = utc0SecsLong / 4294967296.0;
                 var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
@@ -157,7 +157,7 @@ namespace Unigram.Controls.Items
                 var from = topMessage.FromId;
                 if (from != null)
                 {
-                    int currentUserId = MTProtoService.Instance.CurrentUserId;
+                    int currentUserId = MTProtoService.Current.CurrentUserId;
                     if (currentUserId == from.Value)
                     {
                         return true;
