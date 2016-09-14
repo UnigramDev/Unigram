@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -22,6 +23,9 @@ namespace Unigram.Views
     public sealed partial class DialogPage : Page
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
+
+        public BindConvert Convert => BindConvert.Current;
+
         public bool isLoading = false;
         public DialogPage()
         {

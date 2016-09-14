@@ -85,7 +85,7 @@
                     Padding="0,0,6,0" 
                     Margin="0,0,-6,0"
                     Grid.Row="2">
-                <TextBlock x:Name="StatusText" Text="{x:Bind ConvertDate(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
+                <TextBlock x:Name="StatusText" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
             </Border>
         </Grid>
     </Border>

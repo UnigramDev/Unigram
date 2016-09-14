@@ -19,6 +19,9 @@ using Telegram.Api.Services.Connection;
 using System.Threading;
 using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Collections;
+using System.ComponentModel;
 
 namespace Unigram.ViewModels
 {
@@ -32,7 +35,7 @@ namespace Unigram.ViewModels
         int loaded = 0;
         public TLPeerBase peer;
         public TLInputPeerBase inputPeer;
-        public ObservableCollection<TLMessageBase> Messages= new ObservableCollection<TLMessageBase>();
+        public MessageCollection Messages { get; private set; } = new MessageCollection();
         public string DialogTitle;
         public string debug;
         public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
@@ -123,11 +126,7 @@ namespace Unigram.ViewModels
             TLVector<TLMessageBase> y = x.Value.Messages;
             foreach (var item in y)
             {                
-                var xy = (TLMessage)item;
-               // if (xy.Id == SettingsHelper.UserId)
-                    //set the thing to right alignment
-                //var time = TLUtils.ToDateTime(xy.Date);
-                Messages.Insert(0, xy);
+                Messages.Insert(0, item);
                 counter++;
             }
             loaded += loadCount;
@@ -339,6 +338,107 @@ namespace Unigram.ViewModels
                 //}
             }
             return result;
+        }
+    }
+
+    public class MessageCollection : ObservableCollection<TLMessageBase>
+    {
+        public ObservableCollection<MessageGroup> Groups { get; private set; } = new ObservableCollection<MessageGroup>();
+
+        protected override void InsertItem(int index, TLMessageBase item)
+        {
+            base.InsertItem(index, item);
+
+            var group = GroupForIndex(index);
+            if (group == null || group?.FromId != item.FromId)
+            {
+                group = new MessageGroup(this, item.From, item.FromId, item.ToId);
+                Groups.Insert(0, group);
+            }
+
+            group.Insert(index, item);
+        }
+
+        protected override void RemoveItem(int index)
+        {
+            base.RemoveItem(index);
+
+            var group = GroupForIndex(index);
+            if (group != null)
+            {
+                group.RemoveAt(index);
+            }
+        }
+
+        private MessageGroup GroupForIndex(int index)
+        {
+            if (index == 0)
+            {
+                return Groups.FirstOrDefault();
+            }
+            else if (index == Count - 1)
+            {
+                return Groups.LastOrDefault();
+            }
+            else
+            {
+                return Groups.FirstOrDefault(x => x.FirstIndex >= index && x.LastIndex <= index);
+            }
+        }
+    }
+
+    public class MessageGroup : ObservableCollection<TLMessageBase>
+    {
+        private ObservableCollection<MessageGroup> _parent;
+
+        public MessageGroup(MessageCollection parent, TLUser from, int? fromId, TLPeerBase toId)
+        {
+            _parent = parent.Groups;
+
+            From = from;
+            FromId = fromId;
+            ToId = toId;
+        }
+
+        public TLUser From { get; private set; }
+
+        public int? FromId { get; private set; }
+
+        public TLPeerBase ToId { get; private set; }
+
+        public int FirstIndex
+        {
+            get
+            {
+                var count = 0;
+                var index = _parent.IndexOf(this);
+                if (index > 0)
+                {
+                    count = _parent[index - 1].LastIndex;
+                }
+
+                return count;
+            }
+        }
+
+        public int LastIndex
+        {
+            get
+            {
+                return FirstIndex + Count - 1;
+            }
+        }
+
+        protected override void InsertItem(int index, TLMessageBase item)
+        {
+            index -= FirstIndex;
+            base.InsertItem(index, item);
+        }
+
+        protected override void RemoveItem(int index)
+        {
+            index -= FirstIndex;
+            base.RemoveItem(index);
         }
     }
 }

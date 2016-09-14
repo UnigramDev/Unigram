@@ -82,8 +82,8 @@
                     Margin="0,0,-6,0"
                     Grid.Row="2">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="StatusText" Text="{x:Bind ConvertDate(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
-                    <FontIcon x:Name="StatusGlyph" Glyph="{x:Bind ConvertState(ViewModel.State), Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
+                    <TextBlock x:Name="StatusText" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
+                    <FontIcon x:Name="StatusGlyph" Glyph="{x:Bind Convert.State(ViewModel.State), Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
                 </StackPanel>
             </Border>
         </Grid>

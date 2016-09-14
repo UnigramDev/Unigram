@@ -148,6 +148,7 @@
     </Compile>
     <Compile Include="Controls\UnigramLogo.cs" />
     <Compile Include="Controls\UpdateTextBox.cs" />
+    <Compile Include="Converters\BindConvert.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DateTimeToFormatConverter.cs" />
     <Compile Include="Converters\DefaultPhotoConverter.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\ShareTargetHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Selectors\MessageGroupTemplateSelector.cs" />
     <Compile Include="Selectors\MessageStyleSelector.cs" />
     <Compile Include="Selectors\MessageTemplateSelector.cs" />
     <Compile Include="Themes\Messages.xaml.cs">

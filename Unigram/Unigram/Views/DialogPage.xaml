@@ -6,6 +6,7 @@
     xmlns:local="using:Unigram.Views"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:selectors="using:Unigram.Selectors"
+    xmlns:viewmodels="using:Unigram.ViewModels"
     xmlns:vm="using:Unigram.ViewModels"
     xmlns:vmc="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -21,6 +22,34 @@
     </Page.Transitions>
 
     <Page.Resources>
+        <CollectionViewSource x:Name="MessagesSource" IsSourceGrouped="True" Source="{Binding Messages.Groups}"/>
+
+        <Style TargetType="ListViewHeaderItem">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+            <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+            <Setter Property="Background" Value="Red" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="MinHeight" Value="{ThemeResource ListViewHeaderItemMinHeight}" />
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewHeaderItem">
+                        <ContentPresenter x:Name="ContentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
             <StackPanel Margin="0,12">
@@ -128,7 +157,7 @@
                   RelativePanel.Above="rpInput">
                 <Image Source="ms-appx:///Assets/Images/DefaultBackground.jpg" Stretch="UniformToFill"/>
                 <controls:BubbleListView x:Name="lvDialogs" 
-                                         ItemsSource="{x:Bind ViewModel.Messages}"
+                                         ItemsSource="{Binding Source={StaticResource MessagesSource}}"
                                          ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                                          SelectionMode="None">
                     <ListView.ItemsPanel>
@@ -138,7 +167,7 @@
                                              VerticalAlignment="Bottom" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
-                    <controls:BubbleListView.ItemContainerStyleSelector>
+                    <ListView.ItemContainerStyleSelector>
                         <selectors:MessageStyleSelector>
                             <selectors:MessageStyleSelector.MessageStyle>
                                 <Style TargetType="ListViewItem">
@@ -231,13 +260,26 @@
                                 </Style>
                             </selectors:MessageStyleSelector.ServiceStyle>
                         </selectors:MessageStyleSelector>
-                    </controls:BubbleListView.ItemContainerStyleSelector>
-                    <controls:BubbleListView.Header>
+                    </ListView.ItemContainerStyleSelector>
+                    <ListView.Header>
                         <Border Height="6"/>
-                    </controls:BubbleListView.Header>
-                    <controls:BubbleListView.Footer>
+                    </ListView.Header>
+                    <ListView.Footer>
                         <Border Height="6"/>
-                    </controls:BubbleListView.Footer>
+                    </ListView.Footer>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplateSelector>
+                                <selectors:MessageGroupTemplateSelector>
+                                    <selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
+                                        <DataTemplate x:DataType="viewmodels:MessageGroup">
+                                            <Ellipse Width="32" Height="32" Fill="Red" Margin="12,4,0,0"/>
+                                        </DataTemplate>
+                                    </selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
+                                </selectors:MessageGroupTemplateSelector>
+                            </GroupStyle.HeaderTemplateSelector>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
                 </controls:BubbleListView>
             </Grid>
             
