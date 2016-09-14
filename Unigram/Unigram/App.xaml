@@ -11,9 +11,10 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
+                <!--<ResourceDictionary Source="ms-appx:///Themes/Brand.xaml"/>-->
                 <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
                 <themes:Messages/>
-                <!--<ResourceDictionary Source="ms-appx:///Themes/Brand.xaml"/>-->
+                <themes:Replies/>
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
