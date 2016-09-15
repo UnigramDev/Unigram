@@ -407,8 +407,10 @@
                 </AppBarButton>
                 <AppBarButton x:Name="cbtnStickers"
                               x:Uid="CBTN-Stickers"
-                              Icon="Emoji2"
                               Label="Stickers">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE606;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
+                    </AppBarButton.Icon>
                     <FlyoutBase.AttachedFlyout>
                         <Flyout>
                             <Grid Height="240"
