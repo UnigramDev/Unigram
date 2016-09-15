@@ -10,6 +10,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Core.Dependency;
 using Unigram.WebP;
 using Windows.Graphics.Imaging;
@@ -713,15 +714,15 @@ namespace Unigram.Converters
         //    return null;
         //}
 
-        public static ImageSource EnqueueStickerPreview(TLFileLocation location, TLObject owner, TLPhotoSize photoSize, BitmapImage bitmap)
+        public static ImageSource EnqueueStickerPreview(TLFileLocation location, TLObject owner, TLPhotoSize photoSize, StickerBitmapSource bitmap)
         {
             string filename = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
 
-            if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)))
+            if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)) && bitmap.IsSet == false)
             {
                 byte[] array = File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename));
 
-                return DecodeWebPImage(filename, array, delegate
+                return DecodeWebPImage(filename, array, () =>
                 {
                     File.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename));
                 });
@@ -735,11 +736,14 @@ namespace Unigram.Converters
                 Execute.BeginOnThreadPool(async () =>
                 {
                     await manager.DownloadFileAsync(location, owner, photoSize.Size);
-                    var buffer = WebPImage.Encode(File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)));
-                    Execute.BeginOnUIThread(() =>
+                    if (bitmap.IsSet == false)
                     {
-                        bitmap.SetSource(buffer);
-                    });
+                        var buffer = WebPImage.Encode(File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)));
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            bitmap.SetStream(buffer);
+                        });
+                    }
                 });
 
                 return bitmap;
@@ -767,7 +771,7 @@ namespace Unigram.Converters
 
                 Debug.WriteLine("Download");
 
-                var bitmap = new BitmapImage();
+                var bitmap = new StickerBitmapSource();
                 var manager = UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
@@ -775,7 +779,7 @@ namespace Unigram.Converters
                     var buffer = WebPImage.Encode(File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)));
                     Execute.BeginOnUIThread(() =>
                     {
-                        bitmap.SetSource(buffer);
+                        bitmap.SetStream(buffer);
                     });
                 });
 

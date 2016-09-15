@@ -15,6 +15,7 @@ using Template10.Common;
 using Windows.ApplicationModel.Email;
 using Windows.System;
 using Windows.UI;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -56,7 +57,17 @@ namespace Unigram.Common
             {
                 var foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x0f, 0x7d, 0xc7));
                 var paragraph = new Paragraph();
-                ReplaceAll(message, message.Message, paragraph, sender.Foreground, true);
+
+                if (message.HasEntities)
+                {
+                    Debug.WriteLine("USING ENTITIES INSTEAD OF REGEX");
+
+                    ReplaceEntities(message, paragraph, foreground);
+                }
+                else
+                {
+                    ReplaceAll(message, message.Message, paragraph, sender.Foreground, true);
+                }
 
                 if (message17?.Media is TLMessageMediaEmpty || message17?.Media == null)
                 {
@@ -165,6 +176,65 @@ namespace Unigram.Common
             AllRegex = new Regex($"({hashtag})|({mention})|({command})|({hyperlink})", RegexOptions.Compiled);
             //AllRegex = new Regex($"({emoji})|({hashtag})|({mention})|({command})|({hyperlink})", RegexOptions.Compiled);
             EmojiRegex = new Regex(emoji, RegexOptions.Compiled);
+        }
+
+        public static void ReplaceEntities(TLMessage message, Paragraph paragraph, Brush foreground)
+        {
+            var text = message.Message;
+            var previous = 0;
+            foreach (var entity in message.Entities)
+            {
+                if (entity.Offset > previous)
+                {
+                    paragraph.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
+                }
+
+                var type = entity.TypeId;
+                if (type == TLType.MessageEntityBold)
+                {
+                    paragraph.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontWeight = FontWeights.SemiBold });
+                }
+                else if (type == TLType.MessageEntityItalic)
+                {
+                    paragraph.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontStyle = FontStyle.Italic });
+                }
+                else if (type == TLType.MessageEntityCode)
+                {
+                    paragraph.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
+                }
+                else if (type == TLType.MessageEntityPre)
+                {
+                    // TODO any additional
+                    paragraph.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
+                }
+                else if (type == TLType.MessageEntityUrl ||
+                         type == TLType.MessageEntityEmail ||
+                         type == TLType.MessageEntityMention ||
+                         type == TLType.MessageEntityHashtag ||
+                         type == TLType.MessageEntityBotCommand)
+                {
+                    var hyper = new Hyperlink();
+                    hyper.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    hyper.Foreground = foreground;
+                    paragraph.Inlines.Add(hyper);
+                }
+                else if (type == TLType.MessageEntityTextUrl ||
+                         type == TLType.MessageEntityMentionName)
+                {
+                    var hyper = new Hyperlink();
+                    hyper.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    hyper.NavigateUri = new Uri(type == TLType.MessageEntityTextUrl ? ((TLMessageEntityTextUrl)entity).Url : "https://google.com"); //((TLMessageEntityMentionName)entity).UserId);
+                    hyper.Foreground = foreground;
+                    paragraph.Inlines.Add(hyper);
+                }
+
+                previous = entity.Offset + entity.Length;
+            }
+
+            if (text.Length > previous)
+            {
+                paragraph.Inlines.Add(new Run { Text = text.Substring(previous) });
+            }
         }
 
         public static void ReplaceAll(TLMessageBase message, string text, Paragraph paragraph, Brush foreground, bool matchLinks)
