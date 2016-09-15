@@ -126,6 +126,7 @@
                                    FontSize="16"
                                    Style="{StaticResource BaseTextBlockStyle}"/>
                         <TextBlock x:Name="tblDialogStatus"
+                                   Visibility="Collapsed"
                                    Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
                                    FontSize="12"
                                    Text="Online" />
@@ -137,20 +138,6 @@
         
         <!-- Main content -->
         <RelativePanel Grid.Row="1">
-            <!--<GridView x:Name="lvDialogs"
-                 ItemsSource="{x:Bind Path=ViewModel.ListX}"
-                 RelativePanel.AlignLeftWithPanel="True"
-                 RelativePanel.AlignRightWithPanel="True"
-                 RelativePanel.AlignTopWithPanel="True"
-                 RelativePanel.Above="rpInput">
-                 <GridView.ItemsPanel>
-                 <ItemsPanelTemplate>
-                 <ItemsStackPanel GroupHeaderPlacement="Left"
-                 ItemsUpdatingScrollMode="KeepLastItemInView"
-                 VerticalAlignment="Bottom" />
-                 </ItemsPanelTemplate>
-                 </GridView.ItemsPanel>
-                 </GridView>-->
             <Grid RelativePanel.AlignLeftWithPanel="True"
                   RelativePanel.AlignRightWithPanel="True"
                   RelativePanel.AlignTopWithPanel="True"
@@ -320,7 +307,7 @@
                          RelativePanel.LeftOf="btnSendMessage" />
                 <!-- Send-button -->
                 <Button x:Name="btnSendMessage"  
-                        Visibility="Visible"
+                        Visibility="Collapsed"
                         IsEnabled="True"
                         Width="48"
                         Command="{Binding SendCommand}"
@@ -330,7 +317,8 @@
                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
                         RelativePanel.AlignTopWithPanel="True"
                         RelativePanel.AlignBottomWithPanel="True"
-                        RelativePanel.AlignRightWithPanel="True" Click="btnSendMessage_Click">
+                        RelativePanel.AlignRightWithPanel="True" 
+                        Click="btnSendMessage_Click">
                     <Button.Content>
                         <TextBlock FontFamily="Segoe MDL2 Assets" 
                                    FontSize="20"
@@ -341,7 +329,7 @@
 
                 <!-- Voice Record-button -->
                 <Button x:Name="btnVoiceMessage"
-                        Visibility="Collapsed"
+                        Visibility="Visible"
                         Width="48"
                         MinHeight="48" 
                         Background="Transparent"                                      
@@ -349,7 +337,8 @@
                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
                         RelativePanel.AlignTopWithPanel="True"
                         RelativePanel.AlignBottomWithPanel="True"                        
-                        RelativePanel.AlignRightWithPanel="True" Click="btnVoiceMessage_Click">
+                        RelativePanel.AlignRightWithPanel="True" 
+                        Click="btnVoiceMessage_Click">
                     <Button.Content>
                         <TextBlock FontFamily="Segoe MDL2 Assets" 
                                    FontSize="20"
@@ -376,9 +365,9 @@
                             <!-- Please try to add camera capabilities with the W10 file picker first
                                  if that's not possible for all platforms, then enable the Camera-button here and 
                                  write something for that -->
-                            <!--<MenuFlyoutItem x:Name="fcbtnAttachCamera"
-                                 x:Uid="FCBTN-Camera"
-                                 Text="Camera" />-->
+                            <MenuFlyoutItem x:Name="fcbtnAttachCamera"
+                                            x:Uid="FCBTN-Camera"
+                                            Text="Camera" />
                             <MenuFlyoutItem x:Name="fcbtnAttachPhoto"
                                             x:Uid="FCBTN-Photo"
                                             Text="Photo" 
@@ -401,7 +390,18 @@
                 <AppBarButton x:Name="cbtnStickers"
                               x:Uid="CBTN-Stickers"
                               Icon="Emoji2"
-                              Label="Stickers" />
+                              Label="Stickers">
+                    <FlyoutBase.AttachedFlyout>
+                        <Flyout>
+                            <Grid Height="240"
+                                  Width="264">
+                                <TextBlock Text="Soon..."
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+                        </Flyout>
+                    </FlyoutBase.AttachedFlyout>
+                </AppBarButton>
             </CommandBar.PrimaryCommands>
 
             <!-- Secondary Commands (hidden in sub menu) -->
