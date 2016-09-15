@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "WebPImage.h"
+#include <wincodec.h>
+#include <shcore.h>
 
 using namespace Windows::Storage;
 using namespace Windows::UI::Xaml::Media::Imaging;
@@ -160,7 +162,7 @@ WriteableBitmap ^ Unigram::WebP::WebPImage::CreateWriteableBitmapFromWebPData(We
 	return nullptr;
 }
 
-Array<uint8>^ Unigram::WebP::WebPImage::Decode(const Array<uint8> ^bytes)
+IRandomAccessStream^ Unigram::WebP::WebPImage::Encode(const Array<uint8> ^bytes)
 {
 	auto vBuffer = std::vector<uint8_t>(bytes->Length);
 	std::copy(bytes->begin(), bytes->end(), vBuffer.begin());
@@ -196,8 +198,7 @@ Array<uint8>^ Unigram::WebP::WebPImage::Decode(const Array<uint8> ^bytes)
 			throw ref new FailureException(ref new String(L"WebPGetFeatures failed"));
 		}
 
-		auto vPixels = std::vector<uint8_t>(iter.width * iter.height * 4);
-		auto pixels = vPixels.data();
+		uint8_t* pixels = new uint8_t[(iter.width * 4) * iter.height];
 
 		config.options.no_fancy_upsampling = 1;
 		config.output.colorspace = MODE_bgrA;
@@ -213,7 +214,38 @@ Array<uint8>^ Unigram::WebP::WebPImage::Decode(const Array<uint8> ^bytes)
 			throw ref new FailureException(ref new String(L"Failed to decode frame"));
 		}
 
-		return ref new Array<uint8>(vPixels.data(), vPixels.size());
+		//return ref new Array<uint8>(vPixels.data(), vPixels.size());
+
+		InMemoryRandomAccessStream^ stream = ref new InMemoryRandomAccessStream();
+
+		ComPtr<IWICImagingFactory> piFactory;
+		ComPtr<IWICBitmapEncoder> piEncoder;
+		ComPtr<IStream> piStream;
+
+		CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&piFactory));
+		
+		HRESULT dioBubu = CreateStreamOverRandomAccessStream(stream, IID_PPV_ARGS(&piStream));
+
+		piFactory->CreateEncoder(GUID_ContainerFormatPng, NULL, &piEncoder);
+		piEncoder->Initialize(piStream.Get(), WICBitmapEncoderNoCache);
+
+		ComPtr<IPropertyBag2> propertyBag;
+		ComPtr<IWICBitmapFrameEncode> frame;
+		piEncoder->CreateNewFrame(&frame, &propertyBag);
+
+		frame->Initialize(propertyBag.Get());
+		frame->SetSize(iter.width, iter.height);
+
+		WICPixelFormatGUID format = GUID_WICPixelFormat32bppPBGRA;
+		frame->SetPixelFormat(&format);
+		frame->WritePixels(iter.height, iter.width * 4, (iter.width * 4) * iter.height, pixels);
+
+		frame->Commit();
+		piEncoder->Commit();
+
+		delete pixels;
+
+		return stream;
 	}
 
 	return nullptr;
