@@ -162,7 +162,7 @@ WriteableBitmap ^ Unigram::WebP::WebPImage::CreateWriteableBitmapFromWebPData(We
 	return nullptr;
 }
 
-IRandomAccessStream^ Unigram::WebP::WebPImage::Encode(Guid encoderId, const Array<uint8> ^bytes)
+IRandomAccessStream^ Unigram::WebP::WebPImage::Encode(const Array<uint8> ^bytes)
 {
 	auto vBuffer = std::vector<uint8_t>(bytes->Length);
 	std::copy(bytes->begin(), bytes->end(), vBuffer.begin());
@@ -198,8 +198,7 @@ IRandomAccessStream^ Unigram::WebP::WebPImage::Encode(Guid encoderId, const Arra
 			throw ref new FailureException(ref new String(L"WebPGetFeatures failed"));
 		}
 
-		auto vPixels = std::vector<uint8_t>(iter.width * iter.height * 4);
-		auto pixels = vPixels.data();
+		uint8_t* pixels = new uint8_t[(iter.width * 4) * iter.height];
 
 		config.options.no_fancy_upsampling = 1;
 		config.output.colorspace = MODE_bgrA;
@@ -219,9 +218,8 @@ IRandomAccessStream^ Unigram::WebP::WebPImage::Encode(Guid encoderId, const Arra
 
 		InMemoryRandomAccessStream^ stream = ref new InMemoryRandomAccessStream();
 
-		IWICImagingFactory *piFactory = NULL;
-		IWICBitmapEncoder *piEncoder = NULL;
-		//IWICStream *piStream = NULL;
+		ComPtr<IWICImagingFactory> piFactory;
+		ComPtr<IWICBitmapEncoder> piEncoder;
 		ComPtr<IStream> piStream;
 
 		CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&piFactory));
@@ -231,19 +229,21 @@ IRandomAccessStream^ Unigram::WebP::WebPImage::Encode(Guid encoderId, const Arra
 		piFactory->CreateEncoder(GUID_ContainerFormatPng, NULL, &piEncoder);
 		piEncoder->Initialize(piStream.Get(), WICBitmapEncoderNoCache);
 
-		IPropertyBag2 *propertyBag;
-		IWICBitmapFrameEncode *frame;
+		ComPtr<IPropertyBag2> propertyBag;
+		ComPtr<IWICBitmapFrameEncode> frame;
 		piEncoder->CreateNewFrame(&frame, &propertyBag);
 
-		frame->Initialize(propertyBag);
+		frame->Initialize(propertyBag.Get());
 		frame->SetSize(iter.width, iter.height);
 
 		WICPixelFormatGUID format = GUID_WICPixelFormat32bppPBGRA;
 		frame->SetPixelFormat(&format);
-		frame->WritePixels(iter.height, iter.width * 4, (iter.width * 4) * iter.height, vPixels.data());
+		frame->WritePixels(iter.height, iter.width * 4, (iter.width * 4) * iter.height, pixels);
 
 		frame->Commit();
 		piEncoder->Commit();
+
+		delete pixels;
 
 		return stream;
 	}

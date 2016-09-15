@@ -735,21 +735,10 @@ namespace Unigram.Converters
                 Execute.BeginOnThreadPool(async () =>
                 {
                     await manager.DownloadFileAsync(location, owner, photoSize.Size);
+                    var buffer = WebPImage.Encode(File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)));
                     Execute.BeginOnUIThread(() =>
                     {
-                        var timer = Stopwatch.StartNew();
-                        var buffer = WebPImage.Encode(BitmapEncoder.PngEncoderId, File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)));
-                        timer.Stop();
-
                         bitmap.SetSource(buffer);
-                        //using (var stream = new InMemoryRandomAccessStream())
-                        //{
-                        //    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
-                        //    encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, (uint)photoSize.W, (uint)photoSize.H, 96, 96, buffer);
-                        //    await encoder.FlushAsync();
-
-                        //    await bitmap.SetSourceAsync(stream);
-                        //}
                     });
                 });
 
@@ -783,20 +772,10 @@ namespace Unigram.Converters
                 Execute.BeginOnThreadPool(async () =>
                 {
                     await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size);
+                    var buffer = WebPImage.Encode(File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)));
                     Execute.BeginOnUIThread(() =>
                     {
-                        var buffer = WebPImage.Encode(BitmapEncoder.PngEncoderId, File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)));
                         bitmap.SetSource(buffer);
-
-                        //using (var stream = new InMemoryRandomAccessStream())
-                        //{
-                        //    var photoSize = document.Attributes.OfType<TLDocumentAttributeImageSize>().FirstOrDefault();
-                        //    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
-                        //    encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, (uint)photoSize.W, (uint)photoSize.H, 96, 96, buffer);
-                        //    await encoder.FlushAsync();
-
-                        //    await bitmap.SetSourceAsync(stream);
-                        //}
                     });
                 });
 
