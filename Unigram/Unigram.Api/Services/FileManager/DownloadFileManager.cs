@@ -13,6 +13,7 @@ namespace Telegram.Api.Services.FileManager
     public interface IDownloadFileManager
     {
         void DownloadFile(TLFileLocation file, TLObject owner, int fileSize);
+        Task<DownloadableItem> DownloadFileAsync(TLFileLocation file, TLObject owner, int fileSize);
         void CancelDownloadFile(TLObject owner);
     }
 
@@ -58,6 +59,12 @@ namespace Telegram.Api.Services.FileManager
                         try
                         {
                             _eventAggregator.Publish(new DownloadingCanceledEventArgs(item));
+
+                            // TODO: verify
+                            if (item.Source != null)
+                            {
+                                item.Source.TrySetCanceled();
+                            }
                         }
                         catch (Exception e)
                         {
@@ -152,6 +159,12 @@ namespace Telegram.Api.Services.FileManager
                     FileUtils.WriteBytes(fileName, bytes);
 
                     _eventAggregator.Publish(part.ParentItem);
+
+                    // TODO: verify
+                    if (part.ParentItem.Source != null)
+                    {
+                        part.ParentItem.Source.TrySetResult(part.ParentItem);
+                    }
                 }
                 else
                 {
@@ -213,6 +226,35 @@ namespace Telegram.Api.Services.FileManager
             StartAwaitingWorkers();
         }
 
+        public Task<DownloadableItem> DownloadFileAsync(TLFileLocation file, TLObject owner, int fileSize)
+        {
+            var tsc = new TaskCompletionSource<DownloadableItem>();
+            var downloadableItem = GetDownloadableItem(file, owner, fileSize, tsc);
+
+            lock (_itemsSyncRoot)
+            {
+                bool addFile = true;
+                foreach (var item in _items)
+                {
+                    if (item.Location.VolumeId == file.VolumeId &&
+                        item.Location.LocalId == file.LocalId &&
+                        item.Owner == owner)
+                    {
+                        addFile = false;
+                        break;
+                    }
+                }
+
+                if (addFile)
+                {
+                    _items.Add(downloadableItem);
+                }
+            }
+
+            StartAwaitingWorkers();
+            return tsc.Task;
+        }
+
         private void StartAwaitingWorkers()
         {
             var awaitingWorkers = _workers.Where(x => x.IsWaiting);
@@ -229,6 +271,19 @@ namespace Telegram.Api.Services.FileManager
             {
                 Owner = owner,
                 Location = location
+            };
+            item.Parts = GetItemParts(fileSize, item);
+
+            return item;
+        }
+
+        private DownloadableItem GetDownloadableItem(TLFileLocation location, TLObject owner, int fileSize, TaskCompletionSource<DownloadableItem> source)
+        {
+            var item = new DownloadableItem
+            {
+                Owner = owner,
+                Location = location,
+                Source = source
             };
             item.Parts = GetItemParts(fileSize, item);
 

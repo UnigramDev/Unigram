@@ -48,40 +48,40 @@ namespace Unigram.Collections
         #region Handles
         public void Handle(DownloadableItem item)
         {
-            var userProfilePhoto = item.Owner as TLUserProfilePhoto;
-            if (userProfilePhoto == null)
-            {
-                var chatPhoto = item.Owner as TLChatPhoto;
-                if (chatPhoto != null)
-                {
-                    var chat = _cacheService.GetChat(chatPhoto);
-                    if (chat != null)
-                    {
-                        chat.RaisePropertyChanged(() => chat.Photo);
-                        return;
-                    }
+            //var userProfilePhoto = item.Owner as TLUserProfilePhoto;
+            //if (userProfilePhoto == null)
+            //{
+            //    var chatPhoto = item.Owner as TLChatPhoto;
+            //    if (chatPhoto != null)
+            //    {
+            //        var chat = _cacheService.GetChat(chatPhoto);
+            //        if (chat != null)
+            //        {
+            //            chat.RaisePropertyChanged(() => chat.Photo);
+            //            return;
+            //        }
 
-                    var channel = _cacheService.GetChannel(chatPhoto);
-                    if (channel != null)
-                    {
-                        channel.RaisePropertyChanged(() => channel.Photo);
-                        return;
-                    }
+            //        var channel = _cacheService.GetChannel(chatPhoto);
+            //        if (channel != null)
+            //        {
+            //            channel.RaisePropertyChanged(() => channel.Photo);
+            //            return;
+            //        }
 
-                    Execute.ShowDebugMessage("Handle TLChatPhoto chat=null");
-                }
+            //        Execute.ShowDebugMessage("Handle TLChatPhoto chat=null");
+            //    }
 
-                return;
-            }
+            //    return;
+            //}
 
-            var user = _cacheService.GetUser(userProfilePhoto) as TLUser;
-            if (user != null)
-            {
-                user.RaisePropertyChanged(() => user.Photo);
-                return;
-            }
+            //var user = _cacheService.GetUser(userProfilePhoto) as TLUser;
+            //if (user != null)
+            //{
+            //    user.RaisePropertyChanged(() => user.Photo);
+            //    return;
+            //}
 
-            Execute.ShowDebugMessage("Handle TLUserProfilePhoto user=null");
+            //Execute.ShowDebugMessage("Handle TLUserProfilePhoto user=null");
         }
 
         public void Handle(TLUpdateEditMessage update)

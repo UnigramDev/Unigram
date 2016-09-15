@@ -14,6 +14,9 @@ namespace Telegram.Api.Services.FileManager
     public interface IUploadFileManager
     {
         void UploadFile(long fileId, TLObject owner, byte[] bytes);
+
+        Task<UploadableItem> UploadFileAsync(long fileId, TLObject owner, byte[] bytes);
+
 #if WP8
         void UploadFile(long fileId, TLObject owner, StorageFile file);
 #endif
@@ -63,6 +66,12 @@ namespace Telegram.Api.Services.FileManager
                         try
                         {
                             _eventAggregator.Publish(new UploadingCanceledEventArgs(item));
+
+                            // TODO: verify
+                            if (item.Source != null)
+                            {
+                                item.Source.TrySetCanceled();
+                            }
                         }
                         catch (Exception e)
                         {
@@ -149,6 +158,12 @@ namespace Telegram.Api.Services.FileManager
                         try
                         {
                             Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
+
+                            // TODO: verify
+                            if (part.ParentItem.Source != null)
+                            {
+                                part.ParentItem.Source.TrySetResult(part.ParentItem);
+                            }
                         }
                         catch (Exception e)
                         {
@@ -209,6 +224,20 @@ namespace Telegram.Api.Services.FileManager
             StartAwaitingWorkers();
         }
 
+        public Task<UploadableItem> UploadFileAsync(long fileId, TLObject owner, byte[] bytes)
+        {
+            var tsc = new TaskCompletionSource<UploadableItem>();
+            var item = GetUploadableItem(fileId, owner, bytes, tsc);
+
+            lock (_itemsSyncRoot)
+            {
+                _items.Add(item);
+            }
+
+            StartAwaitingWorkers();
+            return tsc.Task;
+        }
+
 #if WP8
         public void UploadFile(long fileId, TLObject owner, StorageFile file)
         {
@@ -253,6 +282,13 @@ namespace Telegram.Api.Services.FileManager
         private UploadableItem GetUploadableItem(long fileId, TLObject owner, byte[] bytes)
         {
             var item = new UploadableItem(fileId, owner, bytes);
+            item.Parts = GetItemParts(item);
+            return item;
+        }
+
+        private UploadableItem GetUploadableItem(long fileId, TLObject owner, byte[] bytes, TaskCompletionSource<UploadableItem> source)
+        {
+            var item = new UploadableItem(fileId, owner, bytes, source);
             item.Parts = GetItemParts(item);
             return item;
         }

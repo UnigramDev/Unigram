@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Unigram.Core.Dependency;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -32,12 +33,25 @@ namespace Unigram.Converters
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            return Convert(value, parameter);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static object Convert(object value)
+        {
+            return Convert(value, null);
+        }
+
+        public static object Convert(object value, object parameter)
+        {
             if (value == null)
             {
                 return null;
             }
-
-            Stopwatch timer = Stopwatch.StartNew();
 
             //var encryptedFile = value as TLEncryptedFile;
             //if (encryptedFile != null)
@@ -51,7 +65,7 @@ namespace Unigram.Converters
                 var fileLocation = userProfilePhoto.PhotoSmall as TLFileLocation;
                 if (fileLocation != null)
                 {
-                    return ReturnOrEnqueueProfileImage(timer, fileLocation, userProfilePhoto, 0);
+                    return ReturnOrEnqueueProfileImage(fileLocation, userProfilePhoto, 0);
                 }
             }
 
@@ -61,7 +75,7 @@ namespace Unigram.Converters
                 var fileLocation = chatPhoto.PhotoSmall as TLFileLocation;
                 if (fileLocation != null)
                 {
-                    return ReturnOrEnqueueProfileImage(timer, fileLocation, chatPhoto, 0);
+                    return ReturnOrEnqueueProfileImage(fileLocation, chatPhoto, 0);
                 }
             }
 
@@ -181,7 +195,7 @@ namespace Unigram.Converters
                     var fileLocation = photoSize.Location as TLFileLocation;
                     if (fileLocation != null && (photoMedia == null /*|| !photoMedia.IsCanceled*/))
                     {
-                        return ReturnOrEnqueueImage(timer, CheckChatSettings, fileLocation, photo, photoSize.Size, photoMedia);
+                        return ReturnOrEnqueueImage(false, fileLocation, photo, photoSize.Size, photoMedia);
                     }
                 }
             }
@@ -367,18 +381,13 @@ namespace Unigram.Converters
                         var fileLocation = photoSize.Location as TLFileLocation;
                         if (fileLocation != null)
                         {
-                            return DefaultPhotoConverter.ReturnOrEnqueueImage(timer, false, fileLocation, webpage, photoSize.Size, null);
+                            return DefaultPhotoConverter.ReturnOrEnqueueImage(false, fileLocation, webpage, photoSize.Size, null);
                         }
                     }
                 }
             }
 
             return null;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
         }
 
         //private static ImageSource DecodeWebPImage(string cacheKey, byte[] buffer, System.Action faultCallback = null)
@@ -434,53 +443,18 @@ namespace Unigram.Converters
         //    return null;
         //}
 
-        public static BitmapImage ReturnImage(Stopwatch timer, TLFileLocation location)
+        public static BitmapImage ReturnImage(TLFileLocation location)
         {
             var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
 
             if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName)))
             {
-                //return new BitmapImage(new Uri("ms-appdata:///local/" + fileName));
                 var bitmap = new BitmapImage();
-                LoadBitmapAsync(bitmap, new Uri("ms-appdata:///local/" + fileName));
+                bitmap.SetUriSource(new Uri("ms-appdata:///local/" + fileName));
                 return bitmap;
             }
 
-            //using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
-            //{
-            //    if (userStoreForApplication.FileExists(fileName))
-            //    {
-            //        BitmapImage bitmapImage2;
-            //        BitmapImage result;
-            //        try
-            //        {
-            //            using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(fileName, 3, 1))
-            //            {
-            //                isolatedStorageFileStream.Seek(0L, 0);
-            //                BitmapImage bitmapImage = new BitmapImage();
-            //                bitmapImage.SetSource(isolatedStorageFileStream);
-            //                bitmapImage2 = bitmapImage;
-            //            }
-            //        }
-            //        catch (Exception)
-            //        {
-            //            result = null;
-            //            return result;
-            //        }
-            //        result = bitmapImage2;
-            //        return result;
-            //    }
-            //}
             return null;
-        }
-
-        private static async void LoadBitmapAsync(BitmapImage bitmap, Uri uri)
-        {
-            var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
-            using (var stream = await file.OpenReadAsync())
-            {
-                await bitmap.SetSourceAsync(stream);
-            }
         }
 
         //public static BitmapImage ReturnOrEnqueueImage(Stopwatch timer, bool checkChatSettings, TLEncryptedFile location, TLObject owner, TLDecryptedMessageMediaBase mediaPhoto)
@@ -552,22 +526,33 @@ namespace Unigram.Converters
         //    return null;
         //}
 
-        public static BitmapImage ReturnOrEnqueueImage(Stopwatch timer, bool checkChatSettings, TLFileLocation location, TLObject owner, int fileSize, TLMessageMediaPhoto mediaPhoto)
+        public static BitmapImage ReturnOrEnqueueImage(bool checkChatSettings, TLFileLocation location, TLObject owner, int fileSize, TLMessageMediaPhoto mediaPhoto)
         {
             string fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
 
             if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName)))
             {
-                //return new BitmapImage(new Uri("ms-appdata:///local/" + fileName));
                 var bitmap = new BitmapImage();
-                LoadBitmapAsync(bitmap, new Uri("ms-appdata:///local/" + fileName));
+                bitmap.SetUriSource(new Uri("ms-appdata:///local/" + fileName));
                 return bitmap;
             }
 
             if (fileSize >= 0)
             {
                 var manager = UnigramContainer.Instance.ResolverType<IDownloadFileManager>();
-                Execute.BeginOnThreadPool(() => manager.DownloadFile(location, owner, fileSize));
+                var bitmap = new BitmapImage();
+
+                //Execute.BeginOnThreadPool(() => manager.DownloadFile(location, owner, fileSize));
+                Execute.BeginOnThreadPool(async () =>
+                {
+                    await manager.DownloadFileAsync(location, owner, fileSize);
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        bitmap.SetUriSource(new Uri("ms-appdata:///local/" + fileName));
+                    });
+                });
+
+                return bitmap;
             }
 
             //using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
@@ -639,7 +624,7 @@ namespace Unigram.Converters
             return null;
         }
 
-        public static BitmapSource ReturnOrEnqueueProfileImage(Stopwatch timer, TLFileLocation location, TLObject owner, int fileSize)
+        public static BitmapSource ReturnOrEnqueueProfileImage(TLFileLocation location, TLObject owner, int fileSize)
         {
             var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
 
@@ -651,14 +636,8 @@ namespace Unigram.Converters
 
             if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName)))
             {
-                //var bytes = File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName));
-                //var stream = new MemoryStream(bytes);
-                //var bitmap = new BitmapImage();
-                //bitmap.SetSource(stream.AsRandomAccessStream());
-
-                //return new BitmapImage(new Uri("ms-appdata:///local/" + fileName));
                 var bitmap = new BitmapImage();
-                LoadBitmapAsync(bitmap, new Uri("ms-appdata:///local/" + fileName));
+                bitmap.SetUriSource(new Uri("ms-appdata:///local/" + fileName));
                 _cachedSources[fileName] = new WeakReference(bitmap);
 
                 return bitmap;
@@ -667,43 +646,22 @@ namespace Unigram.Converters
             if (fileSize >= 0)
             {
                 var manager = UnigramContainer.Instance.ResolverType<IDownloadFileManager>();
-                Execute.BeginOnThreadPool(() => manager.DownloadFile(location, owner, fileSize));
+                var bitmap = new BitmapImage();
+                _cachedSources[fileName] = new WeakReference(bitmap);
+
+                //Execute.BeginOnThreadPool(() => manager.DownloadFile(location, owner, fileSize));
+                Execute.BeginOnThreadPool(async () =>
+                {
+                    await manager.DownloadFileAsync(location, owner, fileSize);
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        bitmap.SetUriSource(new Uri("ms-appdata:///local/" + fileName));
+                    });
+                });
+
+                return bitmap;
             }
 
-            //using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
-            //{
-            //    if (userStoreForApplication.FileExists(fileName))
-            //    {
-            //        BitmapSource bitmapSource;
-            //        BitmapSource result;
-            //        try
-            //        {
-            //            using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(fileName, 3, 1))
-            //            {
-            //                isolatedStorageFileStream.Seek(0L, 0);
-            //                BitmapImage bitmapImage = new BitmapImage();
-            //                bitmapImage.SetSource(isolatedStorageFileStream);
-            //                bitmapSource = bitmapImage;
-            //            }
-            //            DefaultPhotoConverter._cachedSources.set_Item(fileName, new WeakReference(bitmapSource));
-            //        }
-            //        catch (Exception)
-            //        {
-            //            result = null;
-            //            return result;
-            //        }
-            //        result = bitmapSource;
-            //        return result;
-            //    }
-            //    if (fileSize != null)
-            //    {
-            //        IFileManager fileManager = IoC.Get<IFileManager>(null);
-            //        Telegram.Api.Helpers.Execute.BeginOnThreadPool(delegate
-            //        {
-            //            fileManager.DownloadFile(location, owner, fileSize);
-            //        });
-            //    }
-            //}
             return null;
         }
 

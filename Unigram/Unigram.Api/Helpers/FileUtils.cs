@@ -136,10 +136,14 @@ namespace Telegram.Api.Helpers
                 if (flag)
                 {
                     FileUtils.SwitchIdleDetectionMode(true);
-                    Execute.BeginOnThreadPool(delegate
+                    Execute.BeginOnThreadPool(() => eventAggregator.Publish(part.ParentItem));
+
+                    // TODO: verify
+                    if (part.ParentItem.Source != null)
                     {
-                        eventAggregator.Publish(part.ParentItem);
-                    });
+                        part.ParentItem.Source.TrySetResult(part.ParentItem);
+                    }
+
                     return;
                 }
                 if (part.ParentItem.FileNotFound)

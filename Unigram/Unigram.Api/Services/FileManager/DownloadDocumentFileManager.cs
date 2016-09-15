@@ -141,6 +141,12 @@ namespace Telegram.Api.Services.FileManager
 
                     part.ParentItem.IsoFileName = fileName;
                     Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
+
+                    // TODO: verify
+                    if (part.ParentItem.Source != null)
+                    {
+                        part.ParentItem.Source.TrySetResult(part.ParentItem);
+                    }
                 }
                 else
                 {
@@ -198,6 +204,12 @@ namespace Telegram.Api.Services.FileManager
 
                     downloadableItem.IsoFileName = fileName;
                     _eventAggregator.Publish(downloadableItem);
+
+                    // TODO: verify
+                    if (downloadableItem.Source != null)
+                    {
+                        downloadableItem.Source.TrySetResult(downloadableItem);
+                    }
                 }
                 else
                 {

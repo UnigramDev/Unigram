@@ -21,6 +21,8 @@ namespace Telegram.Api.Services.FileManager
 
         public TLObject Owner { get; protected set; }
 
+        public TaskCompletionSource<UploadableItem> Source { get; set; }
+
 #if WP8
         public StorageFile File { get; protected set; }
 
@@ -40,6 +42,14 @@ namespace Telegram.Api.Services.FileManager
             FileId = fileId;
             Owner = owner;
             Bytes = bytes;
+        }
+
+        public UploadableItem(long fileId, TLObject owner, byte[] bytes, TaskCompletionSource<UploadableItem> source)
+        {
+            FileId = fileId;
+            Owner = owner;
+            Bytes = bytes;
+            Source = source;
         }
 
 #if WP8

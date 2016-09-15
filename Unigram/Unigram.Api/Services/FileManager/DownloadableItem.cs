@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.FileManager
@@ -10,6 +11,8 @@ namespace Telegram.Api.Services.FileManager
         public string FileName { get; set; }
 
         public TLObject Owner { get; set; }
+
+        public TaskCompletionSource<DownloadableItem> Source { get; set; }
 
         public TLFileLocation Location { get; set; }
 
