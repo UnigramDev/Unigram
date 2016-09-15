@@ -296,14 +296,17 @@
                         RequestedTheme="Dark"
                         Canvas.ZIndex="10"
                         RelativePanel.AlignLeftWithPanel="True"
-                        RelativePanel.AlignTopWithPanel="True"/>
+                        RelativePanel.AlignTopWithPanel="True"
+                        Click="btnRemoveSingleImgThumbnail_Click"/>
                 <Image x:Name="imgSingleImgThumbnail" 
                        Visibility="Collapsed"
+                       Stretch="UniformToFill"
                        Source="ms-appx:///Assets/Mockups/Images/userPhoto.jpg"
+                       MaxHeight="240"
                        Margin="0,0,48,0"
                        RelativePanel.AlignTopWithPanel="True"
                        RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignRightWithPanel="True"/>
+                       RelativePanel.AlignRightWithPanel="True" />
                 <!-- Message input -->
                 <TextBox x:Name="txtMessage" 
                          x:Uid="Chat-Input-Message"
@@ -325,7 +328,7 @@
                          RelativePanel.LeftOf="btnSendMessage" />
                 <!-- Send-button -->
                 <Button x:Name="btnSendMessage"  
-                        Visibility="Visible"
+                        Visibility="Collapsed"
                         IsEnabled="True"
                         Width="48"
                         Command="{Binding SendCommand}"
@@ -347,7 +350,7 @@
 
                 <!-- Voice Record-button -->
                 <Button x:Name="btnVoiceMessage"
-                        Visibility="Collapsed"
+                        Visibility="Visible"
                         Width="48"
                         MinHeight="48" 
                         Background="Transparent"                                      
@@ -389,7 +392,8 @@
                             <MenuFlyoutItem x:Name="fcbtnAttachPhoto"
                                             x:Uid="FCBTN-Photo"
                                             Text="Photo" 
-                                            MinWidth="180"/>
+                                            MinWidth="180"
+                                            Click="fcbtnAttachPhoto_Click"/>
                             <MenuFlyoutItem x:Name="fcbtnAttachVideo"
                                             x:Uid="FCBTN-Video"
                                             Text="Video" />

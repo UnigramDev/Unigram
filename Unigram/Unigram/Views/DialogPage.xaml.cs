@@ -9,12 +9,16 @@ using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
@@ -99,6 +103,44 @@ namespace Unigram.Views
         {
             var user = ViewModel.user;
             ViewModel.NavigationService.Navigate(typeof(UserInfoPage), user);
+        }
+
+        private async void fcbtnAttachPhoto_Click(object sender, RoutedEventArgs e)
+        {
+            imgSingleImgThumbnail.Source = null;
+
+            // Create the picker
+            FileOpenPicker picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+
+            // Set the allowed filetypes
+            picker.FileTypeFilter.Add(".png");
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+
+            // Get the file
+            StorageFile file = await picker.PickSingleFileAsync();
+            BitmapImage img = new BitmapImage();
+
+            using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
+            {
+                await img.SetSourceAsync(stream);
+            }
+
+            imgSingleImgThumbnail.Source = img;
+            imgSingleImgThumbnail.Visibility = Visibility.Visible;
+            btnRemoveSingleImgThumbnail.Visibility = Visibility.Visible;
+            btnVoiceMessage.Visibility = Visibility.Collapsed;
+            btnSendMessage.Visibility = Visibility.Visible;
+        }
+
+        private void btnRemoveSingleImgThumbnail_Click(object sender, RoutedEventArgs e)
+        {
+            imgSingleImgThumbnail.Visibility = Visibility.Collapsed;
+            btnRemoveSingleImgThumbnail.Visibility = Visibility.Collapsed;
+            imgSingleImgThumbnail.Source = null;
+            CheckMessageBoxEmpty();
         }
     }
 }
