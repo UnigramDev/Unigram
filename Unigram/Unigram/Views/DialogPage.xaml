@@ -281,11 +281,29 @@
             <RelativePanel x:Name="rpInput"
                            MinHeight="{ThemeResource AppBarThemeCompactHeight}"
                            BorderThickness="0,2,0,0"
-                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                           BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
                            Visibility="Visible"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignRightWithPanel="True"
                            RelativePanel.AlignBottomWithPanel="True">
+                <!-- Image thumbnail -->
+                <Button x:Name="btnRemoveSingleImgThumbnail"
+                        Visibility="Collapsed"
+                        Content="&#xE106;"
+                        Height="36"
+                        Width="36"
+                        FontFamily="Segoe MDL2 Assets"
+                        RequestedTheme="Dark"
+                        Canvas.ZIndex="10"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignTopWithPanel="True"/>
+                <Image x:Name="imgSingleImgThumbnail" 
+                       Visibility="Collapsed"
+                       Source="ms-appx:///Assets/Mockups/Images/userPhoto.jpg"
+                       Margin="0,0,48,0"
+                       RelativePanel.AlignTopWithPanel="True"
+                       RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.AlignRightWithPanel="True"/>
                 <!-- Message input -->
                 <TextBox x:Name="txtMessage" 
                          x:Uid="Chat-Input-Message"
@@ -307,7 +325,7 @@
                          RelativePanel.LeftOf="btnSendMessage" />
                 <!-- Send-button -->
                 <Button x:Name="btnSendMessage"  
-                        Visibility="Collapsed"
+                        Visibility="Visible"
                         IsEnabled="True"
                         Width="48"
                         Command="{Binding SendCommand}"
@@ -329,7 +347,7 @@
 
                 <!-- Voice Record-button -->
                 <Button x:Name="btnVoiceMessage"
-                        Visibility="Visible"
+                        Visibility="Collapsed"
                         Width="48"
                         MinHeight="48" 
                         Background="Transparent"                                      
