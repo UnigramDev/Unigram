@@ -175,7 +175,47 @@ namespace Unigram.Controls
                     board.Children.Add(anim);
                     board.Begin();
                 }
+            }else
+            {
+                // While in Filled (wide) state, if a page is already open remove it from backstack. 
+                if (e.NavigationMode == NavigationMode.New && DetailFrame.BackStackDepth > 1)
+                {
+
+                    // When the new page is a settings or about page.
+                    if (e.SourcePageType == typeof(AboutPage) || e.SourcePageType == typeof(SettingsPage))
+                    {
+                        // The user opened first a chat, then the userinfo. Remove them from backstack.
+                        if (DetailFrame.BackStackDepth == 3)
+                        {
+                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
+                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        }
+                        // Simple case of about or settings page
+                        else
+                        {
+                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        }
+                        
+                    }
+                    // When the new page is a chat
+                    else if (e.SourcePageType == typeof(DialogPage))
+                    {
+                        // The user opened first a chat, then the userinfo. Remove them from backstack.
+                        if(DetailFrame.BackStackDepth == 3)
+                        {
+                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
+                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        }
+                        // Simple case of consecutive chats open
+                        else
+                        {
+                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        }
+                        
+                    }
+                }
             }
+
         }
 
         #region Initialize
