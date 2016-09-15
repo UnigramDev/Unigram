@@ -159,3 +159,62 @@ WriteableBitmap ^ Unigram::WebP::WebPImage::CreateWriteableBitmapFromWebPData(We
 
 	return nullptr;
 }
+
+Array<uint8>^ Unigram::WebP::WebPImage::Decode(const Array<uint8> ^bytes)
+{
+	auto vBuffer = std::vector<uint8_t>(bytes->Length);
+	std::copy(bytes->begin(), bytes->end(), vBuffer.begin());
+
+	WebPData webPData;
+	webPData.bytes = vBuffer.data();
+	webPData.size = vBuffer.size();
+
+	auto spDemuxer = std::unique_ptr<WebPDemuxer, decltype(&WebPDemuxDelete)>
+	{
+		WebPDemux(&webPData),
+		WebPDemuxDelete
+	};
+	if (!spDemuxer)
+	{
+		throw ref new InvalidArgumentException(ref new String(L"Failed to create demuxer"));
+		return nullptr;
+	}
+
+	WebPIterator iter;
+	if (WebPDemuxGetFrame(spDemuxer.get(), 1, &iter))
+	{
+		WebPDecoderConfig config;
+		int ret = WebPInitDecoderConfig(&config);
+		if (!ret)
+		{
+			throw ref new FailureException(ref new String(L"WebPInitDecoderConfig failed"));
+		}
+
+		ret = (WebPGetFeatures(iter.fragment.bytes, iter.fragment.size, &config.input) == VP8_STATUS_OK);
+		if (!ret)
+		{
+			throw ref new FailureException(ref new String(L"WebPGetFeatures failed"));
+		}
+
+		auto vPixels = std::vector<uint8_t>(iter.width * iter.height * 4);
+		auto pixels = vPixels.data();
+
+		config.options.no_fancy_upsampling = 1;
+		config.output.colorspace = MODE_bgrA;
+		config.output.is_external_memory = 1;
+		config.output.u.RGBA.rgba = pixels;
+		config.output.u.RGBA.stride = iter.width * 4;
+		config.output.u.RGBA.size = (iter.width * 4) * iter.height;
+
+		ret = WebPDecode(iter.fragment.bytes, iter.fragment.size, &config);
+
+		if (ret != VP8_STATUS_OK)
+		{
+			throw ref new FailureException(ref new String(L"Failed to decode frame"));
+		}
+
+		return ref new Array<uint8>(vPixels.data(), vPixels.size());
+	}
+
+	return nullptr;
+}

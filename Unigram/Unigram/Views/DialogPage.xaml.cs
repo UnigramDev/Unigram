@@ -29,9 +29,11 @@ namespace Unigram.Views
         public bool isLoading = false;
         public DialogPage()
         {
+            InitializeComponent();
+
             DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
-            this.InitializeComponent();
-            this.Loaded += DialogPage_Loaded;
+
+            Loaded += DialogPage_Loaded;
             CheckMessageBoxEmpty();
         }
 

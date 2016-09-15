@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,25 @@ namespace Telegram.Api.TL
 
                 return "Resources.Document";
             }
+        }
+
+        public string GetFileName()
+        {
+            return string.Format("document{0}_{1}{2}", new object[]
+            {
+                base.Id,
+                AccessHash,
+                Path.GetExtension(FileName)
+            });
+        }
+
+        public TLInputDocumentFileLocation ToInputFileLocation()
+        {
+            return new TLInputDocumentFileLocation
+            {
+                AccessHash = AccessHash,
+                Id = base.Id
+            };
         }
     }
 }

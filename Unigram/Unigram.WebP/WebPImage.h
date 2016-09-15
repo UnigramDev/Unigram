@@ -38,6 +38,7 @@ namespace Unigram
 
 			static WriteableBitmap^ DecodeFromBuffer(IBuffer^ buffer);
 			static WriteableBitmap^ DecodeFromByteArray(const Array<uint8> ^bytes);
+			static Array<uint8>^ Decode(const Array<uint8> ^bytes);
 
 			property int PixelWidth
 			{

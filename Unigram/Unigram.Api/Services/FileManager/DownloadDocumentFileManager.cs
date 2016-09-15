@@ -16,6 +16,7 @@ namespace Telegram.Api.Services.FileManager
     public interface IDownloadDocumentFileManager
     {
         void DownloadFileAsync(string fileName, int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize, Action<double> callback);
+        Task<DownloadableItem> DownloadFileAsync(string fileName, int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize);
         void CancelDownloadFileAsync(TLObject owner);
     }
 
@@ -241,6 +242,35 @@ namespace Telegram.Api.Services.FileManager
             });
         }
 
+        public Task<DownloadableItem> DownloadFileAsync(string originalFileName, int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize)
+        {
+            var tsc = new TaskCompletionSource<DownloadableItem>();
+            var downloadableItem = GetDownloadableItem(originalFileName, dcId, fileLocation, owner, fileSize, tsc);
+
+            lock (_itemsSyncRoot)
+            {
+                bool addFile = true;
+                foreach (var item in _items)
+                {
+                    if (item.InputDocumentLocation.AccessHash == fileLocation.AccessHash &&
+                        item.InputDocumentLocation.Id == fileLocation.Id &&
+                        item.Owner == owner)
+                    {
+                        addFile = false;
+                        break;
+                    }
+                }
+
+                if (addFile)
+                {
+                    _items.Add(downloadableItem);
+                }
+            }
+
+            StartAwaitingWorkers();
+            return tsc.Task;
+        }
+
         private void StartAwaitingWorkers()
         {
             var awaitingWorkers = _workers.Where(x => x.IsWaiting);
@@ -259,6 +289,21 @@ namespace Telegram.Api.Services.FileManager
                 FileName = fileName,
                 Owner = owner,
                 InputDocumentLocation = location
+            };
+            item.Parts = GetItemParts(fileSize, item);
+
+            return item;
+        }
+
+        private DownloadableItem GetDownloadableItem(string fileName, int dcId, TLInputDocumentFileLocation location, TLObject owner, int fileSize, TaskCompletionSource<DownloadableItem> source)
+        {
+            var item = new DownloadableItem
+            {
+                DCId = dcId,
+                FileName = fileName,
+                Owner = owner,
+                InputDocumentLocation = location,
+                Source = source
             };
             item.Parts = GetItemParts(fileSize, item);
 

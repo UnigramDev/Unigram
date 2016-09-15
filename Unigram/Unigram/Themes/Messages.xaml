@@ -9,21 +9,21 @@
 
     <DataTemplate x:Key="UserStickerTemplate">
         <Grid Margin="0,8">
-            <!--<Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Border Visibility="{Binding ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,0" Margin="0,0,12,0">
+            <!--<Border Visibility="{Binding ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,0" Margin="0,0,12,0">
                 <ContentControl
                     Content="{Binding ReplyInfo}" 
                     ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
                     common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
                     common:Attached.RequestedTheme="HighContrast"
                     RequestedTheme="Dark"/>
-            </Border>
+            </Border>-->
 
             <Grid Grid.Column="1">
-                <common:FlyoutHelper.AttachedFlyout>
+                <!--<common:FlyoutHelper.AttachedFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Command="{Binding Dialog.MessageReplyCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.Reply, Source={StaticResource Resources}}"/>
                         <MenuFlyoutItem Text="{Binding Strings.Forward, Source={StaticResource Resources}}"/>
@@ -31,15 +31,16 @@
                         <MenuFlyoutItem Command="{Binding Dialog.StickerAddCommand, Source={StaticResource Locator}}" CommandParameter="{Binding}" Text="{Binding Strings.AddToStickers, Source={StaticResource Resources}}" common:FlyoutHelper.IsSticker="True"/>
                     </MenuFlyout>
                 </common:FlyoutHelper.AttachedFlyout>
-                <controls:StickerControl TelegramSource="{Binding Media.Document}" MaxWidth="256" MaxHeight="256" Margin="2"/>
+                <controls:StickerControl TelegramSource="{Binding Media.Document}" MaxWidth="256" MaxHeight="256" Margin="2"/>-->
+                <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="256" MaxHeight="256" Margin="2"/>
 
                 <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
-                        <FontIcon Glyph="{Binding Status, Converter={StaticResource StatusToImageConverter}}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="White" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
+                        <!--<TextBlock Text="{Binding Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                        <FontIcon Glyph="{Binding Status, Converter={StaticResource StatusToImageConverter}}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="White" Margin="4,0,0,3" VerticalAlignment="Bottom"/>-->
                     </StackPanel>
                 </Border>
-            </Grid>-->
+            </Grid>
         </Grid>
     </DataTemplate>
 

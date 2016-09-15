@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
@@ -10,6 +11,8 @@ using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Dependency;
+using Unigram.WebP;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Data;
@@ -285,34 +288,35 @@ namespace Unigram.Converters
             var tLDocument3 = value as TLDocument;
             if (tLDocument3 != null)
             {
-                //if (TLMessageBase.IsSticker(tLDocument3))
-                //{
-                //    if (parameter != null && string.Equals(parameter.ToString(), "ignoreStickers", StringComparison.OrdinalIgnoreCase))
-                //    {
-                //        return null;
-                //    }
+                if (TLMessage.IsSticker(tLDocument3))
+                {
+                    if (parameter != null && string.Equals(parameter.ToString(), "ignoreStickers", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return null;
+                    }
 
-                //    return DefaultPhotoConverter.ReturnOrEnqueueSticker((TLDocument22)tLDocument3, null);
-                //}
-                //else
-                //{
-                //    var photoSize = tLDocument3.Thumb as TLPhotoSize;
-                //    if (photoSize != null)
-                //    {
-                //        var fileLocation = photoSize.Location as TLFileLocation;
-                //        if (fileLocation != null)
-                //        {
-                //            return ReturnOrEnqueueImage(timer, false, fileLocation, tLDocument3, photoSize.Size, null);
-                //        }
-                //    }
+                    return DefaultPhotoConverter.ReturnOrEnqueueSticker(tLDocument3, null);
+                }
+                else
+                {
+                    var photoSize = tLDocument3.Thumb as TLPhotoSize;
+                    if (photoSize != null)
+                    {
+                        var fileLocation = photoSize.Location as TLFileLocation;
+                        if (fileLocation != null)
+                        {
+                            return ReturnOrEnqueueImage(false, fileLocation, tLDocument3, photoSize.Size, null);
+                        }
+                    }
 
-                //    var photoCachedSize = tLDocument3.Thumb as TLPhotoCachedSize;
-                //    if (photoCachedSize != null)
-                //    {
-                //        byte[] data5 = photoCachedSize.Bytes.Data;
-                //        return ImageUtils.CreateImage(data5);
-                //    }
-                //}
+                    var photoCachedSize = tLDocument3.Thumb as TLPhotoCachedSize;
+                    if (photoCachedSize != null)
+                    {
+                        var bitmap = new BitmapImage();
+                        bitmap.SetByteSource(photoCachedSize.Bytes);
+                        return bitmap;
+                    }
+                }
             }
 
             //var videoMedia = value as TLMessageMediaVideo;
@@ -390,58 +394,38 @@ namespace Unigram.Converters
             return null;
         }
 
-        //private static ImageSource DecodeWebPImage(string cacheKey, byte[] buffer, System.Action faultCallback = null)
-        //{
-        //    try
-        //    {
-        //        WeakReference<WriteableBitmap> weakReference;
-        //        WriteableBitmap writeableBitmap;
-        //        ImageSource result;
-        //        if (DefaultPhotoConverter._cachedWebPImages.TryGetValue(cacheKey, ref weakReference) && weakReference.TryGetTarget(ref writeableBitmap))
-        //        {
-        //            result = writeableBitmap;
-        //            return result;
-        //        }
-        //        WebPDecoder webPDecoder = new WebPDecoder();
-        //        int num = 0;
-        //        int num2 = 0;
-        //        byte[] array = null;
-        //        if (buffer == null)
-        //        {
-        //            Log.Write("DefaultPhotoConverter.DecodeWebPImage buffer=null", null);
-        //        }
-        //        else
-        //        {
-        //            array = webPDecoder.DecodeRgbA(buffer, out num, out num2);
-        //        }
-        //        if (array == null)
-        //        {
-        //            result = null;
-        //            return result;
-        //        }
-        //        WriteableBitmap writeableBitmap2 = new WriteableBitmap(num, num2);
-        //        for (int i = 0; i < array.Length / 4; i++)
-        //        {
-        //            int num3 = (int)array[4 * i];
-        //            int num4 = (int)array[4 * i + 1];
-        //            int num5 = (int)array[4 * i + 2];
-        //            int num6 = (int)array[4 * i + 3];
-        //            num6 <<= 24;
-        //            num3 <<= 16;
-        //            num4 <<= 8;
-        //            int num7 = num6 | num3 | num4 | num5;
-        //            writeableBitmap2.get_Pixels()[i] = num7;
-        //        }
-        //        DefaultPhotoConverter._cachedWebPImages.set_Item(cacheKey, new WeakReference<WriteableBitmap>(writeableBitmap2));
-        //        result = writeableBitmap2;
-        //        return result;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        TLUtils.WriteException("WebPDecode ex ", e);
-        //    }
-        //    return null;
-        //}
+        private static ImageSource DecodeWebPImage(string cacheKey, byte[] buffer, Action faultCallback = null)
+        {
+            try
+            {
+                WeakReference<WriteableBitmap> weakReference;
+                WriteableBitmap writeableBitmap;
+                if (_cachedWebPImages.TryGetValue(cacheKey, out weakReference) && weakReference.TryGetTarget(out writeableBitmap))
+                {
+                    return writeableBitmap;
+                }
+
+                try
+                {
+                    var result = WebPImage.DecodeFromByteArray(buffer);
+                    _cachedWebPImages[cacheKey] = new WeakReference<WriteableBitmap>(result);
+
+                    GC.Collect();
+
+                    return result;
+                }
+                catch
+                {
+                    faultCallback?.Invoke();
+                }
+            }
+            catch (Exception e)
+            {
+                TLUtils.WriteException("WebPDecode ex ", e);
+            }
+
+            return null;
+        }
 
         public static BitmapImage ReturnImage(TLFileLocation location)
         {
@@ -730,75 +714,179 @@ namespace Unigram.Converters
         //    return null;
         //}
 
-        //public static ImageSource ReturnOrEnqueueSticker(TLDocument22 document, TLObject sticker)
-        //{
-        //    if (document == null)
-        //    {
-        //        return null;
-        //    }
-        //    string documentLocalFileName = document.GetFileName();
-        //    using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
-        //    {
-        //        if (!userStoreForApplication.FileExists(documentLocalFileName))
-        //        {
-        //            TLObject owner = document;
-        //            if (sticker != null)
-        //            {
-        //                owner = sticker;
-        //            }
-        //            IoC.Get<IDocumentFileManager>(null).DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, delegate (double progress)
-        //            {
-        //            }, null);
-        //            TLPhotoCachedSize tLPhotoCachedSize = document.Thumb as TLPhotoCachedSize;
-        //            if (tLPhotoCachedSize != null)
-        //            {
-        //                string cacheKey = "cached" + document.GetFileName();
-        //                byte[] data = tLPhotoCachedSize.Bytes.Data;
-        //                ImageSource result;
-        //                if (data == null)
-        //                {
-        //                    result = null;
-        //                    return result;
-        //                }
-        //                result = DefaultPhotoConverter.DecodeWebPImage(cacheKey, data, delegate
-        //                {
-        //                });
-        //                return result;
-        //            }
-        //            else
-        //            {
-        //                TLPhotoSize tLPhotoSize = document.Thumb as TLPhotoSize;
-        //                if (tLPhotoSize != null)
-        //                {
-        //                    TLFileLocation tLFileLocation = tLPhotoSize.Location as TLFileLocation;
-        //                    if (tLFileLocation != null)
-        //                    {
-        //                        ImageSource result = DefaultPhotoConverter.ReturnOrEnqueueStickerPreview(tLFileLocation, sticker, tLPhotoSize.Size);
-        //                        return result;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        else if (document.DocumentSize > 0 && document.DocumentSize < 262144)
-        //        {
-        //            byte[] array;
-        //            using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(documentLocalFileName, 3))
-        //            {
-        //                array = new byte[isolatedStorageFileStream.get_Length()];
-        //                isolatedStorageFileStream.Read(array, 0, array.Length);
-        //            }
-        //            ImageSource result = DefaultPhotoConverter.DecodeWebPImage(documentLocalFileName, array, delegate
-        //            {
-        //                using (IsolatedStorageFile userStoreForApplication2 = IsolatedStorageFile.GetUserStoreForApplication())
-        //                {
-        //                    userStoreForApplication2.DeleteFile(documentLocalFileName);
-        //                }
-        //            });
-        //            return result;
-        //        }
-        //    }
-        //    return null;
-        //}
+        public static ImageSource EnqueueStickerPreview(TLFileLocation location, TLObject owner, TLPhotoSize photoSize, BitmapImage bitmap)
+        {
+            string filename = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+
+            if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)))
+            {
+                byte[] array = File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename));
+
+                return DecodeWebPImage(filename, array, delegate
+                {
+                    File.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename));
+                });
+            }
+
+            if (photoSize != null)
+            {
+                Debug.WriteLine("Download");
+
+                var manager = UnigramContainer.Instance.ResolverType<IDownloadFileManager>();
+                Execute.BeginOnThreadPool(async () =>
+                {
+                    await manager.DownloadFileAsync(location, owner, photoSize.Size);
+                    Execute.BeginOnUIThread(async () =>
+                    {
+                        var buffer = WebPImage.Decode(File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)));
+
+                        using (var stream = new InMemoryRandomAccessStream())
+                        {
+                            var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                            encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, (uint)photoSize.W, (uint)photoSize.H, 96, 96, buffer);
+                            await encoder.FlushAsync();
+
+                            await bitmap.SetSourceAsync(stream);
+                        }
+                    });
+                });
+
+                return bitmap;
+            }
+
+            return null;
+        }
+
+        public static ImageSource ReturnOrEnqueueSticker(TLDocument document, TLObject sticker)
+        {
+            if (document == null)
+            {
+                return null;
+            }
+
+            var filename = document.GetFileName();
+
+            if (!File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)))
+            {
+                TLObject owner = document;
+                if (sticker != null)
+                {
+                    owner = sticker;
+                }
+
+                Debug.WriteLine("Download");
+
+                var bitmap = new BitmapImage();
+
+                UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>().DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, (progress) =>
+                {
+                    Debug.WriteLine("DOWNLOAD PROGRESS " + progress);
+                });
+
+                var cachedSize = document.Thumb as TLPhotoCachedSize;
+                if (cachedSize != null)
+                {
+                    var cacheKey = "cached" + document.GetFileName();
+                    var data = cachedSize.Bytes;
+                    if (data == null)
+                    {
+                        return null;
+                    }
+
+                    return DecodeWebPImage(cacheKey, data, () => { });
+                }
+                else
+                {
+                    var photoSize = document.Thumb as TLPhotoSize;
+                    if (photoSize != null)
+                    {
+                        var location = photoSize.Location as TLFileLocation;
+                        if (location != null)
+                        {
+                            return EnqueueStickerPreview(location, sticker, photoSize, bitmap);
+                        }
+                    }
+                }
+            }
+            else if (document.Size > 0 && document.Size < 262144)
+            {
+                var array = File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename));
+                return DecodeWebPImage(filename, array, delegate
+                {
+                    File.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename));
+                });
+            }
+
+            return null;
+
+            //if (document == null)
+            //{
+            //    return null;
+            //}
+            //string documentLocalFileName = document.GetFileName();
+            //using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
+            //{
+            //    if (!userStoreForApplication.FileExists(documentLocalFileName))
+            //    {
+            //        TLObject owner = document;
+            //        if (sticker != null)
+            //        {
+            //            owner = sticker;
+            //        }
+            //        UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>().DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, delegate (double progress)
+            //        {
+            //        }, null);
+
+            //        UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>()
+            //        TLPhotoCachedSize tLPhotoCachedSize = document.Thumb as TLPhotoCachedSize;
+            //        if (tLPhotoCachedSize != null)
+            //        {
+            //            string cacheKey = "cached" + document.GetFileName();
+            //            byte[] data = tLPhotoCachedSize.Bytes.Data;
+            //            ImageSource result;
+            //            if (data == null)
+            //            {
+            //                result = null;
+            //                return result;
+            //            }
+            //            result = DefaultPhotoConverter.DecodeWebPImage(cacheKey, data, delegate
+            //            {
+            //            });
+            //            return result;
+            //        }
+            //        else
+            //        {
+            //            var photoSize = document.Thumb as TLPhotoSize;
+            //            if (photoSize != null)
+            //            {
+            //                var fileLocation = photoSize.Location as TLFileLocation;
+            //                if (fileLocation != null)
+            //                {
+            //                    return DefaultPhotoConverter.ReturnOrEnqueueStickerPreview(fileLocation, sticker, photoSize.Size);
+            //                }
+            //            }
+            //        }
+            //    }
+            //    else if (document.DocumentSize > 0 && document.DocumentSize < 262144)
+            //    {
+            //        byte[] array;
+            //        using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(documentLocalFileName, 3))
+            //        {
+            //            array = new byte[isolatedStorageFileStream.get_Length()];
+            //            isolatedStorageFileStream.Read(array, 0, array.Length);
+            //        }
+            //        ImageSource result = DefaultPhotoConverter.DecodeWebPImage(documentLocalFileName, array, delegate
+            //        {
+            //            using (IsolatedStorageFile userStoreForApplication2 = IsolatedStorageFile.GetUserStoreForApplication())
+            //            {
+            //                userStoreForApplication2.DeleteFile(documentLocalFileName);
+            //            }
+            //        });
+            //        return result;
+            //    }
+            //}
+            //return null;
+        }
 
         //public static ImageSource ReturnOrEnqueueStickerPreview(TLFileLocation location, TLObject owner, TLInt fileSize)
         //{
