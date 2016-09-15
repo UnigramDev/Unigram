@@ -320,7 +320,7 @@
                          RelativePanel.LeftOf="btnSendMessage" />
                 <!-- Send-button -->
                 <Button x:Name="btnSendMessage"  
-                        Visibility="Visible"
+                        Visibility="Collapsed"
                         IsEnabled="True"
                         Width="48"
                         Command="{Binding SendCommand}"
@@ -341,7 +341,7 @@
 
                 <!-- Voice Record-button -->
                 <Button x:Name="btnVoiceMessage"
-                        Visibility="Collapsed"
+                        Visibility="Visible"
                         Width="48"
                         MinHeight="48" 
                         Background="Transparent"                                      

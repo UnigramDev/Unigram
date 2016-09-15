@@ -32,7 +32,7 @@ namespace Unigram.Views
             DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
             this.InitializeComponent();
             this.Loaded += DialogPage_Loaded;
-            
+            CheckMessageBoxEmpty();
         }
 
         private void DialogPage_Loaded(object sender, RoutedEventArgs e)
@@ -60,7 +60,7 @@ namespace Unigram.Views
 
         }
 
-        private void txtMessage_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
+        private void CheckMessageBoxEmpty()
         {
             if (txtMessage.Text == "" || txtMessage.Text == null)
             {
@@ -72,6 +72,11 @@ namespace Unigram.Views
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
                 btnSendMessage.Visibility = Visibility.Visible;
             }
+        }
+
+        private void txtMessage_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
+        {
+            CheckMessageBoxEmpty();
 
             // TODO Save text to draft if not being send
 
