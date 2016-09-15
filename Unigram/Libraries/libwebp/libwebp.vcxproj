@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7789c8b7-887c-46b6-bd76-952c590b1853}</ProjectGuid>
+    <Keyword>StaticLibrary</Keyword>
+    <ProjectName>libwebp</ProjectName>
+    <RootNamespace>libwebp</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <ApplicationTypeRevision>8.2</ApplicationTypeRevision>
+    <SccProjectName>SAK</SccProjectName>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccProvider>SAK</SccProvider>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+      <CompileAs>Default</CompileAs>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)dec\alphai.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dec\decode_vp8.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dec\vp8i.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dec\vp8li.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dec\webpi.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dsp\dsp.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dsp\lossless.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dsp\neon.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dsp\yuv.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dsp\yuv_tables_sse2.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\bit_reader.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\bit_reader_inl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\bit_writer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\color_cache.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\endian_inl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\filters.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\huffman.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\huffman_encode.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\quant_levels.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\quant_levels_dec.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\random.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\rescaler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\thread.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\utils.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\decode.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\demux.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\encode.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\format_constants.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\mux.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\mux_types.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\types.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\alpha.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\buffer.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\frame.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\idec.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\io.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\quant.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\tree.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\vp8.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\vp8l.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\webp.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)demux\demux.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\alpha_processing.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\alpha_processing_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\cpu.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\dec.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\dec_clip_tables.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\dec_mips32.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\dec_neon.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\dec_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\enc.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\enc_avx2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\enc_mips32.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\enc_neon.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\enc_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\lossless.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\lossless_mips32.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\lossless_neon.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\lossless_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\upsampling.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\upsampling_neon.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\upsampling_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\yuv.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\yuv_mips32.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\yuv_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\bit_reader.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\bit_writer.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\color_cache.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\filters.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\huffman.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\huffman_encode.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\quant_levels.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\quant_levels_dec.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\random.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\rescaler.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\thread.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\utils.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

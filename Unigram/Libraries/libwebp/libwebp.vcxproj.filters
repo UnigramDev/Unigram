@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\alpha.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\buffer.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\frame.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\idec.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\io.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\quant.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\tree.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\vp8.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\vp8l.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dec\webp.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)demux\demux.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\alpha_processing.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\alpha_processing_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\cpu.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\dec.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\dec_clip_tables.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\dec_mips32.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\dec_neon.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\dec_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\enc.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\enc_avx2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\enc_mips32.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\enc_neon.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\enc_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\lossless.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\lossless_mips32.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\lossless_neon.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\lossless_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\upsampling.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\upsampling_neon.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\upsampling_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\yuv.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\yuv_mips32.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)dsp\yuv_sse2.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\bit_reader.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\bit_writer.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\color_cache.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\filters.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\huffman.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\huffman_encode.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\quant_levels.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\quant_levels_dec.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\random.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\rescaler.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\thread.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\utils.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dec\alphai.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dec\decode_vp8.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dec\vp8i.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dec\vp8li.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dec\webpi.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dsp\dsp.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dsp\lossless.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dsp\neon.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dsp\yuv.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dsp\yuv_tables_sse2.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\bit_reader.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\bit_reader_inl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\bit_writer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\color_cache.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\endian_inl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\filters.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\huffman.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\huffman_encode.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\quant_levels.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\quant_levels_dec.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\random.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\rescaler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\thread.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\utils.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\decode.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\demux.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\encode.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\format_constants.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\mux.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\mux_types.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)webp\types.h" />
+  </ItemGroup>
+</Project>
