@@ -270,6 +270,11 @@
                                             </Grid>
                                         </DataTemplate>
                                     </selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
+                                    <selectors:MessageGroupTemplateSelector.EmptyMessageTemplate>
+                                        <DataTemplate>
+                                            <Rectangle Width="44"/>
+                                        </DataTemplate>
+                                    </selectors:MessageGroupTemplateSelector.EmptyMessageTemplate>
                                 </selectors:MessageGroupTemplateSelector>
                             </GroupStyle.HeaderTemplateSelector>
                         </GroupStyle>
