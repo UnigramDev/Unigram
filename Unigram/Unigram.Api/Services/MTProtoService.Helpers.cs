@@ -7,7 +7,8 @@ using System.Globalization;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Functions.Help;
+using Telegram.Api.TL.Methods;
+using Telegram.Api.TL.Methods.Help;
 using Telegram.Api.Transport;
 
 namespace Telegram.Api.Services
@@ -90,13 +91,13 @@ namespace Telegram.Api.Services
                     _history[historyItem.Hash] = historyItem;
                 }
 #if DEBUG
-                NotifyOfPropertyChange(() => History);
+                RaisePropertyChanged(() => History);
 #endif
             }
 
             //Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2, -4} SessionId {3}", caption, transportMessage.MessageId.Value, transportMessage.SeqNo.Value, transportMessage.SessionId.Value);
             
-            var captionString = string.Format("{0} {1}", caption, transportMessage.MessageId);
+            var captionString = string.Format("{0} {1}", caption, transportMessage.MsgId);
             SendPacketAsync(_activeTransport, captionString, encryptedMessage,
                 result =>
                 {
@@ -109,10 +110,10 @@ namespace Telegram.Api.Services
                                 _history.Remove(historyItem.Hash);
                             }
 #if DEBUG
-                            NotifyOfPropertyChange(() => History);
+                            RaisePropertyChanged(() => History);
 #endif
                         }
-                        faultCallback.SafeInvoke(new TLRPCError(404) { Message = new TLString("FastCallback SocketError=" + result) });
+                        faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FastCallback SocketError=" + result });
                     }
                 },
                 error =>
@@ -124,15 +125,16 @@ namespace Telegram.Api.Services
                             _history.Remove(historyItem.Hash);
                         }
 #if DEBUG
-                        NotifyOfPropertyChange(() => History);
+                        RaisePropertyChanged(() => History);
 #endif
                     }
-                    faultCallback.SafeInvoke(new TLRPCError(404)
+                    faultCallback.SafeInvoke(new TLRPCError
                     {
+                        ErrorCode = 404,
 #if WINDOWS_PHONE
                         SocketError = error.Error,
 #endif
-                        Exception = error.Exception
+                        // TODO: Exception = error.Exception
                     });
                 });
         }
@@ -146,7 +148,7 @@ namespace Telegram.Api.Services
 
             transport.SendPacketAsync(
                 caption,
-                data.ToBytes(),
+                data.ToArray(),
                 callback,
                 faultCallback);
 	    }
@@ -157,7 +159,6 @@ namespace Telegram.Api.Services
 	        int? maxAttempt = null, // to send delayed items
 	        Action<int> attemptFailed = null,
             Action fastCallback = null) // to send delayed items
-	        where T : TLObject
 	    {
             if (_activeTransport.AuthKey == null)
             {
@@ -219,17 +220,18 @@ namespace Telegram.Api.Services
                     //SystemEvents.TimeChanged
                     var initConnection = new TLInitConnection
                     {
-                        AppId = new int?(Constants.ApiId),
-                        AppVersion = new TLString(_deviceInfo.AppVersion),
-                        Data = obj,
-                        DeviceModel = new TLString(_deviceInfo.Model),
-                        LangCode = new TLString(Utils.CurrentUICulture()),
-                        SystemVersion = new TLString(_deviceInfo.SystemVersion)
+                        ApiId = Constants.ApiId,
+                        AppVersion = _deviceInfo.AppVersion,
+                        Query = obj,
+                        DeviceModel = _deviceInfo.Model,
+                        LangCode = Utils.CurrentUICulture(),
+                        SystemVersion = _deviceInfo.SystemVersion
                     };
 
                     SaveInitConnectionAsync(initConnection);
 
-                    var withLayerN = new TLInvokeWithLayerN { Data = initConnection };
+                    // TODO?
+                    var withLayerN = new TLInvokeWithLayer { Query = initConnection, Layer = Constants.SupportedLayer };
                     data = withLayerN;
                     _activeTransport.Initiated = true;
                 }
@@ -320,13 +322,13 @@ namespace Telegram.Api.Services
 #if DEBUG
 	        if (historyItem.Caption != "account.updateStatus") // to avoid deadlock on deactivation
 	        {
-	            NotifyOfPropertyChange(() => History);
+	            RaisePropertyChanged(() => History);
 	        }
 #endif
 
             //Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2, -4} SessionId {3} ClientTicksDelta {4}", caption, transportMessage.MessageId.Value, transportMessage.SeqNo.Value, transportMessage.SessionId.Value, clientsTicksDelta);
 
-            var captionString = string.Format("{0} {1} {2}", caption, transportMessage.SessionId, transportMessage.MessageId);
+            var captionString = string.Format("{0} {1} {2}", caption, transportMessage.SessionId, transportMessage.MsgId);
             SendPacketAsync(_activeTransport, captionString, encryptedMessage,
                 result =>
                 {
@@ -341,11 +343,11 @@ namespace Telegram.Api.Services
 #if DEBUG
                             if (historyItem.Caption != "account.updateStatus") // to avoid deadlock on deactivation
                             {
-                                NotifyOfPropertyChange(() => History);
+                                RaisePropertyChanged(() => History);
                             }
 #endif
                         }
-                        faultCallback.SafeInvoke(new TLRPCError(404) { Message = new TLString("FastCallback SocketError=" + result) });
+                        faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FastCallback SocketError=" + result });
                     }
                 },
                 error =>
@@ -359,16 +361,17 @@ namespace Telegram.Api.Services
 #if DEBUG
                         if (historyItem.Caption != "account.updateStatus") // to avoid deadlock on deactivation
                         {
-                            NotifyOfPropertyChange(() => History);
+                            RaisePropertyChanged(() => History);
                         }
 #endif
                     }
-                    faultCallback.SafeInvoke(new TLRPCError(404)
+                    faultCallback.SafeInvoke(new TLRPCError
                     {
+                        ErrorCode = 404,
 #if WINDOWS_PHONE
                         SocketError = error.Error,
 #endif
-                        Exception = error.Exception
+                        // TODO: Exception = error.Exception
                     });
                 });
 	    }
@@ -376,7 +379,6 @@ namespace Telegram.Api.Services
 	    private void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null, 
             int? maxAttempt = null,                 // to send delayed items
             Action<int> attemptFailed = null)       // to send delayed items
-            where T : TLObject
 	    {
             Execute.BeginOnThreadPool(() =>
             {
@@ -405,7 +407,7 @@ namespace Telegram.Api.Services
                 Status = RequestStatus.Sent
             };
             
-            var guid = message.MessageId;
+            var guid = message.MsgId;
             lock (_activeTransportRoot)
             {
                 if (_activeTransport.Closed)
@@ -437,7 +439,7 @@ namespace Telegram.Api.Services
             // Если сначала добавить в историю транспорта, то потом можем получить новый и не найдем запрос
             _activeTransport.EnqueueNonEncryptedItem(historyItem);
 
-            var bytes = message.ToBytes();
+            var bytes = message.ToArray();
 #if LOG_REGISTRATION
             TLUtils.WriteLog(string.Format("SendPacketAsync {0} [{1}](data length={2})", _activeTransport.Id, caption, bytes.Length));
 #endif
@@ -454,7 +456,7 @@ namespace Telegram.Api.Services
 
                         if (result)
                         {
-                            faultCallback.SafeInvoke(new TLRPCError { Code = 404, Message = new TLString("FastCallback SocketError=" + socketError) });
+                            faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FastCallback SocketError=" + socketError });
                         }
                     }                  
                 },
@@ -468,14 +470,14 @@ namespace Telegram.Api.Services
                     // чтобы callback не вызвался два раза из CheckTimeouts и отсюда
                     if (result)
                     {
-                        faultCallback.SafeInvoke(new TLRPCError { Code = 404, Message = new TLString("FaltCallback") });
+                        faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FaltCallback" });
                     }                    
                 });
         }
 
         private static TLEncryptedTransportMessage CreateTLEncryptedMessage(byte[] authKey, TLContainerTransportMessage containerTransportMessage)
         {
-            var message = new TLEncryptedTransportMessage { Data = containerTransportMessage.ToBytes() };
+            var message = new TLEncryptedTransportMessage { Query = containerTransportMessage };
 
             return message.Encrypt(authKey);
         }
@@ -485,19 +487,19 @@ namespace Telegram.Api.Services
             var message = new TLTransportMessage();
             message.Salt = salt;
             message.SessionId = sessionId;
-            message.MessageId = messageId;
+            message.MsgId = messageId;
             message.SeqNo = seqNo;
-            message.MessageData = obj;
+            message.Query = obj;
 
             return message;
         }
 
-        public static TLNonEncryptedMessage CreateTLNonEncryptedMessage(long? messageId, TLObject obj)
+        public static TLNonEncryptedTransportMessage CreateTLNonEncryptedMessage(long? messageId, TLObject obj)
         {
-            var message = new TLNonEncryptedMessage();
+            var message = new TLNonEncryptedTransportMessage();
             message.AuthKeyId = 0;
-            message.MessageId = messageId;
-            message.Data = obj;
+            message.MsgId = messageId;
+            message.Query = obj;
 
             return message;
         }

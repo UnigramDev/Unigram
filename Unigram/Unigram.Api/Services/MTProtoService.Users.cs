@@ -1,7 +1,7 @@
 ﻿using System;
 using Telegram.Api.Extensions;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Functions.Users;
+using Telegram.Api.TL.Methods.Users;
 
 namespace Telegram.Api.Services
 {
@@ -9,7 +9,7 @@ namespace Telegram.Api.Services
 	{
         public void GetUsersAsync(TLVector<TLInputUserBase> id, Action<TLVector<TLUserBase>> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLGetUsers { Id = id };
+            var obj = new TLUsersGetUsers { Id = id };
 
             SendInformativeMessage<TLVector<TLUserBase>>("users.getUsers", obj, result =>
             {
@@ -20,7 +20,7 @@ namespace Telegram.Api.Services
 
         public void GetFullUserAsync(TLInputUserBase id, Action<TLUserFull> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLGetFullUser { Id = id };
+            var obj = new TLUsersGetFullUser { Id = id };
 
             SendInformativeMessage<TLUserFull>("users.getFullUser", obj, userFull =>
             {

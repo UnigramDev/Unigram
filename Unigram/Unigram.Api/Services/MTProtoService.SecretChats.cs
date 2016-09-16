@@ -1,7 +1,7 @@
 ﻿using System;
 using Telegram.Api.Extensions;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Functions.Messages;
+using Telegram.Api.TL.Methods.Messages;
 
 namespace Telegram.Api.Services
 {
@@ -12,16 +12,16 @@ namespace Telegram.Api.Services
             //GetGA()
         }
 
-        public void GetDHConfigAsync(int? version, int? randomLength, Action<TLDHConfigBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetDHConfigAsync(int version, int randomLength, Action<TLMessagesDHConfigBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLGetDHConfig { Version = version, RandomLength = randomLength };
+            var obj = new TLMessagesGetDHConfig { Version = version, RandomLength = randomLength };
 
             SendInformativeMessage("messages.getDhConfig", obj, callback, faultCallback);
         }
 
-        public void RequestEncryptionAsync(TLInputUserBase userId, int? randomId, string ga, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
+        public void RequestEncryptionAsync(TLInputUserBase userId, int randomId, byte[] ga, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLRequestEncryption { UserId = userId, RandomId = randomId, G_A = ga };
+            var obj = new TLMessagesRequestEncryption { UserId = userId, RandomId = randomId, GA = ga };
 
             SendInformativeMessage<TLEncryptedChatBase>("messages.requestEncryption", obj,
                 encryptedChat =>
@@ -31,9 +31,9 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void AcceptEncryptionAsync(TLInputEncryptedChat peer, string gb, long? keyFingerprint, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
+        public void AcceptEncryptionAsync(TLInputEncryptedChat peer, byte[] gb, long keyFingerprint, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAcceptEncryption { Peer = peer, GB = gb, KeyFingerprint = keyFingerprint };
+            var obj = new TLMessagesAcceptEncryption { Peer = peer, GB = gb, KeyFingerprint = keyFingerprint };
 
             SendInformativeMessage<TLEncryptedChatBase>("messages.acceptEncryption", obj,
                 encryptedChat =>
@@ -43,9 +43,9 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void DiscardEncryptionAsync(int? chatId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void DiscardEncryptionAsync(int chatId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLDiscardEncryption { ChatId = chatId };
+            var obj = new TLMessagesDiscardEncryption { ChatId = chatId };
 
             SendInformativeMessage("messages.discardEncryption", obj, callback, faultCallback);
         }

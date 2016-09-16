@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Telegram.Api.Extensions;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Functions.Stuff;
+using Telegram.Api.TL.Methods;
 
 namespace Telegram.Api.Services
 {
@@ -18,7 +18,7 @@ namespace Telegram.Api.Services
 	        {
 	            TLUtils.WriteLine(TLUtils.MessageIdString(id));
             }
-            var obj = new TLMessageAcknowledgments { MsgIds = ids };
+            var obj = new TLMsgsAck { MsgIds = ids };
 
             var authKey = _activeTransport.AuthKey;
 	        var sesseionId = _activeTransport.SessionId;
@@ -68,7 +68,7 @@ namespace Telegram.Api.Services
 	            }
 	        }
 
-	        var captionString = string.Format("msgs_ack {0}", transportMessage.MessageId);
+	        var captionString = string.Format("msgs_ack {0}", transportMessage.MsgId);
             SendPacketAsync(_activeTransport, captionString, encryptedMessage,
 	            result =>
 	            {
@@ -81,7 +81,7 @@ namespace Telegram.Api.Services
 	    }
 
 
-        public void PingAsync(long? pingId, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
+        public void PingAsync(long pingId, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
 	    {
 	        var obj = new TLPing{ PingId = pingId };
 
@@ -93,7 +93,7 @@ namespace Telegram.Api.Services
                 faultCallback.SafeInvoke);
 	    }
 
-        public void PingDelayDisconnectAsync(long? pingId, int? disconnectDelay, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
+        public void PingDelayDisconnectAsync(long pingId, int disconnectDelay, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLPingDelayDisconnect { PingId = pingId, DisconnectDelay = disconnectDelay };
 
@@ -105,7 +105,7 @@ namespace Telegram.Api.Services
                 faultCallback.SafeInvoke);
         }
 
-	    public void HttpWaitAsync(int? maxDelay, int? waitAfter, int? maxWait, Action callback, Action faultCallback)
+	    public void HttpWaitAsync(int maxDelay, int waitAfter, int maxWait, Action callback, Action faultCallback)
 	    {
             PrintCaption("http_wait");
 
@@ -150,7 +150,7 @@ namespace Telegram.Api.Services
                 }
 	        }
 
-            SendPacketAsync(_activeTransport, "http_wait " + transportMessage.MessageId, encryptedMessage, 
+            SendPacketAsync(_activeTransport, "http_wait " + transportMessage.MsgId, encryptedMessage, 
                 result =>
 	            {
                     //try

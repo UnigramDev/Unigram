@@ -24,7 +24,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("auth.checkPhone", obj, callback, faultCallback);
 	    }
 
-        public void SendCodeAsync(string phoneNumber, string currentNumber, Action<TLSentCodeBase> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null)
+        public void SendCodeAsync(string phoneNumber, string currentNumber, Action<TLAuthSentCode> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthSendCode
             {
@@ -38,7 +38,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("auth.sendCode", obj, callback, faultCallback, 3);
         }
 
-        public void ResendCodeAsync(string phoneNumber, string phoneCodeHash, Action<TLSentCodeBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ResendCodeAsync(string phoneNumber, string phoneCodeHash, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthResendCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
@@ -59,11 +59,11 @@ namespace Telegram.Api.Services
             SendInformativeMessage("auth.sendCall", obj, callback, faultCallback);
         }
 
-	    public void SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    public void SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAuthSignUp { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode, FirstName = firstName, LastName = lastName };
 
-            SendInformativeMessage<TLAuthorization>("auth.signUp", obj,
+            SendInformativeMessage<TLAuthAuthorization>("auth.signUp", obj,
                 auth =>
                 {
                     _cacheService.SyncUser(auth.User, result => { });
@@ -72,11 +72,11 @@ namespace Telegram.Api.Services
                 faultCallback);
 	    }
 
-        public void SignInAsync(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+        public void SignInAsync(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthSignIn { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode};
 
-            SendInformativeMessage<TLAuthorization>("auth.signIn", obj,
+            SendInformativeMessage<TLAuthAuthorization>("auth.signIn", obj,
                 auth =>
                 {
                     _cacheService.SyncUser(auth.User, result => { }); 
@@ -116,7 +116,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("auth.sendInvites", obj, callback, faultCallback);
 	    }
 
-	    public void ExportAuthorizationAsync(int? dcId, Action<TLExportedAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    public void ExportAuthorizationAsync(int? dcId, Action<TLAuthExportedAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAuthExportAuthorization { DCId = dcId };
 

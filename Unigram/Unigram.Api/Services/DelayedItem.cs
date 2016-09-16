@@ -10,7 +10,7 @@ namespace Telegram.Api.Services
         public DateTime SendTime { get; set; }
         //public DateTime? SendBeforeTime { get; set; }
         public TLObject Object { get; set; }
-        public Action<TLObject> Callback { get; set; }
+        public Action<object> Callback { get; set; }
         public Action<TLRPCError> FaultCallback { get; set; }
         public Action<int> AttemptFailed { get; set; }
         public int? MaxAttempt { get; set; }

@@ -65,19 +65,19 @@ namespace Telegram.Api.Services.Cache
         void SyncSendingMessage(TLMessage message, TLMessageBase previousMessage, Action<TLMessage> callback);
         void SyncSendingMessages(IList<TLMessage> messages, TLMessageBase previousMessage, Action<IList<TLMessage>> callback);
         void SyncSendingMessageId(long? randomId, int? id, Action<TLMessage> callback);
-        void SyncPeerMessages(TLPeerBase peer, TLMessagesBase messages, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesBase> callback);
-        void AddMessagesToContext(TLMessagesBase messages, Action<TLMessagesBase> callback);
-        void SyncDialogs(Stopwatch stopwatch, TLDialogsBase dialogs, Action<TLDialogsBase> callback);
-        void SyncChannelDialogs(TLDialogsBase dialogs, Action<TLDialogsBase> callback);
-        void MergeMessagesAndChannels(TLDialogsBase dialogs);
+        void SyncPeerMessages(TLPeerBase peer, TLMessagesMessagesBase messages, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesMessagesBase> callback);
+        void AddMessagesToContext(TLMessagesMessagesBase messages, Action<TLMessagesMessagesBase> callback);
+        void SyncDialogs(Stopwatch stopwatch, TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback);
+        void SyncChannelDialogs(TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback);
+        void MergeMessagesAndChannels(TLMessagesDialogsBase dialogs);
         void SyncUser(TLUserBase user, Action<TLUserBase> callback);
         void SyncUser(TLUserFull userFull, Action<TLUserFull> callback);
         void SyncUsers(TLVector<TLUserBase> users, Action<TLVector<TLUserBase>> callback);
         void AddUsers(TLVector<TLUserBase> users, Action<TLVector<TLUserBase>> callback);
         void SyncUsersAndChats(TLVector<TLUserBase> users, TLVector<TLChatBase> chats, Action<Tuple<TLVector<TLUserBase>, TLVector<TLChatBase>>> callback);
-        void SyncUserLink(TLLinkBase link, Action<TLLinkBase> callback);
-        void SyncContacts(TLContactsBase contacts, Action<TLContactsBase> callback);
-        void SyncContacts(TLImportedContacts contacts, Action<TLImportedContacts> callback);
+        void SyncUserLink(TLContactsLink link, Action<TLContactsLink> callback);
+        void SyncContacts(TLContactsContactsBase contacts, Action<TLContactsContactsBase> callback);
+        void SyncContacts(TLContactsImportedContacts contacts, Action<TLContactsImportedContacts> callback);
 
         void ClearDialog(TLPeerBase peer);
         void DeleteDialog(TLDialog dialog);
@@ -112,7 +112,7 @@ namespace Telegram.Api.Services.Cache
 
         void SyncDifference(TLDifference difference, Action<TLDifference> result, IList<ExceptionInfo> exceptions);
         void SyncDifferenceWithoutUsersAndChats(TLDifference difference, Action<TLDifference> result, IList<ExceptionInfo> exceptions);
-        void SyncStatuses(TLVector<TLContactStatusBase> contacts, Action<TLVector<TLContactStatusBase>> callback);
+        void SyncStatuses(TLVector<TLContactStatus> contacts, Action<TLVector<TLContactStatus>> callback);
         void DeleteUser(int? id);
         void DeleteChat(int? id);
         void DeleteUserHistory(TLPeerChannel channel, TLPeerUser peer);

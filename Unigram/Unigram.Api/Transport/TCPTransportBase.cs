@@ -69,7 +69,7 @@ namespace Telegram.Api.Transport
                 if (_once) return;
                 _once = true;
 
-                var clientTime = GenerateMessageId().Value;
+                var clientTime = GenerateMessageId();
                 var serverTime = msgId.Value;
                 ClientTicksDelta += serverTime - clientTime;
             }
@@ -438,7 +438,7 @@ namespace Telegram.Api.Transport
 #if LOG_REGISTRATION
                     TLUtils.WriteLog(String.Format("Socket.ClearNonEncryptedHistory {0} item {1}", Id, historyItem.Value.Caption));
 #endif
-                    historyItem.Value.FaultCallback.SafeInvoke(new TLRPCError { Code = 404, Message = new TLString(error.ToString()) });
+                    historyItem.Value.FaultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = error.ToString() });
                 }
 
                 _nonEncryptedHistory.Clear();

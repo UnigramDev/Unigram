@@ -971,6 +971,21 @@ namespace Telegram.Api.TL
             return new int?((int)(unixTime / 4294967296));
         }
 
+        public static int? ToTLInt(byte[] value)
+        {
+            try
+            {
+                var intValue = Convert.ToInt32(value);
+                return intValue;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
+        }
+
         public static byte[] GenerateAuthKeyId(byte[] authKey)
         {
             var authKeyHash = Utils.ComputeSHA1(authKey);

@@ -535,7 +535,7 @@ namespace Telegram.Api.Services.Cache
                                 if (notifyTopMessageUpdated)
                                 {
                                     dialog._topMessage = commonMessage;
-                                    Helpers.Execute.BeginOnUIThread(() => dialog.NotifyOfPropertyChange(() => dialog.TopMessage));
+                                    Helpers.Execute.BeginOnUIThread(() => dialog.RaisePropertyChanged(() => dialog.TopMessage));
                                 }
                                 else
                                 {
@@ -582,7 +582,7 @@ namespace Telegram.Api.Services.Cache
                                 if (notifyTopMessageUpdated)
                                 {
                                     broadcast._topMessage = commonMessage;
-                                    Helpers.Execute.BeginOnUIThread(() => broadcast.NotifyOfPropertyChange(() => broadcast.TopMessage));
+                                    Helpers.Execute.BeginOnUIThread(() => broadcast.RaisePropertyChanged(() => broadcast.TopMessage));
                                 }
                                 else
                                 {
@@ -1129,7 +1129,7 @@ namespace Telegram.Api.Services.Cache
                         Date = chat.Date,
                         Out = new TLBool(false),
                         Unread = new TLBool(false),
-                        Status = MessageStatus.Read
+                        Status = TLMessageState.Read
                     };
                     dialog.Messages.Add(lastMessage);
                     AddDecryptedMessageToContext(lastMessage);
@@ -1172,7 +1172,7 @@ namespace Telegram.Api.Services.Cache
                     {
                         FromId = topMessage.FromId,
                         ToId = topMessage.ToId,
-                        Status = MessageStatus.Confirmed,
+                        Status = TLMessageState.Confirmed,
                         Out = new bool { Value = true },
                         Date = topMessage.Date,
                         //IsAnimated = true,
@@ -2114,10 +2114,10 @@ namespace Telegram.Api.Services.Cache
                             }
                             foreach (var message in encryptedDialog.Messages)
                             {
-                                if (message.Status == MessageStatus.Sending
-                                    || message.Status == MessageStatus.Compressing)
+                                if (message.Status == TLMessageState.Sending
+                                    || message.Status == TLMessageState.Compressing)
                                 {
-                                    message.Status = MessageStatus.Failed;
+                                    message.Status = TLMessageState.Failed;
                                     ResendingDecryptedMessages.Add(message);
                                 }
 
@@ -2153,10 +2153,10 @@ namespace Telegram.Api.Services.Cache
                             }
                             foreach (var message in dialog.Messages)
                             {
-                                if (message.Status == MessageStatus.Sending
-                                    || message.Status == MessageStatus.Compressing)
+                                if (message.Status == TLMessageState.Sending
+                                    || message.Status == TLMessageState.Compressing)
                                 {
-                                    message._status = message.Index != 0 ? MessageStatus.Confirmed : MessageStatus.Failed;
+                                    message._status = message.Index != 0 ? TLMessageState.Confirmed : TLMessageState.Failed;
                                     ResendingMessages.Add(message);
                                 }
 
@@ -2244,10 +2244,10 @@ namespace Telegram.Api.Services.Cache
                             }
                             foreach (var message in dialog.Messages)
                             {
-                                if (message.Status == MessageStatus.Sending
-                                    || message.Status == MessageStatus.Compressing)
+                                if (message.Status == TLMessageState.Sending
+                                    || message.Status == TLMessageState.Compressing)
                                 {
-                                    message._status = message.Index != 0 ? MessageStatus.Confirmed : MessageStatus.Failed;
+                                    message._status = message.Index != 0 ? TLMessageState.Confirmed : TLMessageState.Failed;
                                     ResendingMessages.Add(message);
                                 }
 

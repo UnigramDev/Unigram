@@ -319,7 +319,8 @@ namespace Telegram.Api.Transport
 
             if (_socket != null)
             {
-                _socket.Close();
+                // TODO: _socket.Close();
+                _socket.Dispose();
                 Closed = true;
             }
         }

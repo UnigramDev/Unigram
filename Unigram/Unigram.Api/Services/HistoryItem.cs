@@ -13,14 +13,14 @@ namespace Telegram.Api.Services
 
     public class HistoryItem
     {
-        public long Hash { get { return Message != null ? Message.MessageId.Value : 0; } }
-        public TLTransportMessageWithIdBase Message { get; set; }
+        public long Hash { get { return Message != null ? Message.MsgId : 0; } }
+        public TLTransportMessageBase Message { get; set; }
         public TLObject Object { get; set; }
         public string Caption { get; set; }
         public DateTime SendTime { get; set; }
         public DateTime? SendBeforeTime { get; set; }
         public RequestStatus Status { get; set; }
-        public Action<TLObject> Callback { get; set; }
+        public Action<object> Callback { get; set; }
         public Action FastCallback { get; set; }
         public Action<int> AttemptFailed { get; set; }
         public Action<TLRPCError> FaultCallback { get; set; }
@@ -35,7 +35,6 @@ namespace Telegram.Api.Services
 
         public override string ToString()
         {
-
             return string.Format("{0}: {1} {2}", SendTime.ToString("HH:mm:ss.fff"), Caption, GetHashCode());
         }
     }

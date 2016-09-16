@@ -2,7 +2,7 @@
 using System.Threading;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Functions.Help;
+using Telegram.Api.TL.Methods.Help;
 
 namespace Telegram.Api.Services
 {
@@ -17,16 +17,16 @@ namespace Telegram.Api.Services
             {
                 new TLDCOption 
                 { 
-                    Id = new int?(Constants.FirstServerDCId),
-                    IpAddress = new TLString(Constants.FirstServerIpAddress), 
-                    Port = new int?(Constants.FirstServerPort) 
+                    Id = Constants.FirstServerDCId,
+                    IpAddress = Constants.FirstServerIpAddress, 
+                    Port = Constants.FirstServerPort 
                 }
             }
 	    };
 
         public void GetConfigAsync(Action<TLConfig> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLGetConfig();
+            var obj = new TLHelpGetConfig();
 
             Logs.Log.Write("help.getConfig");
 
@@ -66,7 +66,7 @@ namespace Telegram.Api.Services
                 return;
             }
 
-            var isAuthorized = SettingsHelper.GetValue<bool>(Constants.IsAuthorizedKey);
+            var isAuthorized = SettingsHelper.IsAuthorized;
             if (!isAuthorized)
             {
                 return;
@@ -75,8 +75,8 @@ namespace Telegram.Api.Services
             var currentTime = TLUtils.DateToUniversalTimeTLInt(ClientTicksDelta, DateTime.Now);
 
 
-            var config23 = _config as TLConfig23;
-            if (config23 != null && config23.Expires != null && (config23.Expires.Value > currentTime.Value))
+            var config23 = _config as TLConfig;
+            if (config23 != null && config23.Expires != null && (config23.Expires > currentTime))
             {
                 return;
             }
@@ -104,37 +104,37 @@ namespace Telegram.Api.Services
                 });
         }
 
-        public void GetTermsOfServiceAsync(string langCode, Action<TLTermsOfService> callback, Action<TLRPCError> faultCallback = null)
+        public void GetTermsOfServiceAsync(string langCode, Action<TLHelpTermsOfService> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLGetTermsOfService();
+            var obj = new TLHelpGetTermsOfService();
 
             SendInformativeMessage("help.getTermsOfService", obj, callback, faultCallback);
         }
 
         public void GetNearestDCAsync(Action<TLNearestDC> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLGetNearestDC();
+            var obj = new TLHelpGetNearestDC();
 
             SendInformativeMessage("help.getNearestDc", obj, callback, faultCallback);
         }
 
-        public void GetInviteTextAsync(string langCode, Action<TLInviteText> callback, Action<TLRPCError> faultCallback = null)
+        public void GetInviteTextAsync(string langCode, Action<TLHelpInviteText> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLGetInviteText();
+            var obj = new TLHelpGetInviteText();
 
             SendInformativeMessage("help.getInviteText", obj, callback, faultCallback);
         }
 
-        public void GetSupportAsync( Action<TLSupport> callback, Action<TLRPCError> faultCallback = null)
+        public void GetSupportAsync( Action<TLHelpSupport> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLGetSupport();
+            var obj = new TLHelpGetSupport();
 
             SendInformativeMessage("help.getSupport", obj, callback, faultCallback);
         }
 
-        public void GetAppChangelogAsync(string deviceModel, string systemVersion, string appVersion, string langCode, Action<TLAppChangelogBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetAppChangelogAsync(string deviceModel, string systemVersion, string appVersion, string langCode, Action<TLHelpAppChangelogBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLGetAppChangelog();
+            var obj = new TLHelpGetAppChangelog();
 
             SendInformativeMessage("help.getAppChangelog", obj, callback, faultCallback);
         }

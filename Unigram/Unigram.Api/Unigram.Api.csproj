@@ -986,9 +986,7 @@
     <Compile Include="TL\TLWebPageBase.cs" />
     <Compile Include="TL\TLWebPageEmpty.cs" />
     <Compile Include="TL\TLWebPagePending.cs" />
-    <Compile Include="Transport\AsnycExtensions.cs" />
     <Compile Include="Transport\DataEventArgs.cs" />
-    <Compile Include="Transport\HttpTransport.cs" />
     <Compile Include="Transport\ITransport.cs" />
     <Compile Include="Transport\ITransportService.cs" />
     <Compile Include="Transport\TCPTransport.cs" />

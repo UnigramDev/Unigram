@@ -1382,7 +1382,7 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
-        public void SyncPeerMessages(TLPeerBase peer, TLMessagesBase messages, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesBase> callback)
+        public void SyncPeerMessages(TLPeerBase peer, TLMessagesMessagesBase messages, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesMessagesBase> callback)
         {
             if (messages == null)
             {
@@ -1407,7 +1407,7 @@ namespace Telegram.Api.Services.Cache
             callback(result);
         }
 
-        private void ProcessPeerReading(TLPeerBase peer, TLMessagesBase messages)
+        private void ProcessPeerReading(TLPeerBase peer, TLMessagesMessagesBase messages)
         {
             IReadMaxId readMaxId = null;
             if (peer is TLPeerUser)
@@ -1449,7 +1449,7 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
-        public void AddMessagesToContext(TLMessagesBase messages, Action<TLMessagesBase> callback)
+        public void AddMessagesToContext(TLMessagesMessagesBase messages, Action<TLMessagesMessagesBase> callback)
         {
             if (messages == null)
             {
@@ -1478,11 +1478,11 @@ namespace Telegram.Api.Services.Cache
             callback(result);
         }
 
-        public void SyncStatuses(TLVector<TLContactStatusBase> contactStatuses, Action<TLVector<TLContactStatusBase>> callback)
+        public void SyncStatuses(TLVector<TLContactStatus> contactStatuses, Action<TLVector<TLContactStatus>> callback)
         {
             if (contactStatuses == null)
             {
-                callback(new TLVector<TLContactStatusBase>());
+                callback(new TLVector<TLContactStatus>());
                 return;
             }
 
@@ -1704,7 +1704,7 @@ namespace Telegram.Api.Services.Cache
 
         #region Dialogs
 
-        private void SyncDialogsInternal(Stopwatch stopwatch2, TLDialogsBase dialogs, TLDialogsBase result)
+        private void SyncDialogsInternal(Stopwatch stopwatch2, TLMessagesDialogsBase dialogs, TLMessagesDialogsBase result)
         {
             MergeMessagesAndChannels(dialogs);
 
@@ -1753,7 +1753,7 @@ namespace Telegram.Api.Services.Cache
             result.Messages = dialogs.Messages;
         }
 
-        private void SyncChannelDialogsInternal(TLDialogsBase dialogs, TLDialogsBase result)
+        private void SyncChannelDialogsInternal(TLMessagesDialogsBase dialogs, TLMessagesDialogsBase result)
         {
             // set TopMessage properties
             var timer = Stopwatch.StartNew();
@@ -1796,7 +1796,7 @@ namespace Telegram.Api.Services.Cache
             result.Messages = dialogs.Messages;
         }
 
-        public void SyncDialogs(Stopwatch stopwatch, TLDialogsBase dialogs, Action<TLDialogsBase> callback)
+        public void SyncDialogs(Stopwatch stopwatch, TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback)
         {
             if (dialogs == null)
             {
@@ -1833,7 +1833,7 @@ namespace Telegram.Api.Services.Cache
             callback.SafeInvoke(result);
         }
 
-        public void SyncChannelDialogs(TLDialogsBase dialogs, Action<TLDialogsBase> callback)
+        public void SyncChannelDialogs(TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback)
         {
             if (dialogs == null)
             {
@@ -1866,7 +1866,7 @@ namespace Telegram.Api.Services.Cache
             callback.SafeInvoke(result);
         }
 
-        private void MergeReadMaxIdAndNotifySettings(TLDialogsBase dialogs)
+        private void MergeReadMaxIdAndNotifySettings(TLMessagesDialogsBase dialogs)
         {
             var chatsIndex = new Dictionary<int, TLChatBase>();
             foreach (var chat in dialogs.Chats)
@@ -1956,7 +1956,7 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
-        public void MergeMessagesAndChannels(TLDialogsBase dialogs)
+        public void MergeMessagesAndChannels(TLMessagesDialogsBase dialogs)
         {
             var dialogsCache = new Context<TLDialog>();
             var messagesCache = new Context<Context<TLMessageBase>>();
@@ -2097,7 +2097,7 @@ namespace Telegram.Api.Services.Cache
 
         #region Users
 
-        public void SyncUserLink(TLLinkBase link, Action<TLLinkBase> callback)
+        public void SyncUserLink(TLContactsLink link, Action<TLContactsLink> callback)
         {
             if (link == null)
             {
@@ -2478,7 +2478,7 @@ namespace Telegram.Api.Services.Cache
                                         {
                                             if (item.RandomId.Value == randomId.Value)
                                             {
-                                                item.Status = MessageStatus.Read;
+                                                item.Status = TLMessageState.Read;
                                                 if (item.TTL != null && item.TTL.Value > 0)
                                                 {
                                                     item.DeleteDate = new long?(DateTime.Now.Ticks + encryptedChat.MessageTTL.Value * TimeSpan.TicksPerSecond);
@@ -2959,11 +2959,11 @@ namespace Telegram.Api.Services.Cache
             callback.SafeInvoke(users);
         }
 
-        public void SyncContacts(TLImportedContacts contacts, Action<TLImportedContacts> callback)
+        public void SyncContacts(TLContactsImportedContacts contacts, Action<TLContactsImportedContacts> callback)
         {
             if (contacts == null)
             {
-                callback(new TLImportedContacts());
+                callback(new TLContactsImportedContacts());
                 return;
             }
 
@@ -3201,7 +3201,7 @@ namespace Telegram.Api.Services.Cache
             _database.Commit();
         }
 
-        private void SyncContactsInternal(TLImportedContacts contacts, TLImportedContacts result)
+        private void SyncContactsInternal(TLContactsImportedContacts contacts, TLContactsImportedContacts result)
         {
             var cache = contacts.Users.ToDictionary(x => x.Index);
             foreach (var importedContact in contacts.Imported)
@@ -3255,7 +3255,7 @@ namespace Telegram.Api.Services.Cache
             result.Imported = contacts.Imported;
         }
 
-        public void SyncContacts(TLContactsBase contacts, Action<TLContactsBase> callback)
+        public void SyncContacts(TLContactsContactsBase contacts, Action<TLContactsContactsBase> callback)
         {
             if (contacts == null)
             {
