@@ -18,26 +18,14 @@
         <Border Height="10" Visibility="{x:Bind (Visibility)ViewModel.IsFirst, Mode=OneWay}"/>
 
         <Border x:Name="LayoutRoot"
-            Padding="{ThemeResource MessageContentPadding}" 
-            Background="{ThemeResource MessageBackgroundBrush}" 
-            BorderBrush="{ThemeResource MessageBorderBrush}" 
-            BorderThickness="0,0,0,2" 
-            HorizontalAlignment="Right" 
-            Margin="40,2,0,2" 
-            MaxWidth="430">
-            <Border.ContextFlyout>
-                <MenuFlyout>
-                    <MenuFlyout.MenuFlyoutPresenterStyle>
-                        <Style TargetType="MenuFlyoutPresenter">
-                            <Setter Property="RequestedTheme" Value="Light"/>
-                        </Style>
-                    </MenuFlyout.MenuFlyoutPresenterStyle>
-                    <MenuFlyoutItem Text="Reply"/>
-                    <MenuFlyoutItem Text="Copy"/>
-                    <MenuFlyoutItem Text="Forward"/>
-                    <MenuFlyoutItem Text="Delete"/>
-                </MenuFlyout>
-            </Border.ContextFlyout>
+                ContextFlyout="{StaticResource MessageMenuFlyout}"
+                Padding="{ThemeResource MessageContentPadding}" 
+                Background="{ThemeResource MessageBackgroundBrush}" 
+                BorderBrush="{ThemeResource MessageBorderBrush}" 
+                BorderThickness="0,0,0,2" 
+                HorizontalAlignment="Right" 
+                Margin="40,2,0,2" 
+                MaxWidth="430">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
