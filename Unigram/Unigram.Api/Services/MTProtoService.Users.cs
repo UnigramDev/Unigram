@@ -1,38 +1,31 @@
 ﻿using System;
-using System.Threading.Tasks;
+using Telegram.Api.Extensions;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Users;
+using Telegram.Api.TL.Functions.Users;
 
 namespace Telegram.Api.Services
 {
-    public partial class MTProtoService
-    {
-        public async Task<MTProtoResponse<TLVector<TLUserBase>>> GetUsersAsync(TLVector<TLInputUserBase> id)
+	public partial class MTProtoService
+	{
+        public void GetUsersAsync(TLVector<TLInputUserBase> id, Action<TLVector<TLUserBase>> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLUsersGetUsers { Id = id };
+            var obj = new TLGetUsers { Id = id };
 
-            var result = await SendInformativeMessage<TLVector<TLUserBase>>("users.getUsers", obj);
-            if (result.Error == null)
+            SendInformativeMessage<TLVector<TLUserBase>>("users.getUsers", obj, result =>
             {
-                _cacheService.SyncUsers(result.Value, null);
-            }
-
-            return result;
+                _cacheService.SyncUsers(result, callback);
+            }, 
+            faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUserFull>> GetFullUserAsync(TLInputUserBase id)
+        public void GetFullUserAsync(TLInputUserBase id, Action<TLUserFull> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLUsersGetFullUser { Id = id };
+            var obj = new TLGetFullUser { Id = id };
 
-            var result = await SendInformativeMessage<TLUserFull>("users.getFullUser", obj);
-            if (result.Error == null)
+            SendInformativeMessage<TLUserFull>("users.getFullUser", obj, userFull =>
             {
-                var task = new TaskCompletionSource<MTProtoResponse<TLUserFull>>();
-                _cacheService.SyncUser(result.Value, (callback) => task.SetResult(new MTProtoResponse<TLUserFull>(callback)));
-                return await task.Task;
-            }
-
-            return result;
+                _cacheService.SyncUser(userFull, result => callback.SafeInvoke(result));
+            }, faultCallback);
         }
-    }
+	}
 }

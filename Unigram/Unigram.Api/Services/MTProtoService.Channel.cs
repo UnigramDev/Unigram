@@ -1,404 +1,569 @@
 ﻿using System;
-using Org.BouncyCastle.Bcpg;
 using Telegram.Api.Extensions;
-using Telegram.Api.Services.Cache;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using System.Threading.Tasks;
-using Telegram.Api.TL.Methods.Channels;
+using Telegram.Api.TL.Functions.Channels;
+using Telegram.Api.TL.Functions.Updates;
 
 namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
-        public async Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id)
+        public void GetAdminedPublicChannelsAsync(Action<TLChatsBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsGetMessages { Channel = inputChannel, Id = id };
+            var obj = new TLGetAdminedPublicChannels();
 
-            return await SendInformativeMessage<TLMessagesMessagesBase>("channels.getMessages", obj);
+            SendInformativeMessage<TLChatsBase>("updates.getAdminedPublicChannels", obj,
+                result =>
+                {
+                    var chats = result as TLChats24;
+                    if (chats != null)
+                    {
+                        _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), chats.Chats, tuple => callback.SafeInvoke(result));
+                    }
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<bool>> EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role)
+        public void GetChannelDifferenceAsync(TLInputChannelBase inputChannel, TLChannelMessagesFilerBase filter, TLInt pts, TLInt limit, Action<TLChannelDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsEditAdmin { Channel = channel.ToInputChannel(), UserId = userId, Role = role };
+            var obj = new TLGetChannelDifference { Channel = inputChannel, Filter = filter, Pts = pts, Limit = limit };
 
-            var result = await SendInformativeMessage<bool>("channels.editAdmin", obj);
+            SendInformativeMessage("updates.getChannelDifference", obj, callback, faultCallback);
+        }
 
-            if (result.Error == null)
-            {
-                if (channel.AdminsCount != null)
+        public void GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<TLInt> id, Action<TLMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLGetMessages { Channel = inputChannel, Id = id };
+
+            SendInformativeMessage("channels.getMessages", obj, callback, faultCallback);
+        }
+
+        public void EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLEditAdmin { Channel = channel.ToInputChannel(), UserId = userId, Role = role };
+
+            const string caption = "channels.editAdmin";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    if (role is TLChannelRoleEmpty)
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
                     {
-                        channel.AdminsCount = channel.AdminsCount - 1;
+                        _updatesService.SetState(multiPts, caption);
                     }
                     else
                     {
-                        channel.AdminsCount = channel.AdminsCount + 1;
+                        ProcessUpdates(result, null);
                     }
 
-                    _cacheService.Commit();
-                }
-            }
-
-            return result;
+                    GetFullChannelAsync(channel.ToInputChannel(),
+                        messagesChatFull => callback.SafeInvoke(result),
+                        faultCallback.SafeInvoke);
+                },
+                faultCallback);
         }
 
-        //TLInputChannelBase channelId, TLInputUserBase userId, Action<TLChannelsChannelParticipant> callback, Action<TLRPCError> faultCallback
-        public async Task<MTProtoResponse<TLChannelsChannelParticipant>> GetParticipantAsync(TLInputChannelBase inputChannel, TLInputUserBase userId)
+
+        public void GetParticipantAsync(TLInputChannelBase inputChannel, TLInputUserBase userId, Action<TLChannelsChannelParticipant> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsGetParticipant { Channel = inputChannel, UserId = userId };
+            var obj = new TLGetParticipant { Channel = inputChannel, UserId = userId };
 
-            var result = await SendInformativeMessage<TLChannelsChannelParticipant>("channels.getParticipant", obj);
-            if (result.Error == null)
+            const string caption = "channels.getParticipant";
+            SendInformativeMessage<TLChannelsChannelParticipant>(caption, obj, result =>
             {
-                _cacheService.SyncUsers(result.Value.Users, r => { });
-            }
+                _cacheService.SyncUsers(result.Users, r => { });
 
-            return result;
-        }
-        public async void GetParticipantCallbackAsync(TLInputChannelBase inputChannel, TLInputUserBase userId, Action<TLChannelsChannelParticipant> callback, Action<TLRPCError> faultCallback)
-        {
-            var obj = new TLChannelsGetParticipant { Channel = inputChannel, UserId = userId };
-
-            var result = await SendInformativeMessage<TLChannelsChannelParticipant>("channels.getParticipant", obj);
-            if (result.IsSucceeded)
-            {
-                _cacheService.SyncUsers(result.Value.Users, r => { });
-                callback.SafeInvoke(result.Value);
-            }
-            else
-            {
-                faultCallback.SafeInvoke(result.Error);
-            }
+                callback.SafeInvoke(result);
+            }, 
+            faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLChannelsChannelParticipants>> GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit)
+        public void GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, TLInt offset, TLInt limit, Action<TLChannelsChannelParticipants> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsGetParticipants { Channel = inputChannel, Filter = filter, Offset = offset, Limit = limit };
+            var obj = new TLGetParticipants { Channel = inputChannel, Filter = filter, Offset = offset, Limit = limit };
 
             const string caption = "channels.getParticipants";
-            return await SendInformativeMessage<TLChannelsChannelParticipants>(caption, obj);
+            SendInformativeMessage<TLChannelsChannelParticipants>(caption, obj,
+                result =>
+                {
+                    for (var i = 0; i < result.Users.Count; i++)
+                    {
+                        var cachedUser = _cacheService.GetUser(result.Users[i].Id);
+                        if (cachedUser != null)
+                        {
+                            cachedUser._status = result.Users[i].Status;
+                            result.Users[i] = cachedUser;
+                        }
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> EditTitleAsync(TLChannel channel, string title)
+        public void EditTitleAsync(TLChannel channel, TLString title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsEditTitle { Channel = channel.ToInputChannel(), Title = title };
+            var obj = new TLEditTitle { Channel = channel.ToInputChannel(), Title = title };
 
-            var result = await SendInformativeMessage<TLUpdatesBase>("channels.editTitle", obj);
-            if (result.Error == null)
-            {
-
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
+            const string caption = "channels.editTitle";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, "channels.editTitle");
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<bool>> EditAboutAsync(TLChannel channel, string about)
+        public void EditAboutAsync(TLChannel channel, TLString about, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsEditAbout { Channel = channel.ToInputChannel(), About = about };
+            var obj = new TLEditAbout { Channel = channel.ToInputChannel(), About = about };
 
-            return await SendInformativeMessage<bool>("channels.editAbout", obj);
+            const string caption = "channels.editAbout";
+            SendInformativeMessage<TLBool>(caption, obj, callback.SafeInvoke, faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> JoinChannelAsync(TLChannel channel)
+        public void JoinChannelAsync(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsJoinChannel { Channel = channel.ToInputChannel() };
+            var obj = new TLJoinChannel { Channel = channel.ToInputChannel() };
 
-            var result = await SendInformativeMessage<TLUpdatesBase>("channels.joinChannel", obj);
-            if (result.Error == null)
-            {
-                channel.IsLeft = false;
-                if (channel.ParticipantsCount != null)
+            const string caption = "channels.joinChannel";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    channel.ParticipantsCount = channel.ParticipantsCount + 1;
-                }
-                _cacheService.Commit();
+                    channel.Left = TLBool.False;
+                    if (channel.ParticipantsCount != null)
+                    {
+                        channel.ParticipantsCount = new TLInt(channel.ParticipantsCount.Value + 1);
+                    }
+                    _cacheService.Commit();
 
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
-                {
-                    _updatesService.SetState(multiPts, "channels.joinChannel");
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
-            return result;
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> LeaveChannelAsync(TLChannel channel)
+        public void LeaveChannelAsync(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsLeaveChannel { Channel = channel.ToInputChannel() };
+            var obj = new TLLeaveChannel { Channel = channel.ToInputChannel() };
 
-            var result = await SendInformativeMessage<TLUpdatesBase>("channels.leaveChannel", obj);
-            if (result.Error == null)
-            {
-                channel.IsLeft = true;
-                if (channel.ParticipantsCount != null)
+            const string caption = "channels.leaveChannel";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    channel.ParticipantsCount = channel.ParticipantsCount - 1;
-                }
-                _cacheService.Commit();
+                    channel.Left = TLBool.True;
+                    if (channel.ParticipantsCount != null)
+                    {
+                        channel.ParticipantsCount = new TLInt(channel.ParticipantsCount.Value - 1);
+                    }
+                    _cacheService.Commit();
 
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
-                {
-                    _updatesService.SetState(multiPts, "channels.leaveChannel");
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> KickFromChannelAsync(TLChannel channel, TLInputUserBase userId, bool kicked)
+        public void KickFromChannelAsync(TLChannel channel, TLInputUserBase userId, TLBool kicked, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsKickFromChannel { Channel = channel.ToInputChannel(), UserId = userId, Kicked = kicked };
+            var obj = new TLKickFromChannel { Channel = channel.ToInputChannel(), UserId = userId, Kicked = kicked };
 
-            var result = await SendInformativeMessage<TLUpdatesBase>("channels.kickFromChannel", obj);
-            if (result.Error == null)
-            {
-                if (channel.ParticipantsCount != null)
+            const string caption = "channels.kickFromChannel";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    channel.ParticipantsCount = channel.ParticipantsCount - 1;
-                }
-                _cacheService.Commit();
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
 
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
-                {
-                    _updatesService.SetState(multiPts, "channels.kickFromChannel");
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
-
-            return result;
+                    GetFullChannelAsync(channel.ToInputChannel(),
+                        messagesChatFull => callback.SafeInvoke(result),
+                        faultCallback.SafeInvoke);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> DeleteChannelAsync(TLChannel channel)
+        public void DeleteChannelAsync(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsDeleteChannel { Channel = channel.ToInputChannel() };
+            var obj = new TLDeleteChannel { Channel = channel.ToInputChannel() };
 
-            var result = await SendInformativeMessage<TLUpdatesBase>("channels.deleteChannel", obj);
-            if (result.Error == null)
-            {
-
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
+            const string caption = "channels.deleteChannel";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, "channels.deleteChannel");
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> InviteToChannelAsync(TLInputChannelBase channel, TLVector<TLInputUserBase> users)
+        public void InviteToChannelAsync(TLInputChannelBase channel, TLVector<TLInputUserBase> users, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsInviteToChannel { Channel = channel, Users = users };
+            var obj = new TLInviteToChannel { Channel = channel, Users = users };
 
-            var result = await SendInformativeMessage<TLUpdatesBase>("channels.inviteToChannel", obj);
-            if (result.Error == null)
-            {
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
+            const string caption = "channels.inviteToChannel";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, "channels.inviteToChannel");
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
 
-            return result;
+
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLInputChannelBase channel, TLVector<int> id)
+        public void DeleteMessagesAsync(TLInputChannelBase channel, TLVector<TLInt> id, Action<TLAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsDeleteMessages { Channel = channel, Id = id };
+            var obj = new TLDeleteChannelMessages { Channel = channel, Id = id };
 
-            return SendInformativeMessage<TLMessagesAffectedMessages>("channels.deleteMessages", obj);
+            const string caption = "channels.deleteMessages";
+            SendInformativeMessage<TLAffectedMessages>(caption, obj,
+                result =>
+                {
+                    //var multiPts = result as IMultiPts;
+                    //if (multiPts != null)
+                    //{
+                    //    _updatesService.SetState(multiPts, caption);
+                    //}
+                    //else
+                    //{
+                    //    _updatesService.SetState(null, result.Pts, null, null, null, caption);
+                    //}
+
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public Task<MTProtoResponse<TLMessagesChatFull>> UpdateChannelAsync(int channelId)
+        public void UpdateChannelAsync(TLInt channelId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null)
         {
             var channel = _cacheService.GetChat(channelId) as TLChannel;
             if (channel != null)
             {
-                return GetFullChannelAsync(channel.ToInputChannel());
+                GetFullChannelAsync(channel.ToInputChannel(), callback, faultCallback);
+                return;
             }
 
             var channelForbidden = _cacheService.GetChat(channelId) as TLChannelForbidden;
             if (channelForbidden != null)
             {
-                return GetFullChannelAsync(channelForbidden.ToInputChannel());
+                GetFullChannelAsync(channelForbidden.ToInputChannel(), callback, faultCallback);
+                return;
             }
-
-            return null;
         }
-        public async void UpdateChannelCallbackAsync(int channelId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback)
+
+        public void GetFullChannelAsync(TLInputChannelBase channel, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null)
         {
-            var channel = _cacheService.GetChat(channelId) as TLChannel;
-            if (channel != null)
+            var obj = new TLGetFullChannel { Channel = channel };
+
+            SendInformativeMessage<TLMessagesChatFull>(
+                "cnannels.getFullChannel", obj,
+                messagesChatFull =>
+                {
+                    _cacheService.SyncChat(messagesChatFull, result => callback.SafeInvoke(messagesChatFull));
+                },
+                faultCallback);
+        }
+
+        public void GetImportantHistoryAsync(TLInputChannelBase channel, TLPeerBase peer, bool sync, TLInt offsetId, TLInt addOffset, TLInt limit, TLInt maxId, TLInt minId, Action<TLMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLGetImportantHistory { Channel = channel, OffsetId = offsetId, OffsetDate = new TLInt(0), AddOffset = addOffset, Limit = limit, MaxId = maxId, MinId = minId };
+
+            SendInformativeMessage("channels.getImportantHistory", obj, callback, faultCallback);
+        }
+
+        public void ReadHistoryAsync(TLChannel channel, TLInt maxId, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLReadChannelHistory { Channel = channel.ToInputChannel(), MaxId = maxId };
+
+            SendInformativeMessage<TLBool>("channels.readHistory", obj,
+                result =>
+                {
+                    channel.ReadInboxMaxId = maxId;
+
+                    _cacheService.Commit();
+
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
+        }
+
+        public void CreateChannelAsync(TLInt flags, TLString title, TLString about, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLCreateChannel { Flags = flags, Title = title, About = about };
+
+            var caption = "channels.createChannel";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
+                {
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
+
+                    callback.SafeInvoke(result);
+                }, 
+                faultCallback);
+        }
+
+        public void ExportInviteAsync(TLInputChannelBase channel, Action<TLExportedChatInvite> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLExportInvite { Channel = channel };
+
+            SendInformativeMessage("channels.exportInvite", obj, callback, faultCallback);
+        }
+
+        public void CheckUsernameAsync(TLInputChannelBase channel, TLString username, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLCheckUsername { Channel = channel, Username = username };
+
+            SendInformativeMessage("channels.checkUsername", obj, callback, faultCallback);
+        }
+
+        public void UpdateUsernameAsync(TLInputChannelBase channel, TLString username, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLUpdateUsername { Channel = channel, Username = username };
+
+            SendInformativeMessage("channels.updateUsername", obj, callback, faultCallback);
+        }
+
+        public void EditPhotoAsync(TLChannel channel, TLInputChatPhotoBase photo, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLEditPhoto { Channel = channel.ToInputChannel(), Photo = photo };
+
+            const string caption = "channels.editPhoto";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
+                {
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null, true);
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
+        }
+
+        public void DeleteChannelMessagesAsync(TLInputChannelBase channel, TLVector<TLInt> id, Action<TLAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLDeleteChannelMessages { Channel = channel, Id = id };
+
+            SendInformativeMessage("channels.deleteMessages", obj, callback, faultCallback);
+        }
+
+        public void EditChatAdminAsync(TLInputChannelBase channel, TLInputUserBase userId, TLChannelParticipantRoleBase role, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLEditAdmin { Channel = channel, UserId = userId, Role = role };
+
+            SendInformativeMessage("channels.editAdmin", obj, callback, faultCallback);
+        }
+
+        public void ToggleInvitesAsync(TLInputChannelBase channel, TLBool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLToggleInvites { Channel = channel, Enabled = enabled };
+
+            const string caption = "channels.toggleInvites";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
+                {
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
+        }
+
+        public void ExportMessageLinkAsync(TLInputChannelBase channel, TLInt id, Action<TLExportedMessageLink> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLExportMessageLink { Channel = channel, Id = id };
+
+            SendInformativeMessage("channels.exportMessageLink", obj, callback, faultCallback);
+        }
+
+        public void UpdatePinnedMessageAsync(bool silent, TLInputChannelBase channel, TLInt id, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLUpdatePinnedMessage { Flags = new TLInt(0), Channel = channel, Id = id };
+            if (silent)
             {
-                var result = await GetFullChannelAsync(channel.ToInputChannel());
-                if (result.IsSucceeded)
-                {
-                    callback(result.Value);
-                }
-                else
-                {
-                    faultCallback(result.Error);
-                }
+                obj.SetSilent();
             }
 
-            var channelForbidden = _cacheService.GetChat(channelId) as TLChannelForbidden;
-            if (channelForbidden != null)
-            {
-                var result = await GetFullChannelAsync(channelForbidden.ToInputChannel());
-                if (result.IsSucceeded)
+            const string caption = "channels.updatePinnedMessage";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    callback(result.Value);
-                }
-                else
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
+        }
+
+        public void ToggleSignaturesAsync(TLInputChannelBase channel, TLBool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLToggleSignatures { Channel = channel, Enabled = enabled };
+
+            const string caption = "channels.toggleSignatures";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    faultCallback(result.Error);
-                }
-            }
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLMessagesChatFull>> GetFullChannelAsync(TLInputChannelBase channel)
+        public void GetMessageEditDataAsync(TLInputPeerBase peer, TLInt id, Action<TLMessageEditData> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsGetFullChannel { Channel = channel };
+            var obj = new TLGetMessageEditData { Peer = peer, Id = id };
 
-            var result = await SendInformativeMessage<TLMessagesChatFull>("cnannels.getFullChannel", obj);
-
-            if (result.Error == null)
-            {
-                _cacheService.SyncChat(result.Value, null);
-            }
-
-            return result;
+            SendInformativeMessage("messages.getMessageEditData", obj, callback, faultCallback);
         }
 
-        // TODO:
-        //public Task<MTProtoResponse<TLMessagesMessagesBase>> GetImportantHistoryAsync(TLInputChannelBase channel, TLPeerBase peer, bool sync, int offsetId, int addOffset, int limit, int maxId, int minId)
-        //{
-        //    var obj = new TLChannelsGetImportantHistory { Channel = channel, OffsetId = offsetId, AddOffset = addOffset, Limit = limit, MaxId = maxId, MinId = minId };
 
-        //    return SendInformativeMessage<TLMessagesMessagesBase>("channels.getImportantHistory", obj);
-        //}
-
-        public async Task<MTProtoResponse<bool>> ReadHistoryAsync(TLChannel channel, int maxId)
+        public void EditMessageAsync(TLInputPeerBase peer, TLInt id, TLString message, TLVector<TLMessageEntityBase> entities, TLReplyKeyboardBase replyMarkup, TLBool noWebPage, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsReadHistory { Channel = channel.ToInputChannel(), MaxId = maxId };
+            var obj = new TLEditMessage { Flags=new TLInt(0), Peer = peer, Id = id, Message = message, NoWebPage = noWebPage, Entities = entities, ReplyMarkup = replyMarkup };
 
-            var result = await SendInformativeMessage<bool>("channels.readHistory", obj);
-            if (result.Error == null)
-            {
-                channel.ReadInboxMaxId = maxId;
-                _cacheService.Commit();
-            }
-
-            return result;
-        }
-
-        public async Task<MTProtoResponse<TLUpdatesBase>> CreateChannelAsync(int flags, string title, string about)
-        {
-            var obj = new TLChannelsCreateChannel { Flags = (TLChannelsCreateChannel.Flag)flags, Title = title, About = about };
-
-            var result = await SendInformativeMessage<TLUpdatesBase>("channels.createChannel", obj);
-            if (result.Error == null)
-            {
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
+            const string caption = "messages.editMessage";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, "channels.createChannel");
-                }
-                else
+                    var multiPts = result as IMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null, true);
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
+        }
+
+        public void ReportSpamAsync(TLInputChannelBase channel, TLInt userId, TLVector<TLInt> id, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLReportSpam { Channel = channel, UserId = userId, Id = id };
+
+            const string caption = "channels.reportSpam";
+            SendInformativeMessage<TLBool>(caption, obj, callback.SafeInvoke, faultCallback);
+        }
+
+        public void DeleteUserHistoryAsync(TLChannel channel, TLInputUserBase userId, Action<TLAffectedHistory> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLDeleteUserHistory { Channel = channel.ToInputChannel(), UserId = userId };
+
+            const string caption = "channels.deleteUserHistory";
+            SendInformativeMessage<TLAffectedHistory>(caption, obj,
+                result =>
                 {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
+                    var multiChannelPts = result as IMultiChannelPts;
+                    if (multiChannelPts != null)
+                    {
+                        if (channel.Pts == null
+                            || channel.Pts.Value + multiChannelPts.ChannelPtsCount.Value != multiChannelPts.ChannelPts.Value)
+                        {
+                            Execute.ShowDebugMessage(string.Format("channel_id={0} channel_pts={1} affectedHistory24[channel_pts={2} channel_pts_count={3}]", channel.Id, channel.Pts, multiChannelPts.ChannelPts, multiChannelPts.ChannelPtsCount));
+                        }
+                        channel.Pts = new TLInt(multiChannelPts.ChannelPts.Value);
+                    }
 
-            return result;
-        }
-
-        public Task<MTProtoResponse<TLExportedChatInviteBase>> ExportInviteAsync(TLInputChannelBase channel)
-        {
-            var obj = new TLChannelsExportInvite { Channel = channel };
-
-            return SendInformativeMessage<TLExportedChatInviteBase>("channels.exportInvite", obj);
-        }
-
-        public Task<MTProtoResponse<bool>> CheckUsernameAsync(TLInputChannelBase channel, string username)
-        {
-            var obj = new TLChannelsCheckUsername { Channel = channel, Username = username };
-
-            return SendInformativeMessage<bool>("channels.checkUsername", obj);
-        }
-
-        public Task<MTProtoResponse<bool>> UpdateUsernameAsync(TLInputChannelBase channel, string username)
-        {
-            var obj = new TLChannelsUpdateUsername { Channel = channel, Username = username };
-
-            return SendInformativeMessage<bool>("channels.updateUsername", obj);
-        }
-
-        public async Task<MTProtoResponse<TLUpdatesBase>> EditPhotoAsync(TLChannel channel, TLInputChatPhotoBase photo)
-        {
-            var obj = new TLChannelsEditPhoto { Channel = channel.ToInputChannel(), Photo = photo };
-
-            var result = await SendInformativeMessage<TLUpdatesBase>("channels.editPhoto", obj);
-            if (result.Error == null)
-            {
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
-                {
-                    _updatesService.SetState(multiPts, "channels.editPhoto");
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
-
-            return result;
-        }
-
-        public Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteChannelMessagesAsync(TLInputChannelBase channel, TLVector<int> id)
-        {
-            var obj = new TLChannelsDeleteMessages { Channel = channel, Id = id };
-
-            return SendInformativeMessage<TLMessagesAffectedMessages>("channels.deleteMessages", obj);
-        }
-
-        public Task<MTProtoResponse<bool>> EditChatAdminAsync(TLInputChannelBase channel, TLInputUserBase userId, TLChannelParticipantRoleBase role)
-        {
-            var obj = new TLChannelsEditAdmin { Channel = channel, UserId = userId, Role = role };
-
-            return SendInformativeMessage<bool>("channels.editAdmin", obj);
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
     }
 }

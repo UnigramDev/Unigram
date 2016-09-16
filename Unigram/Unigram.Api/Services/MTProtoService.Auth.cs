@@ -1,110 +1,148 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Auth;
+using Telegram.Api.TL.Functions.Account;
+using Telegram.Api.TL.Functions.Auth;
 using Telegram.Api.Transport;
 
 namespace Telegram.Api.Services
 {
-    public partial class MTProtoService
-    {
-        public async Task<MTProtoResponse<TLAuthCheckedPhone>> CheckPhoneAsync(string phoneNumber)
+	public partial class MTProtoService
+	{
+	    public void LogOutAsync(Action callback)
+	    {
+	        _cacheService.ClearAsync(callback);
+
+            //try to close session
+            LogOutAsync(null, null);
+	    }
+
+        public void CheckPhoneAsync(TLString phoneNumber, Action<TLCheckedPhoneBase> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLCheckPhone { PhoneNumber = phoneNumber };
+
+            SendInformativeMessage("auth.checkPhone", obj, callback, faultCallback);
+	    }
+
+        public void SendCodeAsync(TLString phoneNumber, TLString currentNumber, Action<TLSentCodeBase> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAuthCheckPhone { PhoneNumber = phoneNumber };
-
-            return await SendInformativeMessage<TLAuthCheckedPhone>("auth.checkPhone", obj);
-        }
-
-        public async Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber)
-        {
-            var obj = new TLAuthSendCode { PhoneNumber = phoneNumber, ApiId = Constants.ApiId, ApiHash = Constants.ApiHash, /*LangCode = Utils.CurrentUICulture()*/ };
-
-            return await SendInformativeMessage<TLAuthSentCode>("auth.sendCode", obj, 3);
-        }
-
-        // DEPRECATED
-        //public async Task<MTProtoResponse<bool>> SendCallAsync(string phoneNumber, string phoneCodeHash)
-        //{
-        //    var obj = new TLSendCall { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
-
-        //    return await SendInformativeMessage<bool>("auth.sendCall", obj);
-        //}
-
-        public async Task<MTProtoResponse<TLAuthAuthorization>> SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName)
-        {
-            var obj = new TLAuthSignUp { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode, FirstName = firstName, LastName = lastName };
-
-            var result = await SendInformativeMessage<TLAuthAuthorization>("auth.signUp", obj);
-            if (result.IsSucceeded)
+            var obj = new TLSendCode
             {
-                // TODO: sync
-                _cacheService.SyncUser(result.Value.User, (callback) => { });
-            }
-            return result;
+                Flags = new TLInt(0),
+                PhoneNumber = phoneNumber,
+                CurrentNumber = currentNumber,
+                ApiId = new TLInt(Constants.ApiId),
+                ApiHash = new TLString(Constants.ApiHash)
+            };
+
+            SendInformativeMessage("auth.sendCode", obj, callback, faultCallback, 3);
         }
 
-        public async Task<MTProtoResponse<TLAuthAuthorization>> SignInAsync(string phoneNumber, string phoneCodeHash, string phoneCode)
+        public void ResendCodeAsync(TLString phoneNumber, TLString phoneCodeHash, Action<TLSentCodeBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAuthSignIn { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode };
+            var obj = new TLResendCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
-            var result = await SendInformativeMessage<TLAuthAuthorization>("auth.signIn", obj);
-            if (result.IsSucceeded)
-            {
-                // TODO: sync
-                _cacheService.SyncUser(result.Value.User, (callback) => { });
-            }
-            return result;
+            SendInformativeMessage("auth.resendCode", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLAuthSentCode>> CancelSignInAsync()
+        public void CancelCodeAsync(TLString phoneNumber, TLString phoneCodeHash, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            CancelDelayedItemsAsync(true);
-            return null;
+            var obj = new TLCancelCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
+
+            SendInformativeMessage("auth.cancelCode", obj, callback, faultCallback);
         }
 
-        public async Task<MTProtoResponse<bool>> LogOutAsync()
+        public void SendCallAsync(TLString phoneNumber, TLString phoneCodeHash, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAuthLogOut();
+            var obj = new TLSendCall { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
-            return await SendInformativeMessage<bool>("auth.logOut", obj);
+            SendInformativeMessage("auth.sendCall", obj, callback, faultCallback);
         }
 
-        public async Task<MTProtoResponse<bool>> SendInvitesAsync(TLVector<string> phoneNumbers, string message)
+	    public void SignUpAsync(TLString phoneNumber, TLString phoneCodeHash, TLString phoneCode, TLString firstName, TLString lastName, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLSignUp { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode, FirstName = firstName, LastName = lastName };
+
+            SendInformativeMessage<TLAuthorization>("auth.signUp", obj,
+                auth =>
+                {
+                    _cacheService.SyncUser(auth.User, result => { });
+                    callback(auth);
+                },
+                faultCallback);
+	    }
+
+        public void SignInAsync(TLString phoneNumber, TLString phoneCodeHash, TLString phoneCode, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAuthSendInvites { PhoneNumbers = phoneNumbers, Message = message };
+            var obj = new TLSignIn{ PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode};
 
-            return await SendInformativeMessage<bool>("auth.sendInvites", obj);
+            SendInformativeMessage<TLAuthorization>("auth.signIn", obj,
+                auth =>
+                {
+                    _cacheService.SyncUser(auth.User, result => { }); 
+                    callback(auth);
+                }, 
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLAuthExportedAuthorization>> ExportAuthorizationAsync(int dcId)
+	    public void CancelSignInAsync()
+	    {
+	        CancelDelayedItemsAsync(true);
+	    }
+
+        public void LogOutAsync(Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAuthExportAuthorization { DCId = dcId };
+            var obj = new TLLogOut();
 
-            return await SendInformativeMessage<TLAuthExportedAuthorization>("auth.exportAuthorization", obj);
+            const string methodName = "auth.logOut";
+            Logs.Log.Write(methodName);
+            SendInformativeMessage<TLBool>(methodName, obj,
+                result =>
+                {
+                    Logs.Log.Write(string.Format("{0} result={1}", methodName, result));
+                    callback.SafeInvoke(result);
+                }, 
+                error =>
+                {
+                    Logs.Log.Write(string.Format("{0} error={1}", methodName, error));
+                    faultCallback.SafeInvoke(error);
+                });
         }
 
-        public async Task<MTProtoResponse<TLAuthAuthorization>> ImportAuthorizationAsync(int id, byte[] bytes)
+        public void SendInvitesAsync(TLVector<TLString> phoneNumbers, TLString message, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLSendInvites{ PhoneNumbers = phoneNumbers, Message = message };
+
+            SendInformativeMessage("auth.sendInvites", obj, callback, faultCallback);
+	    }
+
+	    public void ExportAuthorizationAsync(TLInt dcId, Action<TLExportedAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLExportAuthorization { DCId = dcId };
+
+            SendInformativeMessage("auth.exportAuthorization dc_id=" + dcId, obj, callback, faultCallback);
+	    }
+
+	    public void ImportAuthorizationAsync(TLInt id, TLString bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLImportAuthorization { Id = id, Bytes = bytes };
+
+            SendInformativeMessage("auth.importAuthorization id=" + id, obj, callback, faultCallback);
+	    }
+
+        public void ImportAuthorizationByTransportAsync(ITransport transport, TLInt id, TLString bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAuthImportAuthorization { Id = id, Bytes = bytes };
+            var obj = new TLImportAuthorization { Id = id, Bytes = bytes };
 
-            return await SendInformativeMessage<TLAuthAuthorization>("auth.importAuthorization", obj);
+            SendInformativeMessageByTransport(transport, "auth.importAuthorization dc_id=" + transport.DCId, obj, callback, faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLAuthAuthorization>> ImportAuthorizationByTransportAsync(ITransport transport, int id, byte[] bytes)
+        public void ResetAuthorizationsAsync(Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAuthImportAuthorization { Id = id, Bytes = bytes };
+            var obj = new TLResetAuthorizations();
 
-            return await SendInformativeMessageByTransport<TLAuthAuthorization>(transport, "auth.importAuthorization", obj);
+            SendInformativeMessage("auth.resetAuthorizations", obj, callback, faultCallback);
         }
-
-        public async Task<MTProtoResponse<bool>> ResetAuthorizationsAsync()
-        {
-            var obj = new TLAuthResetAuthorizations();
-
-            return await SendInformativeMessage<bool>("auth.resetAuthorizations", obj);
-        }
-    }
+	}
 }

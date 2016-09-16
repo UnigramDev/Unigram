@@ -23,7 +23,7 @@ namespace Telegram.Api.Services
             TLUtils.WriteLongPoll("Send " + DateTime.Now);
             try
             {
-				HttpWaitAsync(0, 0, 25000,
+				HttpWaitAsync(new TLInt(0), new TLInt(0), new TLInt(25000),
 				    () =>
 				    {
                         TLUtils.WriteLongPoll("Receive " + DateTime.Now);

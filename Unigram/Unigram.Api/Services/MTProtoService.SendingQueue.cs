@@ -4,12 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Api.Extensions;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Functions.Messages;
+using Action = System.Action;
 
 namespace Telegram.Api.Services
 {
@@ -17,7 +16,7 @@ namespace Telegram.Api.Services
     {
         private readonly object _sendingQueueSyncRoot = new object();
 
-        private readonly List<HistoryItem> _sendingQueue = new List<HistoryItem>();
+        private readonly List<HistoryItem> _sendingQueue = new List<HistoryItem>(); 
 
         private static Timer _sendingTimer;
 
@@ -39,90 +38,88 @@ namespace Telegram.Api.Services
             if (Debugger.IsAttached) return;
 #endif
 
-            var service = (MTProtoService)state;
+            var service = (MTProtoService) state;
 
             service.ProcessQueue();
         }
 
-        private Task<MTProtoResponse<bool>> ReadEncryptedHistoryAsyncInternal(TLMessagesReadEncryptedHistory message)
+        private void ReadEncryptedHistoryAsyncInternal(TLReadEncryptedHistory message, Action<TLBool> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            return SendAsyncInternal<bool>("messages.readEncryptedHistory", int.MaxValue, message);
+            SendAsyncInternal("messages.readEncryptedHistory", int.MaxValue, message, callback, fastCallback, faultCallback);
         }
-
-#if LAYER_41
 
         private void ReadHistoryAsyncInternal(TLReadHistory message, Action<TLAffectedMessages> callback, Action fastCallback, Action<TLRPCError> faultCallback)
-#else
-        private Task<MTProtoResponse<TLMessagesAffectedHistory>> ReadHistoryAsyncInternal(TLMessagesReadHistory message)
-#endif
         {
-            return SendAsyncInternal<TLMessagesAffectedHistory>("messages.readHistory", int.MaxValue, message);
+            SendAsyncInternal("messages.readHistory", int.MaxValue, message, callback, fastCallback, faultCallback);
         }
 
-        private Task<MTProtoResponse<TLMessagesAffectedMessages>> ReadMessageContentsAsyncInternal(TLMessagesReadMessageContents message)
+        private void ReadMessageContentsAsyncInternal(TLReadMessageContents message, Action<TLAffectedMessages> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            return SendAsyncInternal<TLMessagesAffectedMessages>("messages.readMessageContents", int.MaxValue, message);
+            SendAsyncInternal("messages.readMessageContents", int.MaxValue, message, callback, fastCallback, faultCallback);
         }
 
-        private Task<MTProtoResponse<TLMessagesSentEncryptedMessage>> SendEncryptedAsyncInternal(TLMessagesSendEncrypted message)
+        private void SendEncryptedAsyncInternal(TLSendEncrypted message, Action<TLSentEncryptedMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback) 
         {
-            return SendAsyncInternal<TLMessagesSentEncryptedMessage>("messages.sendEncrypted", Constants.MessageSendingInterval, message);
+            SendAsyncInternal("messages.sendEncrypted", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
         }
 
-        private Task<MTProtoResponse<TLMessagesSentEncryptedFile>> SendEncryptedFileAsyncInternal(TLMessagesSendEncryptedFile message)
+        private void SendEncryptedFileAsyncInternal(TLSendEncryptedFile message, Action<TLSentEncryptedFile> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            return SendAsyncInternal<TLMessagesSentEncryptedFile>("messages.sendEncryptedFile", Constants.MessageSendingInterval, message);
+            SendAsyncInternal("messages.sendEncryptedFile", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
         }
 
-        private Task<MTProtoResponse<TLMessagesSentEncryptedMessage>> SendEncryptedServiceAsyncInternal(TLMessagesSendEncryptedService message)
+        private void SendEncryptedServiceAsyncInternal(TLSendEncryptedService message, Action<TLSentEncryptedMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            return SendAsyncInternal<TLMessagesSentEncryptedMessage>("messages.sendEncryptedService", Constants.MessageSendingInterval, message);
+            SendAsyncInternal("messages.sendEncryptedService", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
         }
 
-        private Task<MTProtoResponse<TLUpdatesBase>> SendMessageAsyncInternal(TLMessagesSendMessage message)
+        private void SendMessageAsyncInternal(TLSendMessage message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            return SendAsyncInternal<TLUpdatesBase>("messages.sendMessage", Constants.MessageSendingInterval, message);
+            SendAsyncInternal("messages.sendMessage", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
         }
 
-        private Task<MTProtoResponse<TLUpdatesBase>> SendMediaAsyncInternal(TLMessagesSendMedia message)
+        private void SendInlineBotResultAsyncInternal(TLSendInlineBotResult message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            return SendAsyncInternal<TLUpdatesBase>("messages.sendMedia", Constants.MessageSendingInterval, message);
+            SendAsyncInternal("messages.sendInlineBotResult", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
         }
 
-        private Task<MTProtoResponse<TLUpdatesBase>> StartBotAsyncInternal(TLMessagesStartBot message)
+        private void SendMediaAsyncInternal(TLSendMedia message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            return SendAsyncInternal<TLUpdatesBase>("messages.startBot", Constants.MessageSendingInterval, message);
+            SendAsyncInternal("messages.sendMedia", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
         }
 
-        private Task<MTProtoResponse<TLUpdatesBase>> ForwardMessageAsyncInternal(TLMessagesForwardMessage message)
+        private void StartBotAsyncInternal(TLStartBot message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            return SendAsyncInternal<TLUpdatesBase>("messages.forwardMessage", Constants.MessageSendingInterval, message);
+            SendAsyncInternal("messages.startBot", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
         }
 
-        private Task<MTProtoResponse<TLUpdatesBase>> ForwardMessagesAsyncInternal(TLMessagesForwardMessages message)
+        private void ForwardMessageAsyncInternal(TLForwardMessage message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            return SendAsyncInternal<TLUpdatesBase>("messages.forwardMessages", Constants.MessageSendingInterval, message);
+            SendAsyncInternal("messages.forwardMessage", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
         }
 
-        private async Task<MTProtoResponse<T>> SendAsyncInternal<T>(string caption, double timeout, TLObject obj)
+        private void ForwardMessagesAsyncInternal(TLForwardMessages message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
+        {
+            SendAsyncInternal("messages.forwardMessages", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
+        }
+
+        private void SendAsyncInternal<T>(string caption, double timeout, TLObject obj, Action<T> callback, Action fastCallback, Action<TLRPCError> faultCallback) where T : TLObject
         {
             int sequenceNumber;
-            long messageId;
+            TLLong messageId;
             lock (_activeTransportRoot)
             {
                 sequenceNumber = _activeTransport.SequenceNumber * 2 + 1;
-                _activeTransport.SequenceNumber++;
+                _activeTransport.SequenceNumber++; 
                 messageId = _activeTransport.GenerateMessageId(true);
             }
 
             var transportMessage = new TLContainerTransportMessage
             {
-                MsgId = messageId,
-                SeqNo = sequenceNumber,
-                Query = obj
+                MessageId = messageId,
+                SeqNo = new TLInt(sequenceNumber),
+                MessageData = obj
             };
-
-            var callback = new TaskCompletionSource<MTProtoResponse>();
 
             var now = DateTime.Now;
             var sendBeforeTime = now.AddSeconds(timeout);
@@ -131,10 +128,12 @@ namespace Telegram.Api.Services
                 SendTime = now,
                 SendBeforeTime = sendBeforeTime,
                 Caption = caption,
-                Callback = callback,
                 Object = obj,
                 Message = transportMessage,
-                FaultCallback = null, // чтобы не вылететь по таймауту не сохраняем сюда faultCallback, а просто запоминаем последнюю ошибку,                
+                Callback = result => callback((T)result),
+                FastCallback = fastCallback,
+                FaultCallback = null, // чтобы не вылететь по таймауту не сохраняем сюда faultCallback, а просто запоминаем последнюю ошибку,
+                FaultQueueCallback = faultCallback, // для MTProto.CleanupQueue
                 InvokeAfter = null,   // устанвливаем в момент создания контейнера historyItems.LastOrDefault(),
                 Status = RequestStatus.ReadyToSend,
             };
@@ -152,20 +151,16 @@ namespace Telegram.Api.Services
             }
 
             ProcessQueue();
-
-            return await callback.Task;
-
-            //await Task.WhenAny(ProcessQueue(), callback.Task);
-            //return callback.Task.Result;
         }
 
         private void ProcessFault(HistoryItem item, TLRPCError error)
         {
             item.LastError = error;
-            if (error != null &&
-                (error.CodeEquals(TLErrorCode.BAD_REQUEST) ||
-                    error.CodeEquals(TLErrorCode.FLOOD) ||
-                    error.CodeEquals(TLErrorCode.UNAUTHORIZED)))
+            if (error != null
+                && (error.CodeEquals(ErrorCode.BAD_REQUEST)
+                    || error.CodeEquals(ErrorCode.FLOOD)
+                    || error.CodeEquals(ErrorCode.UNAUTHORIZED)
+                    || error.CodeEquals(ErrorCode.INTERNAL)))
             {
                 RemoveFromQueue(item);
                 item.FaultQueueCallback.SafeInvoke(error);
@@ -175,10 +170,11 @@ namespace Telegram.Api.Services
         private void ProcessQueue()
         {
             CleanupQueue();
+
             SendQueue();
         }
 
-        private async void SendQueue()
+        private void SendQueue()
         {
             List<HistoryItem> itemsSnapshort;
             lock (_sendingQueueSyncRoot)
@@ -209,7 +205,27 @@ namespace Telegram.Api.Services
 
             var container = CreateContainer(historyItems);
 
-            await SendNonInformativeMessage<TLObject>("container.sendMessages", container);
+            SendNonInformativeMessage<TLObject>(
+                "container.sendMessages",
+                container,
+                result =>
+                {
+                    // переотправка сейчас по таймеру раз в 5 сек
+                    // этот метод никогда не вызывается, т.к. не используется в SendNonInformativeMessage для container.sendMessages
+                    //lock (_queueSyncRoot)
+                    //{
+                    //    // fast aknowledgments
+                    //    _sendingQueue.Remove(item);
+                    //}
+
+
+                    //item.FastCallback.SafeInvoke();
+                },
+                error =>
+                {
+                    // переотправка сейчас по таймеру раз в 5 сек
+                    //FaultSending(error, item);
+                });
         }
 
         private void CleanupQueue()
@@ -253,7 +269,7 @@ namespace Telegram.Api.Services
             {
                 foreach (var item in itemsToRemove)
                 {
-                    item.FaultQueueCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.CleanupQueue" });
+                    item.FaultQueueCallback.SafeInvoke(new TLRPCError { Code = new TLInt(404), Message = new TLString("MTProtoService.CleanupQueue") });
                 }
             });
         }
@@ -299,7 +315,7 @@ namespace Telegram.Api.Services
             {
                 foreach (var item in itemsToRemove)
                 {
-                    item.FaultQueueCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.CleanupQueue" });
+                    item.FaultQueueCallback.SafeInvoke(new TLRPCError { Code = new TLInt(404), Message = new TLString("MTProtoService.CleanupQueue") });
                 }
             });
         }
@@ -320,14 +336,14 @@ namespace Telegram.Api.Services
             RemoveActionInfoFromFile(item.Object);
         }
 
-        private void RemoveFromQueue(long? id)
+        private void RemoveFromQueue(TLLong id)
         {
-            HistoryItem item = null;
+            HistoryItem item = null; 
             lock (_sendingQueueSyncRoot)
             {
                 foreach (var historyItem in _sendingQueue)
                 {
-                    var randomId = historyItem.Object as ITLRandomId;
+                    var randomId = historyItem.Object as IRandomId;
                     if (randomId != null && randomId.RandomId.Value == id.Value)
                     {
                         item = historyItem;
@@ -344,6 +360,8 @@ namespace Telegram.Api.Services
         }
 
         private readonly object _actionsSyncRoot = new object();
+
+        private readonly object _actionInfoSyncRoot = new object();
 
         private TLVector<TLActionInfo> _actionInfo;
 
@@ -364,35 +382,41 @@ namespace Telegram.Api.Services
             TLUtils.SaveObjectToMTProtoFile(_actionsSyncRoot, Constants.ActionQueueFileName, data);
         }
 
-        private void AddActionInfoToFile(int sendBefore, TLObject obj)
+        private void AddActionInfoToFile(TLInt sendBefore, TLObject obj)
         {
             if (!TLUtils.IsValidAction(obj))
             {
                 return;
             }
 
-            var actions = GetActionInfoFromFile();
-
-            var actionInfo = new TLActionInfo
+            lock (_actionInfoSyncRoot)
             {
-                Action = obj,
-                SendBefore = sendBefore
-            };
-            actions.Add(actionInfo);
+                var actions = GetActionInfoFromFile();
 
-            SaveActionInfoToFile(actions);
+                var actionInfo = new TLActionInfo
+                {
+                    Action = obj,
+                    SendBefore = sendBefore
+                };
+                actions.Add(actionInfo);
+
+                SaveActionInfoToFile(actions);
+            }
         }
 
         private void RemoveActionInfoFromFile(TLVector<TLObject> objects)
         {
-            var actions = GetActionInfoFromFile();
-
-            foreach (var obj in objects)
+            lock (_actionInfoSyncRoot)
             {
-                RemoveActionInfoCommon(actions, obj);
-            }
+                var actions = GetActionInfoFromFile();
 
-            SaveActionInfoToFile(actions);
+                foreach (var obj in objects)
+                {
+                    RemoveActionInfoCommon(actions, obj);
+                }
+
+                SaveActionInfoToFile(actions);
+            }
         }
 
         private void RemoveActionInfoCommon(TLVector<TLActionInfo> actions, TLObject obj)
@@ -407,8 +431,8 @@ namespace Telegram.Api.Services
                         continue;
                     }
 
-                    var randomId1 = actions[i].Action as ITLRandomId;
-                    var randomId2 = obj as ITLRandomId;
+                    var randomId1 = actions[i].Action as IRandomId;
+                    var randomId2 = obj as IRandomId;
                     if (randomId1 != null
                         && randomId2 != null
                         && randomId1.RandomId.Value == randomId2.RandomId.Value)
@@ -420,51 +444,63 @@ namespace Telegram.Api.Services
             }
         }
 
-        private void RemoveActionInfoFromFile(long? id)
+        private void RemoveActionInfoFromFile(TLLong id)
         {
-            var actions = GetActionInfoFromFile();
-
-            for (var i = 0; i < actions.Count; i++)
+            lock (_actionInfoSyncRoot)
             {
-                var randomId = actions[i].Action as ITLRandomId;
-                if (randomId != null
-                    && randomId.RandomId.Value == id.Value)
-                {
-                    actions.RemoveAt(i--);
-                }
-            }
+                var actions = GetActionInfoFromFile();
 
-            SaveActionInfoToFile(actions);
+                for (var i = 0; i < actions.Count; i++)
+                {
+                    var randomId = actions[i].Action as IRandomId;
+                    if (randomId != null
+                        && randomId.RandomId.Value == id.Value)
+                    {
+                        actions.RemoveAt(i--);
+                    }
+                }
+
+                SaveActionInfoToFile(actions);
+            }
         }
 
         private void RemoveActionInfoFromFile(TLObject obj)
         {
-            var actions = GetActionInfoFromFile();
+            lock (_actionInfoSyncRoot)
+            {
+                var actions = GetActionInfoFromFile();
 
-            RemoveActionInfoCommon(actions, obj);
+                RemoveActionInfoCommon(actions, obj);
 
-            SaveActionInfoToFile(actions);
+                SaveActionInfoToFile(actions);
+            }
         }
 
         public void RemoveActionInfoFromFile(IEnumerable<TLObject> obj)
         {
-            var actions = GetActionInfoFromFile();
-
-            foreach (var o in obj)
+            lock (_actionInfoSyncRoot)
             {
-                RemoveActionInfoCommon(actions, o);
-            }
+                var actions = GetActionInfoFromFile();
 
-            SaveActionInfoToFile(actions);
+                foreach (var o in obj)
+                {
+                    RemoveActionInfoCommon(actions, o);
+                }
+
+                SaveActionInfoToFile(actions);
+            }
         }
 
         public void ClearActionInfoFile()
         {
-            var actions = new TLVector<TLActionInfo>();
-            SaveActionInfoToFile(actions);
+            lock (_actionInfoSyncRoot)
+            {
+                var actions = new TLVector<TLActionInfo>();
+                SaveActionInfoToFile(actions);
+            }
         }
 
-        private static TLMessageContainer CreateContainer(IList<HistoryItem> items)
+        private static TLContainer CreateContainer(IList<HistoryItem> items)
         {
             var messages = new List<TLContainerTransportMessage>();
 
@@ -475,10 +511,10 @@ namespace Telegram.Api.Services
                 var transportMessage = (TLContainerTransportMessage)item.Message;
                 if (item.InvokeAfter != null)
                 {
-                    transportMessage.Query = new TLInvokeAfterMsg
+                    transportMessage.MessageData = new TLInvokeAfterMsg
                     {
-                        MsgId = item.InvokeAfter.Message.MsgId,
-                        Query = item.Object
+                        MsgId = item.InvokeAfter.Message.MessageId,
+                        Object = item.Object
                     };
                 }
 
@@ -487,9 +523,9 @@ namespace Telegram.Api.Services
                 messages.Add(transportMessage);
             }
 
-            var container = new TLMessageContainer
+            var container = new TLContainer
             {
-                Messages = new List<TLContainerTransportMessage>(messages)
+                Messages = new List<TLContainerTransportMessage> (messages)
             };
 
             return container;
@@ -521,17 +557,17 @@ namespace Telegram.Api.Services
                             var transportMessage = item.Message as TLContainerTransportMessage;
                             if (transportMessage != null)
                             {
-                                var sendMessage = transportMessage.Query as TLMessagesSendMessage;
+                                var sendMessage = transportMessage.MessageData as TLSendMessage;
                                 if (sendMessage != null)
                                 {
                                     message = string.Format("{0} {1}", sendMessage.Message, sendMessage.RandomId);
                                 }
                                 else
                                 {
-                                    var invokeAfterMsg = transportMessage.Query as TLInvokeAfterMsg;
+                                    var invokeAfterMsg = transportMessage.MessageData as TLInvokeAfterMsg;
                                     if (invokeAfterMsg != null)
                                     {
-                                        sendMessage = invokeAfterMsg.Query as TLMessagesSendMessage;
+                                        sendMessage = invokeAfterMsg.Object as TLSendMessage;
                                         if (sendMessage != null)
                                         {
                                             message = string.Format("{0} {1}", sendMessage.Message, sendMessage.RandomId);

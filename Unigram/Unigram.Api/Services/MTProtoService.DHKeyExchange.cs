@@ -7,47 +7,50 @@ using System.Text;
 using Org.BouncyCastle.Security;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using System.Threading.Tasks;
-using Telegram.Api.TL.Methods;
+using Telegram.Api.TL.Functions.DHKeyExchange;
 
 namespace Telegram.Api.Services
 {
+    public class AuthKeyItem
+    {
+        public long AutkKeyId { get; set; }
+        public byte[] AuthKey { get; set; }
+    }
+
     public partial class MTProtoService
     {
         /// <summary>
         /// Список имеющихся ключей авторизации
         /// </summary>
-        private static readonly Dictionary<long, AuthKeyItem> _authKeys = new Dictionary<long, AuthKeyItem>();
+        private static readonly Dictionary<long, AuthKeyItem> _authKeys = new Dictionary<long, AuthKeyItem>(); 
 
         private static readonly object _authKeysRoot = new object();
 
-        private Task<MTProtoResponse<TLResPQ>> ReqPQAsync(TLInt128 nonce)
+        private void ReqPQAsync(TLInt128 nonce, Action<TLResPQ> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLReqPQ { Nonce = nonce };
+            var obj = new TLReqPQ{ Nonce = nonce };
 
-            return SendNonEncryptedMessage<TLResPQ>("req_pq", obj);
+            SendNonEncryptedMessage("req_pq", obj, callback, faultCallback);
         }
 
-        private Task<MTProtoResponse<TLServerDHParamsBase>> ReqDHParamsAsync(TLInt128 nonce, TLInt128 serverNonce, byte[] p, byte[] q, long publicKeyFingerprint, byte[] encryptedData)
+        private void ReqDHParamsAsync(TLInt128 nonce, TLInt128 serverNonce, TLString p, TLString q, TLLong publicKeyFingerprint, TLString encryptedData, Action<TLServerDHParamsBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLReqDHParams { Nonce = nonce, ServerNonce = serverNonce, P = p, Q = q, PublicKeyFingerprint = publicKeyFingerprint, EncryptedData = encryptedData };
 
-            return SendNonEncryptedMessage<TLServerDHParamsBase>("req_DH_params", obj);
+            SendNonEncryptedMessage("req_DH_params", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLSetClientDHParamsAnswerBase>> SetClientDHParamsAsync(TLInt128 nonce, TLInt128 serverNonce, byte[] encryptedData)
+        public void SetClientDHParamsAsync(TLInt128 nonce, TLInt128 serverNonce, TLString encryptedData, Action<TLDHGenBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLSetClientDHParams { Nonce = nonce, ServerNonce = serverNonce, EncryptedData = encryptedData };
 
-            return SendNonEncryptedMessage<TLSetClientDHParamsAnswerBase>("set_client_DH_params", obj);
+            SendNonEncryptedMessage("set_client_DH_params", obj, callback, faultCallback);
         }
 
         private TimeSpan _authTimeElapsed;
 
-        public async Task<MTProtoResponse<Tuple<byte[], long?, long?>>> InitAsync()
+        public void InitAsync(Action<WindowsPhone.Tuple<byte[], TLLong, TLLong>> callback, Action<TLRPCError> faultCallback = null)
         {
-            MTProtoResponse<Tuple<byte[], long?, long?>> result = null;
-
             var authTime = Stopwatch.StartNew();
             var newNonce = TLInt256.Random();
 
@@ -55,28 +58,28 @@ namespace Telegram.Api.Services
             TLUtils.WriteLog("Start ReqPQ");
 #endif
             var nonce = TLInt128.Random();
-            var resPQ = await ReqPQAsync(nonce);
-            if (resPQ.Error == null)
-            {
-                var serverNonce = resPQ.Value.ServerNonce;
-                if (nonce != resPQ.Value.Nonce)
+            ReqPQAsync(nonce,
+                resPQ =>
                 {
-                    var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
+                    var serverNonce = resPQ.ServerNonce;
+                    if (!TLUtils.ByteArraysEqual(nonce.Value, resPQ.Nonce.Value))
+                    {
+                        var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect nonce") };
 #if LOG_REGISTRATION
-                    TLUtils.WriteLog("Stop ReqPQ with error " + error);
+                        TLUtils.WriteLog("Stop ReqPQ with error " + error);
 #endif
 
-                    result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, error);
-                    TLUtils.WriteLine(error.ToString());
-                }
+                        if (faultCallback != null) faultCallback(error);
+                        TLUtils.WriteLine(error.ToString());
+                    }
 
 #if LOG_REGISTRATION
-                TLUtils.WriteLog("Stop ReqPQ");
+                    TLUtils.WriteLog("Stop ReqPQ");
 #endif
-                TimeSpan calcTime;
-                Tuple<ulong, ulong> pqPair;
-                var innerData = GetInnerData(resPQ.Value, newNonce, out calcTime, out pqPair);
-                var encryptedInnerData = GetEncryptedInnerData(innerData);
+                    TimeSpan calcTime;
+                    WindowsPhone.Tuple<ulong, ulong> pqPair;
+                    var innerData = GetInnerData(resPQ, newNonce, out calcTime, out pqPair);
+                    var encryptedInnerData = GetEncryptedInnerData(innerData);
 
 #if LOG_REGISTRATION
                     var pq = BitConverter.ToUInt64(resPQ.PQ.Data.Reverse().ToArray(), 0);
@@ -92,219 +95,208 @@ namespace Telegram.Api.Services
 
                     TLUtils.WriteLog("Start ReqDHParams");
 #endif
-                var serverDHParams = await ReqDHParamsAsync(
-                     resPQ.Value.Nonce,
-                     resPQ.Value.ServerNonce,
-                     innerData.P,
-                     innerData.Q,
-                     resPQ.Value.ServerPublicKeyFingerprints[0],
-                     encryptedInnerData);
-                if (serverDHParams.Error == null)
-                {
-                    if (nonce != serverDHParams.Value.Nonce)
-                    {
-                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
+                    ReqDHParamsAsync(
+                        resPQ.Nonce,
+                        resPQ.ServerNonce,
+                        innerData.P,
+                        innerData.Q,
+                        resPQ.ServerPublicKeyFingerprints[0],
+                        encryptedInnerData,
+                        serverDHParams =>
+                        {
+                            if (!TLUtils.ByteArraysEqual(nonce.Value, serverDHParams.Nonce.Value))
+                            {
+                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect nonce") };
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                        result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, error);
-                        TLUtils.WriteLine(error.ToString());
-                    }
-                    if (serverNonce != serverDHParams.Value.ServerNonce)
-                    {
-                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
+                                if (faultCallback != null) faultCallback(error);
+                                TLUtils.WriteLine(error.ToString());
+                            }
+                            if (!TLUtils.ByteArraysEqual(serverNonce.Value, serverDHParams.ServerNonce.Value))
+                            {
+                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect server_nonce") };
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                        result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, error);
-                        TLUtils.WriteLine(error.ToString());
-                    }
+                                if (faultCallback != null) faultCallback(error);
+                                TLUtils.WriteLine(error.ToString());
+                            }
 
 #if LOG_REGISTRATION
-                    TLUtils.WriteLog("Stop ReqDHParams");
+                            TLUtils.WriteLog("Stop ReqDHParams");
 #endif
-                    var random = new SecureRandom();
+                            var random = new SecureRandom();
 
-                    var serverDHParamsOk = serverDHParams.Value as TLServerDHParamsOk;
-                    if (serverDHParamsOk == null)
-                    {
-                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = $"Incorrect serverDHParams {serverDHParams.GetType()}" };
-                        result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, error);
-                        TLUtils.WriteLine(error.ToString());
+                            var serverDHParamsOk = serverDHParams as TLServerDHParamsOk;
+                            if (serverDHParamsOk == null)
+                            {
+                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("Incorrect serverDHParams " + serverDHParams.GetType()) };
+                                if (faultCallback != null) faultCallback(error);
+                                TLUtils.WriteLine(error.ToString());
 #if LOG_REGISTRATION
                             
-                        TLUtils.WriteLog("ServerDHParams " + serverDHParams);  
+                                TLUtils.WriteLog("ServerDHParams " + serverDHParams);  
 #endif
-                        return result;
-                    }
+                                return;
+                            }
 
-                    var aesParams = GetAesKeyIV(resPQ.Value.ServerNonce.ToArray(), newNonce.ToArray());
+                            var aesParams = GetAesKeyIV(resPQ.ServerNonce.ToBytes(), newNonce.ToBytes());
 
-                    var decryptedAnswerWithHash = Utils.AesIge(serverDHParamsOk.EncryptedAnswer, aesParams.Item1, aesParams.Item2, false);
+                            var decryptedAnswerWithHash = Utils.AesIge(serverDHParamsOk.EncryptedAnswer.Data, aesParams.Item1, aesParams.Item2, false);
 
-                    //var position = 0;
-                    //var serverDHInnerData = (TLServerDHInnerData)new TLServerDHInnerData().FromBytes(decryptedAnswerWithHash.Skip(20).ToArray(), ref position);
-                    var serverDHInnerData = TLFactory.From<TLServerDHInnerData>(decryptedAnswerWithHash.Skip(20).ToArray());
+                            var position = 0;
+                            var serverDHInnerData = (TLServerDHInnerData)new TLServerDHInnerData().FromBytes(decryptedAnswerWithHash.Skip(20).ToArray(), ref position);
 
-                    var sha1 = Utils.ComputeSHA1(serverDHInnerData.ToArray());
-                    if (!TLUtils.ByteArraysEqual(sha1, decryptedAnswerWithHash.Take(20).ToArray()))
-                    {
-                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect sha1 TLServerDHInnerData" };
+                            var sha1 = Utils.ComputeSHA1(serverDHInnerData.ToBytes());
+                            if (!TLUtils.ByteArraysEqual(sha1, decryptedAnswerWithHash.Take(20).ToArray()))
+                            {
+                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect sha1 TLServerDHInnerData") };
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqDHParams with error " + error);
-#endif
-
-                        result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, error);
-                        TLUtils.WriteLine(error.ToString());
-                    }
-
-                    if (!TLUtils.CheckPrime(serverDHInnerData.DHPrime, serverDHInnerData.G))
-                    {
-                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect (p, q) pair" };
-#if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                        result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, error);
-                        TLUtils.WriteLine(error.ToString());
-                    }
+                                if (faultCallback != null) faultCallback(error);
+                                TLUtils.WriteLine(error.ToString());    
+                            }
 
-                    if (!TLUtils.CheckGaAndGb(serverDHInnerData.GA, serverDHInnerData.DHPrime))
-                    {
-                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect g_a" };
+                            if (!TLUtils.CheckPrime(serverDHInnerData.DHPrime.Data, serverDHInnerData.G.Value))
+                            {
+                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect (p, q) pair") };
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                        result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, error);
-                        TLUtils.WriteLine(error.ToString());
-                    }
+                                if (faultCallback != null) faultCallback(error);
+                                TLUtils.WriteLine(error.ToString());                  
+                            }
 
-                    var bBytes = new byte[256]; //big endian B
-                    random.NextBytes(bBytes);
-
-                    var gbBytes = GetGB(bBytes, serverDHInnerData.G, serverDHInnerData.DHPrime);
-
-                    var clientDHInnerData = new TLClientDHInnerData
-                    {
-                        Nonce = resPQ.Value.Nonce,
-                        ServerNonce = resPQ.Value.ServerNonce,
-                        RetryId = 0,
-                        GB = gbBytes
-                    };
-
-                    var encryptedClientDHInnerData = GetEncryptedClientDHInnerData(clientDHInnerData, aesParams);
+                            if (!TLUtils.CheckGaAndGb(serverDHInnerData.GA.Data, serverDHInnerData.DHPrime.Data))
+                            {
+                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect g_a") };
 #if LOG_REGISTRATION
+                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+#endif
+
+                                if (faultCallback != null) faultCallback(error);
+                                TLUtils.WriteLine(error.ToString());
+                            }
+
+                            var bBytes = new byte[256]; //big endian B
+                            random.NextBytes(bBytes);
+
+                            var gbBytes = GetGB(bBytes, serverDHInnerData.G, serverDHInnerData.DHPrime);
+
+                            var clientDHInnerData = new TLClientDHInnerData
+                            {
+                                Nonce = resPQ.Nonce,
+                                ServerNonce = resPQ.ServerNonce,
+                                RetryId = new TLLong(0),
+                                GB = TLString.FromBigEndianData(gbBytes)
+                            };
+
+                            var encryptedClientDHInnerData = GetEncryptedClientDHInnerData(clientDHInnerData, aesParams);
+#if LOG_REGISTRATION                 
                             TLUtils.WriteLog("Start SetClientDHParams");  
 #endif
-                    var dhGen = await SetClientDHParamsAsync(resPQ.Value.Nonce, resPQ.Value.ServerNonce, encryptedClientDHInnerData);
-                    if (dhGen.Error == null)
-                    {
-                        if (nonce != dhGen.Value.Nonce)
-                        {
-                            var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
+                            SetClientDHParamsAsync(resPQ.Nonce, resPQ.ServerNonce, encryptedClientDHInnerData,
+                                dhGen =>
+                                {
+                                    if (!TLUtils.ByteArraysEqual(nonce.Value, dhGen.Nonce.Value))
+                                    {
+                                        var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect nonce") };
 #if LOG_REGISTRATION
-                            TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
+                                        TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
 #endif
 
-                            result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, error);
-                            TLUtils.WriteLine(error.ToString());
-                        }
-                        if (serverNonce != dhGen.Value.ServerNonce)
-                        {
-                            var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
+                                        if (faultCallback != null) faultCallback(error);
+                                        TLUtils.WriteLine(error.ToString());
+                                    }
+                                    if (!TLUtils.ByteArraysEqual(serverNonce.Value, dhGen.ServerNonce.Value))
+                                    {
+                                        var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect server_nonce") };
 #if LOG_REGISTRATION
-                            TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
+                                        TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
 #endif
 
-                            result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, error);
-                            TLUtils.WriteLine(error.ToString());
-                        }
+                                        if (faultCallback != null) faultCallback(error);
+                                        TLUtils.WriteLine(error.ToString());
+                                    }
 
-                        var dhGenOk = dhGen.Value as TLDHGenOk;
-                        if (dhGenOk == null)
-                        {
-                            var error = new TLRPCError { ErrorCode = 404, ErrorMessage = $"Incorrect dhGen {dhGen.GetType()}" };
-                            result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, error);
-                            TLUtils.WriteLine(error.ToString());
+                                    var dhGenOk = dhGen as TLDHGenOk;
+                                    if (dhGenOk == null)
+                                    {
+                                        var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("Incorrect dhGen " + dhGen.GetType()) };
+                                        if (faultCallback != null) faultCallback(error);
+                                        TLUtils.WriteLine(error.ToString());
 #if LOG_REGISTRATION
-                            TLUtils.WriteLog("DHGen result " + serverDHParams);
+                                        TLUtils.WriteLog("DHGen result " + serverDHParams);
 #endif
-                            return result;
-                        }
+                                        return;
+                                    }
 
 
-                        _authTimeElapsed = authTime.Elapsed;
+                                    _authTimeElapsed = authTime.Elapsed;
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop SetClientDHParams");
+                                    TLUtils.WriteLog("Stop SetClientDHParams");
 #endif
-                        var getKeyTimer = Stopwatch.StartNew();
-                        var authKey = GetAuthKey(bBytes, serverDHInnerData.GA.ToBytes(), serverDHInnerData.DHPrime.ToBytes());
+                                    var getKeyTimer = Stopwatch.StartNew();
+                                    var authKey = GetAuthKey(bBytes, serverDHInnerData.GA.ToBytes(), serverDHInnerData.DHPrime.ToBytes());
 
-                        var logCountersString = new StringBuilder();
+                                    var logCountersString = new StringBuilder();
 
-                        logCountersString.AppendLine("Auth Counters");
-                        logCountersString.AppendLine();
-                        logCountersString.AppendLine("pq factorization time: " + calcTime);
-                        logCountersString.AppendLine("calc auth key time: " + getKeyTimer.Elapsed);
-                        logCountersString.AppendLine("auth time: " + _authTimeElapsed);
+                                    logCountersString.AppendLine("Auth Counters");
+                                    logCountersString.AppendLine();
+                                    logCountersString.AppendLine("pq factorization time: " + calcTime);
+                                    logCountersString.AppendLine("calc auth key time: " + getKeyTimer.Elapsed);
+                                    logCountersString.AppendLine("auth time: " + _authTimeElapsed);
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog(logCountersString.ToString());
+                                    TLUtils.WriteLog(logCountersString.ToString());
 #endif
-                        //newNonce - little endian
-                        //authResponse.ServerNonce - little endian
-                        var salt = GetSalt(newNonce.ToArray(), resPQ.Value.ServerNonce.ToArray());
-                        var sessionId = new byte[8];
-                        random.NextBytes(sessionId);
+                                    //newNonce - little endian
+                                    //authResponse.ServerNonce - little endian
+                                    var salt = GetSalt(newNonce.ToBytes(), resPQ.ServerNonce.ToBytes());
+                                    var sessionId = new byte[8];
+                                    random.NextBytes(sessionId);
 
-                        TLUtils.WriteLine("Salt " + BitConverter.ToInt64(salt, 0) + " (" + BitConverter.ToString(salt) + ")");
-                        TLUtils.WriteLine("Session id " + BitConverter.ToInt64(sessionId, 0) + " (" + BitConverter.ToString(sessionId) + ")");
+                                    TLUtils.WriteLine("Salt " + BitConverter.ToInt64(salt, 0) + " (" + BitConverter.ToString(salt) + ")");
+                                    TLUtils.WriteLine("Session id " + BitConverter.ToInt64(sessionId, 0) + " (" + BitConverter.ToString(sessionId) + ")");
 
-                        result = new MTProtoResponse<Tuple<byte[], long?, long?>>(
-                            new Tuple<byte[], long?, long?>(
-                                authKey, 
-                                new long?(
-                                    BitConverter.ToInt64(salt, 0)), 
-                                    new long?(BitConverter.ToInt64(sessionId, 0))));
-                    }
-                    else
-                    {
-
+                                    callback(new WindowsPhone.Tuple<byte[], TLLong, TLLong>(authKey, new TLLong(BitConverter.ToInt64(salt, 0)), new TLLong(BitConverter.ToInt64(sessionId, 0))));
+                                },
+                                error =>
+                                {
 #if LOG_REGISTRATION
                                     TLUtils.WriteLog("Stop SetClientDHParams with error " + error.ToString());
 #endif
-                        result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, dhGen.Error);
-                        TLUtils.WriteLine(dhGen.Error.ToString());
-                    }
-                }
-                else
-                {
-
+                                    if (faultCallback != null) faultCallback(error);
+                                    TLUtils.WriteLine(error.ToString());
+                                });
+                        },
+                        error =>
+                        {
 #if LOG_REGISTRATION
                             TLUtils.WriteLog("Stop ReqDHParams with error " + error.ToString());
 #endif
-                    result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, serverDHParams.Error);
-                    TLUtils.WriteLine(serverDHParams.Error.ToString());
-                }
-            }
-            else
-            {
-
+                            if (faultCallback != null) faultCallback(error);
+                            TLUtils.WriteLine(error.ToString());
+                        });
+                },
+                error =>
+                {
 #if LOG_REGISTRATION
                     TLUtils.WriteLog("Stop ReqPQ with error " + error.ToString());
 #endif
-                result = new MTProtoResponse<Tuple<byte[], long?, long?>>(null, resPQ.Error);
-                TLUtils.WriteLine(resPQ.Error.ToString());
-            }
-
-            return result;
+                    if (faultCallback != null) faultCallback(error);
+                    TLUtils.WriteLine(error.ToString());
+                });
         }
 
-        private static TLPQInnerData GetInnerData(TLResPQ resPQ, TLInt256 newNonce, out TimeSpan calcTime, out Tuple<ulong, ulong> pqPair)
+        private static TLPQInnerData GetInnerData(TLResPQ resPQ, TLInt256 newNonce, out TimeSpan calcTime, out WindowsPhone.Tuple<ulong, ulong> pqPair)
         {
-            var pq = BitConverter.ToUInt64(resPQ.PQ.Reverse().ToArray(), 0);       //NOTE: add Reverse here
+            var pq = BitConverter.ToUInt64(resPQ.PQ.Data.Reverse().ToArray(), 0);       //NOTE: add Reverse here
             TLUtils.WriteLine("pq: " + pq);
 
             var pqCalcTime = Stopwatch.StartNew();
@@ -328,8 +320,8 @@ namespace Telegram.Api.Services
                 TLUtils.WriteLine("q: " + pqPair.Item2);
             }
 
-            var p = pqPair.Item1.FromUInt64();
-            var q = pqPair.Item2.FromUInt64();
+            var p = TLString.FromUInt64(pqPair.Item1);
+            var q = TLString.FromUInt64(pqPair.Item2);
 
             var innerData1 = new TLPQInnerData
             {
@@ -344,10 +336,10 @@ namespace Telegram.Api.Services
             return innerData1;
         }
 
-        private static byte[] GetEncryptedClientDHInnerData(TLClientDHInnerData clientDHInnerData, Tuple<byte[], byte[]> aesParams)
+        private static TLString GetEncryptedClientDHInnerData(TLClientDHInnerData clientDHInnerData, WindowsPhone.Tuple<byte[], byte[]> aesParams)
         {
             var random = new Random();
-            var client_DH_inner_data = clientDHInnerData.ToArray();
+            var client_DH_inner_data = clientDHInnerData.ToBytes();
 
             var client_DH_inner_dataWithHash = Utils.ComputeSHA1(client_DH_inner_data).Concat(client_DH_inner_data).ToArray();
             var addedBytesLength = 16 - (client_DH_inner_dataWithHash.Length % 16);
@@ -361,12 +353,12 @@ namespace Telegram.Api.Services
 
             var aesEncryptClientDHInnerDataWithHash = Utils.AesIge(client_DH_inner_dataWithHash, aesParams.Item1, aesParams.Item2, true);
 
-            return aesEncryptClientDHInnerDataWithHash;
+            return TLString.FromBigEndianData(aesEncryptClientDHInnerDataWithHash);
         }
 
-        public static byte[] GetEncryptedInnerData(TLPQInnerData innerData)
+        public static TLString GetEncryptedInnerData(TLPQInnerData innerData)
         {
-            var innerDataBytes = innerData.ToArray();
+            var innerDataBytes = innerData.ToBytes();
 #if LOG_REGISTRATION
             var sb = new StringBuilder();
             sb.AppendLine();
@@ -396,7 +388,9 @@ namespace Telegram.Api.Services
 
             var reverseRSABytes = Utils.GetRSABytes(data255);               // NOTE: remove Reverse here
 
-            return reverseRSABytes;
+            var encryptedData = new TLString { Data = reverseRSABytes };
+
+            return encryptedData;
         }
 
         public static byte[] GetSalt(byte[] newNonce, byte[] serverNonce)
@@ -417,9 +411,11 @@ namespace Telegram.Api.Services
         // return big-endian authKey
         public static byte[] GetAuthKey(byte[] bBytes, byte[] g_aData, byte[] dhPrimeData)
         {
+            int position = 0;
             var b = new BigInteger(bBytes.Reverse().Concat(new byte[] { 0x00 }).ToArray());
-            var dhPrime = TLFactory.From<byte[]>(dhPrimeData).ToBigInteger(); // TODO: I don't like this.
-            var g_a = TLFactory.From<byte[]>(g_aData).ToBigInteger();
+            var dhPrime = TLObject.GetObject<TLString>(dhPrimeData, ref position).ToBigInteger();
+            position = 0;
+            var g_a = TLObject.GetObject<TLString>(g_aData, ref position).ToBigInteger();
 
             var authKey = BigInteger.ModPow(g_a, b, dhPrime).ToByteArray(); // little endian + (may be) zero last byte
 
@@ -473,7 +469,7 @@ namespace Telegram.Api.Services
         // g - serialized data
         // dhPrime - serialized data
         // returns big-endian G_B
-        public static byte[] GetGB(byte[] bData, int? gData, byte[] pString)
+        public static byte[] GetGB(byte[] bData, TLInt gData, TLString pString)
         {
             //var bBytes = new byte[256]; // big endian bytes
             //var random = new Random();
@@ -511,7 +507,7 @@ namespace Telegram.Api.Services
         //    return new BigInteger(Data.Reverse().Concat(new byte[] { 0x00 }).ToArray());  //NOTE: add reverse here
         //}
 
-        public static Tuple<byte[], byte[]> GetAesKeyIV(byte[] serverNonce, byte[] newNonce)
+        public static WindowsPhone.Tuple<byte[], byte[]> GetAesKeyIV(byte[] serverNonce, byte[] newNonce)
         {
             var newNonceServerNonce = newNonce.Concat(serverNonce).ToArray();
             var serverNonceNewNonce = serverNonce.Concat(newNonce).ToArray();
@@ -521,7 +517,7 @@ namespace Telegram.Api.Services
                 .Concat(Utils.ComputeSHA1(newNonce.Concat(newNonce).ToArray()))
                 .Concat(newNonce.SubArray(0, 4));
 
-            return new Tuple<byte[], byte[]>(key.ToArray(), im.ToArray());
+            return new WindowsPhone.Tuple<byte[], byte[]>(key.ToArray(), im.ToArray());
         }
     }
 }

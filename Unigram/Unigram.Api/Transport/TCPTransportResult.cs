@@ -4,11 +4,10 @@ using System.Net.Sockets;
 using SocketError = System.Net.Sockets.SocketError;
 #endif
 using System.Text;
-using Telegram.Api.TL;
 
 namespace Telegram.Api.Transport
 {
-    public class TcpTransportResult : TLRPCError
+    public class TcpTransportResult
     {
 #if WINDOWS_PHONE
         public SocketError Error { get; set; }
@@ -16,7 +15,7 @@ namespace Telegram.Api.Transport
         public SocketAsyncOperation Operation { get; set; }
 #endif
 
-        public new Exception Exception { get; set; }
+        public Exception Exception { get; set; }
 
         public TcpTransportResult(Exception exception)
         {

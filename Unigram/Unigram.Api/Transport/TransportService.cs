@@ -46,7 +46,8 @@ namespace Telegram.Api.Transport
 #else
                     new TcpTransport(host, port);
 #endif
-
+                transport.Additional = true;
+                transport.ConnectionLost += OnConnectionLost;
                 TLUtils.WritePerformance(string.Format("  TCP: New file transport {0}:{1}", host, port));
 
                 _fileCache.Add(key, transport);
@@ -88,10 +89,11 @@ namespace Telegram.Api.Transport
 #if WIN_RT
                     new TcpTransportWinRT(host, port);
 #else
-                    new TcpTransportWinRT(host, port);
+                    new TcpTransport(host, port);
 #endif
                 transport.Connecting += OnConnecting;
                 transport.Connected += OnConnected;
+                transport.ConnectionLost += OnConnectionLost;
 
 #if LOG_REGISTRATION
                 TLUtils.WriteLog(string.Format("New transport {2} {0}:{1}", host, port, transport.Id));
@@ -116,6 +118,7 @@ namespace Telegram.Api.Transport
                 transport.Close();
                 transport.Connecting -= OnConnecting;
                 transport.Connected -= OnConnected;
+                transport.ConnectionLost -= OnConnectionLost;
             }
             _cache.Clear();
 
@@ -126,6 +129,7 @@ namespace Telegram.Api.Transport
                 transport.Close();
                 transport.Connecting -= OnConnecting;
                 transport.Connected -= OnConnected;
+                transport.ConnectionLost -= OnConnectionLost;
             }
             _fileCache.Clear();
         }
@@ -139,6 +143,7 @@ namespace Telegram.Api.Transport
                 value.Close();
                 transport.Connecting -= OnConnecting;
                 transport.Connected -= OnConnected;
+                transport.ConnectionLost -= OnConnectionLost;
             }
             _cache.Remove(string.Format("{0} {1} {2}", transport.Host, transport.Port, transport.Type));
 
@@ -149,6 +154,7 @@ namespace Telegram.Api.Transport
                 value.Close();
                 transport.Connecting -= OnConnecting;
                 transport.Connected -= OnConnected;
+                transport.ConnectionLost -= OnConnectionLost;
             }
             _fileCache.Remove(string.Format("{0} {1} {2}", transport.Host, transport.Port, transport.Type));
         }
@@ -191,6 +197,35 @@ namespace Telegram.Api.Transport
             //{
             //    mtProtoService.SetMessageOnTime(0.0, string.Empty);
             //}
+        }
+
+        public event EventHandler<TransportEventArgs> ConnectionLost;
+
+        protected virtual void RaiseConnectionLost(ITransport transport)
+        {
+            var handler = ConnectionLost;
+            if (handler != null) handler(this, new TransportEventArgs { Transport = transport });
+        }
+
+        public event EventHandler<TransportEventArgs> FileConnectionLost;
+
+        protected virtual void RaiseFileConnectionLost(ITransport transport)
+        {
+            var handler = FileConnectionLost;
+            if (handler != null) handler(this, new TransportEventArgs { Transport = transport });
+        }
+
+        private void OnConnectionLost(object sender, EventArgs e)
+        {
+            var transport = (ITransport)sender;
+            if (transport.Additional)
+            {
+                RaiseFileConnectionLost(sender as ITransport);
+            }
+            else
+            {
+                RaiseConnectionLost(sender as ITransport);
+            }
         }
     }
 

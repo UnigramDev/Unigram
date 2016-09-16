@@ -44,6 +44,7 @@ namespace Telegram.Api.Services.Connection
 
 #if WP8 || WIN_RT
         private ConnectionProfile _profile;
+        private NetworkConnectivityLevel? _connectivityLevel;
 #endif
 
         public ConnectionService(IDeviceInfoService deviceInfoService)
@@ -61,59 +62,71 @@ namespace Telegram.Api.Services.Connection
 
 #if WP8 || WIN_RT
             _profile = NetworkInformation.GetInternetConnectionProfile();
+            _connectivityLevel = _profile != null ? _profile.GetNetworkConnectivityLevel() : (NetworkConnectivityLevel?)null;
+
+            //var connectivityLevel = _profile.GetNetworkConnectivityLevel();
+            //_profile.NetworkAdapter.IanaInterfaceType != 71 // mobile data
+            //_profile.GetConnectionCost().Roaming;
+
             //Helpers.Execute.ShowDebugMessage(string.Format("InternetConnectionProfile={0}", _profile != null ? _profile.GetNetworkConnectivityLevel().ToString() : "null"));
+            
+            // new solution
             NetworkInformation.NetworkStatusChanged += sender =>
             {
                 var previousProfile = _profile;
+                var previousConnectivityLevel = _connectivityLevel;
+
                 _profile = NetworkInformation.GetInternetConnectionProfile();
+                _connectivityLevel = _profile != null ? _profile.GetNetworkConnectivityLevel() : (NetworkConnectivityLevel?)null;
 
-                if (previousProfile != _profile)
+                if (_profile != null)
                 {
-                    if (_profile != null)
+                    if (_mtProtoService == null) return;
+
+                    var activeTransport = _mtProtoService.GetActiveTransport();
+                    if (activeTransport == null) return;
+                    if (activeTransport.AuthKey == null) return;
+
+                    var transportId = activeTransport.Id;
+
+                    var isAuthorized = SettingsHelper.GetValue<bool>(Constants.IsAuthorizedKey);
+                    if (!isAuthorized)
                     {
-                        if (_mtProtoService == null) return;
-
-                        var activeTransport = _mtProtoService.GetActiveTransport();
-                        if (activeTransport == null) return;
-                        if (activeTransport.AuthKey == null) return;
-
-                        var transportId = activeTransport.Id;
-
-                        var isAuthorized = SettingsHelper.IsAuthorized;
-                        if (!isAuthorized)
-                        {
-                            return;
-                        }
-
-                        var reconnect = true;
-                        var errorDebugString = string.Format("{0} internet connected",
-                            DateTime.Now.ToString("HH:mm:ss.fff"));
-                        TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
-
-                        //Helpers.Execute.ShowDebugMessage(string.Format("NetworkStatusChanged Internet connected Profile={0}", _profile));
-                        if (reconnect)
-                        {
-                            TLUtils.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) + " reconnect t" + transportId, LogSeverity.Error);
-
-                            RaiseConnectionFailed();
-
-                            return;
-                        }
+                        return;
                     }
-                    else
+
+                    var errorDebugString = string.Format("{0} internet connected", DateTime.Now.ToString("HH:mm:ss.fff"));
+                    TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
+
+                    var reconnect = _connectivityLevel == NetworkConnectivityLevel.InternetAccess && previousConnectivityLevel != NetworkConnectivityLevel.InternetAccess;
+                    if (reconnect)
                     {
-                        var errorDebugString = string.Format("{0} internet disconnected",
-                            DateTime.Now.ToString("HH:mm:ss.fff"));
-                        TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
+                        TLUtils.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) + " reconnect t" + transportId, LogSeverity.Error);
 
-                        _mtProtoService.SetMessageOnTimeAsync(60.0 * 60, "Waiting for network...");
-                        //Helpers.Execute.ShowDebugMessage(string.Format("NetworkStatusChanged Internet disconnected Profile={0}", _profile));
+                        Logs.Log.Write(string.Format("  Reconnect reason=NetworkStatusChanged profile={0} internet_access={1} previous_profile={2} previous_internet_access={3}",
+                            _profile != null ? _profile.ProfileName : "none",
+                            _profile != null ? _connectivityLevel.ToString() : "none",
+                            previousProfile != null ? previousProfile.ProfileName : "none",
+                            previousProfile != null ? previousConnectivityLevel.ToString() : "none"));
+
+                        RaiseConnectionFailed();
+
+                        return;
                     }
+                }
+                else
+                {
+                    var errorDebugString = string.Format("{0} internet disconnected", DateTime.Now.ToString("HH:mm:ss.fff"));
+                    TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
+
+                    _mtProtoService.SetMessageOnTime(60.0 * 60, "Waiting for network...");
+                    //Helpers.Execute.ShowDebugMessage(string.Format("NetworkStatusChanged Internet disconnected Profile={0}", _profile));
                 }
             };
 #endif
 
 #if WINDOWS_PHONE
+            // old solution
             DeviceNetworkInformation.NetworkAvailabilityChanged += (sender, args) =>
             {
                 return;
@@ -197,22 +210,26 @@ namespace Telegram.Api.Services.Connection
 
         }
 
-        private async void CheckConnectionState(object state)
+        private void CheckConnectionState(object state)
         {
+//#if !WIN_RT && DEBUG
+//            Microsoft.Devices.VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
+//#endif
+
             if (Debugger.IsAttached) return;
-            //#if DEBUG
-            //            return;
-            //#endif
+//#if DEBUG
+//            return;
+//#endif
 
             if (_mtProtoService == null) return;
-
+            
             var activeTransport = _mtProtoService.GetActiveTransport();
             if (activeTransport == null) return;
             if (activeTransport.AuthKey == null) return;
 
             var transportId = activeTransport.Id;
 
-            var isAuthorized = SettingsHelper.IsAuthorized;
+            var isAuthorized = SettingsHelper.GetValue<bool>(Constants.IsAuthorizedKey);
             if (!isAuthorized)
             {
                 return;
@@ -223,12 +240,20 @@ namespace Telegram.Api.Services.Connection
             if (activeTransport.LastReceiveTime.HasValue)
             {
                 connectionFailed = Math.Abs((now - activeTransport.LastReceiveTime.Value).TotalSeconds) > Constants.TimeoutInterval;
+                if (connectionFailed)
+                {
+                    Logs.Log.Write(string.Format("  Reconnect reason=ConnectionFailed transport={3} now={0} - last_receive_time={1} > timeout={2}", now.ToString("dd-MM-yyyy HH:mm:ss.fff"), activeTransport.LastReceiveTime.Value.ToString("dd-MM-yyyy HH:mm:ss.fff"), Constants.TimeoutInterval, activeTransport.Id));
+                }
             }
             else
             {
                 if (activeTransport.FirstSendTime.HasValue)
                 {
                     connectionFailed = Math.Abs((now - activeTransport.FirstSendTime.Value).TotalSeconds) > Constants.TimeoutInterval;
+                    if (connectionFailed)
+                    {
+                        Logs.Log.Write(string.Format("  Reconnect reason=ConnectionFailed transport={3} now={0} - first_send_time={1} > timeout={2}", now.ToString("dd-MM-yyyy HH:mm:ss.fff"), activeTransport.FirstSendTime.Value.ToString("dd-MM-yyyy HH:mm:ss.fff"), Constants.TimeoutInterval, activeTransport.Id));
+                    }
                 }
             }
 
@@ -242,13 +267,18 @@ namespace Telegram.Api.Services.Connection
             var pingRequired = false;
             var timeFromLastReceive = 0.0;
             var timeFromFirstSend = 0.0;
+            var pingTimeout = Math.Max(Constants.TimeoutInterval - 10.0, 10.0);
             if (activeTransport.LastReceiveTime.HasValue)
             {
                 // что-то уже получали по соединению
                 var lastReceiveTime = activeTransport.LastReceiveTime.Value;
                 timeFromLastReceive = Math.Abs((now - lastReceiveTime).TotalSeconds);
 
-                pingRequired = timeFromLastReceive > 15.0;
+                pingRequired = timeFromLastReceive > pingTimeout;
+                if (pingRequired)
+                {
+                    Logs.Log.Write(string.Format("  CheckReconnect reason=PingRequired transport={3} now={0} - last_receive_time={1} > ping_timeout={2}", now.ToString("HH:mm:ss.fff"), lastReceiveTime.ToString("HH:mm:ss.fff"), pingTimeout, activeTransport.Id));
+                }
             }
             else
             {
@@ -258,7 +288,11 @@ namespace Telegram.Api.Services.Connection
                     var firstSendTime = activeTransport.FirstSendTime.Value;
                     timeFromFirstSend = Math.Abs((now - firstSendTime).TotalSeconds);
 
-                    pingRequired = timeFromFirstSend > 15.0;
+                    pingRequired = timeFromFirstSend > pingTimeout;
+                    if (pingRequired)
+                    {
+                        Logs.Log.Write(string.Format("  CheckReconnect reason=PingRequired transport={3} now={0} - first_send_time={1} > ping_timeout={2}", now.ToString("HH:mm:ss.fff"), firstSendTime.ToString("HH:mm:ss.fff"), pingTimeout, activeTransport.Id));
+                    }
                 }
                 // хотя бы пинганем для начала
                 else
@@ -270,37 +304,36 @@ namespace Telegram.Api.Services.Connection
             if (pingRequired)
             {
                 var pingId = TLLong.Random();
-                var pingIdHash = pingId % 1000;
+                var pingIdHash = pingId.Value % 1000;
 
-                var debugString = string.Format("{0} ping t{1} ({2}, {3}) [{4}]",
+                var debugString = string.Format("{0} ping t{1} ({2}, {3}) [{4}]", 
                     DateTime.Now.ToString("HH:mm:ss.fff"),
-                    transportId,
-                    timeFromFirstSend.ToString("N"),
-                    timeFromLastReceive.ToString("N"),
+                    transportId, 
+                    timeFromFirstSend.ToString("N"), 
+                    timeFromLastReceive.ToString("N"), 
                     pingIdHash);
 
                 TLUtils.WriteLine(debugString, LogSeverity.Error);
-                var result = await _mtProtoService.PingAsync(pingId); //new int?(35),
-                if (result.Error == null)
-                {
+                _mtProtoService.PingAsync(pingId, //new TLInt(35),
+                    result =>
+                    {
+                        var resultDebugString = string.Format("{0} pong t{1} ({2}, {3}) [{4}]",
+                            DateTime.Now.ToString("HH:mm:ss.fff"),
+                            transportId,
+                            timeFromFirstSend.ToString("N"),
+                            timeFromLastReceive.ToString("N"),
+                            pingIdHash);
 
-                    var resultDebugString = string.Format("{0} pong t{1} ({2}, {3}) [{4}]",
-                        DateTime.Now.ToString("HH:mm:ss.fff"),
-                        transportId,
-                        timeFromFirstSend.ToString("N"),
-                        timeFromLastReceive.ToString("N"),
-                        pingIdHash);
-
-                    TLUtils.WriteLine(resultDebugString, LogSeverity.Error);
-                }
-                else
-                {
-                    var errorDebugString = string.Format("{0} pong error t{1} ({2}, {3}) [{4}] \nSocketError={5}",
-                        DateTime.Now.ToString("HH:mm:ss.fff"),
-                        transportId,
-                        timeFromFirstSend.ToString("N"),
-                        timeFromLastReceive.ToString("N"),
-                        pingIdHash,
+                        TLUtils.WriteLine(resultDebugString, LogSeverity.Error);
+                    },
+                    error =>
+                    {
+                        var errorDebugString = string.Format("{0} pong error t{1} ({2}, {3}) [{4}] \nSocketError={5}",
+                            DateTime.Now.ToString("HH:mm:ss.fff"),
+                            transportId,
+                            timeFromFirstSend.ToString("N"),
+                            timeFromLastReceive.ToString("N"),
+                            pingIdHash,
 #if WINDOWS_PHONE
                             error.SocketError
 #else
@@ -308,8 +341,8 @@ namespace Telegram.Api.Services.Connection
 #endif
                             );
 
-                    TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
-                }
+                        TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
+                    });
             }
             else
             {

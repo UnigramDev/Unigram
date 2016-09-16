@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.Cache
@@ -8,102 +9,116 @@ namespace Telegram.Api.Services.Cache
     {
         ExceptionInfo LastSyncMessageException { get; }
 
+        void CompressAsync(Action callback);
         void Commit();
         bool TryCommit();
         void SaveSnapshot(string toDirectoryName);
+        void SaveTempSnapshot(string toDirectoryName);
         void LoadSnapshot(string fromDirectoryName);
         //event EventHandler<DialogAddedEventArgs> DialogAdded;
         //event EventHandler<TopMessageUpdatedEventArgs> TopMessageUpdated;
 
-        TLUserBase GetUser(int id);
+        TLUserBase GetUser(TLInt id);
+        TLUserBase GetUser(string username);
         TLUserBase GetUser(TLUserProfilePhoto photo);
-        TLMessageBase GetMessage(int id, int? channelId = null); 
-        TLMessageBase GetMessage(long randomId);
+        TLMessageBase GetMessage(TLInt id, TLInt channelId = null); 
+        TLMessageBase GetMessage(TLLong randomId);
         TLMessageBase GetMessage(TLWebPageBase webPage);
-        TLDialog GetDialog(TLMessage message);
+        TLDecryptedMessageBase GetDecryptedMessage(TLInt chatId, TLLong randomId);
+        TLDialog GetDialog(TLMessageCommon message);
         TLDialog GetDialog(TLPeerBase peer);
-        // TODO: Secrets: TLDialogBase GetEncryptedDialog(int chatId);
+        TLDialogBase GetEncryptedDialog(TLInt chatId);
 
         TLChat GetChat(TLChatPhoto chatPhoto);
+        TLChannel GetChannel(string username);
         TLChannel GetChannel(TLChatPhoto channelPhoto);
-        TLChatBase GetChat(int id);
-        // DEPRECATED: TLBroadcastChat GetBroadcast(int id);
+        TLChatBase GetChat(TLInt id);
+        TLBroadcastChat GetBroadcast(TLInt id);
 
         IList<TLMessageBase> GetMessages();
         IList<TLMessageBase> GetSendingMessages();
         IList<TLMessageBase> GetResendingMessages(); 
 
-        void GetHistoryAsync(int currentUserId, TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount);
-        IList<TLMessageBase> GetHistory(int currentUserId, TLPeerBase peer, int limit = Constants.CachedMessagesCount);
-        //IList<TLMessageBase> GetUnreadHistory(int currentUserId, TLPeerBase peer, int limit = Constants.CachedMessagesCount);
+        void GetHistoryAsync(TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount);
+        IList<TLMessageBase> GetHistory(TLPeerBase peer, int limit = Constants.CachedMessagesCount);
+        IList<TLMessageBase> GetHistory(TLPeerBase peer, int maxId, int limit = Constants.CachedMessagesCount);
+        //IList<TLMessageBase> GetUnreadHistory(TLInt currentUserId, TLPeerBase peer, int limit = Constants.CachedMessagesCount);
         IList<TLMessageBase> GetHistory(int dialogId);
-        // TODO: Secrets: IList<TLDecryptedMessageBase> GetDecryptedHistory(int dialogId, int limit = Constants.CachedMessagesCount);
-        // TODO: Secrets: IList<TLDecryptedMessageBase> GetDecryptedHistory(int dialogId, long randomId, int limit = Constants.CachedMessagesCount);
-        void GetDialogsAsync(Action<IList<TLDialog>> callback);
-        IList<TLDialog> GetDialogs();
+        IList<TLDecryptedMessageBase> GetDecryptedHistory(int dialogId, int limit = Constants.CachedMessagesCount);
+        IList<TLDecryptedMessageBase> GetDecryptedHistory(int dialogId, long randomId, int limit = Constants.CachedMessagesCount);
+        IList<TLDecryptedMessageBase> GetUnreadDecryptedHistory(int dialogId);
+        void GetDialogsAsync(Action<IList<TLDialogBase>> callback);
+        IList<TLDialogBase> GetDialogs();
         void GetContactsAsync(Action<IList<TLUserBase>> callback);
 
         List<TLUserBase> GetContacts();
-        List<TLUserBase> GetUsersForSearch(IList<TLDialog> nonCachedDialogs);
+        List<TLUserBase> GetUsersForSearch(IList<TLDialogBase> nonCachedDialogs);
         List<TLUserBase> GetUsers();
         List<TLChatBase> GetChats();
         void GetChatsAsync(Action<IList<TLChatBase>> callback);
 
 
         void ClearAsync(Action callback = null);
-        void SyncMessage(TLMessageBase message, TLPeerBase peer, Action<TLMessageBase> callback);
-        void SyncSendingMessage(TLMessage message, TLMessageBase previousMessage, TLPeerBase peer, Action<TLMessage> callback);
-        void SyncSendingMessages(IList<TLMessage> messages, TLMessageBase previousMessage, TLPeerBase peer, Action<IList<TLMessage>> callback);
-        void SyncSendingMessageId(long randomId, int id, Action<TLMessage> callback);
-        void SyncMessages(TLMessagesMessagesBase messages, TLPeerBase peer, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesMessagesBase> callback);
+        void SyncMessage(TLMessageBase message, Action<TLMessageBase> callback);
+        void SyncMessage(TLMessageBase message, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessageBase> callback);
         void SyncEditedMessage(TLMessageBase message, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessageBase> callback);
-        void SyncDialogs(TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback);
-        void SyncChannelDialogs(TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback);
-        void MergeMessagesAndChannels(TLMessagesDialogsBase dialogs);
+        void SyncSendingMessage(TLMessageCommon message, TLMessageBase previousMessage, Action<TLMessageCommon> callback);
+        void SyncSendingMessages(IList<TLMessage> messages, TLMessageBase previousMessage, Action<IList<TLMessage>> callback);
+        void SyncSendingMessageId(TLLong randomId, TLInt id, Action<TLMessageCommon> callback);
+        void SyncPeerMessages(TLPeerBase peer, TLMessagesBase messages, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesBase> callback);
+        void AddMessagesToContext(TLMessagesBase messages, Action<TLMessagesBase> callback);
+        void SyncDialogs(Stopwatch stopwatch, TLDialogsBase dialogs, Action<TLDialogsBase> callback);
+        void SyncChannelDialogs(TLDialogsBase dialogs, Action<TLDialogsBase> callback);
+        void MergeMessagesAndChannels(TLDialogsBase dialogs);
         void SyncUser(TLUserBase user, Action<TLUserBase> callback);
         void SyncUser(TLUserFull userFull, Action<TLUserFull> callback);
         void SyncUsers(TLVector<TLUserBase> users, Action<TLVector<TLUserBase>> callback);
         void AddUsers(TLVector<TLUserBase> users, Action<TLVector<TLUserBase>> callback);
-        void SyncUsersAndChats(TLVector<TLUserBase> users, TLVector<TLChatBase> chats, Action<Tuple<TLVector<TLUserBase>, TLVector<TLChatBase>>> callback);
-        void SyncUserLink(TLContactsLink link, Action<TLContactsLink> callback);
-        void SyncContacts(TLContactsContactsBase contacts, Action<TLContactsContactsBase> callback);
-        void SyncContacts(TLContactsImportedContacts contacts, Action<TLContactsImportedContacts> callback);
+        void SyncUsersAndChats(TLVector<TLUserBase> users, TLVector<TLChatBase> chats, Action<WindowsPhone.Tuple<TLVector<TLUserBase>, TLVector<TLChatBase>>> callback);
+        void SyncUserLink(TLLinkBase link, Action<TLLinkBase> callback);
+        void SyncContacts(TLContactsBase contacts, Action<TLContactsBase> callback);
+        void SyncContacts(TLImportedContacts contacts, Action<TLImportedContacts> callback);
 
-        void DeleteDialog(TLDialog dialog);
-        void DeleteMessages(TLVector<int> ids);
-        void DeleteChannelMessages(int channelId, TLVector<int> ids);
-        void DeleteMessages(TLPeerBase peer, TLMessageBase lastItem, TLVector<int> messages);
-        void DeleteMessages(TLVector<long> ids);
-        // TODO: Secrets: void DeleteDecryptedMessages(TLVector<long> ids);
-        // TODO: Secrets: void ClearDecryptedHistoryAsync(int chatId);
-        // DEPRECATED: void ClearBroadcastHistoryAsync(int chatId);
+        void ClearDialog(TLPeerBase peer);
+        void DeleteDialog(TLDialogBase dialog);
+        void DeleteMessages(TLVector<TLInt> ids);
+        void DeleteChannelMessages(TLInt channelId, TLVector<TLInt> ids);
+        void DeleteMessages(TLPeerBase peer, TLMessageBase lastItem, TLVector<TLInt> messages);
+        void DeleteMessages(TLVector<TLLong> ids);
+        void DeleteDecryptedMessages(TLVector<TLLong> ids);
+        void ClearDecryptedHistoryAsync(TLInt chatId);
+        void ClearBroadcastHistoryAsync(TLInt chatId);
 
-        // TODO: No idea: void SyncStatedMessage(TLStatedMessageBase statedMessage, Action<TLStatedMessageBase> callback);
-        // TODO: No idea: void SyncStatedMessages(TLStatedMessagesBase statedMessages, Action<TLStatedMessagesBase> callback);
+        void SyncStatedMessage(TLStatedMessageBase statedMessage, Action<TLStatedMessageBase> callback);
+        void SyncStatedMessages(TLStatedMessagesBase statedMessages, Action<TLStatedMessagesBase> callback);
 
         void CheckDisabledFeature(string featureKey, Action callback, Action<TLDisabledFeature> faultCallback = null);
         void CheckDisabledFeature(TLObject with, string featurePMMessage, string featureChatMessage, string featureBigChatMessage, Action callback, Action<TLDisabledFeature> faultCallback);
         void GetConfigAsync(Action<TLConfig> config);
+        TLConfig GetConfig();
         void SetConfig(TLConfig config);
+        void ClearConfigImportAsync();
         void SyncChat(TLMessagesChatFull messagesChatFull, Action<TLMessagesChatFull> callback);
         void AddChats(TLVector<TLChatBase> chats, Action<TLVector<TLChatBase>> callback);
-        // NO MORE SUPPORTED: void SyncBroadcast(TLBroadcastChat broadcast, Action<TLBroadcastChat> callback);
+        void SyncBroadcast(TLBroadcastChat broadcast, Action<TLBroadcastChat> callback);
 
-        // TODO: Secrets: TLEncryptedChatBase GetEncryptedChat(int id);
-        // TODO: Secrets: void SyncEncryptedChat(TLEncryptedChatBase encryptedChat, Action<TLEncryptedChatBase> callback);
-        // TODO: Secrets: void SyncDecryptedMessage(TLDecryptedMessageBase message, TLEncryptedChatBase peer, Action<TLDecryptedMessageBase> callback);
-        // TODO: Secrets: void SyncSendingDecryptedMessage(int chatId, int date, long randomId, Action<TLDecryptedMessageBase> callback);
+        TLEncryptedChatBase GetEncryptedChat(TLInt id);
+        void SyncEncryptedChat(TLEncryptedChatBase encryptedChat, Action<TLEncryptedChatBase> callback);
+        void SyncDecryptedMessage(TLDecryptedMessageBase message, TLEncryptedChatBase peer, Action<TLDecryptedMessageBase> callback);
+        void SyncDecryptedMessages(IList<WindowsPhone.Tuple<TLDecryptedMessageBase, TLObject>> tuples, TLEncryptedChatBase peer, Action<IList<WindowsPhone.Tuple<TLDecryptedMessageBase, TLObject>>> callback);
+        void SyncSendingDecryptedMessage(TLInt chatId, TLInt date, TLLong randomId, Action<TLDecryptedMessageBase> callback);
+        
+        void Init();
 
-        void Initialize();
-
-        void SyncDifference(TLUpdatesDifference difference, Action<TLUpdatesDifference> result, IList<ExceptionInfo> exceptions);
-        void SyncDifferenceWithoutUsersAndChats(TLUpdatesDifference difference, Action<TLUpdatesDifference> result, IList<ExceptionInfo> exceptions);
-        void SyncStatuses(TLVector<TLContactStatus> contacts, Action<TLVector<TLContactStatus>> callback);
-        void DeleteUser(int id);
-        void DeleteChat(int id);
+        void SyncDifference(TLDifference difference, Action<TLDifference> result, IList<ExceptionInfo> exceptions);
+        void SyncDifferenceWithoutUsersAndChats(TLDifference difference, Action<TLDifference> result, IList<ExceptionInfo> exceptions);
+        void SyncStatuses(TLVector<TLContactStatusBase> contacts, Action<TLVector<TLContactStatusBase>> callback);
+        void DeleteUser(TLInt id);
+        void DeleteChat(TLInt id);
+        void DeleteUserHistory(TLPeerChannel channel, TLPeerUser peer);
     }
 
-    public class ExceptionInfo : TLObject
+    public class ExceptionInfo
     {
         public Exception Exception { get; set; }
 

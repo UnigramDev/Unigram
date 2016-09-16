@@ -1,27 +1,30 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Photos;
+using Telegram.Api.TL.Functions.Photos;
 
 namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
-        // TODO: missing TLPhotosDeletePhotos
-
-        public Task<MTProtoResponse<TLPhotosPhotosBase>> GetUserPhotosAsync(TLInputUserBase userId, int offset, long maxId, int limit)
+        public void UploadProfilePhotoAsync(TLInputFile file, Action<TLPhotosPhoto> callback, Action<TLRPCError> faultCallback = null)
         {
-            return SendInformativeMessage<TLPhotosPhotosBase>("photos.getUserPhotos", new TLPhotosGetUserPhotos { UserId = userId, Offset = offset, MaxId = maxId, Limit = limit });
+            var obj = new TLUploadProfilePhoto { File = file };
+
+            SendInformativeMessage("photos.uploadProfilePhoto", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLPhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id, TLInputPhotoCropBase crop)
+        public void UpdateProfilePhotoAsync(TLInputPhotoBase id, Action<TLPhotoBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            return SendInformativeMessage<TLPhotoBase>("photos.updateProfilePhoto", new TLPhotosUpdateProfilePhoto { Id = id, Crop = crop });
+            var obj = new TLUpdateProfilePhoto{ Id = id };
+
+            SendInformativeMessage("photos.updateProfilePhoto", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLPhotosPhoto>> UploadProfilePhotoAsync(TLInputFile file, string caption, TLInputGeoPointBase geoPoint, TLInputPhotoCropBase crop)
+        public void GetUserPhotosAsync(TLInputUserBase userId, TLInt offset, TLLong maxId, TLInt limit, Action<TLPhotosBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            return SendInformativeMessage<TLPhotosPhoto>("photos.uploadProfilePhoto", new TLPhotosUploadProfilePhoto { File = file, Caption = caption, GeoPoint = geoPoint, Crop = crop });
+            var obj = new TLGetUserPhotos { UserId = userId, Offset = offset, MaxId = maxId, Limit = limit };
+
+            SendInformativeMessage("photos.getUserPhotos", obj, callback, faultCallback);
         }
     }
 }

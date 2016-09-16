@@ -1,34 +1,34 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Upload;
+using Telegram.Api.TL.Functions.Upload;
 
 namespace Telegram.Api.Services
 {
-    public partial class MTProtoService
-    {
-        public Task<MTProtoResponse<bool>> SaveFilePartAsync(long fileId, int filePart, byte[] bytes)
+	public partial class MTProtoService
+	{
+        public void SaveFilePartAsync(TLLong fileId, TLInt filePart, TLString bytes, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var filePartValue = filePart;
-            var bytesLength = bytes.Length;
+            var filePartValue = filePart.Value;
+            var bytesLength = bytes.Data.Length;
 
-            var obj = new TLUploadSaveFilePart { FileId = fileId, FilePart = filePart, Bytes = bytes };
+            var obj = new TLSaveFilePart{ FileId = fileId, FilePart = filePart, Bytes = bytes };
 
-            return SendInformativeMessage<bool>("upload.saveFilePart " + filePart, obj);
+            SendInformativeMessage("upload.saveFilePart" + " " + filePart.Value, obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<bool>> SaveBigFilePartAsync(long fileId, int filePart, int fileTotalParts, byte[] bytes)
+        public void SaveBigFilePartAsync(TLLong fileId, TLInt filePart, TLInt fileTotalParts, TLString bytes, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLUploadSaveBigFilePart { FileId = fileId, FilePart = filePart, FileTotalParts = fileTotalParts, Bytes = bytes };
-
-            return SendInformativeMessage<bool>("upload.saveBigFilePart " + filePart + " " + fileTotalParts, obj);
+            var obj = new TLSaveBigFilePart { FileId = fileId, FilePart = filePart, FileTotalParts = fileTotalParts, Bytes = bytes };
+            Debug.WriteLine(string.Format("upload.saveBigFilePart file_id={0} file_part={1} file_total_parts={2} bytes={3}", fileId, filePart, fileTotalParts, bytes.Data.Length));
+            SendInformativeMessage("upload.saveBigFilePart " + filePart + " " + fileTotalParts, obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLUploadFile>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit)
+        public void GetFileAsync(TLInputFileLocationBase location, TLInt offset, TLInt limit, Action<TLFile> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLUploadGetFile { Location = location, Offset = offset, Limit = limit };
+            var obj = new TLGetFile { Location = location, Offset = offset, Limit = limit };
 
-            return SendInformativeMessage<TLUploadFile>("upload.getFile", obj);
+            SendInformativeMessage("upload.getFile", obj, callback, faultCallback);
         }
-    }
+	}
 }

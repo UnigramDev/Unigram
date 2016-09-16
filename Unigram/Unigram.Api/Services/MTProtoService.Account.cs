@@ -1,161 +1,175 @@
 ﻿using System;
 using System.Threading;
+#if WIN_RT
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
+#endif
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using System.Threading.Tasks;
-using Telegram.Api.TL.Methods.Auth;
-using Telegram.Api.TL.Methods.Account;
+using Telegram.Api.TL.Account;
+using Telegram.Api.TL.Functions.Account;
+using TLUpdateUserName = Telegram.Api.TL.Account.TLUpdateUserName;
 
 namespace Telegram.Api.Services
 {
-    public partial class MTProtoService
-    {
-        public event EventHandler CheckDeviceLocked;
+	public partial class MTProtoService
+	{
+	    public event EventHandler CheckDeviceLocked;
 
-        protected virtual void RaiseCheckDeviceLocked()
-        {
-            CheckDeviceLocked?.Invoke(this, EventArgs.Empty);
-        }
+	    protected virtual void RaiseCheckDeviceLocked()
+	    {
+	        var handler = CheckDeviceLocked;
+	        if (handler != null) handler(this, EventArgs.Empty);
+	    }
 
-        private void CheckDeviceLockedInternal(object state)
+	    private void CheckDeviceLockedInternal(object state)
         {
             RaiseCheckDeviceLocked();
         }
 
-        public Task<MTProtoResponse<bool>> DeleteAccountAsync(string reason)
+        public void ReportPeerAsync(TLInputPeerBase peer, TLInputReportReasonBase reason, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAccountDeleteAccount { Reason = reason };
+            var obj = new TLReportPeer { Peer = peer, Reason = reason };
 
-            return SendInformativeMessage<bool>("account.deleteAccount", obj);
+            SendInformativeMessage("account.reportPeer", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<bool>> UpdateDeviceLockedAsync(int period)
-        {
-            var obj = new TLAccountUpdateDeviceLocked { Period = period };
+	    public void DeleteAccountAsync(TLString reason, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLDeleteAccount { Reason = reason };
 
-            return SendInformativeMessage<bool>("account.updateDeviceLocked", obj);
+            SendInformativeMessage("account.deleteAccount", obj, callback, faultCallback);
+	    }
+
+        public void UpdateDeviceLockedAsync(TLInt period, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLUpdateDeviceLocked{ Period = period };
+
+            SendInformativeMessage("account.updateDeviceLocked", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLVector<TLWallPaperBase>>> GetWallpapersAsync()
-        {
-            var obj = new TLAccountGetWallPapers();
+	    public void GetWallpapersAsync(Action<TLVector<TLWallPaperBase>> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLGetWallPapers();
 
-            return SendInformativeMessage<TLVector<TLWallPaperBase>>("account.getWallpapers", obj);
+            SendInformativeMessage("account.getWallpapers", obj, callback, faultCallback);
+	    }
+
+        public void SendChangePhoneCodeAsync(TLString phoneNumber, TLString currentNumber, Action<TLSentCodeBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLSendChangePhoneCode { Flags = new TLInt(0), PhoneNumber = phoneNumber, CurrentNumber = currentNumber };
+
+            SendInformativeMessage("account.sendChangePhoneCode", obj, callback, faultCallback);
         }
 
-        // TODO: VERIFY RETURN TYPE
-        public Task<MTProtoResponse<TLAuthSentCode>> SendChangePhoneCodeAsync(string phoneNumber)
+        public void ChangePhoneAsync(TLString phoneNumber, TLString phoneCodeHash, TLString phoneCode, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAccountSendChangePhoneCode { PhoneNumber = phoneNumber };
+            var obj = new TLChangePhone { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode };
 
-            return SendInformativeMessage<TLAuthSentCode>("account.sendChangePhoneCode", obj);
+            SendInformativeMessage<TLUserBase>("account.changePhone", obj, user => _cacheService.SyncUser(user, callback.SafeInvoke), faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUserBase>> ChangePhoneAsync(string phoneNumber, string phoneCodeHash, string phoneCode)
-        {
-            var obj = new TLAccountChangePhone { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode };
-
-            var result = await SendInformativeMessage<TLUserBase>("account.changePhone", obj);
-            var task = new TaskCompletionSource<MTProtoResponse<TLUserBase>>();
-            _cacheService.SyncUser(result.Value, (callback) =>
-            {
-                task.SetResult(new MTProtoResponse<TLUserBase>(callback));
-            });
-            return await task.Task;
-        }
-
-        public async Task<MTProtoResponse<bool>> RegisterDeviceAsync(int tokenType, string token)
+        public void RegisterDeviceAsync(TLInt tokenType, TLString token, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
             if (_activeTransport.AuthKey == null)
             {
-                return new MTProtoResponse<bool>(new TLRPCError { ErrorCode = 404, ErrorMessage = "Service is not initialized to register device" });
+                faultCallback.SafeInvoke(new TLRPCError
+                {
+                    Code = new TLInt(404),
+                    Message = new TLString("Service is not initialized to register device")
+                });
+
+                return;
             }
 
-            var systemVersion = _deviceInfo.SystemVersion;
-#if !WP8
-            if (!systemVersion.StartsWith("7."))
+            var obj = new TLRegisterDevice
             {
-                systemVersion = "7.0.0.0";
-            }
-#endif
-
-            var obj = new TLAccountRegisterDevice
-            {
-                //TokenType = new int?(3),   // MPNS
-                //TokenType = new int?(8),   // WNS
+                //TokenType = new TLInt(3),   // MPNS
+                //TokenType = new TLInt(8),   // WNS
                 TokenType = tokenType,
-                Token = token,
-                //TODO: where should we put these info?
-                //DeviceModel = _deviceInfo.Model,
-                //SystemVersion = systemVersion,
-                //AppVersion = _deviceInfo.AppVersion,
-                //AppSandbox = false,
-                //LangCode = Utils.CurrentUICulture()
-            };
-
-            //Execute.ShowDebugMessage("account.registerDevice " + obj);
-
-            return await SendInformativeMessage<bool>("account.registerDevice", obj);
-        }
-
-        public Task<MTProtoResponse<bool>> UnregisterDeviceAsync(string token)
-        {
-            var obj = new TLAccountUnregisterDevice
-            {
-                TokenType = 3,
                 Token = token
             };
 
-            return SendInformativeMessage<bool>("account.unregisterDevice", obj);
+            const string methodName = "account.registerDevice";
+            Logs.Log.Write(string.Format("{0} {1}", methodName, obj));
+            SendInformativeMessage<TLBool>(methodName, obj,
+                result =>
+                {
+                    Logs.Log.Write(string.Format("{0} result={1}", methodName, result));
+
+                    callback.SafeInvoke(result);
+                },
+                error =>
+                {
+                    Logs.Log.Write(string.Format("{0} error={1}", methodName, error));
+
+                    faultCallback.SafeInvoke(error);
+                });
         }
 
-        public Task<MTProtoResponse<TLPeerNotifySettingsBase>> GetNotifySettingsAsync(TLInputNotifyPeerBase peer)
+        public void UnregisterDeviceAsync(TLInt tokenType, TLString token, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAccountGetNotifySettings { Peer = peer };
+            var obj = new TLUnregisterDevice
+            {
+                //TokenType = new TLInt(3),   // MPNS
+                //TokenType = new TLInt(8),   // WNS
+                TokenType = tokenType,
+                Token = token
+            };
 
-            return SendInformativeMessage<TLPeerNotifySettingsBase>("account.getNotifySettings", obj);
+            const string methodName = "account.unregisterDevice";
+            Logs.Log.Write(string.Format("{0} {1}", methodName, obj));
+            SendInformativeMessage<TLBool>("account.unregisterDevice", obj,
+                result =>
+                {
+                    Logs.Log.Write(string.Format("{0} result={1}", methodName, result));
+
+                    callback.SafeInvoke(result);
+                },
+                error =>
+                {
+                    Logs.Log.Write(string.Format("{0} error={1}", methodName, error));
+
+                    faultCallback.SafeInvoke(error);
+                });
         }
 
-        public Task<MTProtoResponse<bool>> ResetNotifySettingsAsync()
+        public void GetNotifySettingsAsync(TLInputNotifyPeerBase peer, Action<TLPeerNotifySettingsBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLGetNotifySettings{ Peer = peer };
+
+            SendInformativeMessage("account.getNotifySettings", obj, callback, faultCallback);
+        }
+
+        public void ResetNotifySettingsAsync(Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
             Execute.ShowDebugMessage(string.Format("account.resetNotifySettings"));
 
-            var obj = new TLAccountResetNotifySettings();
+            var obj = new TLResetNotifySettings();
 
-            return SendInformativeMessage<bool>("account.resetNotifySettings", obj);
+            SendInformativeMessage("account.resetNotifySettings", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<bool>> UpdateNotifySettingsAsync(TLInputNotifyPeerBase peer, TLInputPeerNotifySettings settings)
+	    public void UpdateNotifySettingsAsync(TLInputNotifyPeerBase peer, TLInputPeerNotifySettings settings, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
             //Execute.ShowDebugMessage(string.Format("account.updateNotifySettings peer=[{0}] settings=[{1}]", peer, settings));
 
-            var obj = new TLAccountUpdateNotifySettings { Peer = peer, Settings = settings };
+            var obj = new TL.Functions.Account.TLUpdateNotifySettings { Peer = peer, Settings = settings };
 
-            return SendInformativeMessage<bool>("account.updateNotifySettings", obj);
+            SendInformativeMessage("account.updateNotifySettings", obj, callback, faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUserBase>> UpdateProfileAsync(string firstName, string lastName)
+        public void UpdateProfileAsync(TLString firstName, TLString lastName, TLString about, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAccountUpdateProfile { FirstName = firstName, LastName = lastName };
+            var obj = new TLUpdateProfile { FirstName = firstName, LastName = lastName, About = about };
 
-            var result = await SendInformativeMessage<TLUserBase>("account.updateProfile", obj);
-            var task = new TaskCompletionSource<MTProtoResponse<TLUserBase>>();
-            _cacheService.SyncUser(result.Value, (callback) =>
-            {
-                task.SetResult(new MTProtoResponse<TLUserBase>(callback));
-            });
-            return await task.Task;
+            SendInformativeMessage<TLUserBase>("account.updateProfile", obj, result => _cacheService.SyncUser(result, callback), faultCallback);
         }
 
-        public Task<MTProtoResponse<bool>> UpdateStatusAsync(bool offline)
+        public void UpdateStatusAsync(TLBool offline, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            if (_activeTransport.AuthKey == null)
-            {
-                return null;
-            }
+            if (_activeTransport.AuthKey == null) return;
 
 #if WIN_RT
             if (_deviceInfo != null && _deviceInfo.IsBackground)
@@ -167,9 +181,9 @@ namespace Telegram.Api.Services
 #endif
             }
 #endif
-            var obj = new TLAccountUpdateStatus { Offline = offline };
-
-            return SendInformativeMessage<bool>("account.updateStatus", obj);
+            var obj = new TLUpdateStatus { Offline = offline };
+            System.Diagnostics.Debug.WriteLine("account.updateStatus offline=" + offline.Value);
+            SendInformativeMessage("account.updateStatus", obj, callback, faultCallback);
         }
 #if WIN_RT
         public static void AddToast(string caption, string message)
@@ -199,109 +213,124 @@ namespace Telegram.Api.Services
         }
 #endif
 
-        public Task<MTProtoResponse<bool>> CheckUsernameAsync(string username)
-        {
-            var obj = new TLAccountCheckUsername { Username = username };
+	    public void CheckUsernameAsync(TLString username, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLCheckUsername { Username = username };
 
-            return SendInformativeMessage<bool>("account.checkUsername", obj);
-        }
+            SendInformativeMessage("account.checkUsername", obj, callback, faultCallback);
+	    }
 
-        public Task<MTProtoResponse<TLUserBase>> UpdateUsernameAsync(string username)
-        {
+	    public void UpdateUsernameAsync(TLString username, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null)
+	    {
             var obj = new TLUpdateUserName { Username = username };
 
-            return SendInformativeMessage<TLUserBase>("account.updateUsername", obj);
-        }
+            SendInformativeMessage("account.updateUsername", obj, callback, faultCallback);
+	    }
 
-        public Task<MTProtoResponse<TLAccountDaysTTL>> GetAccountTTLAsync()
+	    public void GetAccountTTLAsync(Action<TLAccountDaysTTL> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLGetAccountTTL();
+
+            SendInformativeMessage("account.getAccountTTL", obj, callback, faultCallback);
+	    }
+
+        public void SetAccountTTLAsync(TLAccountDaysTTL ttl, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAccountGetAccountTTL();
+            var obj = new TLSetAccountTTL{TTL = ttl};
 
-            return SendInformativeMessage<TLAccountDaysTTL>("account.getAccountTTL", obj);
+            SendInformativeMessage("account.setAccountTTL", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<bool>> SetAccountTTLAsync(TLAccountDaysTTL ttl)
+        public void DeleteAccountTTLAsync(TLString reason, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAccountSetAccountTTL { TTL = ttl };
+            var obj = new TLDeleteAccount { Reason = reason };
 
-            return SendInformativeMessage<bool>("account.setAccountTTL", obj);
+            SendInformativeMessage("account.deleteAccount", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<bool>> DeleteAccountTTLAsync(string reason)
+        public void GetPrivacyAsync(TLInputPrivacyKeyBase key, Action<TLPrivacyRules> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAccountDeleteAccount { Reason = reason };
+            var obj = new TLGetPrivacy { Key = key };
 
-            return SendInformativeMessage<bool>("account.deleteAccount", obj);
+            SendInformativeMessage("account.getPrivacy", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLAccountPrivacyRules>> GetPrivacyAsync(TLInputPrivacyKeyBase key)
+        public void SetPrivacyAsync(TLInputPrivacyKeyBase key, TLVector<TLInputPrivacyRuleBase> rules, Action<TLPrivacyRules> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAccountGetPrivacy { Key = key };
+            var obj = new TLSetPrivacy { Key = key, Rules = rules };
 
-            return SendInformativeMessage<TLAccountPrivacyRules>("account.getPrivacy", obj);
+            SendInformativeMessage("account.setPrivacy", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLInputPrivacyRuleBase>> SetPrivacyAsync(TLInputPrivacyKeyBase key, TLVector<TLInputPrivacyRuleBase> rules)
+        public void GetAuthorizationsAsync(Action<TLAccountAuthorizations> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAccountSetPrivacy { Key = key, Rules = rules };
+            var obj = new TLGetAuthorizations();
 
-            return SendInformativeMessage<TLInputPrivacyRuleBase>("account.setPrivacy", obj);
+            SendInformativeMessage("account.getAuthorizations", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLAccountAuthorizations>> GetAuthorizationsAsync()
+        public void ResetAuthorizationAsync(TLLong hash, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAccountGetAuthorizations();
+            var obj = new TLResetAuthorization { Hash = hash };
 
-            return SendInformativeMessage<TLAccountAuthorizations>("account.getAuthorizations", obj);
+            SendInformativeMessage("account.resetAuthorization", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<bool>> ResetAuthorizationAsync(long hash)
-        {
-            var obj = new TLAccountResetAuthorization { Hash = hash };
+	    public void GetPasswordAsync(Action<TLPasswordBase> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLGetPassword();
 
-            return SendInformativeMessage<bool>("account.resetAuthorization", obj);
-        }
+            SendInformativeMessage("account.getPassword", obj, callback, faultCallback);
+	    }
 
-        public Task<MTProtoResponse<TLAccountPasswordBase>> GetPasswordAsync()
-        {
-            var obj = new TLAccountGetPassword();
+	    public void GetPasswordSettingsAsync(TLString currentPasswordHash, Action<TLPasswordSettings> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLGetPasswordSettings{ CurrentPasswordHash = currentPasswordHash };
 
-            return SendInformativeMessage<TLAccountPasswordBase>("account.getPassword", obj);
-        }
+            SendInformativeMessage("account.getPasswordSettings", obj, callback, faultCallback);
+	    }
 
-        public Task<MTProtoResponse<TLAccountPasswordSettings>> GetPasswordSettingsAsync(byte[] currentPasswordHash)
-        {
-            var obj = new TLAccountGetPasswordSettings { CurrentPasswordHash = currentPasswordHash };
+	    public void UpdatePasswordSettingsAsync(TLString currentPasswordHash, TLPasswordInputSettings newSettings, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLUpdatePasswordSettings { CurrentPasswordHash = currentPasswordHash, NewSettings = newSettings };
 
-            return SendInformativeMessage<TLAccountPasswordSettings>("account.getPasswordSettings", obj);
-        }
+            SendInformativeMessage("account.updatePasswordSettings", obj, callback, faultCallback);
+	    }
 
-        public Task<MTProtoResponse<bool>> UpdatePasswordSettingsAsync(byte[] currentPasswordHash, TLAccountPasswordInputSettings newSettings)
-        {
-            var obj = new TLAccountUpdatePasswordSettings { CurrentPasswordHash = currentPasswordHash, NewSettings = newSettings };
+	    public void CheckPasswordAsync(TLString passwordHash, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLCheckPassword { PasswordHash = passwordHash };
 
-            return SendInformativeMessage<bool>("account.updatePasswordSettings", obj);
-        }
+            SendInformativeMessage("account.checkPassword", obj, callback, faultCallback);
+	    }
 
-        public Task<MTProtoResponse<TLAuthAuthorization>> CheckPasswordAsync(byte[] passwordHash)
-        {
-            var obj = new TLAuthCheckPassword { PasswordHash = passwordHash };
+	    public void RequestPasswordRecoveryAsync(Action<TLPasswordRecovery> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLRequestPasswordRecovery();
 
-            return SendInformativeMessage<TLAuthAuthorization>("account.checkPassword", obj);
-        }
+            SendInformativeMessage("account.requestPasswordRecovery", obj, callback, faultCallback);
+	    }
 
-        public Task<MTProtoResponse<TLAuthPasswordRecovery>> RequestPasswordRecoveryAsync()
-        {
-            var obj = new TLAuthRequestPasswordRecovery();
+	    public void RecoverPasswordAsync(TLString code, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    {
+	        var obj = new TLRecoverPassword {Code = code};
 
-            return SendInformativeMessage<TLAuthPasswordRecovery>("account.requestPasswordRecovery", obj);
-        }
+            SendInformativeMessage("account.recoverPassword", obj, callback, faultCallback);
+	    }
 
-        public Task<MTProtoResponse<TLAuthAuthorization>> RecoverPasswordAsync(string code)
-        {
-            var obj = new TLAuthRecoverPassword { Code = code };
 
-            return SendInformativeMessage<TLAuthAuthorization>("account.recoverPassword", obj);
-        }
-    }
+	    public void ConfirmPhoneAsync(TLString phoneCodeHash, TLString phoneCode, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLConfirmPhone { PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode };
+
+            SendInformativeMessage("account.confirmPhone", obj, callback, faultCallback);
+	    }
+
+	    public void SendConfirmPhoneCodeAsync(TLString hash, TLBool currentNumber, Action<TLSentCodeBase> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLSendConfirmPhoneCode { Flags = new TLInt(0), Hash = hash, CurrentNumber = currentNumber };
+
+            SendInformativeMessage("account.sendConfirmPhoneCode", obj, callback, faultCallback);
+	    }
+	}
 }

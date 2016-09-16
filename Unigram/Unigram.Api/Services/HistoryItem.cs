@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Telegram.Api.TL;
 
 namespace Telegram.Api.Services
@@ -14,14 +13,14 @@ namespace Telegram.Api.Services
 
     public class HistoryItem
     {
-        public long Hash { get { return Message != null ? Message.MsgId : 0; } }
-        public TLTransportMessageBase Message { get; set; }
+        public long Hash { get { return Message != null ? Message.MessageId.Value : 0; } }
+        public TLTransportMessageWithIdBase Message { get; set; }
         public TLObject Object { get; set; }
         public string Caption { get; set; }
         public DateTime SendTime { get; set; }
         public DateTime? SendBeforeTime { get; set; }
         public RequestStatus Status { get; set; }
-        public TaskCompletionSource<MTProtoResponse> Callback { get; set; }
+        public Action<TLObject> Callback { get; set; }
         public Action FastCallback { get; set; }
         public Action<int> AttemptFailed { get; set; }
         public Action<TLRPCError> FaultCallback { get; set; }

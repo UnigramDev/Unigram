@@ -7,222 +7,117 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
+using TransportType = Telegram.Api.Services.TransportType;
 
 namespace Telegram.Api.Transport
 {
     public abstract class TcpTransportBase : ITransport
     {
-        private readonly object _syncRoot = new object();
+        public bool Additional { get; set; }
 
-        private bool _once;
-
-        private int _bytesReceived;
-
-        private int _packetLength;
-
-        private byte[] _previousTail = new byte[0];
-
-        private bool _usePreviousTail;
-
-        private int _packetLengthBytesRead;
-
-        private readonly MemoryStream _stream = new MemoryStream();
-
-        private readonly object _previousMessageRoot = new object();
-
-        public long PreviousMessageId;
-
-        private readonly object _nonEncryptedHistoryRoot = new object();
-
-        private readonly Dictionary<long, HistoryItem> _nonEncryptedHistory = new Dictionary<long, HistoryItem>();
-
-        public event EventHandler<DataEventArgs> PacketReceived;
-
-        public event EventHandler Connecting;
-
-        public event EventHandler Connected;
-
-        public event EventHandler ConnectionLost;
-
-        public string Host
-        {
-            get;
-            protected set;
-        }
-
-        public int Port
-        {
-            get;
-            protected set;
-        }
-
-        public virtual TransportType Type
-        {
-            get
-            {
-                return TransportType.Tcp;
-            }
-        }
-
-        public bool Initiated
-        {
-            get;
-            set;
-        }
-
-        public bool Initialized
-        {
-            get;
-            set;
-        }
-
-        public bool IsInitializing
-        {
-            get;
-            set;
-        }
-
-        public bool IsAuthorized
-        {
-            get;
-            set;
-        }
-
-        public bool IsAuthorizing
-        {
-            get;
-            set;
-        }
-
-        public bool Closed
-        {
-            get;
-            protected set;
-        }
-
-        public object SyncRoot
-        {
-            get
-            {
-                return _syncRoot;
-            }
-        }
-
-        public int Id
-        {
-            get;
-            protected set;
-        }
-
-        public int DCId
-        {
-            get;
-            set;
-        }
-
-        public byte[] AuthKey
-        {
-            get;
-            set;
-        }
-
-        public long? SessionId
-        {
-            get;
-            set;
-        }
-
-        public long? Salt
-        {
-            get;
-            set;
-        }
-
-        public int SequenceNumber
-        {
-            get;
-            set;
-        }
-
-        public long ClientTicksDelta
-        {
-            get;
-            set;
-        }
-
-        public DateTime? FirstSendTime
-        {
-            get;
-            protected set;
-        }
-
-        public DateTime? FirstReceiveTime
-        {
-            get;
-            protected set;
-        }
-
-        public DateTime? LastReceiveTime
-        {
-            get;
-            protected set;
-        }
+        public string Host { get; protected set; }
+        public int Port { get; protected set; }
+        public virtual TransportType Type { get { return TransportType.Tcp; } }
 
         protected TcpTransportBase(string host, int port)
         {
             Host = host;
             Port = port;
-            Random random = new Random();
+
+            var random = new Random();
             Id = random.Next(0, 255);
         }
 
-        public void UpdateTicksDelta(long? msgId)
-        {
-            if (_once)
-            {
-                return;
-            }
-            lock (SyncRoot)
-            {
-                if (!_once)
-                {
-                    _once = true;
-                    long value = GenerateMessageId(false);
-                    long value2 = msgId.Value;
-                    ClientTicksDelta += value2 - value;
-                }
+        public bool Initiated { get; set; }
+        public bool Initialized { get; set; }
+        public bool IsInitializing { get; set; }
+        public bool IsAuthorized { get; set; }
+        public bool IsAuthorizing { get; set; }
+        public bool Closed { get; protected set; }
+
+        private readonly object _syncRoot = new object();
+        public object SyncRoot { get { return _syncRoot; } }
+
+        public int Id { get; protected set; }
+        public int DCId { get; set; }
+        public byte[] AuthKey { get; set; }
+        public TLLong SessionId { get; set; }
+        public TLLong Salt { get; set; }
+        public int SequenceNumber { get; set; }
+
+        private long _clientTicksDelta;
+        public long ClientTicksDelta 
+        { 
+            get 
+            { 
+                return _clientTicksDelta; 
+            } 
+            set 
+            { 
+                _clientTicksDelta = value; 
             }
         }
 
-        public abstract void SendPacketAsync(string caption, byte[] data, Action<bool> callback, Action<TcpTransportResult> faultCallback = null);
+        private bool _once;
 
+        public void UpdateTicksDelta(TLLong msgId)
+        {
+            if (_once) return;  // to avoid lock
+
+            lock (SyncRoot)
+            {
+                if (_once) return;
+                _once = true;
+
+                var clientTime = GenerateMessageId().Value;
+                var serverTime = msgId.Value;
+                ClientTicksDelta += serverTime - clientTime;
+            }
+            //Execute.ShowDebugMessage("ITransport.UpdateTicksDelta dc_id=" + DCId);
+        }
+
+        public abstract void SendPacketAsync(string caption, byte[] data, Action<bool> callback, Action<TcpTransportResult> faultCallback = null);
         public abstract void Close();
 
-        public Tuple<int, int, int> GetCurrentPacketInfo()
+        public int PacketLength { get { return _packetLength; } }
+
+        private int _lastPacketLength;
+
+        public int LastPacketLength { get { return _lastPacketLength; } }
+
+
+        public WindowsPhone.Tuple<int, int, int> GetCurrentPacketInfo()
         {
-            return new Tuple<int, int, int>(_packetLengthBytesRead, _packetLength, _bytesReceived);
+            return new WindowsPhone.Tuple<int, int, int>(_packetLengthBytesRead, _packetLength, _bytesReceived);
         }
 
         public abstract string GetTransportInfo();
 
+        public DateTime? FirstSendTime { get; protected set; }
+        public DateTime? FirstReceiveTime { get; protected set; }
+        public DateTime? LastReceiveTime { get; protected set; }
+
         protected static byte[] CreatePacket(byte[] buffer)
         {
-            int num = buffer.Length / 4;
-            int num2 = (num > 126) ? (4 + buffer.Length) : (1 + buffer.Length);
-            byte[] array = new byte[num2];
-            if (num > 126)
+            const int maxShortLength = 0x7E;
+            var shortLength = buffer.Length / 4;
+            var length = (shortLength > maxShortLength) ? 4 + buffer.Length : 1 + buffer.Length;
+            var bytes = new byte[length];
+
+            if (shortLength > maxShortLength)
             {
-                array[0] = 127;
-                byte[] bytes = BitConverter.GetBytes(num);
-                Array.Copy(bytes, 0, array, 1, 3);
-                Array.Copy(buffer, 0, array, 4, buffer.Length);
+                bytes[0] = 0x7F;
+                var shortLengthBytes = BitConverter.GetBytes(shortLength);
+                Array.Copy(shortLengthBytes, 0, bytes, 1, 3);
+                Array.Copy(buffer, 0, bytes, 4, buffer.Length);
             }
             else
             {
-                array[0] = (byte)num;
-                Array.Copy(buffer, 0, array, 1, buffer.Length);
+                bytes[0] = (byte)shortLength;
+                Array.Copy(buffer, 0, bytes, 1, buffer.Length);
             }
-            return array;
+
+            return bytes;
         }
 
         protected static int GetPacketLength(byte[] bytes, int position, out int bytesRead)
@@ -231,95 +126,115 @@ namespace Telegram.Api.Transport
             {
                 if (bytes.Length != 0 && position != 0)
                 {
-                    Execute.ShowDebugMessage(string.Concat(new object[]
-                    {
-                        "TCPTransport.0x7F l<=p p=",
-                        position,
-                        " l=",
-                        bytes.Length
-                    }));
+                    Execute.ShowDebugMessage("TCPTransport.0x7F l<=p p=" + position + " l=" + bytes.Length);
                 }
                 bytesRead = 0;
                 return 0;
             }
-            int num;
-            if (bytes[position] == 127)
+
+            int shortLength;
+            if (bytes[position] == 0x7F)
             {
-                if (bytes.Length < position + 1 + 3)
+                if (bytes.Length < (position + 1 + 3))
                 {
-                    Execute.ShowDebugMessage(string.Concat(new object[]
-                    {
-                        "TCPTransport.0x7F error p=",
-                        position,
-                        " l=",
-                        bytes.Length
-                    }));
+                    Execute.ShowDebugMessage("TCPTransport.0x7F error p=" + position + " l=" + bytes.Length);
                 }
-                byte[] array = bytes.SubArray(1 + position, 3);
-                IEnumerable<byte> arg_A6_0 = array;
-                byte[] second = new byte[1];
-                num = BitConverter.ToInt32(arg_A6_0.Concat(second).ToArray<byte>(), 0);
+
+                var lengthBytes = bytes.SubArray(1 + position, 3);
+
+                shortLength = BitConverter.ToInt32(lengthBytes.Concat(new byte[] { 0x00 }).ToArray(), 0);
                 bytesRead = 4;
             }
             else
             {
-                num = (int)bytes[position];
+                //Execute.ShowDebugMessage("TCPTransport.!=0x7F " + position);
+
+                shortLength = bytes[position];
                 bytesRead = 1;
             }
-            return num * 4;
+
+            return shortLength * 4;
         }
 
+        protected static byte[] GetInitBuffer()
+        {
+            var buffer = new byte[64];
+            var random = new Random();
+            random.NextBytes(buffer);
+            while (buffer[0] == 0x44414548
+                   || buffer[0] == 0x54534f50
+                   || buffer[0] == 0x20544547
+                   || buffer[0] == 0x4954504f
+                   || buffer[0] == 0xeeeeeeee
+                   || buffer[0] == 0xef)
+            {
+                buffer[0] = (byte)random.Next();
+            }
+            while (buffer[1] == 0x00000000)
+            {
+                buffer[1] = (byte)random.Next();
+            }
+
+            return buffer;
+        }
+
+        private int _bytesReceived;
+        private int _packetLength = 0;
+        private byte[] _previousTail = new byte[0];
+        private bool _usePreviousTail;
+        private int _packetLengthBytesRead = 0;
+        readonly MemoryStream _stream = new MemoryStream();
         protected void OnBufferReceived(byte[] buffer, int offset, int bytesTransferred)
         {
             if (bytesTransferred > 0)
             {
                 _bytesReceived += bytesTransferred;
+
                 if (_packetLength == 0)
                 {
-                    byte[] bytes;
+                    byte[] fullBuffer;
+
                     if (_usePreviousTail)
                     {
                         _usePreviousTail = false;
-                        bytes = TLUtils.Combine(new byte[][]
-                        {
-                            _previousTail,
-                            buffer
-                        });
+                        fullBuffer = TLUtils.Combine(_previousTail, buffer);
                         _previousTail = new byte[0];
                     }
                     else
                     {
-                        bytes = buffer;
+                        fullBuffer = buffer;
                     }
-                    _packetLength = TcpTransportBase.GetPacketLength(bytes, offset, out _packetLengthBytesRead);
+
+                    _packetLength = GetPacketLength(fullBuffer, offset, out _packetLengthBytesRead);
                 }
+
                 _stream.Write(buffer, offset, bytesTransferred);
+
                 if (_bytesReceived >= _packetLength + _packetLengthBytesRead)
                 {
-                    byte[] data = _stream.ToArray();
-                    byte[] data2 = data.SubArray(_packetLengthBytesRead, _packetLength);
-                    _previousTail = new byte[0];
+                    var bytes = _stream.ToArray();
+
+                    var data = bytes.SubArray(_packetLengthBytesRead, _packetLength);
+                    _previousTail = new byte[] { };
                     if (_bytesReceived > _packetLength + _packetLengthBytesRead)
                     {
-                        _previousTail = data.SubArray(_packetLengthBytesRead + _packetLength, _bytesReceived - (_packetLengthBytesRead + _packetLength));
+                        _previousTail = bytes.SubArray(_packetLengthBytesRead + _packetLength, _bytesReceived - (_packetLengthBytesRead + _packetLength));
                     }
-                    _stream.SetLength(0L);
+
+                    _stream.SetLength(0);
                     _stream.Write(_previousTail, 0, _previousTail.Length);
                     _bytesReceived = _previousTail.Length;
+
                     if (_previousTail.Length > 0)
                     {
                         if (_previousTail.Length >= 4)
                         {
-                            _packetLength = TcpTransportBase.GetPacketLength(_previousTail, 0, out _packetLengthBytesRead);
-                            if (_packetLength != 0 && _previousTail.Length >= _packetLength + _packetLengthBytesRead)
+                            _packetLength = GetPacketLength(_previousTail, 0, out _packetLengthBytesRead);
+
+                            if (_packetLength != 0
+                                && _previousTail.Length >= _packetLength + _packetLengthBytesRead)
                             {
-                                Execute.ShowDebugMessage(string.Concat(new object[]
-                                {
-                                    "TCPTransport.0x7F forgot package length=",
-                                    _packetLength,
-                                    " tail=",
-                                    _previousTail.Length
-                                }));
+                                Execute.ShowDebugMessage("TCPTransport.0x7F forgot package length=" + _packetLength + " tail=" + _previousTail.Length);
                             }
                         }
                         else
@@ -331,10 +246,10 @@ namespace Telegram.Api.Transport
                     }
                     else
                     {
-                        _packetLength = TcpTransportBase.GetPacketLength(_previousTail, 0, out _packetLengthBytesRead);
+                        _packetLength = GetPacketLength(_previousTail, 0, out _packetLengthBytesRead);
                     }
-                    RaisePacketReceived(new DataEventArgs(data2));
-                    return;
+                    _lastPacketLength = data.Length;
+                    RaisePacketReceived(new DataEventArgs(data, PacketLength, LastReceiveTime));
                 }
             }
             else
@@ -343,35 +258,54 @@ namespace Telegram.Api.Transport
             }
         }
 
-        public long GenerateMessageId(bool checkPreviousMessageId = false)
+        #region MessageId
+        private readonly object _previousMessageRoot = new object();
+
+        public static long PreviousMessageId;
+
+        public TLLong GenerateMessageId(bool checkPreviousMessageId = false)
         {
-            long clientTicksDelta = ClientTicksDelta;
-            DateTime now = DateTime.Now;
-            long num = (long)(Utils.DateTimeToUnixTimestamp(now) * 4294967296.0) + clientTicksDelta;
-            long num2 = 4L - num % 4L;
-            long num3;
-            if (num % 4L == 0L)
+            var clientDelta = ClientTicksDelta;
+            // serverTime = clientTime + clientDelta
+            var now = DateTime.Now;
+            //var unixTime = (long)Utils.DateTimeToUnixTimestamp(now) << 32;
+
+            var unixTime = (long)(Utils.DateTimeToUnixTimestamp(now) * 4294967296) + clientDelta; //2^32
+            long correctUnixTime;
+
+            var addingTicks = 4 - (unixTime % 4);
+            if ((unixTime % 4) == 0)
             {
-                num3 = num;
+                correctUnixTime = unixTime;
             }
             else
             {
-                num3 = num + num2;
+                correctUnixTime = unixTime + addingTicks;
             }
+
+            // check with previous messageId
+
             lock (_previousMessageRoot)
             {
-                if (PreviousMessageId != 0L && checkPreviousMessageId)
+                if (PreviousMessageId != 0 && checkPreviousMessageId)
                 {
-                    num3 = Math.Max(PreviousMessageId + 4L, num3);
+                    correctUnixTime = Math.Max(PreviousMessageId + 4, correctUnixTime);
                 }
-                PreviousMessageId = num3;
+                PreviousMessageId = correctUnixTime;
             }
-            if (num3 == 0L)
-            {
+
+            if (correctUnixTime == 0)
                 throw new Exception("Bad message id");
-            }
-            return num3;
+
+            return new TLLong(correctUnixTime);
         }
+        #endregion
+
+        #region NonEncryptedHistory
+
+        private readonly object _nonEncryptedHistoryRoot = new object();
+
+        private readonly Dictionary<long, HistoryItem> _nonEncryptedHistory = new Dictionary<long, HistoryItem>();
 
         public void EnqueueNonEncryptedItem(HistoryItem item)
         {
@@ -379,47 +313,79 @@ namespace Telegram.Api.Transport
             {
                 _nonEncryptedHistory[item.Hash] = item;
             }
+#if LOG_REGISTRATION
+            var info = new StringBuilder();
+            info.AppendLine(String.Format("Socket.EnqueueNonEncryptedItem {0} item {1} hash={2}", Id, item.Caption, item.Hash));
+            info.AppendLine("Items: " + _nonEncryptedHistory.Count);
+            foreach (var historyItem in _nonEncryptedHistory.Values)
+            {
+                info.AppendLine(historyItem.Caption + " " + historyItem.Hash);
+            }
+            TLUtils.WriteLog(info.ToString());
+#endif
         }
 
-        public IList<HistoryItem> RemoveTimeOutRequests(double timeout = 25.0)
+        public IList<HistoryItem> RemoveTimeOutRequests(double timeout = Constants.TimeoutInterval)
         {
-            DateTime now = DateTime.Now;
-            List<long> list = new List<long>();
-            List<HistoryItem> list2 = new List<HistoryItem>();
+            var now = DateTime.Now;
+            var timedOutKeys = new List<long>();
+            var timedOutValues = new List<HistoryItem>();
+
             lock (_nonEncryptedHistoryRoot)
             {
-                foreach (KeyValuePair<long, HistoryItem> current in _nonEncryptedHistory)
+                foreach (var historyKeyValue in _nonEncryptedHistory)
                 {
-                    HistoryItem value = current.Value;
-                    if (value.SendTime != default(DateTime) && value.SendTime.AddSeconds(timeout) < now)
+                    var historyValue = historyKeyValue.Value;
+                    if (historyValue.SendTime != default(DateTime)
+                        && historyValue.SendTime.AddSeconds(timeout) < now)
                     {
-                        list.Add(current.Key);
-                        list2.Add(current.Value);
+                        timedOutKeys.Add(historyKeyValue.Key);
+                        timedOutValues.Add(historyKeyValue.Value);
                     }
                 }
-                if (list.Count > 0)
+
+                if (timedOutKeys.Count > 0)
                 {
-                    foreach (long current2 in list)
+#if LOG_REGISTRATION
+                    var info = new StringBuilder();
+                    info.AppendLine(String.Format("Socket.RemoveTimeOutRequests {0}", Id));
+                    info.AppendLine("Items before: " + _nonEncryptedHistory.Count);
+                    foreach (var historyItem in _nonEncryptedHistory.Values)
                     {
-                        _nonEncryptedHistory.Remove(current2);
+                        info.AppendLine(historyItem.Caption + " " + historyItem.Hash);
                     }
+#endif
+                    foreach (var key in timedOutKeys)
+                    {
+                        _nonEncryptedHistory.Remove(key);
+                    }
+#if LOG_REGISTRATION
+                    info.AppendLine("Items after: " + _nonEncryptedHistory.Count);
+                    foreach (var historyItem in _nonEncryptedHistory.Values)
+                    {
+                        info.AppendLine(historyItem.Caption + " " + historyItem.Hash);
+                    }
+                    TLUtils.WriteLog(info.ToString());
+#endif
                 }
             }
-            return list2;
+
+            return timedOutValues;
         }
 
         public HistoryItem DequeueFirstNonEncryptedItem()
         {
-            HistoryItem historyItem;
+            HistoryItem item;
             lock (_nonEncryptedHistoryRoot)
             {
-                historyItem = _nonEncryptedHistory.Values.FirstOrDefault<HistoryItem>();
-                if (historyItem != null)
+                item = _nonEncryptedHistory.Values.FirstOrDefault();
+                if (item != null)
                 {
-                    _nonEncryptedHistory.Remove(historyItem.Hash);
+                    _nonEncryptedHistory.Remove(item.Hash);
                 }
             }
-            return historyItem;
+
+            return item;
         }
 
         public bool RemoveNonEncryptedItem(HistoryItem item)
@@ -427,8 +393,28 @@ namespace Telegram.Api.Transport
             bool result;
             lock (_nonEncryptedHistoryRoot)
             {
+#if LOG_REGISTRATION
+                var info = new StringBuilder();
+                info.AppendLine(String.Format("Socket.RemoveNonEncryptedItem {0} item {1} hash={2}", Id, item.Caption, item.Hash));
+                info.AppendLine("Items before: " + _nonEncryptedHistory.Count);
+                foreach (var historyItem in _nonEncryptedHistory.Values)
+                {
+                    info.AppendLine(historyItem.Caption + " " + historyItem.Hash);
+                }
+#endif
+
                 result = _nonEncryptedHistory.Remove(item.Hash);
+
+#if LOG_REGISTRATION
+                info.AppendLine("Items after: " + _nonEncryptedHistory.Count);
+                foreach (var historyItem in _nonEncryptedHistory.Values)
+                {
+                    info.AppendLine(historyItem.Caption + " " + historyItem.Hash);
+                }
+                TLUtils.WriteLog(info.ToString());
+#endif
             }
+
             return result;
         }
 
@@ -436,119 +422,109 @@ namespace Telegram.Api.Transport
         {
             lock (_nonEncryptedHistoryRoot)
             {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.Append(string.Format("Socket.ClearNonEncryptedHistory {0} count={1}", new object[]
-                {
-                    Id,
-                    _nonEncryptedHistory.Count
-                }));
+                var error = new StringBuilder();
+                error.Append(String.Format("Socket.ClearNonEncryptedHistory {0} count={1}", Id, _nonEncryptedHistory.Count));
                 if (e != null)
                 {
-                    stringBuilder.AppendLine(e.ToString());
+                    error.AppendLine(e.ToString());
                 }
-                foreach (KeyValuePair<long, HistoryItem> current in _nonEncryptedHistory)
+
+#if LOG_REGISTRATION
+                TLUtils.WriteLog(error.ToString());
+#endif
+
+                foreach (var historyItem in _nonEncryptedHistory)
                 {
-                    current.Value.FaultCallback.SafeInvoke(new TLRPCError
-                    {
-                        ErrorCode = 404,
-                        ErrorMessage = stringBuilder.ToString()
-                    });
+#if LOG_REGISTRATION
+                    TLUtils.WriteLog(String.Format("Socket.ClearNonEncryptedHistory {0} item {1}", Id, historyItem.Value.Caption));
+#endif
+                    historyItem.Value.FaultCallback.SafeInvoke(new TLRPCError { Code = new TLInt(404), Message = new TLString(error.ToString()) });
                 }
+
                 _nonEncryptedHistory.Clear();
             }
         }
 
         public string PrintNonEncryptedHistory()
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            var sb = new StringBuilder();
+
             lock (_nonEncryptedHistoryRoot)
             {
-                stringBuilder.AppendLine("NonEncryptedHistory items:");
-                foreach (HistoryItem current in _nonEncryptedHistory.Values)
+                sb.AppendLine("NonEncryptedHistory items:");
+                foreach (var historyItem in _nonEncryptedHistory.Values)
                 {
-                    stringBuilder.AppendLine(current.Caption + " msgId " + current.Hash);
+                    sb.AppendLine(historyItem.Caption + " msgId " + historyItem.Hash);
                 }
             }
-            return stringBuilder.ToString();
+
+            return sb.ToString();
         }
+        #endregion
+
+        #region Events
+        public event EventHandler<DataEventArgs> PacketReceived;
 
         protected virtual void RaisePacketReceived(DataEventArgs args)
         {
-            EventHandler<DataEventArgs> handler = PacketReceived;
+            var handler = PacketReceived;
             if (handler != null)
             {
-                Execute.BeginOnThreadPool(delegate
-                {
-                    handler.Invoke(this, args);
-                });
+                Execute.BeginOnThreadPool(() => handler(this, args));
             }
         }
+
+        public event EventHandler Connecting;
 
         protected virtual void RaiseConnectingAsync()
         {
-            EventHandler handler = Connecting;
+            var handler = Connecting;
             if (handler != null)
             {
-                Execute.BeginOnThreadPool(delegate
-                {
-                    handler.Invoke(this, EventArgs.Empty);
-                });
+                Execute.BeginOnThreadPool(() => handler(this, EventArgs.Empty));
             }
         }
+
+        public event EventHandler Connected;
 
         protected virtual void RaiseConnectedAsync()
         {
-            EventHandler handler = Connected;
+            var handler = Connected;
             if (handler != null)
             {
-                Execute.BeginOnThreadPool(delegate
-                {
-                    handler.Invoke(this, EventArgs.Empty);
-                });
+                Execute.BeginOnThreadPool(() => handler(this, EventArgs.Empty));
             }
         }
+
+        public event EventHandler ConnectionLost;
 
         protected virtual void RaiseConnectionLost()
         {
-            EventHandler handler = ConnectionLost;
+            var handler = ConnectionLost;
             if (handler != null)
             {
-                Execute.BeginOnThreadPool(delegate
-                {
-                    handler.Invoke(this, EventArgs.Empty);
-                });
+                Execute.BeginOnThreadPool(() => handler(this, EventArgs.Empty));
             }
         }
 
+        #endregion
+
         public override string ToString()
         {
-            return string.Format("Id={0} {1}) {2}:{3} (AuthKey {4})\n  Salt {5}\n  SessionId {6} TicksDelta {7}", new object[]
-            {
-                Id,
-                DCId,
-                Host,
-                Port,
-                AuthKey != null,
-                Salt,
-                SessionId,
-                ClientTicksDelta
-            });
+            return String.Format("Id={0} {1}) {2}:{3} (AuthKey {4})\n  Salt {5}\n  SessionId {6} TicksDelta {7}", Id, DCId, Host, Port, AuthKey != null, Salt, SessionId, ClientTicksDelta);
         }
 
         protected virtual void WRITE_LOG(string str)
         {
+#if LOG_REGISTRATION
+            TLUtils.WriteLog(str);
+#endif
         }
 
         protected virtual void WRITE_LOG(string str, Exception ex)
         {
-            string text = (ex != null) ? ex.GetType().Name : "null";
-            WRITE_LOG(string.Format("{0} {1} {2}={3}", new object[]
-            {
-                str,
-                Id,
-                text,
-                ex
-            }));
+            var type = ex != null ? ex.GetType().Name : "null";
+            WRITE_LOG(String.Format("{0} {1} {2}={3}", str, Id, type, ex));
         }
     }
 }
