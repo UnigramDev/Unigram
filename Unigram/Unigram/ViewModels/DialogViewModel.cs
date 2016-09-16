@@ -236,8 +236,8 @@ namespace Unigram.ViewModels
                 Item = user;
                 DialogTitle = Item.FullName;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
-                inputPeer = new TLInputPeerUser { UserId = user.Id };
-                Peer = new TLInputPeerUser { UserId = user.Id };
+                inputPeer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
+                Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
                 await FetchMessages(peer,inputPeer);
                 ChatType = 0;
             }
