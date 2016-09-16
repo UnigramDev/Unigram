@@ -288,7 +288,7 @@ namespace Unigram.Common
                         }
 
                         var hyperlink = new Hyperlink();
-                        // TODO: hyperlink.Click += (s, args) => Hyperlink_Navigate(match.Value.Substring(index), null);
+                        hyperlink.Click += (s, args) => Hyperlink_Legacy(match.Value.Substring(index));
                         hyperlink.UnderlineStyle = UnderlineStyle.Single;
                         hyperlink.Foreground = foreground;
                         hyperlink.Inlines.Add(new Run { Text = label });
@@ -358,6 +358,35 @@ namespace Unigram.Common
         //    }
         //}
 
+        private static void Hyperlink_Legacy(string navstr)
+        {
+            if (string.IsNullOrEmpty(navstr))
+            {
+                return;
+            }
+
+            if (navstr.StartsWith("@"))
+            {
+                Hyperlink_Navigate(TLType.MessageEntityMention, navstr);
+            }
+            else if (navstr.StartsWith("#"))
+            {
+                Hyperlink_Navigate(TLType.MessageEntityHashtag, navstr);
+            }
+            else if (navstr.StartsWith("/"))
+            {
+                Hyperlink_Navigate(TLType.MessageEntityBotCommand, navstr);
+            }
+            else if (!navstr.Contains("@"))
+            {
+                Hyperlink_Navigate(TLType.MessageEntityUrl, navstr);
+            }
+            else
+            {
+                Hyperlink_Navigate(TLType.MessageEntityEmail, navstr);
+            }
+        }
+
         private static async void Hyperlink_Navigate(TLType type, object data)
         {
             if (type == TLType.MessageEntityMentionName)
@@ -395,6 +424,10 @@ namespace Unigram.Common
                     }
 
                     await Launcher.LaunchUriAsync(new Uri(navigation));
+                }
+                else if (type == TLType.MessageEntityEmail)
+                {
+                    await Launcher.LaunchUriAsync(new Uri($"mailto:{navigation}"));
                 }
             }
 
