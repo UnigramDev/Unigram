@@ -270,11 +270,11 @@
                                             </Grid>
                                         </DataTemplate>
                                     </selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
-                                    <selectors:MessageGroupTemplateSelector.EmptyMessageTemplate>
+                                    <selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
                                         <DataTemplate>
                                             <Rectangle Width="44"/>
                                         </DataTemplate>
-                                    </selectors:MessageGroupTemplateSelector.EmptyMessageTemplate>
+                                    </selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
                                 </selectors:MessageGroupTemplateSelector>
                             </GroupStyle.HeaderTemplateSelector>
                         </GroupStyle>
