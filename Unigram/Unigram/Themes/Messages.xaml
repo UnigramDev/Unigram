@@ -49,13 +49,13 @@
             </Border>
 
             <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
-                <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                       common:StickerBitmapSource.Source="{Binding Media.Document}"
+                <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                       common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                        MaxWidth="256" MaxHeight="256" Margin="2"/>
 
                 <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                        <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                         <FontIcon Glyph="{x:Bind State, Converter={StaticResource StateToGlyphConverter}, Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="White" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
                     </StackPanel>
                 </Border>
@@ -70,12 +70,12 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
-                <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                       common:StickerBitmapSource.Source="{Binding Media.Document}"
+                <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                       common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                        MaxWidth="256" MaxHeight="256" Margin="2"/>
 
                 <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
-                    <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                    <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                 </Border>
             </Grid>
 
@@ -109,12 +109,12 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
-                <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                       common:StickerBitmapSource.Source="{Binding Media.Document}"
+                <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                       common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                        MaxWidth="256" MaxHeight="256" Margin="2"/>
 
                 <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
-                    <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                    <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                 </Border>
             </Grid>
 

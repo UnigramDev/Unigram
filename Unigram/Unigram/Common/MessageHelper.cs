@@ -15,6 +15,7 @@ using Template10.Common;
 using Windows.ApplicationModel.Email;
 using Windows.System;
 using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -213,17 +214,28 @@ namespace Unigram.Common
                          type == TLType.MessageEntityHashtag ||
                          type == TLType.MessageEntityBotCommand)
                 {
+                    object data = text.Substring(entity.Offset, entity.Length);
                     var hyper = new Hyperlink();
-                    hyper.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    hyper.Click += (s, args) => Hyperlink_Navigate(type, data);
+                    hyper.Inlines.Add(new Run { Text = (string)data });
                     hyper.Foreground = foreground;
                     paragraph.Inlines.Add(hyper);
                 }
                 else if (type == TLType.MessageEntityTextUrl ||
                          type == TLType.MessageEntityMentionName)
                 {
+                    object data;
+                    if (type == TLType.MessageEntityTextUrl)
+                    {
+                        data = ((TLMessageEntityTextUrl)entity).Url;
+                    }
+                    else
+                    {
+                        data = ((TLMessageEntityMentionName)entity).UserId;
+                    }
                     var hyper = new Hyperlink();
+                    hyper.Click += (s, args) => Hyperlink_Navigate(type, data);
                     hyper.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
-                    hyper.NavigateUri = new Uri(type == TLType.MessageEntityTextUrl ? ((TLMessageEntityTextUrl)entity).Url : "https://google.com"); //((TLMessageEntityMentionName)entity).UserId);
                     hyper.Foreground = foreground;
                     paragraph.Inlines.Add(hyper);
                 }
@@ -276,7 +288,7 @@ namespace Unigram.Common
                         }
 
                         var hyperlink = new Hyperlink();
-                        hyperlink.Click += (s, args) => Hyperlink_Navigate(match.Value.Substring(index), null);
+                        // TODO: hyperlink.Click += (s, args) => Hyperlink_Navigate(match.Value.Substring(index), null);
                         hyperlink.UnderlineStyle = UnderlineStyle.Single;
                         hyperlink.Foreground = foreground;
                         hyperlink.Inlines.Add(new Run { Text = label });
@@ -346,89 +358,124 @@ namespace Unigram.Common
         //    }
         //}
 
-        private static async void Hyperlink_Navigate(string navstr, TLMessageBase message)
+        private static async void Hyperlink_Navigate(TLType type, object data)
         {
-            if (string.IsNullOrEmpty(navstr))
+            if (type == TLType.MessageEntityMentionName)
             {
-                return;
-            }
 
-            if (navstr.StartsWith("@"))
-            {
-                int index = navstr.IndexOf('@');
-                if (index != -1)
-                {
-                    var mention = navstr.Substring(navstr.IndexOf('@'));
-                    //var user = ServiceLocator.Current.GetInstance<ICacheService>().GetUser(new TLInt(userId));
-                    //if (user != null)
-                    //{
-                    //    var navigationService = WindowWrapper.Current().NavigationServices["Main"];
-                    //    if (navigationService != null)
-                    //    {
-                    //        navigationService.Navigate(typeof(ContactPage), user);
-                    //    }
-                    //}
-                }
-            }
-            else if (navstr.StartsWith("#"))
-            {
-                int index = navstr.IndexOf('#');
-                if (index != -1)
-                {
-                    var hashtag = navstr.Substring(index);
-                    //RaiseSearchHashtag(new TelegramHashtagEventArgs
-                    //{
-                    //    Hashtag = hashtag
-                    //});
-                }
-            }
-            else if (navstr.StartsWith("/"))
-            {
-                int index = navstr.LastIndexOf('/');
-                if (index != -1)
-                {
-                    var command = navstr.Substring(index);
-                    if (MessageCommand != null)
-                    {
-                        MessageCommand(null, new MessageCommandEventArgs(message, command, MessageCommandType.Invoke));
-                    }
-                    //RaiseInvokeCommand(new TelegramCommandEventArgs
-                    //{
-                    //    Command = command,
-                    //    Message = message
-                    //});
-                }
-            }
-            else if (!navstr.Contains("@"))
-            {
-                if (navstr.ToLowerInvariant().Contains("telegram.me"))
-                {
-                    //RaiseTelegramLinkAction(new TelegramEventArgs
-                    //{
-                    //    Uri = navstr
-                    //});
-                    return;
-                }
-
-                if (!navstr.StartsWith("http"))
-                {
-                    navstr = "http://" + navstr;
-                }
-
-                await Launcher.LaunchUriAsync(new Uri(navstr));
             }
             else
             {
-                if (navstr.StartsWith("http://"))
+                var navigation = (string)data;
+                if (type == TLType.MessageEntityUrl || type == TLType.MessageEntityTextUrl)
                 {
-                    navstr = navstr.Remove(0, 7);
+                    if (navigation.Contains("telegram.me"))
+                    {
+                        // TODO: in-app navigation
+                    }
+
+                    if (type == TLType.MessageEntityTextUrl)
+                    {
+                        var dialog = new MessageDialog(navigation, "Open this link?");
+                        dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
+                        dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
+                        dialog.DefaultCommandIndex = 0;
+                        dialog.CancelCommandIndex = 1;
+
+                        var result = await dialog.ShowAsync();
+                        if (result == null || (int)result?.Id == 1)
+                        {
+                            return;
+                        }
+                    }
+
+                    if (!navigation.StartsWith("http"))
+                    {
+                        navigation = "http://" + navigation;
+                    }
+
+                    await Launcher.LaunchUriAsync(new Uri(navigation));
                 }
-
-                var email = new EmailMessage();
-                email.To.Add(new EmailRecipient(navstr));
-
-                await EmailManager.ShowComposeNewEmailAsync(email);
             }
+
+            //if (string.IsNullOrEmpty(navstr))
+            //{
+            //    return;
+            //}
+
+            //if (navstr.StartsWith("@"))
+            //{
+            //    int index = navstr.IndexOf('@');
+            //    if (index != -1)
+            //    {
+            //        var mention = navstr.Substring(navstr.IndexOf('@'));
+            //        //var user = ServiceLocator.Current.GetInstance<ICacheService>().GetUser(new TLInt(userId));
+            //        //if (user != null)
+            //        //{
+            //        //    var navigationService = WindowWrapper.Current().NavigationServices["Main"];
+            //        //    if (navigationService != null)
+            //        //    {
+            //        //        navigationService.Navigate(typeof(ContactPage), user);
+            //        //    }
+            //        //}
+            //    }
+            //}
+            //else if (navstr.StartsWith("#"))
+            //{
+            //    int index = navstr.IndexOf('#');
+            //    if (index != -1)
+            //    {
+            //        var hashtag = navstr.Substring(index);
+            //        //RaiseSearchHashtag(new TelegramHashtagEventArgs
+            //        //{
+            //        //    Hashtag = hashtag
+            //        //});
+            //    }
+            //}
+            //else if (navstr.StartsWith("/"))
+            //{
+            //    int index = navstr.LastIndexOf('/');
+            //    if (index != -1)
+            //    {
+            //        var command = navstr.Substring(index);
+            //        MessageCommand?.Invoke(null, new MessageCommandEventArgs(message, command, MessageCommandType.Invoke));
+            //        //RaiseInvokeCommand(new TelegramCommandEventArgs
+            //        //{
+            //        //    Command = command,
+            //        //    Message = message
+            //        //});
+            //    }
+            //}
+            //else if (!navstr.Contains("@"))
+            //{
+            //    if (navstr.ToLowerInvariant().Contains("telegram.me"))
+            //    {
+            //        //RaiseTelegramLinkAction(new TelegramEventArgs
+            //        //{
+            //        //    Uri = navstr
+            //        //});
+            //        return;
+            //    }
+
+            //    if (!navstr.StartsWith("http"))
+            //    {
+            //        navstr = "http://" + navstr;
+            //    }
+
+            //    await Launcher.LaunchUriAsync(new Uri(navstr));
+            //}
+            //else
+            //{
+            //    if (navstr.StartsWith("http://"))
+            //    {
+            //        navstr = navstr.Remove(0, 7);
+            //    }
+
+            //    var email = new EmailMessage();
+            //    email.To.Add(new EmailRecipient(navstr));
+
+            //    await EmailManager.ShowComposeNewEmailAsync(email);
+            //}
         }
 
         public static bool IsValidCommand(string command)

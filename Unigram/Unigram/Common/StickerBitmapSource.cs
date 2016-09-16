@@ -60,16 +60,12 @@ namespace Unigram.Common
                 }
                 if (imageSize != null)
                 {
-                    var maximum = Math.Max(imageSize.W, imageSize.H);
-                    if (maximum > sender.MaxWidth)
-                    {
-                        var ratioX = sender.MaxWidth / (double)imageSize.W;
-                        var ratioY = sender.MaxHeight / (double)imageSize.H;
-                        var ratio = Math.Min(ratioX, ratioY);
+                    var ratioX = sender.MaxWidth / (double)imageSize.W;
+                    var ratioY = sender.MaxHeight / (double)imageSize.H;
+                    var ratio = Math.Min(ratioX, ratioY);
 
-                        sender.Width = (imageSize.W * ratio);
-                        sender.Height = (imageSize.H * ratio);
-                    }
+                    sender.Width = (imageSize.W * ratio);
+                    sender.Height = (imageSize.H * ratio);
                 }
             }
         }
