@@ -389,7 +389,6 @@
     <Compile Include="Services\MTProtoService.Upload.cs" />
     <Compile Include="Services\MTProtoService.Users.cs" />
     <Compile Include="Services\ServiceBase.cs" />
-    <Compile Include="Services\AuthKeyItem.cs" />
     <Compile Include="Services\Updates\IUpdatesService.cs" />
     <Compile Include="Services\Updates\ReceiveUpdatesEventArgs.cs" />
     <Compile Include="Services\Updates\UpdatesBySeqComparer.cs" />

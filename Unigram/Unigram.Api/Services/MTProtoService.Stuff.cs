@@ -10,7 +10,7 @@ namespace Telegram.Api.Services
 	{
 	    private object _debugRoot = new object();
 
-	    public void MessageAcknowledgments(TLVector<TLLong> ids)
+	    public void MessageAcknowledgments(TLVector<long> ids)
 	    {
             PrintCaption("msgs_ack");
             TLUtils.WriteLine("ids");
@@ -25,13 +25,13 @@ namespace Telegram.Api.Services
 	        var salt = _activeTransport.Salt;
 
 	        int sequenceNumber;
-	        TLLong messageId;
+	        long? messageId;
 	        lock (_activeTransportRoot)
             {
                 sequenceNumber = _activeTransport.SequenceNumber * 2;
                 messageId = _activeTransport.GenerateMessageId(true);
 	        }
-            var transportMessage = CreateTLTransportMessage(salt, sesseionId, new TLInt(sequenceNumber), messageId, obj);
+            var transportMessage = CreateTLTransportMessage(salt, sesseionId, new int?(sequenceNumber), messageId, obj);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
 	        lock (_activeTransportRoot)
@@ -81,7 +81,7 @@ namespace Telegram.Api.Services
 	    }
 
 
-        public void PingAsync(TLLong pingId, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
+        public void PingAsync(long? pingId, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
 	    {
 	        var obj = new TLPing{ PingId = pingId };
 
@@ -93,7 +93,7 @@ namespace Telegram.Api.Services
                 faultCallback.SafeInvoke);
 	    }
 
-        public void PingDelayDisconnectAsync(TLLong pingId, TLInt disconnectDelay, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
+        public void PingDelayDisconnectAsync(long? pingId, int? disconnectDelay, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLPingDelayDisconnect { PingId = pingId, DisconnectDelay = disconnectDelay };
 
@@ -105,7 +105,7 @@ namespace Telegram.Api.Services
                 faultCallback.SafeInvoke);
         }
 
-	    public void HttpWaitAsync(TLInt maxDelay, TLInt waitAfter, TLInt maxWait, Action callback, Action faultCallback)
+	    public void HttpWaitAsync(int? maxDelay, int? waitAfter, int? maxWait, Action callback, Action faultCallback)
 	    {
             PrintCaption("http_wait");
 
@@ -116,13 +116,13 @@ namespace Telegram.Api.Services
             var sessionId = _activeTransport.SessionId;
 
 	        int sequenceNumber;
-	        TLLong messageId;
+	        long? messageId;
 	        lock (_activeTransportRoot)
             {
                 sequenceNumber = _activeTransport.SequenceNumber * 2;
                 messageId = _activeTransport.GenerateMessageId(true);
 	        }
-            var transportMessage = CreateTLTransportMessage(salt, sessionId, new TLInt(sequenceNumber), messageId, obj);
+            var transportMessage = CreateTLTransportMessage(salt, sessionId, new int?(sequenceNumber), messageId, obj);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
 	        lock (_activeTransportRoot)

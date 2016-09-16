@@ -20,7 +20,7 @@ namespace Telegram.Api.Transport
 
         private bool _once;
 
-        public void UpdateTicksDelta(TLLong msgId)
+        public void UpdateTicksDelta(long? msgId)
         {
             lock (SyncRoot)
             {
@@ -69,7 +69,7 @@ namespace Telegram.Api.Transport
             get { throw new NotImplementedException(); }
         }
 
-        public WindowsPhone.Tuple<int, int, int> GetCurrentPacketInfo()
+        public Tuple<int, int, int> GetCurrentPacketInfo()
         {
             throw new NotImplementedException();
         }
@@ -85,7 +85,7 @@ namespace Telegram.Api.Transport
 
         public long PreviousMessageId;
 
-        public TLLong GenerateMessageId(bool checkPreviousMessageId = false)
+        public long GenerateMessageId(bool checkPreviousMessageId = false)
         {
             var clientDelta = ClientTicksDelta;
             // serverTime = clientTime + clientDelta
@@ -144,7 +144,7 @@ namespace Telegram.Api.Transport
             if (correctUnixTime == 0)
                 throw new Exception("Bad message id");
 
-            return new TLLong(correctUnixTime);
+            return correctUnixTime;
         }
 
         #region NonEncryptedHistory
@@ -227,7 +227,7 @@ namespace Telegram.Api.Transport
                     {
                         error.AppendLine(e.ToString());
                     }
-                    historyItem.Value.FaultCallback.SafeInvoke(new TLRPCError { Code = new TLInt(404), Message = new TLString(error.ToString()) });
+                    historyItem.Value.FaultCallback.SafeInvoke(new TLRPCError { Code = 404, Message = new TLString(error.ToString()) });
                 }
 
                 _nonEncryptedHistory.Clear();
@@ -262,8 +262,8 @@ namespace Telegram.Api.Transport
         public int DCId { get; set; }
 
         public byte[] AuthKey { get; set; }
-        public TLLong SessionId { get; set; }
-        public TLLong Salt { get; set; }
+        public long? SessionId { get; set; }
+        public long? Salt { get; set; }
         public int SequenceNumber { get; set; }
         public long ClientTicksDelta { get; set; }
 

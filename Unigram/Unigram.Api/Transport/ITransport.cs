@@ -24,24 +24,24 @@ namespace Telegram.Api.Transport
         int LastPacketLength { get; }
 
         // debug
-        WindowsPhone.Tuple<int, int, int> GetCurrentPacketInfo();
+        Tuple<int, int, int> GetCurrentPacketInfo();
         string GetTransportInfo();
         string PrintNonEncryptedHistory();
 
-        TLLong GenerateMessageId(bool checkPreviousMessageId = false);
+        long GenerateMessageId(bool checkPreviousMessageId = false);
         void EnqueueNonEncryptedItem(HistoryItem item);
         HistoryItem DequeueFirstNonEncryptedItem();
         bool RemoveNonEncryptedItem(HistoryItem item);
         void ClearNonEncryptedHistory(Exception e = null);
         IList<HistoryItem> RemoveTimeOutRequests(double timeout = Constants.TimeoutInterval);
-        void UpdateTicksDelta(TLLong msgId);
+        void UpdateTicksDelta(long? msgId);
 
         object SyncRoot { get; }
         int Id { get; }
         int DCId { get; set; }
         byte[] AuthKey { get; set; }
-        TLLong SessionId { get; set; }
-        TLLong Salt { get; set; }
+        long? SessionId { get; set; }
+        long? Salt { get; set; }
         int SequenceNumber { get; set; }
         long ClientTicksDelta { get; set; }
         string Host { get; }

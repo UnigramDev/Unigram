@@ -18,22 +18,22 @@ namespace Telegram.Api.Services.Cache
         //event EventHandler<DialogAddedEventArgs> DialogAdded;
         //event EventHandler<TopMessageUpdatedEventArgs> TopMessageUpdated;
 
-        TLUserBase GetUser(TLInt id);
+        TLUserBase GetUser(int? id);
         TLUserBase GetUser(string username);
         TLUserBase GetUser(TLUserProfilePhoto photo);
-        TLMessageBase GetMessage(TLInt id, TLInt channelId = null); 
-        TLMessageBase GetMessage(TLLong randomId);
+        TLMessageBase GetMessage(int? id, int? channelId = null); 
+        TLMessageBase GetMessage(long? randomId);
         TLMessageBase GetMessage(TLWebPageBase webPage);
-        TLDecryptedMessageBase GetDecryptedMessage(TLInt chatId, TLLong randomId);
-        TLDialog GetDialog(TLMessageCommon message);
+        TLDecryptedMessageBase GetDecryptedMessage(int? chatId, long? randomId);
+        TLDialog GetDialog(TLMessage message);
         TLDialog GetDialog(TLPeerBase peer);
-        TLDialogBase GetEncryptedDialog(TLInt chatId);
+        TLDialog GetEncryptedDialog(int? chatId);
 
         TLChat GetChat(TLChatPhoto chatPhoto);
         TLChannel GetChannel(string username);
         TLChannel GetChannel(TLChatPhoto channelPhoto);
-        TLChatBase GetChat(TLInt id);
-        TLBroadcastChat GetBroadcast(TLInt id);
+        TLChatBase GetChat(int? id);
+        TLBroadcastChat GetBroadcast(int? id);
 
         IList<TLMessageBase> GetMessages();
         IList<TLMessageBase> GetSendingMessages();
@@ -42,17 +42,17 @@ namespace Telegram.Api.Services.Cache
         void GetHistoryAsync(TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount);
         IList<TLMessageBase> GetHistory(TLPeerBase peer, int limit = Constants.CachedMessagesCount);
         IList<TLMessageBase> GetHistory(TLPeerBase peer, int maxId, int limit = Constants.CachedMessagesCount);
-        //IList<TLMessageBase> GetUnreadHistory(TLInt currentUserId, TLPeerBase peer, int limit = Constants.CachedMessagesCount);
+        //IList<TLMessageBase> GetUnreadHistory(int? currentUserId, TLPeerBase peer, int limit = Constants.CachedMessagesCount);
         IList<TLMessageBase> GetHistory(int dialogId);
         IList<TLDecryptedMessageBase> GetDecryptedHistory(int dialogId, int limit = Constants.CachedMessagesCount);
         IList<TLDecryptedMessageBase> GetDecryptedHistory(int dialogId, long randomId, int limit = Constants.CachedMessagesCount);
         IList<TLDecryptedMessageBase> GetUnreadDecryptedHistory(int dialogId);
-        void GetDialogsAsync(Action<IList<TLDialogBase>> callback);
-        IList<TLDialogBase> GetDialogs();
+        void GetDialogsAsync(Action<IList<TLDialog>> callback);
+        IList<TLDialog> GetDialogs();
         void GetContactsAsync(Action<IList<TLUserBase>> callback);
 
         List<TLUserBase> GetContacts();
-        List<TLUserBase> GetUsersForSearch(IList<TLDialogBase> nonCachedDialogs);
+        List<TLUserBase> GetUsersForSearch(IList<TLDialog> nonCachedDialogs);
         List<TLUserBase> GetUsers();
         List<TLChatBase> GetChats();
         void GetChatsAsync(Action<IList<TLChatBase>> callback);
@@ -62,9 +62,9 @@ namespace Telegram.Api.Services.Cache
         void SyncMessage(TLMessageBase message, Action<TLMessageBase> callback);
         void SyncMessage(TLMessageBase message, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessageBase> callback);
         void SyncEditedMessage(TLMessageBase message, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessageBase> callback);
-        void SyncSendingMessage(TLMessageCommon message, TLMessageBase previousMessage, Action<TLMessageCommon> callback);
+        void SyncSendingMessage(TLMessage message, TLMessageBase previousMessage, Action<TLMessage> callback);
         void SyncSendingMessages(IList<TLMessage> messages, TLMessageBase previousMessage, Action<IList<TLMessage>> callback);
-        void SyncSendingMessageId(TLLong randomId, TLInt id, Action<TLMessageCommon> callback);
+        void SyncSendingMessageId(long? randomId, int? id, Action<TLMessage> callback);
         void SyncPeerMessages(TLPeerBase peer, TLMessagesBase messages, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesBase> callback);
         void AddMessagesToContext(TLMessagesBase messages, Action<TLMessagesBase> callback);
         void SyncDialogs(Stopwatch stopwatch, TLDialogsBase dialogs, Action<TLDialogsBase> callback);
@@ -74,20 +74,20 @@ namespace Telegram.Api.Services.Cache
         void SyncUser(TLUserFull userFull, Action<TLUserFull> callback);
         void SyncUsers(TLVector<TLUserBase> users, Action<TLVector<TLUserBase>> callback);
         void AddUsers(TLVector<TLUserBase> users, Action<TLVector<TLUserBase>> callback);
-        void SyncUsersAndChats(TLVector<TLUserBase> users, TLVector<TLChatBase> chats, Action<WindowsPhone.Tuple<TLVector<TLUserBase>, TLVector<TLChatBase>>> callback);
+        void SyncUsersAndChats(TLVector<TLUserBase> users, TLVector<TLChatBase> chats, Action<Tuple<TLVector<TLUserBase>, TLVector<TLChatBase>>> callback);
         void SyncUserLink(TLLinkBase link, Action<TLLinkBase> callback);
         void SyncContacts(TLContactsBase contacts, Action<TLContactsBase> callback);
         void SyncContacts(TLImportedContacts contacts, Action<TLImportedContacts> callback);
 
         void ClearDialog(TLPeerBase peer);
-        void DeleteDialog(TLDialogBase dialog);
-        void DeleteMessages(TLVector<TLInt> ids);
-        void DeleteChannelMessages(TLInt channelId, TLVector<TLInt> ids);
-        void DeleteMessages(TLPeerBase peer, TLMessageBase lastItem, TLVector<TLInt> messages);
-        void DeleteMessages(TLVector<TLLong> ids);
-        void DeleteDecryptedMessages(TLVector<TLLong> ids);
-        void ClearDecryptedHistoryAsync(TLInt chatId);
-        void ClearBroadcastHistoryAsync(TLInt chatId);
+        void DeleteDialog(TLDialog dialog);
+        void DeleteMessages(TLVector<int> ids);
+        void DeleteChannelMessages(int? channelId, TLVector<int> ids);
+        void DeleteMessages(TLPeerBase peer, TLMessageBase lastItem, TLVector<int> messages);
+        void DeleteMessages(TLVector<long> ids);
+        void DeleteDecryptedMessages(TLVector<long> ids);
+        void ClearDecryptedHistoryAsync(int? chatId);
+        void ClearBroadcastHistoryAsync(int? chatId);
 
         void SyncStatedMessage(TLStatedMessageBase statedMessage, Action<TLStatedMessageBase> callback);
         void SyncStatedMessages(TLStatedMessagesBase statedMessages, Action<TLStatedMessagesBase> callback);
@@ -102,19 +102,19 @@ namespace Telegram.Api.Services.Cache
         void AddChats(TLVector<TLChatBase> chats, Action<TLVector<TLChatBase>> callback);
         void SyncBroadcast(TLBroadcastChat broadcast, Action<TLBroadcastChat> callback);
 
-        TLEncryptedChatBase GetEncryptedChat(TLInt id);
+        TLEncryptedChatBase GetEncryptedChat(int? id);
         void SyncEncryptedChat(TLEncryptedChatBase encryptedChat, Action<TLEncryptedChatBase> callback);
         void SyncDecryptedMessage(TLDecryptedMessageBase message, TLEncryptedChatBase peer, Action<TLDecryptedMessageBase> callback);
-        void SyncDecryptedMessages(IList<WindowsPhone.Tuple<TLDecryptedMessageBase, TLObject>> tuples, TLEncryptedChatBase peer, Action<IList<WindowsPhone.Tuple<TLDecryptedMessageBase, TLObject>>> callback);
-        void SyncSendingDecryptedMessage(TLInt chatId, TLInt date, TLLong randomId, Action<TLDecryptedMessageBase> callback);
+        void SyncDecryptedMessages(IList<Tuple<TLDecryptedMessageBase, TLObject>> tuples, TLEncryptedChatBase peer, Action<IList<Tuple<TLDecryptedMessageBase, TLObject>>> callback);
+        void SyncSendingDecryptedMessage(int? chatId, int? date, long? randomId, Action<TLDecryptedMessageBase> callback);
         
         void Init();
 
         void SyncDifference(TLDifference difference, Action<TLDifference> result, IList<ExceptionInfo> exceptions);
         void SyncDifferenceWithoutUsersAndChats(TLDifference difference, Action<TLDifference> result, IList<ExceptionInfo> exceptions);
         void SyncStatuses(TLVector<TLContactStatusBase> contacts, Action<TLVector<TLContactStatusBase>> callback);
-        void DeleteUser(TLInt id);
-        void DeleteChat(TLInt id);
+        void DeleteUser(int? id);
+        void DeleteChat(int? id);
         void DeleteUserHistory(TLPeerChannel channel, TLPeerUser peer);
     }
 

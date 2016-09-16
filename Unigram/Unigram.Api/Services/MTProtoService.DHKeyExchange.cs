@@ -33,14 +33,14 @@ namespace Telegram.Api.Services
             SendNonEncryptedMessage("req_pq", obj, callback, faultCallback);
         }
 
-        private void ReqDHParamsAsync(TLInt128 nonce, TLInt128 serverNonce, TLString p, TLString q, TLLong publicKeyFingerprint, TLString encryptedData, Action<TLServerDHParamsBase> callback, Action<TLRPCError> faultCallback = null)
+        private void ReqDHParamsAsync(TLInt128 nonce, TLInt128 serverNonce, string p, string q, long? publicKeyFingerprint, string encryptedData, Action<TLServerDHParamsBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLReqDHParams { Nonce = nonce, ServerNonce = serverNonce, P = p, Q = q, PublicKeyFingerprint = publicKeyFingerprint, EncryptedData = encryptedData };
 
             SendNonEncryptedMessage("req_DH_params", obj, callback, faultCallback);
         }
 
-        public void SetClientDHParamsAsync(TLInt128 nonce, TLInt128 serverNonce, TLString encryptedData, Action<TLDHGenBase> callback, Action<TLRPCError> faultCallback = null)
+        public void SetClientDHParamsAsync(TLInt128 nonce, TLInt128 serverNonce, string encryptedData, Action<TLDHGenBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLSetClientDHParams { Nonce = nonce, ServerNonce = serverNonce, EncryptedData = encryptedData };
 
@@ -49,7 +49,7 @@ namespace Telegram.Api.Services
 
         private TimeSpan _authTimeElapsed;
 
-        public void InitAsync(Action<WindowsPhone.Tuple<byte[], TLLong, TLLong>> callback, Action<TLRPCError> faultCallback = null)
+        public void InitAsync(Action<Tuple<byte[], TLLong, TLLong>> callback, Action<TLRPCError> faultCallback = null)
         {
             var authTime = Stopwatch.StartNew();
             var newNonce = TLInt256.Random();
@@ -64,7 +64,7 @@ namespace Telegram.Api.Services
                     var serverNonce = resPQ.ServerNonce;
                     if (!TLUtils.ByteArraysEqual(nonce.Value, resPQ.Nonce.Value))
                     {
-                        var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect nonce") };
+                        var error = new TLRPCError { Code = 404, Message = new TLString("incorrect nonce") };
 #if LOG_REGISTRATION
                         TLUtils.WriteLog("Stop ReqPQ with error " + error);
 #endif
@@ -77,7 +77,7 @@ namespace Telegram.Api.Services
                     TLUtils.WriteLog("Stop ReqPQ");
 #endif
                     TimeSpan calcTime;
-                    WindowsPhone.Tuple<ulong, ulong> pqPair;
+                    Tuple<ulong, ulong> pqPair;
                     var innerData = GetInnerData(resPQ, newNonce, out calcTime, out pqPair);
                     var encryptedInnerData = GetEncryptedInnerData(innerData);
 
@@ -106,7 +106,7 @@ namespace Telegram.Api.Services
                         {
                             if (!TLUtils.ByteArraysEqual(nonce.Value, serverDHParams.Nonce.Value))
                             {
-                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect nonce") };
+                                var error = new TLRPCError { Code = 404, Message = new TLString("incorrect nonce") };
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
@@ -116,7 +116,7 @@ namespace Telegram.Api.Services
                             }
                             if (!TLUtils.ByteArraysEqual(serverNonce.Value, serverDHParams.ServerNonce.Value))
                             {
-                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect server_nonce") };
+                                var error = new TLRPCError { Code = 404, Message = new TLString("incorrect server_nonce") };
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
@@ -133,7 +133,7 @@ namespace Telegram.Api.Services
                             var serverDHParamsOk = serverDHParams as TLServerDHParamsOk;
                             if (serverDHParamsOk == null)
                             {
-                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("Incorrect serverDHParams " + serverDHParams.GetType()) };
+                                var error = new TLRPCError { Code = 404, Message = new TLString("Incorrect serverDHParams " + serverDHParams.GetType()) };
                                 if (faultCallback != null) faultCallback(error);
                                 TLUtils.WriteLine(error.ToString());
 #if LOG_REGISTRATION
@@ -153,7 +153,7 @@ namespace Telegram.Api.Services
                             var sha1 = Utils.ComputeSHA1(serverDHInnerData.ToBytes());
                             if (!TLUtils.ByteArraysEqual(sha1, decryptedAnswerWithHash.Take(20).ToArray()))
                             {
-                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect sha1 TLServerDHInnerData") };
+                                var error = new TLRPCError { Code = 404, Message = new TLString("incorrect sha1 TLServerDHInnerData") };
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
@@ -164,7 +164,7 @@ namespace Telegram.Api.Services
 
                             if (!TLUtils.CheckPrime(serverDHInnerData.DHPrime.Data, serverDHInnerData.G.Value))
                             {
-                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect (p, q) pair") };
+                                var error = new TLRPCError { Code = 404, Message = new TLString("incorrect (p, q) pair") };
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
@@ -175,7 +175,7 @@ namespace Telegram.Api.Services
 
                             if (!TLUtils.CheckGaAndGb(serverDHInnerData.GA.Data, serverDHInnerData.DHPrime.Data))
                             {
-                                var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect g_a") };
+                                var error = new TLRPCError { Code = 404, Message = new TLString("incorrect g_a") };
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
@@ -193,7 +193,7 @@ namespace Telegram.Api.Services
                             {
                                 Nonce = resPQ.Nonce,
                                 ServerNonce = resPQ.ServerNonce,
-                                RetryId = new TLLong(0),
+                                RetryId = 0,
                                 GB = TLString.FromBigEndianData(gbBytes)
                             };
 
@@ -206,7 +206,7 @@ namespace Telegram.Api.Services
                                 {
                                     if (!TLUtils.ByteArraysEqual(nonce.Value, dhGen.Nonce.Value))
                                     {
-                                        var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect nonce") };
+                                        var error = new TLRPCError { Code = 404, Message = new TLString("incorrect nonce") };
 #if LOG_REGISTRATION
                                         TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
 #endif
@@ -216,7 +216,7 @@ namespace Telegram.Api.Services
                                     }
                                     if (!TLUtils.ByteArraysEqual(serverNonce.Value, dhGen.ServerNonce.Value))
                                     {
-                                        var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("incorrect server_nonce") };
+                                        var error = new TLRPCError { Code = 404, Message = new TLString("incorrect server_nonce") };
 #if LOG_REGISTRATION
                                         TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
 #endif
@@ -228,7 +228,7 @@ namespace Telegram.Api.Services
                                     var dhGenOk = dhGen as TLDHGenOk;
                                     if (dhGenOk == null)
                                     {
-                                        var error = new TLRPCError { Code = new TLInt(404), Message = new TLString("Incorrect dhGen " + dhGen.GetType()) };
+                                        var error = new TLRPCError { Code = 404, Message = new TLString("Incorrect dhGen " + dhGen.GetType()) };
                                         if (faultCallback != null) faultCallback(error);
                                         TLUtils.WriteLine(error.ToString());
 #if LOG_REGISTRATION
@@ -264,7 +264,7 @@ namespace Telegram.Api.Services
                                     TLUtils.WriteLine("Salt " + BitConverter.ToInt64(salt, 0) + " (" + BitConverter.ToString(salt) + ")");
                                     TLUtils.WriteLine("Session id " + BitConverter.ToInt64(sessionId, 0) + " (" + BitConverter.ToString(sessionId) + ")");
 
-                                    callback(new WindowsPhone.Tuple<byte[], TLLong, TLLong>(authKey, new TLLong(BitConverter.ToInt64(salt, 0)), new TLLong(BitConverter.ToInt64(sessionId, 0))));
+                                    callback(new Tuple<byte[], TLLong, TLLong>(authKey, new long?(BitConverter.ToInt64(salt, 0)), new long?(BitConverter.ToInt64(sessionId, 0))));
                                 },
                                 error =>
                                 {
@@ -294,7 +294,7 @@ namespace Telegram.Api.Services
                 });
         }
 
-        private static TLPQInnerData GetInnerData(TLResPQ resPQ, TLInt256 newNonce, out TimeSpan calcTime, out WindowsPhone.Tuple<ulong, ulong> pqPair)
+        private static TLPQInnerData GetInnerData(TLResPQ resPQ, TLInt256 newNonce, out TimeSpan calcTime, out Tuple<ulong, ulong> pqPair)
         {
             var pq = BitConverter.ToUInt64(resPQ.PQ.Data.Reverse().ToArray(), 0);       //NOTE: add Reverse here
             TLUtils.WriteLine("pq: " + pq);
@@ -336,7 +336,7 @@ namespace Telegram.Api.Services
             return innerData1;
         }
 
-        private static TLString GetEncryptedClientDHInnerData(TLClientDHInnerData clientDHInnerData, WindowsPhone.Tuple<byte[], byte[]> aesParams)
+        private static string GetEncryptedClientDHInnerData(TLClientDHInnerData clientDHInnerData, Tuple<byte[], byte[]> aesParams)
         {
             var random = new Random();
             var client_DH_inner_data = clientDHInnerData.ToBytes();
@@ -356,7 +356,7 @@ namespace Telegram.Api.Services
             return TLString.FromBigEndianData(aesEncryptClientDHInnerDataWithHash);
         }
 
-        public static TLString GetEncryptedInnerData(TLPQInnerData innerData)
+        public static string GetEncryptedInnerData(TLPQInnerData innerData)
         {
             var innerDataBytes = innerData.ToBytes();
 #if LOG_REGISTRATION
@@ -388,7 +388,7 @@ namespace Telegram.Api.Services
 
             var reverseRSABytes = Utils.GetRSABytes(data255);               // NOTE: remove Reverse here
 
-            var encryptedData = new TLString { Data = reverseRSABytes };
+            var encryptedData = new string { Data = reverseRSABytes };
 
             return encryptedData;
         }
@@ -413,9 +413,9 @@ namespace Telegram.Api.Services
         {
             int position = 0;
             var b = new BigInteger(bBytes.Reverse().Concat(new byte[] { 0x00 }).ToArray());
-            var dhPrime = TLObject.GetObject<TLString>(dhPrimeData, ref position).ToBigInteger();
+            var dhPrime = TLObject.GetObject<string>(dhPrimeData, ref position).ToBigInteger();
             position = 0;
-            var g_a = TLObject.GetObject<TLString>(g_aData, ref position).ToBigInteger();
+            var g_a = TLObject.GetObject<string>(g_aData, ref position).ToBigInteger();
 
             var authKey = BigInteger.ModPow(g_a, b, dhPrime).ToByteArray(); // little endian + (may be) zero last byte
 
@@ -469,7 +469,7 @@ namespace Telegram.Api.Services
         // g - serialized data
         // dhPrime - serialized data
         // returns big-endian G_B
-        public static byte[] GetGB(byte[] bData, TLInt gData, TLString pString)
+        public static byte[] GetGB(byte[] bData, int? gData, string pString)
         {
             //var bBytes = new byte[256]; // big endian bytes
             //var random = new Random();
@@ -507,7 +507,7 @@ namespace Telegram.Api.Services
         //    return new BigInteger(Data.Reverse().Concat(new byte[] { 0x00 }).ToArray());  //NOTE: add reverse here
         //}
 
-        public static WindowsPhone.Tuple<byte[], byte[]> GetAesKeyIV(byte[] serverNonce, byte[] newNonce)
+        public static Tuple<byte[], byte[]> GetAesKeyIV(byte[] serverNonce, byte[] newNonce)
         {
             var newNonceServerNonce = newNonce.Concat(serverNonce).ToArray();
             var serverNonceNewNonce = serverNonce.Concat(newNonce).ToArray();
@@ -517,7 +517,7 @@ namespace Telegram.Api.Services
                 .Concat(Utils.ComputeSHA1(newNonce.Concat(newNonce).ToArray()))
                 .Concat(newNonce.SubArray(0, 4));
 
-            return new WindowsPhone.Tuple<byte[], byte[]>(key.ToArray(), im.ToArray());
+            return new Tuple<byte[], byte[]>(key.ToArray(), im.ToArray());
         }
     }
 }

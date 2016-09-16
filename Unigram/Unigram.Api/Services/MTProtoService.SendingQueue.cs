@@ -43,7 +43,7 @@ namespace Telegram.Api.Services
             service.ProcessQueue();
         }
 
-        private void ReadEncryptedHistoryAsyncInternal(TLReadEncryptedHistory message, Action<TLBool> callback, Action fastCallback, Action<TLRPCError> faultCallback)
+        private void ReadEncryptedHistoryAsyncInternal(TLReadEncryptedHistory message, Action<bool> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
             SendAsyncInternal("messages.readEncryptedHistory", int.MaxValue, message, callback, fastCallback, faultCallback);
         }
@@ -106,7 +106,7 @@ namespace Telegram.Api.Services
         private void SendAsyncInternal<T>(string caption, double timeout, TLObject obj, Action<T> callback, Action fastCallback, Action<TLRPCError> faultCallback) where T : TLObject
         {
             int sequenceNumber;
-            TLLong messageId;
+            long? messageId;
             lock (_activeTransportRoot)
             {
                 sequenceNumber = _activeTransport.SequenceNumber * 2 + 1;
@@ -117,7 +117,7 @@ namespace Telegram.Api.Services
             var transportMessage = new TLContainerTransportMessage
             {
                 MessageId = messageId,
-                SeqNo = new TLInt(sequenceNumber),
+                SeqNo = new int?(sequenceNumber),
                 MessageData = obj
             };
 
@@ -269,7 +269,7 @@ namespace Telegram.Api.Services
             {
                 foreach (var item in itemsToRemove)
                 {
-                    item.FaultQueueCallback.SafeInvoke(new TLRPCError { Code = new TLInt(404), Message = new TLString("MTProtoService.CleanupQueue") });
+                    item.FaultQueueCallback.SafeInvoke(new TLRPCError { Code = 404, Message = new TLString("MTProtoService.CleanupQueue") });
                 }
             });
         }
@@ -315,7 +315,7 @@ namespace Telegram.Api.Services
             {
                 foreach (var item in itemsToRemove)
                 {
-                    item.FaultQueueCallback.SafeInvoke(new TLRPCError { Code = new TLInt(404), Message = new TLString("MTProtoService.CleanupQueue") });
+                    item.FaultQueueCallback.SafeInvoke(new TLRPCError { Code = 404, Message = new TLString("MTProtoService.CleanupQueue") });
                 }
             });
         }
@@ -336,7 +336,7 @@ namespace Telegram.Api.Services
             RemoveActionInfoFromFile(item.Object);
         }
 
-        private void RemoveFromQueue(TLLong id)
+        private void RemoveFromQueue(long? id)
         {
             HistoryItem item = null; 
             lock (_sendingQueueSyncRoot)
@@ -382,7 +382,7 @@ namespace Telegram.Api.Services
             TLUtils.SaveObjectToMTProtoFile(_actionsSyncRoot, Constants.ActionQueueFileName, data);
         }
 
-        private void AddActionInfoToFile(TLInt sendBefore, TLObject obj)
+        private void AddActionInfoToFile(int? sendBefore, TLObject obj)
         {
             if (!TLUtils.IsValidAction(obj))
             {
@@ -444,7 +444,7 @@ namespace Telegram.Api.Services
             }
         }
 
-        private void RemoveActionInfoFromFile(TLLong id)
+        private void RemoveActionInfoFromFile(long? id)
         {
             lock (_actionInfoSyncRoot)
             {

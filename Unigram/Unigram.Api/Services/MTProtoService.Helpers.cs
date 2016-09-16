@@ -27,7 +27,7 @@ namespace Telegram.Api.Services
             PrintCaption(caption);
 
             int sequenceNumber;
-            TLLong messageId;
+            long? messageId;
             lock (_activeTransportRoot)
             {
                 sequenceNumber = _activeTransport.SequenceNumber * 2;
@@ -37,7 +37,7 @@ namespace Telegram.Api.Services
             var salt = _activeTransport.Salt;
             var sessionId = _activeTransport.SessionId;
             var clientsTicksDelta = _activeTransport.ClientTicksDelta;
-            var transportMessage = CreateTLTransportMessage(salt, sessionId, new TLInt(sequenceNumber), messageId, obj);
+            var transportMessage = CreateTLTransportMessage(salt, sessionId, new int?(sequenceNumber), messageId, obj);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
             lock (_activeTransportRoot)
@@ -219,7 +219,7 @@ namespace Telegram.Api.Services
                     //SystemEvents.TimeChanged
                     var initConnection = new TLInitConnection
                     {
-                        AppId = new TLInt(Constants.ApiId),
+                        AppId = new int?(Constants.ApiId),
                         AppVersion = new TLString(_deviceInfo.AppVersion),
                         Data = obj,
                         DeviceModel = new TLString(_deviceInfo.Model),
@@ -240,7 +240,7 @@ namespace Telegram.Api.Services
             }
 
             int sequenceNumber;
-            TLLong messageId;
+            long? messageId;
             lock (_activeTransportRoot)
             {
                 sequenceNumber = _activeTransport.SequenceNumber * 2 + 1;
@@ -251,7 +251,7 @@ namespace Telegram.Api.Services
             var salt = _activeTransport.Salt;
             var sessionId = _activeTransport.SessionId;
             var clientsTicksDelta = _activeTransport.ClientTicksDelta;
-            var transportMessage = CreateTLTransportMessage(salt, sessionId, new TLInt(sequenceNumber), messageId, data);
+            var transportMessage = CreateTLTransportMessage(salt, sessionId, new int?(sequenceNumber), messageId, data);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
             //save items to history
@@ -388,7 +388,7 @@ namespace Telegram.Api.Services
             where T : TLObject
         {
             PrintCaption(caption);
-            TLLong messageId;
+            long? messageId;
             lock (_activeTransportRoot)
             {
                 messageId = _activeTransport.GenerateMessageId();
@@ -454,7 +454,7 @@ namespace Telegram.Api.Services
 
                         if (result)
                         {
-                            faultCallback.SafeInvoke(new TLRPCError { Code = new TLInt(404), Message = new TLString("FastCallback SocketError=" + socketError) });
+                            faultCallback.SafeInvoke(new TLRPCError { Code = 404, Message = new TLString("FastCallback SocketError=" + socketError) });
                         }
                     }                  
                 },
@@ -468,7 +468,7 @@ namespace Telegram.Api.Services
                     // чтобы callback не вызвался два раза из CheckTimeouts и отсюда
                     if (result)
                     {
-                        faultCallback.SafeInvoke(new TLRPCError { Code = new TLInt(404), Message = new TLString("FaltCallback") });
+                        faultCallback.SafeInvoke(new TLRPCError { Code = 404, Message = new TLString("FaltCallback") });
                     }                    
                 });
         }
@@ -480,7 +480,7 @@ namespace Telegram.Api.Services
             return message.Encrypt(authKey);
         }
 
-        private TLTransportMessage CreateTLTransportMessage(TLLong salt, TLLong sessionId, TLInt seqNo, TLLong messageId, TLObject obj)
+        private TLTransportMessage CreateTLTransportMessage(long? salt, long? sessionId, int? seqNo, long? messageId, TLObject obj)
         {
             var message = new TLTransportMessage();
             message.Salt = salt;
@@ -492,10 +492,10 @@ namespace Telegram.Api.Services
             return message;
         }
 
-        public static TLNonEncryptedMessage CreateTLNonEncryptedMessage(TLLong messageId, TLObject obj)
+        public static TLNonEncryptedMessage CreateTLNonEncryptedMessage(long? messageId, TLObject obj)
         {
             var message = new TLNonEncryptedMessage();
-            message.AuthKeyId = new TLLong(0);
+            message.AuthKeyId = 0;
             message.MessageId = messageId;
             message.Data = obj;
 

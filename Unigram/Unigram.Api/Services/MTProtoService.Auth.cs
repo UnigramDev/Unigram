@@ -2,8 +2,7 @@
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Functions.Account;
-using Telegram.Api.TL.Functions.Auth;
+using Telegram.Api.TL.Methods.Auth;
 using Telegram.Api.Transport;
 
 namespace Telegram.Api.Services
@@ -18,51 +17,51 @@ namespace Telegram.Api.Services
             LogOutAsync(null, null);
 	    }
 
-        public void CheckPhoneAsync(TLString phoneNumber, Action<TLCheckedPhoneBase> callback, Action<TLRPCError> faultCallback = null)
+        public void CheckPhoneAsync(string phoneNumber, Action<TLCheckedPhoneBase> callback, Action<TLRPCError> faultCallback = null)
 	    {
-            var obj = new TLCheckPhone { PhoneNumber = phoneNumber };
+            var obj = new TLAuthCheckPhone { PhoneNumber = phoneNumber };
 
             SendInformativeMessage("auth.checkPhone", obj, callback, faultCallback);
 	    }
 
-        public void SendCodeAsync(TLString phoneNumber, TLString currentNumber, Action<TLSentCodeBase> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null)
+        public void SendCodeAsync(string phoneNumber, string currentNumber, Action<TLSentCodeBase> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLSendCode
+            var obj = new TLAuthSendCode
             {
-                Flags = new TLInt(0),
+                Flags = 0,
                 PhoneNumber = phoneNumber,
                 CurrentNumber = currentNumber,
-                ApiId = new TLInt(Constants.ApiId),
-                ApiHash = new TLString(Constants.ApiHash)
+                ApiId = Constants.ApiId,
+                ApiHash = Constants.ApiHash
             };
 
             SendInformativeMessage("auth.sendCode", obj, callback, faultCallback, 3);
         }
 
-        public void ResendCodeAsync(TLString phoneNumber, TLString phoneCodeHash, Action<TLSentCodeBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ResendCodeAsync(string phoneNumber, string phoneCodeHash, Action<TLSentCodeBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLResendCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
+            var obj = new TLAuthResendCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
             SendInformativeMessage("auth.resendCode", obj, callback, faultCallback);
         }
 
-        public void CancelCodeAsync(TLString phoneNumber, TLString phoneCodeHash, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        public void CancelCodeAsync(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLCancelCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
+            var obj = new TLAuthCancelCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
             SendInformativeMessage("auth.cancelCode", obj, callback, faultCallback);
         }
 
-        public void SendCallAsync(TLString phoneNumber, TLString phoneCodeHash, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        public void SendCallAsync(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLSendCall { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
             SendInformativeMessage("auth.sendCall", obj, callback, faultCallback);
         }
 
-	    public void SignUpAsync(TLString phoneNumber, TLString phoneCodeHash, TLString phoneCode, TLString firstName, TLString lastName, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    public void SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
-            var obj = new TLSignUp { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode, FirstName = firstName, LastName = lastName };
+            var obj = new TLAuthSignUp { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode, FirstName = firstName, LastName = lastName };
 
             SendInformativeMessage<TLAuthorization>("auth.signUp", obj,
                 auth =>
@@ -73,9 +72,9 @@ namespace Telegram.Api.Services
                 faultCallback);
 	    }
 
-        public void SignInAsync(TLString phoneNumber, TLString phoneCodeHash, TLString phoneCode, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+        public void SignInAsync(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLSignIn{ PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode};
+            var obj = new TLAuthSignIn { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode};
 
             SendInformativeMessage<TLAuthorization>("auth.signIn", obj,
                 auth =>
@@ -91,13 +90,13 @@ namespace Telegram.Api.Services
 	        CancelDelayedItemsAsync(true);
 	    }
 
-        public void LogOutAsync(Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        public void LogOutAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLLogOut();
+            var obj = new TLAuthLogOut();
 
             const string methodName = "auth.logOut";
             Logs.Log.Write(methodName);
-            SendInformativeMessage<TLBool>(methodName, obj,
+            SendInformativeMessage<bool>(methodName, obj,
                 result =>
                 {
                     Logs.Log.Write(string.Format("{0} result={1}", methodName, result));
@@ -110,37 +109,37 @@ namespace Telegram.Api.Services
                 });
         }
 
-        public void SendInvitesAsync(TLVector<TLString> phoneNumbers, TLString message, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        public void SendInvitesAsync(TLVector<string> phoneNumbers, string message, Action<bool> callback, Action<TLRPCError> faultCallback = null)
 	    {
-            var obj = new TLSendInvites{ PhoneNumbers = phoneNumbers, Message = message };
+            var obj = new TLAuthSendInvites { PhoneNumbers = phoneNumbers, Message = message };
 
             SendInformativeMessage("auth.sendInvites", obj, callback, faultCallback);
 	    }
 
-	    public void ExportAuthorizationAsync(TLInt dcId, Action<TLExportedAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    public void ExportAuthorizationAsync(int? dcId, Action<TLExportedAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
-            var obj = new TLExportAuthorization { DCId = dcId };
+            var obj = new TLAuthExportAuthorization { DCId = dcId };
 
             SendInformativeMessage("auth.exportAuthorization dc_id=" + dcId, obj, callback, faultCallback);
 	    }
 
-	    public void ImportAuthorizationAsync(TLInt id, TLString bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    public void ImportAuthorizationAsync(int? id, string bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
-            var obj = new TLImportAuthorization { Id = id, Bytes = bytes };
+            var obj = new TLAuthImportAuthorization { Id = id, Bytes = bytes };
 
             SendInformativeMessage("auth.importAuthorization id=" + id, obj, callback, faultCallback);
 	    }
 
-        public void ImportAuthorizationByTransportAsync(ITransport transport, TLInt id, TLString bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+        public void ImportAuthorizationByTransportAsync(ITransport transport, int? id, string bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLImportAuthorization { Id = id, Bytes = bytes };
+            var obj = new TLAuthImportAuthorization { Id = id, Bytes = bytes };
 
             SendInformativeMessageByTransport(transport, "auth.importAuthorization dc_id=" + transport.DCId, obj, callback, faultCallback);
         }
 
-        public void ResetAuthorizationsAsync(Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        public void ResetAuthorizationsAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLResetAuthorizations();
+            var obj = new TLAuthResetAuthorizations();
 
             SendInformativeMessage("auth.resetAuthorizations", obj, callback, faultCallback);
         }

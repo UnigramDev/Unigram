@@ -41,8 +41,8 @@ namespace Telegram.Api.Transport
         public int Id { get; protected set; }
         public int DCId { get; set; }
         public byte[] AuthKey { get; set; }
-        public TLLong SessionId { get; set; }
-        public TLLong Salt { get; set; }
+        public long? SessionId { get; set; }
+        public long? Salt { get; set; }
         public int SequenceNumber { get; set; }
 
         private long _clientTicksDelta;
@@ -60,7 +60,7 @@ namespace Telegram.Api.Transport
 
         private bool _once;
 
-        public void UpdateTicksDelta(TLLong msgId)
+        public void UpdateTicksDelta(long? msgId)
         {
             if (_once) return;  // to avoid lock
 
@@ -86,9 +86,9 @@ namespace Telegram.Api.Transport
         public int LastPacketLength { get { return _lastPacketLength; } }
 
 
-        public WindowsPhone.Tuple<int, int, int> GetCurrentPacketInfo()
+        public Tuple<int, int, int> GetCurrentPacketInfo()
         {
-            return new WindowsPhone.Tuple<int, int, int>(_packetLengthBytesRead, _packetLength, _bytesReceived);
+            return new Tuple<int, int, int>(_packetLengthBytesRead, _packetLength, _bytesReceived);
         }
 
         public abstract string GetTransportInfo();
@@ -263,7 +263,7 @@ namespace Telegram.Api.Transport
 
         public static long PreviousMessageId;
 
-        public TLLong GenerateMessageId(bool checkPreviousMessageId = false)
+        public long GenerateMessageId(bool checkPreviousMessageId = false)
         {
             var clientDelta = ClientTicksDelta;
             // serverTime = clientTime + clientDelta
@@ -297,7 +297,7 @@ namespace Telegram.Api.Transport
             if (correctUnixTime == 0)
                 throw new Exception("Bad message id");
 
-            return new TLLong(correctUnixTime);
+            return correctUnixTime;
         }
         #endregion
 
@@ -438,7 +438,7 @@ namespace Telegram.Api.Transport
 #if LOG_REGISTRATION
                     TLUtils.WriteLog(String.Format("Socket.ClearNonEncryptedHistory {0} item {1}", Id, historyItem.Value.Caption));
 #endif
-                    historyItem.Value.FaultCallback.SafeInvoke(new TLRPCError { Code = new TLInt(404), Message = new TLString(error.ToString()) });
+                    historyItem.Value.FaultCallback.SafeInvoke(new TLRPCError { Code = 404, Message = new TLString(error.ToString()) });
                 }
 
                 _nonEncryptedHistory.Clear();

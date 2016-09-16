@@ -21,14 +21,14 @@ namespace Telegram.Api.Services
             SendInformativeMessage("updates.getState", obj, callback, faultCallback);
         }
 
-        public void GetDifferenceAsync(TLInt pts, TLInt date, TLInt qts, Action<TLDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetDifferenceAsync(int? pts, int? date, int? qts, Action<TLDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLGetDifference{ Date = date, Pts = pts, Qts = qts };
 
             SendInformativeMessage("updates.getDifference", obj, callback, faultCallback);
         }
 
-        public void GetDifferenceWithoutUpdatesAsync(TLInt pts, TLInt date, TLInt qts, Action<TLDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetDifferenceWithoutUpdatesAsync(int? pts, int? date, int? qts, Action<TLDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLGetDifference { Date = date, Pts = pts, Qts = qts };
 

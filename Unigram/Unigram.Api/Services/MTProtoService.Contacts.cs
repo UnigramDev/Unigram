@@ -7,16 +7,16 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
-        public void ResetTopPeerRatingAsync(TLTopPeerCategoryBase category, TLInputPeerBase peer, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        public void ResetTopPeerRatingAsync(TLTopPeerCategoryBase category, TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLResetTopPeerRating { Category = category, Peer = peer };
 
-            SendInformativeMessage<TLBool>("contacts.resetTopPeerRating", obj, callback.SafeInvoke, faultCallback);
+            SendInformativeMessage<bool>("contacts.resetTopPeerRating", obj, callback.SafeInvoke, faultCallback);
         }
 
-        public void GetTopPeersAsync(GetTopPeersFlags flags, TLInt offset, TLInt limit, TLInt hash, Action<TLTopPeersBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetTopPeersAsync(GetTopPeersFlags flags, int? offset, int? limit, int? hash, Action<TLTopPeersBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLGetTopPeers { Flags = new TLInt((int) flags), Offset  = offset, Limit = limit, Hash = hash };
+            var obj = new TLGetTopPeers { Flags = new int?((int) flags), Offset  = offset, Limit = limit, Hash = hash };
 
             SendInformativeMessage<TLTopPeersBase>("contacts.getTopPeers", obj, result =>
             {
@@ -38,7 +38,7 @@ namespace Telegram.Api.Services
             }, faultCallback);
         }
 
-        public void ResolveUsernameAsync(TLString username, Action<TLResolvedPeer> callback, Action<TLRPCError> faultCallback = null)
+        public void ResolveUsernameAsync(string username, Action<TLResolvedPeer> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLResolveUsername{ Username = username };
 
@@ -68,14 +68,14 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void GetContactsAsync(TLString hash, Action<TLContactsBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetContactsAsync(string hash, Action<TLContactsBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLGetContacts { Hash = hash };
 
             SendInformativeMessage<TLContactsBase>("contacts.getContacts", obj, result => _cacheService.SyncContacts(result, callback), faultCallback);
         }
 
-        public void ImportContactsAsync(TLVector<TLInputContactBase> contacts, TLBool replace, Action<TLImportedContacts> callback, Action<TLRPCError> faultCallback = null)
+        public void ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace, Action<TLImportedContacts> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLImportContacts { Contacts = contacts, Replace = replace };
 
@@ -89,35 +89,35 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLLinkBase>("contacts.deleteContact", obj, result => _cacheService.SyncUserLink(result, callback), faultCallback);
         }
 
-        public void DeleteContactsAsync(TLVector<TLInputUserBase> id, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        public void DeleteContactsAsync(TLVector<TLInputUserBase> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLDeleteContacts { Id = id };
 
             SendInformativeMessage("contacts.deleteContacts", obj, callback, faultCallback);
         }
 
-        public void BlockAsync(TLInputUserBase id, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        public void BlockAsync(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLBlock { Id = id };
 
             SendInformativeMessage("contacts.block", obj, callback, faultCallback);
         }
 
-        public void UnblockAsync(TLInputUserBase id, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        public void UnblockAsync(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUnblock { Id = id };
 
             SendInformativeMessage("contacts.unblock", obj, callback, faultCallback);
         }
 
-        public void GetBlockedAsync(TLInt offset, TLInt limit, Action<TLContactsBlockedBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetBlockedAsync(int? offset, int? limit, Action<TLContactsBlockedBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLGetBlocked { Offset = offset, Limit = limit };
 
             SendInformativeMessage("contacts.getBlocked", obj, callback, faultCallback);
         }
 
-        public void SearchAsync(TLString q, TLInt limit, Action<TLContactsFoundBase> callback, Action<TLRPCError> faultCallback = null)
+        public void SearchAsync(string q, int? limit, Action<TLContactsFoundBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLSearch { Q = q, Limit = limit };
             //var invokeWithLayer18 = new TLInvokeWithLayer18 {Data = obj};

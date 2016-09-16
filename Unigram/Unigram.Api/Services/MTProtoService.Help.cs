@@ -17,9 +17,9 @@ namespace Telegram.Api.Services
             {
                 new TLDCOption 
                 { 
-                    Id = new TLInt(Constants.FirstServerDCId),
+                    Id = new int?(Constants.FirstServerDCId),
                     IpAddress = new TLString(Constants.FirstServerIpAddress), 
-                    Port = new TLInt(Constants.FirstServerPort) 
+                    Port = new int?(Constants.FirstServerPort) 
                 }
             }
 	    };
@@ -104,7 +104,7 @@ namespace Telegram.Api.Services
                 });
         }
 
-        public void GetTermsOfServiceAsync(TLString langCode, Action<TLTermsOfService> callback, Action<TLRPCError> faultCallback = null)
+        public void GetTermsOfServiceAsync(string langCode, Action<TLTermsOfService> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLGetTermsOfService();
 
@@ -118,7 +118,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("help.getNearestDc", obj, callback, faultCallback);
         }
 
-        public void GetInviteTextAsync(TLString langCode, Action<TLInviteText> callback, Action<TLRPCError> faultCallback = null)
+        public void GetInviteTextAsync(string langCode, Action<TLInviteText> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLGetInviteText();
 
@@ -132,7 +132,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("help.getSupport", obj, callback, faultCallback);
         }
 
-        public void GetAppChangelogAsync(TLString deviceModel, TLString systemVersion, TLString appVersion, TLString langCode, Action<TLAppChangelogBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetAppChangelogAsync(string deviceModel, string systemVersion, string appVersion, string langCode, Action<TLAppChangelogBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLGetAppChangelog();
 

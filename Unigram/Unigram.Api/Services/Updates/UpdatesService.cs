@@ -29,7 +29,7 @@ namespace Telegram.Api.Services.Updates
 
         private readonly ITelegramEventAggregator _eventAggregator;
 
-        public Func<TLInt> GetCurrentUserId { get; set; }
+        public Func<int> GetCurrentUserId { get; set; }
 
         public Action<Action<TLState>, Action<TLRPCError>> GetStateAsync { get; set; }
         public GetDHConfigAction GetDHConfigAsync { get; set; }
@@ -37,7 +37,7 @@ namespace Telegram.Api.Services.Updates
         public AcceptEncryptionAction AcceptEncryptionAsync { get; set; }
         public SendEncryptedServiceAction SendEncryptedServiceAsync { get; set; }
         public SetMessageOnTimeAtion SetMessageOnTimeAsync { get; set; }
-        public Action<TLLong> RemoveFromQueue { get; set; }
+        public Action<long> RemoveFromQueue { get; set; }
         public UpdateChannelAction UpdateChannelAsync { get; set; }
         public GetParticipantAction GetParticipantAsync { get; set; }
         public GetFullChatAction GetFullChatAsync { get; set; }
@@ -88,7 +88,7 @@ namespace Telegram.Api.Services.Updates
             TLUtils.WriteLine(DateTime.Now.ToString("  HH:mm:ss.fff", CultureInfo.InvariantCulture) + " OnCheck lostSeqTimer", LogSeverity.Error);
             var getDifference = false;
             var isLostSeqEmpty = true;
-            var keyValuePair = default(KeyValuePair<int, WindowsPhone.Tuple<DateTime, TLState>>);
+            var keyValuePair = default(KeyValuePair<int, Tuple<DateTime, TLState>>);
             lock (_clientSeqLock)
             {
                 foreach (var keyValue in _lostSeq.OrderBy(x => x.Key))
@@ -134,7 +134,7 @@ namespace Telegram.Api.Services.Updates
             TLUtils.WriteLine(DateTime.Now.ToString("  HH:mm:ss.fff", CultureInfo.InvariantCulture) + " OnCheck lostPtsTimer", LogSeverity.Error);
             var getDifference = false;
             var isLostPtsEmpty = true;
-            var keyValuePair = default(KeyValuePair<int, WindowsPhone.Tuple<DateTime, TLState>>);
+            var keyValuePair = default(KeyValuePair<int, Tuple<DateTime, TLState>>);
             lock (_clientPtsLock)
             {
                 foreach (var keyValue in _lostPts.OrderBy(x => x.Key))
@@ -175,7 +175,7 @@ namespace Telegram.Api.Services.Updates
             }
         }
 
-        public void SetState(IMultiPts multiPts, string caption)
+        public void SetState(ITLMultiPts multiPts, string caption)
         {
             var ptsList = TLUtils.GetPtsRange(multiPts);
 
@@ -189,11 +189,11 @@ namespace Telegram.Api.Services.Updates
             UpdateLostPts(ptsList);
         }
 
-        public TLInt ClientSeq { get; protected set; }
+        public int? ClientSeq { get; protected set; }
 
-        private TLInt _dateInternal;
+        private int? _dateInternal;
 
-        private TLInt _date
+        private int? _date
         {
             get { return _dateInternal; }
             set
@@ -202,13 +202,13 @@ namespace Telegram.Api.Services.Updates
             }
         }
 
-        private TLInt _pts;
+        private int? _pts;
 
-        private TLInt _qts = new TLInt(1);
+        private int? _qts = 1;
 
-        private TLInt _unreadCount;
+        private int? _unreadCount;
 
-        public void SetState(TLInt seq, TLInt pts, TLInt qts, TLInt date, TLInt unreadCount, string caption, bool cleanupMissingCounts = false)
+        public void SetState(int? seq, int? pts, int? qts, int? date, int? unreadCount, string caption, bool cleanupMissingCounts = false)
         {
 #if LOG_CLIENTSEQ
             TLUtils.WriteLine(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} newPts={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", seq, _pts != null ? _pts.ToString() : "null", pts), LogSeverity.Error);
@@ -216,14 +216,14 @@ namespace Telegram.Api.Services.Updates
 #endif
             if (seq != null)
             {
-                UpdateLostSeq(new List<TLInt> { seq }, cleanupMissingCounts);
+                UpdateLostSeq(new List<int> { seq }, cleanupMissingCounts);
             }
 
             _date = date ?? _date;
 
             if (pts != null)
             {
-                UpdateLostPts(new List<TLInt> { pts }, cleanupMissingCounts);
+                UpdateLostPts(new List<int> { pts }, cleanupMissingCounts);
             }
 
             _qts = qts ?? _qts;
@@ -303,7 +303,7 @@ namespace Telegram.Api.Services.Updates
             }
         }
 
-        private void GetDifference(int id, TLInt pts, TLInt date, TLInt qts, Action callback)
+        private void GetDifference(int id, int? pts, int? date, int? qts, Action callback)
         {
             Logs.Log.Write(string.Format("UpdatesService.GetDifference {0} state=[p={1} d={2} q={3}]", id, _pts, _date, _qts));
             TLUtils.WritePerformance(string.Format("UpdatesService.GetDifference pts={0} date={1} qts={2}", _pts, _date, _qts));
@@ -689,7 +689,7 @@ namespace Telegram.Api.Services.Updates
                 {
                     if (maxId.Value >= message.Index)
                     {
-                        message.SetUnreadSilent(TLBool.False);
+                        message.SetUnreadSilent(false);
                     }
                 }
             }
@@ -752,7 +752,7 @@ namespace Telegram.Api.Services.Updates
                 {
                     if (maxId.Value >= message.Index)
                     {
-                        message.SetUnreadSilent(TLBool.False);
+                        message.SetUnreadSilent(false);
                     }
                 }
             }
@@ -775,7 +775,7 @@ namespace Telegram.Api.Services.Updates
             if (handler != null) handler(this, e);
         }
 
-        public static TLDecryptedMessageBase GetDecryptedMessage(TLInt currentUserId, TLEncryptedChat cachedChat, TLEncryptedMessageBase encryptedMessageBase, TLInt qts, out bool commitChat)
+        public static TLDecryptedMessageBase GetDecryptedMessage(int? currentUserId, TLEncryptedChat cachedChat, TLEncryptedMessageBase encryptedMessageBase, int? qts, out bool commitChat)
         {
             commitChat = false;
 
@@ -974,8 +974,8 @@ namespace Telegram.Api.Services.Updates
                 //        if (channel != null)
                 //        {
                 //            // replace with channels.getDifference and handling channelDifferenceTooLong
-                //            GetHistoryAsync(channel.ToInputPeer(), new TLInt(0), new TLInt(0),
-                //                new TLInt(Constants.CachedMessagesCount), new TLInt(0), new TLInt(0),
+                //            GetHistoryAsync(channel.ToInputPeer(), 0, 0,
+                //                new int?(Constants.CachedMessagesCount), 0, 0,
                 //                result2 =>
                 //                {
 
@@ -1069,7 +1069,7 @@ namespace Telegram.Api.Services.Updates
                     if (message == null)
                     {
                         GetChannelMessagesAsync(channel.ToInputChannel(),
-                            new TLVector<TLInt> {updateChannelPinnedMessage.Id},
+                            new TLVector<int> {updateChannelPinnedMessage.Id},
                             messagesBase =>
                             {
                                 _cacheService.AddMessagesToContext(messagesBase, result =>
@@ -1122,7 +1122,7 @@ namespace Telegram.Api.Services.Updates
             if (updateEditChannelMessage != null)
             {
                 Execute.ShowDebugMessage(string.Format("updateEditChannelMessage channel_pts={0} channel_ptscount={1} message={2}", updateEditChannelMessage.ChannelPts, updateEditChannelMessage.ChannelPtsCount, updateEditChannelMessage.Message));
-                var commonMessage = updateEditChannelMessage.Message as TLMessageCommon;
+                var commonMessage = updateEditChannelMessage.Message as TLMessage;
                 if (commonMessage != null)
                 {
                     var peer = commonMessage.ToId;
@@ -1136,7 +1136,7 @@ namespace Telegram.Api.Services.Updates
                         {
                             Execute.ShowDebugMessage(string.Format("channel_id={0} channel_pts={1} updateEditChannelMessage[channel_pts={2} channel_pts_count={3}]", peer.Id, channel.Pts, updateEditChannelMessage.ChannelPts, updateEditChannelMessage.ChannelPtsCount));
                         }
-                        channel.Pts = new TLInt(updateEditChannelMessage.ChannelPts.Value);
+                        channel.Pts = new int?(updateEditChannelMessage.ChannelPts.Value);
                     }
 
                     _cacheService.SyncEditedMessage(updateEditChannelMessage.Message, notifyNewMessage, notifyNewMessage,
@@ -1156,7 +1156,7 @@ namespace Telegram.Api.Services.Updates
             var updateNewChannelMessage = update as TLUpdateNewChannelMessage;
             if (updateNewChannelMessage != null)
             {
-                var commonMessage = updateNewChannelMessage.Message as TLMessageCommon;
+                var commonMessage = updateNewChannelMessage.Message as TLMessage;
                 if (commonMessage != null)
                 {
                     var peer = commonMessage.ToId;
@@ -1170,7 +1170,7 @@ namespace Telegram.Api.Services.Updates
                         {
                             //Execute.ShowDebugMessage(string.Format("channel_id={0} channel_pts={1} updateNewChannelMessage[channel_pts={2} channel_pts_count={3}]", peer.Id, channel.Pts, updateNewChannelMessage.ChannelPts, updateNewChannelMessage.ChannelPtsCount));
                         }
-                        channel.Pts = new TLInt(updateNewChannelMessage.ChannelPts.Value);
+                        channel.Pts = new int?(updateNewChannelMessage.ChannelPts.Value);
 
                         if (!commonMessage.Out.Value)
                         {
@@ -1178,7 +1178,7 @@ namespace Telegram.Api.Services.Updates
 
                             if (commonMessage.Index <= readInboxMaxId)
                             {
-                                commonMessage.SetUnreadSilent(TLBool.False);
+                                commonMessage.SetUnreadSilent(false);
                             }
                         }
                         else
@@ -1190,7 +1190,7 @@ namespace Telegram.Api.Services.Updates
 
                                 if (commonMessage.Index <= readOutboxMaxId)
                                 {
-                                    commonMessage.SetUnreadSilent(TLBool.False);
+                                    commonMessage.SetUnreadSilent(false);
                                 }
                             }
                         }
@@ -1212,7 +1212,7 @@ namespace Telegram.Api.Services.Updates
             var updateNewMessage = update as TLUpdateNewMessage;
             if (updateNewMessage != null)
             {
-                var commonMessage = updateNewMessage.Message as TLMessageCommon;
+                var commonMessage = updateNewMessage.Message as TLMessage;
                 if (commonMessage != null)
                 {
                     MTProtoService.ProcessSelfMessage(commonMessage);
@@ -1273,10 +1273,10 @@ namespace Telegram.Api.Services.Updates
             var updatedReadMessagesContents = update as TLUpdateReadMessagesContents;
             if (updatedReadMessagesContents != null)
             {
-                var messages = new List<TLMessage25>(updatedReadMessagesContents.Messages.Count);
+                var messages = new List<TLMessage>(updatedReadMessagesContents.Messages.Count);
                 foreach (var readMessageId in updatedReadMessagesContents.Messages)
                 {
-                    var message = _cacheService.GetMessage(readMessageId) as TLMessage25;
+                    var message = _cacheService.GetMessage(readMessageId) as TLMessage;
                     if (message != null)
                     {
                         messages.Add(message);
@@ -1304,7 +1304,7 @@ namespace Telegram.Api.Services.Updates
             {
                 //Execute.ShowDebugMessage(string.Format("updateChannelMessageViews channel_id={0} id={1} views={2}", updateChannelMessageViews.ChannelId, updateChannelMessageViews.Id, updateChannelMessageViews.Views));
 
-                var message = _cacheService.GetMessage(updateChannelMessageViews.Id, updateChannelMessageViews.ChannelId) as TLMessage36;
+                var message = _cacheService.GetMessage(updateChannelMessageViews.Id, updateChannelMessageViews.ChannelId) as TLMessage;
                 if (message != null)
                 {
                     if (message.Views == null || message.Views.Value < updateChannelMessageViews.Views.Value)
@@ -1348,11 +1348,11 @@ namespace Telegram.Api.Services.Updates
                         SetReadMaxId(dialog53.With as IReadMaxId, updateReadHistory.MaxId, outbox);
                     }
 
-                    var notifyMessages = new List<TLMessageCommon>();
+                    var notifyMessages = new List<TLMessage>();
                     var maxId = updateReadHistory.MaxId;
                     for (int i = 0; i < dialog.Messages.Count; i++)
                     {
-                        var message = dialog.Messages[i] as TLMessageCommon;
+                        var message = dialog.Messages[i] as TLMessage;
                         if (message != null)
                         {
                             if (message.Index != 0
@@ -1361,7 +1361,7 @@ namespace Telegram.Api.Services.Updates
                             {
                                 if (message.Unread.Value)
                                 {
-                                    message.SetUnread(TLBool.False);
+                                    message.SetUnread(false);
                                     notifyMessages.Add(message);
                                     //message.NotifyOfPropertyChange(() => message.Unread);
                                 }
@@ -1373,7 +1373,7 @@ namespace Telegram.Api.Services.Updates
                         }
                     }
 
-                    var topMessage = dialog.TopMessage as TLMessageCommon;
+                    var topMessage = dialog.TopMessage as TLMessage;
                     if (topMessage != null)
                     {
                         if (topMessage.Index <= maxId.Value)
@@ -1382,7 +1382,7 @@ namespace Telegram.Api.Services.Updates
                                 && topMessage.Unread.Value
                                 && topMessage.Out.Value == outbox)
                             {
-                                topMessage.SetUnread(TLBool.False);
+                                topMessage.SetUnread(false);
                                 notifyMessages.Add(topMessage);
                                 //topMessage.NotifyOfPropertyChange(() => topMessage.Unread);
                             }
@@ -1398,7 +1398,7 @@ namespace Telegram.Api.Services.Updates
                     {
                         unreadCount = dialog.UnreadCount.Value;
                     }
-                    dialog.UnreadCount = new TLInt(unreadCount);
+                    dialog.UnreadCount = new int?(unreadCount);
 
                     Execute.BeginOnUIThread(() =>
                     {
@@ -1442,26 +1442,26 @@ namespace Telegram.Api.Services.Updates
                         SetReadMaxId(dialog53.With as IReadMaxId, updateReadChannelOutbox.MaxId, true);
                     }
 
-                    var messages = new List<TLMessageCommon>();
+                    var messages = new List<TLMessage>();
 
-                    var topMessage = dialog.TopMessage as TLMessageCommon;
+                    var topMessage = dialog.TopMessage as TLMessage;
                     if (topMessage != null
                         && topMessage.Out.Value
                         && topMessage.Index <= updateReadChannelOutbox.MaxId.Value)
                     {
-                        //dialog.UnreadCount = new TLInt(0);
-                        topMessage.SetUnread(TLBool.False);
+                        //dialog.UnreadCount = 0;
+                        topMessage.SetUnread(false);
                         messages.Add(topMessage);
                     }
 
                     foreach (var messageBase in dialog.Messages)
                     {
-                        var message = messageBase as TLMessageCommon;
+                        var message = messageBase as TLMessage;
                         if (message != null && message.Unread.Value && message.Out.Value)
                         {
                             if (message.Index != 0 && message.Index < updateReadChannelOutbox.MaxId.Value)
                             {
-                                message.SetUnread(TLBool.False);
+                                message.SetUnread(false);
                                 messages.Add(message);
                             }
                         }
@@ -1493,7 +1493,7 @@ namespace Telegram.Api.Services.Updates
             {
                 //Execute.ShowDebugMessage(string.Format("TLUpdateReadChannelInbox channel_id={0} max_id={1}", updateReadChannelInbox.ChannelId, updateReadChannelInbox.MaxId));
 
-                var messages = new List<TLMessageCommon>();
+                var messages = new List<TLMessage>();
 
                 var readMaxId = _cacheService.GetChat(updateReadChannelInbox.ChannelId) as IReadMaxId;
                 if (readMaxId != null)
@@ -1511,24 +1511,24 @@ namespace Telegram.Api.Services.Updates
                         SetReadMaxId(dialog53.With as IReadMaxId, updateReadChannelInbox.MaxId, false);
                     }
 
-                    var topMessage = dialog.TopMessage as TLMessageCommon;
+                    var topMessage = dialog.TopMessage as TLMessage;
                     if (topMessage != null
                         && !topMessage.Out.Value
                         && topMessage.Index <= updateReadChannelInbox.MaxId.Value)
                     {
-                        dialog.UnreadCount = new TLInt(0);
-                        topMessage.SetUnread(TLBool.False);
+                        dialog.UnreadCount = 0;
+                        topMessage.SetUnread(false);
                         messages.Add(topMessage);
                     }
 
                     foreach (var messageBase in dialog.Messages)
                     {
-                        var message = messageBase as TLMessageCommon;
+                        var message = messageBase as TLMessage;
                         if (message != null && message.Unread.Value && !message.Out.Value)
                         {
                             if (message.Index != 0 && message.Index < updateReadChannelInbox.MaxId.Value)
                             {
-                                message.SetUnread(TLBool.False);
+                                message.SetUnread(false);
                                 messages.Add(message);
                             }
                         }
@@ -1558,11 +1558,11 @@ namespace Telegram.Api.Services.Updates
             var updateReadMessages = update as TLUpdateReadMessages;
             if (updateReadMessages != null)
             {
-                var dialogs = new Dictionary<int, TLDialogBase>();
-                var messages = new List<TLMessageCommon>(updateReadMessages.Messages.Count);
+                var dialogs = new Dictionary<int, TLDialog>();
+                var messages = new List<TLMessage>(updateReadMessages.Messages.Count);
                 foreach (var readMessageId in updateReadMessages.Messages)
                 {
-                    var message = _cacheService.GetMessage(readMessageId) as TLMessageCommon;
+                    var message = _cacheService.GetMessage(readMessageId) as TLMessage;
                     if (message != null)
                     {
                         messages.Add(message);
@@ -1570,7 +1570,7 @@ namespace Telegram.Api.Services.Updates
                         var dialog = _cacheService.GetDialog(message);
                         if (dialog != null && dialog.UnreadCount.Value > 0)
                         {
-                            dialog.UnreadCount = new TLInt(Math.Max(0, dialog.UnreadCount.Value - 1));
+                            dialog.UnreadCount = new int?(Math.Max(0, dialog.UnreadCount.Value - 1));
                             var topMessage = dialog.TopMessage;
                             if (topMessage != null
                                 && topMessage.Index == readMessageId.Value)
@@ -1624,7 +1624,7 @@ namespace Telegram.Api.Services.Updates
                     {
                         Execute.ShowDebugMessage(string.Format("channel_id={0} channel_pts={1} updateDeleteChannelMessages[channel_pts={2} channel_pts_count={3}]", channel.Id, channel.Pts, updateDeleteChannelMessages.ChannelPts, updateDeleteChannelMessages.ChannelPtsCount));
                     }
-                    channel.Pts = new TLInt(updateDeleteChannelMessages.ChannelPts.Value);
+                    channel.Pts = new int?(updateDeleteChannelMessages.ChannelPts.Value);
                 }
 
                 _cacheService.DeleteChannelMessages(updateDeleteChannelMessages.ChannelId, updateDeleteChannelMessages.Messages);
@@ -1781,7 +1781,7 @@ namespace Telegram.Api.Services.Updates
 
                 if (user == null)
                 {
-                    GetFullUserAsync(new TLInputUser { UserId = contactRegistered.UserId, AccessHash = new TLLong(0) },
+                    GetFullUserAsync(new TLInputUser { UserId = contactRegistered.UserId, AccessHash = 0 },
                         userFull =>
                         {
                             user = userFull.ToUser();
@@ -2044,7 +2044,7 @@ namespace Telegram.Api.Services.Updates
             return false;
         }
 
-        private static void SetReadMaxId(IReadMaxId readMaxId, TLInt maxId, bool outbox)
+        private static void SetReadMaxId(IReadMaxId readMaxId, int? maxId, bool outbox)
         {
             if (readMaxId == null) return;
 
@@ -2128,7 +2128,7 @@ namespace Telegram.Api.Services.Updates
                                             }
                                         }
 
-                                        items[i].DeleteDate = new TLLong(DateTime.Now.Ticks + encryptedChat.MessageTTL.Value * TimeSpan.TicksPerSecond);
+                                        items[i].DeleteDate = new long?(DateTime.Now.Ticks + encryptedChat.MessageTTL.Value * TimeSpan.TicksPerSecond);
                                     }
                                 }
                                 else if (items[i].Status == MessageStatus.Read)
@@ -2145,7 +2145,7 @@ namespace Telegram.Api.Services.Updates
                         var dialog = _cacheService.GetEncryptedDialog(encryptedChat.Id) as TLEncryptedDialog;
                         if (dialog != null)
                         {
-                            //dialog.UnreadCount = new TLInt(dialog.UnreadCount.Value - 1);
+                            //dialog.UnreadCount = new int?(dialog.UnreadCount.Value - 1);
                             var topMessage = dialog.TopMessage;
                             if (topMessage != null)
                             {
@@ -2222,7 +2222,7 @@ namespace Telegram.Api.Services.Updates
                                             item.Status = MessageStatus.Read;
                                             if (item.TTL != null && item.TTL.Value > 0)
                                             {
-                                                item.DeleteDate = new TLLong(DateTime.Now.Ticks + encryptedChat8.MessageTTL.Value * TimeSpan.TicksPerSecond);
+                                                item.DeleteDate = new long?(DateTime.Now.Ticks + encryptedChat8.MessageTTL.Value * TimeSpan.TicksPerSecond);
                                             }
 
                                             var message = item as TLDecryptedMessage17;
@@ -2308,7 +2308,7 @@ namespace Telegram.Api.Services.Updates
                     var isDisplayedMessage = TLUtils.IsDisplayedDecryptedMessageInternal(decryptedMessage);
                     if (!isDisplayedMessage)
                     {
-                        decryptedMessage.Unread = TLBool.False;
+                        decryptedMessage.Unread = false;
                     }
 
                     ProcessPFS(SendEncryptedServiceAsync, _cacheService, _eventAggregator, encryptedChat20, decryptedMessageService);
@@ -2324,7 +2324,7 @@ namespace Telegram.Api.Services.Updates
                             if (messageRawInSeqNo == chatRawInSeqNo)
                             {
                                 hasMessagesGap = false;
-                                encryptedChat17.RawInSeqNo = new TLInt(encryptedChat17.RawInSeqNo.Value + 1);
+                                encryptedChat17.RawInSeqNo = new int?(encryptedChat17.RawInSeqNo.Value + 1);
                                 _cacheService.SyncEncryptedChat(encryptedChat17, result => { });
                             }
                             else
@@ -2350,9 +2350,9 @@ namespace Telegram.Api.Services.Updates
                                 }
                             }
 
-                            var layer = new TLInt(newLayer);
-                            var rawInSeqNo = new TLInt(1);      // только что получил сообщение по новому слою
-                            var rawOutSeqNo = new TLInt(0);
+                            var layer = new int?(newLayer);
+                            var rawInSeqNo = 1;      // только что получил сообщение по новому слою
+                            var rawOutSeqNo = 0;
 
                             UpgradeSecretChatLayerAndSendNotification(SendEncryptedServiceAsync, _cacheService, _eventAggregator, encryptedChat8, layer, rawInSeqNo, rawOutSeqNo);
                         }
@@ -2371,9 +2371,9 @@ namespace Telegram.Api.Services.Updates
                                     newLayer = notifyLayerAction.Layer.Value;
                                 }
 
-                                var layer = new TLInt(newLayer);
-                                var rawInSeqNo = new TLInt(0);
-                                var rawOutSewNo = new TLInt(0);
+                                var layer = new int?(newLayer);
+                                var rawInSeqNo = 0;
+                                var rawOutSewNo = 0;
 
                                 UpgradeSecretChatLayerAndSendNotification(SendEncryptedServiceAsync, _cacheService, _eventAggregator, encryptedChat17, layer, rawInSeqNo, rawOutSewNo);
                             }
@@ -2385,9 +2385,9 @@ namespace Telegram.Api.Services.Updates
                                     newLayer = notifyLayerAction.Layer.Value;
                                 }
 
-                                var layer = new TLInt(newLayer);
-                                var rawInSeqNo = new TLInt(0);
-                                var rawOutSewNo = new TLInt(0);
+                                var layer = new int?(newLayer);
+                                var rawInSeqNo = 0;
+                                var rawOutSewNo = 0;
 
                                 UpgradeSecretChatLayerAndSendNotification(SendEncryptedServiceAsync, _cacheService, _eventAggregator, encryptedChat8, layer, rawInSeqNo, rawOutSewNo);
                             }
@@ -2462,7 +2462,7 @@ namespace Telegram.Api.Services.Updates
 
                     _cacheService.SyncDecryptedMessage(message, chatRequested, result => { });
 
-                    GetDHConfigAsync(new TLInt(0), new TLInt(0),
+                    GetDHConfigAsync(0, 0,
                         result =>
                         {
                             var dhConfig = (TLDHConfig)result;
@@ -2491,7 +2491,7 @@ namespace Telegram.Api.Services.Updates
 
                             var key = MTProtoService.GetAuthKey(bBytes, chatRequested.GA.ToBytes(), dhConfig.P.ToBytes());
                             var keyHash = Utils.ComputeSHA1(key);
-                            var keyFingerprint = new TLLong(BitConverter.ToInt64(keyHash, 12));
+                            var keyFingerprint = new long?(BitConverter.ToInt64(keyHash, 12));
 
                             AcceptEncryptionAsync(
                                 new TLInputEncryptedChat
@@ -2554,7 +2554,7 @@ namespace Telegram.Api.Services.Updates
                                     var clientTicksDelta = MTProtoService.Instance.ClientTicksDelta;
 
                                     var notifyLayerAction = new TLDecryptedMessageActionNotifyLayer();
-                                    notifyLayerAction.Layer = new TLInt(Constants.SecretSupportedLayer);
+                                    notifyLayerAction.Layer = new int?(Constants.SecretSupportedLayer);
 
                                     // уведомляем в старом слое, чтобы не сломать предыдущие версии клиентов
                                     var notifyLayerMessage = new TLDecryptedMessageService
@@ -2564,8 +2564,8 @@ namespace Telegram.Api.Services.Updates
                                         RandomBytes = TLString.Random(Constants.MinRandomBytesLength),
 
                                         FromId = currentUserId,
-                                        Out = TLBool.True,
-                                        Unread = TLBool.False,
+                                        Out = true,
+                                        Unread = false,
                                         Date = TLUtils.DateToUniversalTimeTLInt(clientTicksDelta, DateTime.Now),
                                         Status = MessageStatus.Confirmed,
 
@@ -2633,13 +2633,13 @@ namespace Telegram.Api.Services.Updates
                 var currentUserId = MTProtoService.Instance.CurrentUserId;
                 var message = new TLMessageService17
                 {
-                    Flags = new TLInt(0),
-                    Id = new TLInt(0),
+                    Flags = 0,
+                    Id = 0,
                     FromId = user.Id,
                     ToId = new TLPeerUser { Id = currentUserId },
                     Status = MessageStatus.Confirmed,
-                    Out = TLBool.False,
-                    Unread = TLBool.False,
+                    Out = false,
+                    Unread = false,
                     Date = updateContactRegistered.Date,
                     Action = new TLMessageActionContactRegistered { UserId = user.Id },
                     RandomId = TLLong.Random()
@@ -2731,7 +2731,7 @@ namespace Telegram.Api.Services.Updates
 
                 var key = MTProtoService.GetAuthKey(encryptedChat.PFS_A.Data, requestKey.GA.ToBytes(), encryptedChat.P.ToBytes());
                 var keyHash = Utils.ComputeSHA1(key);
-                var keyFingerprint = new TLLong(BitConverter.ToInt64(keyHash, 12));
+                var keyFingerprint = new long?(BitConverter.ToInt64(keyHash, 12));
 
                 encryptedChat.PFS_Key = TLString.FromBigEndianData(key);
                 encryptedChat.PFS_KeyFingerprint = keyFingerprint;
@@ -2764,7 +2764,7 @@ namespace Telegram.Api.Services.Updates
 
                 var key = MTProtoService.GetAuthKey(encryptedChat.PFS_A.Data, acceptKey.GB.ToBytes(), encryptedChat.P.ToBytes());
                 var keyHash = Utils.ComputeSHA1(key);
-                var keyFingerprint = new TLLong(BitConverter.ToInt64(keyHash, 12));
+                var keyFingerprint = new long?(BitConverter.ToInt64(keyHash, 12));
 
                 // abort for keyfingerprint != acceptKey.keyFingerprint
                 if (keyFingerprint.Value != acceptKey.KeyFingerprint.Value)
@@ -2830,7 +2830,7 @@ namespace Telegram.Api.Services.Updates
             var inSeqNo = TLUtils.GetInSeqNo(currentUserId, encryptedChat);
             var outSeqNo = TLUtils.GetOutSeqNo(currentUserId, encryptedChat);
 
-            encryptedChat.RawOutSeqNo = new TLInt(encryptedChat.RawOutSeqNo.Value + 1);
+            encryptedChat.RawOutSeqNo = new int?(encryptedChat.RawOutSeqNo.Value + 1);
 
             var message = new TLDecryptedMessageService17
             {
@@ -2839,11 +2839,11 @@ namespace Telegram.Api.Services.Updates
                 RandomBytes = TLString.Random(Constants.MinRandomBytesLength),
                 ChatId = encryptedChat.Id,
                 FromId = currentUserId,
-                Out = TLBool.True,
-                Unread = TLBool.False,
+                Out = true,
+                Unread = false,
                 Date = TLUtils.DateToUniversalTimeTLInt(clientTicksDelta, DateTime.Now),
                 Status = MessageStatus.Sending,
-                TTL = new TLInt(0),
+                TTL = 0,
                 InSeqNo = inSeqNo,
                 OutSeqNo = outSeqNo
             };
@@ -2879,7 +2879,7 @@ namespace Telegram.Api.Services.Updates
                 });
         }
 
-        public static void UpgradeSecretChatLayerAndSendNotification(SendEncryptedServiceAction sendEncryptedServiceAsync, ICacheService cacheService, ITelegramEventAggregator eventAggregator, TLEncryptedChat encryptedChat, TLInt layer, TLInt rawInSeqNo, TLInt rawOutSeqNo)
+        public static void UpgradeSecretChatLayerAndSendNotification(SendEncryptedServiceAction sendEncryptedServiceAsync, ICacheService cacheService, ITelegramEventAggregator eventAggregator, TLEncryptedChat encryptedChat, int? layer, int? rawInSeqNo, int? rawOutSeqNo)
         {
             var newEncryptedChat = new TLEncryptedChat20();
             newEncryptedChat.Layer = layer;
@@ -2915,7 +2915,7 @@ namespace Telegram.Api.Services.Updates
                     var randomId = TLLong.Random();
 
                     var notifyLayerAction = new TLDecryptedMessageActionNotifyLayer();
-                    notifyLayerAction.Layer = new TLInt(Constants.SecretSupportedLayer);
+                    notifyLayerAction.Layer = new int?(Constants.SecretSupportedLayer);
 
                     var inSeqNo = TLUtils.GetInSeqNo(currentUserId, newEncryptedChat);
                     var outSeqNo = TLUtils.GetOutSeqNo(currentUserId, newEncryptedChat);
@@ -2923,7 +2923,7 @@ namespace Telegram.Api.Services.Updates
                     var newEncryptedChat17 = cacheService.GetEncryptedChat(newEncryptedChat.Id) as TLEncryptedChat17;
                     if (newEncryptedChat17 != null)
                     {
-                        newEncryptedChat17.RawOutSeqNo = new TLInt(newEncryptedChat17.RawOutSeqNo.Value + 1);
+                        newEncryptedChat17.RawOutSeqNo = new int?(newEncryptedChat17.RawOutSeqNo.Value + 1);
                     }
 
                     var decryptedMessageService17 = new TLDecryptedMessageService17
@@ -2934,12 +2934,12 @@ namespace Telegram.Api.Services.Updates
 
                         ChatId = encryptedChat.Id,
                         FromId = currentUserId,
-                        Out = TLBool.True,
-                        Unread = TLBool.False,
+                        Out = true,
+                        Unread = false,
                         Date = TLUtils.DateToUniversalTimeTLInt(clientTicksDelta, DateTime.Now),
                         Status = MessageStatus.Sending,
 
-                        TTL = new TLInt(0),
+                        TTL = 0,
                         InSeqNo = inSeqNo,
                         OutSeqNo = outSeqNo
                     };
@@ -2978,7 +2978,7 @@ namespace Telegram.Api.Services.Updates
                 });
         }
 
-        public static int GetRawInFromReceivedMessage(TLInt currentUserId, TLEncryptedChat17 chat, ISeqNo message)
+        public static int GetRawInFromReceivedMessage(int? currentUserId, TLEncryptedChat17 chat, ISeqNo message)
         {
             var isAdmin = chat.AdminId.Value == currentUserId.Value;
             var x = isAdmin ? 0 : 1;
@@ -2992,9 +2992,9 @@ namespace Telegram.Api.Services.Updates
 
         private readonly object _clientSeqLock = new object();
 
-        private readonly Dictionary<int, WindowsPhone.Tuple<DateTime, TLState>> _lostSeq = new Dictionary<int, WindowsPhone.Tuple<DateTime, TLState>>();
+        private readonly Dictionary<int, Tuple<DateTime, TLState>> _lostSeq = new Dictionary<int, Tuple<DateTime, TLState>>();
 
-        private void UpdateLostSeq(IList<TLInt> seqList, bool cleanupMissingSeq = false)
+        private void UpdateLostSeq(IList<int> seqList, bool cleanupMissingSeq = false)
         {
             lock (_clientSeqLock)
             {
@@ -3007,7 +3007,7 @@ namespace Telegram.Api.Services.Updates
                         {
                             for (var i = ClientSeq.Value + 1; i < seqList[0].Value; i++)
                             {
-                                _lostSeq[i] = new WindowsPhone.Tuple<DateTime, TLState>(DateTime.Now, new TLState { Seq = ClientSeq, Pts = _pts, Date = _date, Qts = _qts });
+                                _lostSeq[i] = new Tuple<DateTime, TLState>(DateTime.Now, new TLState { Seq = ClientSeq, Pts = _pts, Date = _date, Qts = _qts });
                             }
                         }
 
@@ -3035,7 +3035,7 @@ namespace Telegram.Api.Services.Updates
                 {
                     var lastSeqValue = seqList.Last().Value;
                     var maxSeqValue = Math.Max(lastSeqValue, ClientSeq != null ? ClientSeq.Value : -1);
-                    ClientSeq = new TLInt(maxSeqValue);
+                    ClientSeq = new int?(maxSeqValue);
                 }
 
                 if (_lostSeq.Count > 0)
@@ -3058,9 +3058,9 @@ namespace Telegram.Api.Services.Updates
 
         private readonly object _clientPtsLock = new object();
 
-        private readonly Dictionary<int, WindowsPhone.Tuple<DateTime, TLState>> _lostPts = new Dictionary<int, WindowsPhone.Tuple<DateTime, TLState>>();
+        private readonly Dictionary<int, Tuple<DateTime, TLState>> _lostPts = new Dictionary<int, Tuple<DateTime, TLState>>();
 
-        private void UpdateLostPts(IList<TLInt> ptsList, bool cleanupMissingPts = false)
+        private void UpdateLostPts(IList<int> ptsList, bool cleanupMissingPts = false)
         {
             lock (_clientPtsLock)
             {
@@ -3073,7 +3073,7 @@ namespace Telegram.Api.Services.Updates
                         {
                             for (var i = _pts.Value + 1; i < ptsList[0].Value; i++)
                             {
-                                _lostPts[i] = new WindowsPhone.Tuple<DateTime, TLState>(DateTime.Now, new TLState { Seq = ClientSeq, Pts = _pts, Date = _date, Qts = _qts });
+                                _lostPts[i] = new Tuple<DateTime, TLState>(DateTime.Now, new TLState { Seq = ClientSeq, Pts = _pts, Date = _date, Qts = _qts });
                             }
                         }
 
@@ -3099,7 +3099,7 @@ namespace Telegram.Api.Services.Updates
                 {
                     var lastPtsValue = ptsList.Last().Value;
                     var maxPtsValue = Math.Max(lastPtsValue, _pts != null ? _pts.Value : -1);
-                    _pts = new TLInt(maxPtsValue);
+                    _pts = new int?(maxPtsValue);
                 }
 
                 if (_lostPts.Count > 0)
@@ -3350,21 +3350,21 @@ namespace Telegram.Api.Services.Updates
                             && peerChat.Id.Value == shortChatMessageList[i].ChatId.Value
                             && readHistory.MaxId.Value >= shortChatMessageList[i].Id.Value)
                         {
-                            shortChatMessageList[i].Unread = TLBool.False;
+                            shortChatMessageList[i].Unread = false;
                             shortChatMessageList.RemoveAt(i--);
                         }
                     }
 
                     for (var i = 0; i < newChatMessageList.Count; i++)
                     {
-                        var message = newChatMessageList[i].Message as TLMessageCommon;
+                        var message = newChatMessageList[i].Message as TLMessage;
                         if (message != null && message.Out.Value == outbox)
                         {
                             if (message.Out.Value == outbox
                                 && peerChat.Id.Value == message.ToId.Id.Value
                                 && readHistory.MaxId.Value >= message.Id.Value)
                             {
-                                message.SetUnreadSilent(TLBool.False);
+                                message.SetUnreadSilent(false);
                                 newChatMessageList.RemoveAt(i--);
                             }
                         }
@@ -3381,21 +3381,21 @@ namespace Telegram.Api.Services.Updates
                             && peerUser.Id.Value == shortMessageList[i].UserId.Value
                             && readHistory.MaxId.Value >= shortMessageList[i].Id.Value)
                         {
-                            shortMessageList[i].Unread = TLBool.False;
+                            shortMessageList[i].Unread = false;
                             shortMessageList.RemoveAt(i--);
                         }
                     }
 
                     for (var i = 0; i < newMessageList.Count; i++)
                     {
-                        var message = newMessageList[i].Message as TLMessageCommon;
+                        var message = newMessageList[i].Message as TLMessage;
                         if (message != null)
                         {
                             if (message.Out.Value == outbox
                                 && peerUser.Id.Value == message.FromId.Value
                                 && readHistory.MaxId.Value >= message.Id.Value)
                             {
-                                message.SetUnreadSilent(TLBool.False);
+                                message.SetUnreadSilent(false);
                                 newMessageList.RemoveAt(i--);
                             }
                         }
@@ -3428,7 +3428,7 @@ namespace Telegram.Api.Services.Updates
             var newMessage = updateBase as TLUpdateNewMessage;
             if (newMessage != null)
             {
-                var message = newMessage.Message as TLMessageCommon;
+                var message = newMessage.Message as TLMessage;
                 if (message != null
                     && message.Unread.Value)
                 {
@@ -3505,7 +3505,7 @@ namespace Telegram.Api.Services.Updates
             {
                 var state = TLUtils.OpenObjectFromMTProtoFile<TLState>(_stateRoot, Constants.StateFileName);
 #if DEBUG_UPDATES
-                state.Pts = new TLInt(140000);
+                state.Pts = 140000;
 #endif
 
                 SetState(state, "setFileState");
@@ -3724,6 +3724,6 @@ namespace Telegram.Api.Services.Updates
 
     public class ChannelUpdateCompletedEventArgs
     {
-        public TLInt ChannelId { get; set; }
+        public int? ChannelId { get; set; }
     }
 }

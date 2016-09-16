@@ -5,25 +5,25 @@ namespace Telegram.Api.Services.Cache.EventArgs
 {
     public class MessagesRemovedEventArgs
     {
-        public TLDialogBase Dialog { get; protected set; }
+        public TLDialog Dialog { get; protected set; }
 
         public IList<TLMessageBase> Messages { get; protected set; }
 
         public TLDecryptedMessageBase DecryptedMessage { get; protected set; }
 
-        public MessagesRemovedEventArgs(TLDialogBase dialog, TLMessageBase message)
+        public MessagesRemovedEventArgs(TLDialog dialog, TLMessageBase message)
         {
             Dialog = dialog;
             Messages = new List<TLMessageBase> {message};
         }
 
-        public MessagesRemovedEventArgs(TLDialogBase dialog, IList<TLMessageBase> messages)
+        public MessagesRemovedEventArgs(TLDialog dialog, IList<TLMessageBase> messages)
         {
             Dialog = dialog;
             Messages = messages;
         }
 
-        public MessagesRemovedEventArgs(TLDialogBase dialog, TLDecryptedMessageBase message)
+        public MessagesRemovedEventArgs(TLDialog dialog, TLDecryptedMessageBase message)
         {
             Dialog = dialog;
             DecryptedMessage = message;
@@ -32,9 +32,9 @@ namespace Telegram.Api.Services.Cache.EventArgs
 
     public class DialogAddedEventArgs
     {
-        public TLDialogBase Dialog { get; protected set; }
+        public TLDialog Dialog { get; protected set; }
 
-        public DialogAddedEventArgs(TLDialogBase dialog)
+        public DialogAddedEventArgs(TLDialog dialog)
         {
             Dialog = dialog;
         }
@@ -42,9 +42,9 @@ namespace Telegram.Api.Services.Cache.EventArgs
 
     public class DialogRemovedEventArgs
     {
-        public TLDialogBase Dialog { get; protected set; }
+        public TLDialog Dialog { get; protected set; }
 
-        public DialogRemovedEventArgs(TLDialogBase dialog)
+        public DialogRemovedEventArgs(TLDialog dialog)
         {
             Dialog = dialog;
         }

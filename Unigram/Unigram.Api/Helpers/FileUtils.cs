@@ -368,9 +368,9 @@ namespace Telegram.Api.Helpers
         //                    }
         //                    if (part.ParentItem.Key != null && part.ParentItem.IV != null)
         //                    {
-        //                        TLString key = part.ParentItem.Key;
-        //                        TLString tLString = (part.FilePart.Value == 0) ? part.ParentItem.IV : part.IV;
-        //                        if (tLString == null)
+        //                        string key = part.ParentItem.Key;
+        //                        string string = (part.FilePart.Value == 0) ? part.ParentItem.IV : part.IV;
+        //                        if (string == null)
         //                        {
         //                            result = new Tuple<bool, byte[]>(true, null);
         //                            return result;
@@ -402,12 +402,12 @@ namespace Telegram.Api.Helpers
         //    return result;
         //}
 
-        //public static UploadableItem GetUploadableItem(TLLong fileId, TLObject owner, StorageFile file)
+        //public static UploadableItem GetUploadableItem(long? fileId, TLObject owner, StorageFile file)
         //{
         //    return FileUtils.GetUploadableItem(fileId, owner, file, null, null);
         //}
 
-        //public static UploadableItem GetUploadableItem(TLLong fileId, TLObject owner, StorageFile file, TLString key, TLString iv)
+        //public static UploadableItem GetUploadableItem(long? fileId, TLObject owner, StorageFile file, string key, string iv)
         //{
         //    UploadableItem uploadableItem = new UploadableItem(fileId, owner, file, key, iv);
         //    Task<BasicProperties> task = file.GetBasicPropertiesAsync().AsTask<BasicProperties>();
@@ -425,7 +425,7 @@ namespace Telegram.Api.Helpers
         //    List<UploadablePart> list = new List<UploadablePart>(partsCount);
         //    for (int i = 0; i < partsCount; i++)
         //    {
-        //        UploadablePart uploadablePart = new UploadablePart(item, new TLInt(i), (long)(i * chunkSize), Math.Min((long)chunkSize, (long)size - (long)(i * chunkSize)));
+        //        UploadablePart uploadablePart = new UploadablePart(item, new int?(i), (long)(i * chunkSize), Math.Min((long)chunkSize, (long)size - (long)(i * chunkSize)));
         //        list.Add(uploadablePart);
         //    }
         //    item.IsSmallFile = (size < 10485760);

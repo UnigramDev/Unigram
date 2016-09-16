@@ -20,7 +20,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("photos.updateProfilePhoto", obj, callback, faultCallback);
         }
 
-        public void GetUserPhotosAsync(TLInputUserBase userId, TLInt offset, TLLong maxId, TLInt limit, Action<TLPhotosBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetUserPhotosAsync(TLInputUserBase userId, int? offset, long? maxId, int? limit, Action<TLPhotosBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLGetUserPhotos { UserId = userId, Offset = offset, MaxId = maxId, Limit = limit };
 

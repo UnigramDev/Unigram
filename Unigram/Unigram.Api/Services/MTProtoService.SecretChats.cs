@@ -7,19 +7,19 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
-        public void RekeyAsync(TLEncryptedChatBase chat, Action<TLLong> callback)
+        public void RekeyAsync(TLEncryptedChatBase chat, Action<long> callback)
         {
             //GetGA()
         }
 
-        public void GetDHConfigAsync(TLInt version, TLInt randomLength, Action<TLDHConfigBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetDHConfigAsync(int? version, int? randomLength, Action<TLDHConfigBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLGetDHConfig { Version = version, RandomLength = randomLength };
 
             SendInformativeMessage("messages.getDhConfig", obj, callback, faultCallback);
         }
 
-        public void RequestEncryptionAsync(TLInputUserBase userId, TLInt randomId, TLString ga, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
+        public void RequestEncryptionAsync(TLInputUserBase userId, int? randomId, string ga, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLRequestEncryption { UserId = userId, RandomId = randomId, G_A = ga };
 
@@ -31,7 +31,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void AcceptEncryptionAsync(TLInputEncryptedChat peer, TLString gb, TLLong keyFingerprint, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
+        public void AcceptEncryptionAsync(TLInputEncryptedChat peer, string gb, long? keyFingerprint, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAcceptEncryption { Peer = peer, GB = gb, KeyFingerprint = keyFingerprint };
 
@@ -43,7 +43,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void DiscardEncryptionAsync(TLInt chatId, Action<TLBool> callback, Action<TLRPCError> faultCallback = null)
+        public void DiscardEncryptionAsync(int? chatId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLDiscardEncryption { ChatId = chatId };
 
