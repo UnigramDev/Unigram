@@ -211,5 +211,21 @@ namespace Unigram.Views
         {
             ChangeListState();
         }
+
+        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (txtSearch.Text != "")
+            {
+                if (lvMasterChats.ItemsSource != ViewModel.SearchDialogs)
+                {
+                    lvMasterChats.ItemsSource = ViewModel.SearchDialogs;
+                }
+                ViewModel.GetSearchDialogs(txtSearch.Text);
+            }
+            else
+            {
+                lvMasterChats.ItemsSource = ViewModel.Dialogs;
+            }
+        }
     }
 }
