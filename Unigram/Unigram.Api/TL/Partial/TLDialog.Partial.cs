@@ -177,6 +177,11 @@ namespace Telegram.Api.TL
             }
         }
 
+        public int Index
+        {
+            get { return Peer != null && Peer.Id != null ? Peer.Id : default(int); }
+        }
+
         public TLDialog Self
         {
             get

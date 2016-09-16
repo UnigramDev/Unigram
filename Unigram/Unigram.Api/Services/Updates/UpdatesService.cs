@@ -681,7 +681,7 @@ namespace Telegram.Api.Services.Updates
             }
 
             // set as read
-            var readMaxId = _cacheService.GetUser(message.IsOut ? message.ToId.Id : message.FromId) as IReadMaxId;
+            var readMaxId = _cacheService.GetUser(message.IsOut ? message.ToId.Id : message.FromId) as ITLReadMaxId;
             if (readMaxId != null)
             {
                 var maxId = message.IsOut ? readMaxId.ReadOutboxMaxId : readMaxId.ReadInboxMaxId;
@@ -744,7 +744,7 @@ namespace Telegram.Api.Services.Updates
             }
 
             // set as read
-            var readMaxId = _cacheService.GetChat(message.ToId.Id) as IReadMaxId;
+            var readMaxId = _cacheService.GetChat(message.ToId.Id) as ITLReadMaxId;
             if (readMaxId != null)
             {
                 var maxId = message.IsOut ? readMaxId.ReadOutboxMaxId : readMaxId.ReadInboxMaxId;
@@ -1325,14 +1325,14 @@ namespace Telegram.Api.Services.Updates
             {
                 var outbox = update is TLUpdateReadHistoryOutbox;
 
-                IReadMaxId readMaxId = null;
+                ITLReadMaxId readMaxId = null;
                 if (updateReadHistory.Peer is TLPeerUser)
                 {
-                    readMaxId = _cacheService.GetUser(updateReadHistory.Peer.Id) as IReadMaxId;
+                    readMaxId = _cacheService.GetUser(updateReadHistory.Peer.Id) as ITLReadMaxId;
                 }
                 else if (updateReadHistory.Peer is TLPeerChat)
                 {
-                    readMaxId = _cacheService.GetChat(updateReadHistory.Peer.Id) as IReadMaxId;
+                    readMaxId = _cacheService.GetChat(updateReadHistory.Peer.Id) as ITLReadMaxId;
                 }
                 SetReadMaxId(readMaxId, updateReadHistory.MaxId, outbox);
 
@@ -1343,7 +1343,7 @@ namespace Telegram.Api.Services.Updates
                     if (dialog53 != null)
                     {
                         SetReadMaxId(dialog53, updateReadHistory.MaxId, outbox);
-                        SetReadMaxId(dialog53.With as IReadMaxId, updateReadHistory.MaxId, outbox);
+                        SetReadMaxId(dialog53.With as ITLReadMaxId, updateReadHistory.MaxId, outbox);
                     }
 
                     var notifyMessages = new List<TLMessage>();
@@ -1424,7 +1424,7 @@ namespace Telegram.Api.Services.Updates
             {
                 //Execute.ShowDebugMessage(string.Format("TLUpdateReadChannelOutbox channel_id={0} max_id={1}", updateReadChannelOutbox.ChannelId, updateReadChannelOutbox.MaxId));
 
-                var readMaxId = _cacheService.GetChat(updateReadChannelOutbox.ChannelId) as IReadMaxId;
+                var readMaxId = _cacheService.GetChat(updateReadChannelOutbox.ChannelId) as ITLReadMaxId;
                 if (readMaxId != null)
                 {
                     SetReadMaxId(readMaxId, updateReadChannelOutbox.MaxId, true);
@@ -1437,7 +1437,7 @@ namespace Telegram.Api.Services.Updates
                     if (dialog53 != null)
                     {
                         SetReadMaxId(dialog53, updateReadChannelOutbox.MaxId, true);
-                        SetReadMaxId(dialog53.With as IReadMaxId, updateReadChannelOutbox.MaxId, true);
+                        SetReadMaxId(dialog53.With as ITLReadMaxId, updateReadChannelOutbox.MaxId, true);
                     }
 
                     var messages = new List<TLMessage>();
@@ -1493,7 +1493,7 @@ namespace Telegram.Api.Services.Updates
 
                 var messages = new List<TLMessage>();
 
-                var readMaxId = _cacheService.GetChat(updateReadChannelInbox.ChannelId) as IReadMaxId;
+                var readMaxId = _cacheService.GetChat(updateReadChannelInbox.ChannelId) as ITLReadMaxId;
                 if (readMaxId != null)
                 {
                     SetReadMaxId(readMaxId, updateReadChannelInbox.MaxId, false);
@@ -1506,7 +1506,7 @@ namespace Telegram.Api.Services.Updates
                     if (dialog53 != null)
                     {
                         SetReadMaxId(dialog53, updateReadChannelInbox.MaxId, false);
-                        SetReadMaxId(dialog53.With as IReadMaxId, updateReadChannelInbox.MaxId, false);
+                        SetReadMaxId(dialog53.With as ITLReadMaxId, updateReadChannelInbox.MaxId, false);
                     }
 
                     var topMessage = dialog.TopMessage as TLMessage;
@@ -2040,7 +2040,7 @@ namespace Telegram.Api.Services.Updates
             return false;
         }
 
-        private static void SetReadMaxId(IReadMaxId readMaxId, int? maxId, bool outbox)
+        private static void SetReadMaxId(ITLReadMaxId readMaxId, int? maxId, bool outbox)
         {
             if (readMaxId == null) return;
 
