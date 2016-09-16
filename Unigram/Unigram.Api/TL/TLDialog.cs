@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLDialog : TLObject 
+	public partial class TLDialog : TLObject, ITLReadMaxId 
 	{
 		[Flags]
 		public enum Flag : Int32

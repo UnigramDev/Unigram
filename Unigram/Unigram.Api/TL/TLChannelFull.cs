@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLChannelFull : TLChatFullBase 
+	public partial class TLChannelFull : TLChatFullBase, ITLReadMaxId 
 	{
 		[Flags]
 		public enum Flag : Int32

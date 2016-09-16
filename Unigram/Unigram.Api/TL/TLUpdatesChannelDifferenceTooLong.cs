@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLUpdatesChannelDifferenceTooLong : TLUpdatesChannelDifferenceBase 
+	public partial class TLUpdatesChannelDifferenceTooLong : TLUpdatesChannelDifferenceBase, ITLReadMaxId 
 	{
 		[Flags]
 		public enum Flag : Int32
