@@ -116,7 +116,6 @@ namespace Telegram.Api.TL
 				case TLType.MessagesDeleteChatUser: return (T)(Object)new TLMessagesDeleteChatUser(from);
 				case TLType.MessagesCreateChat: return (T)(Object)new TLMessagesCreateChat(from);
 				case TLType.MessagesForwardMessage: return (T)(Object)new TLMessagesForwardMessage(from);
-				case TLType.MessagesSendBroadcast: return (T)(Object)new TLMessagesSendBroadcast(from);
 				case TLType.MessagesGetDHConfig: return (T)(Object)new TLMessagesGetDHConfig(from);
 				case TLType.MessagesRequestEncryption: return (T)(Object)new TLMessagesRequestEncryption(from);
 				case TLType.MessagesAcceptEncryption: return (T)(Object)new TLMessagesAcceptEncryption(from);
@@ -210,6 +209,7 @@ namespace Telegram.Api.TL
 				case TLType.ChannelsExportMessageLink: return (T)(Object)new TLChannelsExportMessageLink(from);
 				case TLType.ChannelsToggleSignatures: return (T)(Object)new TLChannelsToggleSignatures(from);
 				case TLType.ChannelsUpdatePinnedMessage: return (T)(Object)new TLChannelsUpdatePinnedMessage(from);
+				case TLType.ChannelsGetAdminedPublicChannels: return (T)(Object)new TLChannelsGetAdminedPublicChannels(from);
 				case TLType.ResPQ: return (T)(Object)new TLResPQ(from);
 				case TLType.PQInnerData: return (T)(Object)new TLPQInnerData(from);
 				case TLType.ServerDHParamsFail: return (T)(Object)new TLServerDHParamsFail(from);
@@ -264,6 +264,8 @@ namespace Telegram.Api.TL
 				case TLType.InputMediaDocument: return (T)(Object)new TLInputMediaDocument(from);
 				case TLType.InputMediaVenue: return (T)(Object)new TLInputMediaVenue(from);
 				case TLType.InputMediaGifExternal: return (T)(Object)new TLInputMediaGifExternal(from);
+				case TLType.InputMediaPhotoExternal: return (T)(Object)new TLInputMediaPhotoExternal(from);
+				case TLType.InputMediaDocumentExternal: return (T)(Object)new TLInputMediaDocumentExternal(from);
 				case TLType.InputChatPhotoEmpty: return (T)(Object)new TLInputChatPhotoEmpty(from);
 				case TLType.InputChatUploadedPhoto: return (T)(Object)new TLInputChatUploadedPhoto(from);
 				case TLType.InputChatPhoto: return (T)(Object)new TLInputChatPhoto(from);
@@ -451,6 +453,8 @@ namespace Telegram.Api.TL
 				case TLType.UpdateDraftMessage: return (T)(Object)new TLUpdateDraftMessage(from);
 				case TLType.UpdateReadFeaturedStickers: return (T)(Object)new TLUpdateReadFeaturedStickers(from);
 				case TLType.UpdateRecentStickers: return (T)(Object)new TLUpdateRecentStickers(from);
+				case TLType.UpdateConfig: return (T)(Object)new TLUpdateConfig(from);
+				case TLType.UpdatePtsChanged: return (T)(Object)new TLUpdatePtsChanged(from);
 				case TLType.UpdatesState: return (T)(Object)new TLUpdatesState(from);
 				case TLType.UpdatesDifferenceEmpty: return (T)(Object)new TLUpdatesDifferenceEmpty(from);
 				case TLType.UpdatesDifference: return (T)(Object)new TLUpdatesDifference(from);

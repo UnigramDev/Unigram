@@ -5,6 +5,15 @@ namespace Telegram.Api.TL
 {
 	public partial class TLKeyboardButtonSwitchInline : TLKeyboardButtonBase 
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			SamePeer = (1 << 0),
+		}
+
+		public bool IsSamePeer { get { return Flags.HasFlag(Flag.SamePeer); } set { Flags = value ? (Flags | Flag.SamePeer) : (Flags & ~Flag.SamePeer); } }
+
+		public Flag Flags { get; set; }
 		public String Query { get; set; }
 
 		public TLKeyboardButtonSwitchInline() { }
@@ -17,13 +26,15 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, TLType type = TLType.KeyboardButtonSwitchInline)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Text = from.ReadString();
 			Query = from.ReadString();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0xEA1B7A14);
+			to.Write(0x568A748);
+			to.Write((Int32)Flags);
 			to.Write(Text);
 			to.Write(Query);
 		}

@@ -10,5 +10,6 @@ namespace Telegram.Api.TL
 		public TLInputGeoPointBase GeoPoint { get; set; }
 		public String MimeType { get; set; }
 		public TLVector<TLDocumentAttributeBase> Attributes { get; set; }
+		public String Url { get; set; }
 	}
 }

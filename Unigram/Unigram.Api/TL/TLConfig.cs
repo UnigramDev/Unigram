@@ -5,6 +5,15 @@ namespace Telegram.Api.TL
 {
 	public partial class TLConfig : TLObject 
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			TmpSessions = (1 << 0),
+		}
+
+		public bool HasTmpSessions { get { return Flags.HasFlag(Flag.TmpSessions); } set { Flags = value ? (Flags | Flag.TmpSessions) : (Flags & ~Flag.TmpSessions); } }
+
+		public Flag Flags { get; set; }
 		public Int32 Date { get; set; }
 		public Int32 Expires { get; set; }
 		public Boolean TestMode { get; set; }
@@ -26,6 +35,7 @@ namespace Telegram.Api.TL
 		public Int32 EditTimeLimit { get; set; }
 		public Int32 RatingEDecay { get; set; }
 		public Int32 StickersRecentLimit { get; set; }
+		public Int32? TmpSessions { get; set; }
 		public TLVector<TLDisabledFeature> DisabledFeatures { get; set; }
 
 		public TLConfig() { }
@@ -38,6 +48,7 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, TLType type = TLType.Config)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Date = from.ReadInt32();
 			Expires = from.ReadInt32();
 			TestMode = from.ReadBoolean();
@@ -59,12 +70,14 @@ namespace Telegram.Api.TL
 			EditTimeLimit = from.ReadInt32();
 			RatingEDecay = from.ReadInt32();
 			StickersRecentLimit = from.ReadInt32();
+			if (HasTmpSessions) { TmpSessions = from.ReadInt32(); }
 			DisabledFeatures = TLFactory.Read<TLVector<TLDisabledFeature>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0xF401A4BF);
+			to.Write(0x9A6B2E2A);
+			to.Write((Int32)Flags);
 			to.Write(Date);
 			to.Write(Expires);
 			to.Write(TestMode);
@@ -86,6 +99,7 @@ namespace Telegram.Api.TL
 			to.Write(EditTimeLimit);
 			to.Write(RatingEDecay);
 			to.Write(StickersRecentLimit);
+			if (HasTmpSessions) to.Write(TmpSessions.Value);
 			to.WriteObject(DisabledFeatures);
 		}
 	}

@@ -5,6 +5,16 @@ namespace Telegram.Api.TL
 {
 	public partial class TLAuthAuthorization : TLObject 
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			TmpSessions = (1 << 0),
+		}
+
+		public bool HasTmpSessions { get { return Flags.HasFlag(Flag.TmpSessions); } set { Flags = value ? (Flags | Flag.TmpSessions) : (Flags & ~Flag.TmpSessions); } }
+
+		public Flag Flags { get; set; }
+		public Int32? TmpSessions { get; set; }
 		public TLUserBase User { get; set; }
 
 		public TLAuthAuthorization() { }
@@ -17,12 +27,16 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, TLType type = TLType.AuthAuthorization)
 		{
+			Flags = (Flag)from.ReadInt32();
+			if (HasTmpSessions) { TmpSessions = from.ReadInt32(); }
 			User = TLFactory.Read<TLUserBase>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0xFF036AF1);
+			to.Write(0xCD050916);
+			to.Write((Int32)Flags);
+			if (HasTmpSessions) to.Write(TmpSessions.Value);
 			to.WriteObject(User);
 		}
 	}
