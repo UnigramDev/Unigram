@@ -306,12 +306,14 @@
                 <Image x:Name="imgSingleImgThumbnail" 
                        Visibility="Collapsed"
                        Stretch="UniformToFill"
-                       Source="ms-appx:///Assets/Mockups/Images/userPhoto.jpg"
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"
                        MaxHeight="240"
                        Margin="0,0,48,0"
-                       RelativePanel.AlignTopWithPanel="True"
                        RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignRightWithPanel="True" />
+                       RelativePanel.AlignRightWithPanel="True"
+                       RelativePanel.AlignTopWithPanel="True"
+                       RelativePanel.AlignBottomWithPanel="True" />
                 <!-- Message input -->
                 <TextBox x:Name="txtMessage" 
                          x:Uid="Chat-Input-Message"
