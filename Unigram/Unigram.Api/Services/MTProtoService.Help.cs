@@ -93,7 +93,7 @@ namespace Telegram.Api.Services
                 result =>
                 {
                     //TLUtils.WriteLine(DateTime.Now.ToLongTimeString() + ": help.getConfig", LogSeverity.Error);
-                    _config = TLConfig.Merge(_config, result);
+                    _config = TLExtensions.Merge(_config, result);
                     SaveConfig();
                     _isGettingConfig = false;
                 },

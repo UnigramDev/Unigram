@@ -17,7 +17,7 @@ namespace Telegram.Api.Services
             LogOutAsync(null, null);
 	    }
 
-        public void CheckPhoneAsync(string phoneNumber, Action<TLCheckedPhoneBase> callback, Action<TLRPCError> faultCallback = null)
+        public void CheckPhoneAsync(string phoneNumber, Action<TLAuthCheckedPhone> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAuthCheckPhone { PhoneNumber = phoneNumber };
 
@@ -52,14 +52,15 @@ namespace Telegram.Api.Services
             SendInformativeMessage("auth.cancelCode", obj, callback, faultCallback);
         }
 
-        public void SendCallAsync(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLSendCall { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
+        // Fela: DEPRECATED
+        //public void SendCallAsync(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        //{
+        //    var obj = new TLSendCall { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
-            SendInformativeMessage("auth.sendCall", obj, callback, faultCallback);
-        }
+        //    SendInformativeMessage("auth.sendCall", obj, callback, faultCallback);
+        //}
 
-	    public void SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
+        public void SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAuthSignUp { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode, FirstName = firstName, LastName = lastName };
 
@@ -116,21 +117,21 @@ namespace Telegram.Api.Services
             SendInformativeMessage("auth.sendInvites", obj, callback, faultCallback);
 	    }
 
-	    public void ExportAuthorizationAsync(int? dcId, Action<TLAuthExportedAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    public void ExportAuthorizationAsync(int dcId, Action<TLAuthExportedAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAuthExportAuthorization { DCId = dcId };
 
             SendInformativeMessage("auth.exportAuthorization dc_id=" + dcId, obj, callback, faultCallback);
 	    }
 
-	    public void ImportAuthorizationAsync(int? id, string bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    public void ImportAuthorizationAsync(int id, byte[] bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAuthImportAuthorization { Id = id, Bytes = bytes };
 
             SendInformativeMessage("auth.importAuthorization id=" + id, obj, callback, faultCallback);
 	    }
 
-        public void ImportAuthorizationByTransportAsync(ITransport transport, int? id, string bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+        public void ImportAuthorizationByTransportAsync(ITransport transport, int id, byte[] bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthImportAuthorization { Id = id, Bytes = bytes };
 

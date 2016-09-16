@@ -591,7 +591,7 @@ namespace Telegram.Api.Services
                         // fix readonly array of dcOption
                         var list = _config.DCOptions.ToList();
                         list.Add(newOption); 
-                        _config.DCOptions.Items = list;
+                        _config.DCOptions = new TLVector<TLDCOption>(list);
                     }
                 }
                 SaveConfig();
@@ -648,7 +648,8 @@ namespace Telegram.Api.Services
                 try
                 {
 
-                    var message = TLObject.GetObject<TLNonEncryptedTransportMessage>(e.Data, ref position);
+                    //var message = TLObject.GetObject<TLNonEncryptedTransportMessage>(e.Data, ref position);
+                    var message = TLFactory.From<TLNonEncryptedTransportMessage>(e.Data);
                     var historyItem = transport.DequeueFirstNonEncryptedItem();
                     if (historyItem != null)
                     {
@@ -657,7 +658,7 @@ namespace Telegram.Api.Services
                             string.Format("OnReceivedBytes by {0} AuthKey==null: invoke historyItem {1} with result {2} (data length={3})",
                                 transport.Id, historyItem.Caption, message.Data.GetType(), e.Data.Length));
 #endif
-                        historyItem.Callback.SafeInvoke(message.Data);
+                        historyItem.Callback.SafeInvoke(message.Query);
                     }
                     else
                     {
@@ -875,7 +876,7 @@ namespace Telegram.Api.Services
 #endif
                                         lock (_activeTransportRoot)
                                         {
-                                            _activeTransport.DCId = nearestDC.ThisDC.Value;
+                                            _activeTransport.DCId = nearestDC.ThisDC;
                                         }
                                         var elapsed = timer.Elapsed;
                                         var timer2 = Stopwatch.StartNew();
@@ -895,7 +896,7 @@ namespace Telegram.Api.Services
 
                                                 Execute.BeginOnThreadPool(() => RaiseGotUserCountry(config.Country));
 
-                                                _config = TLConfig.Merge(_config, config);
+                                                _config = TLExtensions.Merge(_config, config);
                                                 var dcOption = config.DCOptions.First(x => x.IsValidIPv4Option(_activeTransport.DCId));
 
                                                 dcOption.AuthKey = _activeTransport.AuthKey;
@@ -1005,7 +1006,7 @@ namespace Telegram.Api.Services
                                                 TLUtils.WriteLog("Stop help.getConfig");
 #endif
                                                 config.Country = nearestDC.Country.ToString();
-                                                _config = TLConfig.Merge(_config, config);
+                                                _config = TLExtensions.Merge(_config, config);
                                                 var dcOption = config.DCOptions.First(x => x.IsValidIPv4Option(_activeTransport.DCId));
 
                                                 dcOption.AuthKey = _activeTransport.AuthKey;
@@ -1115,19 +1116,53 @@ namespace Telegram.Api.Services
         {
             try
             {
-//#if !WIN_RT && DEBUG
-//                VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
-//#endif
+                //#if !WIN_RT && DEBUG
+                //                VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
+                //#endif
+                //if (bytes.Length == 4)
+                //{
+                //    if (BitConverter.ToInt32(bytes, 0) == -404)
+                //    {
+
+                //    }
+                //}
+
+                //var position = 0;
+                //var encryptedMessage = (TLEncryptedTransportMessage)new TLEncryptedTransportMessage().FromBytes(bytes, ref position);
+
+                //byte[] authKey2 = null;
+                //lock (_authKeysRoot)
+                //{
+                //    try
+                //    {
+                //        authKey2 = _authKeys[encryptedMessage.AuthKeyId].AuthKey;
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        TLUtils.WriteException("_authKeys", e);
+                //    }
+                //}
+
+                //encryptedMessage.Decrypt(authKey2);
+
+                //position = 0;
+                //TLTransportMessage transportMessage;
                 if (bytes.Length == 4)
                 {
                     if (BitConverter.ToInt32(bytes, 0) == -404)
                     {
-                        
+                        // PREVIOUS REQUEST WAS INVALID
+                        Debugger.Break();
                     }
                 }
 
-                var position = 0;
-                var encryptedMessage = (TLEncryptedTransportMessage)new TLEncryptedTransportMessage().FromBytes(bytes, ref position);
+                //var position = 0;
+                //var encryptedMessage = (TLEncryptedTransportMessage)new TLEncryptedTransportMessage().FromBytes(bytes, ref position);
+                var encryptedMessage = new TLEncryptedTransportMessage();
+                using (var reader = new TLBinaryReader(bytes))
+                {
+                    encryptedMessage.Read(reader);
+                }
 
                 byte[] authKey2 = null;
                 lock (_authKeysRoot)
@@ -1138,43 +1173,50 @@ namespace Telegram.Api.Services
                     }
                     catch (Exception e)
                     {
-                        TLUtils.WriteException("_authKeys", e);
+                        TLUtils.WriteException(e);
                     }
                 }
 
-                encryptedMessage.Decrypt(authKey2);
-
-                position = 0;
-                TLTransportMessage transportMessage;
+                using (var reader = new TLBinaryReader(bytes))
                 {
-                    if (encryptedMessage.Data.Length < 32)
-                    {
-                        var message = string.Format("padding extension data={0} < 32", encryptedMessage.Data.Length);
-                        Execute.ShowDebugMessage(message);
-                        throw new Exception(message);
-                    }
-                    var messageDataLength = BitConverter.ToInt32(encryptedMessage.Data, 28);
-                    if (32 + messageDataLength > encryptedMessage.Data.Length)
-                    {
-                        var message = string.Format("padding extension data={0} length={1}", encryptedMessage.Data.Length, messageDataLength);
-                        Execute.ShowDebugMessage(message);
-                        throw new Exception(message);
-                    }
-                    transportMessage = TLObject.GetObject<TLTransportMessage>(encryptedMessage.Data, ref position);
-                    if ((encryptedMessage.Data.Length - position) > 15)
-                    {
-                        var message = string.Format("padding extension data={0} position={1} object={2}", encryptedMessage.Data.Length, position, transportMessage.MessageData);
-                        Execute.ShowDebugMessage(message);
-                        throw new Exception(message);
-                    }
+                    encryptedMessage.Read(reader, authKey2);
+                }
+
+                //encryptedMessage.Decrypt(authKey2);
+
+                //position = 0;
+                TLTransportMessage transportMessage = encryptedMessage.Query as TLTransportMessage;
+                {
+                    //if (encryptedMessage.Data.Length < 32)
+                    //{
+                    //    var message = string.Format("padding extension data={0} < 32", encryptedMessage.Data.Length);
+                    //    Execute.ShowDebugMessage(message);
+                    //    throw new Exception(message);
+                    //}
+                    //var messageDataLength = BitConverter.ToInt32(encryptedMessage.Data, 28);
+                    //if (32 + messageDataLength > encryptedMessage.Data.Length)
+                    //{
+                    //    var message = string.Format("padding extension data={0} length={1}", encryptedMessage.Data.Length, messageDataLength);
+                    //    Execute.ShowDebugMessage(message);
+                    //    throw new Exception(message);
+                    //}
+                    //transportMessage = TLObject.GetObject<TLTransportMessage>(encryptedMessage.Data, ref position);
+                    //if ((encryptedMessage.Data.Length - position) > 15)
+                    //{
+                    //    var message = string.Format("padding extension data={0} position={1} object={2}", encryptedMessage.Data.Length, position, transportMessage.MessageData);
+                    //    Execute.ShowDebugMessage(message);
+                    //    throw new Exception(message);
+                    //}
                     //if (transportMessage.SessionId.Value != transport.SessionId.Value)
                     //{
                     //    throw new Exception("Incorrect session_id");
                     //}
-                    if ((transportMessage.MessageId.Value%2) == 0)
+                    if ((transportMessage.MsgId % 2) == 0)
                     {
                         throw new Exception("Incorrect message_id");
                     }
+
+                    // TODO: maybe delta correction?
 
                     if (_deviceInfo != null && _deviceInfo.IsBackground)
                     {
@@ -1387,9 +1429,9 @@ namespace Telegram.Api.Services
                                 messageData = ((TLGzipPacked) messageData).Query;
                             }
 
-                            if (messageData is TLSentMessageBase
+                            if (/*messageData is TLSentMessageBase
                                 || messageData is TLStatedMessageBase
-                                || messageData is TLUpdatesBase
+                                ||*/ messageData is TLUpdatesBase
                                 || messageData is TLMessagesSentEncryptedMessage
                                 || messageData is TLMessagesSentEncryptedFile
                                 || messageData is TLMessagesAffectedHistory
@@ -1601,7 +1643,7 @@ namespace Telegram.Api.Services
                         // параметры предыдущего подключения не сохраняются, поэтому когда ответ приходит после
                         // подключения к следующему серверу, то не удается расшифровать старые сообщения, пришедшие с 
                         // задержкой с новой солью и authKey
-                        _config = TLConfig.Merge(_config, config);
+                        _config = TLExtensions.Merge(_config, config);
                         SaveConfig();
                         if (historyItem.Object.GetType() == typeof(TLAuthSendCode))
                         {
@@ -1702,14 +1744,14 @@ namespace Telegram.Api.Services
 
                         lock (_activeTransportRoot)
                         {
-                            var transportDCId = activeDCOption.Id.Value;
+                            var transportDCId = activeDCOption.Id;
                             var transportKey = activeDCOption.AuthKey;
                             var transportSalt = activeDCOption.Salt;
                             var transportSessionId = TLLong.Random();
                             var transportSequenceNumber = 0;
                             var transportClientsTicksDelta = activeDCOption.ClientTicksDelta;
                             bool isCreated;
-                            _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port.Value, Type, out isCreated);
+                            _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port, Type, out isCreated);
                             if (isCreated)
                             {
                                 _activeTransport.DCId = transportDCId;
@@ -2151,7 +2193,7 @@ namespace Telegram.Api.Services
                         transportMessage.SeqNo = sequenceNumber;
                         transportMessage.MsgId = _activeTransport.GenerateMessageId(true);
                     }
-                    ((TLTransportMessage)transportMessage).SessionId = _activeTransport.SessionId;
+                    ((TLTransportMessage)transportMessage).SessionId = _activeTransport.SessionId ?? 0;
 
 
                     // TODO: replace with SendInformativeMessage

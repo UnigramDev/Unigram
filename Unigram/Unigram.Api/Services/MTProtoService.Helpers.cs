@@ -38,7 +38,7 @@ namespace Telegram.Api.Services
             var salt = _activeTransport.Salt;
             var sessionId = _activeTransport.SessionId;
             var clientsTicksDelta = _activeTransport.ClientTicksDelta;
-            var transportMessage = CreateTLTransportMessage(salt, sessionId, new int?(sequenceNumber), messageId, obj);
+            var transportMessage = CreateTLTransportMessage(salt ?? 0, sessionId ?? 0, sequenceNumber, messageId ?? 0, obj);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
             lock (_activeTransportRoot)
@@ -253,7 +253,7 @@ namespace Telegram.Api.Services
             var salt = _activeTransport.Salt;
             var sessionId = _activeTransport.SessionId;
             var clientsTicksDelta = _activeTransport.ClientTicksDelta;
-            var transportMessage = CreateTLTransportMessage(salt, sessionId, new int?(sequenceNumber), messageId, data);
+            var transportMessage = CreateTLTransportMessage(salt ?? 0, sessionId ?? 0, sequenceNumber, messageId ?? 0, data);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
             //save items to history
@@ -390,7 +390,7 @@ namespace Telegram.Api.Services
             where T : TLObject
         {
             PrintCaption(caption);
-            long? messageId;
+            long messageId;
             lock (_activeTransportRoot)
             {
                 messageId = _activeTransport.GenerateMessageId();
@@ -482,7 +482,7 @@ namespace Telegram.Api.Services
             return message.Encrypt(authKey);
         }
 
-        private TLTransportMessage CreateTLTransportMessage(long? salt, long? sessionId, int? seqNo, long? messageId, TLObject obj)
+        private TLTransportMessage CreateTLTransportMessage(long salt, long sessionId, int seqNo, long messageId, TLObject obj)
         {
             var message = new TLTransportMessage();
             message.Salt = salt;
@@ -494,7 +494,7 @@ namespace Telegram.Api.Services
             return message;
         }
 
-        public static TLNonEncryptedTransportMessage CreateTLNonEncryptedMessage(long? messageId, TLObject obj)
+        public static TLNonEncryptedTransportMessage CreateTLNonEncryptedMessage(long messageId, TLObject obj)
         {
             var message = new TLNonEncryptedTransportMessage();
             message.AuthKeyId = 0;

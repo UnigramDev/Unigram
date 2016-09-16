@@ -25,14 +25,14 @@ namespace Telegram.Api.Services
             SendNonEncryptedMessageByTransport(transport, "req_pq", obj, callback, faultCallback);
         }
 
-        private void ReqDHParamsByTransportAsync(ITransport transport, TLInt128 nonce, TLInt128 serverNonce, string p, string q, long? publicKeyFingerprint, string encryptedData, Action<TLServerDHParamsBase> callback, Action<TLRPCError> faultCallback = null)
+        private void ReqDHParamsByTransportAsync(ITransport transport, TLInt128 nonce, TLInt128 serverNonce, byte[] p, byte[] q, long publicKeyFingerprint, byte[] encryptedData, Action<TLServerDHParamsBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLReqDHParams { Nonce = nonce, ServerNonce = serverNonce, P = p, Q = q, PublicKeyFingerprint = publicKeyFingerprint, EncryptedData = encryptedData };
 
             SendNonEncryptedMessageByTransport(transport, "req_DH_params", obj, callback, faultCallback);
         }
 
-        public void SetClientDHParamsByTransportAsync(ITransport transport, TLInt128 nonce, TLInt128 serverNonce, string encryptedData, Action<TLDHGenBase> callback, Action<TLRPCError> faultCallback = null)
+        public void SetClientDHParamsByTransportAsync(ITransport transport, TLInt128 nonce, TLInt128 serverNonce, byte[] encryptedData, Action<TLSetClientDHParamsAnswerBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLSetClientDHParams { Nonce = nonce, ServerNonce = serverNonce, EncryptedData = encryptedData };
 
@@ -54,7 +54,7 @@ namespace Telegram.Api.Services
                 resPQ =>
                 {
                     var serverNonce = resPQ.ServerNonce;
-                    if (!TLUtils.ByteArraysEqual(nonce, resPQ.Nonce))
+                    if (nonce != resPQ.Nonce)
                     {
                         var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
 #if LOG_REGISTRATION
@@ -86,7 +86,7 @@ namespace Telegram.Api.Services
                         encryptedInnerData,
                         serverDHParams =>
                         {
-                            if (!TLUtils.ByteArraysEqual(nonce, serverDHParams.Nonce))
+                            if (nonce != serverDHParams.Nonce)
                             {
                                 var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
 #if LOG_REGISTRATION
@@ -96,7 +96,7 @@ namespace Telegram.Api.Services
                                 faultCallback?.Invoke(error);
                                 TLUtils.WriteLine(error.ToString());
                             }
-                            if (!TLUtils.ByteArraysEqual(serverNonce, serverDHParams.ServerNonce))
+                            if (serverNonce != serverDHParams.ServerNonce)
                             {
                                 var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
 #if LOG_REGISTRATION
@@ -125,14 +125,15 @@ namespace Telegram.Api.Services
                                 return;
                             }
 
-                            var aesParams = GetAesKeyIV(resPQ.ServerNonce.ToBytes(), newNonce.ToBytes());
+                            var aesParams = GetAesKeyIV(resPQ.ServerNonce.ToArray(), newNonce.ToArray());
 
                             var decryptedAnswerWithHash = Utils.AesIge(serverDHParamsOk.EncryptedAnswer, aesParams.Item1, aesParams.Item2, false);     //NOTE: Remove reverse here
 
-                            var position = 0;
-                            var serverDHInnerData = (TLServerDHInnerData)new TLServerDHInnerData().FromBytes(decryptedAnswerWithHash.Skip(20).ToArray(), ref position);
+                            //var position = 0;
+                            //var serverDHInnerData = (TLServerDHInnerData)new TLServerDHInnerData().FromBytes(decryptedAnswerWithHash.Skip(20).ToArray(), ref position);
+                            var serverDHInnerData = TLFactory.From<TLServerDHInnerData>(decryptedAnswerWithHash.Skip(20).ToArray());
 
-                            var sha1 = Utils.ComputeSHA1(serverDHInnerData.ToBytes());
+                            var sha1 = Utils.ComputeSHA1(serverDHInnerData.ToArray());
                             if (!TLUtils.ByteArraysEqual(sha1, decryptedAnswerWithHash.Take(20).ToArray()))
                             {
                                 var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect sha1 TLServerDHInnerData" };
@@ -176,7 +177,7 @@ namespace Telegram.Api.Services
                                 Nonce = resPQ.Nonce,
                                 ServerNonce = resPQ.ServerNonce,
                                 RetryId = 0,
-                                GB = TLString.FromBigEndianData(gbBytes)
+                                GB = gbBytes
                             };
 
                             var encryptedClientDHInnerData = GetEncryptedClientDHInnerData(clientDHInnerData, aesParams);
@@ -190,7 +191,7 @@ namespace Telegram.Api.Services
                                 encryptedClientDHInnerData,
                                 dhGen =>
                                 {
-                                    if (!TLUtils.ByteArraysEqual(nonce, dhGen.Nonce))
+                                    if (nonce != dhGen.Nonce)
                                     {
                                         var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
 #if LOG_REGISTRATION
@@ -200,7 +201,7 @@ namespace Telegram.Api.Services
                                         faultCallback?.Invoke(error);
                                         TLUtils.WriteLine(error.ToString());
                                     }
-                                    if (!TLUtils.ByteArraysEqual(serverNonce, dhGen.ServerNonce))
+                                    if (serverNonce != dhGen.ServerNonce)
                                     {
                                         var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
 #if LOG_REGISTRATION
@@ -242,7 +243,7 @@ namespace Telegram.Api.Services
 #endif
                                     //newNonce - little endian
                                     //authResponse.ServerNonce - little endian
-                                    var salt = GetSalt(newNonce.ToBytes(), resPQ.ServerNonce.ToBytes());
+                                    var salt = GetSalt(newNonce.ToArray(), resPQ.ServerNonce.ToArray());
                                     var sessionId = new byte[8];
                                     random.NextBytes(sessionId);
 
@@ -338,11 +339,11 @@ namespace Telegram.Api.Services
             });
         }
 
-        public void LogOutAsync(int? dcId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void LogOutAsync(int dcId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             lock (_activeTransportRoot)
             {
-                if (_activeTransport.DCId == dcId.Value)
+                if (_activeTransport.DCId == dcId)
                 {
                     if (_activeTransport.DCId == 0)
                     {
@@ -370,7 +371,7 @@ namespace Telegram.Api.Services
                 return;
             }
 
-            var obj = new TLLogOut();
+            var obj = new TLAuthLogOut();
 
             SendInformativeMessageByTransport<bool>(transport, "auth.logOut", obj,
                 result =>
@@ -385,15 +386,15 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void GetFileAsync(int? dcId, TLInputFileLocationBase location, int? offset, int? limit, Action<TLUploadFile> callback, Action<TLRPCError> faultCallback = null)
+        public void GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFile> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLGetFile { Location = location, Offset = offset, Limit = limit };
+            var obj = new TLUploadGetFile { Location = location, Offset = offset, Limit = limit };
 
             var transport = GetMediaTransportByDCId(dcId);
 
             lock (_activeTransportRoot)
             {
-                if (_activeTransport.DCId == dcId.Value)
+                if (_activeTransport.DCId == dcId)
                 {
                     if (_activeTransport.DCId == 0)
                     {
@@ -626,7 +627,6 @@ namespace Telegram.Api.Services
         private void SendInformativeMessageByTransport<T>(ITransport transport, string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null,
             int? maxAttempt = null,                 // to send delayed items
             Action<int> attemptFailed = null)       // to send delayed items
-            where T : TLObject
         {
             bool isInitialized;
             lock (transport.SyncRoot)
@@ -686,22 +686,22 @@ namespace Telegram.Api.Services
 
             TLObject data;
             int sequenceNumber;
-            long? messageId;
+            long messageId;
             lock (transport.SyncRoot)
             {
                 if (!transport.Initiated || caption == "auth.sendCode")
                 {
                     var initConnection = new TLInitConnection
                     {
-                        AppId = Constants.ApiId,
+                        ApiId = Constants.ApiId,
                         AppVersion = _deviceInfo.AppVersion,
-                        Data = obj,
+                        Query = obj,
                         DeviceModel = _deviceInfo.Model,
                         LangCode = Utils.CurrentUICulture(),
                         SystemVersion = _deviceInfo.SystemVersion
                     };
 
-                    var withLayerN = new TLInvokeWithLayerN { Data = initConnection };
+                    var withLayerN = new TLInvokeWithLayer { Query = initConnection, Layer = Constants.SupportedLayer };
                     data = withLayerN;
                     transport.Initiated = true;
                 }
@@ -720,7 +720,7 @@ namespace Telegram.Api.Services
             var sessionId = transport.SessionId;
             var clientsTicksDelta = transport.ClientTicksDelta;
             var dcId = transport.DCId;
-            var transportMessage = CreateTLTransportMessage(salt, sessionId, new int?(sequenceNumber), messageId, data);
+            var transportMessage = CreateTLTransportMessage(salt ?? 0, sessionId ?? 0, sequenceNumber, messageId, data);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
             var historyItem = new HistoryItem
@@ -785,7 +785,7 @@ namespace Telegram.Api.Services
         {
             PrintCaption(caption);
 
-            long? messageId;
+            long messageId;
             lock (transport.SyncRoot)
             {
                 messageId = transport.GenerateMessageId();
@@ -802,7 +802,7 @@ namespace Telegram.Api.Services
                 Status = RequestStatus.Sent
             };
 
-            var guid = message.MessageId;
+            var guid = message.MsgId;
             lock (transport.SyncRoot)
             {
                 if (transport.Closed)
@@ -864,20 +864,20 @@ namespace Telegram.Api.Services
             {
                 TLUtils.WriteLine(TLUtils.MessageIdString(id));
             }
-            var obj = new TLMessageAcknowledgments { MsgIds = ids };
+            var obj = new TLMsgsAck { MsgIds = ids };
 
             var authKey = transport.AuthKey;
             var sesseionId = transport.SessionId;
             var salt = transport.Salt;
 
             int sequenceNumber;
-            long? messageId;
+            long messageId;
             lock (transport.SyncRoot)
             {
                 sequenceNumber = transport.SequenceNumber * 2;
                 messageId = transport.GenerateMessageId(true);
             }
-            var transportMessage = CreateTLTransportMessage(salt, sesseionId, sequenceNumber, messageId, obj);
+            var transportMessage = CreateTLTransportMessage(salt ?? 0, sesseionId ?? 0, sequenceNumber, messageId, obj);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
             lock (transport.SyncRoot)
@@ -1092,7 +1092,7 @@ namespace Telegram.Api.Services
                         transportMessage.SeqNo = sequenceNumber;
                         transportMessage.MsgId = transport.GenerateMessageId(true);
                     }
-                    ((TLTransportMessage)transportMessage).SessionId = transport.SessionId;
+                    ((TLTransportMessage)transportMessage).SessionId = transport.SessionId ?? 0;
 
 
                     // TODO: replace with SendInformativeMessage
@@ -1305,7 +1305,7 @@ namespace Telegram.Api.Services
                 {
                     GetConfigAsync(config =>
                     {
-                        _config = TLConfig.Merge(_config, config);
+                        _config = TLExtensions.Merge(_config, config);
                         SaveConfig();
                         if (historyItem.Object.GetType() == typeof(TLAuthSendCode))
                         {
@@ -1530,7 +1530,7 @@ namespace Telegram.Api.Services
             {
                 try
                 {
-                    var message = TLObject.GetObject<TLNonEncryptedTransportMessage>(e.Data, ref position);
+                    var message = TLFactory.From<TLNonEncryptedTransportMessage>(e.Data);
 
                     var item = transport.DequeueFirstNonEncryptedItem();
                     if (item != null)
@@ -1538,7 +1538,7 @@ namespace Telegram.Api.Services
 #if LOG_REGISTRATION
                             TLUtils.WriteLog("OnReceivedBytes !IsInitialized try historyItem " + item.Caption);
 #endif
-                        item.Callback.SafeInvoke(message.Data);
+                        item.Callback.SafeInvoke(message.Query);
                     }
                     else
                     {
@@ -1581,10 +1581,13 @@ namespace Telegram.Api.Services
         {
             try
             {
-                var position = 0;
-                var encryptedMessage = (TLEncryptedTransportMessage)new TLEncryptedTransportMessage().FromBytes(bytes, ref position);
+                //var position = 0;
+                var encryptedMessage = new TLEncryptedTransportMessage();
 
-                encryptedMessage.Decrypt(transport.AuthKey);
+                using (var reader = new TLBinaryReader(bytes))
+                {
+                    encryptedMessage.Read(reader, transport.AuthKey);
+                }
 
                 //check msg_key
                 //var padding = encryptedMessage.Data.Length
@@ -1592,13 +1595,10 @@ namespace Telegram.Api.Services
                 //msg_id
 
 
-                position = 0;
-                TLTransportMessage transportMessage;
-                transportMessage = TLObject.GetObject<TLTransportMessage>(encryptedMessage.Query, ref position);
-                //if (transportMessage.SessionId.Value != transport.SessionId.Value)
-                //{
-                //    throw new Exception("Incorrect session_id");
-                //}
+                //position = 0;
+                //TLTransportMessage transportMessage;
+                //transportMessage = TLObject.GetObject<TLTransportMessage>(encryptedMessage.Data, ref position);
+                var transportMessage = encryptedMessage.Query as TLTransportMessage;
                 if ((transportMessage.MsgId % 2) == 0)
                 {
                     throw new Exception("Incorrect message_id");
@@ -1723,15 +1723,15 @@ namespace Telegram.Api.Services
                     }
                     else
                     {
-                        var messageData = result.Object;
+                        var messageData = result.Query;
                         if (messageData is TLGzipPacked)
                         {
-                            messageData = ((TLGzipPacked)messageData).Data;
+                            messageData = ((TLGzipPacked)messageData).Query;
                         }
 
-                        if (messageData is TLSentMessageBase
+                        if (/*messageData is TLSentMessageBase
                             || messageData is TLStatedMessageBase
-                            || messageData is TLUpdatesBase
+                            ||*/ messageData is TLUpdatesBase
                             || messageData is TLMessagesSentEncryptedMessage
                             || messageData is TLMessagesSentEncryptedFile
                             || messageData is TLMessagesAffectedHistory

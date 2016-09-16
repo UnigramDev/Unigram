@@ -40,7 +40,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("account.deleteAccount", obj, callback, faultCallback);
 	    }
 
-        public void UpdateDeviceLockedAsync(int? period, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void UpdateDeviceLockedAsync(int period, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAccountUpdateDeviceLocked { Period = period };
 
@@ -68,7 +68,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLUserBase>("account.changePhone", obj, user => _cacheService.SyncUser(user, callback.SafeInvoke), faultCallback);
         }
 
-        public void RegisterDeviceAsync(int? tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void RegisterDeviceAsync(int tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             if (_activeTransport.AuthKey == null)
             {
@@ -106,7 +106,7 @@ namespace Telegram.Api.Services
                 });
         }
 
-        public void UnregisterDeviceAsync(int? tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void UnregisterDeviceAsync(int tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAccountUnregisterDevice
             {
@@ -267,7 +267,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("account.getAuthorizations", obj, callback, faultCallback);
         }
 
-        public void ResetAuthorizationAsync(long? hash, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ResetAuthorizationAsync(long hash, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAccountResetAuthorization { Hash = hash };
 
@@ -281,21 +281,21 @@ namespace Telegram.Api.Services
             SendInformativeMessage("account.getPassword", obj, callback, faultCallback);
 	    }
 
-	    public void GetPasswordSettingsAsync(string currentPasswordHash, Action<TLAccountPasswordSettings> callback, Action<TLRPCError> faultCallback = null)
+	    public void GetPasswordSettingsAsync(byte[] currentPasswordHash, Action<TLAccountPasswordSettings> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAccountGetPasswordSettings { CurrentPasswordHash = currentPasswordHash };
 
             SendInformativeMessage("account.getPasswordSettings", obj, callback, faultCallback);
 	    }
 
-	    public void UpdatePasswordSettingsAsync(string currentPasswordHash, TLAccountPasswordInputSettings newSettings, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+	    public void UpdatePasswordSettingsAsync(byte[] currentPasswordHash, TLAccountPasswordInputSettings newSettings, Action<bool> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAccountUpdatePasswordSettings { CurrentPasswordHash = currentPasswordHash, NewSettings = newSettings };
 
             SendInformativeMessage("account.updatePasswordSettings", obj, callback, faultCallback);
 	    }
 
-	    public void CheckPasswordAsync(string passwordHash, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    public void CheckPasswordAsync(byte[] passwordHash, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAuthCheckPassword { PasswordHash = passwordHash };
 

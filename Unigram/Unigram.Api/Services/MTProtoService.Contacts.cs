@@ -14,7 +14,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<bool>("contacts.resetTopPeerRating", obj, callback.SafeInvoke, faultCallback);
         }
 
-        public void GetTopPeersAsync(TLContactsGetTopPeers.Flag flags, int? offset, int? limit, int? hash, Action<TLContactsTopPeersBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetTopPeersAsync(TLContactsGetTopPeers.Flag flags, int offset, int limit, int hash, Action<TLContactsTopPeersBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsGetTopPeers { Flags = flags, Offset  = offset, Limit = limit, Hash = hash };
 
@@ -110,14 +110,14 @@ namespace Telegram.Api.Services
             SendInformativeMessage("contacts.unblock", obj, callback, faultCallback);
         }
 
-        public void GetBlockedAsync(int? offset, int? limit, Action<TLContactsBlockedBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetBlockedAsync(int offset, int limit, Action<TLContactsBlockedBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsGetBlocked { Offset = offset, Limit = limit };
 
             SendInformativeMessage("contacts.getBlocked", obj, callback, faultCallback);
         }
 
-        public void SearchAsync(string q, int? limit, Action<TLContactsFound> callback, Action<TLRPCError> faultCallback = null)
+        public void SearchAsync(string q, int limit, Action<TLContactsFound> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsSearch { Q = q, Limit = limit };
             //var invokeWithLayer18 = new TLInvokeWithLayer18 {Data = obj};

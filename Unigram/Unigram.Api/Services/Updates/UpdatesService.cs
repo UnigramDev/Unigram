@@ -1130,9 +1130,7 @@ namespace Telegram.Api.Services.Updates
                     var channel = _cacheService.GetChat(commonMessage.ToId.Id) as TLChannel;
                     if (channel != null)
                     {
-                        if (channel.Pts == null
-                            || (channel.Pts < updateEditChannelMessage.ChannelPts.Value
-                                && channel.Pts + updateEditChannelMessage.ChannelPtsCount.Value != updateEditChannelMessage.ChannelPts.Value))
+                        if (channel.Pts == null || (channel.Pts < updateEditChannelMessage.ChannelPts.Value && channel.Pts + updateEditChannelMessage.ChannelPtsCount.Value != updateEditChannelMessage.ChannelPts.Value))
                         {
                             Execute.ShowDebugMessage(string.Format("channel_id={0} channel_pts={1} updateEditChannelMessage[channel_pts={2} channel_pts_count={3}]", peer.Id, channel.Pts, updateEditChannelMessage.ChannelPts, updateEditChannelMessage.ChannelPtsCount));
                         }
