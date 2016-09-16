@@ -180,6 +180,7 @@
     <Compile Include="TL\Methods\Channels\TLChannelsEditTitle.cs" />
     <Compile Include="TL\Methods\Channels\TLChannelsExportInvite.cs" />
     <Compile Include="TL\Methods\Channels\TLChannelsExportMessageLink.cs" />
+    <Compile Include="TL\Methods\Channels\TLChannelsGetAdminedPublicChannels.cs" />
     <Compile Include="TL\Methods\Channels\TLChannelsGetChannels.cs" />
     <Compile Include="TL\Methods\Channels\TLChannelsGetFullChannel.cs" />
     <Compile Include="TL\Methods\Channels\TLChannelsGetMessages.cs" />
@@ -277,7 +278,6 @@
     <Compile Include="TL\Methods\Messages\TLMessagesSearch.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSearchGifs.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSearchGlobal.cs" />
-    <Compile Include="TL\Methods\Messages\TLMessagesSendBroadcast.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSendEncrypted.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSendEncryptedFile.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSendEncryptedService.cs" />
@@ -631,10 +631,12 @@
     <Compile Include="TL\TLInputMediaBase.cs" />
     <Compile Include="TL\TLInputMediaContact.cs" />
     <Compile Include="TL\TLInputMediaDocument.cs" />
+    <Compile Include="TL\TLInputMediaDocumentExternal.cs" />
     <Compile Include="TL\TLInputMediaEmpty.cs" />
     <Compile Include="TL\TLInputMediaGeoPoint.cs" />
     <Compile Include="TL\TLInputMediaGifExternal.cs" />
     <Compile Include="TL\TLInputMediaPhoto.cs" />
+    <Compile Include="TL\TLInputMediaPhotoExternal.cs" />
     <Compile Include="TL\TLInputMediaUploadedDocument.cs" />
     <Compile Include="TL\TLInputMediaUploadedPhoto.cs" />
     <Compile Include="TL\TLInputMediaUploadedThumbDocument.cs" />
@@ -905,6 +907,7 @@
     <Compile Include="TL\TLUpdateChatParticipantDelete.cs" />
     <Compile Include="TL\TLUpdateChatParticipants.cs" />
     <Compile Include="TL\TLUpdateChatUserTyping.cs" />
+    <Compile Include="TL\TLUpdateConfig.cs" />
     <Compile Include="TL\TLUpdateContactLink.cs" />
     <Compile Include="TL\TLUpdateContactRegistered.cs" />
     <Compile Include="TL\TLUpdateDCOptions.cs" />
@@ -925,6 +928,7 @@
     <Compile Include="TL\TLUpdateNewStickerSet.cs" />
     <Compile Include="TL\TLUpdateNotifySettings.cs" />
     <Compile Include="TL\TLUpdatePrivacy.cs" />
+    <Compile Include="TL\TLUpdatePtsChanged.cs" />
     <Compile Include="TL\TLUpdateReadChannelInbox.cs" />
     <Compile Include="TL\TLUpdateReadChannelOutbox.cs" />
     <Compile Include="TL\TLUpdateReadFeaturedStickers.cs" />
