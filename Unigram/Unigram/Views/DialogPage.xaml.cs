@@ -141,32 +141,36 @@ namespace Unigram.Views
 
         private async void fcbtnAttachPhoto_Click(object sender, RoutedEventArgs e)
         {
-            imgSingleImgThumbnail.Source = null;
-
-            // Create the picker
-            FileOpenPicker picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-
-            // Set the allowed filetypes
-            picker.FileTypeFilter.Add(".png");
-            picker.FileTypeFilter.Add(".jpg");
-            picker.FileTypeFilter.Add(".jpeg");
-
-            // Get the file
-            StorageFile file = await picker.PickSingleFileAsync();
-            BitmapImage img = new BitmapImage();
-
-            using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
+            try
             {
-                await img.SetSourceAsync(stream);
-            }
+                imgSingleImgThumbnail.Source = null;
 
-            imgSingleImgThumbnail.Source = img;
-            imgSingleImgThumbnail.Visibility = Visibility.Visible;
-            btnRemoveSingleImgThumbnail.Visibility = Visibility.Visible;
-            btnVoiceMessage.Visibility = Visibility.Collapsed;
-            btnSendMessage.Visibility = Visibility.Visible;
+                // Create the picker
+                FileOpenPicker picker = new FileOpenPicker();
+                picker.ViewMode = PickerViewMode.Thumbnail;
+                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+
+                // Set the allowed filetypes
+                picker.FileTypeFilter.Add(".png");
+                picker.FileTypeFilter.Add(".jpg");
+                picker.FileTypeFilter.Add(".jpeg");
+
+                // Get the file
+                StorageFile file = await picker.PickSingleFileAsync();
+                BitmapImage img = new BitmapImage();
+
+                using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
+                {
+                    await img.SetSourceAsync(stream);
+                }
+
+                imgSingleImgThumbnail.Source = img;
+                imgSingleImgThumbnail.Visibility = Visibility.Visible;
+                btnRemoveSingleImgThumbnail.Visibility = Visibility.Visible;
+                btnVoiceMessage.Visibility = Visibility.Collapsed;
+                btnSendMessage.Visibility = Visibility.Visible;
+            }
+            catch { }
         }
 
         private void btnRemoveSingleImgThumbnail_Click(object sender, RoutedEventArgs e)
