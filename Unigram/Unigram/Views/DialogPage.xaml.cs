@@ -12,6 +12,8 @@ using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -39,6 +41,7 @@ namespace Unigram.Views
 
             Loaded += DialogPage_Loaded;
             CheckMessageBoxEmpty();
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         private void DialogPage_Loaded(object sender, RoutedEventArgs e)
@@ -80,9 +83,40 @@ namespace Unigram.Views
             }
         }
 
+        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+
+            // Check if the "Enter" Key is pressed.
+            if ((args.EventType == CoreAcceleratorKeyEventType.SystemKeyDown || args.EventType == CoreAcceleratorKeyEventType.KeyDown) && (args.VirtualKey == VirtualKey.Enter))
+            {
+                // Check if CTRL is also pressed in addition to Enter key.
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+
+                // If there is text and CTRL is not pressed, send message. Else start new row.
+                if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && btnSendMessage.Visibility == Visibility.Visible)
+                {
+
+                    // TODO working but UGLY workaround: removal of the enter character from message.
+                    // The character itself should not be added to the string from the begining.
+                    // This will create a visual artefact for a fraction of a second, enlarging the 
+                    // message box prior to sending and clearing the it.
+                    txtMessage.Text = txtMessage.Text.Remove(txtMessage.Text.Length - 1);
+                    ViewModel.SendTextHolder = txtMessage.Text;
+                    if (ViewModel.SendCommand.CanExecute(null))
+                        ViewModel.SendCommand.Execute(null);
+                    txtMessage.Text = "";
+                    args.Handled = true;
+                }
+            }
+            
+        }
+
         private void txtMessage_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
         {
             CheckMessageBoxEmpty();
+
+            // TODO Prevent "Enter" from being added to message string when pressed for sending.
+            // See "Dispatcher_AcceleratorKeyActivated" for more info.
 
             // TODO Save text to draft if not being send
 
