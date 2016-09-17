@@ -54,7 +54,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("account.getWallpapers", obj, callback, faultCallback);
 	    }
 
-        public void SendChangePhoneCodeAsync(string phoneNumber, string currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
+        public void SendChangePhoneCodeAsync(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAccountSendChangePhoneCode { Flags = 0, PhoneNumber = phoneNumber, CurrentNumber = currentNumber };
 

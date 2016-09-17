@@ -142,7 +142,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLUpdatesBase>(caption, obj,
                 result =>
                 {
-                    channel.Left = false;
+                    channel.IsLeft = false;
                     if (channel.ParticipantsCount != null)
                     {
                         channel.ParticipantsCount = channel.ParticipantsCount + 1;
@@ -172,7 +172,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLUpdatesBase>(caption, obj,
                 result =>
                 {
-                    channel.Left = true;
+                    channel.IsLeft = true;
                     if (channel.ParticipantsCount != null)
                     {
                         channel.ParticipantsCount = new int?(channel.ParticipantsCount.Value - 1);
@@ -447,7 +447,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ExportMessageLinkAsync(TLInputChannelBase channel, int? id, Action<TLExportedMessageLink> callback, Action<TLRPCError> faultCallback = null)
+        public void ExportMessageLinkAsync(TLInputChannelBase channel, int id, Action<TLExportedMessageLink> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsExportMessageLink { Channel = channel, Id = id };
 

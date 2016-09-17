@@ -12,42 +12,45 @@ namespace Telegram.Api.Services
             //GetGA()
         }
 
-        public void GetDHConfigAsync(int version, int randomLength, Action<TLMessagesDHConfigBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetDHConfigAsync(int version, int randomLength, Action<TLServerDHInnerData> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetDHConfig { Version = version, RandomLength = randomLength };
 
             SendInformativeMessage("messages.getDhConfig", obj, callback, faultCallback);
         }
 
-        public void RequestEncryptionAsync(TLInputUserBase userId, int randomId, byte[] ga, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLMessagesRequestEncryption { UserId = userId, RandomId = randomId, GA = ga };
+        // TODO: Encrypted 
+        //public void RequestEncryptionAsync(TLInputUserBase userId, int randomId, byte[] ga, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
+        //{
+        //    var obj = new TLMessagesRequestEncryption { UserId = userId, RandomId = randomId, GA = ga };
 
-            SendInformativeMessage<TLEncryptedChatBase>("messages.requestEncryption", obj,
-                encryptedChat =>
-                {
-                    _cacheService.SyncEncryptedChat(encryptedChat, callback.SafeInvoke);
-                }, 
-                faultCallback);
-        }
+        //    SendInformativeMessage<TLEncryptedChatBase>("messages.requestEncryption", obj,
+        //        encryptedChat =>
+        //        {
+        //            _cacheService.SyncEncryptedChat(encryptedChat, callback.SafeInvoke);
+        //        }, 
+        //        faultCallback);
+        //}
 
-        public void AcceptEncryptionAsync(TLInputEncryptedChat peer, byte[] gb, long keyFingerprint, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLMessagesAcceptEncryption { Peer = peer, GB = gb, KeyFingerprint = keyFingerprint };
+        // TODO: Encrypted 
+        //public void AcceptEncryptionAsync(TLInputEncryptedChat peer, byte[] gb, long keyFingerprint, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null)
+        //{
+        //    var obj = new TLMessagesAcceptEncryption { Peer = peer, GB = gb, KeyFingerprint = keyFingerprint };
 
-            SendInformativeMessage<TLEncryptedChatBase>("messages.acceptEncryption", obj,
-                encryptedChat =>
-                {
-                    _cacheService.SyncEncryptedChat(encryptedChat, callback.SafeInvoke);
-                },
-                faultCallback);
-        }
+        //    SendInformativeMessage<TLEncryptedChatBase>("messages.acceptEncryption", obj,
+        //        encryptedChat =>
+        //        {
+        //            _cacheService.SyncEncryptedChat(encryptedChat, callback.SafeInvoke);
+        //        },
+        //        faultCallback);
+        //}
 
-        public void DiscardEncryptionAsync(int chatId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLMessagesDiscardEncryption { ChatId = chatId };
+        // TODO: Encrypted 
+        //public void DiscardEncryptionAsync(int chatId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        //{
+        //    var obj = new TLMessagesDiscardEncryption { ChatId = chatId };
 
-            SendInformativeMessage("messages.discardEncryption", obj, callback, faultCallback);
-        }
+        //    SendInformativeMessage("messages.discardEncryption", obj, callback, faultCallback);
+        //}
     }
 }

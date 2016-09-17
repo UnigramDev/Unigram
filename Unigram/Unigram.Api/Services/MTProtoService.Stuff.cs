@@ -25,13 +25,13 @@ namespace Telegram.Api.Services
 	        var salt = _activeTransport.Salt;
 
 	        int sequenceNumber;
-	        long? messageId;
+	        long messageId;
 	        lock (_activeTransportRoot)
             {
                 sequenceNumber = _activeTransport.SequenceNumber * 2;
                 messageId = _activeTransport.GenerateMessageId(true);
 	        }
-            var transportMessage = CreateTLTransportMessage(salt, sesseionId, new int?(sequenceNumber), messageId, obj);
+            var transportMessage = CreateTLTransportMessage(salt ?? 0, sesseionId ?? 0, sequenceNumber, messageId, obj);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
 	        lock (_activeTransportRoot)
@@ -116,13 +116,13 @@ namespace Telegram.Api.Services
             var sessionId = _activeTransport.SessionId;
 
 	        int sequenceNumber;
-	        long? messageId;
+	        long messageId;
 	        lock (_activeTransportRoot)
             {
                 sequenceNumber = _activeTransport.SequenceNumber * 2;
                 messageId = _activeTransport.GenerateMessageId(true);
 	        }
-            var transportMessage = CreateTLTransportMessage(salt, sessionId, new int?(sequenceNumber), messageId, obj);
+            var transportMessage = CreateTLTransportMessage(salt ?? 0, sessionId ?? 0, sequenceNumber, messageId, obj);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
 	        lock (_activeTransportRoot)

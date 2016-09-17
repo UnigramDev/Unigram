@@ -58,7 +58,7 @@ namespace Unigram.Converters
 
         public string Date(int value)
         {
-            var clientDelta = MTProtoService.Current.ClientTicksDelta;
+            var clientDelta = MTProtoService.Instance.ClientTicksDelta;
             var utc0SecsLong = value * 4294967296 - clientDelta;
             var utc0SecsInt = utc0SecsLong / 4294967296.0;
             var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);

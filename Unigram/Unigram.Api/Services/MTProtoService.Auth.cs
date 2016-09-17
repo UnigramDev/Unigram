@@ -24,7 +24,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("auth.checkPhone", obj, callback, faultCallback);
 	    }
 
-        public void SendCodeAsync(string phoneNumber, string currentNumber, Action<TLAuthSentCode> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null)
+        public void SendCodeAsync(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthSendCode
             {

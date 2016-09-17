@@ -122,7 +122,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLMessagesPeerDialogs>("messages.getPeerDialogs", obj, callback.SafeInvoke, faultCallback);
         }
 
-        public void GetInlineBotResultsAsync(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset, Action<TLBotResults> callback, Action<TLRPCError> faultCallback = null)
+        public void GetInlineBotResultsAsync(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset, Action<TLMessagesBotResults> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetInlineBotResults { Flags = 0, Bot = bot, Peer = peer, GeoPoint = geoPoint, Query = query, Offset = offset };
 
@@ -132,7 +132,7 @@ namespace Telegram.Api.Services
 
         public void SetInlineBotResultsAsync(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesSetInlineBotResults { Flags = 0, Gallery = gallery, Private = pr, QueryId = queryId, Results = results, CacheTime = cacheTime, NextOffset = nextOffset, HasSwitchPm = switchPM != null, SwitchPm = switchPM };
+            var obj = new TLMessagesSetInlineBotResults { Flags = 0, IsGallery = gallery, IsPrivate = pr, QueryId = queryId, Results = results, CacheTime = cacheTime, NextOffset = nextOffset, HasSwitchPm = switchPM != null, SwitchPm = switchPM };
 
             const string caption = "messages.setInlineBotResults";
             SendInformativeMessage(caption, obj, callback, faultCallback);
@@ -151,7 +151,7 @@ namespace Telegram.Api.Services
             var message48 = message as TLMessage;
             if (message48 != null && message48.IsSilent)
             {
-                obj.SetSilent();
+                obj.IsSilent = true;
             }
 
             const string caption = "messages.sendInlineBotResult";
@@ -162,7 +162,8 @@ namespace Telegram.Api.Services
                     var shortSentMessage = result as TLUpdateShortSentMessage;
                     if (shortSentMessage != null)
                     {
-                        message.Flags = shortSentMessage.Flags;
+                        // TODO: verify
+                        message.Flags = (TLMessage.Flag)(int)shortSentMessage.Flags;
                         if (shortSentMessage.HasMedia)
                         {
                             message._media = shortSentMessage.Media;
@@ -723,7 +724,7 @@ namespace Telegram.Api.Services
         public void SendMessageAsync(TLMessage message, Action<TLMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
         {
             var inputPeer = PeerToInputPeer(message.ToId);
-            var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Message = message.Message, RandomId = message.RandomId };
+            var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Message = message.Message, RandomId = message.RandomId.Value };
 
             if (message.Entities != null)
             {
@@ -732,7 +733,7 @@ namespace Telegram.Api.Services
 
             if (message.NoWebpage)
             {
-                obj.NoWebpage();
+                obj.IsNoWebpage = true;
             }
 
             if (message.IsChannelMessage)
@@ -743,10 +744,10 @@ namespace Telegram.Api.Services
             var message48 = message as TLMessage;
             if (message48 != null && message48.IsSilent)
             {
-                obj.SetSilent();
+                obj.IsSilent = true;
             }
 
-            obj.ClearDraft();
+            obj.IsClearDraft = true;
 
             const string caption = "messages.sendMessage";
             SendMessageAsyncInternal(obj,
@@ -777,7 +778,8 @@ namespace Telegram.Api.Services
                     var shortSentMessage = result as TLUpdateShortSentMessage;
                     if (shortSentMessage != null)
                     {
-                        message.Flags = shortSentMessage.Flags;
+                        // TODO: verify
+                        message.Flags = (TLMessage.Flag)(int)shortSentMessage.Flags;
                         if (shortSentMessage.HasMedia)
                         {
                             message._media = shortSentMessage.Media;
@@ -967,7 +969,7 @@ namespace Telegram.Api.Services
             var message48 = message as TLMessage;
             if (message48 != null && message48.IsSilent)
             {
-                obj.SetSilent();
+                obj.IsSilent = true;
             }
 
             const string caption = "messages.sendMedia";
@@ -1147,13 +1149,13 @@ namespace Telegram.Api.Services
                 foreach (var dialogBase in result.Dialogs)
                 {
                     List<TLDialog> dialogs;
-                    if (dialogsCache.TryGetValue(dialogBase.TopMessage, out dialogs))
+                    if (dialogsCache.TryGetValue(dialogBase.TopMessageId, out dialogs))
                     {
                         dialogs.Add(dialogBase);
                     }
                     else
                     {
-                        dialogsCache[dialogBase.TopMessage] = new List<TLDialog>{ dialogBase };
+                        dialogsCache[dialogBase.TopMessageId] = new List<TLDialog>{ dialogBase };
                     }
                 }
 
@@ -1551,7 +1553,7 @@ namespace Telegram.Api.Services
 
             if (justClear)
             {
-                obj.SetJustClear();
+                obj.IsJustClear = true;
             }
 
             const string caption = "messages.deleteHistory";
@@ -1565,7 +1567,8 @@ namespace Telegram.Api.Services
                     }
                     else
                     {
-                        _updatesService.SetState(result.Seq, result.Pts, null, null, null, caption);
+                        // TODO: Verify Value.PtsCount, before was Seq.
+                        _updatesService.SetState(result.PtsCount, result.Pts, null, null, null, caption);
                     }
 
                     callback(result);
@@ -1596,12 +1599,13 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void RestoreMessagesAsync(TLVector<int> id, Action<TLVector<int>> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLMessagesRestoreMessages { Id = id };
+        // TODO: Probably deprecated.
+        //public void RestoreMessagesAsync(TLVector<int> id, Action<TLVector<int>> callback, Action<TLRPCError> faultCallback = null)
+        //{
+        //    var obj = new TLMessagesRestoreMessages { Id = id };
 
-            SendInformativeMessage("messages.restoreMessages", obj, callback, faultCallback);
-        }
+        //    SendInformativeMessage("messages.restoreMessages", obj, callback, faultCallback);
+        //}
 
         public void ReceivedMessagesAsync(int maxId, Action<TLVector<TLReceivedNotifyMessage>> callback, Action<TLRPCError> faultCallback = null)
         {
@@ -1677,7 +1681,7 @@ namespace Telegram.Api.Services
 
             if (message48 != null && message48.IsSilent)
             {
-                obj.SetSilent();
+                obj.IsSilent = true;
             }
 
             if (withMyScore)
@@ -2011,30 +2015,31 @@ namespace Telegram.Api.Services
             SendInformativeMessage("messages.editChatAdmin", obj, callback, faultCallback);
 	    }
 
-        public void DeactivateChatAsync(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLDeactivateChat { ChatId = chatId, Enabled = enabled };
+        // TODO: Probably deprecated
+        //public void DeactivateChatAsync(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        //{
+        //    var obj = new TLDeactivateChat { ChatId = chatId, Enabled = enabled };
 
-            const string caption = "messages.deactivateChat";
-            SendInformativeMessage<TLUpdatesBase>(caption, obj,
-                result =>
-                {
-                    var multiPts = result as ITLMultiPts;
-                    if (multiPts != null)
-                    {
-                        _updatesService.SetState(multiPts, caption);
-                    }
-                    else
-                    {
-                        ProcessUpdates(result, null);
-                    }
+        //    const string caption = "messages.deactivateChat";
+        //    SendInformativeMessage<TLUpdatesBase>(caption, obj,
+        //        result =>
+        //        {
+        //            var multiPts = result as ITLMultiPts;
+        //            if (multiPts != null)
+        //            {
+        //                _updatesService.SetState(multiPts, caption);
+        //            }
+        //            else
+        //            {
+        //                ProcessUpdates(result, null);
+        //            }
 
-                    callback.SafeInvoke(result);
-                },
-                faultCallback);
-        }
+        //            callback.SafeInvoke(result);
+        //        },
+        //        faultCallback);
+        //}
 
-	    public void HideReportSpamAsync(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void HideReportSpamAsync(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLMessagesHideReportSpam { Peer = peer };
 

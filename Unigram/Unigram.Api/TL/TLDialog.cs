@@ -17,7 +17,7 @@ namespace Telegram.Api.TL
 
 		public Flag Flags { get; set; }
 		public TLPeerBase Peer { get; set; }
-		public Int32 TopMessage { get; set; }
+		public Int32 TopMessageId { get; set; }
 		public Int32 ReadInboxMaxId { get; set; }
 		public Int32 ReadOutboxMaxId { get; set; }
 		public Int32 UnreadCount { get; set; }

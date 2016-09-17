@@ -957,7 +957,7 @@ namespace Telegram.Api.TL
 
         public static int DateToUniversalTimeTLInt(long clientDelta, DateTime date)
         {
-            clientDelta = MTProtoService.Current.ClientTicksDelta;
+            clientDelta = MTProtoService.Instance.ClientTicksDelta;
 
             var unixTime = (long)(Utils.DateTimeToUnixTimestamp(date) * 4294967296) + clientDelta; //int * 2^32 + clientDelta
 
