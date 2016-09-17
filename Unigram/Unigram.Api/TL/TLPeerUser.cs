@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLPeerUser : TLPeerBase 
 	{
+		public Int32 UserId { get; set; }
 
 		public TLPeerUser() { }
 		public TLPeerUser(TLBinaryReader from, TLType type = TLType.PeerUser)
@@ -16,13 +17,13 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, TLType type = TLType.PeerUser)
 		{
-			Id = from.ReadInt32();
+			UserId = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x9DB1BC6D);
-			to.Write(Id);
+			to.Write(UserId);
 		}
 	}
 }

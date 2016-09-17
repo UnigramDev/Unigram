@@ -177,12 +177,9 @@ inputPhotoCrop#d9915325 crop_left:double crop_top:double crop_width:double = Inp
 
 inputAppEvent#770656a8 time:double type:string peer:long data:string = InputAppEvent;
 
-peerUser#9db1bc6d id:int = Peer;
-peerChat#bad0e5bb id:int = Peer;
-peerChannel#bddde532 id:int = Peer;
-//peerUser#9db1bc6d user_id:int = Peer;
-//peerChat#bad0e5bb chat_id:int = Peer;
-//peerChannel#bddde532 channel_id:int = Peer;
+peerUser#9db1bc6d user_id:int = Peer;
+peerChat#bad0e5bb chat_id:int = Peer;
+peerChannel#bddde532 channel_id:int = Peer;
 
 storage.fileUnknown#aa963b05 = storage.FileType;
 storage.fileJpeg#7efe0e = storage.FileType;
