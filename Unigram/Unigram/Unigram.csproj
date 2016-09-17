@@ -109,6 +109,7 @@
     <Compile Include="Common\FluidGridView.cs" />
     <Compile Include="Common\IncrementalCollection.cs" />
     <Compile Include="Common\KeyedList.cs" />
+    <Compile Include="Common\LastSeenHelper.cs" />
     <Compile Include="Common\LazyBitmapImage.cs" />
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\ListCollectionView.cs" />

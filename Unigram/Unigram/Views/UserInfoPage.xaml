@@ -245,6 +245,7 @@
                                 Margin="0,24,0,12"
                                 Padding="0"
                                 BorderThickness="0"
+                                Background="Transparent"                                
                                 Command="{Binding PhotoCommand}"
                                 RelativePanel.AlignHorizontalCenterWithPanel="True">
                             <Ellipse Width="128"
@@ -290,8 +291,9 @@
                                 <!-- Chat-status (Personal + Group) -->
                                 <TextBlock x:Name="tblUserInfoChatStatus"
                                            Visibility="Visible"
-                                           Text="Last seen on 12:57"
+                                           Text="{x:Bind ViewModel.LastSeen}"
                                            Margin="0"
+                                           TextAlignment="Center"
                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                            Style="{ThemeResource BaseTextBlockStyle}"
                                            FontWeight="Normal" />
