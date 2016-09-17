@@ -455,7 +455,7 @@ namespace Telegram.Api.Services
 	            });
 	    }
 
-	    private static void ProcessStickerSets(IStickers stickers, List<TLMessagesStickerSet> results)
+	    private static void ProcessStickerSets(ITLStickers stickers, List<TLMessagesStickerSet> results)
 	    {
 	        var documentsDict = new Dictionary<long, TLDocumentBase>();
 	        var packsDict = new Dictionary<string, TLStickerPack>();
@@ -504,7 +504,7 @@ namespace Telegram.Api.Services
 	        }
 	    }
 
-	    private void GetStickerSetsAsync(IStickers stickers, Action<IStickers> callback, Action<object> getStickerSetCallback, Action<TLRPCError> faultCallback)
+	    private void GetStickerSetsAsync(ITLStickers stickers, Action<ITLStickers> callback, Action<object> getStickerSetCallback, Action<TLRPCError> faultCallback)
 	    {
 	        var sets = stickers.Sets;
 	        if (sets.Count == 0)

@@ -9,7 +9,7 @@ namespace Telegram.Api.Services.Cache.EventArgs
 
         public IList<TLMessageBase> Messages { get; protected set; }
 
-        public TLDecryptedMessageBase DecryptedMessage { get; protected set; }
+        // TODO: Encrypted public TLDecryptedMessageBase DecryptedMessage { get; protected set; }
 
         public MessagesRemovedEventArgs(TLDialog dialog, TLMessageBase message)
         {
@@ -23,11 +23,12 @@ namespace Telegram.Api.Services.Cache.EventArgs
             Messages = messages;
         }
 
-        public MessagesRemovedEventArgs(TLDialog dialog, TLDecryptedMessageBase message)
-        {
-            Dialog = dialog;
-            DecryptedMessage = message;
-        }
+        // TODO: Encrypted 
+        //public MessagesRemovedEventArgs(TLDialog dialog, TLDecryptedMessageBase message)
+        //{
+        //    Dialog = dialog;
+        //    DecryptedMessage = message;
+        //}
     }
 
     public class DialogAddedEventArgs

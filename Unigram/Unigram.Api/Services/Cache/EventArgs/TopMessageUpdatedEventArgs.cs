@@ -10,7 +10,7 @@ namespace Telegram.Api.Services.Cache.EventArgs
 
         public TLMessageBase Message { get; protected set; }
 
-        public TLDecryptedMessageBase DecryptedMessage { get; protected set; }
+        // TODO: Encrypted public TLDecryptedMessageBase DecryptedMessage { get; protected set; }
 
         public TopMessageUpdatedEventArgs(TLPeerBase peer)
         {
@@ -23,10 +23,11 @@ namespace Telegram.Api.Services.Cache.EventArgs
             Message = message;
         }
 
-        public TopMessageUpdatedEventArgs(TLDialog dialog, TLDecryptedMessageBase message)
-        {
-            Dialog = dialog;
-            DecryptedMessage = message;
-        }
+        // TODO: Encrypted 
+        //public TopMessageUpdatedEventArgs(TLDialog dialog, TLDecryptedMessageBase message)
+        //{
+        //    Dialog = dialog;
+        //    DecryptedMessage = message;
+        //}
     }
 }

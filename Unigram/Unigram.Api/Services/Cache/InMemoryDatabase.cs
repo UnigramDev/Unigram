@@ -1836,10 +1836,14 @@ namespace Telegram.Api.Services.Cache
                             }
 
                             dialog._topMessage = dialog.Messages.FirstOrDefault();
-                            dialog.TopMessageId = dialog.TopMessage != null ? dialog.TopMessage.Id : null;
-                            if (dialog.TopMessageId == null)
+                            var topMessage = dialog.TopMessage != null ? dialog.TopMessage.Id : new int?();
+                            if (topMessage == null)
                             {
                                 dialog.TopMessageRandomId = dialog.TopMessage != null ? dialog.TopMessage.RandomId : null;
+                            }
+                            else
+                            {
+                                dialog.TopMessageId = topMessage.Value;
                             }
                             foreach (var message in dialog.Messages)
                             {

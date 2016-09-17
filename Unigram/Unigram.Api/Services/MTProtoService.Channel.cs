@@ -551,6 +551,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLMessagesAffectedHistory>(caption, obj,
                 result =>
                 {
+                    ChannelPt
                     var multiChannelPts = result as IMultiChannelPts;
                     if (multiChannelPts != null)
                     {
