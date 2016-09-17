@@ -126,10 +126,10 @@
                                    FontSize="16"
                                    Style="{StaticResource BaseTextBlockStyle}"/>
                         <TextBlock x:Name="tblDialogStatus"
-                                   Visibility="Collapsed"
+                                   Visibility="{x:Bind ViewModel.LastSeenVisible}"
                                    Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
                                    FontSize="12"
-                                   Text="Online" />
+                                   Text="{x:Bind ViewModel.LastSeen}" />
                     </StackPanel>
                 </StackPanel>
             </Button.Content>

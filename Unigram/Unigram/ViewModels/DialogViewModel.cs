@@ -22,6 +22,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Collections;
 using System.ComponentModel;
+using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels
 {
@@ -36,6 +37,8 @@ namespace Unigram.ViewModels
         public TLInputPeerBase inputPeer;
         public MessageCollection Messages { get; private set; } = new MessageCollection();
         public string DialogTitle;
+        public string LastSeen;
+        public Visibility LastSeenVisible;
         public string debug;
         public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
@@ -233,6 +236,8 @@ namespace Unigram.ViewModels
                 Messages.Clear();
                 Item = user;
                 DialogTitle = Item.FullName;
+                LastSeen = LastSeenHelper.getLastSeen(user).Item1;
+                LastSeenVisible = Visibility.Visible;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
@@ -241,12 +246,12 @@ namespace Unigram.ViewModels
             }
             else if (channel != null)
             {
-
-                TLInputChannel x=new TLInputChannel();
+                TLInputChannel x=new TLInputChannel();                
                 x.ChannelId = channel.ChannelId;
                 x.AccessHash = channel.AccessHash;
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);
                 DialogTitle = channelDetails.Value.Chats[0].FullName;
+                LastSeenVisible = Visibility.Collapsed;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerChannel { ChannelId = x.ChannelId, AccessHash = x.AccessHash };
                 Peer = new TLInputPeerChannel { ChannelId = x.ChannelId, AccessHash = x.AccessHash };
@@ -258,6 +263,7 @@ namespace Unigram.ViewModels
             {
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
                 DialogTitle = chatDetails.Value.Chats[0].FullName;
+                LastSeenVisible = Visibility.Collapsed;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };
                 Peer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };
