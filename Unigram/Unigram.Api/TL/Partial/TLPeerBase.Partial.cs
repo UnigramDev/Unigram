@@ -16,8 +16,8 @@ namespace Telegram.Api.TL
                     return ((TLPeerUser)this).UserId;
                 else if (this is TLPeerChat)
                     return ((TLPeerChat)this).ChatId;
-
-                return ((TLPeerChannel)this).ChannelId;
+                else
+                    return ((TLPeerChannel)this).ChannelId;
             }
             set
             {
@@ -25,8 +25,8 @@ namespace Telegram.Api.TL
                     ((TLPeerUser)this).UserId = value;
                 else if (this is TLPeerChat)
                     ((TLPeerChat)this).ChatId = value;
-
-                ((TLPeerChannel)this).ChannelId = value;
+                else
+                    ((TLPeerChannel)this).ChannelId = value;
             }
         }
     }
