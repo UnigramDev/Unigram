@@ -28,6 +28,7 @@ namespace Unigram.ViewModels
         private readonly IPushService _pushService;        
         public ObservableCollection<UsersPanelListItem> TempList = new ObservableCollection<UsersPanelListItem>();
         public ObservableCollection<UsersPanelListItem> UsersList = new ObservableCollection<UsersPanelListItem>();
+        public TLUser Self { get; internal set; }
         public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService)
             : base(protoService, cacheService, aggregator)
         {
@@ -51,6 +52,11 @@ namespace Unigram.ViewModels
             foreach (var item in x.Users)
             {
                 var User = item as TLUser;
+                if(User.IsSelf==true)
+                {
+                    Self = User;
+                    continue;
+                }
                 UsersPanelListItem TempX = new UsersPanelListItem(User as TLUser);
                 var Status= LastSeenHelper.getLastSeen(User);
                 TempX.fullName = User.FullName;
