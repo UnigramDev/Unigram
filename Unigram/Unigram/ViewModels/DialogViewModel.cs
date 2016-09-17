@@ -29,7 +29,6 @@ namespace Unigram.ViewModels
     public class DialogViewModel : UnigramViewModelBase
     {
         int ChatType=-1;
-        int counter = 0;
         //0 if private, 1 if group, 2 if supergroup/channel
         int loadCount =15;
         int loaded = 0;
@@ -41,7 +40,7 @@ namespace Unigram.ViewModels
         public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-        }
+        }       
 
         public string SendTextHolder;
         public TLUser user;
@@ -49,7 +48,7 @@ namespace Unigram.ViewModels
         public TLUserBase Item
         {
             get
-            {
+            {                
                 return _item;
             }
             set
@@ -129,7 +128,6 @@ namespace Unigram.ViewModels
                 foreach (var item in result.Value.Messages)
                 {
                     Messages.Insert(0, item);
-                    counter++;
                 }
             }
 

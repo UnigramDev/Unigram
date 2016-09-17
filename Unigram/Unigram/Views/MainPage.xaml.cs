@@ -32,7 +32,7 @@ namespace Unigram.Views
         public MainViewModel ViewModel => DataContext as MainViewModel;
 
         private object _lastSelected;
-
+        private object _lastSelectedContact;
         public MainPage()
         {
             InitializeComponent();
@@ -226,6 +226,23 @@ namespace Unigram.Views
             {
                 lvMasterChats.ItemsSource = ViewModel.Dialogs;
             }
+        }
+
+        private void PivotItem_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.getTLContacts();
+        }
+
+        private void UsersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (UsersListView.SelectedItem != null && _lastSelectedContact != UsersListView.SelectedItem && UsersListView.SelectionMode != ListViewSelectionMode.Multiple)
+            {
+                var x = UsersListView.SelectedItem as UsersPanelListItem;
+                TLDialog dialog = new TLDialog();
+                dialog.With = x._parent;
+                ViewModel.NavigationService.Navigate(typeof(Views.DialogPage), dialog.With);
+            }
+
         }
     }
 }
