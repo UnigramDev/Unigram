@@ -68,13 +68,33 @@
                 </PivotItem>
                 <PivotItem Loaded="PivotItem_Loaded">
                     <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE125;"/>                        
+                        <controls:TabHeaderStyle Glyph="&#xE125;"/>
                     </PivotItem.Header>
-                    <ListView x:Name="UsersListView" ItemsSource="{x:Bind Path=ViewModel.UsersList}" SelectionChanged="UsersListView_SelectionChanged">
+                    <ListView Margin="0,4,0,0" x:Name="UsersListView" ItemsSource="{x:Bind Path=ViewModel.UsersList}" SelectionChanged="UsersListView_SelectionChanged">
+                        <ListView.Header>
+                            <Grid Height="120">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="96"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Ellipse Height="72" Width="72" VerticalAlignment="Center" Grid.RowSpan="2" Grid.Column="0">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{x:Bind ViewModel.Self.Photo,Mode=OneWay, Converter={StaticResource DefaultPhotoConverter} ,FallbackValue='ms-appx:///Assets/Mockups/UserIcons/user_batman.png' }" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <TextBlock Text="{x:Bind ViewModel.Self.FullName ,Mode=OneWay, FallbackValue='Batman'}" Margin="12,0,0,0" VerticalAlignment="Bottom" FontSize="20" Grid.Row="0" Grid.Column="1"/>
+                                <TextBlock Text="{x:Bind ViewModel.Self.Phone ,Mode=OneWay, FallbackValue='1800-800-HELP'}" Margin="12,0,0,0" Style="{ThemeResource BodyTextBlockStyle}" 
+                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" FontSize="16" Grid.Row="1" Grid.Column="1"/>
+                            </Grid>
+                        </ListView.Header>
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ItemsStackPanel GroupHeaderPlacement="Left"
-                                             ItemsUpdatingScrollMode="KeepLastItemInView"
+                                             ItemsUpdatingScrollMode="KeepScrollOffset"
                                              VerticalAlignment="Top" />
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
@@ -83,7 +103,7 @@
                                 <Grid Margin="0,4,0,4">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>                                        
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -102,7 +122,6 @@
                        TextTrimming="CharacterEllipsis" 
                        TextWrapping="NoWrap" 
                        MaxLines="1"/>
-
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
