@@ -401,7 +401,7 @@ namespace Telegram.Api.Services
                         TLUtils.WriteException(new Exception("_activeTransport.DCId==0"));
                     }
 
-                    SendInformativeMessageByTransport(transport, string.Format("upload.getFile main dc_id={0} loc=[{5}] o={1} l={2}\ntransport_id={3} session_id={4}", dcId, offset, limit, transport.Id, transport.SessionId, location.GetLocationString()), obj, callback, faultCallback);
+                    SendInformativeMessageByTransport(transport, string.Format("upload.getFile main dc_id={0} loc=[{5}] o={1} l={2}\ntransport_id={3} session_id={4}", dcId, offset, limit, transport.Id, transport.SessionId, location), obj, callback, faultCallback);
                     return;
                 }
             }
@@ -472,7 +472,7 @@ namespace Telegram.Api.Services
 
                                 _cacheService.SetConfig(_config);
 
-                                SendInformativeMessageByTransport(transport, string.Format("upload.getFile dc_id={0} loc=[{3}] o={1} l={2}", dcId, offset, limit, location.GetLocationString()), obj, callback, faultCallback);
+                                SendInformativeMessageByTransport(transport, string.Format("upload.getFile dc_id={0} loc=[{3}] o={1} l={2}", dcId, offset, limit, location), obj, callback, faultCallback);
                             },
                             error =>
                             {
@@ -501,7 +501,7 @@ namespace Telegram.Api.Services
                     transport,
                     () =>
                     {
-                        SendInformativeMessageByTransport(transport, string.Format("upload.getFile dc_id={0} loc=[{3}] o={1} l={2}", dcId, offset, limit, location.GetLocationString()), obj, callback, faultCallback);
+                        SendInformativeMessageByTransport(transport, string.Format("upload.getFile dc_id={0} loc=[{3}] o={1} l={2}", dcId, offset, limit, location), obj, callback, faultCallback);
                     },
                     error =>
                     {

@@ -93,7 +93,7 @@ namespace Telegram.Api.Services
                         var cachedUser = _cacheService.GetUser(result.Users[i].Id);
                         if (cachedUser != null)
                         {
-                            cachedUser._status = result.Users[i].Status;
+                            cachedUser._status = ((TLUser)result.Users[i]).Status;
                             result.Users[i] = cachedUser;
                         }
                     }
@@ -535,7 +535,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ReportSpamAsync(TLInputChannelBase channel, int userId, TLVector<int> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ReportSpamAsync(TLInputChannelBase channel, TLInputUserBase userId, TLVector<int> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsReportSpam { Channel = channel, UserId = userId, Id = id };
 
@@ -551,15 +551,14 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLMessagesAffectedHistory>(caption, obj,
                 result =>
                 {
-                    ChannelPt
-                    var multiChannelPts = result as IMultiChannelPts;
+                    var multiChannelPts = result as ITLMultiChannelPts;
                     if (multiChannelPts != null)
                     {
-                        if (channel.Pts == null || channel.Pts.Value + multiChannelPts.ChannelPtsCount.Value != multiChannelPts.ChannelPts.Value)
+                        if (channel.Pts == null || channel.Pts.Value + multiChannelPts.PtsCount != multiChannelPts.Pts)
                         {
-                            Execute.ShowDebugMessage(string.Format("channel_id={0} channel_pts={1} affectedHistory24[channel_pts={2} channel_pts_count={3}]", channel.Id, channel.Pts, multiChannelPts.ChannelPts, multiChannelPts.ChannelPtsCount));
+                            Execute.ShowDebugMessage(string.Format("channel_id={0} channel_pts={1} affectedHistory24[channel_pts={2} channel_pts_count={3}]", channel.Id, channel.Pts, multiChannelPts.Pts, multiChannelPts.PtsCount));
                         }
-                        channel.Pts = multiChannelPts.ChannelPts.Value;
+                        channel.Pts = multiChannelPts.Pts;
                     }
 
                     callback.SafeInvoke(result);

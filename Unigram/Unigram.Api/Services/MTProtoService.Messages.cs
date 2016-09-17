@@ -649,15 +649,16 @@ namespace Telegram.Api.Services
             var status = TLMessageState.Confirmed;
             if (peer is TLPeerUser)
             {
-                var user = cacheService.GetUser(peer.Id);
-                if (user != null)
+                var userBase = cacheService.GetUser(peer.Id);
+                var user = userBase as TLUser;
+                if (userBase != null)
                 {
-                    var botInfo = user.BotInfo as TLBotInfo;
+                    var botInfo = userBase.BotInfo as TLBotInfo;
                     if (botInfo != null)
                     {
                         status = TLMessageState.Read;
                     }
-                    else if (user.IsSelf)
+                    else if (user != null && user.IsSelf)
                     {
                         status = TLMessageState.Read;
                     }
@@ -1001,55 +1002,6 @@ namespace Telegram.Api.Services
                     //fastCallback();
                 },
                 faultCallback.SafeInvoke);
-        }
-
-        public void SendBroadcastAsync(TLVector<TLInputUserBase> contacts, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
-        {
-            var randomId = new TLVector<long>();
-            for (var i = 0; i < contacts.Count; i++)
-            {
-                randomId.Add(TLLong.Random());
-            }
-
-            var obj = new TLMessagesSendBroadcast { Contacts = contacts, RandomId = randomId, Message = message.Message, Media = inputMedia };
-
-
-
-            const string caption = "messages.sendBroadcast";
-            SendInformativeMessage<TLUpdatesBase>(caption,
-                obj,
-                result =>
-                {
-                    var multiPts = result as ITLMultiPts;
-                    if (multiPts != null)
-                    {
-                        _updatesService.SetState(multiPts, caption);
-                    }
-                    else
-                    {
-                        ProcessUpdates(result, new List<TLMessage> { message });
-                    }
-
-                    var updates = result as TLUpdates;
-                    if (updates != null)
-                    {
-                        var updateNewMessage = updates.Updates.FirstOrDefault(x => x is TLUpdateNewMessage) as TLUpdateNewMessage;
-                        if (updateNewMessage != null)
-                        {
-                            var messageCommon = updateNewMessage.Message as TLMessage;
-                            if (messageCommon != null)
-                            {
-                                message.Date = messageCommon.Date - 1; // Делаем бродкаст после всех чатов, в которые отправили, в списке диалогов
-                            }
-                        }
-                    }
-
-                    //message.Id = result.Id;
-                    message.State = TLMessageState.Confirmed;
-
-                    callback.SafeInvoke(result);
-                },
-                faultCallback);
         }
 
 
