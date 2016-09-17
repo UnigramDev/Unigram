@@ -15,6 +15,7 @@ using Unigram.Collections;
 using Unigram.Core.Notifications;
 using Unigram.Core.Services;
 using Windows.ApplicationModel.Background;
+using Windows.Globalization.DateTimeFormatting;
 using Windows.Networking.PushNotifications;
 using Windows.Security.Authentication.Web;
 using Windows.UI.Xaml.Navigation;
@@ -50,22 +51,37 @@ namespace Unigram.ViewModels
             {                
                 string status = "";
                 var User = item as TLUser;
-                var sOfflineCheck = User.Status as TLUserStatusOffline;
-                    if(sOfflineCheck !=null)
-                         status = "Last seen at " + TLUtils.ToDateTime(sOfflineCheck.WasOnline).ToString();
-                var sOnlineCheck = User.Status as TLUserStatusOnline;
-                    if (sOnlineCheck != null)
-                          status = "Online";
-                if (status == "")
-                    status = "Last seen recently";
                 UsersPanelListItem TempX = new UsersPanelListItem(User as TLUser);
+                var sOfflineCheck = User.Status as TLUserStatusOffline;
+                if (sOfflineCheck != null)
+                {
+                    var seen = TLUtils.ToDateTime(sOfflineCheck.WasOnline);
+                    var now = DateTime.Now;
+                    string t;
+                    //if date=date, show hours else show full string
+                    //if hours=hours, show minutes else show "hours ago"
+                    t = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? " moments ago" : (now - seen).Minutes.ToString() + " minutes ago") : ((now - seen).Hours.ToString()) + " hours ago") : now.Date - seen.Date == new TimeSpan(24,0,0) ? "yesterday "+ new DateTimeFormatter("shorttime").Format(seen): seen.ToString();
+                    status = "Last seen " + t;
+                    TempX.lastSeenEpoch = sOfflineCheck.WasOnline;
+                }
+                var sOnlineCheck = User.Status as TLUserStatusOnline;
+                if (sOnlineCheck != null)
+                {
+                    status = "Online";
+                    TempX.lastSeenEpoch = int.MaxValue;
+                }
+                if (status == "")
+                {
+                    status = "Last seen recently";
+                    TempX.lastSeenEpoch = 0;
+                }                
                 TempX.fullName = User.FullName;
-                TempX.lastSeen = status;
+                TempX.lastSeen = status;                
                 TempX.Photo = TempX._parent.Photo;
                 TempList.Add(TempX);
             }
             //Super Inefficient Method below to sort alphabetically, TODO: FIX IT
-            TempList = new ObservableCollection<ViewModels.UsersPanelListItem>(TempList.OrderBy(person => person.fullName));
+            TempList = new ObservableCollection<ViewModels.UsersPanelListItem>(TempList.OrderByDescending(person => person.lastSeenEpoch));
             foreach (var item in TempList)
             {
                 UsersList.Add(item);
@@ -73,7 +89,6 @@ namespace Unigram.ViewModels
         }
 
         public ObservableCollection<string> ContactsList = new ObservableCollection<string>();
-
 
         public DialogCollection Dialogs { get; private set; }
 
@@ -109,5 +124,6 @@ namespace Unigram.ViewModels
         }
         public string fullName { get; internal set; }
         public string lastSeen { get; internal set; }
+        public int lastSeenEpoch { get; internal set; }
     }
 }
