@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLChannelParticipantEditor : TLChannelParticipantBase 
+	public partial class TLChannelParticipantEditor : TLChannelParticipantBase, ITLChannelInviter 
 	{
 
 		public TLChannelParticipantEditor() { }
