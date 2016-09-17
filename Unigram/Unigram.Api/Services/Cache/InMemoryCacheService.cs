@@ -192,7 +192,7 @@ namespace Telegram.Api.Services.Cache
 
             try
             {
-                contacts = _database.UsersContext.Values.Where(x => x != null && (x.IsContact || x.IsSelf)).ToList();
+                contacts = _database.UsersContext.Values.OfType<TLUser>().Where(x => x != null && (x.IsContact || x.IsSelf)).Cast<TLUserBase>().ToList();
                 //contacts = _database.UsersContext.Values.Where(x => x.Contact != null).ToList();
 
             }
@@ -261,13 +261,13 @@ namespace Telegram.Api.Services.Cache
                     }
                 }
 
-                var unsortedContacts = _database.UsersContext.Values.Where(x => x != null && x.IsContact).ToList();
+                var unsortedContacts = _database.UsersContext.Values.OfType<TLUser>().Where(x => x != null && x.IsContact).ToList();
                 for (var i = 0; i < unsortedContacts.Count; i++)
                 {
                     var user = unsortedContacts[i];
-                    if (!usersCache.ContainsKey(user.Index))
+                    if (!usersCache.ContainsKey(user.Id))
                     {
-                        usersCache[user.Index] = user.Index;
+                        usersCache[user.Id] = user.Id;
                         contacts.Add(user);
                     }
                 }
@@ -301,7 +301,7 @@ namespace Telegram.Api.Services.Cache
 
                     try
                     {
-                        contacts = _database.UsersContext.Values.Where(x => x != null && x.IsContact).ToList();
+                        contacts = _database.UsersContext.Values.OfType<TLUser>().Where(x => x != null && x.IsContact).Cast<TLUserBase>().ToList();
                         //contacts = _database.UsersContext.Values.Where(x => x.Contact != null).ToList();
 
                     }
@@ -1082,22 +1082,23 @@ namespace Telegram.Api.Services.Cache
             {
                 _database.AddSendingMessage(message, previousMessage);
 
+                // TODO: forwarding
                 // forwarding
-                var messagesContainer = message.Reply as TLMessagesContainter;               
-                if (messagesContainer != null)
-                {
-                    var messages = messagesContainer.FwdMessages;
-                    if (messages != null)
-                    {
-                        for (var i = 0; i < messages.Count; i++)
-                        {
-                            var fwdMessage = messages[i];
-                            var previousMsg = i == 0 ? message : messages[i - 1];
-                            var isLastMsg = i == messages.Count - 1;
-                            _database.AddSendingMessage(fwdMessage, previousMsg, isLastMsg, isLastMsg);
-                        }
-                    }
-                }     
+                //var messagesContainer = message.Reply as TLMessagesContainter;               
+                //if (messagesContainer != null)
+                //{
+                //    var messages = messagesContainer.FwdMessages;
+                //    if (messages != null)
+                //    {
+                //        for (var i = 0; i < messages.Count; i++)
+                //        {
+                //            var fwdMessage = messages[i];
+                //            var previousMsg = i == 0 ? message : messages[i - 1];
+                //            var isLastMsg = i == messages.Count - 1;
+                //            _database.AddSendingMessage(fwdMessage, previousMsg, isLastMsg, isLastMsg);
+                //        }
+                //    }
+                //}     
             }
 
             _database.Commit();
@@ -1466,10 +1467,11 @@ namespace Telegram.Api.Services.Cache
                 if (contactStatus19 != null)
                 {
                     var userId = contactStatus.UserId;
-                    var user = GetUser(userId);
+                    var user = GetUser(userId) as TLUser;
                     if (user != null)
                     {
-                        user._status = contactStatus19.Status;
+                        // TODO: user._status = contactStatus19.Status;
+                        user.Status = contactStatus19.Status;
                     }
                 }
             }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
@@ -10,14 +10,7 @@ using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.FileManager
 {
-    public interface IDownloadFileManager
-    {
-        void DownloadFile(TLFileLocation file, TLObject owner, int fileSize);
-        Task<DownloadableItem> DownloadFileAsync(TLFileLocation file, TLObject owner, int fileSize);
-        void CancelDownloadFile(TLObject owner);
-    }
-
-    public class DownloadFileManager : IDownloadFileManager
+    public class FileManager : IFileManager
     {
         private readonly object _randomRoot = new object();
 
@@ -33,19 +26,22 @@ namespace Telegram.Api.Services.FileManager
 
         private readonly IMTProtoService _mtProtoService;
 
-        public DownloadFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
+        public FileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
         {
+            var stopwatch = Stopwatch.StartNew();
             _eventAggregator = eventAggregator;
             _mtProtoService = mtProtoService;
 
             for (int i = 0; i < Constants.WorkersNumber; i++)
             {
-                var worker = new Worker(OnDownloading, "downloader" + i);
+                var worker = new Worker(OnDownloading, "downloader"+i);
                 _workers.Add(worker);
             }
+
+            System.Diagnostics.Debug.WriteLine("FileManager.ctor {0}", stopwatch.Elapsed);
         }
 
-        private async void OnDownloading(object state)
+        private void OnDownloading(object state)
         {
             DownloadablePart part = null;
             lock (_itemsSyncRoot)
@@ -59,12 +55,6 @@ namespace Telegram.Api.Services.FileManager
                         try
                         {
                             _eventAggregator.Publish(new DownloadingCanceledEventArgs(item));
-
-                            // TODO: verify
-                            if (item.Source != null)
-                            {
-                                item.Source.TrySetCanceled();
-                            }
                         }
                         catch (Exception e)
                         {
@@ -91,18 +81,47 @@ namespace Telegram.Api.Services.FileManager
                 return;
             }
 
-            part.File = await GetFile(part.ParentItem.Location, part.Offset, part.Limit);
-            while (part.File == null)
-            {
-                part.File = await GetFile(part.ParentItem.Location, part.Offset, part.Limit);
-            }
-
-            part.Status = PartStatus.Processed;
-
-            var data = part.File.Bytes;
-            if (data.Length < part.Limit && (part.Number + 1) != part.ParentItem.Parts.Count)
+            TLRPCError error;
+            bool canceled;
+            part.File = GetFile(part.ParentItem.Location, part.Offset, part.Limit, out error, out canceled);
+            if (canceled)
             {
                 lock (_itemsSyncRoot)
+                {
+                    part.ParentItem.Canceled = true;
+                    part.Status = PartStatus.Processed;
+                    _items.Remove(part.ParentItem);
+                }
+
+                return;
+            }
+            while (part.File == null)
+            {
+                part.File = GetFile(part.ParentItem.Location, part.Offset, part.Limit, out error, out canceled);
+                if (canceled)
+                {
+                    lock (_itemsSyncRoot)
+                    {
+                        part.ParentItem.Canceled = true;
+                        part.Status = PartStatus.Processed;
+                        _items.Remove(part.ParentItem);
+                    }
+
+                    return;
+                }
+            }
+
+            // indicate progress
+            // indicate complete
+            bool isComplete;
+            bool isCanceled;
+            var progress = 0.0;
+            lock (_itemsSyncRoot)
+            {
+                part.Status = PartStatus.Processed;
+
+                var data = part.File.Bytes;
+                if (data.Length < part.Limit && (part.Number + 1) != part.ParentItem.Parts.Count)
                 {
                     var complete = part.ParentItem.Parts.All(x => x.Status == PartStatus.Processed);
                     if (!complete)
@@ -116,16 +135,7 @@ namespace Telegram.Api.Services.FileManager
                         part.ParentItem.Parts.Insert(currentItemIndex + 1, missingPart);
                     }
                 }
-            }
 
-            // indicate progress
-            // indicate complete
-            bool isComplete;
-            bool isCanceled;
-            var progress = 0.0;
-            lock (_itemsSyncRoot)
-            {
-                part.Status = PartStatus.Processed;
                 isCanceled = part.ParentItem.Canceled;
 
                 isComplete = part.ParentItem.Parts.All(x => x.Status == PartStatus.Processed);
@@ -133,7 +143,7 @@ namespace Telegram.Api.Services.FileManager
                 {
                     var downloadedCount = part.ParentItem.Parts.Count(x => x.Status == PartStatus.Processed);
                     var count = part.ParentItem.Parts.Count;
-                    progress = downloadedCount / count;
+                    progress = (double)downloadedCount / count;
                 }
                 else
                 {
@@ -153,64 +163,84 @@ namespace Telegram.Api.Services.FileManager
                     //part.ParentItem.Location.Buffer = bytes;
                     var fileName = String.Format("{0}_{1}_{2}.jpg",
                         part.ParentItem.Location.VolumeId,
-                        part.ParentItem.Location.LocalId,
+                        part.ParentItem.Location.LocalId, 
                         part.ParentItem.Location.Secret);
 
                     FileUtils.WriteBytes(fileName, bytes);
 
-                    _eventAggregator.Publish(part.ParentItem);
-
-                    // TODO: verify
-                    if (part.ParentItem.Source != null)
+                    if (part.ParentItem.Callback != null)
                     {
-                        part.ParentItem.Source.TrySetResult(part.ParentItem);
+                        Execute.BeginOnThreadPool(() => part.ParentItem.Callback(part.ParentItem));
+                    }
+                    else
+                    {
+                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
                     }
                 }
                 else
                 {
-                    _eventAggregator.Publish(new ProgressChangedEventArgs(part.ParentItem, progress));
+                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new ProgressChangedEventArgs(part.ParentItem, progress)));
                 }
             }
         }
 
-        private async Task<TLUploadFile> GetFile(TLFileLocation location, int offset, int limit)
+        private TLUploadFile GetFile(TLFileLocation location, int offset, int limit, out TLRPCError er, out bool isCanceled)
         {
+
             var manualResetEvent = new ManualResetEvent(false);
             TLUploadFile result = null;
-
-            var request = await _mtProtoService.GetFileAsync(location.DCId, location.ToInputFileLocation(), offset, limit);
-            if (request.Error == null)
-            {
-                result = request.Value;
-                manualResetEvent.Set();
-            }
-            else
-            {
-                int delay;
-                lock (_randomRoot)
+            TLRPCError outError = null;
+            var outIsCanceled = false;
+            _mtProtoService.GetFileCallback(location.DCId, location.ToInputFileLocation(), offset, limit,
+                file =>
                 {
-                    delay = _random.Next(1000, 3000);
-                }
+                    result = file;
+                    manualResetEvent.Set();
+                },
+                error =>
+                {
+                    outError = error;
 
-                Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
-            }
+                    if (error.CodeEquals(TLErrorCode.INTERNAL)
+                        || (error.CodeEquals(TLErrorCode.BAD_REQUEST) && (error.TypeEquals(TLErrorType.LOCATION_INVALID) || error.TypeEquals(TLErrorType.VOLUME_LOC_NOT_FOUND)))
+                        || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.ToString().StartsWith("Incorrect dhGen")))
+                    {
+                        outIsCanceled = true;
+
+                        manualResetEvent.Set();
+                        return;
+                    }
+
+                    int delay;
+                    lock (_randomRoot)
+                    {
+                        delay = _random.Next(1000, 3000);
+                    }
+
+                    Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
+                });
 
             manualResetEvent.WaitOne();
+            er = outError;
+            isCanceled = outIsCanceled;
+
             return result;
         }
 
         public void DownloadFile(TLFileLocation file, TLObject owner, int fileSize)
         {
-            var downloadableItem = GetDownloadableItem(file, owner, fileSize);
+            //return;
+
+            var downloadableItem = GetDownloadableItem(file, owner, fileSize, null);
 
             lock (_itemsSyncRoot)
             {
                 bool addFile = true;
                 foreach (var item in _items)
                 {
-                    if (item.Location.VolumeId == file.VolumeId &&
-                        item.Location.LocalId == file.LocalId &&
-                        item.Owner == owner)
+                    if (item.Location.VolumeId == file.VolumeId
+                        && item.Location.LocalId == file.LocalId
+                        && item.Owner == owner)
                     {
                         addFile = false;
                         break;
@@ -226,19 +256,18 @@ namespace Telegram.Api.Services.FileManager
             StartAwaitingWorkers();
         }
 
-        public Task<DownloadableItem> DownloadFileAsync(TLFileLocation file, TLObject owner, int fileSize)
+        public void DownloadFile(TLFileLocation file, TLObject owner, int fileSize, Action<DownloadableItem> callback)
         {
-            var tsc = new TaskCompletionSource<DownloadableItem>();
-            var downloadableItem = GetDownloadableItem(file, owner, fileSize, tsc);
+            var downloadableItem = GetDownloadableItem(file, owner, fileSize, callback);
 
             lock (_itemsSyncRoot)
             {
                 bool addFile = true;
                 foreach (var item in _items)
                 {
-                    if (item.Location.VolumeId == file.VolumeId &&
-                        item.Location.LocalId == file.LocalId &&
-                        item.Owner == owner)
+                    if (item.Location.VolumeId == file.VolumeId
+                        && item.Location.LocalId == file.LocalId
+                        && item.Owner == owner)
                     {
                         addFile = false;
                         break;
@@ -252,7 +281,6 @@ namespace Telegram.Api.Services.FileManager
             }
 
             StartAwaitingWorkers();
-            return tsc.Task;
         }
 
         private void StartAwaitingWorkers()
@@ -265,25 +293,13 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private DownloadableItem GetDownloadableItem(TLFileLocation location, TLObject owner, int fileSize)
+        private DownloadableItem GetDownloadableItem(TLFileLocation location, TLObject owner, int fileSize, Action<DownloadableItem> callback)
         {
             var item = new DownloadableItem
             {
                 Owner = owner,
+                Callback = callback,
                 Location = location
-            };
-            item.Parts = GetItemParts(fileSize, item);
-
-            return item;
-        }
-
-        private DownloadableItem GetDownloadableItem(TLFileLocation location, TLObject owner, int fileSize, TaskCompletionSource<DownloadableItem> source)
-        {
-            var item = new DownloadableItem
-            {
-                Owner = owner,
-                Location = location,
-                Source = source
             };
             item.Parts = GetItemParts(fileSize, item);
 
@@ -297,7 +313,7 @@ namespace Telegram.Api.Services.FileManager
             var partsCount = size / chunkSize + 1;
             for (var i = 0; i < partsCount; i++)
             {
-                var part = new DownloadablePart(item, i * chunkSize, size == 0 ? 0 : chunkSize);
+                var part = new DownloadablePart(item, i * chunkSize, size == 0? 0 : chunkSize);
                 parts.Add(part);
             }
 

@@ -139,10 +139,10 @@ namespace Telegram.Api.Helpers
                     Execute.BeginOnThreadPool(() => eventAggregator.Publish(part.ParentItem));
 
                     // TODO: verify
-                    if (part.ParentItem.Source != null)
-                    {
-                        part.ParentItem.Source.TrySetResult(part.ParentItem);
-                    }
+                    //if (part.ParentItem.Source != null)
+                    //{
+                    //    part.ParentItem.Source.TrySetResult(part.ParentItem);
+                    //}
 
                     return;
                 }

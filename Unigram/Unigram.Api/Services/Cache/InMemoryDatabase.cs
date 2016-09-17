@@ -1612,7 +1612,7 @@ namespace Telegram.Api.Services.Cache
                             clearHistoryMessage.ToId = messageCommon.ToId;
                             clearHistoryMessage.Date = messageCommon.Date;
                             clearHistoryMessage.IsOut = messageCommon.IsOut;
-                            clearHistoryMessage.Action = new TLMessageActionClearHistory();
+                            clearHistoryMessage.Action = new TLMessageActionHistoryClear();
 
                             dialog.Messages[updatedIndex] = clearHistoryMessage;
                         }
@@ -1850,7 +1850,7 @@ namespace Telegram.Api.Services.Cache
                                 if (message.State == TLMessageState.Sending
                                     || message.State == TLMessageState.Compressing)
                                 {
-                                    message._status = message.Id != 0 ? TLMessageState.Confirmed : TLMessageState.Failed;
+                                    message._state = message.Id != 0 ? TLMessageState.Confirmed : TLMessageState.Failed;
                                     ResendingMessages.Add(message);
                                 }
 

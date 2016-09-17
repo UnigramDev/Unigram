@@ -538,7 +538,7 @@ namespace Telegram.Api.Services
                 }
 
                 ExportAuthorizationAsync(
-                    new int?(toTransport.DCId),
+                    toTransport.DCId,
                     exportedAuthorization =>
                     {
                         ImportAuthorizationByTransportAsync(

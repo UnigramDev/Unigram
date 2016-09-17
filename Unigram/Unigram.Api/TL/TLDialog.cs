@@ -37,7 +37,7 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			Peer = TLFactory.Read<TLPeerBase>(from);
-			TopMessage = from.ReadInt32();
+			TopMessageId = from.ReadInt32();
 			ReadInboxMaxId = from.ReadInt32();
 			ReadOutboxMaxId = from.ReadInt32();
 			UnreadCount = from.ReadInt32();
@@ -51,7 +51,7 @@ namespace Telegram.Api.TL
 			to.Write(0x66FFBA14);
 			to.Write((Int32)Flags);
 			to.WriteObject(Peer);
-			to.Write(TopMessage);
+			to.Write(TopMessageId);
 			to.Write(ReadInboxMaxId);
 			to.Write(ReadOutboxMaxId);
 			to.Write(UnreadCount);

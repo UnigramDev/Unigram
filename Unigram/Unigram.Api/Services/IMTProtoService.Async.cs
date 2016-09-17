@@ -68,9 +68,9 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<bool>> ReadHistoryAsync(TLChannel channel, int maxId);
         Task<MTProtoResponse<bool>> UnregisterDeviceAsync(int tokenType, string token);
         Task<MTProtoResponse<bool>> DeleteAccountAsync(string reason);
-        Task<MTProtoResponse<TLMessagesChats>> GetAdminedPublicChannelsAsync();
+        // TODO: Layer 56 Task<MTProtoResponse<TLMessagesChats>> GetAdminedPublicChannelsAsync();
         Task<MTProtoResponse<TLUpdatesBase>> ToggleSignaturesAsync(TLInputChannelBase channel, bool enabled);
-        Task<MTProtoResponse<TLMessagesMessagesBase>> GetImportantHistoryAsync(TLInputChannelBase channel, TLPeerBase peer, bool sync, int? offsetId, int? addOffset, int? limit, int? maxId, int? minId);
+        // TODO: Layer 56 Task<MTProtoResponse<TLMessagesMessagesBase>> GetImportantHistoryAsync(TLInputChannelBase channel, TLPeerBase peer, bool sync, int? offsetId, int? addOffset, int? limit, int? maxId, int? minId);
         Task<MTProtoResponse<TLUpdatesBase>> CreateChannelAsync(TLChannelsCreateChannel.Flag flags, string title, string about);
         Task<MTProtoResponse<TLChannelsChannelParticipants>> GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit);
         Task<MTProtoResponse<TLMessagesMessagesBase>> GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit);
@@ -152,7 +152,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage);
         Task<MTProtoResponse<TLUpdatesBase>> LeaveChannelAsync(TLChannel channel);
         Task<MTProtoResponse<TLUpdatesBase>> EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role);
-        Task<MTProtoResponse<TLVector<TLStickerSetCovered>>> GetAttachedStickersAsync(TLInputStickeredMediaBase media);
+        // TODO: Layer 56 Task<MTProtoResponse<TLVector<TLStickerSetCovered>>> GetAttachedStickersAsync(TLInputStickeredMediaBase media);
         Task<MTProtoResponse<TLUpdatesBase>> AddChatUserAsync(int chatId, TLInputUserBase userId, int fwdLimit);
         Task<MTProtoResponse<TLUpdatesBase>> StartBotAsync(TLInputUserBase bot, string startParam, TLMessage message);
         Task<MTProtoResponse<bool>> ReorderStickerSetsAsync(bool masks, TLVector<long> order);

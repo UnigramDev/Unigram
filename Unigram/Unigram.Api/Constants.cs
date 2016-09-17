@@ -58,6 +58,7 @@ namespace Telegram.Api
 #endif
         public static double CheckPingInterval = 20.0;              //seconds
         public static double UpdateStatusInterval = 2.0;
+        public static int BigFileDownloadersCount = 10;
         public static int VideoDownloadersCount = 3;
         public static int VideoUploadersCount = 3;
         public static int DocumentUploadersCount = 3;

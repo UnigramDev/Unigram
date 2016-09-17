@@ -135,7 +135,18 @@ namespace Telegram.Api.TL
 
         public long? TopMessageRandomId { get; set; }
 
-        public TLMessageBase TopMessage { get; set; }
+        public TLMessageBase _topMessage;
+        public TLMessageBase TopMessage
+        {
+            get
+            {
+                return _topMessage;
+            }
+            set
+            {
+                _topMessage = value;
+            }
+        }
 
         public int GetDateIndex()
         {
@@ -160,8 +171,18 @@ namespace Telegram.Api.TL
         }
 
 
-
-        public TLObject With { get; set; }
+        public TLObject _with;
+        public TLObject With
+        {
+            get
+            {
+                return _with;
+            }
+            set
+            {
+                _with = value;
+            }
+        }
 
         public int WithId
         {

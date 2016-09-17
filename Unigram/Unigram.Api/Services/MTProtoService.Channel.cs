@@ -10,21 +10,22 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
-        public void GetAdminedPublicChannelsCallback(Action<TLMessagesChats> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLGetAdminedPublicChannels();
+        // TODO: Layer 56 
+        //public void GetAdminedPublicChannelsCallback(Action<TLMessagesChats> callback, Action<TLRPCError> faultCallback = null)
+        //{
+        //    var obj = new TLGetAdminedPublicChannels();
 
-            SendInformativeMessage<TLMessagesChats>("updates.getAdminedPublicChannels", obj,
-                result =>
-                {
-                    var chats = result as TLChats24;
-                    if (chats != null)
-                    {
-                        _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), chats.Chats, tuple => callback.SafeInvoke(result));
-                    }
-                },
-                faultCallback);
-        }
+        //    SendInformativeMessage<TLMessagesChats>("updates.getAdminedPublicChannels", obj,
+        //        result =>
+        //        {
+        //            var chats = result as TLChats24;
+        //            if (chats != null)
+        //            {
+        //                _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), chats.Chats, tuple => callback.SafeInvoke(result));
+        //            }
+        //        },
+        //        faultCallback);
+        //}
 
         public void GetChannelDifferenceCallback(TLInputChannelBase inputChannel, TLChannelMessagesFilterBase filter, int pts, int limit, Action<TLUpdatesChannelDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
         {
@@ -90,10 +91,11 @@ namespace Telegram.Api.Services
                 {
                     for (var i = 0; i < result.Users.Count; i++)
                     {
-                        var cachedUser = _cacheService.GetUser(result.Users[i].Id);
+                        var cachedUser = _cacheService.GetUser(result.Users[i].Id) as TLUser;
                         if (cachedUser != null)
                         {
-                            cachedUser._status = ((TLUser)result.Users[i]).Status;
+                            // TODO: cachedUser._status = ((TLUser)result.Users[i]).Status;
+                            cachedUser.Status = ((TLUser)result.Users[i]).Status;
                             result.Users[i] = cachedUser;
                         }
                     }
@@ -320,12 +322,13 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void GetImportantHistoryCallback(TLInputChannelBase channel, TLPeerBase peer, bool sync, int? offsetId, int? addOffset, int? limit, int? maxId, int? minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLGetImportantHistory { Channel = channel, OffsetId = offsetId, OffsetDate = 0, AddOffset = addOffset, Limit = limit, MaxId = maxId, MinId = minId };
+        // TODO: Layer 56 
+        //public void GetImportantHistoryCallback(TLInputChannelBase channel, TLPeerBase peer, bool sync, int? offsetId, int? addOffset, int? limit, int? maxId, int? minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        //{
+        //    var obj = new TLGetImportantHistory { Channel = channel, OffsetId = offsetId, OffsetDate = 0, AddOffset = addOffset, Limit = limit, MaxId = maxId, MinId = minId };
 
-            SendInformativeMessage("channels.getImportantHistory", obj, callback, faultCallback);
-        }
+        //    SendInformativeMessage("channels.getImportantHistory", obj, callback, faultCallback);
+        //}
 
         public void ReadHistoryCallback(TLChannel channel, int maxId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {

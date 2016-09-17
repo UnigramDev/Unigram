@@ -1,4 +1,4 @@
-namespace Telegram.Api.Services.FileManager.EventArgs
+namespace Telegram.Api.Services.FileManager
 {
     public class ProgressChangedEventArgs
     {

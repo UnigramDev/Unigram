@@ -336,7 +336,7 @@ namespace Telegram.Api.Services
             RemoveActionInfoFromFile(item.Object);
         }
 
-        private void RemoveFromQueue(long? id)
+        private void RemoveFromQueue(long id)
         {
             HistoryItem item = null; 
             lock (_sendingQueueSyncRoot)
@@ -344,7 +344,7 @@ namespace Telegram.Api.Services
                 foreach (var historyItem in _sendingQueue)
                 {
                     var randomId = historyItem.Object as ITLRandomId;
-                    if (randomId != null && randomId.RandomId.Value == id.Value)
+                    if (randomId != null && randomId.RandomId.Value == id)
                     {
                         item = historyItem;
                         break;

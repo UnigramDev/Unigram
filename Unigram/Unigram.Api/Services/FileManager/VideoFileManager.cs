@@ -3,20 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 
+
 namespace Telegram.Api.Services.FileManager
 {
-    public interface IVideoFileManager
-    {
-        void DownloadFileAsync(int dcId, TLInputVideoFileLocation file, TLObject owner, int fileSize, Action<double> callback);
-        void CancelDownloadFileAsync(TLObject owner);
-    }
-
     public class VideoFileManager : IVideoFileManager
     {
         private readonly object _randomRoot = new object();
@@ -40,17 +34,17 @@ namespace Telegram.Api.Services.FileManager
 
 
             var timer = Stopwatch.StartNew();
-            for (int i = 0; i < Constants.VideoDownloadersCount; i++)
+            for (int i = 0; i < Constants.BigFileDownloadersCount; i++)
             {
-                var worker = new Worker(OnDownloading, "videoDownloader" + i);
+                var worker = new Worker(OnDownloading, "videoDownloader"+i);
                 _workers.Add(worker);
             }
 
             TLUtils.WritePerformance("Start workers timer: " + timer.Elapsed);
-
+            
         }
 
-        private async void OnDownloading(object state)
+        private void OnDownloading(object state)
         {
             DownloadablePart part = null;
             lock (_itemsSyncRoot)
@@ -91,15 +85,11 @@ namespace Telegram.Api.Services.FileManager
             }
 
             var partName = string.Format("video{0}_{1}_{2}.dat", part.ParentItem.InputVideoLocation.Id, part.ParentItem.InputVideoLocation.AccessHash, part.Number);
-            part.File = await GetFile(part.ParentItem.DCId, part.ParentItem.InputVideoLocation, part.Offset, part.Limit);
+            part.File = GetFile(part.ParentItem.DCId, (TLInputFileLocationBase)part.ParentItem.InputVideoLocation, part.Offset, part.Limit);
             while (part.File == null)
             {
-                part.File = await GetFile(part.ParentItem.DCId, part.ParentItem.InputVideoLocation, part.Offset, part.Limit);
+                part.File = GetFile(part.ParentItem.DCId, (TLInputFileLocationBase)part.ParentItem.InputVideoLocation, part.Offset, part.Limit);
             }
-
-            part.Status = PartStatus.Processed;
-
-            FileUtils.CheckMissingPart(_itemsSyncRoot, part, partName);
 
             // indicate progress
             // indicate complete
@@ -109,6 +99,9 @@ namespace Telegram.Api.Services.FileManager
             lock (_itemsSyncRoot)
             {
                 part.Status = PartStatus.Processed;
+
+                FileUtils.CheckMissingPart(_itemsSyncRoot, part, partName);
+
                 isCanceled = part.ParentItem.Canceled;
 
                 isComplete = part.ParentItem.Parts.All(x => x.Status == PartStatus.Processed);
@@ -120,7 +113,7 @@ namespace Telegram.Api.Services.FileManager
                 }
                 else
                 {
-                    _items.Remove(part.ParentItem);
+                    _items.Remove(part.ParentItem);    
                 }
             }
 
@@ -131,8 +124,8 @@ namespace Telegram.Api.Services.FileManager
                     var id = part.ParentItem.InputVideoLocation.Id;
                     var accessHash = part.ParentItem.InputVideoLocation.AccessHash;
                     var fileName = string.Format("video{0}_{1}.mp4", id, accessHash);
-                    var getPartName = new Func<DownloadablePart, string>(x => string.Format("video{0}_{1}_{2}.dat", id, accessHash, x.Number));
-
+                    var getPartName = new Func<DownloadablePart, string>( x => string.Format("video{0}_{1}_{2}.dat", id, accessHash, x.Number));  
+         
                     FileUtils.MergePartsToFile(getPartName, part.ParentItem.Parts, fileName);
 
                     part.ParentItem.IsoFileName = fileName;
@@ -145,34 +138,34 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private async Task<TLUploadFile> GetFile(int dcId, TLInputVideoFileLocation location, int offset, int limit)
+        private TLUploadFile GetFile(int dcId, TLInputFileLocationBase location, int offset, int limit)
         {
             var manualResetEvent = new ManualResetEvent(false);
             TLUploadFile result = null;
 
-            var request = await _mtProtoService.GetFileAsync(dcId, location, offset, limit);
-            if (request.Error == null)
-            {
-                result = request.Value;
-                manualResetEvent.Set();
-            }
-            else
-            {
-                int delay;
-                lock (_randomRoot)
+            _mtProtoService.GetFileCallback(dcId, location, offset, limit,
+                file =>
                 {
-                    delay = _random.Next(1000, 3000);
-                }
+                    result = file;
+                    manualResetEvent.Set();
+                },
+                error =>
+                {
+                    int delay;
+                    lock (_randomRoot)
+                    {
+                        delay = _random.Next(1000, 3000);
+                    }
 
-                Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
-            }
+                    Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
+                });
 
             manualResetEvent.WaitOne();
             return result;
         }
 
 
-        public void DownloadFileAsync(int dcId, TLInputVideoFileLocation fileLocation, TLObject owner, int fileSize, Action<double> callback)
+        public void DownloadFileAsync(int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize, Action<double> callback)
         {
             Execute.BeginOnThreadPool(() =>
             {
@@ -204,8 +197,8 @@ namespace Telegram.Api.Services.FileManager
                         bool addFile = true;
                         foreach (var item in _items)
                         {
-                            if (item.InputVideoLocation.AccessHash.Value == fileLocation.AccessHash.Value
-                                && item.InputVideoLocation.Id.Value == fileLocation.Id.Value
+                            if (item.InputVideoLocation.AccessHash == fileLocation.AccessHash
+                                && item.InputVideoLocation.Id == fileLocation.Id
                                 && item.Owner == owner)
                             {
                                 addFile = false;
@@ -221,7 +214,7 @@ namespace Telegram.Api.Services.FileManager
 
                     StartAwaitingWorkers();
                 }
-            });
+            });        
         }
 
         private void StartAwaitingWorkers()
@@ -234,7 +227,7 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private DownloadableItem GetDownloadableItem(int dcId, TLInputVideoFileLocation location, TLObject owner, int fileSize)
+        private DownloadableItem GetDownloadableItem(int dcId, TLInputDocumentFileLocation location, TLObject owner, int fileSize)
         {
             var item = new DownloadableItem
             {

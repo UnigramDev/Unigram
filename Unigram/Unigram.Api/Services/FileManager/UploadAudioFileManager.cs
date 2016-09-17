@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 
+
 namespace Telegram.Api.Services.FileManager
 {
-    public interface IUploadAudioFileManager
-    {
-        void UploadFile(long fileId, TLObject owner, string fileName);
-        void UploadFile(long fileId, TLObject owner, string fileName, IList<UploadablePart> parts);
-        void CancelUploadFile(long fileId);
-    }
-
     public class UploadAudioFileManager : IUploadAudioFileManager
     {
         private readonly object _itemsSyncRoot = new object();
@@ -46,7 +39,7 @@ namespace Telegram.Api.Services.FileManager
 
         }
 
-        private async void OnUploading(object state)
+        private void OnUploading(object state)
         {
             UploadablePart part = null;
             lock (_itemsSyncRoot)
@@ -84,14 +77,14 @@ namespace Telegram.Api.Services.FileManager
                 var bytes = FileUtils.ReadBytes(part.ParentItem.IsoFileName, part.Position, part.Count);
                 part.SetBuffer(bytes);
 
-                bool result = await PutFile(part.ParentItem.FileId, part.FilePart, part.Bytes);
+                bool result = PutFile(part.ParentItem.FileId, part.FilePart, part.Bytes);
                 while (!result)
                 {
                     if (part.ParentItem.Canceled)
                     {
                         return;
                     }
-                    result = await PutFile(part.ParentItem.FileId, part.FilePart, part.Bytes);
+                    result = PutFile(part.ParentItem.FileId, part.FilePart, part.Bytes);
                 }
 
                 part.ClearBuffer();
@@ -141,21 +134,22 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private async Task<bool> PutFile(long fileId, int filePart, byte[] bytes)
+        private bool PutFile(long fileId, int filePart, byte[] bytes)
         {
             var manualResetEvent = new ManualResetEvent(false);
             var result = false;
 
-            var request = await _mtProtoService.SaveFilePartAsync(fileId, filePart, bytes);
-            if (request.Error == null)
-            {
-                result = true;
-                manualResetEvent.Set();
-            }
-            else
-            {
-                Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(1000), () => manualResetEvent.Set());
-            }
+            _mtProtoService.SaveFilePartCallback(fileId, filePart, bytes,
+                savingResult =>
+                {
+                    result = true;
+                    manualResetEvent.Set();
+                },
+                error =>
+                {
+
+                    Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(1000), () => manualResetEvent.Set());
+                });
 
             manualResetEvent.WaitOne();
             return result;
@@ -198,11 +192,11 @@ namespace Telegram.Api.Services.FileManager
             var count = item.Parts.Count;
             var isComplete = uploadedCount == count;
 
-            if (isComplete)
-            {
-                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(item));
-            }
-            else
+            //if (isComplete)
+            //{
+            //    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(item));
+            //}
+            //else
             {
                 lock (_itemsSyncRoot)
                 {

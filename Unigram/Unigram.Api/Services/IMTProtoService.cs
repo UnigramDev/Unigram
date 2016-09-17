@@ -195,7 +195,7 @@ namespace Telegram.Api.Services
         void GetRecentStickersCallback(bool attached, int hash, Action<TLMessagesRecentStickersBase> callback, Action<TLRPCError> faultCallback = null);
         void ClearRecentStickersCallback(bool attached, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void GetUnusedStickersCallback(int limit, Action<TLVector<TLStickerSetCovered>> callback, Action<TLRPCError> faultCallback = null);
-        void GetAttachedStickersCallback(TLInputStickeredMediaBase media, Action<TLVector<TLStickerSetCovered>> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Layer 56 void GetAttachedStickersCallback(TLInputStickeredMediaBase media, Action<TLVector<TLStickerSetCovered>> callback, Action<TLRPCError> faultCallback = null);
 
         // contacts
         void GetTopPeersCallback(TLContactsGetTopPeers.Flag flags, int offset, int limit, int hash, Action<TLContactsTopPeersBase> callback, Action<TLRPCError> faultCallback = null);
@@ -222,7 +222,7 @@ namespace Telegram.Api.Services
         void CheckUsernameCallback(TLInputChannelBase channel, string username, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void UpdateUsernameCallback(TLInputChannelBase channel, string username, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void GetChannelDialogsCallback(int? offset, int? limit, Action<TLMessagesDialogsBase> callback, Action<TLRPCError> faultCallback = null);
-        void GetImportantHistoryCallback(TLInputChannelBase channel, TLPeerBase peer, bool sync, int? offsetId, int? addOffset, int? limit, int? maxId, int? minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Layer 56 void GetImportantHistoryCallback(TLInputChannelBase channel, TLPeerBase peer, bool sync, int? offsetId, int? addOffset, int? limit, int? maxId, int? minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void ReadHistoryCallback(TLChannel channel, int maxId, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void DeleteMessagesCallback(TLInputChannelBase channel, TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null);
         void ToggleInvitesCallback(TLInputChannelBase channel, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
@@ -233,7 +233,7 @@ namespace Telegram.Api.Services
         void UpdatePinnedMessageCallback(bool silent, TLInputChannelBase channel, int id, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void ReportSpamCallback(TLInputChannelBase channel, TLInputUserBase userId, TLVector<int> id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void DeleteUserHistoryCallback(TLChannel channel, TLInputUserBase userId, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null);
-        void GetAdminedPublicChannelsCallback(Action<TLMessagesChats> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Layer 56 void GetAdminedPublicChannelsCallback(Action<TLMessagesChats> callback, Action<TLRPCError> faultCallback = null);
 
         // updates
         void GetChannelDifferenceCallback(TLInputChannelBase inputChannel, TLChannelMessagesFilterBase filter, int pts, int limit, Action<TLUpdatesChannelDifferenceBase> callback, Action<TLRPCError> faultCallback = null);

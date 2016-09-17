@@ -308,7 +308,7 @@ namespace Telegram.Api.Services.Updates
             Logs.Log.Write(string.Format("UpdatesService.GetDifference {0} state=[p={1} d={2} q={3}]", id, _pts, _date, _qts));
             TLUtils.WritePerformance(string.Format("UpdatesService.GetDifference pts={0} date={1} qts={2}", _pts, _date, _qts));
 
-            GetDifferenceAsync(pts, date, qts,
+            GetDifferenceAsync(pts.Value, date.Value, qts.Value,
                 diff =>
                 {
 //#if DEBUG
@@ -861,13 +861,18 @@ namespace Telegram.Api.Services.Updates
             var userStatus = update as TLUpdateUserStatus;
             if (userStatus != null)
             {
-                var user = _cacheService.GetUser(userStatus.UserId);
-                if (user == null)
+                var userBase = _cacheService.GetUser(userStatus.UserId);
+                if (userBase == null)
                 {
                     return false;
                 }
 
-                user._status = userStatus.Status;    // not UI Thread
+                var user = userBase as TLUser;
+                if (user != null)
+                {
+                    // TODO: user._status = userStatus.Status;    // not UI Thread
+                    user.Status = userStatus.Status;    // not UI Thread
+                }
 
                 if (notifyNewMessage)
                 {
@@ -1018,7 +1023,7 @@ namespace Telegram.Api.Services.Updates
                                 var inviter = result2.Participant as IChannelInviter;
                                 var inviterId = inviter != null ? inviter.InviterId.ToString() : "unknown";
                                 var date = inviter != null ? inviter.Date.ToString() : "unknown";
-                                Execute.ShowDebugMessage(string.Format("updateChannel [channel_id={0} creator={1} kicked={2} left={3} editor={4} moderator={5} broadcast={6} public={7} verified={8} inviter=[id={9} date={10}]]", channel.Id, channel.IsCreator, channel.IsKicked, channel.IsLeft, channel.IsEditor, channel.IsModerator, channel.IsBroadcast, channel.IsPublic, channel.IsVerified, inviterId, date));
+                                Execute.ShowDebugMessage(string.Format("updateChannel [channel_id={0} creator={1} kicked={2} left={3} editor={4} moderator={5} broadcast={6} public={7} verified={8} inviter=[id={9} date={10}]]", channel.Id, channel.IsCreator, channel.IsKicked, channel.IsLeft, channel.IsEditor, channel.IsModerator, channel.IsBroadcast, "channel.IsPublic", channel.IsVerified, inviterId, date));
 
                                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChannel));
                             }, 
@@ -1583,7 +1588,7 @@ namespace Telegram.Api.Services.Updates
                 {
                     foreach (var message in messages)
                     {
-                        message.SetUnread(new TLBool(false));
+                        message.SetUnread(false);
                         message.RaisePropertyChanged(() => message.IsUnread);
                     }
 
@@ -1899,7 +1904,8 @@ namespace Telegram.Api.Services.Updates
                 var message = _cacheService.GetMessage(updateWebPage.Webpage) as TLMessage;
                 if (message != null)
                 {
-                    message._media = new TLMessageMediaWebPage { Webpage = updateWebPage.Webpage };
+                    // TODO: message._media = new TLMessageMediaWebPage { Webpage = updateWebPage.Webpage };
+                    message.Media = new TLMessageMediaWebPage { Webpage = updateWebPage.Webpage };
 
                     _cacheService.SyncMessage(message,
                         m =>
@@ -2638,7 +2644,7 @@ namespace Telegram.Api.Services.Updates
                     Flags = 0,
                     Id = 0,
                     FromId = user.Id,
-                    ToId = new TLPeerUser { Id = currentUserId },
+                    ToId = new TLPeerUser { Id = currentUserId.Value },
                     State = TLMessageState.Confirmed,
                     IsOut = false,
                     IsUnread = false,

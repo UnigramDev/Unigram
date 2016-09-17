@@ -22,10 +22,19 @@ namespace Telegram.Api.TL
         //    get { return null; }
         //}
 
+        public void SetUnreadSilent(bool unread)
+        {
+            IsUnread = unread;
+        }
+
+        public void SetUnread(bool unread)
+        {
+            IsUnread = unread;
+        }
 
         public Int64? RandomId { get; set; }
 
-        private TLMessageState _state;
+        public TLMessageState _state;
         public TLMessageState State
         {
             get
@@ -66,7 +75,7 @@ namespace Telegram.Api.TL
                 }
                 if (ToId is TLPeerChannel)
                 {
-                    var instance = InMemoryCacheService.Current;
+                    var instance = InMemoryCacheService.Instance;
                     var channel = instance.GetChat(ToId.Id) as TLChannel;
                     if (channel != null && channel.IsMegagroup)
                     {
@@ -88,7 +97,7 @@ namespace Telegram.Api.TL
             get
             {
                 if (_from == null)
-                    _from = InMemoryCacheService.Current.GetUser(FromId.Value) as TLUser;
+                    _from = InMemoryCacheService.Instance.GetUser(FromId.Value) as TLUser;
 
                 return _from;
             }

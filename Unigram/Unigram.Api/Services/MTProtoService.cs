@@ -200,17 +200,17 @@ namespace Telegram.Api.Services
 
             if (_updatesService != null)
             {
-                _updatesService.GetDifferenceAsync = GetDifferenceAsync;
+                _updatesService.GetDifferenceAsync = GetDifferenceCallback;
                 _updatesService.GetStateAsync = GetStateCallback;
                 _updatesService.GetCurrentUserId = GetCurrentUserId;
-                _updatesService.GetDHConfigAsync = GetDHConfigAsync;
-                _updatesService.AcceptEncryptionAsync = AcceptEncryptionAsync;
+                _updatesService.GetDHConfigAsync = GetDHConfigCallback;
+                //_updatesService.AcceptEncryptionAsync = AcceptEncryptionAsync;
                 _updatesService.SendEncryptedServiceAsync = SendEncryptedServiceAsync;
                 _updatesService.SetMessageOnTimeAsync = SetMessageOnTime;
                 _updatesService.RemoveFromQueue = RemoveFromQueue;
                 _updatesService.UpdateChannelAsync = UpdateChannelCallback;
                 _updatesService.GetParticipantAsync = GetParticipantCallback;
-                _updatesService.GetFullChatAsync = GetFullChatAsync;
+                _updatesService.GetFullChatAsync = GetFullChatCallback;
                 _updatesService.GetFullUserAsync = GetFullUserCallback;
                 _updatesService.GetChannelMessagesAsync = GetMessagesCallback;
             }
@@ -598,9 +598,9 @@ namespace Telegram.Api.Services
             }
         }
 
-        private int? GetCurrentUserId()
+        private int GetCurrentUserId()
         {
-            return CurrentUserId;
+            return CurrentUserId ?? 0;
         }
 
         private void OnPacketReceived(object sender, DataEventArgs e)
