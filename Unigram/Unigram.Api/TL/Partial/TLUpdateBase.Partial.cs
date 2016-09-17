@@ -262,7 +262,7 @@ namespace Telegram.Api.TL
         }
     }
 
-    public partial class TLUpdateNewChannelMessage
+    public partial class TLUpdateNewChannelMessage : ITLMultiChannelPts
     {
         public override IList<int> GetPts()
         {
@@ -278,11 +278,19 @@ namespace Telegram.Api.TL
         }
     }
 
-    public partial class TLUpdateDeleteChannelMessages
+    public partial class TLUpdateDeleteChannelMessages : ITLMultiChannelPts
     {
         public override IList<int> GetPts()
         {
             return TLUtils.GetPtsRange(Pts, PtsCount);
+        }
+    }
+
+    public partial class TLUpdateEditChannelMessage : ITLMultiChannelPts
+    {
+        public override IList<int> GetPts()
+        {
+            return new List<int>();
         }
     }
 
