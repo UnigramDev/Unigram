@@ -45,7 +45,7 @@ namespace Unigram.ViewModels
             await _pushService.RegisterAsync();
         }
 
-        public async void getTLContacts()
+        public async Task getTLContacts()
         {
             var UserList = await ProtoService.GetContactsAsync("");
             var x = UserList.Value as TLContactsContacts;            
