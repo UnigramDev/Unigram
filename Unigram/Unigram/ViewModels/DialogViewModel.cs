@@ -248,8 +248,8 @@ namespace Unigram.ViewModels
             {
                 TLInputChannel x=new TLInputChannel();                
                 x.ChannelId = channel.ChannelId;
-                x.AccessHash = channel.AccessHash;
-                var channelDetails = await ProtoService.GetFullChannelAsync(x);
+                x.AccessHash = channel.AccessHash;                
+                var channelDetails = await ProtoService.GetFullChannelAsync(x);                
                 DialogTitle = channelDetails.Value.Chats[0].FullName;
                 LastSeenVisible = Visibility.Collapsed;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };

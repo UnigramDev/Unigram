@@ -26,7 +26,7 @@ namespace Unigram.Common
                 string t;
                 //if date=date, show hours else show full string
                 //if hours=hours, show minutes else show "hours ago"
-                t = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? " moments ago" : (now - seen).Minutes.ToString() + (now - seen).Minutes.ToString()=="1"? " minute ago" :" minutes ago") : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString())=="1"? (" hour ago"): ("hours ago"))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? "yesterday " + new DateTimeFormatter("shorttime").Format(seen) : seen.ToString();
+                t = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? "moments ago" : (now - seen).Minutes.ToString() + ((now - seen).Minutes.ToString()=="1"? " minute ago" :" minutes ago")) : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString())=="1"? (" hour ago"): (" hours ago"))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? "yesterday " + new DateTimeFormatter("shorttime").Format(seen) : new DateTimeFormatter("shortdate").Format(seen) + " " +new DateTimeFormatter("shorttime").Format(seen);
                 status = "Last seen " + t;
                 lastSeenEpoch = sOfflineCheck.WasOnline;
             }
