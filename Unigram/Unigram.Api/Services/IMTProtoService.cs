@@ -9,7 +9,7 @@ using Telegram.Api.Transport;
 
 namespace Telegram.Api.Services
 {
-    public interface IMTProtoService
+    public partial interface IMTProtoService
     {
         event EventHandler<TransportCheckedEventArgs> TransportChecked;
 

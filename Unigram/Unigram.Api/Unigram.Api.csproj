@@ -119,6 +119,8 @@
     <Compile Include="Services\FileManager\UploadFileManager.cs" />
     <Compile Include="Services\FileManager\EventArgs\UploadProgressChangedEventArgs.cs" />
     <Compile Include="Services\FileManager\Worker.cs" />
+    <Compile Include="Services\IMTProtoService.Async.cs" />
+    <Compile Include="Services\MTProtoService.Async.cs" />
     <Compile Include="TLExtensions.cs" />
     <Compile Include="Hash\CRC32\CRC32.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
