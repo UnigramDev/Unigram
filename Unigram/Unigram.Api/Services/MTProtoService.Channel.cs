@@ -10,7 +10,7 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
-        public void GetAdminedPublicChannelsAsync(Action<TLMessagesChats> callback, Action<TLRPCError> faultCallback = null)
+        public void GetAdminedPublicChannelsCallback(Action<TLMessagesChats> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLGetAdminedPublicChannels();
 
@@ -26,21 +26,21 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void GetChannelDifferenceAsync(TLInputChannelBase inputChannel, TLChannelMessagesFilterBase filter, int pts, int limit, Action<TLUpdatesChannelDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetChannelDifferenceCallback(TLInputChannelBase inputChannel, TLChannelMessagesFilterBase filter, int pts, int limit, Action<TLUpdatesChannelDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUpdatesGetChannelDifference { Channel = inputChannel, Filter = filter, Pts = pts, Limit = limit };
 
             SendInformativeMessage("updates.getChannelDifference", obj, callback, faultCallback);
         }
 
-        public void GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetMessagesCallback(TLInputChannelBase inputChannel, TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsGetMessages { Channel = inputChannel, Id = id };
 
             SendInformativeMessage("channels.getMessages", obj, callback, faultCallback);
         }
 
-        public void EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void EditAdminCallback(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsEditAdmin { Channel = channel.ToInputChannel(), UserId = userId, Role = role };
 
@@ -58,7 +58,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    GetFullChannelAsync(channel.ToInputChannel(),
+                    GetFullChannelCallback(channel.ToInputChannel(),
                         messagesChatFull => callback.SafeInvoke(result),
                         faultCallback.SafeInvoke);
                 },
@@ -66,7 +66,7 @@ namespace Telegram.Api.Services
         }
 
 
-        public void GetParticipantAsync(TLInputChannelBase inputChannel, TLInputUserBase userId, Action<TLChannelsChannelParticipant> callback, Action<TLRPCError> faultCallback = null)
+        public void GetParticipantCallback(TLInputChannelBase inputChannel, TLInputUserBase userId, Action<TLChannelsChannelParticipant> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsGetParticipant { Channel = inputChannel, UserId = userId };
 
@@ -80,7 +80,7 @@ namespace Telegram.Api.Services
             faultCallback);
         }
 
-        public void GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit, Action<TLChannelsChannelParticipants> callback, Action<TLRPCError> faultCallback = null)
+        public void GetParticipantsCallback(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit, Action<TLChannelsChannelParticipants> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsGetParticipants { Channel = inputChannel, Filter = filter, Offset = offset, Limit = limit };
 
@@ -103,7 +103,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void EditTitleAsync(TLChannel channel, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void EditTitleCallback(TLChannel channel, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsEditTitle { Channel = channel.ToInputChannel(), Title = title };
 
@@ -126,7 +126,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void EditAboutAsync(TLChannel channel, string about, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void EditAboutCallback(TLChannel channel, string about, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsEditAbout { Channel = channel.ToInputChannel(), About = about };
 
@@ -134,7 +134,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<bool>(caption, obj, callback.SafeInvoke, faultCallback);
         }
 
-        public void JoinChannelAsync(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void JoinChannelCallback(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsJoinChannel { Channel = channel.ToInputChannel() };
 
@@ -164,7 +164,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void LeaveChannelAsync(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void LeaveChannelCallback(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsLeaveChannel { Channel = channel.ToInputChannel() };
 
@@ -194,7 +194,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void KickFromChannelAsync(TLChannel channel, TLInputUserBase userId, bool kicked, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void KickFromChannelCallback(TLChannel channel, TLInputUserBase userId, bool kicked, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsKickFromChannel { Channel = channel.ToInputChannel(), UserId = userId, Kicked = kicked };
 
@@ -212,14 +212,14 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    GetFullChannelAsync(channel.ToInputChannel(),
+                    GetFullChannelCallback(channel.ToInputChannel(),
                         messagesChatFull => callback.SafeInvoke(result),
                         faultCallback.SafeInvoke);
                 },
                 faultCallback);
         }
 
-        public void DeleteChannelAsync(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void DeleteChannelCallback(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsDeleteChannel { Channel = channel.ToInputChannel() };
 
@@ -242,7 +242,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void InviteToChannelAsync(TLInputChannelBase channel, TLVector<TLInputUserBase> users, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void InviteToChannelCallback(TLInputChannelBase channel, TLVector<TLInputUserBase> users, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsInviteToChannel { Channel = channel, Users = users };
 
@@ -267,7 +267,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void DeleteMessagesAsync(TLInputChannelBase channel, TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
+        public void DeleteMessagesCallback(TLInputChannelBase channel, TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsDeleteMessages { Channel = channel, Id = id };
 
@@ -290,24 +290,24 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void UpdateChannelAsync(int? channelId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null)
+        public void UpdateChannelCallback(int? channelId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null)
         {
             var channel = _cacheService.GetChat(channelId) as TLChannel;
             if (channel != null)
             {
-                GetFullChannelAsync(channel.ToInputChannel(), callback, faultCallback);
+                GetFullChannelCallback(channel.ToInputChannel(), callback, faultCallback);
                 return;
             }
 
             var channelForbidden = _cacheService.GetChat(channelId) as TLChannelForbidden;
             if (channelForbidden != null)
             {
-                GetFullChannelAsync(channelForbidden.ToInputChannel(), callback, faultCallback);
+                GetFullChannelCallback(channelForbidden.ToInputChannel(), callback, faultCallback);
                 return;
             }
         }
 
-        public void GetFullChannelAsync(TLInputChannelBase channel, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null)
+        public void GetFullChannelCallback(TLInputChannelBase channel, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsGetFullChannel { Channel = channel };
 
@@ -320,14 +320,14 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void GetImportantHistoryAsync(TLInputChannelBase channel, TLPeerBase peer, bool sync, int? offsetId, int? addOffset, int? limit, int? maxId, int? minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetImportantHistoryCallback(TLInputChannelBase channel, TLPeerBase peer, bool sync, int? offsetId, int? addOffset, int? limit, int? maxId, int? minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLGetImportantHistory { Channel = channel, OffsetId = offsetId, OffsetDate = 0, AddOffset = addOffset, Limit = limit, MaxId = maxId, MinId = minId };
 
             SendInformativeMessage("channels.getImportantHistory", obj, callback, faultCallback);
         }
 
-        public void ReadHistoryAsync(TLChannel channel, int maxId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ReadHistoryCallback(TLChannel channel, int maxId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsReadHistory { Channel = channel.ToInputChannel(), MaxId = maxId };
 
@@ -343,7 +343,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void CreateChannelAsync(TLChannelsCreateChannel.Flag flags, string title, string about, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void CreateChannelCallback(TLChannelsCreateChannel.Flag flags, string title, string about, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsCreateChannel { Flags = flags, Title = title, About = about };
 
@@ -366,28 +366,28 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ExportInviteAsync(TLInputChannelBase channel, Action<TLExportedChatInviteBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ExportInviteCallback(TLInputChannelBase channel, Action<TLExportedChatInviteBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsExportInvite { Channel = channel };
 
             SendInformativeMessage("channels.exportInvite", obj, callback, faultCallback);
         }
 
-        public void CheckUsernameAsync(TLInputChannelBase channel, string username, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void CheckUsernameCallback(TLInputChannelBase channel, string username, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsCheckUsername { Channel = channel, Username = username };
 
             SendInformativeMessage("channels.checkUsername", obj, callback, faultCallback);
         }
 
-        public void UpdateUsernameAsync(TLInputChannelBase channel, string username, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void UpdateUsernameCallback(TLInputChannelBase channel, string username, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsUpdateUsername { Channel = channel, Username = username };
 
             SendInformativeMessage("channels.updateUsername", obj, callback, faultCallback);
         }
 
-        public void EditPhotoAsync(TLChannel channel, TLInputChatPhotoBase photo, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void EditPhotoCallback(TLChannel channel, TLInputChatPhotoBase photo, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsEditPhoto { Channel = channel.ToInputChannel(), Photo = photo };
 
@@ -424,7 +424,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("channels.editAdmin", obj, callback, faultCallback);
         }
 
-        public void ToggleInvitesAsync(TLInputChannelBase channel, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ToggleInvitesCallback(TLInputChannelBase channel, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsToggleInvites { Channel = channel, Enabled = enabled };
 
@@ -447,14 +447,14 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ExportMessageLinkAsync(TLInputChannelBase channel, int id, Action<TLExportedMessageLink> callback, Action<TLRPCError> faultCallback = null)
+        public void ExportMessageLinkCallback(TLInputChannelBase channel, int id, Action<TLExportedMessageLink> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsExportMessageLink { Channel = channel, Id = id };
 
             SendInformativeMessage("channels.exportMessageLink", obj, callback, faultCallback);
         }
 
-        public void UpdatePinnedMessageAsync(bool silent, TLInputChannelBase channel, int id, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void UpdatePinnedMessageCallback(bool silent, TLInputChannelBase channel, int id, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsUpdatePinnedMessage { Flags = 0, Channel = channel, Id = id };
             if (silent)
@@ -481,7 +481,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ToggleSignaturesAsync(TLInputChannelBase channel, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ToggleSignaturesCallback(TLInputChannelBase channel, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsToggleSignatures { Channel = channel, Enabled = enabled };
 
@@ -504,7 +504,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void GetMessageEditDataAsync(TLInputPeerBase peer, int id, Action<TLMessagesMessageEditData> callback, Action<TLRPCError> faultCallback = null)
+        public void GetMessageEditDataCallback(TLInputPeerBase peer, int id, Action<TLMessagesMessageEditData> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetMessageEditData { Peer = peer, Id = id };
 
@@ -512,7 +512,7 @@ namespace Telegram.Api.Services
         }
 
 
-        public void EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void EditMessageCallback(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesEditMessage { Flags=0, Peer = peer, Id = id, Message = message, IsNoWebpage = noWebPage, Entities = entities, ReplyMarkup = replyMarkup };
 
@@ -535,7 +535,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ReportSpamAsync(TLInputChannelBase channel, TLInputUserBase userId, TLVector<int> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ReportSpamCallback(TLInputChannelBase channel, TLInputUserBase userId, TLVector<int> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsReportSpam { Channel = channel, UserId = userId, Id = id };
 
@@ -543,7 +543,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<bool>(caption, obj, callback.SafeInvoke, faultCallback);
         }
 
-        public void DeleteUserHistoryAsync(TLChannel channel, TLInputUserBase userId, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null)
+        public void DeleteUserHistoryCallback(TLChannel channel, TLInputUserBase userId, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsDeleteUserHistory { Channel = channel.ToInputChannel(), UserId = userId };
 

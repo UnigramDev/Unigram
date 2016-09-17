@@ -104,14 +104,14 @@ namespace Telegram.Api.Services
                 });
         }
 
-        public void GetTermsOfServiceAsync(string langCode, Action<TLHelpTermsOfService> callback, Action<TLRPCError> faultCallback = null)
+        public void GetTermsOfServiceCallback(string langCode, Action<TLHelpTermsOfService> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLHelpGetTermsOfService();
 
             SendInformativeMessage("help.getTermsOfService", obj, callback, faultCallback);
         }
 
-        public void GetNearestDCAsync(Action<TLNearestDC> callback, Action<TLRPCError> faultCallback = null)
+        public void GetNearestDCCallback(Action<TLNearestDC> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLHelpGetNearestDC();
 
@@ -125,14 +125,14 @@ namespace Telegram.Api.Services
             SendInformativeMessage("help.getInviteText", obj, callback, faultCallback);
         }
 
-        public void GetSupportAsync( Action<TLHelpSupport> callback, Action<TLRPCError> faultCallback = null)
+        public void GetSupportCallback( Action<TLHelpSupport> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLHelpGetSupport();
 
             SendInformativeMessage("help.getSupport", obj, callback, faultCallback);
         }
 
-        public void GetAppChangelogAsync(string deviceModel, string systemVersion, string appVersion, string langCode, Action<TLHelpAppChangelogBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetAppChangelogCallback(string deviceModel, string systemVersion, string appVersion, string langCode, Action<TLHelpAppChangelogBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLHelpGetAppChangelog();
 

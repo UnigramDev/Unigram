@@ -191,7 +191,7 @@ namespace Telegram.Api.Services
 
             _statusSubscription = sendStatusEvents
                 .Throttle(TimeSpan.FromSeconds(Constants.UpdateStatusInterval))
-                .Subscribe(e => UpdateStatusAsync(e.EventArgs.Offline, result => { }));
+                .Subscribe(e => UpdateStatusCallback(e.EventArgs.Offline, result => { }));
 
             _updatesService = updatesService;
             _updatesService.DCOptionsUpdated += OnDCOptionsUpdated;
@@ -201,18 +201,18 @@ namespace Telegram.Api.Services
             if (_updatesService != null)
             {
                 _updatesService.GetDifferenceAsync = GetDifferenceAsync;
-                _updatesService.GetStateAsync = GetStateAsync;
+                _updatesService.GetStateAsync = GetStateCallback;
                 _updatesService.GetCurrentUserId = GetCurrentUserId;
                 _updatesService.GetDHConfigAsync = GetDHConfigAsync;
                 _updatesService.AcceptEncryptionAsync = AcceptEncryptionAsync;
                 _updatesService.SendEncryptedServiceAsync = SendEncryptedServiceAsync;
                 _updatesService.SetMessageOnTimeAsync = SetMessageOnTime;
                 _updatesService.RemoveFromQueue = RemoveFromQueue;
-                _updatesService.UpdateChannelAsync = UpdateChannelAsync;
-                _updatesService.GetParticipantAsync = GetParticipantAsync;
+                _updatesService.UpdateChannelAsync = UpdateChannelCallback;
+                _updatesService.GetParticipantAsync = GetParticipantCallback;
                 _updatesService.GetFullChatAsync = GetFullChatAsync;
-                _updatesService.GetFullUserAsync = GetFullUserAsync;
-                _updatesService.GetChannelMessagesAsync = GetMessagesAsync;
+                _updatesService.GetFullUserAsync = GetFullUserCallback;
+                _updatesService.GetChannelMessagesAsync = GetMessagesCallback;
             }
 
             _transportService = transportService;
@@ -868,7 +868,7 @@ namespace Telegram.Api.Services
 
 
                                     var timer = Stopwatch.StartNew();
-                                    GetNearestDCAsync(nearestDC =>
+                                    GetNearestDCCallback(nearestDC =>
                                     {
 #if LOG_REGISTRATION
                                         TLUtils.WriteLog("Stop help.getNearestDc");
@@ -981,7 +981,7 @@ namespace Telegram.Api.Services
                                 if (getConfigRequired)
                                 {
                                     var timer = Stopwatch.StartNew();
-                                    GetNearestDCAsync(nearestDC =>
+                                    GetNearestDCCallback(nearestDC =>
                                     {
 #if LOG_REGISTRATION
                                         TLUtils.WriteLog("Stop help.getNearestDc");
@@ -1514,7 +1514,7 @@ namespace Telegram.Api.Services
             }
 
             // to bind authKey to current TCPTransport, get changes, etc...
-            UpdateStatusAsync(false, result => { });
+            UpdateStatusCallback(false, result => { });
         }
 
         public void ClearHistory(string caption, bool createNewSession, Exception e = null)
