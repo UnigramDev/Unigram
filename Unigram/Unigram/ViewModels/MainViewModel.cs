@@ -12,6 +12,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods.Contacts;
 using Unigram.Collections;
+using Unigram.Common;
 using Unigram.Core.Notifications;
 using Unigram.Core.Services;
 using Windows.ApplicationModel.Background;
@@ -48,35 +49,13 @@ namespace Unigram.ViewModels
             var UserList = await ProtoService.GetContactsAsync("");
             var x = UserList.Value as TLContactsContacts;            
             foreach (var item in x.Users)
-            {                
-                string status = "";
+            {
                 var User = item as TLUser;
                 UsersPanelListItem TempX = new UsersPanelListItem(User as TLUser);
-                var sOfflineCheck = User.Status as TLUserStatusOffline;
-                if (sOfflineCheck != null)
-                {
-                    var seen = TLUtils.ToDateTime(sOfflineCheck.WasOnline);
-                    var now = DateTime.Now;
-                    string t;
-                    //if date=date, show hours else show full string
-                    //if hours=hours, show minutes else show "hours ago"
-                    t = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? " moments ago" : (now - seen).Minutes.ToString() + " minutes ago") : ((now - seen).Hours.ToString()) + " hours ago") : now.Date - seen.Date == new TimeSpan(24,0,0) ? "yesterday "+ new DateTimeFormatter("shorttime").Format(seen): seen.ToString();
-                    status = "Last seen " + t;
-                    TempX.lastSeenEpoch = sOfflineCheck.WasOnline;
-                }
-                var sOnlineCheck = User.Status as TLUserStatusOnline;
-                if (sOnlineCheck != null)
-                {
-                    status = "Online";
-                    TempX.lastSeenEpoch = int.MaxValue;
-                }
-                if (status == "")
-                {
-                    status = "Last seen recently";
-                    TempX.lastSeenEpoch = 0;
-                }                
+                var Status= LastSeenHelper.getLastSeen(User);
                 TempX.fullName = User.FullName;
-                TempX.lastSeen = status;                
+                TempX.lastSeen = Status.Item1;
+                TempX.lastSeenEpoch = Status.Item2;              
                 TempX.Photo = TempX._parent.Photo;
                 TempList.Add(TempX);
             }

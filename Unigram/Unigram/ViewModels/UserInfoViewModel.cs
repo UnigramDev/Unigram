@@ -23,11 +23,13 @@ using Windows.ApplicationModel.Contacts;
 
 namespace Unigram.ViewModels
 {
+    
     public class UserInfoViewModel : UnigramViewModelBase,
         IHandle<TLUpdateUserBlocked>,
         IHandle<TLUpdateNotifySettings>,
         IHandle
     {
+        public string LastSeen { get; internal set; }
         public UserInfoViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
@@ -83,7 +85,8 @@ namespace Unigram.ViewModels
                     RaisePropertyChanged(() => StopVisibility);
                     RaisePropertyChanged(() => UnstopVisibility);
                 }
-
+                var Status = Unigram.Common.LastSeenHelper.getLastSeen(user);
+                LastSeen = Status.Item1;
                 Aggregator.Subscribe(this);
             }
         }
