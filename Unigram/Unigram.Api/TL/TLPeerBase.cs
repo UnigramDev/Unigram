@@ -5,6 +5,5 @@ namespace Telegram.Api.TL
 {
 	public abstract partial class TLPeerBase : TLObject
 	{
-		public Int32 Id { get; set; }
 	}
 }

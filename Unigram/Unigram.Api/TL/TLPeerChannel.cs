@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLPeerChannel : TLPeerBase 
 	{
+		public Int32 ChannelId { get; set; }
 
 		public TLPeerChannel() { }
 		public TLPeerChannel(TLBinaryReader from, TLType type = TLType.PeerChannel)
@@ -16,13 +17,13 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, TLType type = TLType.PeerChannel)
 		{
-			Id = from.ReadInt32();
+			ChannelId = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xBDDDE532);
-			to.Write(Id);
+			to.Write(ChannelId);
 		}
 	}
 }
