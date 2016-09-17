@@ -186,7 +186,7 @@
     <comment>Settings - Titlebar - Page Title</comment>
   </data>
   <data name="BTN-CodeNotRecieved.Content" xml:space="preserve">
-    <value>I have not recieved a code</value>
+    <value>I have not received a code</value>
     <comment>Button - Login</comment>
   </data>
   <data name="BTN-Next.Content" xml:space="preserve">
