@@ -12,24 +12,26 @@ namespace Telegram.Api.TL.Methods.Account
 		public TLAccountPasswordInputSettings NewSettings { get; set; }
 
 		public TLAccountUpdatePasswordSettings() { }
-		public TLAccountUpdatePasswordSettings(TLBinaryReader from, TLType type = TLType.AccountUpdatePasswordSettings)
+		public TLAccountUpdatePasswordSettings(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountUpdatePasswordSettings; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AccountUpdatePasswordSettings)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			CurrentPasswordHash = from.ReadByteArray();
-			NewSettings = TLFactory.Read<TLAccountPasswordInputSettings>(from);
+			NewSettings = TLFactory.Read<TLAccountPasswordInputSettings>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xFA7C4B86);
 			to.WriteByteArray(CurrentPasswordHash);
-			to.WriteObject(NewSettings);
+			to.WriteObject(NewSettings, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

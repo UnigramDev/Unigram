@@ -6,20 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLPrivacyKeyChatInvite : TLPrivacyKeyBase 
 	{
 		public TLPrivacyKeyChatInvite() { }
-		public TLPrivacyKeyChatInvite(TLBinaryReader from, TLType type = TLType.PrivacyKeyChatInvite)
+		public TLPrivacyKeyChatInvite(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.PrivacyKeyChatInvite; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.PrivacyKeyChatInvite)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x500E6DFA);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -8,30 +8,32 @@ namespace Telegram.Api.TL
 		public TLEncryptedFileBase File { get; set; }
 
 		public TLEncryptedMessage() { }
-		public TLEncryptedMessage(TLBinaryReader from, TLType type = TLType.EncryptedMessage)
+		public TLEncryptedMessage(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.EncryptedMessage; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.EncryptedMessage)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			RandomId = from.ReadInt64();
 			ChatId = from.ReadInt32();
 			Date = from.ReadInt32();
 			Bytes = from.ReadByteArray();
-			File = TLFactory.Read<TLEncryptedFileBase>(from);
+			File = TLFactory.Read<TLEncryptedFileBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xED18C118);
 			to.Write(RandomId);
 			to.Write(ChatId);
 			to.Write(Date);
 			to.WriteByteArray(Bytes);
-			to.WriteObject(File);
+			to.WriteObject(File, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

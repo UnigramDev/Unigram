@@ -7,24 +7,26 @@ namespace Telegram.Api.TL
 	{
 
 		public TLUpdateUserTyping() { }
-		public TLUpdateUserTyping(TLBinaryReader from, TLType type = TLType.UpdateUserTyping)
+		public TLUpdateUserTyping(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateUserTyping; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdateUserTyping)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			UserId = from.ReadInt32();
-			Action = TLFactory.Read<TLSendMessageActionBase>(from);
+			Action = TLFactory.Read<TLSendMessageActionBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x5C486927);
 			to.Write(UserId);
-			to.WriteObject(Action);
+			to.WriteObject(Action, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -13,26 +13,28 @@ namespace Telegram.Api.TL.Methods.Channels
 		public TLChannelParticipantRoleBase Role { get; set; }
 
 		public TLChannelsEditAdmin() { }
-		public TLChannelsEditAdmin(TLBinaryReader from, TLType type = TLType.ChannelsEditAdmin)
+		public TLChannelsEditAdmin(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelsEditAdmin; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ChannelsEditAdmin)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Channel = TLFactory.Read<TLInputChannelBase>(from);
-			UserId = TLFactory.Read<TLInputUserBase>(from);
-			Role = TLFactory.Read<TLChannelParticipantRoleBase>(from);
+			Channel = TLFactory.Read<TLInputChannelBase>(from, cache);
+			UserId = TLFactory.Read<TLInputUserBase>(from, cache);
+			Role = TLFactory.Read<TLChannelParticipantRoleBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xEB7611D0);
-			to.WriteObject(Channel);
-			to.WriteObject(UserId);
-			to.WriteObject(Role);
+			to.WriteObject(Channel, cache);
+			to.WriteObject(UserId, cache);
+			to.WriteObject(Role, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -6,20 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLStorageFileWebp : TLStorageFileTypeBase 
 	{
 		public TLStorageFileWebp() { }
-		public TLStorageFileWebp(TLBinaryReader from, TLType type = TLType.StorageFileWebp)
+		public TLStorageFileWebp(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.StorageFileWebp; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.StorageFileWebp)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x1081464C);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

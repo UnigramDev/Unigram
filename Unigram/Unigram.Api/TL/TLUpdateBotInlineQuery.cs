@@ -17,32 +17,34 @@ namespace Telegram.Api.TL
 		public String Offset { get; set; }
 
 		public TLUpdateBotInlineQuery() { }
-		public TLUpdateBotInlineQuery(TLBinaryReader from, TLType type = TLType.UpdateBotInlineQuery)
+		public TLUpdateBotInlineQuery(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateBotInlineQuery; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdateBotInlineQuery)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			QueryId = from.ReadInt64();
 			UserId = from.ReadInt32();
 			Query = from.ReadString();
-			if (HasGeo) { Geo = TLFactory.Read<TLGeoPointBase>(from); }
+			if (HasGeo) { Geo = TLFactory.Read<TLGeoPointBase>(from, cache); }
 			Offset = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x54826690);
 			to.Write((Int32)Flags);
 			to.Write(QueryId);
 			to.Write(UserId);
 			to.Write(Query);
-			if (HasGeo) to.WriteObject(Geo);
+			if (HasGeo) to.WriteObject(Geo, cache);
 			to.Write(Offset);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

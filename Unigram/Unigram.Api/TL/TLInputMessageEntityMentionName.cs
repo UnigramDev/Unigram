@@ -8,26 +8,28 @@ namespace Telegram.Api.TL
 		public TLInputUserBase UserId { get; set; }
 
 		public TLInputMessageEntityMentionName() { }
-		public TLInputMessageEntityMentionName(TLBinaryReader from, TLType type = TLType.InputMessageEntityMentionName)
+		public TLInputMessageEntityMentionName(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.InputMessageEntityMentionName; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.InputMessageEntityMentionName)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Offset = from.ReadInt32();
 			Length = from.ReadInt32();
-			UserId = TLFactory.Read<TLInputUserBase>(from);
+			UserId = TLFactory.Read<TLInputUserBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x208E68C9);
 			to.Write(Offset);
 			to.Write(Length);
-			to.WriteObject(UserId);
+			to.WriteObject(UserId, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

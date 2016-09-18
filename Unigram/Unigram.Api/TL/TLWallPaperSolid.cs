@@ -8,28 +8,30 @@ namespace Telegram.Api.TL
 		public Int32 BgColor { get; set; }
 
 		public TLWallPaperSolid() { }
-		public TLWallPaperSolid(TLBinaryReader from, TLType type = TLType.WallPaperSolid)
+		public TLWallPaperSolid(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.WallPaperSolid; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.WallPaperSolid)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Id = from.ReadInt32();
 			Title = from.ReadString();
 			BgColor = from.ReadInt32();
 			Color = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x63117F24);
 			to.Write(Id);
 			to.Write(Title);
 			to.Write(BgColor);
 			to.Write(Color);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

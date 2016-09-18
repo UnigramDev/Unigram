@@ -23,14 +23,14 @@ namespace Telegram.Api.TL
 		public TLVector<TLMessageBase> Messages { get; set; }
 
 		public TLUpdatesChannelDifferenceTooLong() { }
-		public TLUpdatesChannelDifferenceTooLong(TLBinaryReader from, TLType type = TLType.UpdatesChannelDifferenceTooLong)
+		public TLUpdatesChannelDifferenceTooLong(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdatesChannelDifferenceTooLong; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdatesChannelDifferenceTooLong)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Pts = from.ReadInt32();
@@ -39,12 +39,13 @@ namespace Telegram.Api.TL
 			ReadInboxMaxId = from.ReadInt32();
 			ReadOutboxMaxId = from.ReadInt32();
 			UnreadCount = from.ReadInt32();
-			Messages = TLFactory.Read<TLVector<TLMessageBase>>(from);
-			Chats = TLFactory.Read<TLVector<TLChatBase>>(from);
-			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
+			Messages = TLFactory.Read<TLVector<TLMessageBase>>(from, cache);
+			Chats = TLFactory.Read<TLVector<TLChatBase>>(from, cache);
+			Users = TLFactory.Read<TLVector<TLUserBase>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x410DEE07);
 			to.Write((Int32)Flags);
@@ -54,9 +55,10 @@ namespace Telegram.Api.TL
 			to.Write(ReadInboxMaxId);
 			to.Write(ReadOutboxMaxId);
 			to.Write(UnreadCount);
-			to.WriteObject(Messages);
-			to.WriteObject(Chats);
-			to.WriteObject(Users);
+			to.WriteObject(Messages, cache);
+			to.WriteObject(Chats, cache);
+			to.WriteObject(Users, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -12,24 +12,26 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Boolean Unsave { get; set; }
 
 		public TLMessagesSaveGif() { }
-		public TLMessagesSaveGif(TLBinaryReader from, TLType type = TLType.MessagesSaveGif)
+		public TLMessagesSaveGif(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSaveGif; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesSaveGif)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Id = TLFactory.Read<TLInputDocumentBase>(from);
+			Id = TLFactory.Read<TLInputDocumentBase>(from, cache);
 			Unsave = from.ReadBoolean();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x327A30CB);
-			to.WriteObject(Id);
+			to.WriteObject(Id, cache);
 			to.Write(Unsave);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

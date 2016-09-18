@@ -8,24 +8,26 @@ namespace Telegram.Api.TL
 		public TLDraftMessageBase Draft { get; set; }
 
 		public TLUpdateDraftMessage() { }
-		public TLUpdateDraftMessage(TLBinaryReader from, TLType type = TLType.UpdateDraftMessage)
+		public TLUpdateDraftMessage(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateDraftMessage; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdateDraftMessage)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Peer = TLFactory.Read<TLPeerBase>(from);
-			Draft = TLFactory.Read<TLDraftMessageBase>(from);
+			Peer = TLFactory.Read<TLPeerBase>(from, cache);
+			Draft = TLFactory.Read<TLDraftMessageBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xEE2BB969);
-			to.WriteObject(Peer);
-			to.WriteObject(Draft);
+			to.WriteObject(Peer, cache);
+			to.WriteObject(Draft, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

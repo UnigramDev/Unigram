@@ -57,7 +57,13 @@ namespace Unigram.ViewModels
 
             if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
             {
-                Execute.BeginOnUIThread(() =>
+
+                // Temporary fix: delay the execution by 500 millisec.
+                // Reason: this operation was executed BEFORE the UI update
+                // and population of the list, so when the list was afterwards
+                // populated the first item (Afghanistan) was again assinged
+                // as SelectedCountry, thus overriding the correct values.
+                Execute.BeginOnUIThread(new TimeSpan(0,0,0,0,500),() =>
                 {
                     _phoneCode = country.PhoneCode;
                     SelectedCountry = country;

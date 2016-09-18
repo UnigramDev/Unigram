@@ -9,24 +9,26 @@ namespace Telegram.Api.TL
 		public TLVector<TLDocumentBase> Gifs { get; set; }
 
 		public TLMessagesSavedGifs() { }
-		public TLMessagesSavedGifs(TLBinaryReader from, TLType type = TLType.MessagesSavedGifs)
+		public TLMessagesSavedGifs(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSavedGifs; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesSavedGifs)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Hash = from.ReadInt32();
-			Gifs = TLFactory.Read<TLVector<TLDocumentBase>>(from);
+			Gifs = TLFactory.Read<TLVector<TLDocumentBase>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x2E0709A5);
 			to.Write(Hash);
-			to.WriteObject(Gifs);
+			to.WriteObject(Gifs, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

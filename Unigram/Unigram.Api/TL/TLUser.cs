@@ -66,14 +66,14 @@ namespace Telegram.Api.TL
 		public String BotInlinePlaceholder { get; set; }
 
 		public TLUser() { }
-		public TLUser(TLBinaryReader from, TLType type = TLType.User)
+		public TLUser(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.User; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.User)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
@@ -82,14 +82,15 @@ namespace Telegram.Api.TL
 			if (HasLastName) { LastName = from.ReadString(); }
 			if (HasUsername) { Username = from.ReadString(); }
 			if (HasPhone) { Phone = from.ReadString(); }
-			if (HasPhoto) { Photo = TLFactory.Read<TLUserProfilePhotoBase>(from); }
-			if (HasStatus) { Status = TLFactory.Read<TLUserStatusBase>(from); }
+			if (HasPhoto) { Photo = TLFactory.Read<TLUserProfilePhotoBase>(from, cache); }
+			if (HasStatus) { Status = TLFactory.Read<TLUserStatusBase>(from, cache); }
 			if (HasBotInfoVersion) { BotInfoVersion = from.ReadInt32(); }
 			if (HasRestrictionReason) { RestrictionReason = from.ReadString(); }
 			if (HasBotInlinePlaceholder) { BotInlinePlaceholder = from.ReadString(); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xD10D979A);
 			to.Write((Int32)Flags);
@@ -99,11 +100,12 @@ namespace Telegram.Api.TL
 			if (HasLastName) to.Write(LastName);
 			if (HasUsername) to.Write(Username);
 			if (HasPhone) to.Write(Phone);
-			if (HasPhoto) to.WriteObject(Photo);
-			if (HasStatus) to.WriteObject(Status);
+			if (HasPhoto) to.WriteObject(Photo, cache);
+			if (HasStatus) to.WriteObject(Status, cache);
 			if (HasBotInfoVersion) to.Write(BotInfoVersion.Value);
 			if (HasRestrictionReason) to.Write(RestrictionReason);
 			if (HasBotInlinePlaceholder) to.Write(BotInlinePlaceholder);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

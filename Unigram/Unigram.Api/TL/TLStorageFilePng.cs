@@ -6,20 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLStorageFilePng : TLStorageFileTypeBase 
 	{
 		public TLStorageFilePng() { }
-		public TLStorageFilePng(TLBinaryReader from, TLType type = TLType.StorageFilePng)
+		public TLStorageFilePng(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.StorageFilePng; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.StorageFilePng)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xA4F63C0);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

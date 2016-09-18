@@ -18,26 +18,28 @@ namespace Telegram.Api.TL
 		public Flag Flags { get; set; }
 
 		public TLUpdatesChannelDifferenceEmpty() { }
-		public TLUpdatesChannelDifferenceEmpty(TLBinaryReader from, TLType type = TLType.UpdatesChannelDifferenceEmpty)
+		public TLUpdatesChannelDifferenceEmpty(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdatesChannelDifferenceEmpty; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdatesChannelDifferenceEmpty)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Pts = from.ReadInt32();
 			if (HasTimeout) { Timeout = from.ReadInt32(); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x3E11AFFB);
 			to.Write((Int32)Flags);
 			to.Write(Pts);
 			if (HasTimeout) to.Write(Timeout.Value);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

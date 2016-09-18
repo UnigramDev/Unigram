@@ -12,24 +12,26 @@ namespace Telegram.Api.TL.Methods.Account
 		public String Token { get; set; }
 
 		public TLAccountRegisterDevice() { }
-		public TLAccountRegisterDevice(TLBinaryReader from, TLType type = TLType.AccountRegisterDevice)
+		public TLAccountRegisterDevice(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountRegisterDevice; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AccountRegisterDevice)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			TokenType = from.ReadInt32();
 			Token = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x637EA878);
 			to.Write(TokenType);
 			to.Write(Token);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

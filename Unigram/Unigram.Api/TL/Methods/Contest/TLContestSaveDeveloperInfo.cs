@@ -15,23 +15,24 @@ namespace Telegram.Api.TL.Methods.Contest
 		public String City { get; set; }
 
 		public TLContestSaveDeveloperInfo() { }
-		public TLContestSaveDeveloperInfo(TLBinaryReader from, TLType type = TLType.ContestSaveDeveloperInfo)
+		public TLContestSaveDeveloperInfo(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ContestSaveDeveloperInfo; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ContestSaveDeveloperInfo)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			VkId = from.ReadInt32();
 			Name = from.ReadString();
 			PhoneNumber = from.ReadString();
 			Age = from.ReadInt32();
 			City = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x9A5F6E95);
 			to.Write(VkId);
@@ -39,6 +40,7 @@ namespace Telegram.Api.TL.Methods.Contest
 			to.Write(PhoneNumber);
 			to.Write(Age);
 			to.Write(City);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

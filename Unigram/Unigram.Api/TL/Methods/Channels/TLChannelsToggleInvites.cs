@@ -12,24 +12,26 @@ namespace Telegram.Api.TL.Methods.Channels
 		public Boolean Enabled { get; set; }
 
 		public TLChannelsToggleInvites() { }
-		public TLChannelsToggleInvites(TLBinaryReader from, TLType type = TLType.ChannelsToggleInvites)
+		public TLChannelsToggleInvites(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelsToggleInvites; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ChannelsToggleInvites)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Channel = TLFactory.Read<TLInputChannelBase>(from);
+			Channel = TLFactory.Read<TLInputChannelBase>(from, cache);
 			Enabled = from.ReadBoolean();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x49609307);
-			to.WriteObject(Channel);
+			to.WriteObject(Channel, cache);
 			to.Write(Enabled);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

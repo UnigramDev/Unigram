@@ -6,20 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLMessagesStickerSetInstallResultSuccess : TLMessagesStickerSetInstallResultBase 
 	{
 		public TLMessagesStickerSetInstallResultSuccess() { }
-		public TLMessagesStickerSetInstallResultSuccess(TLBinaryReader from, TLType type = TLType.MessagesStickerSetInstallResultSuccess)
+		public TLMessagesStickerSetInstallResultSuccess(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesStickerSetInstallResultSuccess; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesStickerSetInstallResultSuccess)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x38641628);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

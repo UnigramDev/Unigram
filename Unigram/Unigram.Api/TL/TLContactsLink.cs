@@ -10,26 +10,28 @@ namespace Telegram.Api.TL
 		public TLUserBase User { get; set; }
 
 		public TLContactsLink() { }
-		public TLContactsLink(TLBinaryReader from, TLType type = TLType.ContactsLink)
+		public TLContactsLink(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactsLink; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ContactsLink)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			MyLink = TLFactory.Read<TLContactLinkBase>(from);
-			ForeignLink = TLFactory.Read<TLContactLinkBase>(from);
-			User = TLFactory.Read<TLUserBase>(from);
+			MyLink = TLFactory.Read<TLContactLinkBase>(from, cache);
+			ForeignLink = TLFactory.Read<TLContactLinkBase>(from, cache);
+			User = TLFactory.Read<TLUserBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x3ACE484C);
-			to.WriteObject(MyLink);
-			to.WriteObject(ForeignLink);
-			to.WriteObject(User);
+			to.WriteObject(MyLink, cache);
+			to.WriteObject(ForeignLink, cache);
+			to.WriteObject(User, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

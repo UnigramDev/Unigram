@@ -7,24 +7,26 @@ namespace Telegram.Api.TL
 	{
 
 		public TLPhotosPhotos() { }
-		public TLPhotosPhotos(TLBinaryReader from, TLType type = TLType.PhotosPhotos)
+		public TLPhotosPhotos(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.PhotosPhotos; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.PhotosPhotos)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Photos = TLFactory.Read<TLVector<TLPhotoBase>>(from);
-			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
+			Photos = TLFactory.Read<TLVector<TLPhotoBase>>(from, cache);
+			Users = TLFactory.Read<TLVector<TLUserBase>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x8DCA6AA5);
-			to.WriteObject(Photos);
-			to.WriteObject(Users);
+			to.WriteObject(Photos, cache);
+			to.WriteObject(Users, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Auth
 		public String Code { get; set; }
 
 		public TLAuthRecoverPassword() { }
-		public TLAuthRecoverPassword(TLBinaryReader from, TLType type = TLType.AuthRecoverPassword)
+		public TLAuthRecoverPassword(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AuthRecoverPassword; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AuthRecoverPassword)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Code = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x4EA56E92);
 			to.Write(Code);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

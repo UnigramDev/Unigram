@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLInputPeerBase Peer { get; set; }
 
 		public TLMessagesHideReportSpam() { }
-		public TLMessagesHideReportSpam(TLBinaryReader from, TLType type = TLType.MessagesHideReportSpam)
+		public TLMessagesHideReportSpam(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesHideReportSpam; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesHideReportSpam)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Peer = TLFactory.Read<TLInputPeerBase>(from);
+			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xA8F1709B);
-			to.WriteObject(Peer);
+			to.WriteObject(Peer, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

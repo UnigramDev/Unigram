@@ -9,24 +9,26 @@ namespace Telegram.Api.TL
 		public TLVector<Int64> Documents { get; set; }
 
 		public TLStickerPack() { }
-		public TLStickerPack(TLBinaryReader from, TLType type = TLType.StickerPack)
+		public TLStickerPack(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.StickerPack; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.StickerPack)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Emoticon = from.ReadString();
-			Documents = TLFactory.Read<TLVector<Int64>>(from);
+			Documents = TLFactory.Read<TLVector<Int64>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x12B299D4);
 			to.Write(Emoticon);
-			to.WriteObject(Documents);
+			to.WriteObject(Documents, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -7,24 +7,26 @@ namespace Telegram.Api.TL
 	{
 
 		public TLInputMediaPhotoExternal() { }
-		public TLInputMediaPhotoExternal(TLBinaryReader from, TLType type = TLType.InputMediaPhotoExternal)
+		public TLInputMediaPhotoExternal(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.InputMediaPhotoExternal; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.InputMediaPhotoExternal)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Url = from.ReadString();
 			Caption = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xB55F4F18);
 			to.Write(Url);
 			to.Write(Caption);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

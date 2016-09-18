@@ -12,24 +12,26 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int32 MaxDate { get; set; }
 
 		public TLMessagesReadEncryptedHistory() { }
-		public TLMessagesReadEncryptedHistory(TLBinaryReader from, TLType type = TLType.MessagesReadEncryptedHistory)
+		public TLMessagesReadEncryptedHistory(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesReadEncryptedHistory; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesReadEncryptedHistory)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Peer = TLFactory.Read<TLInputEncryptedChat>(from);
+			Peer = TLFactory.Read<TLInputEncryptedChat>(from, cache);
 			MaxDate = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x7F4B690A);
-			to.WriteObject(Peer);
+			to.WriteObject(Peer, cache);
 			to.Write(MaxDate);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

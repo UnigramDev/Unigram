@@ -25,30 +25,32 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLInputPeerBase ToPeer { get; set; }
 
 		public TLMessagesForwardMessages() { }
-		public TLMessagesForwardMessages(TLBinaryReader from, TLType type = TLType.MessagesForwardMessages)
+		public TLMessagesForwardMessages(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesForwardMessages; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesForwardMessages)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
-			FromPeer = TLFactory.Read<TLInputPeerBase>(from);
-			Id = TLFactory.Read<TLVector<Int32>>(from);
-			RandomId = TLFactory.Read<TLVector<Int64>>(from);
-			ToPeer = TLFactory.Read<TLInputPeerBase>(from);
+			FromPeer = TLFactory.Read<TLInputPeerBase>(from, cache);
+			Id = TLFactory.Read<TLVector<Int32>>(from, cache);
+			RandomId = TLFactory.Read<TLVector<Int64>>(from, cache);
+			ToPeer = TLFactory.Read<TLInputPeerBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x708E0195);
 			to.Write((Int32)Flags);
-			to.WriteObject(FromPeer);
-			to.WriteObject(Id);
-			to.WriteObject(RandomId);
-			to.WriteObject(ToPeer);
+			to.WriteObject(FromPeer, cache);
+			to.WriteObject(Id, cache);
+			to.WriteObject(RandomId, cache);
+			to.WriteObject(ToPeer, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

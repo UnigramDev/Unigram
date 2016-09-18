@@ -11,28 +11,30 @@ namespace Telegram.Api.TL
 		public Boolean Popup { get; set; }
 
 		public TLUpdateServiceNotification() { }
-		public TLUpdateServiceNotification(TLBinaryReader from, TLType type = TLType.UpdateServiceNotification)
+		public TLUpdateServiceNotification(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateServiceNotification; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdateServiceNotification)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Type = from.ReadString();
 			Message = from.ReadString();
-			Media = TLFactory.Read<TLMessageMediaBase>(from);
+			Media = TLFactory.Read<TLMessageMediaBase>(from, cache);
 			Popup = from.ReadBoolean();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x382DD3E4);
 			to.Write(Type);
 			to.Write(Message);
-			to.WriteObject(Media);
+			to.WriteObject(Media, cache);
 			to.Write(Popup);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

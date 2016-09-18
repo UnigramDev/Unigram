@@ -7,26 +7,28 @@ namespace Telegram.Api.TL
 	{
 
 		public TLBadMsgNotification() { }
-		public TLBadMsgNotification(TLBinaryReader from, TLType type = TLType.BadMsgNotification)
+		public TLBadMsgNotification(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.BadMsgNotification; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.BadMsgNotification)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			BadMsgId = from.ReadInt64();
 			BadMsgSeqno = from.ReadInt32();
 			ErrorCode = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xA7EFF811);
 			to.Write(BadMsgId);
 			to.Write(BadMsgSeqno);
 			to.Write(ErrorCode);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

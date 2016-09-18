@@ -26,28 +26,30 @@ namespace Telegram.Api.TL.Methods.Account
 		public String About { get; set; }
 
 		public TLAccountUpdateProfile() { }
-		public TLAccountUpdateProfile(TLBinaryReader from, TLType type = TLType.AccountUpdateProfile)
+		public TLAccountUpdateProfile(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountUpdateProfile; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AccountUpdateProfile)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			if (HasFirstName) { FirstName = from.ReadString(); }
 			if (HasLastName) { LastName = from.ReadString(); }
 			if (HasAbout) { About = from.ReadString(); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x78515775);
 			to.Write((Int32)Flags);
 			if (HasFirstName) to.Write(FirstName);
 			if (HasLastName) to.Write(LastName);
 			if (HasAbout) to.Write(About);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

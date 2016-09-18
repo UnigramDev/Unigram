@@ -14,9 +14,9 @@ namespace Telegram.Api.TL
         public TLObject Query { get; set; }
 
         public TLContainerTransportMessage() { }
-        public TLContainerTransportMessage(TLBinaryReader from, TLType type = TLType.AccountAuthorizations)
+        public TLContainerTransportMessage(TLBinaryReader from, bool cache)
         {
-            Read(from);
+            Read(from, cache);
         }
 
         public override TLType TypeId
@@ -27,21 +27,21 @@ namespace Telegram.Api.TL
             }
         }
 
-        public override void Read(TLBinaryReader from, TLType type = TLType.AccountAuthorizations)
+        public override void Read(TLBinaryReader from, bool cache = false)
         {
             MsgId = from.ReadInt64();
             SeqNo = from.ReadInt32();
             QueryLength = from.ReadInt32();
-            Query = TLFactory.Read<TLObject>(from, (TLType)from.ReadInt32());
+            Query = TLFactory.Read<TLObject>(from, (TLType)from.ReadInt32(), cache);
         }
 
-        public override void Write(TLBinaryWriter to)
+        public override void Write(TLBinaryWriter to, bool cache = false)
         {
             using (var output = new MemoryStream())
             {
                 using (var writer = new TLBinaryWriter(output))
                 {
-                    Query.Write(writer);
+                    writer.WriteObject(Query, cache);
                     var buffer = output.ToArray();
 
                     to.Write(MsgId);

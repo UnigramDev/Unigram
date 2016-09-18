@@ -30,28 +30,30 @@ namespace Telegram.Api.TL.Methods.Contacts
 		public Int32 Hash { get; set; }
 
 		public TLContactsGetTopPeers() { }
-		public TLContactsGetTopPeers(TLBinaryReader from, TLType type = TLType.ContactsGetTopPeers)
+		public TLContactsGetTopPeers(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactsGetTopPeers; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ContactsGetTopPeers)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Offset = from.ReadInt32();
 			Limit = from.ReadInt32();
 			Hash = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xD4982DB5);
 			to.Write((Int32)Flags);
 			to.Write(Offset);
 			to.Write(Limit);
 			to.Write(Hash);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

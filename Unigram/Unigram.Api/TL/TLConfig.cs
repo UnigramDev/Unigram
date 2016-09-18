@@ -39,21 +39,21 @@ namespace Telegram.Api.TL
 		public TLVector<TLDisabledFeature> DisabledFeatures { get; set; }
 
 		public TLConfig() { }
-		public TLConfig(TLBinaryReader from, TLType type = TLType.Config)
+		public TLConfig(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.Config; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.Config)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Date = from.ReadInt32();
 			Expires = from.ReadInt32();
 			TestMode = from.ReadBoolean();
 			ThisDC = from.ReadInt32();
-			DCOptions = TLFactory.Read<TLVector<TLDCOption>>(from);
+			DCOptions = TLFactory.Read<TLVector<TLDCOption>>(from, cache);
 			ChatSizeMax = from.ReadInt32();
 			MegagroupSizeMax = from.ReadInt32();
 			ForwardedCountMax = from.ReadInt32();
@@ -71,10 +71,11 @@ namespace Telegram.Api.TL
 			RatingEDecay = from.ReadInt32();
 			StickersRecentLimit = from.ReadInt32();
 			if (HasTmpSessions) { TmpSessions = from.ReadInt32(); }
-			DisabledFeatures = TLFactory.Read<TLVector<TLDisabledFeature>>(from);
+			DisabledFeatures = TLFactory.Read<TLVector<TLDisabledFeature>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x9A6B2E2A);
 			to.Write((Int32)Flags);
@@ -82,7 +83,7 @@ namespace Telegram.Api.TL
 			to.Write(Expires);
 			to.Write(TestMode);
 			to.Write(ThisDC);
-			to.WriteObject(DCOptions);
+			to.WriteObject(DCOptions, cache);
 			to.Write(ChatSizeMax);
 			to.Write(MegagroupSizeMax);
 			to.Write(ForwardedCountMax);
@@ -100,7 +101,8 @@ namespace Telegram.Api.TL
 			to.Write(RatingEDecay);
 			to.Write(StickersRecentLimit);
 			if (HasTmpSessions) to.Write(TmpSessions.Value);
-			to.WriteObject(DisabledFeatures);
+			to.WriteObject(DisabledFeatures, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

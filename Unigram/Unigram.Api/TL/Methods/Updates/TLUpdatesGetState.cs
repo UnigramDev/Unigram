@@ -9,20 +9,22 @@ namespace Telegram.Api.TL.Methods.Updates
 	public partial class TLUpdatesGetState : TLObject
 	{
 		public TLUpdatesGetState() { }
-		public TLUpdatesGetState(TLBinaryReader from, TLType type = TLType.UpdatesGetState)
+		public TLUpdatesGetState(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdatesGetState; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdatesGetState)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xEDD4882A);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

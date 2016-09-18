@@ -8,22 +8,24 @@ namespace Telegram.Api.TL
 		public TLWebPageBase Webpage { get; set; }
 
 		public TLMessageMediaWebPage() { }
-		public TLMessageMediaWebPage(TLBinaryReader from, TLType type = TLType.MessageMediaWebPage)
+		public TLMessageMediaWebPage(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageMediaWebPage; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessageMediaWebPage)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Webpage = TLFactory.Read<TLWebPageBase>(from);
+			Webpage = TLFactory.Read<TLWebPageBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xA32DD600);
-			to.WriteObject(Webpage);
+			to.WriteObject(Webpage, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

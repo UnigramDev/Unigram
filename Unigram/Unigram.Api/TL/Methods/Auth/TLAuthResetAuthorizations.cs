@@ -9,20 +9,22 @@ namespace Telegram.Api.TL.Methods.Auth
 	public partial class TLAuthResetAuthorizations : TLObject
 	{
 		public TLAuthResetAuthorizations() { }
-		public TLAuthResetAuthorizations(TLBinaryReader from, TLType type = TLType.AuthResetAuthorizations)
+		public TLAuthResetAuthorizations(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AuthResetAuthorizations; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AuthResetAuthorizations)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x9FAB0D1A);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

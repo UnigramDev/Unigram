@@ -25,23 +25,24 @@ namespace Telegram.Api.TL.Methods.Auth
 		public String ApiHash { get; set; }
 
 		public TLAuthSendCode() { }
-		public TLAuthSendCode(TLBinaryReader from, TLType type = TLType.AuthSendCode)
+		public TLAuthSendCode(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AuthSendCode; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AuthSendCode)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			PhoneNumber = from.ReadString();
 			if (HasCurrentNumber) { CurrentNumber = from.ReadBoolean(); }
 			ApiId = from.ReadInt32();
 			ApiHash = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x86AEF0EC);
 			to.Write((Int32)Flags);
@@ -49,6 +50,7 @@ namespace Telegram.Api.TL.Methods.Auth
 			if (HasCurrentNumber) to.Write(CurrentNumber.Value);
 			to.Write(ApiId);
 			to.Write(ApiHash);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

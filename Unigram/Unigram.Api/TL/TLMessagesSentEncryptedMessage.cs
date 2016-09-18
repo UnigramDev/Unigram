@@ -7,22 +7,24 @@ namespace Telegram.Api.TL
 	{
 
 		public TLMessagesSentEncryptedMessage() { }
-		public TLMessagesSentEncryptedMessage(TLBinaryReader from, TLType type = TLType.MessagesSentEncryptedMessage)
+		public TLMessagesSentEncryptedMessage(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSentEncryptedMessage; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesSentEncryptedMessage)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Date = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x560F8935);
 			to.Write(Date);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

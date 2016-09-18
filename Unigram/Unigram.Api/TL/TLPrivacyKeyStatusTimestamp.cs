@@ -6,20 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLPrivacyKeyStatusTimestamp : TLPrivacyKeyBase 
 	{
 		public TLPrivacyKeyStatusTimestamp() { }
-		public TLPrivacyKeyStatusTimestamp(TLBinaryReader from, TLType type = TLType.PrivacyKeyStatusTimestamp)
+		public TLPrivacyKeyStatusTimestamp(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.PrivacyKeyStatusTimestamp; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.PrivacyKeyStatusTimestamp)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xBC2EAB30);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

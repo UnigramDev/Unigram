@@ -7,28 +7,30 @@ namespace Telegram.Api.TL
 	{
 
 		public TLInputMediaUploadedDocument() { }
-		public TLInputMediaUploadedDocument(TLBinaryReader from, TLType type = TLType.InputMediaUploadedDocument)
+		public TLInputMediaUploadedDocument(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.InputMediaUploadedDocument; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.InputMediaUploadedDocument)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			File = TLFactory.Read<TLInputFileBase>(from);
+			File = TLFactory.Read<TLInputFileBase>(from, cache);
 			MimeType = from.ReadString();
-			Attributes = TLFactory.Read<TLVector<TLDocumentAttributeBase>>(from);
+			Attributes = TLFactory.Read<TLVector<TLDocumentAttributeBase>>(from, cache);
 			Caption = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x1D89306D);
-			to.WriteObject(File);
+			to.WriteObject(File, cache);
 			to.Write(MimeType);
-			to.WriteObject(Attributes);
+			to.WriteObject(Attributes, cache);
 			to.Write(Caption);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -6,20 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLInputMessagesFilterVideo : TLMessagesFilterBase 
 	{
 		public TLInputMessagesFilterVideo() { }
-		public TLInputMessagesFilterVideo(TLBinaryReader from, TLType type = TLType.InputMessagesFilterVideo)
+		public TLInputMessagesFilterVideo(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.InputMessagesFilterVideo; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.InputMessagesFilterVideo)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x9FC00E65);
+			if (cache) WriteToCache(to);
 		}
 	}
 }
