@@ -16,32 +16,34 @@ namespace Telegram.Api.TL.Methods
 		public Byte[] EncryptedData { get; set; }
 
 		public TLReqDHParams() { }
-		public TLReqDHParams(TLBinaryReader from, TLType type = TLType.ReqDHParams)
+		public TLReqDHParams(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ReqDHParams; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ReqDHParams)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Nonce = new TLInt128(from);
-			ServerNonce = new TLInt128(from);
+			Nonce = new TLInt128(from, cache);
+			ServerNonce = new TLInt128(from, cache);
 			P = from.ReadByteArray();
 			Q = from.ReadByteArray();
 			PublicKeyFingerprint = from.ReadInt64();
 			EncryptedData = from.ReadByteArray();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xD712E4BE);
-			to.WriteObject(Nonce);
-			to.WriteObject(ServerNonce);
+			to.WriteObject(Nonce, cache);
+			to.WriteObject(ServerNonce, cache);
 			to.WriteByteArray(P);
 			to.WriteByteArray(Q);
 			to.Write(PublicKeyFingerprint);
 			to.WriteByteArray(EncryptedData);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

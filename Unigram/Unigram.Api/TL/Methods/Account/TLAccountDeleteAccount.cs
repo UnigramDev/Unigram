@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Account
 		public String Reason { get; set; }
 
 		public TLAccountDeleteAccount() { }
-		public TLAccountDeleteAccount(TLBinaryReader from, TLType type = TLType.AccountDeleteAccount)
+		public TLAccountDeleteAccount(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountDeleteAccount; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AccountDeleteAccount)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Reason = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x418D4E0B);
 			to.Write(Reason);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

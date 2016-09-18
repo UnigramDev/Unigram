@@ -12,24 +12,26 @@ namespace Telegram.Api.TL.Methods.Photos
 		public TLInputPhotoCropBase Crop { get; set; }
 
 		public TLPhotosUpdateProfilePhoto() { }
-		public TLPhotosUpdateProfilePhoto(TLBinaryReader from, TLType type = TLType.PhotosUpdateProfilePhoto)
+		public TLPhotosUpdateProfilePhoto(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.PhotosUpdateProfilePhoto; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.PhotosUpdateProfilePhoto)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Id = TLFactory.Read<TLInputPhotoBase>(from);
-			Crop = TLFactory.Read<TLInputPhotoCropBase>(from);
+			Id = TLFactory.Read<TLInputPhotoBase>(from, cache);
+			Crop = TLFactory.Read<TLInputPhotoCropBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xEEF579A0);
-			to.WriteObject(Id);
-			to.WriteObject(Crop);
+			to.WriteObject(Id, cache);
+			to.WriteObject(Crop, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

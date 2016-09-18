@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
 using Template10.Services.SerializationService;
 using Unigram.Controls;
+using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Core.Notifications;
 using Unigram.ViewModels;
@@ -228,9 +229,14 @@ namespace Unigram.Views
             }
         }
 
-        private void PivotItem_Loaded(object sender, RoutedEventArgs e)
+        private async void PivotItem_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.getTLContacts();
+            await ViewModel.getTLContacts();
+            SelfNameField.Text = ViewModel.Self.FullName;
+            SelfPhoneField.Text = ViewModel.Self.Phone;
+            ImageBrush photo= new ImageBrush();
+            photo.ImageSource = DefaultPhotoConverter.Convert(ViewModel.Self.Photo) as ImageSource;
+            SelfPhotoField.Fill = photo;
         }
 
         private void UsersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -14,28 +14,30 @@ namespace Telegram.Api.TL.Methods.Auth
 		public String BotAuthToken { get; set; }
 
 		public TLAuthImportBotAuthorization() { }
-		public TLAuthImportBotAuthorization(TLBinaryReader from, TLType type = TLType.AuthImportBotAuthorization)
+		public TLAuthImportBotAuthorization(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AuthImportBotAuthorization; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AuthImportBotAuthorization)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = from.ReadInt32();
 			ApiId = from.ReadInt32();
 			ApiHash = from.ReadString();
 			BotAuthToken = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x67A3FF2C);
 			to.Write(Flags);
 			to.Write(ApiId);
 			to.Write(ApiHash);
 			to.Write(BotAuthToken);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Contacts
 		public TLVector<TLInputUserBase> Id { get; set; }
 
 		public TLContactsDeleteContacts() { }
-		public TLContactsDeleteContacts(TLBinaryReader from, TLType type = TLType.ContactsDeleteContacts)
+		public TLContactsDeleteContacts(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactsDeleteContacts; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ContactsDeleteContacts)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Id = TLFactory.Read<TLVector<TLInputUserBase>>(from);
+			Id = TLFactory.Read<TLVector<TLInputUserBase>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x59AB389E);
-			to.WriteObject(Id);
+			to.WriteObject(Id, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

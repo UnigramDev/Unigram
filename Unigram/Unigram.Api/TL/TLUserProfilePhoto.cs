@@ -10,26 +10,28 @@ namespace Telegram.Api.TL
 		public TLFileLocationBase PhotoBig { get; set; }
 
 		public TLUserProfilePhoto() { }
-		public TLUserProfilePhoto(TLBinaryReader from, TLType type = TLType.UserProfilePhoto)
+		public TLUserProfilePhoto(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UserProfilePhoto; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UserProfilePhoto)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			PhotoId = from.ReadInt64();
-			PhotoSmall = TLFactory.Read<TLFileLocationBase>(from);
-			PhotoBig = TLFactory.Read<TLFileLocationBase>(from);
+			PhotoSmall = TLFactory.Read<TLFileLocationBase>(from, cache);
+			PhotoBig = TLFactory.Read<TLFileLocationBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xD559D8C8);
 			to.Write(PhotoId);
-			to.WriteObject(PhotoSmall);
-			to.WriteObject(PhotoBig);
+			to.WriteObject(PhotoSmall, cache);
+			to.WriteObject(PhotoBig, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

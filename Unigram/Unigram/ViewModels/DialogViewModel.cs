@@ -23,6 +23,8 @@ using System.Collections.Specialized;
 using System.Collections;
 using System.ComponentModel;
 using Windows.UI.Xaml;
+using Unigram.Converters;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.ViewModels
 {
@@ -43,8 +45,8 @@ namespace Unigram.ViewModels
         public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-        }       
-
+        }
+        public object photo;
         public string SendTextHolder;
         public TLUser user;
         private TLUserBase _item;
@@ -235,6 +237,7 @@ namespace Unigram.ViewModels
                 //Happy Birthday Alexmitter xD
                 Messages.Clear();
                 Item = user;
+                photo = (TLUserProfilePhotoBase)user.Photo;
                 DialogTitle = Item.FullName;
                 LastSeen = LastSeenHelper.getLastSeen(user).Item1;
                 LastSeenVisible = Visibility.Visible;
@@ -248,9 +251,10 @@ namespace Unigram.ViewModels
             {
                 TLInputChannel x=new TLInputChannel();                
                 x.ChannelId = channel.ChannelId;
-                x.AccessHash = channel.AccessHash;                
+                x.AccessHash = channel.AccessHash;
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);                
                 DialogTitle = channelDetails.Value.Chats[0].FullName;
+                photo = (TLChatPhotoBase)channelDetails.Value.Chats[0].Photo;
                 LastSeenVisible = Visibility.Collapsed;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerChannel { ChannelId = x.ChannelId, AccessHash = x.AccessHash };
@@ -263,6 +267,7 @@ namespace Unigram.ViewModels
             {
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
                 DialogTitle = chatDetails.Value.Chats[0].FullName;
+                photo = (TLChatPhotoBase)chatDetails.Value.Chats[0].Photo;
                 LastSeenVisible = Visibility.Collapsed;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };

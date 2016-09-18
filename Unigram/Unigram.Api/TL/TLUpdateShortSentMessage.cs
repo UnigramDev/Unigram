@@ -21,25 +21,26 @@ namespace Telegram.Api.TL
 		public TLMessageMediaBase Media { get; set; }
 
 		public TLUpdateShortSentMessage() { }
-		public TLUpdateShortSentMessage(TLBinaryReader from, TLType type = TLType.UpdateShortSentMessage)
+		public TLUpdateShortSentMessage(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateShortSentMessage; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdateShortSentMessage)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
 			Pts = from.ReadInt32();
 			PtsCount = from.ReadInt32();
 			Date = from.ReadInt32();
-			if (HasMedia) { Media = TLFactory.Read<TLMessageMediaBase>(from); }
-			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from); }
+			if (HasMedia) { Media = TLFactory.Read<TLMessageMediaBase>(from, cache); }
+			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x11F1331C);
 			to.Write((Int32)Flags);
@@ -47,8 +48,9 @@ namespace Telegram.Api.TL
 			to.Write(Pts);
 			to.Write(PtsCount);
 			to.Write(Date);
-			if (HasMedia) to.WriteObject(Media);
-			if (HasEntities) to.WriteObject(Entities);
+			if (HasMedia) to.WriteObject(Media, cache);
+			if (HasEntities) to.WriteObject(Entities, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

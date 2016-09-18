@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods
 		public TLInt128 Nonce { get; set; }
 
 		public TLReqPQ() { }
-		public TLReqPQ(TLBinaryReader from, TLType type = TLType.ReqPQ)
+		public TLReqPQ(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ReqPQ; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ReqPQ)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Nonce = new TLInt128(from);
+			Nonce = new TLInt128(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x60469778);
-			to.WriteObject(Nonce);
+			to.WriteObject(Nonce, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

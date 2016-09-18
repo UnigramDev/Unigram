@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Account
 		public Int32 Period { get; set; }
 
 		public TLAccountUpdateDeviceLocked() { }
-		public TLAccountUpdateDeviceLocked(TLBinaryReader from, TLType type = TLType.AccountUpdateDeviceLocked)
+		public TLAccountUpdateDeviceLocked(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountUpdateDeviceLocked; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AccountUpdateDeviceLocked)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Period = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x38DF3532);
 			to.Write(Period);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

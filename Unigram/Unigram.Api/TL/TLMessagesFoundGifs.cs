@@ -9,24 +9,26 @@ namespace Telegram.Api.TL
 		public TLVector<TLFoundGifBase> Results { get; set; }
 
 		public TLMessagesFoundGifs() { }
-		public TLMessagesFoundGifs(TLBinaryReader from, TLType type = TLType.MessagesFoundGifs)
+		public TLMessagesFoundGifs(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesFoundGifs; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesFoundGifs)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			NextOffset = from.ReadInt32();
-			Results = TLFactory.Read<TLVector<TLFoundGifBase>>(from);
+			Results = TLFactory.Read<TLVector<TLFoundGifBase>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x450A1C0A);
 			to.Write(NextOffset);
-			to.WriteObject(Results);
+			to.WriteObject(Results, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

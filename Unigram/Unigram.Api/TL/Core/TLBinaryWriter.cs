@@ -62,11 +62,11 @@ namespace Telegram.Api.TL
             }
         }
 
-        public void WriteObject(TLObject obj)
+        public void WriteObject(TLObject obj, bool toCache)
         {
             if (obj != null)
             {
-                obj.Write(this);
+                obj.Write(this, toCache);
             }
             else
             {

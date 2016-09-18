@@ -8,32 +8,34 @@ namespace Telegram.Api.TL
 		public TLUpdatesState State { get; set; }
 
 		public TLUpdatesDifference() { }
-		public TLUpdatesDifference(TLBinaryReader from, TLType type = TLType.UpdatesDifference)
+		public TLUpdatesDifference(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdatesDifference; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdatesDifference)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			NewMessages = TLFactory.Read<TLVector<TLMessageBase>>(from);
-			NewEncryptedMessages = TLFactory.Read<TLVector<TLEncryptedMessageBase>>(from);
-			OtherUpdates = TLFactory.Read<TLVector<TLUpdateBase>>(from);
-			Chats = TLFactory.Read<TLVector<TLChatBase>>(from);
-			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
-			State = TLFactory.Read<TLUpdatesState>(from);
+			NewMessages = TLFactory.Read<TLVector<TLMessageBase>>(from, cache);
+			NewEncryptedMessages = TLFactory.Read<TLVector<TLEncryptedMessageBase>>(from, cache);
+			OtherUpdates = TLFactory.Read<TLVector<TLUpdateBase>>(from, cache);
+			Chats = TLFactory.Read<TLVector<TLChatBase>>(from, cache);
+			Users = TLFactory.Read<TLVector<TLUserBase>>(from, cache);
+			State = TLFactory.Read<TLUpdatesState>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xF49CA0);
-			to.WriteObject(NewMessages);
-			to.WriteObject(NewEncryptedMessages);
-			to.WriteObject(OtherUpdates);
-			to.WriteObject(Chats);
-			to.WriteObject(Users);
-			to.WriteObject(State);
+			to.WriteObject(NewMessages, cache);
+			to.WriteObject(NewEncryptedMessages, cache);
+			to.WriteObject(OtherUpdates, cache);
+			to.WriteObject(Chats, cache);
+			to.WriteObject(Users, cache);
+			to.WriteObject(State, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -8,22 +8,24 @@ namespace Telegram.Api.TL
 		public TLVector<Int64> MsgIds { get; set; }
 
 		public TLMsgsStateReq() { }
-		public TLMsgsStateReq(TLBinaryReader from, TLType type = TLType.MsgsStateReq)
+		public TLMsgsStateReq(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MsgsStateReq; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MsgsStateReq)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			MsgIds = TLFactory.Read<TLVector<Int64>>(from);
+			MsgIds = TLFactory.Read<TLVector<Int64>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xDA69FB52);
-			to.WriteObject(MsgIds);
+			to.WriteObject(MsgIds, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

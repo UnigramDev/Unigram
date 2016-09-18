@@ -31,14 +31,14 @@ namespace Telegram.Api.TL
 		public Int32 UserId { get; set; }
 
 		public TLUpdateShortMessage() { }
-		public TLUpdateShortMessage(TLBinaryReader from, TLType type = TLType.UpdateShortMessage)
+		public TLUpdateShortMessage(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateShortMessage; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdateShortMessage)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
@@ -47,13 +47,14 @@ namespace Telegram.Api.TL
 			Pts = from.ReadInt32();
 			PtsCount = from.ReadInt32();
 			Date = from.ReadInt32();
-			if (HasFwdFrom) { FwdFrom = TLFactory.Read<TLMessageFwdHeader>(from); }
+			if (HasFwdFrom) { FwdFrom = TLFactory.Read<TLMessageFwdHeader>(from, cache); }
 			if (HasViaBotId) { ViaBotId = from.ReadInt32(); }
 			if (HasReplyToMsgId) { ReplyToMsgId = from.ReadInt32(); }
-			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from); }
+			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x914FBF11);
 			to.Write((Int32)Flags);
@@ -63,10 +64,11 @@ namespace Telegram.Api.TL
 			to.Write(Pts);
 			to.Write(PtsCount);
 			to.Write(Date);
-			if (HasFwdFrom) to.WriteObject(FwdFrom);
+			if (HasFwdFrom) to.WriteObject(FwdFrom, cache);
 			if (HasViaBotId) to.Write(ViaBotId.Value);
 			if (HasReplyToMsgId) to.Write(ReplyToMsgId.Value);
-			if (HasEntities) to.WriteObject(Entities);
+			if (HasEntities) to.WriteObject(Entities, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

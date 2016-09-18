@@ -8,26 +8,28 @@ namespace Telegram.Api.TL
 		public TLInt128 NewNonceHash1 { get; set; }
 
 		public TLDHGenOk() { }
-		public TLDHGenOk(TLBinaryReader from, TLType type = TLType.DHGenOk)
+		public TLDHGenOk(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.DHGenOk; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.DHGenOk)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Nonce = new TLInt128(from);
-			ServerNonce = new TLInt128(from);
-			NewNonceHash1 = new TLInt128(from);
+			Nonce = new TLInt128(from, cache);
+			ServerNonce = new TLInt128(from, cache);
+			NewNonceHash1 = new TLInt128(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x3BCBF734);
-			to.WriteObject(Nonce);
-			to.WriteObject(ServerNonce);
-			to.WriteObject(NewNonceHash1);
+			to.WriteObject(Nonce, cache);
+			to.WriteObject(ServerNonce, cache);
+			to.WriteObject(NewNonceHash1, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

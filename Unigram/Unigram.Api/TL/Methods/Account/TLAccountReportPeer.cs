@@ -12,24 +12,26 @@ namespace Telegram.Api.TL.Methods.Account
 		public TLReportReasonBase Reason { get; set; }
 
 		public TLAccountReportPeer() { }
-		public TLAccountReportPeer(TLBinaryReader from, TLType type = TLType.AccountReportPeer)
+		public TLAccountReportPeer(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountReportPeer; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AccountReportPeer)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Peer = TLFactory.Read<TLInputPeerBase>(from);
-			Reason = TLFactory.Read<TLReportReasonBase>(from);
+			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
+			Reason = TLFactory.Read<TLReportReasonBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xAE189D5F);
-			to.WriteObject(Peer);
-			to.WriteObject(Reason);
+			to.WriteObject(Peer, cache);
+			to.WriteObject(Reason, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

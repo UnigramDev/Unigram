@@ -40,14 +40,14 @@ namespace Telegram.Api.TL
 		public Int32? PinnedMsgId { get; set; }
 
 		public TLChannelFull() { }
-		public TLChannelFull(TLBinaryReader from, TLType type = TLType.ChannelFull)
+		public TLChannelFull(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelFull; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ChannelFull)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
@@ -58,16 +58,17 @@ namespace Telegram.Api.TL
 			ReadInboxMaxId = from.ReadInt32();
 			ReadOutboxMaxId = from.ReadInt32();
 			UnreadCount = from.ReadInt32();
-			ChatPhoto = TLFactory.Read<TLPhotoBase>(from);
-			NotifySettings = TLFactory.Read<TLPeerNotifySettingsBase>(from);
-			ExportedInvite = TLFactory.Read<TLExportedChatInviteBase>(from);
-			BotInfo = TLFactory.Read<TLVector<TLBotInfo>>(from);
+			ChatPhoto = TLFactory.Read<TLPhotoBase>(from, cache);
+			NotifySettings = TLFactory.Read<TLPeerNotifySettingsBase>(from, cache);
+			ExportedInvite = TLFactory.Read<TLExportedChatInviteBase>(from, cache);
+			BotInfo = TLFactory.Read<TLVector<TLBotInfo>>(from, cache);
 			if (HasMigratedFromChatId) { MigratedFromChatId = from.ReadInt32(); }
 			if (HasMigratedFromMaxId) { MigratedFromMaxId = from.ReadInt32(); }
 			if (HasPinnedMsgId) { PinnedMsgId = from.ReadInt32(); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xC3D5512F);
 			to.Write((Int32)Flags);
@@ -79,13 +80,14 @@ namespace Telegram.Api.TL
 			to.Write(ReadInboxMaxId);
 			to.Write(ReadOutboxMaxId);
 			to.Write(UnreadCount);
-			to.WriteObject(ChatPhoto);
-			to.WriteObject(NotifySettings);
-			to.WriteObject(ExportedInvite);
-			to.WriteObject(BotInfo);
+			to.WriteObject(ChatPhoto, cache);
+			to.WriteObject(NotifySettings, cache);
+			to.WriteObject(ExportedInvite, cache);
+			to.WriteObject(BotInfo, cache);
 			if (HasMigratedFromChatId) to.Write(MigratedFromChatId.Value);
 			if (HasMigratedFromMaxId) to.Write(MigratedFromMaxId.Value);
 			if (HasPinnedMsgId) to.Write(PinnedMsgId.Value);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

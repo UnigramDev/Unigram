@@ -12,24 +12,26 @@ namespace Telegram.Api.TL.Methods
 		public Int32 DisconnectDelay { get; set; }
 
 		public TLPingDelayDisconnect() { }
-		public TLPingDelayDisconnect(TLBinaryReader from, TLType type = TLType.PingDelayDisconnect)
+		public TLPingDelayDisconnect(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.PingDelayDisconnect; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.PingDelayDisconnect)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			PingId = from.ReadInt64();
 			DisconnectDelay = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xF3427B8C);
 			to.Write(PingId);
 			to.Write(DisconnectDelay);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

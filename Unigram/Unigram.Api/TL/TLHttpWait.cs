@@ -10,26 +10,28 @@ namespace Telegram.Api.TL
 		public Int32 MaxWait { get; set; }
 
 		public TLHttpWait() { }
-		public TLHttpWait(TLBinaryReader from, TLType type = TLType.HttpWait)
+		public TLHttpWait(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.HttpWait; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.HttpWait)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			MaxDelay = from.ReadInt32();
 			WaitAfter = from.ReadInt32();
 			MaxWait = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x9299359F);
 			to.Write(MaxDelay);
 			to.Write(WaitAfter);
 			to.Write(MaxWait);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

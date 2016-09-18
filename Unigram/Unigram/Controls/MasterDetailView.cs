@@ -66,8 +66,17 @@ namespace Unigram.Controls
             {
                 if (CurrentState != MasterDetailState.Narrow)
                 {
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                        AppViewBackButtonVisibility.Collapsed;
+                    if (DetailFrame.SourcePageType == typeof(DialogPage) ||
+                        DetailFrame.SourcePageType == typeof(AboutPage) ||
+                        DetailFrame.SourcePageType == typeof(SettingsPage))
+                    {
+                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                            AppViewBackButtonVisibility.Collapsed;
+                    }else
+                    {
+                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                        AppViewBackButtonVisibility.Visible;
+                    }
                 }
                 else
                 {
@@ -175,9 +184,11 @@ namespace Unigram.Controls
                     board.Children.Add(anim);
                     board.Begin();
                 }
-            }else
+            }
+            else
             {
-                // While in Filled (wide) state, if a page is already open remove it from backstack. 
+                // While in Filled (wide) state, if a page is already open remove it from backstack in
+                // some particular cases. 
                 if (e.NavigationMode == NavigationMode.New && DetailFrame.BackStackDepth > 1)
                 {
 
@@ -195,13 +206,14 @@ namespace Unigram.Controls
                         {
                             DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
                         }
-                        
+                        UpdateVisualState();
+
                     }
                     // When the new page is a chat
                     else if (e.SourcePageType == typeof(DialogPage))
                     {
                         // The user opened first a chat, then the userinfo. Remove them from backstack.
-                        if(DetailFrame.BackStackDepth == 3)
+                        if (DetailFrame.BackStackDepth == 3)
                         {
                             DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
                             DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
@@ -211,11 +223,20 @@ namespace Unigram.Controls
                         {
                             DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
                         }
-                        
+                        UpdateVisualState();
+                    }
+                    // When the new page is user info show the back button in titlebar.
+                    else if (e.SourcePageType == typeof(UserInfoPage))
+                    {
+                        UpdateVisualState();
                     }
                 }
+                // Hide back button in filled (wide) state
+                else if (e.NavigationMode == NavigationMode.Back && DetailFrame.BackStackDepth <= 1)
+                {
+                    UpdateVisualState();
+                }
             }
-
         }
 
         #region Initialize
@@ -274,7 +295,10 @@ namespace Unigram.Controls
         {
             get
             {
-                return DetailFrame.CanGoBack && AdaptiveStates.CurrentState.Name == NarrowState;
+                return DetailFrame.CanGoBack;
+                
+                // BEFORE BACK NAVIGATION IN FILLED (WIDE) STATE FIX.
+                // return DetailFrame.CanGoBack && AdaptiveStates.CurrentState.Name == NarrowState;
             }
         }
 

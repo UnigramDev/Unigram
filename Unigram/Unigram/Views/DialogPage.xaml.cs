@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Telegram.Api.TL;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
@@ -136,7 +137,15 @@ namespace Unigram.Views
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
         {
             var user = ViewModel.user;
-            ViewModel.NavigationService.Navigate(typeof(UserInfoPage), user);
+            var channel = ViewModel.channel;
+            var chat = ViewModel.chat;
+            if(user!=null)
+                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), user);
+            if(channel!=null)
+                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), channel);
+            if (chat != null)
+                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), chat);
+
         }
 
         private async void fcbtnAttachPhoto_Click(object sender, RoutedEventArgs e)

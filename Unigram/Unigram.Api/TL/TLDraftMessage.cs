@@ -24,30 +24,32 @@ namespace Telegram.Api.TL
 		public Int32 Date { get; set; }
 
 		public TLDraftMessage() { }
-		public TLDraftMessage(TLBinaryReader from, TLType type = TLType.DraftMessage)
+		public TLDraftMessage(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.DraftMessage; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.DraftMessage)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			if (HasReplyToMsgId) { ReplyToMsgId = from.ReadInt32(); }
 			Message = from.ReadString();
-			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from); }
+			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache); }
 			Date = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xFD8E711F);
 			to.Write((Int32)Flags);
 			if (HasReplyToMsgId) to.Write(ReplyToMsgId.Value);
 			to.Write(Message);
-			if (HasEntities) to.WriteObject(Entities);
+			if (HasEntities) to.WriteObject(Entities, cache);
 			to.Write(Date);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

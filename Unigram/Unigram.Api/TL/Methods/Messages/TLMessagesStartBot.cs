@@ -14,28 +14,30 @@ namespace Telegram.Api.TL.Methods.Messages
 		public String StartParam { get; set; }
 
 		public TLMessagesStartBot() { }
-		public TLMessagesStartBot(TLBinaryReader from, TLType type = TLType.MessagesStartBot)
+		public TLMessagesStartBot(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesStartBot; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesStartBot)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Bot = TLFactory.Read<TLInputUserBase>(from);
-			Peer = TLFactory.Read<TLInputPeerBase>(from);
+			Bot = TLFactory.Read<TLInputUserBase>(from, cache);
+			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
 			RandomId = from.ReadInt64();
 			StartParam = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xE6DF7378);
-			to.WriteObject(Bot);
-			to.WriteObject(Peer);
+			to.WriteObject(Bot, cache);
+			to.WriteObject(Peer, cache);
 			to.Write(RandomId);
 			to.Write(StartParam);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

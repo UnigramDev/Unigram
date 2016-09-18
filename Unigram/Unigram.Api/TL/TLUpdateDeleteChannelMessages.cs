@@ -7,28 +7,30 @@ namespace Telegram.Api.TL
 	{
 
 		public TLUpdateDeleteChannelMessages() { }
-		public TLUpdateDeleteChannelMessages(TLBinaryReader from, TLType type = TLType.UpdateDeleteChannelMessages)
+		public TLUpdateDeleteChannelMessages(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateDeleteChannelMessages; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdateDeleteChannelMessages)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			ChannelId = from.ReadInt32();
-			Messages = TLFactory.Read<TLVector<Int32>>(from);
+			Messages = TLFactory.Read<TLVector<Int32>>(from, cache);
 			Pts = from.ReadInt32();
 			PtsCount = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xC37521C9);
 			to.Write(ChannelId);
-			to.WriteObject(Messages);
+			to.WriteObject(Messages, cache);
 			to.Write(Pts);
 			to.Write(PtsCount);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

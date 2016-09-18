@@ -12,14 +12,14 @@ namespace Telegram.Api.TL
 		public Int32 H { get; set; }
 
 		public TLFoundGif() { }
-		public TLFoundGif(TLBinaryReader from, TLType type = TLType.FoundGif)
+		public TLFoundGif(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.FoundGif; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.FoundGif)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Url = from.ReadString();
 			ThumbUrl = from.ReadString();
@@ -27,9 +27,10 @@ namespace Telegram.Api.TL
 			ContentType = from.ReadString();
 			W = from.ReadInt32();
 			H = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x162ECC1F);
 			to.Write(Url);
@@ -38,6 +39,7 @@ namespace Telegram.Api.TL
 			to.Write(ContentType);
 			to.Write(W);
 			to.Write(H);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

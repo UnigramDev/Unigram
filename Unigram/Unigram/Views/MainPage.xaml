@@ -70,9 +70,9 @@
                     <PivotItem.Header>
                         <controls:TabHeaderStyle Glyph="&#xE125;"/>
                     </PivotItem.Header>
-                    <ListView Margin="0,4,0,0" x:Name="UsersListView" ItemsSource="{x:Bind Path=ViewModel.UsersList}" SelectionChanged="UsersListView_SelectionChanged">
+                    <ListView Margin="0,0,0,0" x:Name="UsersListView" ItemsSource="{x:Bind Path=ViewModel.UsersList}" SelectionChanged="UsersListView_SelectionChanged">
                         <ListView.Header>
-                            <Grid Height="120">
+                            <Grid Height="120" Margin="0,0,0,4" Background="{ThemeResource AppBarBackground}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="*"/>
@@ -81,13 +81,12 @@
                                     <ColumnDefinition Width="96"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Ellipse Height="72" Width="72" VerticalAlignment="Center" Grid.RowSpan="2" Grid.Column="0">
+                                <Ellipse x:Name="SelfPhotoField" Height="72" Width="72" VerticalAlignment="Center" Grid.RowSpan="2" Grid.Column="0">
                                     <Ellipse.Fill>
-                                        <ImageBrush ImageSource="{x:Bind ViewModel.Self.Photo,Mode=OneWay, Converter={StaticResource DefaultPhotoConverter} ,FallbackValue='ms-appx:///Assets/Mockups/UserIcons/user_batman.png' }" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                                    </Ellipse.Fill>
+                                        <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>                                    </Ellipse.Fill>
                                 </Ellipse>
-                                <TextBlock Text="{x:Bind ViewModel.Self.FullName ,Mode=OneWay, FallbackValue='Batman'}" Margin="12,0,0,0" VerticalAlignment="Bottom" FontSize="20" Grid.Row="0" Grid.Column="1"/>
-                                <TextBlock Text="{x:Bind ViewModel.Self.Phone ,Mode=OneWay, FallbackValue='1800-800-HELP'}" Margin="12,0,0,0" Style="{ThemeResource BodyTextBlockStyle}" 
+                                <TextBlock x:Name="SelfNameField" Text="Batman" Margin="12,0,0,0" VerticalAlignment="Bottom" FontSize="20" Grid.Row="0" Grid.Column="1"/>
+                                <TextBlock x:Name="SelfPhoneField" Text="1800-800-HELP" Margin="12,0,0,0" Style="{ThemeResource BodyTextBlockStyle}" 
                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" FontSize="16" Grid.Row="1" Grid.Column="1"/>
                             </Grid>
                         </ListView.Header>
@@ -115,8 +114,8 @@
                                             <ImageBrush ImageSource="{x:Bind _parent.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
                                         </Ellipse.Fill>
                                     </Ellipse>
-                                    <TextBlock Text="{x:Bind fullName}" Grid.Column="1" Grid.Row="0"/>
-                                    <TextBlock Text="{x:Bind lastSeen}" Grid.Column="1" Grid.Row="1"
+                                    <TextBlock Text="{x:Bind fullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                    <TextBlock Text="{x:Bind lastSeen}" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"
                                                Style="{ThemeResource BodyTextBlockStyle}" 
                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                        TextTrimming="CharacterEllipsis" 

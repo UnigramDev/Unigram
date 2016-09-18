@@ -9,24 +9,26 @@ namespace Telegram.Api.TL
 		public Double Lat { get; set; }
 
 		public TLGeoPoint() { }
-		public TLGeoPoint(TLBinaryReader from, TLType type = TLType.GeoPoint)
+		public TLGeoPoint(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.GeoPoint; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.GeoPoint)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Long = from.ReadDouble();
 			Lat = from.ReadDouble();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x2049D70C);
 			to.Write(Long);
 			to.Write(Lat);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLInputStickerSetBase Stickerset { get; set; }
 
 		public TLMessagesUninstallStickerSet() { }
-		public TLMessagesUninstallStickerSet(TLBinaryReader from, TLType type = TLType.MessagesUninstallStickerSet)
+		public TLMessagesUninstallStickerSet(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesUninstallStickerSet; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesUninstallStickerSet)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Stickerset = TLFactory.Read<TLInputStickerSetBase>(from);
+			Stickerset = TLFactory.Read<TLInputStickerSetBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xF96E55DE);
-			to.WriteObject(Stickerset);
+			to.WriteObject(Stickerset, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

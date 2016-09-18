@@ -25,23 +25,24 @@ namespace Telegram.Api.TL
 		public Byte[] Waveform { get; set; }
 
 		public TLDocumentAttributeAudio() { }
-		public TLDocumentAttributeAudio(TLBinaryReader from, TLType type = TLType.DocumentAttributeAudio)
+		public TLDocumentAttributeAudio(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.DocumentAttributeAudio; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.DocumentAttributeAudio)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Duration = from.ReadInt32();
 			if (HasTitle) { Title = from.ReadString(); }
 			if (HasPerformer) { Performer = from.ReadString(); }
 			if (HasWaveform) { Waveform = from.ReadByteArray(); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x9852F9C6);
 			to.Write((Int32)Flags);
@@ -49,6 +50,7 @@ namespace Telegram.Api.TL
 			if (HasTitle) to.Write(Title);
 			if (HasPerformer) to.Write(Performer);
 			if (HasWaveform) to.WriteByteArray(Waveform);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

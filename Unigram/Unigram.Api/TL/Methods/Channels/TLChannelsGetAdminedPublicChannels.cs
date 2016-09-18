@@ -9,20 +9,22 @@ namespace Telegram.Api.TL.Methods.Channels
 	public partial class TLChannelsGetAdminedPublicChannels : TLObject
 	{
 		public TLChannelsGetAdminedPublicChannels() { }
-		public TLChannelsGetAdminedPublicChannels(TLBinaryReader from, TLType type = TLType.ChannelsGetAdminedPublicChannels)
+		public TLChannelsGetAdminedPublicChannels(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelsGetAdminedPublicChannels; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ChannelsGetAdminedPublicChannels)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x8D8D82D7);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -24,23 +24,24 @@ namespace Telegram.Api.TL
 		public Int32? ChannelPost { get; set; }
 
 		public TLMessageFwdHeader() { }
-		public TLMessageFwdHeader(TLBinaryReader from, TLType type = TLType.MessageFwdHeader)
+		public TLMessageFwdHeader(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageFwdHeader; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessageFwdHeader)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			if (HasFromId) { FromId = from.ReadInt32(); }
 			Date = from.ReadInt32();
 			if (HasChannelId) { ChannelId = from.ReadInt32(); }
 			if (HasChannelPost) { ChannelPost = from.ReadInt32(); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xC786DDCB);
 			to.Write((Int32)Flags);
@@ -48,6 +49,7 @@ namespace Telegram.Api.TL
 			to.Write(Date);
 			if (HasChannelId) to.Write(ChannelId.Value);
 			if (HasChannelPost) to.Write(ChannelPost.Value);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

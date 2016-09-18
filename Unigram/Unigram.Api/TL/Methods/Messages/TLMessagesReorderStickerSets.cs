@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLVector<Int64> Order { get; set; }
 
 		public TLMessagesReorderStickerSets() { }
-		public TLMessagesReorderStickerSets(TLBinaryReader from, TLType type = TLType.MessagesReorderStickerSets)
+		public TLMessagesReorderStickerSets(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesReorderStickerSets; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesReorderStickerSets)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Order = TLFactory.Read<TLVector<Int64>>(from);
+			Order = TLFactory.Read<TLVector<Int64>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x9FCFBC30);
-			to.WriteObject(Order);
+			to.WriteObject(Order, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }
