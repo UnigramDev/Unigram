@@ -32,16 +32,21 @@ namespace Unigram.Core.Services
             using (await _registrationLock.WaitAsync())
             {
                 if (_alreadyRegistered) return;
+                _alreadyRegistered = true;
 
-                var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                if (channel.Uri != SettingsHelper.ChannelUri)
+                try
                 {
-                    var result = await _protoService.RegisterDeviceAsync(8, channel.Uri);
-                    if (result.IsSucceeded && result.Value)
+                    var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+                    if (channel.Uri != SettingsHelper.ChannelUri)
                     {
-                        SettingsHelper.ChannelUri = channel.Uri;
+                        var result = await _protoService.RegisterDeviceAsync(8, channel.Uri);
+                        if (result.IsSucceeded && result.Value)
+                        {
+                            SettingsHelper.ChannelUri = channel.Uri;
+                        }
                     }
                 }
+                catch { }
             }
         }
     }

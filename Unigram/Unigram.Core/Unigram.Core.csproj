@@ -121,6 +121,7 @@
     <Compile Include="Services\IExtendedDeviceInfoService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Services\TLSerializationService.cs" />
     <EmbeddedResource Include="Properties\Unigram.Core.rd.xml" />
   </ItemGroup>
   <ItemGroup>

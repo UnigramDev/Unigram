@@ -10,12 +10,15 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
     public class UserPhotosViewModel : UnigramViewModelBase, IHandle<DownloadableItem>, IHandle
     {
+        private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+
         public UserPhotosViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
@@ -39,15 +42,28 @@ namespace Unigram.ViewModels
             {
                 User = user;
 
-                var result = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), 0, 0, 0);
-                if (result.IsSucceeded)
+                using (await _loadMoreLock.WaitAsync())
                 {
-                    foreach (var photo in result.Value.Photos)
+                    var result = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), 0, 0, 0);
+                    if (result.IsSucceeded)
                     {
-                        Items.Add(photo);
-                    }
+                        if (result.Value is TLPhotosPhotosSlice)
+                        {
+                            var slice = result.Value as TLPhotosPhotosSlice;
+                            TotalItems = slice.Count;
+                        }
+                        else
+                        {
+                            TotalItems = result.Value.Photos.Count;
+                        }
 
-                    SelectedItem = Items[0];
+                        foreach (var photo in result.Value.Photos)
+                        {
+                            Items.Add(photo);
+                        }
+
+                        SelectedItem = Items[0];
+                    }
                 }
             }
         }
@@ -56,6 +72,21 @@ namespace Unigram.ViewModels
         {
             Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
+        }
+
+        private async void LoadMore()
+        {
+            using (await _loadMoreLock.WaitAsync())
+            {
+                var result = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), Items.Count, 0, 0);
+                if (result.IsSucceeded)
+                {
+                    foreach (var photo in result.Value.Photos)
+                    {
+                        Items.Add(photo);
+                    }
+                }
+            }
         }
 
         private TLUser _user;
@@ -79,8 +110,25 @@ namespace Unigram.ViewModels
                 {
                     return 0;
                 }
+                if (Items.IndexOf(SelectedItem) == Items.Count - 1)
+                {
+                    LoadMore();
+                }
 
                 return Items.IndexOf(SelectedItem) + 1;
+            }
+        }
+
+        private int _totalItems;
+        public int TotalItems
+        {
+            get
+            {
+                return _totalItems;
+            }
+            set
+            {
+                Set(ref _totalItems, value);
             }
         }
 
