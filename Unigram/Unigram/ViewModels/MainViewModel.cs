@@ -19,6 +19,10 @@ using Windows.ApplicationModel.Background;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.Networking.PushNotifications;
 using Windows.Security.Authentication.Web;
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -29,6 +33,8 @@ namespace Unigram.ViewModels
         public ObservableCollection<UsersPanelListItem> TempList = new ObservableCollection<UsersPanelListItem>();
         public ObservableCollection<UsersPanelListItem> UsersList = new ObservableCollection<UsersPanelListItem>();
         public TLUser Self { get; internal set; }
+        public TLUser UserX { get; internal set; }
+        public SolidColorBrush PlaceHolderColor { get; internal set; }
         public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService)
             : base(protoService, cacheService, aggregator)
         {
@@ -63,12 +69,14 @@ namespace Unigram.ViewModels
                 TempX.lastSeen = Status.Item1;
                 TempX.lastSeenEpoch = Status.Item2;              
                 TempX.Photo = TempX._parent.Photo;
+                TempX.PlaceHolderColor = UpdateProfilePictureColor.UpdatePicture(TempX._parent.Id);
                 TempList.Add(TempX);
             }
             //Super Inefficient Method below to sort alphabetically, TODO: FIX IT
             TempList = new ObservableCollection<ViewModels.UsersPanelListItem>(TempList.OrderByDescending(person => person.lastSeenEpoch));
             foreach (var item in TempList)
             {
+                UserX = item._parent;
                 UsersList.Add(item);
             }
         }
@@ -110,5 +118,6 @@ namespace Unigram.ViewModels
         public string fullName { get; internal set; }
         public string lastSeen { get; internal set; }
         public int lastSeenEpoch { get; internal set; }
+        public Brush PlaceHolderColor { get; internal set; }
     }
 }

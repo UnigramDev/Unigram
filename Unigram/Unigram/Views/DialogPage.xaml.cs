@@ -45,6 +45,8 @@ namespace Unigram.Views
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
+
+
         private void DialogPage_Loaded(object sender, RoutedEventArgs e)
         {
             lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
@@ -142,9 +144,9 @@ namespace Unigram.Views
             if(user!=null)
                 ViewModel.NavigationService.Navigate(typeof(UserInfoPage), user);
             if(channel!=null)
-                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), channel);
+                ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), channel);
             if (chat != null)
-                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), chat);
+                ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), chat);
 
         }
 
