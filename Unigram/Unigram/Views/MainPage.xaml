@@ -109,7 +109,8 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Ellipse Margin="0,0,12,0" Fill="Gray" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="0"/>
+                                    <Ellipse Margin="0,0,12,0" Fill="{x:Bind PlaceHolderColor}" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="0"/>
+                                    <TextBlock Margin="0,0,12,0" Foreground="White" x:Name="InitialName" Text="{Binding fullName, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.RowSpan="2"  Grid.Column="0"/>
                                     <Ellipse Margin="0,0,12,0" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="0">
                                         <Ellipse.Fill>
                                             <ImageBrush ImageSource="{x:Bind _parent.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>

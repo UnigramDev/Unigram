@@ -38,6 +38,7 @@ namespace Unigram.ViewModels
         public TLPeerBase peer;
         public TLInputPeerBase inputPeer;
         public MessageCollection Messages { get; private set; } = new MessageCollection();
+        public Brush PlaceHolderColor { get; internal set; }
         public string DialogTitle;
         public string LastSeen;
         public Visibility LastSeenVisible;
@@ -237,8 +238,9 @@ namespace Unigram.ViewModels
                 //Happy Birthday Alexmitter xD
                 Messages.Clear();
                 Item = user;
-                photo = (TLUserProfilePhotoBase)user.Photo;
+                photo = user.Photo;
                 DialogTitle = Item.FullName;
+                PlaceHolderColor = UpdateProfilePictureColor.UpdatePicture(Item.Id);
                 LastSeen = LastSeenHelper.getLastSeen(user).Item1;
                 LastSeenVisible = Visibility.Visible;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
@@ -254,7 +256,8 @@ namespace Unigram.ViewModels
                 x.AccessHash = channel.AccessHash;
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);                
                 DialogTitle = channelDetails.Value.Chats[0].FullName;
-                photo = (TLChatPhotoBase)channelDetails.Value.Chats[0].Photo;
+                PlaceHolderColor = UpdateProfilePictureColor.UpdatePicture(channelDetails.Value.Chats[0].Id);
+                photo = channelDetails.Value.Chats[0].Photo;
                 LastSeenVisible = Visibility.Collapsed;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerChannel { ChannelId = x.ChannelId, AccessHash = x.AccessHash };
@@ -267,7 +270,8 @@ namespace Unigram.ViewModels
             {
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
                 DialogTitle = chatDetails.Value.Chats[0].FullName;
-                photo = (TLChatPhotoBase)chatDetails.Value.Chats[0].Photo;
+                photo =chatDetails.Value.Chats[0].Photo;
+                PlaceHolderColor = UpdateProfilePictureColor.UpdatePicture(chatDetails.Value.Chats[0].Id);
                 LastSeenVisible = Visibility.Collapsed;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };
