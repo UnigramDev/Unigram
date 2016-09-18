@@ -272,6 +272,7 @@
                                          Margin="0,12,0,0"
                                          Width="30"
                                          Header="Code:"
+                                         InputScope="TelephoneNumber"
                                          PlaceholderText="+"
                                          RelativePanel.AlignLeftWithPanel="True"
                                          RelativePanel.Below="cboxMasterPhoneInputCounty" Style="{StaticResource PhoneCodeTextBoxStyle}"/>
