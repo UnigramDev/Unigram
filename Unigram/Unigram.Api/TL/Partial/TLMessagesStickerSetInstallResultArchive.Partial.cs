@@ -7,7 +7,7 @@ using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public abstract partial class TLMessagesStickerSetInstallResultArchive : ITLStickers
+    public partial class TLMessagesStickerSetInstallResultArchive : ITLStickers
     {
         #region ITLStickers implementation
 

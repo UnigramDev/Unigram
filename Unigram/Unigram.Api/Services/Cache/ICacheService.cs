@@ -66,7 +66,7 @@ namespace Telegram.Api.Services.Cache
         void SyncSendingMessageId(long randomId, int id, Action<TLMessage> callback);
         void SyncPeerMessages(TLPeerBase peer, TLMessagesMessagesBase messages, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesMessagesBase> callback);
         void AddMessagesToContext(TLMessagesMessagesBase messages, Action<TLMessagesMessagesBase> callback);
-        void SyncDialogs(Stopwatch stopwatch, TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback);
+        void SyncDialogs(TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback);
         void SyncChannelDialogs(TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback);
         void MergeMessagesAndChannels(TLMessagesDialogsBase dialogs);
         void SyncUser(TLUserBase user, Action<TLUserBase> callback);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
@@ -10,7 +11,7 @@ using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.FileManager
 {
-    public class FileManager : IFileManager
+    public class DownloadFileManager : IDownloadFileManager
     {
         private readonly object _randomRoot = new object();
 
@@ -26,7 +27,7 @@ namespace Telegram.Api.Services.FileManager
 
         private readonly IMTProtoService _mtProtoService;
 
-        public FileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
+        public DownloadFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
         {
             var stopwatch = Stopwatch.StartNew();
             _eventAggregator = eventAggregator;
@@ -225,6 +226,13 @@ namespace Telegram.Api.Services.FileManager
             isCanceled = outIsCanceled;
 
             return result;
+        }
+
+        public Task<DownloadableItem> DownloadFileAsync(TLFileLocation file, TLObject owner, int fileSize)
+        {
+            var tsc = new TaskCompletionSource<DownloadableItem>();
+            DownloadFile(file, owner, fileSize, (item) => tsc.TrySetResult(item));
+            return tsc.Task;
         }
 
         public void DownloadFile(TLFileLocation file, TLObject owner, int fileSize)

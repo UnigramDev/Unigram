@@ -4,15 +4,17 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.FileManager
 {
-    public class DocumentFileManager : IDocumentFileManager
+    public class DownloadDocumentFileManager : IDownloadDocumentFileManager
     {
         private readonly object _randomRoot = new object();
 
@@ -28,7 +30,7 @@ namespace Telegram.Api.Services.FileManager
 
         private readonly IMTProtoService _mtProtoService;
 
-        public DocumentFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
+        public DownloadDocumentFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
         {
             _eventAggregator = eventAggregator;
             _mtProtoService = mtProtoService;
@@ -216,6 +218,12 @@ namespace Telegram.Api.Services.FileManager
             return result;
         }
 
+        public Task<DownloadableItem> DownloadFileAsync(string originalFileName, int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize, Action<double> startCallback)
+        {
+            var tsc = new TaskCompletionSource<DownloadableItem>();
+            DownloadFileAsync(originalFileName, dcId, fileLocation, owner, fileSize, startCallback, (item) => tsc.TrySetResult(item));
+            return tsc.Task;
+        }
 
         public void DownloadFileAsync(string originalFileName, int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize, Action<double> startCallback, Action<DownloadableItem> callback = null)
         {
@@ -242,7 +250,7 @@ namespace Telegram.Api.Services.FileManager
                 }
                 else
                 {
-                    var progress = downloadedCount/(double) count;
+                    var progress = downloadedCount / (double)count;
                     startCallback.SafeInvoke(progress);
 
                     lock (_itemsSyncRoot)

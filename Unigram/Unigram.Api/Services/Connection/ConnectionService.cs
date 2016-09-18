@@ -89,7 +89,7 @@ namespace Telegram.Api.Services.Connection
 
                     var transportId = activeTransport.Id;
 
-                    var isAuthorized = SettingsHelper.GetValue<bool>(Constants.IsAuthorizedKey);
+                    var isAuthorized = SettingsHelper.IsAuthorized;
                     if (!isAuthorized)
                     {
                         return;
@@ -229,7 +229,7 @@ namespace Telegram.Api.Services.Connection
 
             var transportId = activeTransport.Id;
 
-            var isAuthorized = SettingsHelper.GetValue<bool>(Constants.IsAuthorizedKey);
+            var isAuthorized = SettingsHelper.IsAuthorized;
             if (!isAuthorized)
             {
                 return;
@@ -304,7 +304,7 @@ namespace Telegram.Api.Services.Connection
             if (pingRequired)
             {
                 var pingId = TLLong.Random();
-                var pingIdHash = pingId.Value % 1000;
+                var pingIdHash = pingId % 1000;
 
                 var debugString = string.Format("{0} ping t{1} ({2}, {3}) [{4}]", 
                     DateTime.Now.ToString("HH:mm:ss.fff"),

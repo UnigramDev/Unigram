@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Telegram.Api.TL
 {
-    public abstract partial class TLMessagesAllStickers : ITLStickers
+    public partial class TLMessagesAllStickers : ITLStickers
     {
         #region ITLStickers implementation
 

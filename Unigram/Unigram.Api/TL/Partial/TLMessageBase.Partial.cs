@@ -75,7 +75,7 @@ namespace Telegram.Api.TL
                 }
                 if (ToId is TLPeerChannel)
                 {
-                    var instance = InMemoryCacheService.Instance;
+                    var instance = InMemoryCacheService.Current;
                     var channel = instance.GetChat(ToId.Id) as TLChannel;
                     if (channel != null && channel.IsMegagroup)
                     {
@@ -97,7 +97,7 @@ namespace Telegram.Api.TL
             get
             {
                 if (_from == null)
-                    _from = InMemoryCacheService.Instance.GetUser(FromId.Value) as TLUser;
+                    _from = InMemoryCacheService.Current.GetUser(FromId.Value) as TLUser;
 
                 return _from;
             }
@@ -531,5 +531,9 @@ namespace Telegram.Api.TL
                 }
             }
         }
+
+        public long InlineBotResultQueryId { get; set; }
+
+        public string InlineBotResultId { get; set; }
     }
 }

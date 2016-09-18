@@ -20,6 +20,10 @@ namespace Telegram.Api.TL
 
         public Int64? ReadOutboxMaxId { get; set; }
 
+        public Int32? PinnedMsgId { get; set; }
+
+        public Int32? HiddenPinnedMsgId { get; set; }
+
         public Int32? Pts { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;

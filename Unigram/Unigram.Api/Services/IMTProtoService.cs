@@ -26,7 +26,7 @@ namespace Telegram.Api.Services
         // To remove multiple UpdateStatusAsync calls, it's prefer to invoke this method instead
         void RaiseSendStatus(SendStatusEventArgs e);
 
-        int? CurrentUserId { get; set; }
+        int CurrentUserId { get; set; }
 
         IList<HistoryItem> History { get; }
 
@@ -68,8 +68,8 @@ namespace Telegram.Api.Services
         // TODO: Deprecated void SendCallAsync(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null);
        
         void SearchCallback(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
-        void GetDialogsCallback(Stopwatch timer, int offsetDate, int offsetId, TLInputPeerBase offsetPeer, int limit, Action<TLMessagesDialogsBase> callback, Action<TLRPCError> faultCallback = null);
-        void GetHistoryCallback(Stopwatch timer, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetDialogsCallback(int offsetDate, int offsetId, TLInputPeerBase offsetPeer, int limit, Action<TLMessagesDialogsBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetHistoryCallback(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void DeleteMessagesCallback(TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null);
         void DeleteHistoryCallback(bool justClear, TLInputPeerBase peer, int offset, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null);
         void DeleteContactCallback(TLInputUserBase id, Action<TLContactsLink> callback, Action<TLRPCError> faultCallback = null);
@@ -221,7 +221,6 @@ namespace Telegram.Api.Services
         void ExportInviteCallback(TLInputChannelBase channel, Action<TLExportedChatInviteBase> callback, Action<TLRPCError> faultCallback = null);
         void CheckUsernameCallback(TLInputChannelBase channel, string username, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void UpdateUsernameCallback(TLInputChannelBase channel, string username, Action<bool> callback, Action<TLRPCError> faultCallback = null);
-        void GetChannelDialogsCallback(int? offset, int? limit, Action<TLMessagesDialogsBase> callback, Action<TLRPCError> faultCallback = null);
         // TODO: Layer 56 void GetImportantHistoryCallback(TLInputChannelBase channel, TLPeerBase peer, bool sync, int? offsetId, int? addOffset, int? limit, int? maxId, int? minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void ReadHistoryCallback(TLChannel channel, int maxId, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void DeleteMessagesCallback(TLInputChannelBase channel, TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null);
@@ -253,9 +252,9 @@ namespace Telegram.Api.Services
         void GetPasswordCallback(Action<TLAccountPasswordBase> callback, Action<TLRPCError> faultCallback = null);
         void GetPasswordSettingsCallback(byte[] currentPasswordHash, Action<TLAccountPasswordSettings> callback, Action<TLRPCError> faultCallback = null);
         void UpdatePasswordSettingsCallback(byte[] currentPasswordHash, TLAccountPasswordInputSettings newSettings, Action<bool> callback, Action<TLRPCError> faultCallback = null);
-        void CheckPasswordCallback(byte[] passwordHash, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null);
+        void CheckPasswordCallback(byte[] passwordHash, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null);
         void RequestPasswordRecoveryCallback(Action<TLAuthPasswordRecovery> callback, Action<TLRPCError> faultCallback = null);
-        void RecoverPasswordCallback(string code, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null);
+        void RecoverPasswordCallback(string code, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null);
         void ConfirmPhoneCallback(string phoneCodeHash, string phoneCode, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SendConfirmPhoneCodeCallback(string hash, bool currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
 

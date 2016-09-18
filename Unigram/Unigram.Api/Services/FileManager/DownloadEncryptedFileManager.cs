@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
-using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
-
 
 namespace Telegram.Api.Services.FileManager
 {
-    public class VideoFileManager : IVideoFileManager
+    public class DownloadEncryptedFileManager : IDownloadEncryptedFileManager
     {
         private readonly object _randomRoot = new object();
 
@@ -27,7 +27,7 @@ namespace Telegram.Api.Services.FileManager
 
         private readonly IMTProtoService _mtProtoService;
 
-        public VideoFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
+        public DownloadEncryptedFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
         {
             _eventAggregator = eventAggregator;
             _mtProtoService = mtProtoService;
@@ -36,7 +36,7 @@ namespace Telegram.Api.Services.FileManager
             var timer = Stopwatch.StartNew();
             for (int i = 0; i < Constants.BigFileDownloadersCount; i++)
             {
-                var worker = new Worker(OnDownloading, "videoDownloader"+i);
+                var worker = new Worker(OnDownloading, "encryptedDownloader"+i);
                 _workers.Add(worker);
             }
 
@@ -84,11 +84,19 @@ namespace Telegram.Api.Services.FileManager
                 return;
             }
 
-            var partName = string.Format("video{0}_{1}_{2}.dat", part.ParentItem.InputVideoLocation.Id, part.ParentItem.InputVideoLocation.AccessHash, part.Number);
-            part.File = GetFile(part.ParentItem.DCId, (TLInputFileLocationBase)part.ParentItem.InputVideoLocation, part.Offset, part.Limit);
-            while (part.File == null)
+            var partName = part.ParentItem.InputEncryptedFileLocation.GetPartFileName(part.Number);
+            var partLength = FileUtils.GetLocalFileLength(partName);
+            var partExists = partLength > 0;
+            var isLastPart = part.Number + 1 == part.ParentItem.Parts.Count;
+            var isCorrectPartLength = isLastPart || partLength == part.Limit;
+
+            if (!partExists || !isCorrectPartLength)
             {
-                part.File = GetFile(part.ParentItem.DCId, (TLInputFileLocationBase)part.ParentItem.InputVideoLocation, part.Offset, part.Limit);
+                part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputEncryptedFileLocation, part.Offset, part.Limit);
+                while (part.File == null)
+                {
+                    part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputEncryptedFileLocation, part.Offset, part.Limit);
+                }
             }
 
             // indicate progress
@@ -121,15 +129,20 @@ namespace Telegram.Api.Services.FileManager
             {
                 if (isComplete)
                 {
-                    var id = part.ParentItem.InputVideoLocation.Id;
-                    var accessHash = part.ParentItem.InputVideoLocation.AccessHash;
-                    var fileName = string.Format("video{0}_{1}.mp4", id, accessHash);
-                    var getPartName = new Func<DownloadablePart, string>( x => string.Format("video{0}_{1}_{2}.dat", id, accessHash, x.Number));  
-         
-                    FileUtils.MergePartsToFile(getPartName, part.ParentItem.Parts, fileName);
+                    var fileName = part.ParentItem.InputEncryptedFileLocation.GetFileName();
+                    var getPartFileName = new Func<DownloadablePart, string>(p => p.ParentItem.InputEncryptedFileLocation.GetPartFileName(p.Number));
+
+                    FileUtils.MergePartsToFile(getPartFileName, part.ParentItem.Parts, fileName);
 
                     part.ParentItem.IsoFileName = fileName;
-                    _eventAggregator.Publish(part.ParentItem);
+                    if (part.ParentItem.Callback != null)
+                    {
+                        part.ParentItem.Callback(part.ParentItem);
+                    }
+                    else
+                    {
+                        _eventAggregator.Publish(part.ParentItem);
+                    }
                 }
                 else
                 {
@@ -164,57 +177,37 @@ namespace Telegram.Api.Services.FileManager
             return result;
         }
 
-
-        public void DownloadFileAsync(int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize, Action<double> callback)
+        public Task<DownloadableItem> DownloadFileAsync(TLEncryptedFile file, TLObject owner)
         {
-            Execute.BeginOnThreadPool(() =>
+            var tsc = new TaskCompletionSource<DownloadableItem>();
+            DownloadFile(file, owner, (item) => tsc.TrySetResult(item));
+            return tsc.Task;
+        }
+
+        public void DownloadFile(TLEncryptedFile file, TLObject owner, Action<DownloadableItem> callback)
+        {
+            var inputFile = new TLInputEncryptedFileLocation { Id = file.Id, AccessHash = file.AccessHash };
+            var downloadableItem = GetDownloadableItem(file.DCId, inputFile, owner, file.Size, callback);
+
+            lock (_itemsSyncRoot)
             {
-                var downloadableItem = GetDownloadableItem(dcId, fileLocation, owner, fileSize);
-
-                var downloadedCount = downloadableItem.Parts.Count(x => x.Status == PartStatus.Processed);
-                var count = downloadableItem.Parts.Count;
-                var isComplete = downloadedCount == count;
-
-                if (isComplete)
+                bool addFile = true;
+                foreach (var item in _items)
                 {
-                    var id = downloadableItem.InputVideoLocation.Id;
-                    var accessHash = downloadableItem.InputVideoLocation.AccessHash;
-                    var fileName = string.Format("video{0}_{1}.mp4", id, accessHash);
-                    var getPartName = new Func<DownloadablePart, string>(x => string.Format("video{0}_{1}_{2}.dat", id, accessHash, x.Number));
-
-                    FileUtils.MergePartsToFile(getPartName, downloadableItem.Parts, fileName);
-
-                    downloadableItem.IsoFileName = fileName;
-                    _eventAggregator.Publish(downloadableItem);
-                }
-                else
-                {
-                    var progress = downloadedCount / (double)count;
-                    callback.SafeInvoke(progress);
-
-                    lock (_itemsSyncRoot)
+                    if (item.InputEncryptedFileLocation.LocationEquals(inputFile))
                     {
-                        bool addFile = true;
-                        foreach (var item in _items)
-                        {
-                            if (item.InputVideoLocation.AccessHash == fileLocation.AccessHash
-                                && item.InputVideoLocation.Id == fileLocation.Id
-                                && item.Owner == owner)
-                            {
-                                addFile = false;
-                                break;
-                            }
-                        }
-
-                        if (addFile)
-                        {
-                            _items.Add(downloadableItem);
-                        }
+                        addFile = false;
+                        break;
                     }
-
-                    StartAwaitingWorkers();
                 }
-            });        
+
+                if (addFile)
+                {
+                    _items.Add(downloadableItem);
+                }
+            }
+
+            StartAwaitingWorkers();
         }
 
         private void StartAwaitingWorkers()
@@ -227,13 +220,14 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private DownloadableItem GetDownloadableItem(int dcId, TLInputDocumentFileLocation location, TLObject owner, int fileSize)
+        private DownloadableItem GetDownloadableItem(int dcId, TLInputFileLocationBase location, TLObject owner, int fileSize, Action<DownloadableItem> callback)
         {
             var item = new DownloadableItem
             {
                 Owner = owner,
                 DCId = dcId,
-                InputVideoLocation = location
+                InputEncryptedFileLocation = location,
+                Callback = callback
             };
             item.Parts = GetItemParts(fileSize, item);
 
@@ -245,39 +239,26 @@ namespace Telegram.Api.Services.FileManager
             var chunkSize = Constants.DownloadedChunkSize;
             var parts = new List<DownloadablePart>();
             var partsCount = size / chunkSize + (size % chunkSize > 0 ? 1 : 0);
-
             for (var i = 0; i < partsCount; i++)
             {
-                var part = new DownloadablePart(item, i * chunkSize, size == 0 ? 0 : chunkSize, i);
-                var partName = string.Format("video{0}_{1}_{2}.dat", item.InputVideoLocation.Id, item.InputVideoLocation.AccessHash, part.Number);
-
-                var partLength = FileUtils.GetLocalFileLength(partName);
-                if (partLength >= 0)
-                {
-                    var isCompletePart = (part.Number + 1 == partsCount) || partLength == part.Limit;
-                    part.Status = isCompletePart ? PartStatus.Processed : PartStatus.Ready;
-                }
-
+                var part = new DownloadablePart(item, i * chunkSize, size == 0? 0 : chunkSize, i);
                 parts.Add(part);
             }
 
             return parts;
         }
 
-        public void CancelDownloadFileAsync(TLObject owner)
+        public void CancelDownloadFile(TLObject owner)
         {
-            Helpers.Execute.BeginOnThreadPool(() =>
+            lock (_itemsSyncRoot)
             {
-                lock (_itemsSyncRoot)
-                {
-                    var items = _items.Where(x => x.Owner == owner);
+                var items = _items.Where(x => x.Owner == owner);
 
-                    foreach (var item in items)
-                    {
-                        item.Canceled = true;
-                    }
+                foreach (var item in items)
+                {
+                    item.Canceled = true;
                 }
-            });
+            }
         }
     }
 }

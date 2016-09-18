@@ -1020,7 +1020,7 @@ namespace Telegram.Api.Services.Updates
                             result2 => 
                             {
                                 // sync users
-                                var inviter = result2.Participant as IChannelInviter;
+                                var inviter = result2.Participant as ITLChannelInviter;
                                 var inviterId = inviter != null ? inviter.InviterId.ToString() : "unknown";
                                 var date = inviter != null ? inviter.Date.ToString() : "unknown";
                                 Execute.ShowDebugMessage(string.Format("updateChannel [channel_id={0} creator={1} kicked={2} left={3} editor={4} moderator={5} broadcast={6} public={7} verified={8} inviter=[id={9} date={10}]]", channel.Id, channel.IsCreator, channel.IsKicked, channel.IsLeft, channel.IsEditor, channel.IsModerator, channel.IsBroadcast, "channel.IsPublic", channel.IsVerified, inviterId, date));
@@ -1053,13 +1053,14 @@ namespace Telegram.Api.Services.Updates
                 return true;
             }
 
-            var updateChannelGroup = update as TLUpdateChannelGroup;
-            if (updateChannelGroup != null)
-            {
-                Execute.ShowDebugMessage(string.Format("updateChannelGroup channel_id={0} min_id={1} max_id={2} count={3} date={4}", updateChannelGroup.ChannelId, updateChannelGroup.Group.MinId, updateChannelGroup.Group.MaxId, updateChannelGroup.Group.Count, updateChannelGroup.Group.Date));
+            // TODO: Layer 56, when available check if exists
+            //var updateChannelGroup = update as TLUpdateChannelGroup;
+            //if (updateChannelGroup != null)
+            //{
+            //    Execute.ShowDebugMessage(string.Format("updateChannelGroup channel_id={0} min_id={1} max_id={2} count={3} date={4}", updateChannelGroup.ChannelId, updateChannelGroup.Group.MinId, updateChannelGroup.Group.MaxId, updateChannelGroup.Group.Count, updateChannelGroup.Group.Date));
 
-                return true;
-            }
+            //    return true;
+            //}
 
             var updateChannelPinnedMessage = update as TLUpdateChannelPinnedMessage;
             if (updateChannelPinnedMessage != null)
@@ -1291,12 +1292,16 @@ namespace Telegram.Api.Services.Updates
                 {
                     foreach (var message in messages)
                     {
-                        message.SetListened();
-                        if (message.Media != null)
-                        {
-                            message.Media.NotListened = false;
-                            message.Media.RaisePropertyChanged(() => message.Media.NotListened);
-                        }
+                        message.IsMediaUnread = false;
+                        message.RaisePropertyChanged(() => message.IsMediaUnread);
+
+                        // TODO: Verify
+                        //message.SetListened();
+                        //if (message.Media != null)
+                        //{
+                        //    message.Media.NotListened = false;
+                        //    message.Media.RaisePropertyChanged(() => message.Media.NotListened);
+                        //}
                     }
                 });
 
@@ -1377,7 +1382,7 @@ namespace Telegram.Api.Services.Updates
                         }
                     }
 
-                    var topMessage = dialog.TopMessage as TLMessage;
+                    var topMessage = dialog.TopMessageItem as TLMessage;
                     if (topMessage != null)
                     {
                         if (topMessage.Id <= maxId)
@@ -1394,7 +1399,7 @@ namespace Telegram.Api.Services.Updates
                     }
 
                     var unreadCount = 0;
-                    if (dialog.TopMessageId != null && dialog.TopMessageId > updateReadHistory.MaxId)
+                    if (dialog.TopMessage != null && dialog.TopMessage > updateReadHistory.MaxId)
                     {
                         unreadCount = dialog.UnreadCount;
                     }
@@ -1416,7 +1421,7 @@ namespace Telegram.Api.Services.Updates
                         {
                             message.RaisePropertyChanged(() => message.IsUnread);
                         }
-                        dialog.RaisePropertyChanged(() => dialog.TopMessage);
+                        dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
                         dialog.RaisePropertyChanged(() => dialog.Self);
                         dialog.RaisePropertyChanged(() => dialog.UnreadCount);
                     });
@@ -1448,7 +1453,7 @@ namespace Telegram.Api.Services.Updates
 
                     var messages = new List<TLMessage>();
 
-                    var topMessage = dialog.TopMessage as TLMessage;
+                    var topMessage = dialog.TopMessageItem as TLMessage;
                     if (topMessage != null
                         && topMessage.IsOut
                         && topMessage.Id <= updateReadChannelOutbox.MaxId)
@@ -1480,7 +1485,7 @@ namespace Telegram.Api.Services.Updates
                                 message.RaisePropertyChanged(() => message.IsUnread);
                             }
 
-                            dialog.RaisePropertyChanged(() => dialog.TopMessage);
+                            dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
                             dialog.RaisePropertyChanged(() => dialog.Self);
                             dialog.RaisePropertyChanged(() => dialog.UnreadCount);
                         });
@@ -1515,7 +1520,7 @@ namespace Telegram.Api.Services.Updates
                         SetReadMaxId(dialog53.With as ITLReadMaxId, updateReadChannelInbox.MaxId, false);
                     }
 
-                    var topMessage = dialog.TopMessage as TLMessage;
+                    var topMessage = dialog.TopMessageItem as TLMessage;
                     if (topMessage != null
                         && !topMessage.IsOut
                         && topMessage.Id <= updateReadChannelInbox.MaxId)
@@ -1547,7 +1552,7 @@ namespace Telegram.Api.Services.Updates
                                 message.RaisePropertyChanged(() => message.IsUnread);
                             }
 
-                            dialog.RaisePropertyChanged(() => dialog.TopMessage);
+                            dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
                             dialog.RaisePropertyChanged(() => dialog.Self);
                             dialog.RaisePropertyChanged(() => dialog.UnreadCount);
                         });
@@ -1575,7 +1580,7 @@ namespace Telegram.Api.Services.Updates
                         if (dialog != null && dialog.UnreadCount > 0)
                         {
                             dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
-                            var topMessage = dialog.TopMessage;
+                            var topMessage = dialog.TopMessageItem;
                             if (topMessage != null && topMessage.Id == readMessageId)
                             {
                                 dialogs[dialog.ReadInboxMaxId] = dialog;
@@ -1597,7 +1602,7 @@ namespace Telegram.Api.Services.Updates
                         var dialog = dialogBase as TLDialog;
                         if (dialog == null) continue;
 
-                        dialog.RaisePropertyChanged(() => dialog.TopMessage);
+                        dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
                         dialog.RaisePropertyChanged(() => dialog.Self);
                         dialog.RaisePropertyChanged(() => dialog.UnreadCount);
                     }
@@ -2638,18 +2643,19 @@ namespace Telegram.Api.Services.Updates
 
             if (user != null)
             {
-                var currentUserId = MTProtoService.Instance.CurrentUserId;
+                var currentUserId = MTProtoService.Current.CurrentUserId;
                 var message = new TLMessageService
                 {
                     Flags = 0,
                     Id = 0,
                     FromId = user.Id,
-                    ToId = new TLPeerUser { Id = currentUserId.Value },
+                    ToId = new TLPeerUser { Id = currentUserId },
                     State = TLMessageState.Confirmed,
                     IsOut = false,
                     IsUnread = false,
                     Date = updateContactRegistered.Date,
-                    Action = new TLMessageActionContactRegistered { UserId = user.Id },
+                    // TODO: local object 
+                    // Action = new TLMessageActionContactRegistered { UserId = user.Id },
                     RandomId = TLLong.Random()
                 };
 

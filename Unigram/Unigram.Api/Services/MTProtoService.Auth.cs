@@ -124,14 +124,14 @@ namespace Telegram.Api.Services
             SendInformativeMessage("auth.exportAuthorization dc_id=" + dcId, obj, callback, faultCallback);
 	    }
 
-	    public void ImportAuthorizationAsync(int id, byte[] bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    public void ImportAuthorizationAsync(int id, byte[] bytes, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAuthImportAuthorization { Id = id, Bytes = bytes };
 
             SendInformativeMessage("auth.importAuthorization id=" + id, obj, callback, faultCallback);
 	    }
 
-        public void ImportAuthorizationByTransportAsync(ITransport transport, int id, byte[] bytes, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+        public void ImportAuthorizationByTransportAsync(ITransport transport, int id, byte[] bytes, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthImportAuthorization { Id = id, Bytes = bytes };
 

@@ -92,7 +92,7 @@ namespace Telegram.Api.Services.Cache
             {
                 DialogsContext[dialog.Index] = dialog;
 
-                var topMessage = (TLMessage) dialog.TopMessage;
+                var topMessage = (TLMessage) dialog.TopMessageItem;
 
                 // add in desc order by Date
                 var isAdded = false;
@@ -105,7 +105,7 @@ namespace Telegram.Api.Services.Cache
                         // TODO: Encrypted var ed = Dialogs[i] as TLEncryptedDialog;
                         if (d != null)
                         {
-                            var currentTopMessage = (TLMessage)d.TopMessage;
+                            var currentTopMessage = (TLMessage)d.TopMessageItem;
 
                             if (currentTopMessage != null
                                 && currentTopMessage.Date < topMessage.Date)
@@ -447,7 +447,7 @@ namespace Telegram.Api.Services.Cache
                     // в бродкастах дата у всех сообщений совпадает: правильный порядок можно определить по индексу сообщения
                     if (Dialogs[i].GetDateIndex() == dateIndex)
                     {
-                        var currentMessageId = Dialogs[i].TopMessageId != null ? Dialogs[i].TopMessageId : 0;
+                        var currentMessageId = Dialogs[i].TopMessage != null ? Dialogs[i].TopMessage : 0;
 
                         if (currentMessageId != 0 && messageId != 0)
                         {
@@ -503,28 +503,28 @@ namespace Telegram.Api.Services.Cache
                                 dialog.Messages.Add(commonMessage);
                             }
 
-                            if (isUnread && dialog.TopMessage != null && dialog.TopMessage.Id < commonMessage.Id)
+                            if (isUnread && dialog.TopMessageItem != null && dialog.TopMessageItem.Id < commonMessage.Id)
                             {
                                 dialogBase.UnreadCount = dialogBase.UnreadCount + 1;
                             }
 
-                            if (dialog.TopMessage != null)
+                            if (dialog.TopMessageItem != null)
                             {
-                                CorrectDialogOrder(dialogBase, dialog.TopMessage.Date, dialog.TopMessage.Id);
+                                CorrectDialogOrder(dialogBase, dialog.TopMessageItem.Date, dialog.TopMessageItem.Id);
                             }
 
                             if (dialog.Messages[0] == commonMessage)
                             {
                                 if (notifyTopMessageUpdated)
                                 {
-                                    dialog._topMessage = commonMessage;
-                                    Helpers.Execute.BeginOnUIThread(() => dialog.RaisePropertyChanged(() => dialog.TopMessage));
+                                    dialog._topMessageItem = commonMessage;
+                                    Helpers.Execute.BeginOnUIThread(() => dialog.RaisePropertyChanged(() => dialog.TopMessageItem));
                                 }
                                 else
                                 {
-                                    dialog._topMessage = commonMessage;
+                                    dialog._topMessageItem = commonMessage;
                                 }
-                                dialog.TopMessageId = commonMessage.Id;
+                                dialog.TopMessage = commonMessage.Id;
                                 dialog.TopMessageRandomId = commonMessage.RandomId;
                                 if (_eventAggregator != null && notifyTopMessageUpdated)
                                 {
@@ -584,9 +584,9 @@ namespace Telegram.Api.Services.Cache
                                 Peer = peer,
                                 With = with,
                                 Messages = new ObservableCollection<TLMessageBase> { commonMessage },
-                                TopMessageId = commonMessage.Id,
+                                TopMessage = commonMessage.Id,
                                 TopMessageRandomId = commonMessage.RandomId,
-                                TopMessage = commonMessage,
+                                TopMessageItem = commonMessage,
                                 UnreadCount = isUnread ? 1 : 0,
                                 ReadInboxMaxId = 0,
                                 ReadOutboxMaxId = 0,
@@ -602,9 +602,9 @@ namespace Telegram.Api.Services.Cache
                                 Peer = peer,
                                 With = with,
                                 Messages = new ObservableCollection<TLMessageBase> { commonMessage },
-                                TopMessageId = commonMessage.Id,
+                                TopMessage = commonMessage.Id,
                                 TopMessageRandomId = commonMessage.RandomId,
-                                TopMessage = commonMessage,
+                                TopMessageItem = commonMessage,
                                 UnreadCount = isUnread ? 1 : 0,
                                 ReadInboxMaxId = 0,
                                 ReadOutboxMaxId = 0
@@ -807,10 +807,10 @@ namespace Telegram.Api.Services.Cache
                     {
                         dialog.Messages.Remove(oldMessage);
                         TLDialog.InsertMessageInOrder(dialog.Messages, cachedMessage);
-                        if (dialog.TopMessageId == null || dialog.TopMessageId < cachedMessage.Id)
+                        if (dialog.TopMessage == null || dialog.TopMessage < cachedMessage.Id)
                         {
-                            dialog._topMessage = cachedMessage;
-                            dialog.TopMessageId = cachedMessage.Id;
+                            dialog._topMessageItem = cachedMessage;
+                            dialog.TopMessage = cachedMessage.Id;
                             dialog.TopMessageRandomId = cachedMessage.RandomId;
                             notify = true;
                         }
@@ -1180,23 +1180,23 @@ namespace Telegram.Api.Services.Cache
                             else
                             {
                                 dialog.Messages.Add(lastMessage);
-                                dialog._topMessage = dialog.Messages[0];
-                                dialog.TopMessageId = dialog.Messages[0].Id;
+                                dialog._topMessageItem = dialog.Messages[0];
+                                dialog.TopMessage = dialog.Messages[0].Id;
                                 dialog.TopMessageRandomId = dialog.Messages[0].RandomId;
                                 isTopMessageUpdated = true;
-                                topMessage = dialog.TopMessage;
+                                topMessage = dialog.TopMessageItem;
                             }
                         }
                         else
                         {
-                            dialog._topMessage = dialog.Messages[0];
-                            dialog.TopMessageId = dialog.Messages[0].Id;
+                            dialog._topMessageItem = dialog.Messages[0];
+                            dialog.TopMessage = dialog.Messages[0].Id;
                             dialog.TopMessageRandomId = dialog.Messages[0].RandomId;
                             isTopMessageUpdated = true;
-                            topMessage = dialog.TopMessage;
+                            topMessage = dialog.TopMessageItem;
                         }
 
-                        CorrectDialogOrder(dialog, dialog.TopMessage.Date, dialog.TopMessage.Id);
+                        CorrectDialogOrder(dialog, dialog.TopMessageItem.Date, dialog.TopMessageItem.Id);
                     }
                 }
 
@@ -1277,11 +1277,11 @@ namespace Telegram.Api.Services.Cache
                             }
                         }
 
-                        dialog._topMessage = dialog.Messages[0];
-                        dialog.TopMessageId = dialog.Messages[0].Id;
+                        dialog._topMessageItem = dialog.Messages[0];
+                        dialog.TopMessage = dialog.Messages[0].Id;
                         dialog.TopMessageRandomId = dialog.Messages[0].RandomId;
                         isTopMessageUpdated = true;
-                        topMessage = dialog.TopMessage;
+                        topMessage = dialog.TopMessageItem;
                     }
                 }
             }
@@ -1368,11 +1368,11 @@ namespace Telegram.Api.Services.Cache
                             }
                         }
 
-                        dialog._topMessage = dialog.Messages[0];
-                        dialog.TopMessageId = dialog.Messages[0].Id;
+                        dialog._topMessageItem = dialog.Messages[0];
+                        dialog.TopMessage = dialog.Messages[0].Id;
                         dialog.TopMessageRandomId = dialog.Messages[0].RandomId;
                         isTopMessageUpdated = true;
-                        topMessage = dialog.TopMessage;
+                        topMessage = dialog.TopMessageItem;
                     }
                 }
             }
@@ -1434,14 +1434,14 @@ namespace Telegram.Api.Services.Cache
                                 {
                                     dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
                                 }
-                                dialog.TopMessage = dialog.Messages[0];
-                                dialog.TopMessageId = dialog.Messages[0].Id;
+                                dialog.TopMessageItem = dialog.Messages[0];
+                                dialog.TopMessage = dialog.Messages[0].Id;
                                 dialog.TopMessageRandomId = dialog.Messages[0].RandomId;
                                 isTopMessageUpdated = true;
-                                topMessage = dialog.TopMessage;
+                                topMessage = dialog.TopMessageItem;
                             }
 
-                            CorrectDialogOrder(dialog, dialog.TopMessage.Date, dialog.TopMessage.Id);
+                            CorrectDialogOrder(dialog, dialog.TopMessageItem.Date, dialog.TopMessageItem.Id);
                         }
                     }
 
@@ -1628,11 +1628,11 @@ namespace Telegram.Api.Services.Cache
                     }
                     else
                     {
-                        dialog._topMessage = dialog.Messages[0];
-                        dialog.TopMessageId = dialog.Messages[0].Id;
+                        dialog._topMessageItem = dialog.Messages[0];
+                        dialog.TopMessage = dialog.Messages[0].Id;
                         dialog.TopMessageRandomId = dialog.Messages[0].RandomId;
                         isTopMessageUpdated = true;
-                        topMessage = dialog.TopMessage;
+                        topMessage = dialog.TopMessageItem;
                     }
 
                     //CorrectDialogOrder(dialog, dialog.TopMessage.DateIndex, dialog.TopMessage.Index);
@@ -1835,15 +1835,15 @@ namespace Telegram.Api.Services.Cache
                                 }
                             }
 
-                            dialog._topMessage = dialog.Messages.FirstOrDefault();
-                            var topMessage = dialog.TopMessage != null ? dialog.TopMessage.Id : new int?();
+                            dialog._topMessageItem = dialog.Messages.FirstOrDefault();
+                            var topMessage = dialog.TopMessageItem != null ? dialog.TopMessageItem.Id : new int?();
                             if (topMessage == null)
                             {
-                                dialog.TopMessageRandomId = dialog.TopMessage != null ? dialog.TopMessage.RandomId : null;
+                                dialog.TopMessageRandomId = dialog.TopMessageItem != null ? dialog.TopMessageItem.RandomId : null;
                             }
                             else
                             {
-                                dialog.TopMessageId = topMessage.Value;
+                                dialog.TopMessage = topMessage.Value;
                             }
                             foreach (var message in dialog.Messages)
                             {
@@ -1962,7 +1962,7 @@ namespace Telegram.Api.Services.Cache
 
             HasChanges = false;
 
-            TLUtils.WritePerformance(string.Format("Commit DB time ({0}d, {1}u, {2}c, {6}b, {5}ec, {4}m): {3}", dialogs.Count, UsersContext.Count, ChatsContext.Count, timer.Elapsed, messagesCount, EncryptedChatsContext.Count));
+            TLUtils.WritePerformance(string.Format("Commit DB time ({0}d, {1}u, {2}c, {5}ec, {4}m): {3}", dialogs.Count, UsersContext.Count, ChatsContext.Count, timer.Elapsed, messagesCount, EncryptedChatsContext.Count));
         }
 
         public int CountRecords<T>() where T : TLObject

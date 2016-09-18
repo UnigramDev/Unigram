@@ -123,7 +123,7 @@ namespace Unigram.ViewModels
         }
         public async Task FetchMessages(TLPeerBase peer, TLInputPeerBase inputPeer)
         {
-            var result = await ProtoService.GetHistoryAsync(null, inputPeer, peer, false, loaded, int.MaxValue, loadCount);
+            var result = await ProtoService.GetHistoryAsync(inputPeer, peer, false, loaded, int.MaxValue, loadCount);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Value.Messages);
@@ -298,9 +298,12 @@ namespace Unigram.ViewModels
             var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
             var previousMessage = InsertSendingMessage(message);
 
-            CacheService.SyncSendingMessage(message, previousMessage, toId, async (m) =>
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
-                await ProtoService.SendMessageAsync(message);
+                await ProtoService.SendMessageAsync(message, () =>
+                {
+                    // TODO
+                });
             });
         }
 
@@ -402,7 +405,7 @@ namespace Unigram.ViewModels
                 Messages.Clear();
                 Messages.Add(message);
 
-                var history = CacheService.GetHistory(ProtoService.CurrentUserId, TLUtils.InputPeerToPeer(Peer, ProtoService.CurrentUserId), 15);
+                var history = CacheService.GetHistory(TLUtils.InputPeerToPeer(Peer, ProtoService.CurrentUserId), 15);
                 result = history.FirstOrDefault();
 
                 for (int j = 0; j < history.Count; j++)

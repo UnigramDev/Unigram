@@ -73,13 +73,13 @@ namespace Telegram.Api.Services.Cache
 
         private readonly ITelegramEventAggregator _eventAggregator;
 
-        public static ICacheService Instance { get; protected set; }
+        public static ICacheService Current { get; protected set; }
 
         public InMemoryCacheService(ITelegramEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
 
-            Instance = this;
+            Current = this;
         }
 
         public IList<TLDialog> GetDialogs()
@@ -1675,7 +1675,7 @@ namespace Telegram.Api.Services.Cache
 
         #region Dialogs
 
-        private void SyncDialogsInternal(Stopwatch stopwatch2, TLMessagesDialogsBase dialogs, TLMessagesDialogsBase result)
+        private void SyncDialogsInternal(TLMessagesDialogsBase dialogs, TLMessagesDialogsBase result)
         {
             MergeMessagesAndChannels(dialogs);
 
@@ -1694,14 +1694,14 @@ namespace Telegram.Api.Services.Cache
                 if (cachedDialog != null)
                 {
                     //Debug.WriteLine("messages.getDialogs sync dialogs start update cached elapsed=" + stopwatch.Elapsed);
-                    var raiseTopMessageUpdated = cachedDialog.TopMessageId == null || cachedDialog.TopMessageId != dialog.TopMessageId;
+                    var raiseTopMessageUpdated = cachedDialog.TopMessage == null || cachedDialog.TopMessage != dialog.TopMessage;
                     cachedDialog.Update(dialog);
                     //Debug.WriteLine("messages.getDialogs sync dialogs stop update cached elapsed=" + stopwatch.Elapsed);
                     if (raiseTopMessageUpdated)
                     {
                         if (_eventAggregator != null)
                         {
-                            _eventAggregator.Publish(new TopMessageUpdatedEventArgs(cachedDialog, cachedDialog.TopMessage));
+                            _eventAggregator.Publish(new TopMessageUpdatedEventArgs(cachedDialog, cachedDialog.TopMessageItem));
                         }
                     }
                     result.Dialogs.Add(cachedDialog);
@@ -1742,13 +1742,13 @@ namespace Telegram.Api.Services.Cache
 
                 if (cachedDialog != null)
                 {
-                    var raiseTopMessageUpdated = cachedDialog.TopMessageId == null || cachedDialog.TopMessageId != dialog.TopMessageId;
+                    var raiseTopMessageUpdated = cachedDialog.TopMessage == null || cachedDialog.TopMessage != dialog.TopMessage;
                     cachedDialog.Update(dialog);
                     if (raiseTopMessageUpdated)
                     {
                         if (_eventAggregator != null)
                         {
-                            _eventAggregator.Publish(new TopMessageUpdatedEventArgs(cachedDialog, cachedDialog.TopMessage));
+                            _eventAggregator.Publish(new TopMessageUpdatedEventArgs(cachedDialog, cachedDialog.TopMessageItem));
                         }
                     }
                     result.Dialogs.Add(cachedDialog);
@@ -1767,7 +1767,7 @@ namespace Telegram.Api.Services.Cache
             result.Messages = dialogs.Messages;
         }
 
-        public void SyncDialogs(Stopwatch stopwatch, TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback)
+        public void SyncDialogs(TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback)
         {
             if (dialogs == null)
             {
@@ -1793,7 +1793,7 @@ namespace Telegram.Api.Services.Cache
 
             //Debug.WriteLine("messages.getDialogs sync users elapsed=" + stopwatch.Elapsed);
 
-            SyncDialogsInternal(stopwatch, dialogs, result);
+            SyncDialogsInternal(dialogs, result);
 
             //Debug.WriteLine("messages.getDialogs end sync dialogs elapsed=" + stopwatch.Elapsed);
 
@@ -2042,8 +2042,8 @@ namespace Telegram.Api.Services.Cache
                     var dialog = dialogBase as TLDialog;
                     if (dialog != null)
                     {
-                        dialog._topMessage = messagesCache[peer.Id][dialogBase.TopMessageId];
-                        dialog.Messages = new ObservableCollection<TLMessageBase> { dialog.TopMessage };
+                        dialog._topMessageItem = messagesCache[peer.Id][dialogBase.TopMessage];
+                        dialog.Messages = new ObservableCollection<TLMessageBase> { dialog.TopMessageItem };
                     }
 
                     //var dialogChannel = dialogBase as TLDialogChannel;

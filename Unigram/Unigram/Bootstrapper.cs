@@ -72,22 +72,23 @@
             var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
             var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
             var updatesService = UnigramContainer.Instance.ResolverType<IUpdatesService>();
-            cacheService.Initialize();
+            cacheService.Init();
             updatesService.GetCurrentUserId = () => protoService.CurrentUserId;
-            updatesService.GetStateAsync = protoService.GetStateCallbackAsync;
-            updatesService.GetDHConfigAsync = protoService.GetDHConfigCallbackAsync;
-            updatesService.GetDifferenceAsync = protoService.GetDifferenceCallbackAsync;
-            updatesService.AcceptEncryptionAsync = protoService.AcceptEncryptionCallbackAsync;
-            updatesService.SendEncryptedServiceAsync = protoService.SendEncryptedServiceCallbackAsync;
-            updatesService.SetMessageOnTimeAsync = protoService.SetMessageOnTimeAsync;
+            updatesService.GetStateAsync = protoService.GetStateCallback;
+            updatesService.GetDHConfigAsync = protoService.GetDHConfigCallback;
+            updatesService.GetDifferenceAsync = protoService.GetDifferenceCallback;
+            //updatesService.AcceptEncryptionAsync = protoService.AcceptEncryptionCallback;
+            //updatesService.SendEncryptedServiceAsync = protoService.SendEncryptedServiceCallback;
+            updatesService.SetMessageOnTimeAsync = protoService.SetMessageOnTime;
             //updatesService.RemoveFromQueue = protoService.RemoveFromQueue;
-            updatesService.UpdateChannelAsync = protoService.UpdateChannelCallbackAsync;
-            updatesService.GetParticipantAsync = protoService.GetParticipantCallbackAsync;
-            updatesService.GetFullChatAsync = protoService.GetFullChatCallbackAsync;
+            updatesService.UpdateChannelAsync = protoService.UpdateChannelCallback;
+            updatesService.GetParticipantAsync = protoService.GetParticipantCallback;
+            updatesService.GetFullChatAsync = protoService.GetFullChatCallback;
             updatesService.LoadStateAndUpdate(() => { });
 
             protoService.AuthorizationRequired += (s, e) =>
             {
+                SettingsHelper.IsAuthorized = false;
                 Debugger.Break();
             };
         }

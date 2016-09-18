@@ -295,7 +295,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("account.updatePasswordSettings", obj, callback, faultCallback);
 	    }
 
-	    public void CheckPasswordCallback(byte[] passwordHash, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    public void CheckPasswordCallback(byte[] passwordHash, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAuthCheckPassword { PasswordHash = passwordHash };
 
@@ -309,7 +309,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("auth.requestPasswordRecovery", obj, callback, faultCallback);
 	    }
 
-	    public void RecoverPasswordCallback(string code, Action<TLAuthorization> callback, Action<TLRPCError> faultCallback = null)
+	    public void RecoverPasswordCallback(string code, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
 	        var obj = new TLAuthRecoverPassword {Code = code};
 

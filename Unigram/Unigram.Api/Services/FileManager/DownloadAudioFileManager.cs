@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
@@ -10,7 +11,7 @@ using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.FileManager
 {
-    public class AudioFileManager : IAudioFileManager
+    public class DownloadAudioFileManager : IDownloadAudioFileManager
     {
         private readonly object _randomRoot = new object();
 
@@ -26,7 +27,7 @@ namespace Telegram.Api.Services.FileManager
 
         private readonly IMTProtoService _mtProtoService;
 
-        public AudioFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
+        public DownloadAudioFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
         {
             _eventAggregator = eventAggregator;
             _mtProtoService = mtProtoService;
@@ -176,6 +177,13 @@ namespace Telegram.Api.Services.FileManager
 
             manualResetEvent.WaitOne();
             return result;
+        }
+
+        public Task<DownloadableItem> DownloadFileAsync(int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize)
+        {
+            var tsc = new TaskCompletionSource<DownloadableItem>();
+            DownloadFile(dcId, fileLocation, owner, fileSize, (item) => tsc.TrySetResult(item));
+            return tsc.Task;
         }
 
         public void DownloadFile(int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize, Action<DownloadableItem> callback)

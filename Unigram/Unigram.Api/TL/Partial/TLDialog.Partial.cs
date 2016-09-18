@@ -33,15 +33,15 @@ namespace Telegram.Api.TL
             UnreadCount = dialog.UnreadCount;
 
             //если последнее сообщение отправляется и имеет дату больше, то не меняем
-            if (TopMessage == null && (TopMessage == null || TopMessage.Date > dialog.TopMessage.Date))
+            if (TopMessageItem == null && (TopMessageItem == null || TopMessageItem.Date > dialog.TopMessageItem.Date))
             {
 
 
                 //добавляем сообщение в список в нужное место, если его еще нет
                 var insertRequired = false;
-                if (Messages != null && dialog.TopMessage != null)
+                if (Messages != null && dialog.TopMessageItem != null)
                 {
-                    var oldMessage = Messages.FirstOrDefault(x => x.Id == dialog.TopMessage.Id);
+                    var oldMessage = Messages.FirstOrDefault(x => x.Id == dialog.TopMessageItem.Id);
                     if (oldMessage == null)
                     {
                         insertRequired = true;
@@ -50,14 +50,14 @@ namespace Telegram.Api.TL
 
                 if (insertRequired)
                 {
-                    InsertMessageInOrder(Messages, dialog.TopMessage);
+                    InsertMessageInOrder(Messages, dialog.TopMessageItem);
                 }
 
                 return;
             }
-            TopMessageId = dialog.TopMessageId;
-            TopMessageRandomId = dialog.TopMessageRandomId;
             TopMessage = dialog.TopMessage;
+            TopMessageRandomId = dialog.TopMessageRandomId;
+            TopMessageItem = dialog.TopMessageItem;
 
             lock (MessagesSyncRoot)
             {
@@ -65,12 +65,12 @@ namespace Telegram.Api.TL
                 {
                     for (int i = 0; i < Messages.Count; i++)
                     {
-                        if (Messages[i].Date < TopMessage.Date)
+                        if (Messages[i].Date < TopMessageItem.Date)
                         {
-                            Messages.Insert(i, TopMessage);
+                            Messages.Insert(i, TopMessageItem);
                             break;
                         }
-                        if (Messages[i].Date == TopMessage.Date)
+                        if (Messages[i].Date == TopMessageItem.Date)
                         {
                             break;
                         }
@@ -78,7 +78,7 @@ namespace Telegram.Api.TL
                 }
                 else
                 {
-                    Messages.Add(TopMessage);
+                    Messages.Add(TopMessageItem);
                 }
             }
         }
@@ -135,22 +135,23 @@ namespace Telegram.Api.TL
 
         public long? TopMessageRandomId { get; set; }
 
-        public TLMessageBase _topMessage;
-        public TLMessageBase TopMessage
+        public TLMessageBase _topMessageItem;
+        public TLMessageBase TopMessageItem
         {
             get
             {
-                return _topMessage;
+                return _topMessageItem;
             }
             set
             {
-                _topMessage = value;
+                _topMessageItem = value;
+                RaisePropertyChanged(() => TopMessageItem);
             }
         }
 
         public int GetDateIndex()
         {
-            return TopMessage != null ? TopMessage.Date : 0;
+            return TopMessageItem != null ? TopMessageItem.Date : 0;
         }
 
         public int GetDateIndexWithDraft()
@@ -354,7 +355,7 @@ namespace Telegram.Api.TL
                     return Visibility.Visible;
                 }
 
-                var clientDelta = MTProtoService.Instance.ClientTicksDelta;
+                var clientDelta = MTProtoService.Current.ClientTicksDelta;
                 var utc0SecsLong = notifySettings.MuteUntil * 4294967296 - clientDelta;
                 var utc0SecsInt = utc0SecsLong / 4294967296.0;
 

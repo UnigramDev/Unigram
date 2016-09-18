@@ -71,9 +71,8 @@ namespace Telegram.Api.Services
             get { return _config != null ? _config.Country : null; }
         }
 
-        private int? _currentUserId;
-
-        public int? CurrentUserId
+        private int _currentUserId;
+        public int CurrentUserId
         {
             get
             {
@@ -255,7 +254,7 @@ namespace Telegram.Api.Services
                 Initialize();
             }
 
-            Instance = this;
+            Current = this;
         }
 
         public event EventHandler<TransportCheckedEventArgs> TransportChecked;
@@ -304,7 +303,7 @@ namespace Telegram.Api.Services
             _checkTransportTimer.Change(TimeSpan.FromSeconds(1.0), Timeout.InfiniteTimeSpan);
         }
 
-        public static IMTProtoService Instance { get; protected set; }
+        public static IMTProtoService Current { get; protected set; }
 
         private void CheckTimeouts(object state)
         {
@@ -600,7 +599,7 @@ namespace Telegram.Api.Services
 
         private int GetCurrentUserId()
         {
-            return CurrentUserId ?? 0;
+            return CurrentUserId;
         }
 
         private void OnPacketReceived(object sender, DataEventArgs e)
