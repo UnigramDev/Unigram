@@ -18,7 +18,7 @@ namespace Unigram.ViewModels
 {
     public class LoginPhoneCodeViewModel : UnigramViewModelBase
     {
-        private dynamic _sentCode;
+        private NavigationParameter _sentCode;
 
         public LoginPhoneCodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
@@ -27,7 +27,7 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            _sentCode = parameter;
+            _sentCode = (NavigationParameter)parameter;
             return Task.CompletedTask;
         }
 
@@ -51,8 +51,8 @@ namespace Unigram.ViewModels
         public RelayCommand SendCommand => new RelayCommand(SendExecute);
         private async void SendExecute()
         {
-            var phoneNumber = (string)_sentCode.PhoneNumber;
-            var phoneCodeHash = (string)_sentCode.PhoneCodeHash;
+            var phoneNumber = _sentCode.PhoneNumber;
+            var phoneCodeHash = _sentCode.PhoneCodeHash;
 
             var result = await ProtoService.SignInAsync(phoneNumber, phoneCodeHash, PhoneCode);
             if (result?.IsSucceeded == true)
@@ -106,6 +106,13 @@ namespace Unigram.ViewModels
 
                 Execute.ShowDebugMessage("account.signIn error " + result.Error);
             }
+        }
+
+        public class NavigationParameter
+        {
+            public string PhoneNumber { get; set; }
+
+            public string PhoneCodeHash { get; set; }
         }
     }
 }

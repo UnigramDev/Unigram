@@ -232,11 +232,14 @@ namespace Unigram.Views
         private async void PivotItem_Loaded(object sender, RoutedEventArgs e)
         {
             await ViewModel.getTLContacts();
-            SelfNameField.Text = ViewModel.Self.FullName;
-            SelfPhoneField.Text = ViewModel.Self.Phone;
-            ImageBrush photo= new ImageBrush();
-            photo.ImageSource = DefaultPhotoConverter.Convert(ViewModel.Self.Photo) as ImageSource;
-            SelfPhotoField.Fill = photo;
+            if (ViewModel.Self != null)
+            {
+                SelfNameField.Text = ViewModel.Self.FullName;
+                SelfPhoneField.Text = ViewModel.Self.Phone;
+                ImageBrush photo = new ImageBrush();
+                photo.ImageSource = DefaultPhotoConverter.Convert(ViewModel.Self.Photo) as ImageSource;
+                SelfPhotoField.Fill = photo;
+            }
         }
 
         private void UsersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
