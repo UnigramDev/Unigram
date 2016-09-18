@@ -32,6 +32,7 @@ namespace Unigram.Core.Services
             using (await _registrationLock.WaitAsync())
             {
                 if (_alreadyRegistered) return;
+                _alreadyRegistered = true;
 
                 try
                 {
@@ -41,7 +42,6 @@ namespace Unigram.Core.Services
                         var result = await _protoService.RegisterDeviceAsync(8, channel.Uri);
                         if (result.IsSucceeded && result.Value)
                         {
-                            _alreadyRegistered = true;
                             SettingsHelper.ChannelUri = channel.Uri;
                         }
                     }

@@ -30,6 +30,16 @@ namespace Unigram.Core.Services
 
         public T Deserialize<T>(string parameter)
         {
+            if (parameter == null)
+            {
+                return (T)(object)null;
+            }
+
+            if (parameter.StartsWith("{"))
+            {
+                return SerializationService.Json.Deserialize<T>(parameter);
+            }
+
             var length = parameter.Length;
             var bytes = new byte[length / 2];
             for (int i = 0; i < length; i += 2)
@@ -43,6 +53,11 @@ namespace Unigram.Core.Services
 
         public string Serialize(object parameter)
         {
+            if (parameter == null)
+            {
+                return null;
+            }
+
             if (parameter is TLObject)
             {
                 var obj = parameter as TLObject;
@@ -57,7 +72,7 @@ namespace Unigram.Core.Services
                 }
             }
 
-            throw new NotImplementedException();
+            return SerializationService.Json.Serialize(parameter);
         }
     }
 }

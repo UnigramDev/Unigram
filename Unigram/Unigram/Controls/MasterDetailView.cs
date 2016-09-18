@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Navigation;
 using Unigram.Views;
 using Template10.Common;
 using Windows.UI.Xaml.Media;
+using Unigram.Core.Services;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -246,6 +247,7 @@ namespace Unigram.Controls
             if (service == null)
             {
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude) as NavigationService;
+                service.SerializationService = TLSerializationService.Current;
                 service.FrameFacade.FrameId = key;
                 service.FrameFacade.BackRequested += (s, args) =>
                 {
@@ -264,10 +266,7 @@ namespace Unigram.Controls
 
         private void OnCurrentStateChanged(object sender, VisualStateChangedEventArgs e)
         {
-            if (ViewStateChanged != null)
-            {
-                ViewStateChanged(this, EventArgs.Empty);
-            }
+            ViewStateChanged?.Invoke(this, EventArgs.Empty);
 
             if (CurrentState == MasterDetailState.Filled && IsMasterHidden)
             {
