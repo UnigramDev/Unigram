@@ -33,15 +33,20 @@ namespace Unigram.Core.Services
             {
                 if (_alreadyRegistered) return;
 
-                var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                if (channel.Uri != SettingsHelper.ChannelUri)
+                try
                 {
-                    var result = await _protoService.RegisterDeviceAsync(8, channel.Uri);
-                    if (result.IsSucceeded && result.Value)
+                    var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+                    if (channel.Uri != SettingsHelper.ChannelUri)
                     {
-                        SettingsHelper.ChannelUri = channel.Uri;
+                        var result = await _protoService.RegisterDeviceAsync(8, channel.Uri);
+                        if (result.IsSucceeded && result.Value)
+                        {
+                            _alreadyRegistered = true;
+                            SettingsHelper.ChannelUri = channel.Uri;
+                        }
                     }
                 }
+                catch { }
             }
         }
     }
