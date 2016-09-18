@@ -35,7 +35,7 @@ https://www.behance.net/gallery/37507573/Unigram-for-Windows-10-Mobile
 
 Want to contribute? Join the Unigram Insiders-chat on Telegram or join the discussion on Reddit: 
 
-https://telegram [dot] me/joinchat/ARAF8z851op33YNUlSs4lQ
+https://telegram [dot] me/joinchat/ARAF8z851oqv-9A1XXlHJw
 
 https://www.reddit.com/r/windowsphone/comments/4kkcjc/no_uwp_version_of_telegram_lets_make_one/
 

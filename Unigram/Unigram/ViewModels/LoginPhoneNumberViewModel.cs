@@ -57,13 +57,7 @@ namespace Unigram.ViewModels
 
             if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
             {
-
-                // Temporary fix: delay the execution by 500 millisec.
-                // Reason: this operation was executed BEFORE the UI update
-                // and population of the list, so when the list was afterwards
-                // populated the first item (Afghanistan) was again assinged
-                // as SelectedCountry, thus overriding the correct values.
-                Execute.BeginOnUIThread(new TimeSpan(0,0,0,0,500),() =>
+                Execute.BeginOnUIThread(() =>
                 {
                     _phoneCode = country.PhoneCode;
                     SelectedCountry = country;
@@ -147,7 +141,7 @@ namespace Unigram.ViewModels
             var result = await ProtoService.SendCodeAsync(PhoneCode.TrimStart('+') + PhoneNumber);
             if (result?.IsSucceeded == true)
             {
-                var state = new
+                var state = new LoginPhoneCodeViewModel.NavigationParameter
                 {
                     PhoneNumber = PhoneCode.TrimStart('+') + PhoneNumber,
                     PhoneCodeHash = result.Value.PhoneCodeHash,
