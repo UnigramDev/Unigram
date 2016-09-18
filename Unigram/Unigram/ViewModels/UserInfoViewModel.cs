@@ -20,6 +20,9 @@ using Windows.ApplicationModel.Calls;
 using System.Diagnostics;
 using Unigram.Views;
 using Windows.ApplicationModel.Contacts;
+using System.Collections.ObjectModel;
+using Unigram.Common;
+using System.Linq;
 
 namespace Unigram.ViewModels
 {
@@ -29,6 +32,10 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateNotifySettings>,
         IHandle
     {
+        public ObservableCollection<UsersPanelListItem> UsersList = new ObservableCollection<UsersPanelListItem>();
+        public ObservableCollection<UsersPanelListItem> TempList = new ObservableCollection<UsersPanelListItem>();
+        public object photo;
+        public string FullNameField { get; internal set; }
         public string LastSeen { get; internal set; }
         public UserInfoViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
@@ -64,9 +71,14 @@ namespace Unigram.ViewModels
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var user = parameter as TLUser;
+            var channel = parameter as TLInputPeerChannel;
+            var chat = parameter as TLInputPeerChat;
+            await getMembers(channel, chat);
             if (user != null)
             {
+                FullNameField = user.FullName;
                 Item = user;
+                photo = (TLUserProfilePhotoBase)user.Photo;
                 RaisePropertyChanged(() => AreNotificationsEnabled);
                 RaisePropertyChanged(() => PhoneVisibility);
                 RaisePropertyChanged(() => AddToGroupVisibility);
@@ -86,11 +98,61 @@ namespace Unigram.ViewModels
                     RaisePropertyChanged(() => UnstopVisibility);
                 }
                 var Status = Unigram.Common.LastSeenHelper.getLastSeen(user);
+                              
                 LastSeen = Status.Item1;
                 Aggregator.Subscribe(this);
             }
         }
+        public async Task getMembers(TLInputPeerChannel channel, TLInputPeerChat chat)
+        {
+            if(channel!=null)
+            {
+                //set visibility
+                TLInputChannel x = new TLInputChannel();                
+                x.ChannelId = channel.ChannelId;
+                x.AccessHash = channel.AccessHash;
+                var channelDetails = await ProtoService.GetFullChannelAsync(x);
+                FullNameField = channelDetails.Value.Chats[0].FullName;
+                photo = (TLChatPhotoBase)channelDetails.Value.Chats[0].Photo;
+                var participants = await ProtoService.GetParticipantsAsync(x, null, 0, int.MaxValue);
+                foreach (var item in participants.Value.Users)
+                {
+                    var User = item as TLUser;
+                    var TempX = new UsersPanelListItem(User);
+                    var Status = LastSeenHelper.getLastSeen(User);
+                    TempX.fullName = User.FullName;
+                    TempX.lastSeen = Status.Item1;
+                    TempX.lastSeenEpoch = Status.Item2;
+                    TempX.Photo = TempX._parent.Photo;
+                    TempList.Add(TempX);
+                }               
+            }
 
+            if (chat != null)
+            {
+                //set visibility
+                var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
+                FullNameField = chatDetails.Value.Chats[0].FullName;
+                photo = (TLChatPhotoBase)chatDetails.Value.Chats[0].Photo;
+                foreach (var item in chatDetails.Value.Users)
+                {
+                    var User = item as TLUser;
+                    var TempX = new UsersPanelListItem(User);
+                    var Status = LastSeenHelper.getLastSeen(User);
+                    TempX.fullName = User.FullName;
+                    TempX.lastSeen = Status.Item1;
+                    TempX.lastSeenEpoch = Status.Item2;
+                    TempX.Photo = TempX._parent.Photo;
+                    TempList.Add(TempX);
+                }
+            }
+
+            TempList = new ObservableCollection<ViewModels.UsersPanelListItem>(TempList.OrderByDescending(person => person.lastSeenEpoch));
+            foreach (var item in TempList)
+            {
+                UsersList.Add(item);
+            }
+        }
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
             Aggregator.Unsubscribe(this);
