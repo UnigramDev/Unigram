@@ -37,7 +37,20 @@ namespace Unigram.Views
             //    //txtMasterTitle.Visibility = Visibility.Visible;
             //    rpMasterTitlebar.Visibility = Visibility.Collapsed;
             //}
+
+
+
+
+
+            // IDEA MATEI
+            //this.Loaded += LoginPhoneNumberPage_Loaded;
         }
+
+        // IDEA MATEI
+        //private void LoginPhoneNumberPage_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    ViewModel.LocalizeCommand.Execute(sender);
+        //}
 
         private void PhoneNumber_KeyDown(object sender, KeyRoutedEventArgs e)
         {
