@@ -70,10 +70,28 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            //TODO : SET PROPERTY AND VISIBILITY BINDINGS FOR CHATS AND CHANNELS
             var user = parameter as TLUser;
             var channel = parameter as TLInputPeerChannel;
             var chat = parameter as TLInputPeerChat;
-            await getMembers(channel, chat);
+            if (channel != null)
+            {
+                TLInputChannel x = new TLInputChannel();
+                x.ChannelId = channel.ChannelId;
+                x.AccessHash = channel.AccessHash;
+                var channelDetails = await ProtoService.GetFullChannelAsync(x);
+                FullNameField = channelDetails.Value.Chats[0].FullName;
+                photo = (TLChatPhotoBase)channelDetails.Value.Chats[0].Photo;
+            }
+            if (chat != null)
+            {
+                var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
+                FullNameField = chatDetails.Value.Chats[0].FullName;
+                photo = (TLChatPhotoBase)chatDetails.Value.Chats[0].Photo;
+            }
+            TempList.Clear();
+            UsersList.Clear();
+            getMembers(channel, chat);
             if (user != null)
             {
                 FullNameField = user.FullName;
@@ -89,9 +107,7 @@ namespace Unigram.ViewModels
                 if (result.IsSucceeded)
                 {
                     Full = result.Value;
-
                     RaisePropertyChanged(() => AboutVisibility);
-
                     RaisePropertyChanged(() => BlockVisibility);
                     RaisePropertyChanged(() => UnblockVisibility);
                     RaisePropertyChanged(() => StopVisibility);
@@ -105,15 +121,13 @@ namespace Unigram.ViewModels
         }
         public async Task getMembers(TLInputPeerChannel channel, TLInputPeerChat chat)
         {
+            
             if(channel!=null)
             {
                 //set visibility
                 TLInputChannel x = new TLInputChannel();                
                 x.ChannelId = channel.ChannelId;
                 x.AccessHash = channel.AccessHash;
-                var channelDetails = await ProtoService.GetFullChannelAsync(x);
-                FullNameField = channelDetails.Value.Chats[0].FullName;
-                photo = (TLChatPhotoBase)channelDetails.Value.Chats[0].Photo;
                 var participants = await ProtoService.GetParticipantsAsync(x, null, 0, int.MaxValue);
                 foreach (var item in participants.Value.Users)
                 {
@@ -132,8 +146,6 @@ namespace Unigram.ViewModels
             {
                 //set visibility
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
-                FullNameField = chatDetails.Value.Chats[0].FullName;
-                photo = (TLChatPhotoBase)chatDetails.Value.Chats[0].Photo;
                 foreach (var item in chatDetails.Value.Users)
                 {
                     var User = item as TLUser;
