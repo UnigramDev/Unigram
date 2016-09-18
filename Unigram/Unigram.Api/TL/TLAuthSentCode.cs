@@ -24,30 +24,32 @@ namespace Telegram.Api.TL
 		public Int32? Timeout { get; set; }
 
 		public TLAuthSentCode() { }
-		public TLAuthSentCode(TLBinaryReader from, TLType type = TLType.AuthSentCode)
+		public TLAuthSentCode(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AuthSentCode; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AuthSentCode)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Type = TLFactory.Read<TLAuthSentCodeTypeBase>(from);
+			Type = TLFactory.Read<TLAuthSentCodeTypeBase>(from, cache);
 			PhoneCodeHash = from.ReadString();
-			if (HasNextType) { NextType = TLFactory.Read<TLAuthCodeTypeBase>(from); }
+			if (HasNextType) { NextType = TLFactory.Read<TLAuthCodeTypeBase>(from, cache); }
 			if (HasTimeout) { Timeout = from.ReadInt32(); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x5E002502);
 			to.Write((Int32)Flags);
-			to.WriteObject(Type);
+			to.WriteObject(Type, cache);
 			to.Write(PhoneCodeHash);
-			if (HasNextType) to.WriteObject(NextType);
+			if (HasNextType) to.WriteObject(NextType, cache);
 			if (HasTimeout) to.Write(Timeout.Value);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

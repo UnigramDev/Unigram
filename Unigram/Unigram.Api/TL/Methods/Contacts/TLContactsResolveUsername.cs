@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Contacts
 		public String Username { get; set; }
 
 		public TLContactsResolveUsername() { }
-		public TLContactsResolveUsername(TLBinaryReader from, TLType type = TLType.ContactsResolveUsername)
+		public TLContactsResolveUsername(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactsResolveUsername; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ContactsResolveUsername)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Username = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xF93CCBA3);
 			to.Write(Username);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

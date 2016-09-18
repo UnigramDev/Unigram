@@ -6,20 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLMessagesRecentStickersNotModified : TLMessagesRecentStickersBase 
 	{
 		public TLMessagesRecentStickersNotModified() { }
-		public TLMessagesRecentStickersNotModified(TLBinaryReader from, TLType type = TLType.MessagesRecentStickersNotModified)
+		public TLMessagesRecentStickersNotModified(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesRecentStickersNotModified; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesRecentStickersNotModified)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xB17F890);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

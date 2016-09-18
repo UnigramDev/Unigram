@@ -16,24 +16,25 @@ namespace Telegram.Api.TL.Methods
 		public TLObject Query { get; set; }
 
 		public TLInitConnection() { }
-		public TLInitConnection(TLBinaryReader from, TLType type = TLType.InitConnection)
+		public TLInitConnection(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.InitConnection; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.InitConnection)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			ApiId = from.ReadInt32();
 			DeviceModel = from.ReadString();
 			SystemVersion = from.ReadString();
 			AppVersion = from.ReadString();
 			LangCode = from.ReadString();
-			Query = TLFactory.Read<TLObject>(from);
+			Query = TLFactory.Read<TLObject>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x69796DE9);
 			to.Write(ApiId);
@@ -41,7 +42,8 @@ namespace Telegram.Api.TL.Methods
 			to.Write(SystemVersion);
 			to.Write(AppVersion);
 			to.Write(LangCode);
-			to.WriteObject(Query);
+			to.WriteObject(Query, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

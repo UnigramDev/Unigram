@@ -8,22 +8,24 @@ namespace Telegram.Api.TL
 		public String ShortName { get; set; }
 
 		public TLInputStickerSetShortName() { }
-		public TLInputStickerSetShortName(TLBinaryReader from, TLType type = TLType.InputStickerSetShortName)
+		public TLInputStickerSetShortName(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.InputStickerSetShortName; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.InputStickerSetShortName)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			ShortName = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x861CC8A0);
 			to.Write(ShortName);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -9,20 +9,22 @@ namespace Telegram.Api.TL.Methods.Messages
 	public partial class TLMessagesGetAllDrafts : TLObject
 	{
 		public TLMessagesGetAllDrafts() { }
-		public TLMessagesGetAllDrafts(TLBinaryReader from, TLType type = TLType.MessagesGetAllDrafts)
+		public TLMessagesGetAllDrafts(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesGetAllDrafts; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesGetAllDrafts)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x6A3F8D65);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -9,24 +9,26 @@ namespace Telegram.Api.TL
 		public Double Rating { get; set; }
 
 		public TLTopPeer() { }
-		public TLTopPeer(TLBinaryReader from, TLType type = TLType.TopPeer)
+		public TLTopPeer(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.TopPeer; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.TopPeer)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Peer = TLFactory.Read<TLPeerBase>(from);
+			Peer = TLFactory.Read<TLPeerBase>(from, cache);
 			Rating = from.ReadDouble();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xEDCDC05B);
-			to.WriteObject(Peer);
+			to.WriteObject(Peer, cache);
 			to.Write(Rating);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

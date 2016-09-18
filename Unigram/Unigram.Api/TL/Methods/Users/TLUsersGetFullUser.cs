@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Users
 		public TLInputUserBase Id { get; set; }
 
 		public TLUsersGetFullUser() { }
-		public TLUsersGetFullUser(TLBinaryReader from, TLType type = TLType.UsersGetFullUser)
+		public TLUsersGetFullUser(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UsersGetFullUser; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UsersGetFullUser)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Id = TLFactory.Read<TLInputUserBase>(from);
+			Id = TLFactory.Read<TLInputUserBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xCA30A5B1);
-			to.WriteObject(Id);
+			to.WriteObject(Id, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

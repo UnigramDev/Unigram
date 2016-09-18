@@ -6,20 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLMessageMediaUnsupported : TLMessageMediaBase 
 	{
 		public TLMessageMediaUnsupported() { }
-		public TLMessageMediaUnsupported(TLBinaryReader from, TLType type = TLType.MessageMediaUnsupported)
+		public TLMessageMediaUnsupported(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageMediaUnsupported; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessageMediaUnsupported)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x9F84F49E);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

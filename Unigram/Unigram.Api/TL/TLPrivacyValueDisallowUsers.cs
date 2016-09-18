@@ -7,22 +7,24 @@ namespace Telegram.Api.TL
 	{
 
 		public TLPrivacyValueDisallowUsers() { }
-		public TLPrivacyValueDisallowUsers(TLBinaryReader from, TLType type = TLType.PrivacyValueDisallowUsers)
+		public TLPrivacyValueDisallowUsers(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.PrivacyValueDisallowUsers; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.PrivacyValueDisallowUsers)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Users = TLFactory.Read<TLVector<Int32>>(from);
+			Users = TLFactory.Read<TLVector<Int32>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xC7F49B7);
-			to.WriteObject(Users);
+			to.WriteObject(Users, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

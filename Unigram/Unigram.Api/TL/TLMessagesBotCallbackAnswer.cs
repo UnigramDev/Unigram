@@ -24,26 +24,28 @@ namespace Telegram.Api.TL
 		public String Url { get; set; }
 
 		public TLMessagesBotCallbackAnswer() { }
-		public TLMessagesBotCallbackAnswer(TLBinaryReader from, TLType type = TLType.MessagesBotCallbackAnswer)
+		public TLMessagesBotCallbackAnswer(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesBotCallbackAnswer; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesBotCallbackAnswer)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			if (HasMessage) { Message = from.ReadString(); }
 			if (HasUrl) { Url = from.ReadString(); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xB10DF1FB);
 			to.Write((Int32)Flags);
 			if (HasMessage) to.Write(Message);
 			if (HasUrl) to.Write(Url);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

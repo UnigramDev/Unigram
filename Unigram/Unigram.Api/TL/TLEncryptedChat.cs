@@ -9,14 +9,14 @@ namespace Telegram.Api.TL
 		public Int64 KeyFingerprint { get; set; }
 
 		public TLEncryptedChat() { }
-		public TLEncryptedChat(TLBinaryReader from, TLType type = TLType.EncryptedChat)
+		public TLEncryptedChat(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.EncryptedChat; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.EncryptedChat)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Id = from.ReadInt32();
 			AccessHash = from.ReadInt64();
@@ -25,9 +25,10 @@ namespace Telegram.Api.TL
 			ParticipantId = from.ReadInt32();
 			GAOrB = from.ReadByteArray();
 			KeyFingerprint = from.ReadInt64();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xFA56CE36);
 			to.Write(Id);
@@ -37,6 +38,7 @@ namespace Telegram.Api.TL
 			to.Write(ParticipantId);
 			to.WriteByteArray(GAOrB);
 			to.Write(KeyFingerprint);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

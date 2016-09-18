@@ -7,22 +7,24 @@ namespace Telegram.Api.TL
 	{
 
 		public TLMessageMediaGeo() { }
-		public TLMessageMediaGeo(TLBinaryReader from, TLType type = TLType.MessageMediaGeo)
+		public TLMessageMediaGeo(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageMediaGeo; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessageMediaGeo)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Geo = TLFactory.Read<TLGeoPointBase>(from);
+			Geo = TLFactory.Read<TLGeoPointBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x56E0D474);
-			to.WriteObject(Geo);
+			to.WriteObject(Geo, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

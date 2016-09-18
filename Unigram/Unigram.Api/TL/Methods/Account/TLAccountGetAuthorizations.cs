@@ -9,20 +9,22 @@ namespace Telegram.Api.TL.Methods.Account
 	public partial class TLAccountGetAuthorizations : TLObject
 	{
 		public TLAccountGetAuthorizations() { }
-		public TLAccountGetAuthorizations(TLBinaryReader from, TLType type = TLType.AccountGetAuthorizations)
+		public TLAccountGetAuthorizations(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountGetAuthorizations; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AccountGetAuthorizations)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xE320C158);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

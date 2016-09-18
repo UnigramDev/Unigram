@@ -7,22 +7,24 @@ namespace Telegram.Api.TL
 	{
 
 		public TLKeyboardButtonRequestPhone() { }
-		public TLKeyboardButtonRequestPhone(TLBinaryReader from, TLType type = TLType.KeyboardButtonRequestPhone)
+		public TLKeyboardButtonRequestPhone(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.KeyboardButtonRequestPhone; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.KeyboardButtonRequestPhone)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Text = from.ReadString();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xB16A6C29);
 			to.Write(Text);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

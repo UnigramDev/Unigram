@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Account
 		public TLAccountDaysTTL TTL { get; set; }
 
 		public TLAccountSetAccountTTL() { }
-		public TLAccountSetAccountTTL(TLBinaryReader from, TLType type = TLType.AccountSetAccountTTL)
+		public TLAccountSetAccountTTL(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountSetAccountTTL; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AccountSetAccountTTL)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			TTL = TLFactory.Read<TLAccountDaysTTL>(from);
+			TTL = TLFactory.Read<TLAccountDaysTTL>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x2442485E);
-			to.WriteObject(TTL);
+			to.WriteObject(TTL, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

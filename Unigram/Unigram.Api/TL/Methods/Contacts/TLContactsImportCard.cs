@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Contacts
 		public TLVector<Int32> ExportCard { get; set; }
 
 		public TLContactsImportCard() { }
-		public TLContactsImportCard(TLBinaryReader from, TLType type = TLType.ContactsImportCard)
+		public TLContactsImportCard(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactsImportCard; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ContactsImportCard)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			ExportCard = TLFactory.Read<TLVector<Int32>>(from);
+			ExportCard = TLFactory.Read<TLVector<Int32>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x4FE196FE);
-			to.WriteObject(ExportCard);
+			to.WriteObject(ExportCard, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

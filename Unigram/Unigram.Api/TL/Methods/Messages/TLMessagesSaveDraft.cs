@@ -27,30 +27,32 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLVector<TLMessageEntityBase> Entities { get; set; }
 
 		public TLMessagesSaveDraft() { }
-		public TLMessagesSaveDraft(TLBinaryReader from, TLType type = TLType.MessagesSaveDraft)
+		public TLMessagesSaveDraft(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSaveDraft; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesSaveDraft)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			if (HasReplyToMsgId) { ReplyToMsgId = from.ReadInt32(); }
-			Peer = TLFactory.Read<TLInputPeerBase>(from);
+			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
 			Message = from.ReadString();
-			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from); }
+			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xBC39E14B);
 			to.Write((Int32)Flags);
 			if (HasReplyToMsgId) to.Write(ReplyToMsgId.Value);
-			to.WriteObject(Peer);
+			to.WriteObject(Peer, cache);
 			to.Write(Message);
-			if (HasEntities) to.WriteObject(Entities);
+			if (HasEntities) to.WriteObject(Entities, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

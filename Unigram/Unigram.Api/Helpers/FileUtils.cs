@@ -570,7 +570,7 @@ namespace Telegram.Api.Helpers
             {
                 using (var to = new TLBinaryWriter(file))
                 {
-                    data.Write(to);
+                    data.Write(to, true);
                 }
             }
             File.Copy(Path.Combine(ApplicationData.Current.LocalFolder.Path, text), Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName), true);

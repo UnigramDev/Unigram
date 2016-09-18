@@ -9,24 +9,26 @@ namespace Telegram.Api.TL
 		public TLInputStickerSetBase Stickerset { get; set; }
 
 		public TLDocumentAttributeSticker() { }
-		public TLDocumentAttributeSticker(TLBinaryReader from, TLType type = TLType.DocumentAttributeSticker)
+		public TLDocumentAttributeSticker(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.DocumentAttributeSticker; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.DocumentAttributeSticker)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Alt = from.ReadString();
-			Stickerset = TLFactory.Read<TLInputStickerSetBase>(from);
+			Stickerset = TLFactory.Read<TLInputStickerSetBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x3A556302);
 			to.Write(Alt);
-			to.WriteObject(Stickerset);
+			to.WriteObject(Stickerset, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

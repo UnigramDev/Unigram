@@ -8,28 +8,30 @@ namespace Telegram.Api.TL
 		public TLVector<TLPhotoSizeBase> Sizes { get; set; }
 
 		public TLWallPaper() { }
-		public TLWallPaper(TLBinaryReader from, TLType type = TLType.WallPaper)
+		public TLWallPaper(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.WallPaper; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.WallPaper)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Id = from.ReadInt32();
 			Title = from.ReadString();
-			Sizes = TLFactory.Read<TLVector<TLPhotoSizeBase>>(from);
+			Sizes = TLFactory.Read<TLVector<TLPhotoSizeBase>>(from, cache);
 			Color = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xCCB03657);
 			to.Write(Id);
 			to.Write(Title);
-			to.WriteObject(Sizes);
+			to.WriteObject(Sizes, cache);
 			to.Write(Color);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

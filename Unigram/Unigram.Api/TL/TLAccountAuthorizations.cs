@@ -8,22 +8,24 @@ namespace Telegram.Api.TL
 		public TLVector<TLAuthorization> Authorizations { get; set; }
 
 		public TLAccountAuthorizations() { }
-		public TLAccountAuthorizations(TLBinaryReader from, TLType type = TLType.AccountAuthorizations)
+		public TLAccountAuthorizations(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountAuthorizations; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AccountAuthorizations)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Authorizations = TLFactory.Read<TLVector<TLAuthorization>>(from);
+			Authorizations = TLFactory.Read<TLVector<TLAuthorization>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x1250ABDE);
-			to.WriteObject(Authorizations);
+			to.WriteObject(Authorizations, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

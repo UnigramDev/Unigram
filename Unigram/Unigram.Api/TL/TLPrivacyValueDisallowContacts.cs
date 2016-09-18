@@ -6,20 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLPrivacyValueDisallowContacts : TLPrivacyRuleBase 
 	{
 		public TLPrivacyValueDisallowContacts() { }
-		public TLPrivacyValueDisallowContacts(TLBinaryReader from, TLType type = TLType.PrivacyValueDisallowContacts)
+		public TLPrivacyValueDisallowContacts(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.PrivacyValueDisallowContacts; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.PrivacyValueDisallowContacts)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xF888FA1A);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

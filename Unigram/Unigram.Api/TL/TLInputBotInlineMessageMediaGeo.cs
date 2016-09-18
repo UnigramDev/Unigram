@@ -16,26 +16,28 @@ namespace Telegram.Api.TL
 		public Flag Flags { get; set; }
 
 		public TLInputBotInlineMessageMediaGeo() { }
-		public TLInputBotInlineMessageMediaGeo(TLBinaryReader from, TLType type = TLType.InputBotInlineMessageMediaGeo)
+		public TLInputBotInlineMessageMediaGeo(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.InputBotInlineMessageMediaGeo; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.InputBotInlineMessageMediaGeo)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
-			GeoPoint = TLFactory.Read<TLInputGeoPointBase>(from);
-			if (HasReplyMarkup) { ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from); }
+			GeoPoint = TLFactory.Read<TLInputGeoPointBase>(from, cache);
+			if (HasReplyMarkup) { ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xF4A59DE1);
 			to.Write((Int32)Flags);
-			to.WriteObject(GeoPoint);
-			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
+			to.WriteObject(GeoPoint, cache);
+			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

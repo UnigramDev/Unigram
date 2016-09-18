@@ -52,14 +52,14 @@ namespace Telegram.Api.TL
 		public TLDocumentBase Document { get; set; }
 
 		public TLWebPage() { }
-		public TLWebPage(TLBinaryReader from, TLType type = TLType.WebPage)
+		public TLWebPage(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.WebPage; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.WebPage)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt64();
@@ -69,17 +69,18 @@ namespace Telegram.Api.TL
 			if (HasSiteName) { SiteName = from.ReadString(); }
 			if (HasTitle) { Title = from.ReadString(); }
 			if (HasDescription) { Description = from.ReadString(); }
-			if (HasPhoto) { Photo = TLFactory.Read<TLPhotoBase>(from); }
+			if (HasPhoto) { Photo = TLFactory.Read<TLPhotoBase>(from, cache); }
 			if (HasEmbedUrl) { EmbedUrl = from.ReadString(); }
 			if (HasEmbedType) { EmbedType = from.ReadString(); }
 			if (HasEmbedWidth) { EmbedWidth = from.ReadInt32(); }
 			if (HasEmbedHeight) { EmbedHeight = from.ReadInt32(); }
 			if (HasDuration) { Duration = from.ReadInt32(); }
 			if (HasAuthor) { Author = from.ReadString(); }
-			if (HasDocument) { Document = TLFactory.Read<TLDocumentBase>(from); }
+			if (HasDocument) { Document = TLFactory.Read<TLDocumentBase>(from, cache); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xCA820ED7);
 			to.Write((Int32)Flags);
@@ -90,14 +91,15 @@ namespace Telegram.Api.TL
 			if (HasSiteName) to.Write(SiteName);
 			if (HasTitle) to.Write(Title);
 			if (HasDescription) to.Write(Description);
-			if (HasPhoto) to.WriteObject(Photo);
+			if (HasPhoto) to.WriteObject(Photo, cache);
 			if (HasEmbedUrl) to.Write(EmbedUrl);
 			if (HasEmbedType) to.Write(EmbedType);
 			if (HasEmbedWidth) to.Write(EmbedWidth.Value);
 			if (HasEmbedHeight) to.Write(EmbedHeight.Value);
 			if (HasDuration) to.Write(Duration.Value);
 			if (HasAuthor) to.Write(Author);
-			if (HasDocument) to.WriteObject(Document);
+			if (HasDocument) to.WriteObject(Document, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

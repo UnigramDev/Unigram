@@ -13,25 +13,25 @@ namespace Telegram.Api.TL
         public Int64 SessionId { get; set; }
 
         public TLTransportMessage() { }
-        public TLTransportMessage(TLBinaryReader from, TLType type = TLType.AccountAuthorizations)
+        public TLTransportMessage(TLBinaryReader from, bool fromCache)
         {
-            Read(from, type);
+            Read(from, fromCache);
         }
 
-        public override void Read(TLBinaryReader from, TLType type = TLType.AccountAuthorizations)
+        public override void Read(TLBinaryReader from, bool fromCache)
         {
             Salt = from.ReadInt64();
             SessionId = from.ReadInt64();
-            base.Read(from, type);
+            base.Read(from, fromCache);
         }
 
-        public override void Write(TLBinaryWriter to)
+        public override void Write(TLBinaryWriter to, bool toCache)
         {
             using (var output = new MemoryStream())
             {
                 using (var writer = new TLBinaryWriter(output))
                 {
-                    Query.Write(writer);
+                    writer.WriteObject(Query, toCache);
                     var buffer = output.ToArray();
 
                     to.Write(Salt);

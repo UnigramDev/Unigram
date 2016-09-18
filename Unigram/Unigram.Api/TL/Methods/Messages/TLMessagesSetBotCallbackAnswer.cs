@@ -26,28 +26,30 @@ namespace Telegram.Api.TL.Methods.Messages
 		public String Url { get; set; }
 
 		public TLMessagesSetBotCallbackAnswer() { }
-		public TLMessagesSetBotCallbackAnswer(TLBinaryReader from, TLType type = TLType.MessagesSetBotCallbackAnswer)
+		public TLMessagesSetBotCallbackAnswer(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSetBotCallbackAnswer; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesSetBotCallbackAnswer)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			QueryId = from.ReadInt64();
 			if (HasMessage) { Message = from.ReadString(); }
 			if (HasUrl) { Url = from.ReadString(); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xC927D44B);
 			to.Write((Int32)Flags);
 			to.Write(QueryId);
 			if (HasMessage) to.Write(Message);
 			if (HasUrl) to.Write(Url);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

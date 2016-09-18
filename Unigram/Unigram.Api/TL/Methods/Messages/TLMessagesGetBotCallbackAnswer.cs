@@ -13,26 +13,28 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Byte[] Data { get; set; }
 
 		public TLMessagesGetBotCallbackAnswer() { }
-		public TLMessagesGetBotCallbackAnswer(TLBinaryReader from, TLType type = TLType.MessagesGetBotCallbackAnswer)
+		public TLMessagesGetBotCallbackAnswer(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesGetBotCallbackAnswer; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesGetBotCallbackAnswer)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Peer = TLFactory.Read<TLInputPeerBase>(from);
+			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
 			MsgId = from.ReadInt32();
 			Data = from.ReadByteArray();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xA6E94F04);
-			to.WriteObject(Peer);
+			to.WriteObject(Peer, cache);
 			to.Write(MsgId);
 			to.WriteByteArray(Data);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

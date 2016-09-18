@@ -11,32 +11,32 @@ namespace Telegram.Api.TL
         public List<TLContainerTransportMessage> Messages { get; set; }
 
         public TLMessageContainer() { }
-        public TLMessageContainer(TLBinaryReader from, TLType type = TLType.MsgContainer)
+        public TLMessageContainer(TLBinaryReader from, bool cache = false)
         {
-            Read(from, type);
+            Read(from, cache);
         }
 
         public override TLType TypeId { get { return TLType.MsgContainer; } }
 
-        public override void Read(TLBinaryReader from, TLType type = TLType.MsgContainer)
+        public override void Read(TLBinaryReader from, bool cache = false)
         {
             Messages = new List<TLContainerTransportMessage>();
 
             var count = from.ReadUInt32();
             for (int i = 0; i < count; i++)
             {
-                Messages.Add(new TLContainerTransportMessage(from));
+                Messages.Add(new TLContainerTransportMessage(from, cache));
             }
         }
 
-        public override void Write(TLBinaryWriter to)
+        public override void Write(TLBinaryWriter to, bool cache = false)
         {
             to.Write(0x73F1F8DC);
             to.Write(Messages.Count);
             
             foreach (var item in Messages)
             {
-                item.Write(to);
+                item.Write(to, cache);
             }
         }
     }

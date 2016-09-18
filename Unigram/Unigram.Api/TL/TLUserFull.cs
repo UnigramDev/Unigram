@@ -28,34 +28,36 @@ namespace Telegram.Api.TL
 		public TLBotInfo BotInfo { get; set; }
 
 		public TLUserFull() { }
-		public TLUserFull(TLBinaryReader from, TLType type = TLType.UserFull)
+		public TLUserFull(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UserFull; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UserFull)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
-			User = TLFactory.Read<TLUserBase>(from);
+			User = TLFactory.Read<TLUserBase>(from, cache);
 			if (HasAbout) { About = from.ReadString(); }
-			Link = TLFactory.Read<TLContactsLink>(from);
-			if (HasProfilePhoto) { ProfilePhoto = TLFactory.Read<TLPhotoBase>(from); }
-			NotifySettings = TLFactory.Read<TLPeerNotifySettingsBase>(from);
-			if (HasBotInfo) { BotInfo = TLFactory.Read<TLBotInfo>(from); }
+			Link = TLFactory.Read<TLContactsLink>(from, cache);
+			if (HasProfilePhoto) { ProfilePhoto = TLFactory.Read<TLPhotoBase>(from, cache); }
+			NotifySettings = TLFactory.Read<TLPeerNotifySettingsBase>(from, cache);
+			if (HasBotInfo) { BotInfo = TLFactory.Read<TLBotInfo>(from, cache); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x5932FC03);
 			to.Write((Int32)Flags);
-			to.WriteObject(User);
+			to.WriteObject(User, cache);
 			if (HasAbout) to.Write(About);
-			to.WriteObject(Link);
-			if (HasProfilePhoto) to.WriteObject(ProfilePhoto);
-			to.WriteObject(NotifySettings);
-			if (HasBotInfo) to.WriteObject(BotInfo);
+			to.WriteObject(Link, cache);
+			if (HasProfilePhoto) to.WriteObject(ProfilePhoto, cache);
+			to.WriteObject(NotifySettings, cache);
+			if (HasBotInfo) to.WriteObject(BotInfo, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -12,24 +12,26 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLInputUserBase UserId { get; set; }
 
 		public TLMessagesDeleteChatUser() { }
-		public TLMessagesDeleteChatUser(TLBinaryReader from, TLType type = TLType.MessagesDeleteChatUser)
+		public TLMessagesDeleteChatUser(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesDeleteChatUser; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesDeleteChatUser)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			ChatId = from.ReadInt32();
-			UserId = TLFactory.Read<TLInputUserBase>(from);
+			UserId = TLFactory.Read<TLInputUserBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xE0611F16);
 			to.Write(ChatId);
-			to.WriteObject(UserId);
+			to.WriteObject(UserId, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

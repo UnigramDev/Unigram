@@ -20,10 +20,10 @@ namespace Telegram.Api.TL
         {
             _items = new List<T>();
         }
-        public TLVector(TLBinaryReader from)
+        public TLVector(TLBinaryReader from, bool fromCache)
         {
             _items = new List<T>();
-            Read(from);
+            Read(from, fromCache);
         }
         public TLVector(IEnumerable<T> source)
         {
@@ -36,24 +36,24 @@ namespace Telegram.Api.TL
 
         public override TLType TypeId { get { return TLType.Vector; } }
 
-        public override void Read(TLBinaryReader from, TLType type = TLType.Vector)
+        public override void Read(TLBinaryReader from, bool fromCache)
         {
             //var type2 = (TLType)from.ReadUInt32();
             var count = from.ReadUInt32();
             for (int i = 0; i < count; i++)
             {
-                _items.Add(TLFactory.Read<T>(from));
+                _items.Add(TLFactory.Read<T>(from, fromCache));
             }
         }
 
-        public override void Write(TLBinaryWriter to)
+        public override void Write(TLBinaryWriter to, bool toCache)
         {
             to.Write(0x1CB5C415);
             to.Write((uint)_items.Count());
 
             foreach (var item in _items)
             {
-                TLFactory.Write(to, item);
+                TLFactory.Write(to, item, toCache);
             }
         }
 

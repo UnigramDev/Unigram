@@ -12,23 +12,24 @@ namespace Telegram.Api.TL
 		public Int32 UnreadCount { get; set; }
 
 		public TLUpdatesState() { }
-		public TLUpdatesState(TLBinaryReader from, TLType type = TLType.UpdatesState)
+		public TLUpdatesState(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdatesState; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdatesState)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Pts = from.ReadInt32();
 			Qts = from.ReadInt32();
 			Date = from.ReadInt32();
 			Seq = from.ReadInt32();
 			UnreadCount = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xA56C2A3E);
 			to.Write(Pts);
@@ -36,6 +37,7 @@ namespace Telegram.Api.TL
 			to.Write(Date);
 			to.Write(Seq);
 			to.Write(UnreadCount);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

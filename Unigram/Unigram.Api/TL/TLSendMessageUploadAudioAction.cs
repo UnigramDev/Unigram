@@ -7,22 +7,24 @@ namespace Telegram.Api.TL
 	{
 
 		public TLSendMessageUploadAudioAction() { }
-		public TLSendMessageUploadAudioAction(TLBinaryReader from, TLType type = TLType.SendMessageUploadAudioAction)
+		public TLSendMessageUploadAudioAction(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.SendMessageUploadAudioAction; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.SendMessageUploadAudioAction)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Progress = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xF351D7AB);
 			to.Write(Progress);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

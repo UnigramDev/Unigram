@@ -12,24 +12,26 @@ namespace Telegram.Api.TL.Methods.Account
 		public TLVector<TLInputPrivacyRuleBase> Rules { get; set; }
 
 		public TLAccountSetPrivacy() { }
-		public TLAccountSetPrivacy(TLBinaryReader from, TLType type = TLType.AccountSetPrivacy)
+		public TLAccountSetPrivacy(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountSetPrivacy; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.AccountSetPrivacy)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Key = TLFactory.Read<TLInputPrivacyKeyBase>(from);
-			Rules = TLFactory.Read<TLVector<TLInputPrivacyRuleBase>>(from);
+			Key = TLFactory.Read<TLInputPrivacyKeyBase>(from, cache);
+			Rules = TLFactory.Read<TLVector<TLInputPrivacyRuleBase>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xC9F81CE8);
-			to.WriteObject(Key);
-			to.WriteObject(Rules);
+			to.WriteObject(Key, cache);
+			to.WriteObject(Rules, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

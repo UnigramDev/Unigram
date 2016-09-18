@@ -20,17 +20,21 @@ namespace Telegram.Api.TL
             }
         }
 
-        public virtual void Read(TLBinaryReader from, TLType type = TLType.None) { }
+        public virtual void Read(TLBinaryReader from, bool cache = false) { }
 
-        public virtual void Write(TLBinaryWriter to) { }
+        public virtual void Write(TLBinaryWriter to, bool cache = false) { }
 
-        public byte[] ToArray()
+        public virtual void ReadFromCache(TLBinaryReader from) { }
+
+        public virtual void WriteToCache(TLBinaryWriter to) { }
+
+        public byte[] ToArray(bool cache = false)
         {
             using (var stream = new MemoryStream())
             {
                 using (var to = new TLBinaryWriter(stream))
                 {
-                    Write(to);
+                    Write(to, cache);
                     return stream.ToArray();
                 }
             }

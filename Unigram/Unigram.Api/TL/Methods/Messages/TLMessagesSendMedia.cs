@@ -32,32 +32,34 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLReplyMarkupBase ReplyMarkup { get; set; }
 
 		public TLMessagesSendMedia() { }
-		public TLMessagesSendMedia(TLBinaryReader from, TLType type = TLType.MessagesSendMedia)
+		public TLMessagesSendMedia(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSendMedia; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesSendMedia)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Peer = TLFactory.Read<TLInputPeerBase>(from);
+			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
 			if (HasReplyToMsgId) { ReplyToMsgId = from.ReadInt32(); }
-			Media = TLFactory.Read<TLInputMediaBase>(from);
+			Media = TLFactory.Read<TLInputMediaBase>(from, cache);
 			RandomId = from.ReadInt64();
-			if (HasReplyMarkup) { ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from); }
+			if (HasReplyMarkup) { ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache); }
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xC8F16791);
 			to.Write((Int32)Flags);
-			to.WriteObject(Peer);
+			to.WriteObject(Peer, cache);
 			if (HasReplyToMsgId) to.Write(ReplyToMsgId.Value);
-			to.WriteObject(Media);
+			to.WriteObject(Media, cache);
 			to.Write(RandomId);
-			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
+			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

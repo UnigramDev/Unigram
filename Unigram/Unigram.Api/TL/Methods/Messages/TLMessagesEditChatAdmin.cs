@@ -13,26 +13,28 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Boolean IsAdmin { get; set; }
 
 		public TLMessagesEditChatAdmin() { }
-		public TLMessagesEditChatAdmin(TLBinaryReader from, TLType type = TLType.MessagesEditChatAdmin)
+		public TLMessagesEditChatAdmin(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesEditChatAdmin; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesEditChatAdmin)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			ChatId = from.ReadInt32();
-			UserId = TLFactory.Read<TLInputUserBase>(from);
+			UserId = TLFactory.Read<TLInputUserBase>(from, cache);
 			IsAdmin = from.ReadBoolean();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xA9E69F2E);
 			to.Write(ChatId);
-			to.WriteObject(UserId);
+			to.WriteObject(UserId, cache);
 			to.Write(IsAdmin);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

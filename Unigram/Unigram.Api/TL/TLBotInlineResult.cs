@@ -39,14 +39,14 @@ namespace Telegram.Api.TL
 		public Int32? Duration { get; set; }
 
 		public TLBotInlineResult() { }
-		public TLBotInlineResult(TLBinaryReader from, TLType type = TLType.BotInlineResult)
+		public TLBotInlineResult(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.BotInlineResult; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.BotInlineResult)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadString();
@@ -60,10 +60,11 @@ namespace Telegram.Api.TL
 			if (HasW) { W = from.ReadInt32(); }
 			if (HasH) { H = from.ReadInt32(); }
 			if (HasDuration) { Duration = from.ReadInt32(); }
-			SendMessage = TLFactory.Read<TLBotInlineMessageBase>(from);
+			SendMessage = TLFactory.Read<TLBotInlineMessageBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x9BEBAEB9);
 			to.Write((Int32)Flags);
@@ -78,7 +79,8 @@ namespace Telegram.Api.TL
 			if (HasW) to.Write(W.Value);
 			if (HasH) to.Write(H.Value);
 			if (HasDuration) to.Write(Duration.Value);
-			to.WriteObject(SendMessage);
+			to.WriteObject(SendMessage, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

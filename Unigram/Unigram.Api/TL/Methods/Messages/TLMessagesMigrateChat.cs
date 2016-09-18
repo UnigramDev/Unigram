@@ -11,22 +11,24 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int32 ChatId { get; set; }
 
 		public TLMessagesMigrateChat() { }
-		public TLMessagesMigrateChat(TLBinaryReader from, TLType type = TLType.MessagesMigrateChat)
+		public TLMessagesMigrateChat(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesMigrateChat; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.MessagesMigrateChat)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			ChatId = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x15A3B8E3);
 			to.Write(ChatId);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

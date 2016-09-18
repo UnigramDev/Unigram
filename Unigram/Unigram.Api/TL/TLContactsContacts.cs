@@ -9,24 +9,26 @@ namespace Telegram.Api.TL
 		public TLVector<TLUserBase> Users { get; set; }
 
 		public TLContactsContacts() { }
-		public TLContactsContacts(TLBinaryReader from, TLType type = TLType.ContactsContacts)
+		public TLContactsContacts(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactsContacts; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ContactsContacts)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Contacts = TLFactory.Read<TLVector<TLContact>>(from);
-			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
+			Contacts = TLFactory.Read<TLVector<TLContact>>(from, cache);
+			Users = TLFactory.Read<TLVector<TLUserBase>>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x6F8B8CB2);
-			to.WriteObject(Contacts);
-			to.WriteObject(Users);
+			to.WriteObject(Contacts, cache);
+			to.WriteObject(Users, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

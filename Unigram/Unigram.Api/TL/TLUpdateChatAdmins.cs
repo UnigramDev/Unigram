@@ -8,26 +8,28 @@ namespace Telegram.Api.TL
 		public Boolean Enabled { get; set; }
 
 		public TLUpdateChatAdmins() { }
-		public TLUpdateChatAdmins(TLBinaryReader from, TLType type = TLType.UpdateChatAdmins)
+		public TLUpdateChatAdmins(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateChatAdmins; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdateChatAdmins)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			ChatId = from.ReadInt32();
 			Enabled = from.ReadBoolean();
 			Version = from.ReadInt32();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0x6E947941);
 			to.Write(ChatId);
 			to.Write(Enabled);
 			to.Write(Version);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

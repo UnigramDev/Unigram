@@ -6,20 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLUpdateConfig : TLUpdateBase 
 	{
 		public TLUpdateConfig() { }
-		public TLUpdateConfig(TLBinaryReader from, TLType type = TLType.UpdateConfig)
+		public TLUpdateConfig(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateConfig; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.UpdateConfig)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xA229DD06);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

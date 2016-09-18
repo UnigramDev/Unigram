@@ -12,9 +12,9 @@ namespace Telegram.Api.TL
         public TLObject Action { get; set; }
 
         public TLActionInfo() { }
-        public TLActionInfo(TLBinaryReader from, TLType type = TLType.None)
+        public TLActionInfo(TLBinaryReader from, bool fromCache)
         {
-            Read(from, type);
+            Read(from, fromCache);
         }
 
         public override string ToString()
@@ -22,17 +22,17 @@ namespace Telegram.Api.TL
             return string.Format("send_before={0} action={1}", SendBefore, Action);
         }
 
-        public override void Read(TLBinaryReader from, TLType type = TLType.None)
+        public override void Read(TLBinaryReader from, bool fromCache)
         {
             SendBefore = from.ReadInt32();
-            Action = TLFactory.Read<TLObject>(from);
+            Action = TLFactory.Read<TLObject>(from, fromCache);
         }
 
-        public override void Write(TLBinaryWriter to)
+        public override void Write(TLBinaryWriter to, bool toCache)
         {
             to.Write(0xFFFFFF0D);
             to.Write(SendBefore);
-            Action.Write(to);
+            Action.Write(to, toCache);
         }
     }
 }

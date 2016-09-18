@@ -10,26 +10,28 @@ namespace Telegram.Api.TL
 		public Double CropWidth { get; set; }
 
 		public TLInputPhotoCrop() { }
-		public TLInputPhotoCrop(TLBinaryReader from, TLType type = TLType.InputPhotoCrop)
+		public TLInputPhotoCrop(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.InputPhotoCrop; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.InputPhotoCrop)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			CropLeft = from.ReadDouble();
 			CropTop = from.ReadDouble();
 			CropWidth = from.ReadDouble();
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xD9915325);
 			to.Write(CropLeft);
 			to.Write(CropTop);
 			to.Write(CropWidth);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

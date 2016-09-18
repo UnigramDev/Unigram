@@ -6,20 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLContactLinkContact : TLContactLinkBase 
 	{
 		public TLContactLinkContact() { }
-		public TLContactLinkContact(TLBinaryReader from, TLType type = TLType.ContactLinkContact)
+		public TLContactLinkContact(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactLinkContact; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ContactLinkContact)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xD502C2D0);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -9,20 +9,22 @@ namespace Telegram.Api.TL.Methods.Help
 	public partial class TLHelpGetAppUpdate : TLObject
 	{
 		public TLHelpGetAppUpdate() { }
-		public TLHelpGetAppUpdate(TLBinaryReader from, TLType type = TLType.HelpGetAppUpdate)
+		public TLHelpGetAppUpdate(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.HelpGetAppUpdate; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.HelpGetAppUpdate)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xAE2DE196);
+			if (cache) WriteToCache(to);
 		}
 	}
 }

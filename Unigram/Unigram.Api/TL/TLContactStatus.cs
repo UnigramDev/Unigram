@@ -9,24 +9,26 @@ namespace Telegram.Api.TL
 		public TLUserStatusBase Status { get; set; }
 
 		public TLContactStatus() { }
-		public TLContactStatus(TLBinaryReader from, TLType type = TLType.ContactStatus)
+		public TLContactStatus(TLBinaryReader from, bool cache = false)
 		{
-			Read(from, type);
+			Read(from, cache);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactStatus; } }
 
-		public override void Read(TLBinaryReader from, TLType type = TLType.ContactStatus)
+		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			UserId = from.ReadInt32();
-			Status = TLFactory.Read<TLUserStatusBase>(from);
+			Status = TLFactory.Read<TLUserStatusBase>(from, cache);
+			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to)
+		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
 			to.Write(0xD3680C61);
 			to.Write(UserId);
-			to.WriteObject(Status);
+			to.WriteObject(Status, cache);
+			if (cache) WriteToCache(to);
 		}
 	}
 }
