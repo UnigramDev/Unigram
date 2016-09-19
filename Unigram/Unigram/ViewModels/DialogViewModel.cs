@@ -235,13 +235,14 @@ namespace Unigram.ViewModels
             user = parameter as TLUser;
             if (user != null)
             {
+         
                 //Happy Birthday Alexmitter xD
                 Messages.Clear();
                 Item = user;
                 photo = user.Photo;
                 DialogTitle = Item.FullName;
                 PlaceHolderColor = BindConvert.Current.Bubble(Item.Id);
-                LastSeen = LastSeenHelper.GetLastSeen(user);
+                LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
                 LastSeenVisible = Visibility.Visible;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
