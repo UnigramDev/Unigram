@@ -46,6 +46,7 @@ namespace Unigram.ViewModels
             // This portion is moved in a RelayCommand in MATEI'S IDEA.
 
             ProtoService.GotUserCountry += GotUserCountry;
+
             if (!string.IsNullOrEmpty(ProtoService.Country))
             {
                 GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
@@ -72,9 +73,7 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    _phoneCode = country.PhoneCode;
                     SelectedCountry = country;
-                    RaisePropertyChanged(() => PhoneCode);
                 });
             }
         }
