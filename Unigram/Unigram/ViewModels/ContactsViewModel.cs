@@ -44,7 +44,8 @@ namespace Unigram.ViewModels
                     var status = LastSeenHelper.GetLastSeen(user);
                     var listItem = new UsersPanelListItem(user as TLUser);
                     listItem.fullName = user.FullName;
-                    listItem.lastSeen = status;
+                    listItem.lastSeen = status.Item1;
+                    listItem.lastSeenEpoch = status.Item2;
                     listItem.Photo = listItem._parent.Photo;
                     listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
 
@@ -52,7 +53,7 @@ namespace Unigram.ViewModels
                 }
 
                 //Super Inefficient Method below to sort alphabetically, TODO: FIX IT
-                foreach (var item in temp.OrderByDescending(person => person.lastSeen))
+                foreach (var item in temp.OrderByDescending(person => person.lastSeenEpoch))
                 {
                     Items.Add(item);
                 }
