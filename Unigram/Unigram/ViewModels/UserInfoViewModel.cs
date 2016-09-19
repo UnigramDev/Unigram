@@ -113,9 +113,9 @@ namespace Unigram.ViewModels
                     RaisePropertyChanged(() => StopVisibility);
                     RaisePropertyChanged(() => UnstopVisibility);
                 }
-                var Status = Unigram.Common.LastSeenHelper.getLastSeen(user);
+                var Status = Unigram.Common.LastSeenHelper.GetLastSeen(user);
                               
-                LastSeen = Status.Item1;
+                LastSeen = Status;
                 Aggregator.Subscribe(this);
             }
         }
@@ -133,10 +133,9 @@ namespace Unigram.ViewModels
                 {
                     var User = item as TLUser;
                     var TempX = new UsersPanelListItem(User);
-                    var Status = LastSeenHelper.getLastSeen(User);
+                    var Status = LastSeenHelper.GetLastSeen(User);
                     TempX.fullName = User.FullName;
-                    TempX.lastSeen = Status.Item1;
-                    TempX.lastSeenEpoch = Status.Item2;
+                    TempX.lastSeen = Status;
                     TempX.Photo = TempX._parent.Photo;
                     TempList.Add(TempX);
                 }               
@@ -150,17 +149,15 @@ namespace Unigram.ViewModels
                 {
                     var User = item as TLUser;
                     var TempX = new UsersPanelListItem(User);
-                    var Status = LastSeenHelper.getLastSeen(User);
+                    var Status = LastSeenHelper.GetLastSeen(User);
                     TempX.fullName = User.FullName;
-                    TempX.lastSeen = Status.Item1;
-                    TempX.lastSeenEpoch = Status.Item2;
+                    TempX.lastSeen = Status;
                     TempX.Photo = TempX._parent.Photo;
                     TempList.Add(TempX);
                 }
             }
 
-            TempList = new ObservableCollection<ViewModels.UsersPanelListItem>(TempList.OrderByDescending(person => person.lastSeenEpoch));
-            foreach (var item in TempList)
+            foreach (var item in TempList.OrderByDescending(person => person.lastSeen))
             {
                 UsersList.Add(item);
             }

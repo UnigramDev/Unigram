@@ -35,6 +35,16 @@ namespace Unigram.ViewModels
 
             Countries = list;
 
+            // IDEA FELA
+
+            //if(SelectedCountry == null)
+            //{
+            //    SelectedCountry = Countries[0][0];
+            //}
+
+            // Oldimplementation, keeping it till further investigation.
+            // This portion is moved in a RelayCommand in MATEI'S IDEA.
+
             ProtoService.GotUserCountry += GotUserCountry;
 
             if (!string.IsNullOrEmpty(ProtoService.Country))
@@ -55,13 +65,15 @@ namespace Unigram.ViewModels
                 }
             }
 
+            // IDEA MATEI
+            //if (country != null && string.IsNullOrEmpty(PhoneNumber))
+
+            // Old implementation, keeping it til further investigation
             if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    _phoneCode = country.PhoneCode;
                     SelectedCountry = country;
-                    RaisePropertyChanged(() => PhoneCode);
                 });
             }
         }
@@ -152,5 +164,18 @@ namespace Unigram.ViewModels
                 NavigationService.Navigate(typeof(LoginPhoneCodePage), state);
             }
         }
+
+        // IDEA MATEI
+
+        //public RelayCommand LocalizeCommand => new RelayCommand(LocalizeExecute);
+        //private void LocalizeExecute()
+        //{
+        //    ProtoService.GotUserCountry += GotUserCountry;
+
+        //    if (!string.IsNullOrEmpty(ProtoService.Country))
+        //    {
+        //        GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
+        //    }
+        //}
     }
 }
