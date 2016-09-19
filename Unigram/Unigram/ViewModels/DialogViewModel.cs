@@ -240,8 +240,8 @@ namespace Unigram.ViewModels
                 Item = user;
                 photo = user.Photo;
                 DialogTitle = Item.FullName;
-                PlaceHolderColor = UpdateProfilePictureColor.UpdatePicture(Item.Id);
-                LastSeen = LastSeenHelper.getLastSeen(user).Item1;
+                PlaceHolderColor = BindConvert.Current.Bubble(Item.Id);
+                LastSeen = LastSeenHelper.GetLastSeen(user);
                 LastSeenVisible = Visibility.Visible;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
@@ -256,7 +256,7 @@ namespace Unigram.ViewModels
                 x.AccessHash = channel.AccessHash;
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);                
                 DialogTitle = channelDetails.Value.Chats[0].FullName;
-                PlaceHolderColor = UpdateProfilePictureColor.UpdatePicture(channelDetails.Value.Chats[0].Id);
+                PlaceHolderColor = BindConvert.Current.Bubble(channelDetails.Value.Chats[0].Id);
                 photo = channelDetails.Value.Chats[0].Photo;
                 LastSeenVisible = Visibility.Collapsed;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
@@ -271,7 +271,7 @@ namespace Unigram.ViewModels
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
                 DialogTitle = chatDetails.Value.Chats[0].FullName;
                 photo =chatDetails.Value.Chats[0].Photo;
-                PlaceHolderColor = UpdateProfilePictureColor.UpdatePicture(chatDetails.Value.Chats[0].Id);
+                PlaceHolderColor = BindConvert.Current.Bubble(chatDetails.Value.Chats[0].Id);
                 LastSeenVisible = Visibility.Collapsed;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };

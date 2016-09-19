@@ -17,5 +17,19 @@ namespace Telegram.Api.TL
 
         [DataMember]
         public DateTime LastUpdate { get; set; }
+
+        public override void ReadFromCache(TLBinaryReader from)
+        {
+            ActiveDCOptionIndex = from.ReadInt32();
+            Country = from.ReadString();
+            LastUpdate = DateTime.FromBinary(from.ReadInt64());
+        }
+
+        public override void WriteToCache(TLBinaryWriter to)
+        {
+            to.Write(ActiveDCOptionIndex);
+            to.Write(Country);
+            to.Write(LastUpdate.ToBinary());
+        }
     }
 }
