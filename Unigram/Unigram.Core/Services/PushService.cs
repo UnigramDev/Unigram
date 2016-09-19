@@ -29,6 +29,8 @@ namespace Unigram.Core.Services
 
         public async Task RegisterAsync()
         {
+            await Task.Delay(500);
+
             using (await _registrationLock.WaitAsync())
             {
                 if (_alreadyRegistered) return;

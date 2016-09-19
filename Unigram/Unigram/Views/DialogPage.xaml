@@ -319,7 +319,8 @@
                        RelativePanel.AlignTopWithPanel="True"
                        RelativePanel.AlignBottomWithPanel="True" />
                 <!-- Message input -->
-                <TextBox x:Name="txtMessage" 
+                <controls:BubbleTextBox
+                         x:Name="txtMessage" 
                          x:Uid="Chat-Input-Message"
                          PlaceholderText="Type your message..."
                          Text="{Binding SendTextHolder, Mode=TwoWay}"

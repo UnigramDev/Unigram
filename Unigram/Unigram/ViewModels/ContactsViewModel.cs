@@ -8,17 +8,20 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
 
 namespace Unigram.ViewModels
 {
-    public class ContactsViewModel : UnigramViewModelBase
+    public class ContactsViewModel : UnigramViewModelBase, IHandle, IHandle<TLUpdateUserStatus>
     {
         public ContactsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new ObservableCollection<UsersPanelListItem>();
+            Items = new SortedObservableCollection<UsersPanelListItem>(new UsersPanelListItemComparer());
+
+            aggregator.Subscribe(this);
         }
 
         public async Task getTLContacts()
@@ -56,7 +59,16 @@ namespace Unigram.ViewModels
             }
         }
 
-        public ObservableCollection<UsersPanelListItem> Items { get; private set; }
+        #region Handle
+
+        public void Handle(TLUpdateUserStatus message)
+        {
+            var first = Items.FirstOrDefault(x => x._parent.Id == message.UserId);
+        }
+
+        #endregion
+
+        public SortedObservableCollection<UsersPanelListItem> Items { get; private set; }
 
         private TLUser _self;
         public TLUser Self
@@ -69,6 +81,15 @@ namespace Unigram.ViewModels
             {
                 Set(ref _self, value);
             }
+        }
+    }
+
+    public class UsersPanelListItemComparer : IComparer<UsersPanelListItem>
+    {
+        public int Compare(UsersPanelListItem x, UsersPanelListItem y)
+        {
+            return 0;
+            //return x.
         }
     }
 }
