@@ -5,7 +5,7 @@
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
     xmlns:items="using:Unigram.Controls.Items"
-    xmlns:vmc="using:Telegram.Api.TL"
+    xmlns:models="using:Telegram.Api.TL"
     xmlns:vms="using:Unigram.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -71,26 +71,32 @@
                     <PivotItem.Header>
                         <controls:TabHeaderStyle Glyph="&#xE125;"/>
                     </PivotItem.Header>
-                    <ListView Margin="0,0,0,0" x:Name="UsersListView" ItemsSource="{x:Bind Path=ViewModel.UsersList}" SelectionChanged="UsersListView_SelectionChanged">
-                        <ListView.Header>
-                            <Grid Height="120" Margin="0,0,0,4" Background="{ThemeResource AppBarBackground}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="96"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Ellipse x:Name="SelfPhotoField" Height="72" Width="72" VerticalAlignment="Center" Grid.RowSpan="2" Grid.Column="0">
-                                    <Ellipse.Fill>
-                                        <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>                                    </Ellipse.Fill>
-                                </Ellipse>
-                                <TextBlock x:Name="SelfNameField" Text="Batman" Margin="12,0,0,0" VerticalAlignment="Bottom" FontSize="20" Grid.Row="0" Grid.Column="1"/>
-                                <TextBlock x:Name="SelfPhoneField" Text="1800-800-HELP" Margin="12,0,0,0" Style="{ThemeResource BodyTextBlockStyle}" 
-                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" FontSize="16" Grid.Row="1" Grid.Column="1"/>
-                            </Grid>
-                        </ListView.Header>
+                    <ListView x:Name="UsersListView"
+                              ItemsSource="{x:Bind ViewModel.Contacts.Items}"
+                              Header="{x:Bind ViewModel.Contacts.Self, Mode=OneWay}"
+                              SelectionChanged="UsersListView_SelectionChanged">
+                        <ListView.HeaderTemplate>
+                            <DataTemplate x:DataType="models:TLUser">
+                                <Grid Height="120" Margin="0,0,0,8" Background="{ThemeResource AppBarBackground}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="96"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Ellipse x:Name="SelfPhotoField" Height="72" Width="72" VerticalAlignment="Center" Grid.RowSpan="2" Grid.Column="0">
+                                        <Ellipse.Fill>
+                                            <ImageBrush ImageSource="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                    <TextBlock Text="{x:Bind FullName}" Margin="12,0,0,0" VerticalAlignment="Bottom" FontSize="20" Grid.Row="0" Grid.Column="1"/>
+                                    <TextBlock x:Name="SelfPhoneField" Text="{x:Bind Phone}" Margin="12,0,0,0" Style="{ThemeResource BodyTextBlockStyle}" 
+                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" FontSize="16" Grid.Row="1" Grid.Column="1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.HeaderTemplate>
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ItemsStackPanel GroupHeaderPlacement="Left"
@@ -100,7 +106,7 @@
                         </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="vms:UsersPanelListItem">
-                                <Grid Margin="0,4,0,4">
+                                <Grid Margin="0,4,0,8">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>

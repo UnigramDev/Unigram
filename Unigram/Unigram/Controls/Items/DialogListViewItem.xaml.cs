@@ -316,7 +316,7 @@ namespace Unigram.Controls.Items
                         return "Draft: ";
                     }
 
-                    if (message.ShowFrom || IsOut(ViewModel))
+                    if (message.ShowFrom || IsOut(dialog))
                     {
                         FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelFromBrush"] as SolidColorBrush;
 
@@ -334,7 +334,22 @@ namespace Unigram.Controls.Items
                                 var user = InMemoryCacheService.Current.GetUser(from.Value) as TLUser;
                                 if (user != null)
                                 {
-                                    return $"{user.FirstName.Trim()}: ";
+                                    if (user.HasFirstName)
+                                    {
+                                        return $"{user.FirstName.Trim()}: ";
+                                    }
+                                    else if (user.HasLastName)
+                                    {
+                                        return $"{user.LastName.Trim()}: ";
+                                    }
+                                    else if (user.HasUsername)
+                                    {
+                                        return $"{user.Username.Trim()}: ";
+                                    }
+                                    else
+                                    {
+                                        return $"{user.Id}: ";
+                                    }
                                 }
                             }
                         }

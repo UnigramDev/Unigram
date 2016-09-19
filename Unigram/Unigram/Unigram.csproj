@@ -114,7 +114,6 @@
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\ListCollectionView.cs" />
     <Compile Include="Common\MessageHelper.cs" />
-    <Compile Include="Common\UpdateProfilePictureColor.cs" />
     <Compile Include="Controls\BubbleListView.cs" />
     <Compile Include="Controls\BubbleListViewItem.cs" />
     <Compile Include="Controls\Items\DialogListViewItem.xaml.cs">
@@ -177,6 +176,7 @@
       <DependentUpon>Replies.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ChatInfoViewModel.cs" />
+    <Compile Include="ViewModels\ContactsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
     <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />
