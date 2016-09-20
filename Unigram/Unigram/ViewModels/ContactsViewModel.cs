@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -20,8 +21,6 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             Items = new SortedObservableCollection<UsersPanelListItem>(new UsersPanelListItemComparer());
-
-            aggregator.Subscribe(this);
         }
 
         public async Task getTLContacts()
@@ -57,6 +56,8 @@ namespace Unigram.ViewModels
                 {
                     Items.Add(item);
                 }
+
+                Aggregator.Subscribe(this);
             }
         }
 
@@ -64,7 +65,28 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateUserStatus message)
         {
-            var first = Items.FirstOrDefault(x => x._parent.Id == message.UserId);
+            Execute.BeginOnUIThread(() =>
+            {
+                var first = Items.FirstOrDefault(x => x._parent.Id == message.UserId);
+                if (first != null)
+                {
+                    Items.Remove(first);
+                }
+
+                var user = CacheService.GetUser(message.UserId) as TLUser;
+                if (user != null)
+                {
+                    var status = LastSeenHelper.GetLastSeen(user);
+                    var listItem = new UsersPanelListItem(user as TLUser);
+                    listItem.fullName = user.FullName;
+                    listItem.lastSeen = status.Item1;
+                    listItem.lastSeenEpoch = status.Item2;
+                    listItem.Photo = listItem._parent.Photo;
+                    listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+
+                    Items.Add(listItem);
+                }
+            });
         }
 
         #endregion
@@ -89,8 +111,13 @@ namespace Unigram.ViewModels
     {
         public int Compare(UsersPanelListItem x, UsersPanelListItem y)
         {
-            return 0;
-            //return x.
+            var epoch = y.lastSeenEpoch - x.lastSeenEpoch;
+            if (epoch == 0)
+            {
+                return x.fullName.CompareTo(y.fullName);
+            }
+
+            return epoch;
         }
     }
 }

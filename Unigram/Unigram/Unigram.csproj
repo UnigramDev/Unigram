@@ -162,6 +162,7 @@
     <Compile Include="Converters\DefaultPhotoConverter.cs" />
     <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="Converters\ReplyInfoToGlyphConverter.cs" />
     <Compile Include="Converters\StateToGlyphConverter.cs" />
     <Compile Include="Converters\TLIntToDateTimeConverter.cs" />
     <Compile Include="Helpers\ColorHelper.cs" />

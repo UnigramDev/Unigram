@@ -47,7 +47,7 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            await _pushService.RegisterAsync();
+            //await _pushService.RegisterAsync();
         }
 
         public ObservableCollection<string> ContactsList = new ObservableCollection<string>();

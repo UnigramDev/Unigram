@@ -283,34 +283,114 @@ namespace Unigram.ViewModels
             }
         }
 
+        #region Reply 
 
-        public RelayCommand SendCommand => new RelayCommand(SendMessage);
-        private void SendMessage()
+        private TLMessageBase _reply;
+        public TLMessageBase Reply
+        {
+            get
+            {
+                return _reply;
+            }
+            set
+            {
+                if (_reply != value)
+                {
+                    _reply = value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(() => ReplyInfo);
+                }
+            }
+        }
+
+        public ReplyInfo ReplyInfo
+        {
+            get
+            {
+                if (_reply != null)
+                {
+                    return new ReplyInfo
+                    {
+                        Reply = _reply,
+                        ReplyToMsgId = _reply.Id
+                    };
+                }
+
+                return null;
+            }
+        }
+
+        #endregion
+
+        public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
+        private async void SendMessage(string args)
         {
             var messageText = SendTextHolder;
 
             TLPeerBase toId = null;
+            TLInputPeerBase toPeer = null;
+            int replyToId = 0;
 
             switch (ChatType)
             {
                 case 0:
                     toId = new TLPeerUser { Id = int.Parse(Item.Id.ToString()) };
+                    toPeer = new TLInputPeerUser { UserId = Item.Id, AccessHash = ((TLUser)Item).AccessHash ?? 0 };
                     break;
                 case 1:
                     toId = new TLPeerChat { Id = int.Parse(chatItem.Id.ToString()) };
+                    toPeer = new TLInputPeerChat { ChatId = chatItem.Id };
                     break;
                 case 2:
                     toId = new TLPeerChannel { Id = int.Parse(channelItem.Id.ToString()) };
+                    toPeer = new TLInputPeerChannel { ChannelId = channelItem.Id };
                     break;
             }
 
+            if (Reply != null)
+            {
+                replyToId = ReplyInfo.ReplyToMsgId.Value;
+                Reply = null;
+            }
+
+            TLDocument document = null;
+            TLMessageMediaBase media = null;
+            if (args != null)
+            {
+                messageText = string.Empty;
+
+                var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "devsfrog" });
+                if (set.IsSucceeded)
+                {
+                    document = set.Value.Documents.FirstOrDefault(x => x.Id == 325680287654608971) as TLDocument;
+                }
+            }
+
+            if (document != null)
+            {
+                media = new TLMessageMediaDocument { Document = document };
+            }
+            else
+            {
+                media = new TLMessageMediaEmpty();
+            }
+
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
-            var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), 0);
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, media, TLLong.Random(), replyToId);
             var previousMessage = InsertSendingMessage(message);
 
             CacheService.SyncSendingMessage(message, previousMessage, toId, async (m) =>
             {
-                await ProtoService.SendMessageAsync(message);
+            //await ProtoService.SendMessageAsync(message);
+                var input = new TLInputMediaDocument
+                {
+                    Id = new TLInputDocument
+                    {
+                        Id = document.Id,
+                        AccessHash = document.AccessHash
+                    }
+                };
+                var result = await ProtoService.SendMediaAsync(Peer, input, message);
             });
         }
 
@@ -338,45 +418,45 @@ namespace Unigram.ViewModels
                 //    });
                 //}
 
-                //var messagesContainer = Reply as TLMessagesContainter;
-                //if (Reply != null)
-                //{
-                //    if (Reply.Index != 0)
-                //    {
-                //        message.ReplyToMsgId = Reply.Id;
-                //        message.Reply = Reply;
-                //    }
-                //    else if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
-                //    {
-                //        message.Reply = Reply;
-                //    }
+                var messagesContainer = Reply as TLMessagesContainter;
+                if (Reply != null)
+                {
+                    if (Reply.Id != 0)
+                    {
+                        message.ReplyToMsgId = Reply.Id;
+                        message.Reply = Reply;
+                    }
+                    else if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
+                    {
+                        message.Reply = Reply;
+                    }
 
-                //    var tLMessage = Reply as TLMessage31;
-                //    if (tLMessage != null)
-                //    {
-                //        var replyMarkup = tLMessage.ReplyMarkup;
-                //        if (replyMarkup != null)
-                //        {
-                //            replyMarkup.HasResponse = true;
-                //        }
-                //    }
+                    var replyMessage = Reply as TLMessage;
+                    if (replyMessage != null)
+                    {
+                        //var replyMarkup = replyMessage.ReplyMarkup;
+                        //if (replyMarkup != null)
+                        //{
+                        //    replyMarkup.HasResponse = true;
+                        //}
+                    }
 
-                //    Execute.BeginOnUIThread(delegate
-                //    {
-                //        Reply = null;
-                //    });
-                //}
+                    Execute.BeginOnUIThread(delegate
+                    {
+                        Reply = null;
+                    });
+                }
 
                 result = Messages.LastOrDefault();
                 Messages.Add(message);
 
-                //if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
-                //{
-                //    foreach (var fwdMessage in messagesContainer.FwdMessages)
-                //    {
-                //        Messages.Insert(0, fwdMessage);
-                //    }
-                //}
+                if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
+                {
+                    foreach (var fwdMessage in messagesContainer.FwdMessages)
+                    {
+                        Messages.Insert(0, fwdMessage);
+                    }
+                }
 
                 //for (int i = 1; i < Messages.Count; i++)
                 //{
@@ -394,20 +474,21 @@ namespace Unigram.ViewModels
             }
             else
             {
-                //var messagesContainer = Reply as TLMessagesContainter;
-                //if (Reply != null)
-                //{
-                //    if (Reply.Index != 0)
-                //    {
-                //        message.ReplyToMsgId = Reply.Id;
-                //        message.Reply = Reply;
-                //    }
-                //    else if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
-                //    {
-                //        message.Reply = Reply;
-                //    }
-                //    Reply = null;
-                //}
+                var messagesContainer = Reply as TLMessagesContainter;
+                if (Reply != null)
+                {
+                    if (Reply.Id != 0)
+                    {
+                        message.HasReplyToMsgId = true;
+                        message.ReplyToMsgId = Reply.Id;
+                        message.Reply = Reply;
+                    }
+                    else if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
+                    {
+                        message.Reply = Reply;
+                    }
+                    Reply = null;
+                }
 
                 Messages.Clear();
                 Messages.Add(message);

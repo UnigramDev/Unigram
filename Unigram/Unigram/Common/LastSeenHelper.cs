@@ -8,9 +8,9 @@ using Windows.Globalization.DateTimeFormatting;
 
 namespace Unigram.Common
 {
-    public  class LastSeenHelper
+    public class LastSeenHelper
     {
-        public static Tuple<string,int> GetLastSeen(TLUser User)
+        public static Tuple<string, int> GetLastSeen(TLUser User)
         {
             switch (User.Status.TypeId)
             {
@@ -24,7 +24,7 @@ namespace Unigram.Common
 
                     }
                 case TLType.UserStatusOnline:
-                    return Tuple.Create("Online", int.MaxValue);
+                    return Tuple.Create("Online", 4);
                 case TLType.UserStatusRecently:
                     return Tuple.Create("Last seen recently", 3);
                 case TLType.UserStatusLastWeek:
@@ -33,7 +33,7 @@ namespace Unigram.Common
                     return Tuple.Create("Last seen within a month", 1);
                 case TLType.UserStatusEmpty:
                 default:
-                    return Tuple.Create("Last seen long time ago", 0); 
+                    return Tuple.Create("Last seen long time ago", 0);
             }
         }
     }
