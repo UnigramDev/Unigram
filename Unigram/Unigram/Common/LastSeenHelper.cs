@@ -10,7 +10,7 @@ namespace Unigram.Common
 {
     public  class LastSeenHelper
     {
-        public static string GetLastSeen(TLUser User)
+        public static Tuple<string,int> GetLastSeen(TLUser User)
         {
             switch (User.Status.TypeId)
             {
@@ -20,20 +20,20 @@ namespace Unigram.Common
                         var seen = TLUtils.ToDateTime(status.WasOnline);
                         var now = DateTime.Now;
                         var time = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? "moments ago" : (now - seen).Minutes.ToString() + ((now - seen).Minutes.ToString() == "1" ? " minute ago" : " minutes ago")) : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString()) == "1" ? (" hour ago") : (" hours ago"))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? "yesterday " + new DateTimeFormatter("shorttime").Format(seen) : new DateTimeFormatter("shortdate").Format(seen) + " " + new DateTimeFormatter("shorttime").Format(seen);
-                        return $"Last seen {time}";
+                        return Tuple.Create($"Last seen {time}", status.WasOnline); ;
 
                     }
                 case TLType.UserStatusOnline:
-                    return "Online";
+                    return Tuple.Create("Online", int.MaxValue);
                 case TLType.UserStatusRecently:
-                    return "Last seen recently";
+                    return Tuple.Create("Last seen recently", 3);
                 case TLType.UserStatusLastWeek:
-                    return "Last seen within a week";
+                    return Tuple.Create("Last seen within a week", 2);
                 case TLType.UserStatusLastMonth:
-                    return "Last seen within a month";
+                    return Tuple.Create("Last seen within a month", 1);
                 case TLType.UserStatusEmpty:
                 default:
-                    return "Last seen long time ago"; 
+                    return Tuple.Create("Last seen long time ago", 0); 
             }
         }
     }

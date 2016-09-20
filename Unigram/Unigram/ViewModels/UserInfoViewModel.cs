@@ -115,7 +115,7 @@ namespace Unigram.ViewModels
                 }
                 var Status = Unigram.Common.LastSeenHelper.GetLastSeen(user);
                               
-                LastSeen = Status;
+                LastSeen = Status.Item1;
                 Aggregator.Subscribe(this);
             }
         }
@@ -135,7 +135,7 @@ namespace Unigram.ViewModels
                     var TempX = new UsersPanelListItem(User);
                     var Status = LastSeenHelper.GetLastSeen(User);
                     TempX.fullName = User.FullName;
-                    TempX.lastSeen = Status;
+                    TempX.lastSeen = Status.Item1;
                     TempX.Photo = TempX._parent.Photo;
                     TempList.Add(TempX);
                 }               
@@ -151,7 +151,7 @@ namespace Unigram.ViewModels
                     var TempX = new UsersPanelListItem(User);
                     var Status = LastSeenHelper.GetLastSeen(User);
                     TempX.fullName = User.FullName;
-                    TempX.lastSeen = Status;
+                    TempX.lastSeen = Status.Item1;
                     TempX.Photo = TempX._parent.Photo;
                     TempList.Add(TempX);
                 }
