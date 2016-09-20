@@ -185,6 +185,7 @@
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
     <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />
+    <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
     <Compile Include="ViewModels\LoginPasswordViewModel.cs" />
     <Compile Include="ViewModels\LoginPhoneCodeViewModel.cs" />
     <Compile Include="ViewModels\LoginPhoneNumberViewModel.cs" />
