@@ -17,6 +17,7 @@
         </MenuFlyout.MenuFlyoutPresenterStyle>
         <MenuFlyoutItem Text="Reply"/>
         <MenuFlyoutItem Text="Copy"/>
+        <MenuFlyoutItem Text="Edit" Visibility="Collapsed"/>
         <MenuFlyoutItem Text="Forward"/>
         <MenuFlyoutItem Text="Delete"/>
     </MenuFlyout>

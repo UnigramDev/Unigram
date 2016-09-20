@@ -130,6 +130,7 @@
     <Compile Include="TL\Core\ITLRandomId.cs" />
     <Compile Include="TL\Core\ITLReadMaxId.cs" />
     <Compile Include="TL\Core\TLActionInfo.cs" />
+    <Compile Include="TL\Local\TLMessagesContainer.cs" />
     <Compile Include="TL\Partial\TLPeerBase.Partial.cs" />
     <Compile Include="TL\Methods\Account\TLAccountChangePhone.cs" />
     <Compile Include="TL\Methods\Account\TLAccountCheckUsername.cs" />

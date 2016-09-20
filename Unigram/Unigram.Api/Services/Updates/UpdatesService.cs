@@ -648,19 +648,18 @@ namespace Telegram.Api.Services.Updates
             var userStatus = update as TLUpdateUserStatus;
             if (userStatus != null)
             {
-                var userBase = _cacheService.GetUser(userStatus.UserId);
-                if (userBase == null)
+                var user = _cacheService.GetUser(userStatus.UserId) as TLUser;
+                if (user == null)
                 {
                     return false;
                 }
 
-                var user = userBase as TLUser;
-                if (user != null)
-                {
-                    user.Status = userStatus.Status;    // UI Thread
-                }
+                user.Status = userStatus.Status;    // UI Thread
+                user.RaisePropertyChanged(() => user.Status);
 
-                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(userBase));
+#warning
+                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(user));
+                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(userStatus));
 
                 return true;
             }

@@ -35,7 +35,7 @@ namespace Telegram.Api.TL
 
         public override void Write(string value)
         {
-            WriteByteArray(Encoding.UTF8.GetBytes(value));
+            WriteByteArray(Encoding.UTF8.GetBytes(value ?? string.Empty));
         }
 
         public void WriteByteArray(byte[] b)
