@@ -11,37 +11,6 @@ namespace Unigram.Selectors
 {
     public class ReplyTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate WebPageEmptyTemplate { get; set; }
-        public DataTemplate WebPagePendingTemplate { get; set; }
-        public DataTemplate WebPageTemplate { get; set; }
-
-        public DataTemplate ForwardedMessagesTemplate { get; set; }
-        public DataTemplate ForwardEmptyTemplate { get; set; }
-        public DataTemplate ForwardTextTemplate { get; set; }
-        public DataTemplate ForwardContactTemplate { get; set; }
-        public DataTemplate ForwardPhotoTemplate { get; set; }
-        public DataTemplate ForwardVideoTemplate { get; set; }
-        public DataTemplate ForwardGeoPointTemplate { get; set; }
-        public DataTemplate ForwardDocumentTemplate { get; set; }
-        public DataTemplate ForwardStickerTemplate { get; set; }
-
-        public DataTemplate ForwardAudioTemplate { get; set; }
-        public DataTemplate ForwardUnsupportedTemplate { get; set; }
-
-        public DataTemplate ReplyEmptyTemplate { get; set; }
-        public DataTemplate ReplyLoadingTemplate { get; set; }
-        public DataTemplate ReplyTextTemplate { get; set; }
-        public DataTemplate ReplyContactTemplate { get; set; }
-        public DataTemplate ReplyPhotoTemplate { get; set; }
-        public DataTemplate ReplyVideoTemplate { get; set; }
-        public DataTemplate ReplyGeoPointTemplate { get; set; }
-        public DataTemplate ReplyDocumentTemplate { get; set; }
-        public DataTemplate ReplyStickerTemplate { get; set; }
-        public DataTemplate ReplyAudioTemplate { get; set; }
-        public DataTemplate ReplyUnsupportedTemplate { get; set; }
-        public DataTemplate ReplyServiceTextTemplate { get; set; }
-        public DataTemplate ReplyServicePhotoTemplate { get; set; }
-
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             if (item == null)
@@ -52,197 +21,330 @@ namespace Unigram.Selectors
             var replyInfo = item as ReplyInfo;
             if (replyInfo == null)
             {
+                if (item is TLMessageBase)
+                {
+                    return GetMessageTemplate(item as TLObject);
+                }
+
                 return ReplyUnsupportedTemplate;
             }
-
-            if (replyInfo.Reply == null)
+            else
             {
-                return ReplyLoadingTemplate;
-            }
-
-            //var container = replyInfo.Reply as TLMessagesContainter;
-            //if (container != null)
-            //{
-            //    return GetMessagesContainerTemplate(container);
-            //}
-
-            if (replyInfo.ReplyToMsgId == null || replyInfo.ReplyToMsgId.Value == 0)
-            {
-                return ReplyUnsupportedTemplate;
-            }
-
-            var serviceMessage = replyInfo.Reply as TLMessageService;
-            if (serviceMessage != null)
-            {
-                item = serviceMessage.Action;
-
-                if (item is TLMessageActionChatAddUser)
+                if (replyInfo.Reply == null)
                 {
-                    return ReplyServiceTextTemplate;
-                }
-                if (item is TLMessageActionChatCreate)
-                {
-                    return ReplyServiceTextTemplate;
-                }
-                if (item is TLMessageActionChatDeletePhoto)
-                {
-                    return ReplyServiceTextTemplate;
-                }
-                if (item is TLMessageActionChatDeleteUser)
-                {
-                    return ReplyServiceTextTemplate;
-                }
-                if (item is TLMessageActionChatEditPhoto)
-                {
-                    return ReplyServicePhotoTemplate;
-                }
-                if (item is TLMessageActionChatEditTitle)
-                {
-                    return ReplyServiceTextTemplate;
-                }
-            }
-
-            var message = replyInfo.Reply as TLMessage;
-            if (message != null)
-            {
-                if (!string.IsNullOrEmpty(message.Message.ToString()))
-                {
-                    return ReplyTextTemplate;
+                    return ReplyLoadingTemplate;
                 }
 
-                item = message.Media;
+                var contain = replyInfo.Reply as TLMessagesContainter;
+                if (contain != null)
+                {
+                    return GetMessagesContainerTemplate(contain);
+                }
 
-                if (item is TLMessageMediaEmpty)
+                if (replyInfo.ReplyToMsgId == null || replyInfo.ReplyToMsgId.Value == 0)
                 {
                     return ReplyUnsupportedTemplate;
                 }
-                else if (item is TLMessageMediaContact)
+
+                return GetMessageTemplate(replyInfo.Reply);
+            }
+        }
+
+        private DataTemplate GetMessagesContainerTemplate(TLMessagesContainter container)
+        {
+            if (container.WebPageMedia != null)
+            {
+                var webpageMedia = container.WebPageMedia as TLMessageMediaWebPage;
+                if (webpageMedia != null)
                 {
-                    return ReplyContactTemplate;
-                }
-                else if (item is TLMessageMediaPhoto)
-                {
-                    return ReplyPhotoTemplate;
-                }
-                else if (item is TLMessageMediaDocument)
-                {
-                    if (message.IsSticker())
+                    var pendingWebpage = webpageMedia.Webpage as TLWebPagePending;
+                    if (pendingWebpage != null)
                     {
-                        return ReplyStickerTemplate;
+                        return WebPagePendingTemplate;
                     }
 
-                    return ReplyDocumentTemplate;
+                    var webpage = webpageMedia.Webpage as TLWebPage;
+                    if (webpage != null)
+                    {
+                        return WebPageTemplate;
+                    }
+
+                    var emptyWebpage = webpageMedia.Webpage as TLWebPageEmpty;
+                    if (emptyWebpage != null)
+                    {
+                        return WebPageEmptyTemplate;
+                    }
                 }
-                //else if (item is TLMessageMediaVideo)
-                //{
-                //    return ReplyVideoTemplate;
-                //}
-                else if (item is TLMessageMediaGeo)
-                {
-                    return ReplyGeoPointTemplate;
-                }
-                //else if (item is TLMessageMediaAudio)
-                //{
-                //    return ReplyAudioTemplate;
-                //}
             }
 
-            var emptyMessage = replyInfo.Reply as TLMessageEmpty;
-            if (emptyMessage != null)
+            if (container.FwdMessages != null)
             {
-                return ReplyEmptyTemplate;
+                if (container.FwdMessages.Count == 1)
+                {
+                    var forwardMessage = container.FwdMessages[0];
+                    if (forwardMessage != null)
+                    {
+                        var message = container.FwdMessages[0].Message;
+                        if (!string.IsNullOrEmpty(message))
+                        {
+                            return ForwardTextTemplate;
+                        }
+
+                        var media = container.FwdMessages[0].Media;
+                        if (media != null)
+                        {
+                            switch (media.TypeId)
+                            {
+                                case TLType.MessageMediaPhoto:
+                                    return ForwardPhotoTemplate;
+                                //case TLType.MessageMediaAudio:
+                                //    return ForwardAudioTemplate;
+                                //case TLType.MessageMediaVideo:
+                                //    return ForwardVideoTemplate;
+                                case TLType.MessageMediaGeo:
+                                    return ForwardGeoPointTemplate;
+                                case TLType.MessageMediaContact:
+                                    return ForwardContactTemplate;
+                                case TLType.MessageMediaEmpty:
+                                    return ForwardEmptyTemplate;
+                                case TLType.MessageMediaDocument:
+                                    if (forwardMessage.IsVoice())
+                                    {
+                                        return ForwardVoiceMessageTemplate;
+                                    }
+                                    if (forwardMessage.IsVideo())
+                                    {
+                                        return ForwardVideoTemplate;
+                                    }
+                                    if (forwardMessage.IsGif())
+                                    {
+                                        return ForwardGifTemplate;
+                                    }
+                                    if (forwardMessage.IsSticker())
+                                    {
+                                        return ForwardStickerTemplate;
+                                    }
+
+                                    return ForwardDocumentTemplate;
+                            }
+                        }
+                    }
+                }
+
+                return ForwardedMessagesTemplate;
+            }
+
+            if (container.EditMessage != null)
+            {
+                var editMessage = container.EditMessage;
+                if (editMessage != null)
+                {
+                    if (!string.IsNullOrEmpty(editMessage.Message) && (editMessage.Media == null || editMessage.Media is TLMessageMediaEmpty || editMessage.Media is TLMessageMediaWebPage))
+                    {
+                        return EditTextTemplate;
+                    }
+
+                    var media = editMessage.Media;
+                    if (media != null)
+                    {
+                        switch (media.TypeId)
+                        {
+                            case TLType.MessageMediaPhoto:
+                                return EditPhotoTemplate;
+                            //case TLType.MessageMediaAudio:
+                            //    return ForwardAudioTemplate;
+                            //case TLType.MessageMediaVideo:
+                            //    return ForwardVideoTemplate;
+                            case TLType.MessageMediaGeo:
+                                return EditGeoPointTemplate;
+                            case TLType.MessageMediaContact:
+                                return EditContactTemplate;
+                            case TLType.MessageMediaEmpty:
+                                return EditUnsupportedTemplate;
+                            case TLType.MessageMediaDocument:
+                                if (editMessage.IsVoice())
+                                {
+                                    return EditVoiceMessageTemplate;
+                                }
+                                if (editMessage.IsVideo())
+                                {
+                                    return EditVideoTemplate;
+                                }
+                                if (editMessage.IsGif())
+                                {
+                                    return EditGifTemplate;
+                                }
+                                if (editMessage.IsSticker())
+                                {
+                                    return EditStickerTemplate;
+                                }
+
+                                return EditDocumentTemplate;
+                        }
+                    }
+                }
+
+                return EditUnsupportedTemplate;
             }
 
             return ReplyUnsupportedTemplate;
         }
 
-        //private DataTemplate GetMessagesContainerTemplate(TLMessagesContainter container)
-        //{
-        //    if (container.WebPageMedia != null)
-        //    {
-        //        TLMessageMediaWebPage tLMessageMediaWebPage = container.WebPageMedia as TLMessageMediaWebPage;
-        //        if (tLMessageMediaWebPage != null)
-        //        {
-        //            TLWebPagePending tLWebPagePending = tLMessageMediaWebPage.WebPage as TLWebPagePending;
-        //            if (tLWebPagePending != null)
-        //            {
-        //                return WebPagePendingTemplate;
-        //            }
-        //            TLWebPage tLWebPage = tLMessageMediaWebPage.WebPage as TLWebPage;
-        //            if (tLWebPage != null)
-        //            {
-        //                return WebPageTemplate;
-        //            }
-        //            TLWebPageEmpty tLWebPageEmpty = tLMessageMediaWebPage.WebPage as TLWebPageEmpty;
-        //            if (tLWebPageEmpty != null)
-        //            {
-        //                return WebPageEmptyTemplate;
-        //            }
-        //        }
-        //    }
-        //    if (container.FwdMessages != null)
-        //    {
-        //        if (container.FwdMessages.Count == 1)
-        //        {
-        //            TLMessage25 tLMessage = container.FwdMessages[0];
-        //            if (tLMessage != null)
-        //            {
-        //                TLString message = container.FwdMessages[0].Message;
-        //                if (!string.IsNullOrEmpty(message.ToString()))
-        //                {
-        //                    return ForwardTextTemplate;
-        //                }
-        //                TLMessageMediaBase media = container.FwdMessages[0].Media;
-        //                if (media != null)
-        //                {
-        //                    TLMessageMediaPhoto tLMessageMediaPhoto = media as TLMessageMediaPhoto;
-        //                    if (tLMessageMediaPhoto != null)
-        //                    {
-        //                        return ForwardPhotoTemplate;
-        //                    }
-        //                    TLMessageMediaAudio tLMessageMediaAudio = media as TLMessageMediaAudio;
-        //                    if (tLMessageMediaAudio != null)
-        //                    {
-        //                        return ForwardAudioTemplate;
-        //                    }
-        //                    TLMessageMediaDocument tLMessageMediaDocument = media as TLMessageMediaDocument;
-        //                    if (tLMessageMediaDocument != null)
-        //                    {
-        //                        if (tLMessage.IsSticker())
-        //                        {
-        //                            return ForwardStickerTemplate;
-        //                        }
-        //                        return ForwardDocumentTemplate;
-        //                    }
-        //                    else
-        //                    {
-        //                        TLMessageMediaVideo tLMessageMediaVideo = media as TLMessageMediaVideo;
-        //                        if (tLMessageMediaVideo != null)
-        //                        {
-        //                            return ForwardVideoTemplate;
-        //                        }
-        //                        TLMessageMediaGeo tLMessageMediaGeo = media as TLMessageMediaGeo;
-        //                        if (tLMessageMediaGeo != null)
-        //                        {
-        //                            return ForwardGeoPointTemplate;
-        //                        }
-        //                        TLMessageMediaContact tLMessageMediaContact = media as TLMessageMediaContact;
-        //                        if (tLMessageMediaContact != null)
-        //                        {
-        //                            return ForwardContactTemplate;
-        //                        }
-        //                        TLMessageMediaEmpty tLMessageMediaEmpty = media as TLMessageMediaEmpty;
-        //                        if (tLMessageMediaEmpty != null)
-        //                        {
-        //                            return ForwardEmptyTemplate;
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        return ForwardedMessagesTemplate;
-        //    }
-        //    return ReplyUnsupportedTemplate;
-        //}
+        private DataTemplate GetMessageTemplate(TLObject reply)
+        {
+            var replyMessage = reply as TLMessage;
+            if (replyMessage != null)
+            {
+                if (!string.IsNullOrEmpty(replyMessage.Message) && (replyMessage.Media == null || replyMessage.Media is TLMessageMediaEmpty || replyMessage.Media is TLMessageMediaWebPage))
+                {
+                    return this.ReplyTextTemplate;
+                }
+
+                var media = replyMessage.Media;
+                if (media != null)
+                {
+                    switch (media.TypeId)
+                    {
+                        case TLType.MessageMediaPhoto:
+                            return ReplyPhotoTemplate;
+                        //case TLType.MessageMediaAudio:
+                        //    return ForwardAudioTemplate;
+                        //case TLType.MessageMediaVideo:
+                        //    return ForwardVideoTemplate;
+                        case TLType.MessageMediaGeo:
+                            return ReplyGeoPointTemplate;
+                        case TLType.MessageMediaContact:
+                            return ReplyContactTemplate;
+                        case TLType.MessageMediaEmpty:
+                            return ReplyUnsupportedTemplate;
+                        case TLType.MessageMediaDocument:
+                            if (replyMessage.IsVoice())
+                            {
+                                return ReplyVoiceMessageTemplate;
+                            }
+                            if (replyMessage.IsVideo())
+                            {
+                                return ReplyVideoTemplate;
+                            }
+                            if (replyMessage.IsGif())
+                            {
+                                return ReplyGifTemplate;
+                            }
+                            if (replyMessage.IsSticker())
+                            {
+                                return ReplyStickerTemplate;
+                            }
+
+                            return ReplyDocumentTemplate;
+                    }
+                }
+            }
+
+            var serviceMessage = reply as TLMessageService;
+            if (serviceMessage != null)
+            {
+                var action = serviceMessage.Action;
+                if (action is TLMessageActionChatEditPhoto)
+                {
+                    return ReplyServicePhotoTemplate;
+                }
+
+                return ReplyServiceTextTemplate;
+            }
+            else
+            {
+                var emptyMessage = reply as TLMessageEmpty;
+                if (emptyMessage != null)
+                {
+                    return ReplyEmptyTemplate;
+                }
+
+                return ReplyUnsupportedTemplate;
+            }
+        }
+
+        public DataTemplate EditAudioTemplate { get; set; }
+
+        public DataTemplate EditContactTemplate { get; set; }
+
+        public DataTemplate EditDocumentTemplate { get; set; }
+
+        public DataTemplate EditGeoPointTemplate { get; set; }
+
+        public DataTemplate EditGifTemplate { get; set; }
+
+        public DataTemplate EditPhotoTemplate { get; set; }
+
+        public DataTemplate EditStickerTemplate { get; set; }
+
+        public DataTemplate EditTextTemplate { get; set; }
+
+        public DataTemplate EditUnsupportedTemplate { get; set; }
+
+        public DataTemplate EditVideoTemplate { get; set; }
+
+        public DataTemplate EditVoiceMessageTemplate { get; set; }
+
+        public DataTemplate ForwardAudioTemplate { get; set; }
+
+        public DataTemplate ForwardContactTemplate { get; set; }
+
+        public DataTemplate ForwardDocumentTemplate { get; set; }
+
+        public DataTemplate ForwardedMessagesTemplate { get; set; }
+
+        public DataTemplate ForwardEmptyTemplate { get; set; }
+
+        public DataTemplate ForwardGeoPointTemplate { get; set; }
+
+        public DataTemplate ForwardGifTemplate { get; set; }
+
+        public DataTemplate ForwardPhotoTemplate { get; set; }
+
+        public DataTemplate ForwardStickerTemplate { get; set; }
+
+        public DataTemplate ForwardTextTemplate { get; set; }
+
+        public DataTemplate ForwardUnsupportedTemplate { get; set; }
+
+        public DataTemplate ForwardVideoTemplate { get; set; }
+
+        public DataTemplate ForwardVoiceMessageTemplate { get; set; }
+
+        public DataTemplate ReplyAudioTemplate { get; set; }
+
+        public DataTemplate ReplyContactTemplate { get; set; }
+
+        public DataTemplate ReplyDocumentTemplate { get; set; }
+
+        public DataTemplate ReplyEmptyTemplate { get; set; }
+
+        public DataTemplate ReplyGeoPointTemplate { get; set; }
+
+        public DataTemplate ReplyGifTemplate { get; set; }
+
+        public DataTemplate ReplyLoadingTemplate { get; set; }
+
+        public DataTemplate ReplyPhotoTemplate { get; set; }
+
+        public DataTemplate ReplyServicePhotoTemplate { get; set; }
+
+        public DataTemplate ReplyServiceTextTemplate { get; set; }
+
+        public DataTemplate ReplyStickerTemplate { get; set; }
+
+        public DataTemplate ReplyTextTemplate { get; set; }
+
+        public DataTemplate ReplyUnsupportedTemplate { get; set; }
+
+        public DataTemplate ReplyVideoTemplate { get; set; }
+
+        public DataTemplate ReplyVoiceMessageTemplate { get; set; }
+
+        public DataTemplate WebPageEmptyTemplate { get; set; }
+
+        public DataTemplate WebPagePendingTemplate { get; set; }
+
+        public DataTemplate WebPageTemplate { get; set; }
     }
 }

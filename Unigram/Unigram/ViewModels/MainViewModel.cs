@@ -13,6 +13,7 @@ using Telegram.Api.TL;
 using Telegram.Api.TL.Methods.Contacts;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Core.Notifications;
 using Unigram.Core.Services;
 using Windows.ApplicationModel.Background;
@@ -29,12 +30,8 @@ namespace Unigram.ViewModels
 {
     public class MainViewModel : UnigramViewModelBase
     {
-        private readonly IPushService _pushService;        
-        public ObservableCollection<UsersPanelListItem> TempList = new ObservableCollection<UsersPanelListItem>();
-        public ObservableCollection<UsersPanelListItem> UsersList = new ObservableCollection<UsersPanelListItem>();
-        public TLUser Self { get; internal set; }
-        public TLUser UserX { get; internal set; }
-        public SolidColorBrush PlaceHolderColor { get; internal set; }
+        private readonly IPushService _pushService;
+
         public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService)
             : base(protoService, cacheService, aggregator)
         {
@@ -42,43 +39,15 @@ namespace Unigram.ViewModels
            
             Dialogs = new DialogCollection(protoService, cacheService);
             SearchDialogs = new DialogCollection(protoService, cacheService);
+            Contacts = new ContactsViewModel(ProtoService, cacheService, aggregator);
+
             aggregator.Subscribe(Dialogs);
             aggregator.Subscribe(SearchDialogs);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            await _pushService.RegisterAsync();
-        }
-
-        public async Task getTLContacts()
-        {
-            var UserList = await ProtoService.GetContactsAsync("");
-            var x = UserList.Value as TLContactsContacts;            
-            foreach (var item in x.Users)
-            {
-                var User = item as TLUser;
-                if(User.IsSelf==true)
-                {
-                    Self = User;
-                    continue;
-                }
-                UsersPanelListItem TempX = new UsersPanelListItem(User as TLUser);
-                var Status= LastSeenHelper.getLastSeen(User);
-                TempX.fullName = User.FullName;
-                TempX.lastSeen = Status.Item1;
-                TempX.lastSeenEpoch = Status.Item2;              
-                TempX.Photo = TempX._parent.Photo;
-                TempX.PlaceHolderColor = UpdateProfilePictureColor.UpdatePicture(TempX._parent.Id);
-                TempList.Add(TempX);
-            }
-            //Super Inefficient Method below to sort alphabetically, TODO: FIX IT
-            TempList = new ObservableCollection<ViewModels.UsersPanelListItem>(TempList.OrderByDescending(person => person.lastSeenEpoch));
-            foreach (var item in TempList)
-            {
-                UserX = item._parent;
-                UsersList.Add(item);
-            }
+            //await _pushService.RegisterAsync();
         }
 
         public ObservableCollection<string> ContactsList = new ObservableCollection<string>();
@@ -86,6 +55,8 @@ namespace Unigram.ViewModels
         public DialogCollection Dialogs { get; private set; }
 
         public DialogCollection SearchDialogs { get; private set; }
+
+        public ContactsViewModel Contacts { get; private set; }
 
         public void GetSearchDialogs(string query)
         {
@@ -108,6 +79,7 @@ namespace Unigram.ViewModels
             }
         }
     }
+
     public class UsersPanelListItem : TLUser
     {
         public TLUser _parent;

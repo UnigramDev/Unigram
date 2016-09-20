@@ -14,7 +14,8 @@
     </Page.Transitions>
 
     <Page.Resources>
-        <CollectionViewSource x:Name="Countries" Source="{x:Bind ViewModel.Countries}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="Countries" Source="{Binding Countries}" IsSourceGrouped="True"/>
+        
         <Style x:Key="PhoneCodeTextBoxStyle" TargetType="TextBox">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}"/>
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}"/>
