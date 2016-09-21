@@ -377,9 +377,13 @@ namespace Unigram.ViewModels
                 {
                     await SendSimpleTextMessageToAUser(message, reciever.Id);
                 }
-                catch { } //cache will throw an exception when sending to a user other than current. TODO: fix.
+                catch { }
             }
-            await SendForwardedMessage(reciever.Id);
+            try
+            {
+                await SendForwardedMessage(reciever.Id);
+            }
+            catch { }
         }
 
         private async Task SendForwardedMessage(int recieverId)
@@ -406,7 +410,7 @@ namespace Unigram.ViewModels
             var message = ForwardingMessage as TLMessage;
 
 
-            if (Item.Id != recieverId)
+            if ((Item == null) || (Item.Id != recieverId))
             {
                 message.RandomId = TLLong.Random();
                 await ProtoService.ForwardMessageAsync(toPeer, message.Id, message);
@@ -440,6 +444,8 @@ namespace Unigram.ViewModels
             }
         }
 
+
+        //TODO: Create this function.
         private TLMessage CreateClone(TLMessage message)
         {
             return message;
