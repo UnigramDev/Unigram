@@ -362,73 +362,87 @@ namespace Unigram.Collections
             if (SettingsHelper.IsAuthorized)
             {
                 var dialogs = _cacheService.GetDialogs();
-                var dictionary = new Dictionary<int, TLDialog>();
-                var clearedDialogs = new List<TLDialog>();
-                foreach (var current in dialogs)
+                if (dialogs.Count > 0)
                 {
-                    if (!dictionary.ContainsKey(current.Index))
+                    var dictionary = new Dictionary<int, TLDialog>();
+                    var clearedDialogs = new List<TLDialog>();
+                    foreach (var current in dialogs)
                     {
-                        clearedDialogs.Add(current);
-                        dictionary[current.Index] = current;
+                        if (!dictionary.ContainsKey(current.Index))
+                        {
+                            clearedDialogs.Add(current);
+                            dictionary[current.Index] = current;
+                        }
+                        else
+                        {
+                            var tLDialogBase = dictionary[current.Index];
+                            if (tLDialogBase.Peer is TLPeerUser && current.Peer is TLPeerUser)
+                            {
+                                _cacheService.DeleteDialog(current);
+                            }
+                            else if (tLDialogBase.Peer is TLPeerChat && current.Peer is TLPeerChat)
+                            {
+                                _cacheService.DeleteDialog(current);
+                            }
+                            else if (tLDialogBase.Peer is TLPeerChannel && current.Peer is TLPeerChannel)
+                            {
+                                _cacheService.DeleteDialog(current);
+                            }
+                        }
                     }
-                    else
+
+                    ReorderDrafts(clearedDialogs);
+
+                    Execute.BeginOnUIThread(() =>
                     {
-                        var tLDialogBase = dictionary[current.Index];
-                        if (tLDialogBase.Peer is TLPeerUser && current.Peer is TLPeerUser)
-                        {
-                            _cacheService.DeleteDialog(current);
-                        }
-                        else if (tLDialogBase.Peer is TLPeerChat && current.Peer is TLPeerChat)
-                        {
-                            _cacheService.DeleteDialog(current);
-                        }
-                        else if (tLDialogBase.Peer is TLPeerChannel && current.Peer is TLPeerChannel)
-                        {
-                            _cacheService.DeleteDialog(current);
-                        }
-                    }
-                }
-
-                ReorderDrafts(clearedDialogs);
-
-                Execute.BeginOnUIThread(() =>
-                {
                     //this.Status = ((dialogs.get_Count() == 0) ? AppResources.Loading : string.Empty);
 
                     Clear();
 
-                    int num = 0;
-                    int count = 0;
-                    int num2 = 0;
-                    while (num2 < clearedDialogs.Count && num < 8)
-                    {
-                        Add(clearedDialogs[num2]);
-
-                        var chat = clearedDialogs[num2].With as TLChat;
-                        if (chat == null || !chat.HasMigratedTo)
+                        int num = 0;
+                        int count = 0;
+                        int num2 = 0;
+                        while (num2 < clearedDialogs.Count && num < 8)
                         {
-                            num++;
+                            Add(clearedDialogs[num2]);
+
+                            var chat = clearedDialogs[num2].With as TLChat;
+                            if (chat == null || !chat.HasMigratedTo)
+                            {
+                                num++;
+                            }
+
+                            num2++;
+                            count++;
+                        }
+                        if (count < clearedDialogs.Count)
+                        {
+                            Execute.BeginOnUIThread(delegate
+                            {
+                                for (int i = count; i < clearedDialogs.Count; i++)
+                                {
+                                    this.Items.Add(clearedDialogs[i]);
+                                }
+
+                                UpdateItemsAsync(Math.Max(20, this.OfType<TLDialog>().Count()));
+                            });
+                            return;
                         }
 
-                        num2++;
-                        count++;
-                    }
-                    if (count < clearedDialogs.Count)
-                    {
-                        Execute.BeginOnUIThread(delegate
-                        {
-                            for (int i = count; i < clearedDialogs.Count; i++)
-                            {
-                                this.Items.Add(clearedDialogs[i]);
-                            }
-                            
-                            UpdateItemsAsync(Math.Max(20, this.OfType<TLDialog>().Count()));
-                        });
-                        return;
-                    }
+                        UpdateItemsAsync(Math.Max(20, this.OfType<TLDialog>().Count()));
+                    });
+                }
+                else
+                {
+                    var response = await _protoService.GetDialogsAsync(0, 0, new TLInputPeerEmpty(), 20);
+                    var result = response.Value;
+                    result.Dialogs = new TLVector<TLDialog>(result.Dialogs.OrderByDescending(x => x.GetDateIndexWithDraft()));
 
-                    UpdateItemsAsync(Math.Max(20, this.OfType<TLDialog>().Count()));
-                });
+                    foreach (var dialog in result.Dialogs)
+                    {
+                        Add(dialog);
+                    }
+                }
 
                 //var dialogs = _cacheService.GetDialogs();
                 //var cachedDialogs = new Dictionary<int, TLDialog>();

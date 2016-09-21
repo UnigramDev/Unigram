@@ -142,6 +142,7 @@
     <Compile Include="TL\Core\ITLReadMaxId.cs" />
     <Compile Include="TL\Core\ITLStickers.cs" />
     <Compile Include="TL\Core\TLActionInfo.cs" />
+    <Compile Include="TL\Local\TLMessagesContainer.cs" />
     <Compile Include="TL\Partial\TLDraftMessageBase.Partial.cs" />
     <Compile Include="TL\Partial\TLInputFileLocationBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaBase.Partial.cs" />

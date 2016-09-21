@@ -38,7 +38,7 @@ namespace Unigram.ViewModels
             _pushService = pushService;
            
             Dialogs = new DialogCollection(protoService, cacheService);
-            SearchDialogs = new DialogCollection(protoService, cacheService);
+            SearchDialogs = new ObservableCollection<TLDialog>();
             Contacts = new ContactsViewModel(ProtoService, cacheService, aggregator);
 
             aggregator.Subscribe(Dialogs);
@@ -54,7 +54,7 @@ namespace Unigram.ViewModels
 
         public DialogCollection Dialogs { get; private set; }
 
-        public DialogCollection SearchDialogs { get; private set; }
+        public ObservableCollection<TLDialog> SearchDialogs { get; private set; }
 
         public ContactsViewModel Contacts { get; private set; }
 

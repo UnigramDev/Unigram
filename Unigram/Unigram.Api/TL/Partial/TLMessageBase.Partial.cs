@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Windows.UI.Xaml;
 
@@ -30,12 +31,14 @@ namespace Telegram.Api.TL
         public void SetUnread(bool unread)
         {
             IsUnread = unread;
+            RaisePropertyChanged(() => IsUnread);
+            RaisePropertyChanged(() => State);
         }
 
         public Int64? RandomId { get; set; }
 
         public TLMessageState _state;
-        public TLMessageState State
+        public virtual TLMessageState State
         {
             get
             {
@@ -150,7 +153,10 @@ namespace Telegram.Api.TL
         public event PropertyChangedEventHandler PropertyChanged;
         public override void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Execute.BeginOnUIThread(() =>
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            });
         }
     }
 
@@ -312,6 +318,26 @@ namespace Telegram.Api.TL
             get
             {
                 return this;
+            }
+        }
+
+        public override TLMessageState State
+        {
+            get
+            {
+                if (!IsUnread)
+                {
+                    return TLMessageState.Read;
+                }
+                return _state;
+            }
+            set
+            {
+                if (_state != value)
+                {
+                    _state = value;
+                    RaisePropertyChanged();
+                }
             }
         }
 
