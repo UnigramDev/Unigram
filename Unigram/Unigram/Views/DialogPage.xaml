@@ -12,6 +12,9 @@
     xmlns:models="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -35,7 +38,7 @@
             <MenuFlyoutItem Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
             <MenuFlyoutItem Text="Copy"/>
             <MenuFlyoutItem Text="Edit" Visibility="Collapsed"/>
-            <MenuFlyoutItem Text="Forward"/>
+            <MenuFlyoutItem Command="{x:Bind ViewModel.MessageForwardCommand}" CommandParameter="{Binding}" Text="Forward"/>
             <MenuFlyoutItem Text="Delete"/>
         </MenuFlyout>
 
@@ -292,8 +295,67 @@
                                            ChatFriendStickerTemplate="{StaticResource ChatFriendStickerTemplate}"
                                            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
                                            UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
+
+        <Storyboard x:Name="ForwardMenuShowStoryboard">
+            <DoubleAnimation Storyboard.TargetName="ForwardMenuOverlay"
+                             Storyboard.TargetProperty="(UIElement.Opacity)"
+                             From="0"
+                             To="0.5"
+                             Duration="00:00:00.200"
+                             AutoReverse="False">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="ForwardMenuBox"
+                             Storyboard.TargetProperty="(UIElement.Opacity)"
+                             From="0"
+                             To="1"
+                             Duration="00:00:00.200"
+                             AutoReverse="False">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="ForwardMenuBoxTransform" 
+                             Storyboard.TargetProperty="Y"
+                             Duration="0:0:0.2" From="15" To="0" >
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase  EasingMode="EaseOut"  />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        <Storyboard x:Name="ForwardMenuHideStoryboard">
+            <DoubleAnimation Storyboard.TargetName="ForwardMenuOverlay"
+                             Storyboard.TargetProperty="(UIElement.Opacity)"
+                             To="0"
+                             Duration="00:00:00.200"
+                             AutoReverse="False">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="ForwardMenuBox"
+                             Storyboard.TargetProperty="(UIElement.Opacity)"
+                             From="1"
+                             To="0"
+                             Duration="00:00:00.200"
+                             AutoReverse="False">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="ForwardMenuBoxTransform" 
+                             Storyboard.TargetProperty="Y"
+                             Duration="0:0:0.2" From="0" To="15" >
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase  EasingMode="EaseOut"  />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
     </Page.Resources>
 
+    <Grid>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
@@ -720,5 +782,156 @@
         </CommandBar>
         <!-- END OF - Commandbar -->
 
+        
+        
+    </Grid>
+
+        <!-- Forward Menu -->
+        <Grid Visibility="{Binding ForwardMenuVisibility}" x:Name="ForwardMenu">
+            <Interactivity:Interaction.Behaviors>
+                <Interactions:DataTriggerBehavior Binding="{Binding Visibility, ElementName=ForwardMenu}" Value="Visible">
+                    <Media:ControlStoryboardAction Storyboard="{StaticResource ForwardMenuShowStoryboard}" ControlStoryboardOption="Play" />
+                </Interactions:DataTriggerBehavior>
+            </Interactivity:Interaction.Behaviors>
+
+            <!-- Overlay -->
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.5" x:Name="ForwardMenuOverlay" Tapped="ForwardCancel_Tapped"></Grid>
+            <!-- END OF Overlay-->
+
+            <Grid x:Name="ForwardMenuBox" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <Grid.RenderTransform>
+                    <TranslateTransform x:Name="ForwardMenuBoxTransform"></TranslateTransform>
+                </Grid.RenderTransform>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="56" />
+                    <RowDefinition Height="144" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid x:Name="ForwardHeader">
+                        <Button FontFamily="Segoe MDL2 Assets"
+                                Content="&#xE11A;"
+                                Width="40"
+                                Height="40"
+                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                Tapped="ForwardSearchButton_Tapped" />
+                        <TextBlock Text="Forward message"
+                                   Margin="50,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="18"/>
+                    </Grid>
+                    <TextBox PlaceholderText="Search for contacts"
+                             RequestedTheme="Light"
+                             Margin="12"
+                             Grid.Row="0"
+                             Visibility="Collapsed"
+                             x:Name="ForwardSearchBox" />
+                </Grid>
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,24,0,0">
+                    <StackPanel Width="100">
+                        <Ellipse 
+                         Width="60"
+                         Height="60"
+                         Margin="8,0,8,0"
+                         RelativePanel.AlignVerticalCenterWithPanel="True"
+                         RelativePanel.AlignLeftWithPanel="True">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Text="Ahmadalli Shafiee" TextWrapping="Wrap" TextAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Width="100">
+                        <Ellipse 
+                         Width="60"
+                         Height="60"
+                         Margin="8,0,8,0"
+                         RelativePanel.AlignVerticalCenterWithPanel="True"
+                         RelativePanel.AlignLeftWithPanel="True">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Text="Ahmadalli Shafiee" TextWrapping="Wrap" TextAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Width="100">
+                        <Ellipse 
+                         Width="60"
+                         Height="60"
+                         Margin="8,0,8,0"
+                         RelativePanel.AlignVerticalCenterWithPanel="True"
+                         RelativePanel.AlignLeftWithPanel="True">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Text="Ahmadalli Shafiee" TextWrapping="Wrap" TextAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Width="100">
+                        <Ellipse 
+                         Width="60"
+                         Height="60"
+                         Margin="8,0,8,0"
+                         RelativePanel.AlignVerticalCenterWithPanel="True"
+                         RelativePanel.AlignLeftWithPanel="True">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Text="Ahmadalli Shafiee" TextWrapping="Wrap" TextAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Width="100">
+                        <Ellipse 
+                         Width="60"
+                         Height="60"
+                         Margin="8,0,8,0"
+                         RelativePanel.AlignVerticalCenterWithPanel="True"
+                         RelativePanel.AlignLeftWithPanel="True">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Text="Ahmadalli Shafiee" TextWrapping="Wrap" TextAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
+                <TextBox PlaceholderText="Write a message (optional)"
+                         RequestedTheme="Light"
+                         Margin="12"
+                         Grid.Row="2"
+                         Background="White" />
+                <CommandBar Grid.Row="3">
+                    <AppBarButton Icon="Cancel" Label="Cancel" Tapped="ForwardCancel_Tapped"></AppBarButton>
+                    <AppBarButton Icon="Send" Label="Forward"></AppBarButton>
+                </CommandBar>
+            </Grid>
+
+        </Grid>
+        <!-- END OF Forward Menu -->
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <!-- Wide state -->
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="500" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ForwardMenuBox.VerticalAlignment" Value="Center" />
+                        <Setter Target="ForwardMenuBox.Width" Value="500" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <!-- Narrow state -->
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ForwardMenuBox.VerticalAlignment" Value="Bottom" />
+                        <Setter Target="ForwardMenuBox.Width" Value="Auto" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

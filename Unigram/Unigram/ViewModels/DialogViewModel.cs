@@ -323,6 +323,26 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Forward
+        private Visibility _forwardMenuVisibility = Visibility.Collapsed;
+
+        public Visibility ForwardMenuVisibility
+        {
+            get { return _forwardMenuVisibility; }
+            set
+            {
+                _forwardMenuVisibility = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        internal void CancelForward()
+        {
+            ForwardMenuVisibility = Visibility.Collapsed;
+        }
+
+        #endregion
+
         public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
         private async void SendMessage(string args)
         {

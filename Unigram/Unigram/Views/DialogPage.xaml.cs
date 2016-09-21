@@ -192,5 +192,24 @@ namespace Unigram.Views
             imgSingleImgThumbnail.Source = null;
             CheckMessageBoxEmpty();
         }
+
+        private async void ForwardCancel_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ForwardMenuHideStoryboard.Begin();
+
+            await Task.Delay(200);
+
+            ViewModel.CancelForward();
+
+            ForwardHeader.Visibility = Visibility.Visible;
+            ForwardSearchBox.Visibility = Visibility.Collapsed;
+        }
+
+        private void ForwardSearchButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ForwardHeader.Visibility = Visibility.Collapsed;
+            ForwardSearchBox.Visibility = Visibility.Visible;
+            ForwardSearchBox.Focus(FocusState.Pointer);
+        }
     }
 }

@@ -55,6 +55,22 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
         private void MessageForwardExecute(TLMessageBase message)
         {
+            if (message == null) return;
+
+            var serviceMessage = message as TLMessageService;
+            if (serviceMessage != null)
+            {
+                var action = serviceMessage.Action;
+                // TODO: 
+                //if (action is TLMessageActionEmpty || action is TLMessageActionUnreadMessages)
+                //{
+                //    return;
+                //}
+            }
+
+            if (message.Id <= 0) return;
+
+            ForwardMenuVisibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         #endregion
