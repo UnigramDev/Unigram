@@ -9,19 +9,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <MenuFlyout x:Key="MessageMenuFlyout">
-        <MenuFlyout.MenuFlyoutPresenterStyle>
-            <Style TargetType="MenuFlyoutPresenter">
-                <Setter Property="RequestedTheme" Value="Light"/>
-            </Style>
-        </MenuFlyout.MenuFlyoutPresenterStyle>
-        <MenuFlyoutItem Text="Reply"/>
-        <MenuFlyoutItem Text="Copy"/>
-        <MenuFlyoutItem Text="Edit" Visibility="Collapsed"/>
-        <MenuFlyoutItem Text="Forward"/>
-        <MenuFlyoutItem Text="Delete"/>
-    </MenuFlyout>
-
     <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
         <Grid Margin="0,8">
             <Grid.ColumnDefinitions>

@@ -39,16 +39,18 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			User = TLFactory.Read<TLUserBase>(from, cache);
-			if (HasAbout) { About = from.ReadString(); }
+			if (HasAbout) About = from.ReadString();
 			Link = TLFactory.Read<TLContactsLink>(from, cache);
-			if (HasProfilePhoto) { ProfilePhoto = TLFactory.Read<TLPhotoBase>(from, cache); }
+			if (HasProfilePhoto) ProfilePhoto = TLFactory.Read<TLPhotoBase>(from, cache);
 			NotifySettings = TLFactory.Read<TLPeerNotifySettingsBase>(from, cache);
-			if (HasBotInfo) { BotInfo = TLFactory.Read<TLBotInfo>(from, cache); }
+			if (HasBotInfo) BotInfo = TLFactory.Read<TLBotInfo>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x5932FC03);
 			to.Write((Int32)Flags);
 			to.WriteObject(User, cache);
@@ -58,6 +60,13 @@ namespace Telegram.Api.TL
 			to.WriteObject(NotifySettings, cache);
 			if (HasBotInfo) to.WriteObject(BotInfo, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasAbout = About != null;
+			HasProfilePhoto = ProfilePhoto != null;
+			HasBotInfo = BotInfo != null;
 		}
 	}
 }

@@ -39,36 +39,5 @@ namespace Unigram.Controls.Messages
                 }
             };
         }
-
-        private void LayoutRoot_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
-        {
-            var context = sender.ContextFlyout as MenuFlyout;
-            if (context != null)
-            {
-                // TODO: totally WRONG way to do this, find a better solution
-                var editItem = context.Items[2];
-                if (editItem != null)
-                {
-                    //var channel = this.ViewModel.With as TLChannel;
-                    var message = DataContext as TLMessage;
-                    if (message != null && message.FwdFrom == null && message.ViaBotId == null && (message.IsOut /*|| (channel != null && channel.Creator && channel.IsEditor)*/) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty))
-                    {
-                        if (message.IsVoice())
-                        {
-                            return;
-                        }
-
-                        InMemoryCacheService.Current.GetConfigAsync(config =>
-                        {
-                            var now = TLUtils.DateToUniversalTimeTLInt(MTProtoService.Current.ClientTicksDelta, DateTime.Now);
-                            if (config != null && message.Date + config.EditTimeLimit < now)
-                            {
-                                editItem.Visibility = Visibility.Visible;
-                            }
-                        });
-                    }
-                }
-            }
-        }
     }
 }

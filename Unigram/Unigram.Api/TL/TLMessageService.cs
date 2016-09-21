@@ -40,9 +40,9 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
-			if (HasFromId) { FromId = from.ReadInt32(); }
+			if (HasFromId) FromId = from.ReadInt32();
 			ToId = TLFactory.Read<TLPeerBase>(from, cache);
-			if (HasReplyToMsgId) { ReplyToMsgId = from.ReadInt32(); }
+			if (HasReplyToMsgId) ReplyToMsgId = from.ReadInt32();
 			Date = from.ReadInt32();
 			Action = TLFactory.Read<TLMessageActionBase>(from, cache);
 			if (cache) ReadFromCache(from);
@@ -50,6 +50,8 @@ namespace Telegram.Api.TL
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x9E19A1F6);
 			to.Write((Int32)Flags);
 			to.Write(Id);
@@ -59,6 +61,12 @@ namespace Telegram.Api.TL
 			to.Write(Date);
 			to.WriteObject(Action, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasFromId = FromId != null;
+			HasReplyToMsgId = ReplyToMsgId != null;
 		}
 	}
 }

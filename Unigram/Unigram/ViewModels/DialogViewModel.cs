@@ -28,8 +28,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.ViewModels
 {
-
-    public class DialogViewModel : UnigramViewModelBase
+    public partial class DialogViewModel : UnigramViewModelBase
     {
         int ChatType=-1;
         //0 if private, 1 if group, 2 if supergroup/channel
@@ -320,6 +319,8 @@ namespace Unigram.ViewModels
             }
         }
 
+        public RelayCommand ClearReplyCommand => new RelayCommand(() => { Reply = null; });
+
         #endregion
 
         public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
@@ -347,12 +348,6 @@ namespace Unigram.ViewModels
                     break;
             }
 
-            if (Reply != null)
-            {
-                replyToId = ReplyInfo.ReplyToMsgId.Value;
-                Reply = null;
-            }
-
             TLDocument document = null;
             TLMessageMediaBase media = null;
             if (args != null)
@@ -376,21 +371,36 @@ namespace Unigram.ViewModels
             }
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
-            var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, media, TLLong.Random(), replyToId);
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, media, TLLong.Random(), 0);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
             var previousMessage = InsertSendingMessage(message);
 
             CacheService.SyncSendingMessage(message, previousMessage, toId, async (m) =>
             {
-            //await ProtoService.SendMessageAsync(message);
-                var input = new TLInputMediaDocument
+                if (document != null)
                 {
-                    Id = new TLInputDocument
+                    var input = new TLInputMediaDocument
                     {
-                        Id = document.Id,
-                        AccessHash = document.AccessHash
-                    }
-                };
-                var result = await ProtoService.SendMediaAsync(Peer, input, message);
+                        Id = new TLInputDocument
+                        {
+                            Id = document.Id,
+                            AccessHash = document.AccessHash
+                        }
+                    };
+                    await ProtoService.SendMediaAsync(Peer, input, message);
+                }
+                else
+                {
+                    await ProtoService.SendMessageAsync(message);
+                }
             });
         }
 

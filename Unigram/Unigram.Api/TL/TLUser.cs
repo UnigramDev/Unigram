@@ -77,21 +77,23 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
-			if (HasAccessHash) { AccessHash = from.ReadInt64(); }
-			if (HasFirstName) { FirstName = from.ReadString(); }
-			if (HasLastName) { LastName = from.ReadString(); }
-			if (HasUsername) { Username = from.ReadString(); }
-			if (HasPhone) { Phone = from.ReadString(); }
-			if (HasPhoto) { Photo = TLFactory.Read<TLUserProfilePhotoBase>(from, cache); }
-			if (HasStatus) { Status = TLFactory.Read<TLUserStatusBase>(from, cache); }
-			if (HasBotInfoVersion) { BotInfoVersion = from.ReadInt32(); }
-			if (HasRestrictionReason) { RestrictionReason = from.ReadString(); }
-			if (HasBotInlinePlaceholder) { BotInlinePlaceholder = from.ReadString(); }
+			if (HasAccessHash) AccessHash = from.ReadInt64();
+			if (HasFirstName) FirstName = from.ReadString();
+			if (HasLastName) LastName = from.ReadString();
+			if (HasUsername) Username = from.ReadString();
+			if (HasPhone) Phone = from.ReadString();
+			if (HasPhoto) Photo = TLFactory.Read<TLUserProfilePhotoBase>(from, cache);
+			if (HasStatus) Status = TLFactory.Read<TLUserStatusBase>(from, cache);
+			if (HasBotInfoVersion) BotInfoVersion = from.ReadInt32();
+			if (HasRestrictionReason) RestrictionReason = from.ReadString();
+			if (HasBotInlinePlaceholder) BotInlinePlaceholder = from.ReadString();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xD10D979A);
 			to.Write((Int32)Flags);
 			to.Write(Id);
@@ -106,6 +108,20 @@ namespace Telegram.Api.TL
 			if (HasRestrictionReason) to.Write(RestrictionReason);
 			if (HasBotInlinePlaceholder) to.Write(BotInlinePlaceholder);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasAccessHash = AccessHash != null;
+			HasFirstName = FirstName != null;
+			HasLastName = LastName != null;
+			HasUsername = Username != null;
+			HasPhone = Phone != null;
+			HasPhoto = Photo != null;
+			HasStatus = Status != null;
+			HasBotInfoVersion = BotInfoVersion != null;
+			HasRestrictionReason = RestrictionReason != null;
+			HasBotInlinePlaceholder = BotInlinePlaceholder != null;
 		}
 	}
 }
