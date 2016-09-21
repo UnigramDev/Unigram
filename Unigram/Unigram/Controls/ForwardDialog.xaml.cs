@@ -1,0 +1,93 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Telegram.Api.TL;
+using Unigram.ViewModels;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Windows.System;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
+
+// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
+
+namespace Unigram.Controls
+{
+    public sealed partial class ForwardDialog : UserControl
+    {
+        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+
+        public ForwardDialog()
+        {
+            this.InitializeComponent();
+        }
+
+
+        private async void ForwardCancel_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ForwardMenuHideStoryboard.Begin();
+
+            await Task.Delay(200);
+
+            FContactsList.SelectedItem = null;
+
+            ViewModel.CancelForward();
+
+            ForwardHeader.Visibility = Visibility.Visible;
+            ForwardSearchBox.Visibility = Visibility.Collapsed;
+            ForwardMessage.Text = "";
+        }
+
+        private void ForwardSearchButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ForwardHeader.Visibility = Visibility.Collapsed;
+            ForwardSearchBox.Visibility = Visibility.Visible;
+            ForwardSearchBox.Focus(FocusState.Pointer);
+        }
+
+        private void ForwardSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (ForwardSearchBox.Text != "")
+            {
+                if (FContactsList.ItemsSource != ViewModel.FSearchDialogs)
+                {
+                    FContactsList.ItemsSource = ViewModel.FSearchDialogs;
+                }
+                ViewModel.GetSearchDialogs(ForwardSearchBox.Text);
+            }
+            else
+            {
+                FContactsList.ItemsSource = ViewModel.FDialogs;
+            }
+        }
+
+        private void FContactsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ForwardButton.IsEnabled = (FContactsList.SelectedItems.Count != 0);
+        }
+
+        private async void ForwardButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await ViewModel.Forward((FContactsList.SelectedItem as TLDialog).Peer, ForwardMessage.Text.Trim());
+
+            ForwardCancel_Tapped(this, new TappedRoutedEventArgs());
+        }
+
+        private void ForwardMessage_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+            {
+                ForwardButton_Tapped(this, new TappedRoutedEventArgs());
+                e.Handled = true; // Fix a bug causing this event to fire twice.
+            }
+        }
+    }
+}

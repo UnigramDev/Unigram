@@ -327,14 +327,14 @@ namespace Unigram.ViewModels
 
         #region Forward
 
-        private TLMessageBase _forwardingMessage = null;
+        private TLMessageBase _forwardFlyoutMessage = null;
 
-        public TLMessageBase ForwardingMessage
+        public TLMessageBase ForwardFlyoutMessage
         {
-            get { return _forwardingMessage; }
+            get { return _forwardFlyoutMessage; }
             set
             {
-                _forwardingMessage = value;
+                _forwardFlyoutMessage = value;
                 RaisePropertyChanged();
             }
         }
@@ -345,7 +345,7 @@ namespace Unigram.ViewModels
 
         internal void CancelForward()
         {
-            ForwardingMessage = null;
+            ForwardFlyoutMessage = null;
         }
 
         public void GetSearchDialogs(string query)
@@ -407,7 +407,7 @@ namespace Unigram.ViewModels
                     break;
             }
 
-            var message = ForwardingMessage as TLMessage;
+            var message = ForwardFlyoutMessage as TLMessage;
 
 
             if ((Item == null) || (Item.Id != recieverId))

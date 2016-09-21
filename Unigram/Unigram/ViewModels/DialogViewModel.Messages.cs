@@ -70,7 +70,7 @@ namespace Unigram.ViewModels
 
             if (message.Id <= 0) return;
 
-            ForwardingMessage = message;
+            ForwardFlyoutMessage = message;
         }
 
 
