@@ -20,6 +20,10 @@
     using Telegram.Api.Transport;
     using ViewModels;
     using Telegram.Api.Services.FileManager;
+    using Telegram.Api;
+    using System.IO;
+    using Windows.Storage;
+
     public class Bootstrapper
     {
         private UnigramContainer container;
@@ -31,6 +35,8 @@
 
         public void Configure()
         {
+            InitializeLayer();
+
             // .SingleIstance() is required to register a singleton service.
             container.ContainerBuilder.RegisterType<MTProtoService>().As<IMTProtoService>().SingleInstance();
             container.ContainerBuilder.RegisterType<TelegramEventAggregator>().As<ITelegramEventAggregator>().SingleInstance();
@@ -63,6 +69,39 @@
             container.Build();
 
             Initialize();
+        }
+
+        private void InitializeLayer()
+        {
+            var deleteIfExists = new Action<string>((path) =>
+            {
+                if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, path)))
+                {
+                    File.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, path));
+                }
+            });
+
+            if (SettingsHelper.SupportedLayer != Constants.SupportedLayer)
+            {
+                SettingsHelper.SupportedLayer = Constants.SupportedLayer;
+
+                deleteIfExists("action_queue.dat");
+                deleteIfExists("action_queue.dat.temp");
+                deleteIfExists("chats.dat");
+                deleteIfExists("chats.dat.temp");
+                deleteIfExists("dialogs.dat");
+                deleteIfExists("dialogs.dat.temp");
+                deleteIfExists("state.dat");
+                deleteIfExists("state.dat.temp");
+                deleteIfExists("users.dat");
+                deleteIfExists("users.dat.temp");
+
+                deleteIfExists("temp_chats.dat");
+                deleteIfExists("temp_dialogs.dat");
+                deleteIfExists("temp_difference.dat");
+                deleteIfExists("temp_state.dat");
+                deleteIfExists("temp_users.dat");
+            }
         }
 
         private void Initialize()
