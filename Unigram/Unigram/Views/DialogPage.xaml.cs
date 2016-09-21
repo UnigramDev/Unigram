@@ -242,5 +242,11 @@ namespace Unigram.Views
 
             ForwardCancel_Tapped(this, new TappedRoutedEventArgs());
         }
+
+        private void ForwardMessage_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+                ForwardButton_Tapped(this, new TappedRoutedEventArgs());
+        }
     }
 }

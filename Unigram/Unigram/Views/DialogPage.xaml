@@ -880,7 +880,8 @@
                          Margin="12"
                          Grid.Row="2"
                          Background="White"
-                         x:Name="ForwardMessage" />
+                         x:Name="ForwardMessage"
+                         KeyDown="ForwardMessage_KeyDown" />
                 <CommandBar Grid.Row="3">
                     <AppBarButton Icon="Cancel" Label="Cancel" Tapped="ForwardCancel_Tapped"></AppBarButton>
                     <AppBarButton Icon="Send" Label="Forward" IsEnabled="False" x:Name="ForwardButton" Tapped="ForwardButton_Tapped"></AppBarButton>
