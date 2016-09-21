@@ -205,6 +205,7 @@ namespace Unigram.Views
 
             ForwardHeader.Visibility = Visibility.Visible;
             ForwardSearchBox.Visibility = Visibility.Collapsed;
+            ForwardMessage.Text = "";
         }
 
         private void ForwardSearchButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -233,6 +234,13 @@ namespace Unigram.Views
         private void FContactsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ForwardButton.IsEnabled = (FContactsList.SelectedItems.Count != 0);
+        }
+
+        private async void ForwardButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await ViewModel.Forward((FContactsList.SelectedItem as TLDialog).Peer, ForwardMessage.Text.Trim());
+
+            ForwardCancel_Tapped(this, new TappedRoutedEventArgs());
         }
     }
 }
