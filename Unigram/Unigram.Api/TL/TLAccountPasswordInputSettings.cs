@@ -36,15 +36,17 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
-			if (HasNewSalt) { NewSalt = from.ReadByteArray(); }
-			if (HasNewPasswordHash) { NewPasswordHash = from.ReadByteArray(); }
-			if (HasHint) { Hint = from.ReadString(); }
-			if (HasEmail) { Email = from.ReadString(); }
+			if (HasNewSalt) NewSalt = from.ReadByteArray();
+			if (HasNewPasswordHash) NewPasswordHash = from.ReadByteArray();
+			if (HasHint) Hint = from.ReadString();
+			if (HasEmail) Email = from.ReadString();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x86916DEB);
 			to.Write((Int32)Flags);
 			if (HasNewSalt) to.WriteByteArray(NewSalt);
@@ -52,6 +54,14 @@ namespace Telegram.Api.TL
 			if (HasHint) to.Write(Hint);
 			if (HasEmail) to.Write(Email);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasNewSalt = NewSalt != null;
+			HasNewPasswordHash = NewPasswordHash != null;
+			HasHint = Hint != null;
+			HasEmail = Email != null;
 		}
 	}
 }

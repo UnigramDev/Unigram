@@ -36,7 +36,7 @@ namespace Telegram.Api.TL.Methods.Messages
 			Flags = (Flag)from.ReadInt32();
 			Bot = TLFactory.Read<TLInputUserBase>(from, cache);
 			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
-			if (HasGeoPoint) { GeoPoint = TLFactory.Read<TLInputGeoPointBase>(from, cache); }
+			if (HasGeoPoint) GeoPoint = TLFactory.Read<TLInputGeoPointBase>(from, cache);
 			Query = from.ReadString();
 			Offset = from.ReadString();
 			if (cache) ReadFromCache(from);
@@ -44,6 +44,8 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x514E999D);
 			to.Write((Int32)Flags);
 			to.WriteObject(Bot, cache);
@@ -52,6 +54,11 @@ namespace Telegram.Api.TL.Methods.Messages
 			to.Write(Query);
 			to.Write(Offset);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasGeoPoint = GeoPoint != null;
 		}
 	}
 }

@@ -32,12 +32,14 @@ namespace Telegram.Api.TL
 			PhoneNumber = from.ReadString();
 			FirstName = from.ReadString();
 			LastName = from.ReadString();
-			if (HasReplyMarkup) { ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache); }
+			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x35EDB4D4);
 			to.Write((Int32)Flags);
 			to.Write(PhoneNumber);
@@ -45,6 +47,11 @@ namespace Telegram.Api.TL
 			to.Write(LastName);
 			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasReplyMarkup = ReplyMarkup != null;
 		}
 	}
 }

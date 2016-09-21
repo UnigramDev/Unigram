@@ -58,18 +58,20 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
-			if (HasAccessHash) { AccessHash = from.ReadInt64(); }
+			if (HasAccessHash) AccessHash = from.ReadInt64();
 			Title = from.ReadString();
-			if (HasUsername) { Username = from.ReadString(); }
+			if (HasUsername) Username = from.ReadString();
 			Photo = TLFactory.Read<TLChatPhotoBase>(from, cache);
 			Date = from.ReadInt32();
 			Version = from.ReadInt32();
-			if (HasRestrictionReason) { RestrictionReason = from.ReadString(); }
+			if (HasRestrictionReason) RestrictionReason = from.ReadString();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xA14DCA52);
 			to.Write((Int32)Flags);
 			to.Write(Id);
@@ -81,6 +83,13 @@ namespace Telegram.Api.TL
 			to.Write(Version);
 			if (HasRestrictionReason) to.Write(RestrictionReason);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasAccessHash = AccessHash != null;
+			HasUsername = Username != null;
+			HasRestrictionReason = RestrictionReason != null;
 		}
 	}
 }

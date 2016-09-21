@@ -31,7 +31,7 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			Pts = from.ReadInt32();
-			if (HasTimeout) { Timeout = from.ReadInt32(); }
+			if (HasTimeout) Timeout = from.ReadInt32();
 			NewMessages = TLFactory.Read<TLVector<TLMessageBase>>(from, cache);
 			OtherUpdates = TLFactory.Read<TLVector<TLUpdateBase>>(from, cache);
 			Chats = TLFactory.Read<TLVector<TLChatBase>>(from, cache);
@@ -41,6 +41,8 @@ namespace Telegram.Api.TL
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x2064674E);
 			to.Write((Int32)Flags);
 			to.Write(Pts);
@@ -50,6 +52,11 @@ namespace Telegram.Api.TL
 			to.WriteObject(Chats, cache);
 			to.WriteObject(Users, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasTimeout = Timeout != null;
 		}
 	}
 }

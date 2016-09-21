@@ -35,12 +35,14 @@ namespace Telegram.Api.TL
 			Address = from.ReadString();
 			Provider = from.ReadString();
 			VenueId = from.ReadString();
-			if (HasReplyMarkup) { ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache); }
+			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x4366232E);
 			to.Write((Int32)Flags);
 			to.WriteObject(Geo, cache);
@@ -50,6 +52,11 @@ namespace Telegram.Api.TL
 			to.Write(VenueId);
 			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasReplyMarkup = ReplyMarkup != null;
 		}
 	}
 }

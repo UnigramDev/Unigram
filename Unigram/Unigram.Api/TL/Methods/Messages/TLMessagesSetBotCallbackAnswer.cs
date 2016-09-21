@@ -37,19 +37,27 @@ namespace Telegram.Api.TL.Methods.Messages
 		{
 			Flags = (Flag)from.ReadInt32();
 			QueryId = from.ReadInt64();
-			if (HasMessage) { Message = from.ReadString(); }
-			if (HasUrl) { Url = from.ReadString(); }
+			if (HasMessage) Message = from.ReadString();
+			if (HasUrl) Url = from.ReadString();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xC927D44B);
 			to.Write((Int32)Flags);
 			to.Write(QueryId);
 			if (HasMessage) to.Write(Message);
 			if (HasUrl) to.Write(Url);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasMessage = Message != null;
+			HasUrl = Url != null;
 		}
 	}
 }

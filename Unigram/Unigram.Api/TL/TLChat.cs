@@ -46,12 +46,14 @@ namespace Telegram.Api.TL
 			ParticipantsCount = from.ReadInt32();
 			Date = from.ReadInt32();
 			Version = from.ReadInt32();
-			if (HasMigratedTo) { MigratedTo = TLFactory.Read<TLInputChannelBase>(from, cache); }
+			if (HasMigratedTo) MigratedTo = TLFactory.Read<TLInputChannelBase>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xD91CDD54);
 			to.Write((Int32)Flags);
 			to.Write(Id);
@@ -62,6 +64,11 @@ namespace Telegram.Api.TL
 			to.Write(Version);
 			if (HasMigratedTo) to.WriteObject(MigratedTo, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasMigratedTo = MigratedTo != null;
 		}
 	}
 }
