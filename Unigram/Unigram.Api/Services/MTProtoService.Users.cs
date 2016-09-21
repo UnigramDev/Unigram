@@ -14,7 +14,9 @@ namespace Telegram.Api.Services
             var result = await SendInformativeMessage<TLVector<TLUserBase>>("users.getUsers", obj);
             if (result.Error == null)
             {
-                _cacheService.SyncUsers(result.Value, null);
+                var task = new TaskCompletionSource<MTProtoResponse<TLVector<TLUserBase>>>();
+                _cacheService.SyncUsers(result.Value, (callback) => task.SetResult(new MTProtoResponse<TLVector<TLUserBase>>(callback)));
+                return await task.Task;
             }
 
             return result;

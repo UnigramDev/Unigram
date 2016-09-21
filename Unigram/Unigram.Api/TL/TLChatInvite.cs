@@ -41,12 +41,14 @@ namespace Telegram.Api.TL
 			Title = from.ReadString();
 			Photo = TLFactory.Read<TLChatPhotoBase>(from, cache);
 			ParticipantsCount = from.ReadInt32();
-			if (HasParticipants) { Participants = TLFactory.Read<TLVector<TLUserBase>>(from, cache); }
+			if (HasParticipants) Participants = TLFactory.Read<TLVector<TLUserBase>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xDB74F558);
 			to.Write((Int32)Flags);
 			to.Write(Title);
@@ -54,6 +56,11 @@ namespace Telegram.Api.TL
 			to.Write(ParticipantsCount);
 			if (HasParticipants) to.WriteObject(Participants, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasParticipants = Participants != null;
 		}
 	}
 }

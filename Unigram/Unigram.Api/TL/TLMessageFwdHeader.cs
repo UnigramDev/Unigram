@@ -34,15 +34,17 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
-			if (HasFromId) { FromId = from.ReadInt32(); }
+			if (HasFromId) FromId = from.ReadInt32();
 			Date = from.ReadInt32();
-			if (HasChannelId) { ChannelId = from.ReadInt32(); }
-			if (HasChannelPost) { ChannelPost = from.ReadInt32(); }
+			if (HasChannelId) ChannelId = from.ReadInt32();
+			if (HasChannelPost) ChannelPost = from.ReadInt32();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xC786DDCB);
 			to.Write((Int32)Flags);
 			if (HasFromId) to.Write(FromId.Value);
@@ -50,6 +52,13 @@ namespace Telegram.Api.TL
 			if (HasChannelId) to.Write(ChannelId.Value);
 			if (HasChannelPost) to.Write(ChannelPost.Value);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasFromId = FromId != null;
+			HasChannelId = ChannelId != null;
+			HasChannelPost = ChannelPost != null;
 		}
 	}
 }

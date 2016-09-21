@@ -4,12 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Telegram.Api.TL
 {
     public static partial class TLFactory
     {
-        public static T Read<T>(TLBinaryReader from, bool fromCache)
+        public static T Read<T>(TLBinaryReader from, bool cache)
         {
             if (typeof(T) == typeof(UInt32)) return (T)(Object)from.ReadUInt32();
             else if (typeof(T) == typeof(Int32)) return (T)(Object)from.ReadInt32();
@@ -30,7 +31,46 @@ namespace Telegram.Api.TL
             }
             else if ((TLType)type == TLType.Vector)
             {
-                return (T)(Object)Activator.CreateInstance(typeof(T), from, fromCache);
+                if (typeof(T) != typeof(object))
+                {
+                    return (T)(Object)Activator.CreateInstance(typeof(T), from, cache);
+                }
+                else
+                {
+                    var length = from.ReadUInt32();
+                    if (length > 0)
+                    {
+                        var inner = from.ReadUInt32();
+                        from.BaseStream.Position -= 8;
+
+                        var innerType = Type.GetType($"Telegram.Api.TL.TL{(TLType)inner}");
+                        if (innerType != null)
+                        {
+                            var baseType = innerType.GetTypeInfo().BaseType;
+                            if (baseType.Name != "TLObject")
+                            {
+                                innerType = baseType;
+                            }
+
+                            var d1 = typeof(TLVector<>);
+                            var typeArgs = new Type[] { innerType };
+                            var makeme = d1.MakeGenericType(typeArgs);
+                            return (T)(Object)Activator.CreateInstance(makeme, from, cache);
+                        }
+                        else
+                        {
+                            // A base type collection (int, long, double, bool)
+                            // TODO:
+                            return (T)(Object)null;
+                        }
+                    }
+                    else
+                    {
+                        // An empty collection, so we can't determine the generic type
+                        // TODO:
+                        return (T)(Object)new TLVectorEmpty();
+                    }
+                }
             }
             else if ((TLType)type == TLType.BoolTrue)
             {
@@ -42,7 +82,7 @@ namespace Telegram.Api.TL
             }
             else
             {
-                return Read<T>(from, (TLType)type, fromCache);
+                return Read<T>(from, (TLType)type, cache);
             }
         }
 

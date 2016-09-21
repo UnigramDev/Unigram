@@ -34,17 +34,24 @@ namespace Telegram.Api.TL.Methods.Account
 		{
 			Flags = (Flag)from.ReadInt32();
 			PhoneNumber = from.ReadString();
-			if (HasCurrentNumber) { CurrentNumber = from.ReadBoolean(); }
+			if (HasCurrentNumber) CurrentNumber = from.ReadBoolean();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x8E57DEB);
 			to.Write((Int32)Flags);
 			to.Write(PhoneNumber);
 			if (HasCurrentNumber) to.Write(CurrentNumber.Value);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasCurrentNumber = CurrentNumber != null;
 		}
 	}
 }

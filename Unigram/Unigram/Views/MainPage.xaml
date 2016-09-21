@@ -117,7 +117,7 @@
                                     </Ellipse>
                                     <TextBlock Text="{x:Bind fullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                     <TextBlock Text="{x:Bind lastSeen}" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"
-                                               Style="{ThemeResource BodyTextBlockStyle}" 
+                                               Style="{ThemeResource CaptionTextBlockStyle}" 
                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                        TextTrimming="CharacterEllipsis" 
                        TextWrapping="NoWrap" 

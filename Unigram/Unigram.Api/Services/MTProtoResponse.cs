@@ -1,4 +1,5 @@
-﻿using Telegram.Api.TL;
+﻿using System;
+using Telegram.Api.TL;
 
 namespace Telegram.Api.Services
 {
@@ -28,6 +29,11 @@ namespace Telegram.Api.Services
     {
         public MTProtoResponse(object value)
         {
+            if (value is TLVectorEmpty)
+            {
+                value = Activator.CreateInstance<T>();
+            }
+
             Value = (T)value;
         }
 
@@ -38,6 +44,11 @@ namespace Telegram.Api.Services
 
         public MTProtoResponse(object value, TLRPCError error)
         {
+            if (value is TLVectorEmpty)
+            {
+                value = Activator.CreateInstance<T>();
+            }
+
             Value = (T)value;
             Error = error;
         }
