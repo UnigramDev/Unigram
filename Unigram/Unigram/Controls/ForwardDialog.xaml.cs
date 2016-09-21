@@ -33,10 +33,12 @@ namespace Unigram.Controls
 
         private async void ForwardCancel_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            ForwardMenuHideStoryboard.Begin();
+            await PlayCancelAnimation();
+            ExitDialog();
+        }
 
-            await Task.Delay(200);
-
+        private void ExitDialog()
+        {
             FContactsList.SelectedItem = null;
 
             ViewModel.CancelForward();
@@ -44,6 +46,24 @@ namespace Unigram.Controls
             ForwardHeader.Visibility = Visibility.Visible;
             ForwardSearchBox.Visibility = Visibility.Collapsed;
             ForwardMessage.Text = "";
+
+            Windows.UI.ViewManagement.InputPane.GetForCurrentView().Showing -= ForwardDialog_InputShowing;
+            Windows.UI.ViewManagement.InputPane.GetForCurrentView().Hiding -= ForwardDialog_InputHiding;
+        }
+
+
+        private async Task PlaySendAnimation()
+        {
+            ForwardMenuHideStoryboard2.Begin();
+
+            await Task.Delay(200);
+        }
+
+        private async Task PlayCancelAnimation()
+        {
+            ForwardMenuHideStoryboard.Begin();
+
+            await Task.Delay(200);
         }
 
         private void ForwardSearchButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -78,7 +98,8 @@ namespace Unigram.Controls
         {
             await ViewModel.Forward((FContactsList.SelectedItem as TLDialog).Peer, ForwardMessage.Text.Trim());
 
-            ForwardCancel_Tapped(this, new TappedRoutedEventArgs());
+            await PlaySendAnimation();
+            ExitDialog();
         }
 
         private void ForwardMessage_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -87,6 +108,47 @@ namespace Unigram.Controls
             {
                 ForwardButton_Tapped(this, new TappedRoutedEventArgs());
                 e.Handled = true; // Fix a bug causing this event to fire twice.
+            }
+        }
+
+        private void fDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            Windows.UI.ViewManagement.InputPane.GetForCurrentView().Showing += ForwardDialog_InputShowing;
+            Windows.UI.ViewManagement.InputPane.GetForCurrentView().Hiding += ForwardDialog_InputHiding;
+        }
+
+        VerticalAlignment origVa = VerticalAlignment.Center;
+        double origHeight = -1;
+        private void ForwardDialog_InputHiding(Windows.UI.ViewManagement.InputPane sender, Windows.UI.ViewManagement.InputPaneVisibilityEventArgs args)
+        {
+            if (origHeight == -1)
+                return;
+            ForwardMenuBox.VerticalAlignment = origVa;
+            ForwardMenuBox.Height = origHeight;
+            origHeight = -1;
+        }
+
+        private void ForwardDialog_InputShowing(Windows.UI.ViewManagement.InputPane sender, Windows.UI.ViewManagement.InputPaneVisibilityEventArgs args)
+        {
+            if (origHeight != -1)
+                return;
+            origVa = ForwardMenuBox.VerticalAlignment;
+            ForwardMenuBox.VerticalAlignment = VerticalAlignment.Top;
+            origHeight = ForwardMenuBox.Height;
+
+            double maxHeight = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().VisibleBounds.Height - args.OccludedRect.Height;
+            if (ForwardMenuBox.Height > maxHeight)
+            {
+                ForwardMenuBox.Height = maxHeight;
+            }
+        }
+
+        private void ForwardSearchBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (ForwardSearchBox.Text.Length == 0)
+            {
+                ForwardSearchBox.Visibility = Visibility.Collapsed;
+                ForwardHeader.Visibility = Visibility.Visible;
             }
         }
     }

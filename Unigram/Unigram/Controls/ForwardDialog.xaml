@@ -6,12 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400"
+    d:DesignHeight="500"
+    d:DesignWidth="500"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
-    x:Name="fDialog">
+    x:Name="fDialog"
+    Loaded="fDialog_Loaded">
 
     <UserControl.Resources>
 
@@ -38,7 +39,7 @@
             </DoubleAnimation>
             <DoubleAnimation Storyboard.TargetName="ForwardMenuBoxTransform" 
                              Storyboard.TargetProperty="Y"
-                             Duration="0:0:0.2" From="15" To="0" >
+                             Duration="0:0:0.2" From="20" To="0" >
                 <DoubleAnimation.EasingFunction>
                     <ExponentialEase  EasingMode="EaseOut"  />
                 </DoubleAnimation.EasingFunction>
@@ -66,53 +67,67 @@
             </DoubleAnimation>
             <DoubleAnimation Storyboard.TargetName="ForwardMenuBoxTransform" 
                              Storyboard.TargetProperty="Y"
-                             Duration="0:0:0.2" From="0" To="15" >
+                             Duration="0:0:0.2" From="0" To="20" >
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase  EasingMode="EaseOut"  />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        <Storyboard x:Name="ForwardMenuHideStoryboard2">
+            <DoubleAnimation Storyboard.TargetName="ForwardMenuOverlay"
+                             Storyboard.TargetProperty="(UIElement.Opacity)"
+                             To="0"
+                             Duration="00:00:00.200"
+                             AutoReverse="False">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="ForwardMenuBox"
+                             Storyboard.TargetProperty="(UIElement.Opacity)"
+                             From="1"
+                             To="0"
+                             Duration="00:00:00.200"
+                             AutoReverse="False">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="ForwardMenuBoxTransform" 
+                             Storyboard.TargetProperty="Y"
+                             Duration="0:0:0.2" From="0" To="-20" >
                 <DoubleAnimation.EasingFunction>
                     <ExponentialEase  EasingMode="EaseOut"  />
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
 
-        <Style x:Name="ContactsListViewStyleHorizontal" TargetType="ListView">
-            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Enabled" />
-            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="ItemsPanel">
-                <Setter.Value>
-                    <ItemsPanelTemplate>
-                        <VirtualizingStackPanel Orientation="Horizontal"
-                                    ScrollViewer.HorizontalScrollMode="Enabled"
-                                    ScrollViewer.VerticalScrollMode="Disabled"/>
-                    </ItemsPanelTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="ItemTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <StackPanel Width="80">
-                            <Grid>
-                                <Grid>
-                                    <Ellipse x:Name="Placeholder" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
-                                    <TextBlock Text="{Binding FullName, Converter={StaticResource InitialNameStringConverter}}"  TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                </Grid>
-                                <Ellipse Width="48"
-                                         Height="48"
-                                         Margin="0,0,0,0"
-                                         RelativePanel.AlignVerticalCenterWithPanel="True"
-                                         RelativePanel.AlignLeftWithPanel="True">
-                                    <Ellipse.Fill>
-                                        <ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                                    </Ellipse.Fill>
-                                </Ellipse>
-                            </Grid>
-                            <TextBlock Text="{Binding FullName}"  TextWrapping="Wrap" TextAlignment="Center" />
-                        </StackPanel>
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <DataTemplate x:Name="ContactsListViewTemplate">
+            <Grid Width="80" Height="140" VerticalAlignment="Top" Padding="0,8,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="48" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid>
+                        <Ellipse x:Name="Placeholder" Width="48" Height="48" VerticalAlignment="Top" Grid.Column="1" Stroke="White" StrokeThickness="1" Fill="{Binding PlaceHolderColor}"  />
+                        <TextBlock Text="{Binding FullName, Converter={StaticResource InitialNameStringConverter}}"  TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                    <Ellipse Width="48"
+                             Height="48"
+                             Margin="0,0,0,0"
+                             RelativePanel.AlignVerticalCenterWithPanel="True"
+                             RelativePanel.AlignLeftWithPanel="True">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                </Grid>
+                <TextBlock Text="{Binding FullName}" Grid.Row="1" TextWrapping="Wrap" TextAlignment="Center" Margin="0,8,0,16" />
+            </Grid>
+        </DataTemplate>
     </UserControl.Resources>
-    
+
     <Grid>
         <!-- Forward Menu -->
         <Grid Visibility="{Binding ForwardingMessage, Converter={StaticResource NullToVisibilityConverter}}">
@@ -126,23 +141,23 @@
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity="0.5" x:Name="ForwardMenuOverlay" Tapped="ForwardCancel_Tapped"></Grid>
             <!-- END OF Overlay-->
 
-            <Grid x:Name="ForwardMenuBox" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Grid x:Name="ForwardMenuBox" Background="{ThemeResource AppBarBackground}" BorderThickness="1" BorderBrush="Gray" Height="500">
                 <Grid.RenderTransform>
                     <TranslateTransform x:Name="ForwardMenuBoxTransform"></TranslateTransform>
                 </Grid.RenderTransform>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="56" />
-                    <RowDefinition Height="144" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="1" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <Grid x:Name="ForwardHeader">
                         <Button FontFamily="Segoe MDL2 Assets"
                                 Content="&#xE11A;"
-                                Width="40"
-                                Height="40"
-                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                Width="48"
+                                Height="48"
+                                Background="Transparent"
                                 Tapped="ForwardSearchButton_Tapped" />
                         <TextBlock Text="Forward message"
                                    Margin="50,0,0,0"
@@ -150,31 +165,55 @@
                                    FontSize="18"/>
                     </Grid>
                     <TextBox PlaceholderText="Search for contacts"
-                             RequestedTheme="Light"
-                             Margin="12"
-                             Grid.Row="0"
+                             Margin="12,12,56,12"
                              Visibility="Collapsed"
                              x:Name="ForwardSearchBox"
-                             TextChanged="ForwardSearchBox_TextChanged" />
+                             TextChanged="ForwardSearchBox_TextChanged"
+                             LostFocus="ForwardSearchBox_LostFocus" />
+                    <Button FontFamily="Segoe MDL2 Assets"
+                                Content="&#xE10A;"
+                                Width="48"
+                                Height="48"
+                                Background="Transparent"
+                                HorizontalAlignment="Right"
+                                Tapped="ForwardCancel_Tapped" />
                 </Grid>
-                <ListView Grid.Row="1" 
+                <GridView Grid.Row="1" 
                           Margin="0,8,0,0" 
                           ItemsSource="{Binding FSearchDialogs}"
-                          Style="{StaticResource ContactsListViewStyleHorizontal}"
+                          ItemTemplate="{StaticResource ContactsListViewTemplate}"
                           x:Name="FContactsList"
-                          SelectionChanged="FContactsList_SelectionChanged" />
+                          SelectionChanged="FContactsList_SelectionChanged">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapGrid Orientation="Horizontal" HorizontalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </GridView>
 
-                <TextBox PlaceholderText="Write a message (optional)"
-                         RequestedTheme="Light"
-                         Margin="12"
-                         Grid.Row="2"
-                         Background="White"
-                         x:Name="ForwardMessage"
-                         KeyDown="ForwardMessage_KeyDown" />
-                <CommandBar Grid.Row="3">
-                    <AppBarButton Icon="Cancel" Label="Cancel" Tapped="ForwardCancel_Tapped"></AppBarButton>
-                    <AppBarButton Icon="Send" Label="Forward" IsEnabled="False" x:Name="ForwardButton" Tapped="ForwardButton_Tapped"></AppBarButton>
-                </CommandBar>
+                <Grid Grid.Row="2" Background="Gray" />
+                <Grid Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox PlaceholderText="Write a message (optional)"
+                             x:Name="ForwardMessage"
+                             Grid.Column="0"
+                             KeyDown="ForwardMessage_KeyDown"
+                             BorderThickness="0"
+                             Padding="12" />
+                    <Button FontFamily="Segoe MDL2 Assets"
+                            Content="&#xE122;"
+                            Width="48"
+                            Height="48"
+                            Background="{ThemeResource TelegramBackgroundAccentBrush}"
+                            FontSize="20"
+                            HorizontalAlignment="Right"
+                            Grid.Column="1"
+                            x:Name="ForwardButton"
+                            Tapped="ForwardButton_Tapped" />
+                </Grid>
             </Grid>
 
         </Grid>
@@ -185,11 +224,11 @@
                 <VisualState>
                     <!-- Wide state -->
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="500" />
+                        <AdaptiveTrigger MinWindowWidth="520" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="ForwardMenuBox.VerticalAlignment" Value="Center" />
-                        <Setter Target="ForwardMenuBox.Width" Value="500" />
+                        <Setter Target="ForwardMenuBox.Width" Value="520" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
