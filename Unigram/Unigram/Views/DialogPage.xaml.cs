@@ -246,7 +246,10 @@ namespace Unigram.Views
         private void ForwardMessage_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Enter)
+            {
                 ForwardButton_Tapped(this, new TappedRoutedEventArgs());
+                e.Handled = true; // Fix a bug causing this event to fire twice.
+            }
         }
     }
 }
