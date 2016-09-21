@@ -35,5 +35,38 @@ namespace Unigram.Common
                 await bitmap.SetSourceAsync(stream);
             }
         }
+
+        #region Source
+
+        public static object GetSource(DependencyObject obj)
+        {
+            return (object)obj.GetValue(SourceProperty);
+        }
+
+        public static void SetSource(DependencyObject obj, object value)
+        {
+            obj.SetValue(SourceProperty, value);
+        }
+
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.RegisterAttached("Source", typeof(object), typeof(LazyBitmapImage), new PropertyMetadata(null, OnSourceChanged));
+
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as Image;
+            var photo = e.NewValue as TLPhoto;
+            if (photo != null)
+            {
+                var photoSize = photo.Sizes.OrderByDescending(x => Math.Abs(x.W * x.H)).FirstOrDefault();
+                if (photoSize != null)
+                {
+                    sender.MaxWidth = photoSize.W;
+                    sender.MaxHeight = photoSize.H;
+                }
+            }
+        }
+
+        #endregion
+
     }
 }

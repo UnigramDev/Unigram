@@ -45,6 +45,8 @@ namespace Unigram.Views
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
+
+
         private void DialogPage_Loaded(object sender, RoutedEventArgs e)
         {
             lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
@@ -92,9 +94,10 @@ namespace Unigram.Views
             {
                 // Check if CTRL is also pressed in addition to Enter key.
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
                 // If there is text and CTRL is not pressed, send message. Else start new row.
-                if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && btnSendMessage.Visibility == Visibility.Visible)
+                if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && btnSendMessage.Visibility == Visibility.Visible)
                 {
 
                     // TODO working but UGLY workaround: removal of the enter character from message.
@@ -142,9 +145,9 @@ namespace Unigram.Views
             if(user!=null)
                 ViewModel.NavigationService.Navigate(typeof(UserInfoPage), user);
             if(channel!=null)
-                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), channel);
+                ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), channel);
             if (chat != null)
-                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), chat);
+                ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), chat);
 
         }
 

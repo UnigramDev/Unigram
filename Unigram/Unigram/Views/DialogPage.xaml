@@ -4,11 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Unigram.Controls"
     xmlns:local="using:Unigram.Views"
+    xmlns:common="using:Unigram.Common"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:viewmodels="using:Unigram.ViewModels"
     xmlns:vm="using:Unigram.ViewModels"
-    xmlns:vmc="using:Telegram.Api.TL"
+    xmlns:models="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -23,6 +24,140 @@
 
     <Page.Resources>
         <CollectionViewSource x:Name="MessagesSource" IsSourceGrouped="True" Source="{Binding Messages.Groups}"/>
+
+        <!-- Teorically temporary location, but we'll see -->
+        <MenuFlyout x:Key="MessageMenuFlyout">
+            <MenuFlyout.MenuFlyoutPresenterStyle>
+                <Style TargetType="MenuFlyoutPresenter">
+                    <Setter Property="RequestedTheme" Value="Light"/>
+                </Style>
+            </MenuFlyout.MenuFlyoutPresenterStyle>
+            <MenuFlyoutItem Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
+            <MenuFlyoutItem Text="Copy"/>
+            <MenuFlyoutItem Text="Edit" Visibility="Collapsed"/>
+            <MenuFlyoutItem Text="Forward"/>
+            <MenuFlyoutItem Text="Delete"/>
+        </MenuFlyout>
+
+        <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Border Visibility="{x:Bind ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,0" Margin="0,0,12,0">
+                    <ContentControl
+                    Content="{x:Bind ReplyInfo, Mode=OneWay}" 
+                    ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                    RequestedTheme="Dark">
+                        <!-- 
+                    common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
+                    -->
+                        <ContentControl.Resources>
+                            <!-- 
+                        Fela: We have to define here all the brushes we want to override
+                              in the sticker templates.
+                              Resources should be defined here to not override them in the rest of the app
+                        -->
+                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                        </ContentControl.Resources>
+                    </ContentControl>
+                </Border>
+
+                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
+                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                       common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                       MaxWidth="128" MaxHeight="128" Margin="2"/>
+
+                    <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                            <FontIcon Glyph="{x:Bind State, Converter={StaticResource StateToGlyphConverter}, Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="White" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FriendStickerTemplate" x:DataType="models:TLMessage">
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
+                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                       common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                       MaxWidth="128" MaxHeight="128" Margin="2"/>
+
+                    <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                        <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                    </Border>
+                </Grid>
+
+                <Border Visibility="{x:Bind ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
+                    <ContentControl
+                    Content="{x:Bind ReplyInfo, Mode=OneWay}" 
+                    ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                    RequestedTheme="Dark">
+                        <!-- 
+                    common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
+                    -->
+                        <ContentControl.Resources>
+                            <!-- 
+                        Fela: We have to define here all the brushes we want to override
+                              in the sticker templates.
+                              Resources should be defined here to not override them in the rest of the app
+                        -->
+                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                        </ContentControl.Resources>
+                    </ContentControl>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ChatFriendStickerTemplate" x:DataType="models:TLMessage">
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
+                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                       common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                       MaxWidth="128" MaxHeight="128" Margin="2"/>
+
+                    <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                        <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                    </Border>
+                </Grid>
+
+                <Border Visibility="{x:Bind ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
+                    <ContentControl
+                    Content="{x:Bind ReplyInfo, Mode=OneWay}" 
+                    ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                    RequestedTheme="Dark">
+                        <!-- 
+                    common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
+                    -->
+                        <ContentControl.Resources>
+                            <!-- 
+                        Fela: We have to define here all the brushes we want to override
+                              in the sticker templates.
+                              Resources should be defined here to not override them in the rest of the app
+                        -->
+                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                        </ContentControl.Resources>
+                    </ContentControl>
+                </Border>
+            </Grid>
+        </DataTemplate>
 
         <Style TargetType="ListViewHeaderItem">
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -50,6 +185,72 @@
             </Setter>
         </Style>
 
+        <Style x:Key="CloseButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+            <Setter Property="Content" Value="&#xE700;" />
+            <Setter Property="Height" Value="44" />
+            <Setter Property="Width" Value="44" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                            <TextBlock
+                                                        x:Name="ContentPresenter"
+                                                        Padding="{TemplateBinding Padding}"
+                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                        AutomationProperties.AccessibilityView="Raw"
+                                                        Text="&#xE10A;"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
             <StackPanel Margin="0,12">
@@ -70,16 +271,16 @@
         </DataTemplate>
         <!-- EndRegion -->
 
-        <DataTemplate x:Key="UserMessageTemplate" x:DataType="vmc:TLMessage">
-            <messages:UserMessageControl/>
+        <DataTemplate x:Key="UserMessageTemplate" x:DataType="models:TLMessage">
+            <messages:UserMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
         </DataTemplate>
 
-        <DataTemplate x:Key="FriendMessageTemplate">
-            <messages:FriendMessageControl/>
+        <DataTemplate x:Key="FriendMessageTemplate" x:DataType="models:TLMessage">
+            <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
         </DataTemplate>
 
-        <DataTemplate x:Key="ChatFriendMessageTemplate">
-            <messages:ChatFriendMessageControl/>
+        <DataTemplate x:Key="ChatFriendMessageTemplate" x:DataType="models:TLMessage">
+            <messages:ChatFriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
         </DataTemplate>
 
         <selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
@@ -111,6 +312,9 @@
             <Button.Content>
                 <StackPanel Orientation="Horizontal">
                     <!--User icon-->
+                    <Grid>
+                    <Ellipse Margin="12,0" Width="40" Height="40" Fill="{x:Bind ViewModel.PlaceHolderColor}" VerticalAlignment="Top"/>
+                    <TextBlock Margin="12,0" Foreground="White" x:Name="InitialName" Text="" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <Ellipse x:Name="elpDialogIcon"
                              Width="40"
                              Height="40"
@@ -119,6 +323,7 @@
                             <ImageBrush ImageSource="{x:Bind ViewModel.photo, Converter={StaticResource DefaultPhotoConverter}}" />
                         </Ellipse.Fill>
                     </Ellipse>
+                    </Grid>
                     <StackPanel Orientation="Vertical"
                                 VerticalAlignment="Center">
                         <TextBlock x:Name="tblDialogName"
@@ -314,66 +519,126 @@
                        RelativePanel.AlignRightWithPanel="True"
                        RelativePanel.AlignTopWithPanel="True"
                        RelativePanel.AlignBottomWithPanel="True" />
-                <!-- Message input -->
-                <TextBox x:Name="txtMessage" 
-                         x:Uid="Chat-Input-Message"
-                         PlaceholderText="Type your message..."
-                         Text="{Binding SendTextHolder, Mode=TwoWay}"
-                         BorderThickness="0" 
-                         Padding="14" 
-                         TextWrapping="Wrap" 
-                         InputScope="Text" 
-                         IsSpellCheckEnabled="True"
-                         VerticalAlignment="Bottom" 
-                         VerticalContentAlignment="Bottom"
-                         MinHeight="48"
-                         MaxHeight="84"
-                         AcceptsReturn="True"
-                         TextChanging="txtMessage_TextChanging"
-                         RelativePanel.AlignLeftWithPanel="True"
-                         RelativePanel.AlignBottomWithPanel="True"
-                         RelativePanel.LeftOf="btnSendMessage" />
-                <!-- Send-button -->
-                <Button x:Name="btnSendMessage"  
-                        Visibility="Collapsed"
-                        IsEnabled="True"
-                        Width="48"
-                        Command="{Binding SendCommand}"
-                        MinHeight="48" 
-                        Background="{ThemeResource TelegramBackgroundAccentBrush}"                                      
-                        VerticalAlignment="Stretch"
-                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                        RelativePanel.AlignTopWithPanel="True"
-                        RelativePanel.AlignBottomWithPanel="True"
-                        RelativePanel.AlignRightWithPanel="True" 
-                        Click="btnSendMessage_Click">
-                    <Button.Content>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" 
-                                   FontSize="20"
-                                   Text="&#xE122;"
-                                   RequestedTheme="Dark"/>
-                    </Button.Content>
-                </Button>
+                <Grid RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.AlignRightWithPanel="True"
+                       RelativePanel.AlignTopWithPanel="True"
+                       RelativePanel.AlignBottomWithPanel="True" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Visibility="{Binding ReplyInfo, Converter={StaticResource NullToVisibilityConverter}}" Grid.ColumnSpan="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="44"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" Visibility="{Binding ReplyVisibility}" BorderBrush="#2fa9e2" Foreground="#0e7acd" Style="{StaticResource MediaControlStyle}" -->
 
-                <!-- Voice Record-button -->
-                <Button x:Name="btnVoiceMessage"
-                        Visibility="Visible"
-                        Width="48"
-                        MinHeight="48" 
-                        Background="Transparent"                                      
-                        VerticalAlignment="Stretch"
-                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                        RelativePanel.AlignTopWithPanel="True"
-                        RelativePanel.AlignBottomWithPanel="True"                        
-                        RelativePanel.AlignRightWithPanel="True" 
-                        Click="btnVoiceMessage_Click">
-                    <Button.Content>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" 
-                                   FontSize="20"
-                                   Text="&#xE720;"
-                                   RequestedTheme="Dark"/>
-                    </Button.Content>
-                </Button>
+                        <ContentControl Content="{Binding ReplyInfo}" 
+                                        ContentTemplateSelector="{StaticResource ReplyTemplateSelector}"
+                                        Margin="-8,-1,0,-5" 
+                                        Grid.Column="1">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition/>
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Style>
+                                <Style TargetType="ContentControl">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ContentControl">
+                                                <Border>
+                                                    <ContentPresenter x:Name="ContentPresenter"
+                                                            BorderBrush="{x:Null}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            Content="{TemplateBinding Content}"
+                                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                            Padding="{TemplateBinding Padding}"
+                                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                            AutomationProperties.AccessibilityView="Raw"
+                                                            Tag="{TemplateBinding Background}"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
+
+                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                            <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
+                        </Border>
+
+                        <Button Command="{Binding ClearReplyCommand}" IsTabStop="False" Style="{StaticResource CloseButtonStyle}" Width="44" Height="Auto" VerticalAlignment="Stretch" Grid.Column="2"/>
+                    </Grid>
+                    <!-- Message input -->
+                    <controls:BubbleTextBox
+                             x:Name="txtMessage" 
+                             x:Uid="Chat-Input-Message"
+                             PlaceholderText="Type your message..."
+                             Text="{Binding SendTextHolder, Mode=TwoWay}"
+                             BorderThickness="0" 
+                             Padding="14" 
+                             TextWrapping="Wrap" 
+                             InputScope="Text" 
+                             IsSpellCheckEnabled="True"
+                             VerticalAlignment="Bottom" 
+                             VerticalContentAlignment="Bottom"
+                             MinHeight="48"
+                             MaxHeight="84"
+                             AcceptsReturn="True"
+                             TextChanging="txtMessage_TextChanging"
+                             Grid.Row="1"/>
+                    <!-- Send-button -->
+                    <Button x:Name="btnSendMessage"  
+                            Visibility="Collapsed"
+                            IsEnabled="True"
+                            Width="48"
+                            Command="{Binding SendCommand}"
+                            MinHeight="48" 
+                            Background="{ThemeResource TelegramBackgroundAccentBrush}"                                      
+                            VerticalAlignment="Stretch"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            Click="btnSendMessage_Click"
+                            Grid.Column="1"
+                            Grid.Row="1">
+                        <Button.Content>
+                            <TextBlock FontFamily="Segoe MDL2 Assets" 
+                                       FontSize="20"
+                                       Text="&#xE122;"
+                                       RequestedTheme="Dark"/>
+                        </Button.Content>
+                    </Button>
+
+                    <!-- Voice Record-button -->
+                    <Button x:Name="btnVoiceMessage"
+                            Visibility="Visible"
+                            Width="48"
+                            MinHeight="48" 
+                            Background="Transparent"                                      
+                            VerticalAlignment="Stretch"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            Click="btnVoiceMessage_Click"
+                            Grid.Column="1"
+                            Grid.Row="1">
+                        <Button.Content>
+                            <TextBlock FontFamily="Segoe MDL2 Assets" 
+                                       FontSize="20"
+                                       Text="&#xE720;"
+                                       RequestedTheme="Dark"/>
+                        </Button.Content>
+                    </Button>
+                </Grid>
             </RelativePanel>
         </RelativePanel>
         <!-- END OF Main content -->        
@@ -418,7 +683,9 @@
                 </AppBarButton>
                 <AppBarButton x:Name="cbtnStickers"
                               x:Uid="CBTN-Stickers"
-                              Label="Stickers">
+                              Label="Stickers"
+                              Command="{Binding SendCommand}"
+                              CommandParameter="ciao">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE606;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
                     </AppBarButton.Icon>

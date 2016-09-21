@@ -9,9 +9,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Common;
+using Unigram.Views;
 using Windows.ApplicationModel.Email;
 using Windows.System;
 using Windows.UI;
@@ -173,6 +175,7 @@ namespace Unigram.Common
             var hashtag = "(^|[\\s\\.,:;<>|'\"\\[\\]\\{\\}`\\~\\!\\%\\^\\*\\(\\)\\-\\+=\\x10])#[\\w]{2,64}";
             var mention = "(^|[\\s\\.,:;<>|'\"\\[\\]\\{\\}`\\~\\!\\%\\^\\*\\(\\)\\-\\+=\\x10])@[A-Za-z_0-9]{5,32}";
             var command = "(^|[\\s\\.,:;<>|'\"\\[\\]\\{\\}`\\~\\!\\%\\^\\*\\(\\)\\-\\+=\\x10])/[A-Za-z_0-9]{1,64}(@[A-Za-z_0-9]{5,32})?";
+            //var hyperlink = Patterns.AUTOLINK_WEB_URL;
             var hyperlink = "(?i)\\b(((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))|([a-z0-9.\\-]+(\\.ru|\\.com|\\.net|\\.org|\\.us|\\.it|\\.co\\.uk)(?![a-z0-9]))|([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]*[a-zA-Z0-9-]+))";
             AllRegex = new Regex($"({hashtag})|({mention})|({command})|({hyperlink})", RegexOptions.Compiled);
             //AllRegex = new Regex($"({emoji})|({hashtag})|({mention})|({command})|({hyperlink})", RegexOptions.Compiled);
@@ -391,7 +394,73 @@ namespace Unigram.Common
         {
             if (type == TLType.MessageEntityMentionName)
             {
+                // TODO: not the right way
+                //var response = await MTProtoService.Current.GetUsersAsync(new TLVector<TLInputUserBase>(new[] { new TLInputUser { UserId = (int)data } }));
+                //if (response.IsSucceeded && response.Value.Count > 0)
+                //{
+                //    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                //    if (service != null)
+                //    {
+                //        service.Navigate(typeof(UserInfoPage), response.Value[0]);
+                //    }
+                //}
 
+                var user = InMemoryCacheService.Current.GetUser((int)data);
+                if (user != null)
+                {
+                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                    if (service != null)
+                    {
+                        service.Navigate(typeof(UserInfoPage), user);
+                    }
+                }
+            }
+            else if (type == TLType.MessageEntityMention)
+            {
+                var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                if (service != null)
+                {
+                    var user = InMemoryCacheService.Current.GetUser((string)data);
+                    if (user != null)
+                    {
+                        service.Navigate(typeof(UserInfoPage), user);
+                        return;
+                    }
+
+                    var channel = InMemoryCacheService.Current.GetChannel((string)data);
+                    if (channel != null)
+                    {
+                        // TODO
+
+                        return;
+                    }
+
+                    var response = await MTProtoService.Current.ResolveUsernameAsync(((string)data).TrimStart('@'));
+                    if (response.IsSucceeded)
+                    {
+                        var peerUser = response.Value.Peer as TLPeerUser;
+                        if (peerUser != null)
+                        {
+                            var userBase = response.Value.Users.FirstOrDefault();
+                            if (userBase != null)
+                            {
+                                service.Navigate(typeof(UserInfoPage), userBase);
+                                return;
+                            }
+                        }
+
+                        var peerChat = response.Value.Peer as TLPeerChat;
+                        var peerChannel = response.Value.Peer as TLPeerChannel;
+                        if (peerChannel != null || peerChat != null)
+                        {
+                            // TODO:
+
+                            return;
+                        }
+
+                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                    }
+                }
             }
             else
             {

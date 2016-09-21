@@ -36,7 +36,7 @@ namespace Telegram.Api.TL.Methods.Auth
 		{
 			Flags = (Flag)from.ReadInt32();
 			PhoneNumber = from.ReadString();
-			if (HasCurrentNumber) { CurrentNumber = from.ReadBoolean(); }
+			if (HasCurrentNumber) CurrentNumber = from.ReadBoolean();
 			ApiId = from.ReadInt32();
 			ApiHash = from.ReadString();
 			if (cache) ReadFromCache(from);
@@ -44,6 +44,8 @@ namespace Telegram.Api.TL.Methods.Auth
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x86AEF0EC);
 			to.Write((Int32)Flags);
 			to.Write(PhoneNumber);
@@ -51,6 +53,11 @@ namespace Telegram.Api.TL.Methods.Auth
 			to.Write(ApiId);
 			to.Write(ApiHash);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasCurrentNumber = CurrentNumber != null;
 		}
 	}
 }

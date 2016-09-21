@@ -31,14 +31,16 @@ namespace Telegram.Api.TL
 			Flags = (Flag)from.ReadInt32();
 			UserId = from.ReadInt32();
 			Query = from.ReadString();
-			if (HasGeo) { Geo = TLFactory.Read<TLGeoPointBase>(from, cache); }
+			if (HasGeo) Geo = TLFactory.Read<TLGeoPointBase>(from, cache);
 			Id = from.ReadString();
-			if (HasMsgId) { MsgId = TLFactory.Read<TLInputBotInlineMessageID>(from, cache); }
+			if (HasMsgId) MsgId = TLFactory.Read<TLInputBotInlineMessageID>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xE48F964);
 			to.Write((Int32)Flags);
 			to.Write(UserId);
@@ -47,6 +49,12 @@ namespace Telegram.Api.TL
 			to.Write(Id);
 			if (HasMsgId) to.WriteObject(MsgId, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasGeo = Geo != null;
+			HasMsgId = MsgId != null;
 		}
 	}
 }

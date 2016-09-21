@@ -48,16 +48,18 @@ namespace Telegram.Api.TL.Methods.Messages
 		{
 			Flags = (Flag)from.ReadInt32();
 			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
-			if (HasReplyToMsgId) { ReplyToMsgId = from.ReadInt32(); }
+			if (HasReplyToMsgId) ReplyToMsgId = from.ReadInt32();
 			Message = from.ReadString();
 			RandomId = from.ReadInt64();
-			if (HasReplyMarkup) { ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache); }
-			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache); }
+			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache);
+			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xFA88427A);
 			to.Write((Int32)Flags);
 			to.WriteObject(Peer, cache);
@@ -67,6 +69,13 @@ namespace Telegram.Api.TL.Methods.Messages
 			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
 			if (HasEntities) to.WriteObject(Entities, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasReplyToMsgId = ReplyToMsgId != null;
+			HasReplyMarkup = ReplyMarkup != null;
+			HasEntities = Entities != null;
 		}
 	}
 }

@@ -65,23 +65,25 @@ namespace Telegram.Api.TL
 			Id = from.ReadInt64();
 			Url = from.ReadString();
 			DisplayUrl = from.ReadString();
-			if (HasType) { Type = from.ReadString(); }
-			if (HasSiteName) { SiteName = from.ReadString(); }
-			if (HasTitle) { Title = from.ReadString(); }
-			if (HasDescription) { Description = from.ReadString(); }
-			if (HasPhoto) { Photo = TLFactory.Read<TLPhotoBase>(from, cache); }
-			if (HasEmbedUrl) { EmbedUrl = from.ReadString(); }
-			if (HasEmbedType) { EmbedType = from.ReadString(); }
-			if (HasEmbedWidth) { EmbedWidth = from.ReadInt32(); }
-			if (HasEmbedHeight) { EmbedHeight = from.ReadInt32(); }
-			if (HasDuration) { Duration = from.ReadInt32(); }
-			if (HasAuthor) { Author = from.ReadString(); }
-			if (HasDocument) { Document = TLFactory.Read<TLDocumentBase>(from, cache); }
+			if (HasType) Type = from.ReadString();
+			if (HasSiteName) SiteName = from.ReadString();
+			if (HasTitle) Title = from.ReadString();
+			if (HasDescription) Description = from.ReadString();
+			if (HasPhoto) Photo = TLFactory.Read<TLPhotoBase>(from, cache);
+			if (HasEmbedUrl) EmbedUrl = from.ReadString();
+			if (HasEmbedType) EmbedType = from.ReadString();
+			if (HasEmbedWidth) EmbedWidth = from.ReadInt32();
+			if (HasEmbedHeight) EmbedHeight = from.ReadInt32();
+			if (HasDuration) Duration = from.ReadInt32();
+			if (HasAuthor) Author = from.ReadString();
+			if (HasDocument) Document = TLFactory.Read<TLDocumentBase>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xCA820ED7);
 			to.Write((Int32)Flags);
 			to.Write(Id);
@@ -100,6 +102,22 @@ namespace Telegram.Api.TL
 			if (HasAuthor) to.Write(Author);
 			if (HasDocument) to.WriteObject(Document, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasType = Type != null;
+			HasSiteName = SiteName != null;
+			HasTitle = Title != null;
+			HasDescription = Description != null;
+			HasPhoto = Photo != null;
+			HasEmbedUrl = EmbedUrl != null;
+			HasEmbedType = EmbedType != null;
+			HasEmbedWidth = EmbedWidth != null;
+			HasEmbedHeight = EmbedHeight != null;
+			HasDuration = Duration != null;
+			HasAuthor = Author != null;
+			HasDocument = Document != null;
 		}
 	}
 }

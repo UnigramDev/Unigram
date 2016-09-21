@@ -47,15 +47,17 @@ namespace Telegram.Api.TL
 			Pts = from.ReadInt32();
 			PtsCount = from.ReadInt32();
 			Date = from.ReadInt32();
-			if (HasFwdFrom) { FwdFrom = TLFactory.Read<TLMessageFwdHeader>(from, cache); }
-			if (HasViaBotId) { ViaBotId = from.ReadInt32(); }
-			if (HasReplyToMsgId) { ReplyToMsgId = from.ReadInt32(); }
-			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache); }
+			if (HasFwdFrom) FwdFrom = TLFactory.Read<TLMessageFwdHeader>(from, cache);
+			if (HasViaBotId) ViaBotId = from.ReadInt32();
+			if (HasReplyToMsgId) ReplyToMsgId = from.ReadInt32();
+			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x914FBF11);
 			to.Write((Int32)Flags);
 			to.Write(Id);
@@ -69,6 +71,14 @@ namespace Telegram.Api.TL
 			if (HasReplyToMsgId) to.Write(ReplyToMsgId.Value);
 			if (HasEntities) to.WriteObject(Entities, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasFwdFrom = FwdFrom != null;
+			HasViaBotId = ViaBotId != null;
+			HasReplyToMsgId = ReplyToMsgId != null;
+			HasEntities = Entities != null;
 		}
 	}
 }

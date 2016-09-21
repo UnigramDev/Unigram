@@ -35,14 +35,16 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			QueryId = from.ReadInt64();
-			if (HasNextOffset) { NextOffset = from.ReadString(); }
-			if (HasSwitchPm) { SwitchPm = TLFactory.Read<TLInlineBotSwitchPM>(from, cache); }
+			if (HasNextOffset) NextOffset = from.ReadString();
+			if (HasSwitchPm) SwitchPm = TLFactory.Read<TLInlineBotSwitchPM>(from, cache);
 			Results = TLFactory.Read<TLVector<TLBotInlineResultBase>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x256709A6);
 			to.Write((Int32)Flags);
 			to.Write(QueryId);
@@ -50,6 +52,12 @@ namespace Telegram.Api.TL
 			if (HasSwitchPm) to.WriteObject(SwitchPm, cache);
 			to.WriteObject(Results, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasNextOffset = NextOffset != null;
+			HasSwitchPm = SwitchPm != null;
 		}
 	}
 }

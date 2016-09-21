@@ -24,6 +24,8 @@ using Windows.ApplicationModel.Background;
 using Windows.Networking.PushNotifications;
 using Unigram.Tasks;
 using Windows.UI.Notifications;
+using Windows.Storage;
+using Windows.UI.Popups;
 
 namespace Unigram
 {
@@ -45,6 +47,13 @@ namespace Unigram
         public App()
         {
             InitializeComponent();
+
+            UnhandledException += async (s, args) =>
+            {
+                args.Handled = true;
+                await FileIO.WriteTextAsync(await KnownFolders.PicturesLibrary.CreateFileAsync("unigram_log.txt", CreationCollisionOption.GenerateUniqueName), args.Exception?.ToString() ?? "Error" + "\r\n" + args.Message);
+                await new MessageDialog(args.Exception?.ToString() ?? "Error", args.Message ?? "Error").ShowAsync();
+            };
 
 #if RELEASE
 

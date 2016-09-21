@@ -18,7 +18,6 @@
         <Border Height="10" Visibility="{x:Bind (Visibility)ViewModel.IsFirst, Mode=OneWay}"/>
 
         <Border x:Name="LayoutRoot"
-                ContextFlyout="{StaticResource MessageMenuFlyout}"
                 Padding="{ThemeResource MessageContentPadding}" 
                 Background="{ThemeResource MessageBackgroundBrush}" 
                 BorderBrush="{ThemeResource MessageBorderBrush}" 

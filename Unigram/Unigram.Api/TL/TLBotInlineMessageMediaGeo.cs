@@ -27,17 +27,24 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			Geo = TLFactory.Read<TLGeoPointBase>(from, cache);
-			if (HasReplyMarkup) { ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache); }
+			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x3A8FD8B8);
 			to.Write((Int32)Flags);
 			to.WriteObject(Geo, cache);
 			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasReplyMarkup = ReplyMarkup != null;
 		}
 	}
 }

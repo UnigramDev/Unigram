@@ -8,6 +8,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
+using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
