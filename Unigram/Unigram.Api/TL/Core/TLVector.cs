@@ -12,16 +12,11 @@ namespace Telegram.Api.TL
 
     }
 
-    public interface ITLVector<out T>
-    {
-
-    }
-
-    public class TLVectorEmpty : ITLVector<object>
+    public class TLVectorEmpty
     {
     }
 
-    public class TLVector<T> : TLVector, ITLVector<T>, IList<T>, ICollection<T>, IEnumerable<T>, IEnumerable
+    public class TLVector<T> : TLVector, IList<T>, ICollection<T>, IEnumerable<T>, IEnumerable
     {
         private List<T> _items;
 
@@ -130,15 +125,5 @@ namespace Telegram.Api.TL
             return _items.GetEnumerator();
         }
         #endregion
-
-        public static implicit operator TLVector<T>(TLVectorEmpty str)
-        {
-            return new TLVector<T>();
-        }
-
-        public static implicit operator TLVectorEmpty(TLVector<T> str)
-        {
-            return new TLVectorEmpty();
-        }
     }
 }
