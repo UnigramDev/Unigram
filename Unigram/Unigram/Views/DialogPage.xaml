@@ -826,7 +826,7 @@
     </Grid>
 
         <!-- Forward Menu -->
-        <Grid Visibility="{Binding ForwardMenuVisibility}" x:Name="ForwardMenu">
+        <Grid Visibility="{Binding ForwardingMessage, Converter={StaticResource NullToVisibilityConverter}}" x:Name="ForwardMenu">
             <Interactivity:Interaction.Behaviors>
                 <Interactions:DataTriggerBehavior Binding="{Binding Visibility, ElementName=ForwardMenu}" Value="Visible">
                     <Media:ControlStoryboardAction Storyboard="{StaticResource ForwardMenuShowStoryboard}" ControlStoryboardOption="Play" />
@@ -879,10 +879,11 @@
                          RequestedTheme="Light"
                          Margin="12"
                          Grid.Row="2"
-                         Background="White" />
+                         Background="White"
+                         x:Name="ForwardMessage" />
                 <CommandBar Grid.Row="3">
                     <AppBarButton Icon="Cancel" Label="Cancel" Tapped="ForwardCancel_Tapped"></AppBarButton>
-                    <AppBarButton Icon="Send" Label="Forward" IsEnabled="False" x:Name="ForwardButton"></AppBarButton>
+                    <AppBarButton Icon="Send" Label="Forward" IsEnabled="False" x:Name="ForwardButton" Tapped="ForwardButton_Tapped"></AppBarButton>
                 </CommandBar>
             </Grid>
 

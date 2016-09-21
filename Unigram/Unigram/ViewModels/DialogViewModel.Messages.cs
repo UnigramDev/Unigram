@@ -70,8 +70,9 @@ namespace Unigram.ViewModels
 
             if (message.Id <= 0) return;
 
-            ForwardMenuVisibility = Windows.UI.Xaml.Visibility.Visible;
+            ForwardingMessage = message;
         }
+
 
         #endregion
 
