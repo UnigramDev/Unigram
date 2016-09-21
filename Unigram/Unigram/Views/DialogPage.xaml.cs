@@ -199,6 +199,8 @@ namespace Unigram.Views
 
             await Task.Delay(200);
 
+            FContactsList.SelectedItem = null;
+
             ViewModel.CancelForward();
 
             ForwardHeader.Visibility = Visibility.Visible;
@@ -210,6 +212,27 @@ namespace Unigram.Views
             ForwardHeader.Visibility = Visibility.Collapsed;
             ForwardSearchBox.Visibility = Visibility.Visible;
             ForwardSearchBox.Focus(FocusState.Pointer);
+        }
+
+        private void ForwardSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (ForwardSearchBox.Text != "")
+            {
+                if (FContactsList.ItemsSource != ViewModel.FSearchDialogs)
+                {
+                    FContactsList.ItemsSource = ViewModel.FSearchDialogs;
+                }
+                ViewModel.GetSearchDialogs(ForwardSearchBox.Text);
+            }
+            else
+            {
+                FContactsList.ItemsSource = ViewModel.FDialogs;
+            }
+        }
+
+        private void FContactsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ForwardButton.IsEnabled = (FContactsList.SelectedItems.Count != 0);
         }
     }
 }

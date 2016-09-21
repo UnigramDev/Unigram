@@ -353,6 +353,45 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
+
+        <Style x:Name="ContactsListViewStyleHorizontal" TargetType="ListView">
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Enabled" />
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel Orientation="Horizontal"
+                                    ScrollViewer.HorizontalScrollMode="Enabled"
+                                    ScrollViewer.VerticalScrollMode="Disabled"/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel Width="80">
+                            <Grid>
+                                <Grid>
+                                    <Ellipse x:Name="Placeholder" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
+                                    <TextBlock Text="{Binding FullName, Converter={StaticResource InitialNameStringConverter}}"  TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Grid>
+                                <Ellipse Width="48"
+                                         Height="48"
+                                         Margin="0,0,0,0"
+                                         RelativePanel.AlignVerticalCenterWithPanel="True"
+                                         RelativePanel.AlignLeftWithPanel="True">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </Grid>
+                            <TextBlock Text="{Binding FullName}"  TextWrapping="Wrap" TextAlignment="Center" />
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
 
     <Grid>
@@ -826,75 +865,16 @@
                              Margin="12"
                              Grid.Row="0"
                              Visibility="Collapsed"
-                             x:Name="ForwardSearchBox" />
+                             x:Name="ForwardSearchBox"
+                             TextChanged="ForwardSearchBox_TextChanged" />
                 </Grid>
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,24,0,0">
-                    <StackPanel Width="100">
-                        <Ellipse 
-                         Width="60"
-                         Height="60"
-                         Margin="8,0,8,0"
-                         RelativePanel.AlignVerticalCenterWithPanel="True"
-                         RelativePanel.AlignLeftWithPanel="True">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <TextBlock Text="Ahmadalli Shafiee" TextWrapping="Wrap" TextAlignment="Center" />
-                    </StackPanel>
-                    <StackPanel Width="100">
-                        <Ellipse 
-                         Width="60"
-                         Height="60"
-                         Margin="8,0,8,0"
-                         RelativePanel.AlignVerticalCenterWithPanel="True"
-                         RelativePanel.AlignLeftWithPanel="True">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <TextBlock Text="Ahmadalli Shafiee" TextWrapping="Wrap" TextAlignment="Center" />
-                    </StackPanel>
-                    <StackPanel Width="100">
-                        <Ellipse 
-                         Width="60"
-                         Height="60"
-                         Margin="8,0,8,0"
-                         RelativePanel.AlignVerticalCenterWithPanel="True"
-                         RelativePanel.AlignLeftWithPanel="True">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <TextBlock Text="Ahmadalli Shafiee" TextWrapping="Wrap" TextAlignment="Center" />
-                    </StackPanel>
-                    <StackPanel Width="100">
-                        <Ellipse 
-                         Width="60"
-                         Height="60"
-                         Margin="8,0,8,0"
-                         RelativePanel.AlignVerticalCenterWithPanel="True"
-                         RelativePanel.AlignLeftWithPanel="True">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <TextBlock Text="Ahmadalli Shafiee" TextWrapping="Wrap" TextAlignment="Center" />
-                    </StackPanel>
-                    <StackPanel Width="100">
-                        <Ellipse 
-                         Width="60"
-                         Height="60"
-                         Margin="8,0,8,0"
-                         RelativePanel.AlignVerticalCenterWithPanel="True"
-                         RelativePanel.AlignLeftWithPanel="True">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <TextBlock Text="Ahmadalli Shafiee" TextWrapping="Wrap" TextAlignment="Center" />
-                    </StackPanel>
-                </StackPanel>
+                <ListView Grid.Row="1" 
+                          Margin="0,8,0,0" 
+                          ItemsSource="{Binding FSearchDialogs}"
+                          Style="{StaticResource ContactsListViewStyleHorizontal}"
+                          x:Name="FContactsList"
+                          SelectionChanged="FContactsList_SelectionChanged" />
+
                 <TextBox PlaceholderText="Write a message (optional)"
                          RequestedTheme="Light"
                          Margin="12"
@@ -902,7 +882,7 @@
                          Background="White" />
                 <CommandBar Grid.Row="3">
                     <AppBarButton Icon="Cancel" Label="Cancel" Tapped="ForwardCancel_Tapped"></AppBarButton>
-                    <AppBarButton Icon="Send" Label="Forward"></AppBarButton>
+                    <AppBarButton Icon="Send" Label="Forward" IsEnabled="False" x:Name="ForwardButton"></AppBarButton>
                 </CommandBar>
             </Grid>
 

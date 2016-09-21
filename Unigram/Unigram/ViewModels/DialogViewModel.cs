@@ -45,6 +45,8 @@ namespace Unigram.ViewModels
         public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            FDialogs = new DialogCollection(protoService, cacheService);
+            FSearchDialogs = new DialogCollection(protoService, cacheService);
         }
         public object photo;
         public string SendTextHolder;
@@ -336,14 +338,40 @@ namespace Unigram.ViewModels
             }
         }
 
+        public DialogCollection FDialogs { get; private set; }
+
+        public DialogCollection FSearchDialogs { get; private set; }
+
         internal void CancelForward()
         {
             ForwardMenuVisibility = Visibility.Collapsed;
         }
 
-        #endregion
+        public void GetSearchDialogs(string query)
+        {
+            try
+            {
+                FSearchDialogs.Clear();
+            }
+            catch { }
 
-        public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
+            foreach (var dialog in this.FDialogs)
+            {
+                try
+                {
+                    if (dialog.FullName.ToLower().Contains(query.ToLower()))
+                    {
+                        FSearchDialogs.Add(dialog);
+                    }
+                }
+                catch { }
+            }
+        }
+
+
+    #endregion
+
+    public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
         private async void SendMessage(string args)
         {
             var messageText = SendTextHolder;
