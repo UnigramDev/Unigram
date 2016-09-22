@@ -27,6 +27,7 @@
             <converters:DateTimeToFormatConverter x:Key="DateTimeToFormatConverter" />
             <converters:TLIntToDateTimeConverter x:Key="MessageDateTimeConverter" TodayFormat="{}{0}"/>
             <converters:StateToGlyphConverter x:Key="StateToGlyphConverter"/>
+            <converters:ReplyInfoToGlyphConverter x:Key="ReplyInfoToGlyphConverter"/>
 
             <SolidColorBrush x:Key="BlueBrush" Color="#348cd4"/>
             <SolidColorBrush x:Key="CyanBrush" Color="#2996ad"/>

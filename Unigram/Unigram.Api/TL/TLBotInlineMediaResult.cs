@@ -36,16 +36,18 @@ namespace Telegram.Api.TL
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadString();
 			Type = from.ReadString();
-			if (HasPhoto) { Photo = TLFactory.Read<TLPhotoBase>(from, cache); }
-			if (HasDocument) { Document = TLFactory.Read<TLDocumentBase>(from, cache); }
-			if (HasTitle) { Title = from.ReadString(); }
-			if (HasDescription) { Description = from.ReadString(); }
+			if (HasPhoto) Photo = TLFactory.Read<TLPhotoBase>(from, cache);
+			if (HasDocument) Document = TLFactory.Read<TLDocumentBase>(from, cache);
+			if (HasTitle) Title = from.ReadString();
+			if (HasDescription) Description = from.ReadString();
 			SendMessage = TLFactory.Read<TLBotInlineMessageBase>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x17DB940B);
 			to.Write((Int32)Flags);
 			to.Write(Id);
@@ -56,6 +58,14 @@ namespace Telegram.Api.TL
 			if (HasDescription) to.Write(Description);
 			to.WriteObject(SendMessage, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasPhoto = Photo != null;
+			HasDocument = Document != null;
+			HasTitle = Title != null;
+			HasDescription = Description != null;
 		}
 	}
 }

@@ -17,6 +17,7 @@ namespace Telegram.Api.Services.Cache
 
         TLUserBase GetUser(int id);
         TLUserBase GetUser(TLUserProfilePhoto photo);
+        TLUserBase GetUser(string username);
         TLMessageBase GetMessage(int id, int? channelId = null); 
         TLMessageBase GetMessage(long randomId);
         TLMessageBase GetMessage(TLWebPageBase webPage);
@@ -26,6 +27,7 @@ namespace Telegram.Api.Services.Cache
 
         TLChat GetChat(TLChatPhoto chatPhoto);
         TLChannel GetChannel(TLChatPhoto channelPhoto);
+        TLChannel GetChannel(string username);
         TLChatBase GetChat(int id);
         // DEPRECATED: TLBroadcastChat GetBroadcast(int id);
 

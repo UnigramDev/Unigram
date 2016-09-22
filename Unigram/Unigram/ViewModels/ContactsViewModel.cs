@@ -5,20 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
 
 namespace Unigram.ViewModels
 {
-    public class ContactsViewModel : UnigramViewModelBase
+    public class ContactsViewModel : UnigramViewModelBase, IHandle, IHandle<TLUpdateUserStatus>
     {
         public ContactsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new ObservableCollection<UsersPanelListItem>();
+            Items = new SortedObservableCollection<UsersPanelListItem>(new UsersPanelListItemComparer());
         }
 
         public async Task getTLContacts()
@@ -54,10 +56,42 @@ namespace Unigram.ViewModels
                 {
                     Items.Add(item);
                 }
+
+                Aggregator.Subscribe(this);
             }
         }
 
-        public ObservableCollection<UsersPanelListItem> Items { get; private set; }
+        #region Handle
+
+        public void Handle(TLUpdateUserStatus message)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                var first = Items.FirstOrDefault(x => x._parent.Id == message.UserId);
+                if (first != null)
+                {
+                    Items.Remove(first);
+                }
+
+                var user = CacheService.GetUser(message.UserId) as TLUser;
+                if (user != null && user.IsContact && user.IsSelf == false)
+                {
+                    var status = LastSeenHelper.GetLastSeen(user);
+                    var listItem = new UsersPanelListItem(user as TLUser);
+                    listItem.fullName = user.FullName;
+                    listItem.lastSeen = status.Item1;
+                    listItem.lastSeenEpoch = status.Item2;
+                    listItem.Photo = listItem._parent.Photo;
+                    listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+
+                    Items.Add(listItem);
+                }
+            });
+        }
+
+        #endregion
+
+        public SortedObservableCollection<UsersPanelListItem> Items { get; private set; }
 
         private TLUser _self;
         public TLUser Self
@@ -70,6 +104,28 @@ namespace Unigram.ViewModels
             {
                 Set(ref _self, value);
             }
+        }
+    }
+
+    public class UsersPanelListItemComparer : IComparer<UsersPanelListItem>
+    {
+        public int Compare(UsersPanelListItem x, UsersPanelListItem y)
+        {
+            var epoch = y.lastSeenEpoch.CompareTo(x.lastSeenEpoch);
+            if (epoch == 0)
+            {
+                return y.fullName.CompareTo(x.fullName);
+            }
+
+            return epoch;
+
+            //var epoch = y.lastSeenEpoch - x.lastSeenEpoch;
+            //if (epoch == 0)
+            //{
+            //    return x.fullName.CompareTo(y.fullName);
+            //}
+
+            //return epoch;
         }
     }
 }

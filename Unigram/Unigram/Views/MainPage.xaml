@@ -75,7 +75,7 @@
                               ItemsSource="{x:Bind ViewModel.Contacts.Items}"
                               Header="{x:Bind ViewModel.Contacts.Self, Mode=OneWay}"
                               SelectionChanged="UsersListView_SelectionChanged">
-                        <ListView.HeaderTemplate>
+                        <!--<ListView.HeaderTemplate>
                             <DataTemplate x:DataType="models:TLUser">
                                 <Grid Height="120" Margin="0,0,0,8" Background="{ThemeResource AppBarBackground}">
                                     <Grid.RowDefinitions>
@@ -96,14 +96,7 @@
                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" FontSize="16" Grid.Row="1" Grid.Column="1"/>
                                 </Grid>
                             </DataTemplate>
-                        </ListView.HeaderTemplate>
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsStackPanel GroupHeaderPlacement="Left"
-                                             ItemsUpdatingScrollMode="KeepScrollOffset"
-                                             VerticalAlignment="Top" />
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
+                        </ListView.HeaderTemplate>-->
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="vms:UsersPanelListItem">
                                 <Grid Margin="0,4,0,8">
@@ -124,7 +117,7 @@
                                     </Ellipse>
                                     <TextBlock Text="{x:Bind fullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                     <TextBlock Text="{x:Bind lastSeen}" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"
-                                               Style="{ThemeResource BodyTextBlockStyle}" 
+                                               Style="{ThemeResource CaptionTextBlockStyle}" 
                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                        TextTrimming="CharacterEllipsis" 
                        TextWrapping="NoWrap" 

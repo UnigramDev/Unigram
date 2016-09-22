@@ -104,8 +104,10 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Collections\DialogCollection.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
+    <Compile Include="Collections\SortedObservableCollection.cs" />
     <Compile Include="Common\Attached.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
+    <Compile Include="Common\Emoticon.cs" />
     <Compile Include="Common\FluidGridView.cs" />
     <Compile Include="Common\IncrementalCollection.cs" />
     <Compile Include="Common\KeyedList.cs" />
@@ -114,8 +116,10 @@
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\ListCollectionView.cs" />
     <Compile Include="Common\MessageHelper.cs" />
+    <Compile Include="Common\Patterns.cs" />
     <Compile Include="Controls\BubbleListView.cs" />
     <Compile Include="Controls\BubbleListViewItem.cs" />
+    <Compile Include="Controls\BubbleTextBox.cs" />
     <Compile Include="Controls\Items\DialogListViewItem.xaml.cs">
       <DependentUpon>DialogListViewItem.xaml</DependentUpon>
     </Compile>
@@ -158,6 +162,7 @@
     <Compile Include="Converters\DefaultPhotoConverter.cs" />
     <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="Converters\ReplyInfoToGlyphConverter.cs" />
     <Compile Include="Converters\StateToGlyphConverter.cs" />
     <Compile Include="Converters\TLIntToDateTimeConverter.cs" />
     <Compile Include="Helpers\ColorHelper.cs" />
@@ -180,6 +185,7 @@
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
     <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />
+    <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
     <Compile Include="ViewModels\LoginPasswordViewModel.cs" />
     <Compile Include="ViewModels\LoginPhoneCodeViewModel.cs" />
     <Compile Include="ViewModels\LoginPhoneNumberViewModel.cs" />

@@ -51,21 +51,23 @@ namespace Telegram.Api.TL
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadString();
 			Type = from.ReadString();
-			if (HasTitle) { Title = from.ReadString(); }
-			if (HasDescription) { Description = from.ReadString(); }
-			if (HasUrl) { Url = from.ReadString(); }
-			if (HasThumbUrl) { ThumbUrl = from.ReadString(); }
-			if (HasContentUrl) { ContentUrl = from.ReadString(); }
-			if (HasContentType) { ContentType = from.ReadString(); }
-			if (HasW) { W = from.ReadInt32(); }
-			if (HasH) { H = from.ReadInt32(); }
-			if (HasDuration) { Duration = from.ReadInt32(); }
+			if (HasTitle) Title = from.ReadString();
+			if (HasDescription) Description = from.ReadString();
+			if (HasUrl) Url = from.ReadString();
+			if (HasThumbUrl) ThumbUrl = from.ReadString();
+			if (HasContentUrl) ContentUrl = from.ReadString();
+			if (HasContentType) ContentType = from.ReadString();
+			if (HasW) W = from.ReadInt32();
+			if (HasH) H = from.ReadInt32();
+			if (HasDuration) Duration = from.ReadInt32();
 			SendMessage = TLFactory.Read<TLInputBotInlineMessageBase>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x2CBBE15A);
 			to.Write((Int32)Flags);
 			to.Write(Id);
@@ -81,6 +83,19 @@ namespace Telegram.Api.TL
 			if (HasDuration) to.Write(Duration.Value);
 			to.WriteObject(SendMessage, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasTitle = Title != null;
+			HasDescription = Description != null;
+			HasUrl = Url != null;
+			HasThumbUrl = ThumbUrl != null;
+			HasContentUrl = ContentUrl != null;
+			HasContentType = ContentType != null;
+			HasW = W != null;
+			HasH = H != null;
+			HasDuration = Duration != null;
 		}
 	}
 }

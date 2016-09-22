@@ -34,15 +34,17 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
-			if (HasReplyToMsgId) { ReplyToMsgId = from.ReadInt32(); }
+			if (HasReplyToMsgId) ReplyToMsgId = from.ReadInt32();
 			Message = from.ReadString();
-			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache); }
+			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache);
 			Date = from.ReadInt32();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xFD8E711F);
 			to.Write((Int32)Flags);
 			if (HasReplyToMsgId) to.Write(ReplyToMsgId.Value);
@@ -50,6 +52,12 @@ namespace Telegram.Api.TL
 			if (HasEntities) to.WriteObject(Entities, cache);
 			to.Write(Date);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasReplyToMsgId = ReplyToMsgId != null;
+			HasEntities = Entities != null;
 		}
 	}
 }

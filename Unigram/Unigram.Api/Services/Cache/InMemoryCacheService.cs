@@ -431,6 +431,11 @@ namespace Telegram.Api.Services.Cache
             return UsersContext.Values.OfType<TLUser>().FirstOrDefault(x => x.Photo == photo);
         }
 
+        public TLUserBase GetUser(string username)
+        {
+            return UsersContext.Values.OfType<TLUser>().FirstOrDefault(x => x.HasUsername && x.Username != null && string.Equals(x.Username, username, StringComparison.OrdinalIgnoreCase));
+        }
+
         public TLMessageBase GetMessage(int id, int? channelId = null)
         {
             if (channelId != null)
@@ -553,6 +558,11 @@ namespace Telegram.Api.Services.Cache
         public TLChannel GetChannel(TLChatPhoto chatPhoto)
         {
             return _database.ChatsContext.Values.FirstOrDefault(x => x is TLChannel && ((TLChannel)x).Photo == chatPhoto) as TLChannel;
+        }
+
+        public TLChannel GetChannel(string username)
+        {
+            return _database.ChatsContext.Values.FirstOrDefault(x => x is TLChannel && ((TLChannel)x).HasUsername && ((TLChannel)x).Username != null && string.Equals(((TLChannel)x).Username, username, StringComparison.OrdinalIgnoreCase)) as TLChannel;
         }
 
         public IList<TLMessageBase> GetHistory(int dialogIndex)

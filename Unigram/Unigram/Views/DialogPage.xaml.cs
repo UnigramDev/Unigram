@@ -94,9 +94,10 @@ namespace Unigram.Views
             {
                 // Check if CTRL is also pressed in addition to Enter key.
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
                 // If there is text and CTRL is not pressed, send message. Else start new row.
-                if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && btnSendMessage.Visibility == Visibility.Visible)
+                if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && btnSendMessage.Visibility == Visibility.Visible)
                 {
 
                     // TODO working but UGLY workaround: removal of the enter character from message.

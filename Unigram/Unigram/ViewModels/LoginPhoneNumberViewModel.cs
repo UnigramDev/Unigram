@@ -8,6 +8,7 @@ using Unigram.Common;
 using Unigram.Core.Models;
 using System;
 using Telegram.Api.Helpers;
+using Windows.UI.Popups;
 
 namespace Unigram.ViewModels
 {
@@ -162,6 +163,10 @@ namespace Unigram.ViewModels
                 };
 
                 NavigationService.Navigate(typeof(LoginPhoneCodePage), state);
+            }
+            else if (result.Error != null)
+            {
+                await new MessageDialog(result.Error.ErrorMessage, result.Error.ErrorCode.ToString()).ShowAsync();
             }
         }
 

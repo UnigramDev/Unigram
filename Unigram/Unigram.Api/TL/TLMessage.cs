@@ -61,23 +61,25 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
-			if (HasFromId) { FromId = from.ReadInt32(); }
+			if (HasFromId) FromId = from.ReadInt32();
 			ToId = TLFactory.Read<TLPeerBase>(from, cache);
-			if (HasFwdFrom) { FwdFrom = TLFactory.Read<TLMessageFwdHeader>(from, cache); }
-			if (HasViaBotId) { ViaBotId = from.ReadInt32(); }
-			if (HasReplyToMsgId) { ReplyToMsgId = from.ReadInt32(); }
+			if (HasFwdFrom) FwdFrom = TLFactory.Read<TLMessageFwdHeader>(from, cache);
+			if (HasViaBotId) ViaBotId = from.ReadInt32();
+			if (HasReplyToMsgId) ReplyToMsgId = from.ReadInt32();
 			Date = from.ReadInt32();
 			Message = from.ReadString();
-			if (HasMedia) { Media = TLFactory.Read<TLMessageMediaBase>(from, cache); }
-			if (HasReplyMarkup) { ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache); }
-			if (HasEntities) { Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache); }
-			if (HasViews) { Views = from.ReadInt32(); }
-			if (HasEditDate) { EditDate = from.ReadInt32(); }
+			if (HasMedia) Media = TLFactory.Read<TLMessageMediaBase>(from, cache);
+			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache);
+			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache);
+			if (HasViews) Views = from.ReadInt32();
+			if (HasEditDate) EditDate = from.ReadInt32();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xC09BE45F);
 			to.Write((Int32)Flags);
 			to.Write(Id);
@@ -94,6 +96,19 @@ namespace Telegram.Api.TL
 			if (HasViews) to.Write(Views.Value);
 			if (HasEditDate) to.Write(EditDate.Value);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasFromId = FromId != null;
+			HasFwdFrom = FwdFrom != null;
+			HasViaBotId = ViaBotId != null;
+			HasReplyToMsgId = ReplyToMsgId != null;
+			HasMedia = Media != null;
+			HasReplyMarkup = ReplyMarkup != null;
+			HasEntities = Entities != null;
+			HasViews = Views != null;
+			HasEditDate = EditDate != null;
 		}
 	}
 }
