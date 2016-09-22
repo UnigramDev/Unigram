@@ -42,13 +42,15 @@ namespace Telegram.Api.TL
 			ReadOutboxMaxId = from.ReadInt32();
 			UnreadCount = from.ReadInt32();
 			NotifySettings = TLFactory.Read<TLPeerNotifySettingsBase>(from, cache);
-			if (HasPts) { Pts = from.ReadInt32(); }
-			if (HasDraft) { Draft = TLFactory.Read<TLDraftMessageBase>(from, cache); }
+			if (HasPts) Pts = from.ReadInt32();
+			if (HasDraft) Draft = TLFactory.Read<TLDraftMessageBase>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x66FFBA14);
 			to.Write((Int32)Flags);
 			to.WriteObject(Peer, cache);
@@ -60,6 +62,12 @@ namespace Telegram.Api.TL
 			if (HasPts) to.Write(Pts.Value);
 			if (HasDraft) to.WriteObject(Draft, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasPts = Pts != null;
+			HasDraft = Draft != null;
 		}
 	}
 }

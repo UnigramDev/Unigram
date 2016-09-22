@@ -28,17 +28,24 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			ChatId = from.ReadInt32();
-			if (HasSelfParticipant) { SelfParticipant = TLFactory.Read<TLChatParticipantBase>(from, cache); }
+			if (HasSelfParticipant) SelfParticipant = TLFactory.Read<TLChatParticipantBase>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xFC900C2B);
 			to.Write((Int32)Flags);
 			to.Write(ChatId);
 			if (HasSelfParticipant) to.WriteObject(SelfParticipant, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasSelfParticipant = SelfParticipant != null;
 		}
 	}
 }

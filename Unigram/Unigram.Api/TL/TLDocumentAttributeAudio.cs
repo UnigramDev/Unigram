@@ -36,14 +36,16 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			Duration = from.ReadInt32();
-			if (HasTitle) { Title = from.ReadString(); }
-			if (HasPerformer) { Performer = from.ReadString(); }
-			if (HasWaveform) { Waveform = from.ReadByteArray(); }
+			if (HasTitle) Title = from.ReadString();
+			if (HasPerformer) Performer = from.ReadString();
+			if (HasWaveform) Waveform = from.ReadByteArray();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x9852F9C6);
 			to.Write((Int32)Flags);
 			to.Write(Duration);
@@ -51,6 +53,13 @@ namespace Telegram.Api.TL
 			if (HasPerformer) to.Write(Performer);
 			if (HasWaveform) to.WriteByteArray(Waveform);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasTitle = Title != null;
+			HasPerformer = Performer != null;
+			HasWaveform = Waveform != null;
 		}
 	}
 }

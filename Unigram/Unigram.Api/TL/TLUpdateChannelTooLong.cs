@@ -28,17 +28,24 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			ChannelId = from.ReadInt32();
-			if (HasPts) { Pts = from.ReadInt32(); }
+			if (HasPts) Pts = from.ReadInt32();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xEB0467FB);
 			to.Write((Int32)Flags);
 			to.Write(ChannelId);
 			if (HasPts) to.Write(Pts.Value);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasPts = Pts != null;
 		}
 	}
 }

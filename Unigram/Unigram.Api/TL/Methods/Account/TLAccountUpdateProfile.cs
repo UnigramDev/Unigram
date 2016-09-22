@@ -36,20 +36,29 @@ namespace Telegram.Api.TL.Methods.Account
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
-			if (HasFirstName) { FirstName = from.ReadString(); }
-			if (HasLastName) { LastName = from.ReadString(); }
-			if (HasAbout) { About = from.ReadString(); }
+			if (HasFirstName) FirstName = from.ReadString();
+			if (HasLastName) LastName = from.ReadString();
+			if (HasAbout) About = from.ReadString();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x78515775);
 			to.Write((Int32)Flags);
 			if (HasFirstName) to.Write(FirstName);
 			if (HasLastName) to.Write(LastName);
 			if (HasAbout) to.Write(About);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasFirstName = FirstName != null;
+			HasLastName = LastName != null;
+			HasAbout = About != null;
 		}
 	}
 }

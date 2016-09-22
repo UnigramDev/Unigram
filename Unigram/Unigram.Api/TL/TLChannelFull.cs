@@ -52,9 +52,9 @@ namespace Telegram.Api.TL
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
 			About = from.ReadString();
-			if (HasParticipantsCount) { ParticipantsCount = from.ReadInt32(); }
-			if (HasAdminsCount) { AdminsCount = from.ReadInt32(); }
-			if (HasKickedCount) { KickedCount = from.ReadInt32(); }
+			if (HasParticipantsCount) ParticipantsCount = from.ReadInt32();
+			if (HasAdminsCount) AdminsCount = from.ReadInt32();
+			if (HasKickedCount) KickedCount = from.ReadInt32();
 			ReadInboxMaxId = from.ReadInt32();
 			ReadOutboxMaxId = from.ReadInt32();
 			UnreadCount = from.ReadInt32();
@@ -62,14 +62,16 @@ namespace Telegram.Api.TL
 			NotifySettings = TLFactory.Read<TLPeerNotifySettingsBase>(from, cache);
 			ExportedInvite = TLFactory.Read<TLExportedChatInviteBase>(from, cache);
 			BotInfo = TLFactory.Read<TLVector<TLBotInfo>>(from, cache);
-			if (HasMigratedFromChatId) { MigratedFromChatId = from.ReadInt32(); }
-			if (HasMigratedFromMaxId) { MigratedFromMaxId = from.ReadInt32(); }
-			if (HasPinnedMsgId) { PinnedMsgId = from.ReadInt32(); }
+			if (HasMigratedFromChatId) MigratedFromChatId = from.ReadInt32();
+			if (HasMigratedFromMaxId) MigratedFromMaxId = from.ReadInt32();
+			if (HasPinnedMsgId) PinnedMsgId = from.ReadInt32();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xC3D5512F);
 			to.Write((Int32)Flags);
 			to.Write(Id);
@@ -88,6 +90,16 @@ namespace Telegram.Api.TL
 			if (HasMigratedFromMaxId) to.Write(MigratedFromMaxId.Value);
 			if (HasPinnedMsgId) to.Write(PinnedMsgId.Value);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasParticipantsCount = ParticipantsCount != null;
+			HasAdminsCount = AdminsCount != null;
+			HasKickedCount = KickedCount != null;
+			HasMigratedFromChatId = MigratedFromChatId != null;
+			HasMigratedFromMaxId = MigratedFromMaxId != null;
+			HasPinnedMsgId = PinnedMsgId != null;
 		}
 	}
 }

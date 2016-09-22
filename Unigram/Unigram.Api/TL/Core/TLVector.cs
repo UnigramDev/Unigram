@@ -7,9 +7,13 @@ using System.Threading.Tasks;
 
 namespace Telegram.Api.TL
 {
-    public abstract class TLVector : TLObject
+    public class TLVector : TLObject
     {
 
+    }
+
+    public class TLVectorEmpty
+    {
     }
 
     public class TLVector<T> : TLVector, IList<T>, ICollection<T>, IEnumerable<T>, IEnumerable

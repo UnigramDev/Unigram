@@ -70,13 +70,15 @@ namespace Telegram.Api.TL
 			EditTimeLimit = from.ReadInt32();
 			RatingEDecay = from.ReadInt32();
 			StickersRecentLimit = from.ReadInt32();
-			if (HasTmpSessions) { TmpSessions = from.ReadInt32(); }
+			if (HasTmpSessions) TmpSessions = from.ReadInt32();
 			DisabledFeatures = TLFactory.Read<TLVector<TLDisabledFeature>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x9A6B2E2A);
 			to.Write((Int32)Flags);
 			to.Write(Date);
@@ -103,6 +105,11 @@ namespace Telegram.Api.TL
 			if (HasTmpSessions) to.Write(TmpSessions.Value);
 			to.WriteObject(DisabledFeatures, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasTmpSessions = TmpSessions != null;
 		}
 	}
 }

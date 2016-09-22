@@ -34,18 +34,26 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Flags = (Flag)from.ReadInt32();
-			if (HasMessage) { Message = from.ReadString(); }
-			if (HasUrl) { Url = from.ReadString(); }
+			if (HasMessage) Message = from.ReadString();
+			if (HasUrl) Url = from.ReadString();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xB10DF1FB);
 			to.Write((Int32)Flags);
 			if (HasMessage) to.Write(Message);
 			if (HasUrl) to.Write(Url);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasMessage = Message != null;
+			HasUrl = Url != null;
 		}
 	}
 }

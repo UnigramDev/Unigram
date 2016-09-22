@@ -36,13 +36,15 @@ namespace Telegram.Api.TL
 			Flags = (Flag)from.ReadInt32();
 			Type = TLFactory.Read<TLAuthSentCodeTypeBase>(from, cache);
 			PhoneCodeHash = from.ReadString();
-			if (HasNextType) { NextType = TLFactory.Read<TLAuthCodeTypeBase>(from, cache); }
-			if (HasTimeout) { Timeout = from.ReadInt32(); }
+			if (HasNextType) NextType = TLFactory.Read<TLAuthCodeTypeBase>(from, cache);
+			if (HasTimeout) Timeout = from.ReadInt32();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0x5E002502);
 			to.Write((Int32)Flags);
 			to.WriteObject(Type, cache);
@@ -50,6 +52,12 @@ namespace Telegram.Api.TL
 			if (HasNextType) to.WriteObject(NextType, cache);
 			if (HasTimeout) to.Write(Timeout.Value);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasNextType = NextType != null;
+			HasTimeout = Timeout != null;
 		}
 	}
 }

@@ -41,7 +41,7 @@ namespace Telegram.Api.TL.Methods.Messages
 		{
 			Flags = (Flag)from.ReadInt32();
 			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
-			if (HasReplyToMsgId) { ReplyToMsgId = from.ReadInt32(); }
+			if (HasReplyToMsgId) ReplyToMsgId = from.ReadInt32();
 			RandomId = from.ReadInt64();
 			QueryId = from.ReadInt64();
 			Id = from.ReadString();
@@ -50,6 +50,8 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
+			UpdateFlags();
+
 			to.Write(0xB16E06FE);
 			to.Write((Int32)Flags);
 			to.WriteObject(Peer, cache);
@@ -58,6 +60,11 @@ namespace Telegram.Api.TL.Methods.Messages
 			to.Write(QueryId);
 			to.Write(Id);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasReplyToMsgId = ReplyToMsgId != null;
 		}
 	}
 }
