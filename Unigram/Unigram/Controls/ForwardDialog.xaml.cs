@@ -151,5 +151,10 @@ namespace Unigram.Controls
                 ForwardHeader.Visibility = Visibility.Visible;
             }
         }
+
+        private void fDialog_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ForwardMenuBox.MaxHeight = e.NewSize.Height;
+        }
     }
 }

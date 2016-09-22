@@ -12,7 +12,8 @@
     xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
     x:Name="fDialog"
-    Loaded="fDialog_Loaded">
+    Loaded="fDialog_Loaded"
+    SizeChanged="fDialog_SizeChanged">
 
     <UserControl.Resources>
 
