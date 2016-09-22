@@ -964,11 +964,11 @@ namespace Telegram.Api.TL
             return (int)(unixTime / 4294967296);
         }
 
-        public static int? ToTLInt(DateTime date)
+        public static int ToTLInt(DateTime date)
         {
             var unixTime = (long)(Utils.DateTimeToUnixTimestamp(date) * 4294967296); //int * 2^32 + clientDelta
 
-            return new int?((int)(unixTime / 4294967296));
+            return (int)(unixTime / 4294967296);
         }
 
         public static byte[] GenerateAuthKeyId(byte[] authKey)
