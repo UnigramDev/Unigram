@@ -89,7 +89,7 @@ namespace Unigram.ViewModels
         }
         public string fullName { get; internal set; }
         public string lastSeen { get; internal set; }
-        public int lastSeenEpoch { get; internal set; }
+        public DateTime lastSeenEpoch { get; internal set; }
         public Brush PlaceHolderColor { get; internal set; }
     }
 }
