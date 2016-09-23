@@ -58,6 +58,7 @@ namespace Telegram.Api
 #endif
         public static double CheckPingInterval = 20.0;              //seconds
         public static double UpdateStatusInterval = 2.0;
+        public static int BigFileDownloadersCount = 10;
         public static int VideoDownloadersCount = 3;
         public static int VideoUploadersCount = 3;
         public static int DocumentUploadersCount = 3;
@@ -67,6 +68,7 @@ namespace Telegram.Api
         public static ulong MaximumUploadedFileSize = 512 * 1024 * 3000;    // 1,5GB
 
         public static string StateFileName = "state.dat";
+        public static string TempStateFileName = "temp_state.dat";
         public static string ActionQueueFileName = "action_queue.dat";
         public static string SentQueueIdFileName = "sent_queue_id.dat";
 
@@ -77,6 +79,7 @@ namespace Telegram.Api
         public const string BackgroundTaskSettingsFileName = "background_task_settings.dat";
         public const string DifferenceFileName = "difference.dat";
         public const string DifferenceTimeFileName = "difference_time.dat";
+        public const string TempDifferenceFileName = "temp_difference.dat";
 
         public const string TelegramMessengerMutexName = "TelegramMessenger";
         public const double DifferenceMinInterval = 10.0;           //seconds

@@ -71,11 +71,14 @@ namespace Unigram.Tasks
 
                         var date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
                         var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, text, new TLMessageMediaEmpty(), TLLong.Random(), replyToMsgId);
-                        var history = cacheService.GetHistory(SettingsHelper.UserId, toId, 1);
+                        var history = cacheService.GetHistory(toId, 1);
 
-                        cacheService.SyncSendingMessage(message, null, toId, async (m) =>
+                        cacheService.SyncSendingMessage(message, null, async (m) =>
                         {
-                            await protoService.SendMessageAsync(message);
+                            await protoService.SendMessageAsync(message, () => 
+                            {
+                                // TODO: fast callback
+                            });
                             manualResetEvent.Set();
                         });
                     };
@@ -83,7 +86,7 @@ namespace Unigram.Tasks
                     {
                         manualResetEvent.Set();
                     };
-                    cacheService.Initialize();
+                    cacheService.Init();
                     protoService.Initialize();
                     manualResetEvent.WaitOne(15000);
                 }

@@ -35,7 +35,7 @@ namespace Telegram.Api.Services
         /// </summary>
         public void Refresh()
         {
-            NotifyOfPropertyChange(string.Empty);
+            RaisePropertyChanged(string.Empty);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Telegram.Api.Services
         /// 
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
-        public virtual void NotifyOfPropertyChange(string propertyName)
+        public virtual void RaisePropertyChanged(string propertyName)
         {
             if (!IsNotifying)
                 return;
@@ -55,9 +55,9 @@ namespace Telegram.Api.Services
         /// 
         /// </summary>
         /// <typeparam name="TProperty">The type of the property.</typeparam><param name="property">The property expression.</param>
-        public void NotifyOfPropertyChange<TProperty>(Expression<Func<TProperty>> property)
+        public void RaisePropertyChanged<TProperty>(Expression<Func<TProperty>> property)
         {
-            this.NotifyOfPropertyChange(GetMemberInfo(property).Name);
+            this.RaisePropertyChanged(GetMemberInfo(property).Name);
         }
 
         public static MemberInfo GetMemberInfo(Expression expression)

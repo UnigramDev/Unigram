@@ -1,55 +1,38 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods;
 using Telegram.Api.TL.Methods.Updates;
 
 namespace Telegram.Api.Services
 {
-    public partial class MTProtoService
-    {
-        public Task<MTProtoResponse<TLUpdatesState>> GetStateAsync()
+	public partial class MTProtoService
+	{
+        public void GetStateCallback(Action<TLUpdatesState> callback, Action<TLRPCError> faultCallback = null)
         {
-            return SendInformativeMessage<TLUpdatesState>("updates.getState", new TLUpdatesGetState());
-        }
-        public async void GetStateCallbackAsync(Action<TLUpdatesState> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var result = await SendInformativeMessage<TLUpdatesState>("updates.getState", new TLUpdatesGetState());
-            if (result?.IsSucceeded == true)
-            {
-                callback?.Invoke(result.Value);
-            }
-            else
-            {
-                faultCallback?.Invoke(result?.Error);
-            }
+            var obj = new TLUpdatesGetState();
+
+            SendInformativeMessage("updates.getState", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLUpdatesState>> GetStateWithoutUpdatesAsync()
+        public void GetStateWithoutUpdatesAsync(Action<TLUpdatesState> callback, Action<TLRPCError> faultCallback = null)
         {
-            return SendInformativeMessage<TLUpdatesState>("updates.getState", new TLInvokeWithoutUpdates { Query = new TLUpdatesGetState() });
+            var obj = new TLInvokeWithoutUpdates { Query = new TLUpdatesGetState() };
+
+            SendInformativeMessage("updates.getState", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLUpdatesDifferenceBase>> GetDifferenceAsync(int pts, int date, int qts)
+        public void GetDifferenceCallback(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            return SendInformativeMessage<TLUpdatesDifferenceBase>("updates.getDifference", new TLUpdatesGetDifference { Date = date, Pts = pts, Qts = qts });
-        }
-        public async void GetDifferenceCallbackAsync(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var result = await SendInformativeMessage<TLUpdatesDifferenceBase>("updates.getDifference", new TLUpdatesGetDifference { Date = date, Pts = pts, Qts = qts });
-            if (result?.IsSucceeded == true)
-            {
-                callback?.Invoke(result.Value);
-            }
-            else
-            {
-                faultCallback?.Invoke(result?.Error);
-            }
+            var obj = new TLUpdatesGetDifference { Date = date, Pts = pts, Qts = qts };
+
+            SendInformativeMessage("updates.getDifference", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLUpdatesDifferenceBase>> GetDifferenceWithoutUpdatesAsync(int pts, int date, int qts)
+        public void GetDifferenceWithoutUpdatesCallback(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            return SendInformativeMessage<TLUpdatesDifferenceBase>("updates.getDifference", new TLInvokeWithoutUpdates { Query = new TLUpdatesGetDifference { Date = date, Pts = pts, Qts = qts } });
+            var obj = new TLUpdatesGetDifference { Date = date, Pts = pts, Qts = qts };
+
+            SendInformativeMessage("updates.getDifference", new TLInvokeWithoutUpdates{Query = obj}, callback, faultCallback);
         }
-    }
+	}
 }

@@ -460,6 +460,7 @@ namespace Unigram.Controls.Items
 
         private void UpdateUnreadCount()
         {
+            ((TextBlock)UnreadLabel.Child).Text = ViewModel?.UnreadCount.ToString() ?? string.Empty;
             UnreadLabel.Visibility = ViewModel?.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
             Highlight.Visibility = ViewModel?.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
         }

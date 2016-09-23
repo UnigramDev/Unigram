@@ -775,7 +775,7 @@ namespace Unigram.Converters
                 var manager = UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size);
+                    await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, (progess) => { });
                     var buffer = WebPImage.Encode(File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)));
                     Execute.BeginOnUIThread(() =>
                     {
