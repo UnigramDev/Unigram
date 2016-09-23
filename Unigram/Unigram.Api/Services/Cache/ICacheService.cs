@@ -25,7 +25,7 @@ namespace Telegram.Api.Services.Cache
         TLMessageBase GetMessage(long? randomId);
         TLMessageBase GetMessage(TLWebPageBase webPage);
         // TODO: Encrypted TLDecryptedMessageBase GetDecryptedMessage(int? chatId, long? randomId);
-        TLDialog GetDialog(TLMessage message);
+        TLDialog GetDialog(TLMessageCommonBase message);
         TLDialog GetDialog(TLPeerBase peer);
         // TODO: Encrypted TLDialog GetEncryptedDialog(int? chatId);
 
@@ -61,9 +61,9 @@ namespace Telegram.Api.Services.Cache
         void SyncMessage(TLMessageBase message, Action<TLMessageBase> callback);
         void SyncMessage(TLMessageBase message, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessageBase> callback);
         void SyncEditedMessage(TLMessageBase message, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessageBase> callback);
-        void SyncSendingMessage(TLMessage message, TLMessageBase previousMessage, Action<TLMessage> callback);
+        void SyncSendingMessage(TLMessageCommonBase message, TLMessageBase previousMessage, Action<TLMessageCommonBase> callback);
         void SyncSendingMessages(IList<TLMessage> messages, TLMessageBase previousMessage, Action<IList<TLMessage>> callback);
-        void SyncSendingMessageId(long randomId, int id, Action<TLMessage> callback);
+        void SyncSendingMessageId(long randomId, int id, Action<TLMessageCommonBase> callback);
         void SyncPeerMessages(TLPeerBase peer, TLMessagesMessagesBase messages, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesMessagesBase> callback);
         void AddMessagesToContext(TLMessagesMessagesBase messages, Action<TLMessagesMessagesBase> callback);
         void SyncDialogs(TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback);

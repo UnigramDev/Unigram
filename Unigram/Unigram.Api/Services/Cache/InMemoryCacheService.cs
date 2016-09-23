@@ -515,7 +515,7 @@ namespace Telegram.Api.Services.Cache
             return m;
         }
 
-        public TLDialog GetDialog(TLMessage message)
+        public TLDialog GetDialog(TLMessageCommonBase message)
         {
             TLPeerBase peer;
             if (message.ToId is TLPeerChat)
@@ -583,7 +583,7 @@ namespace Telegram.Api.Services.Cache
                 if (dialog != null)
                 {
                     msgs = dialog.Messages
-                        .OfType<TLMessage>()
+                        .OfType<TLMessageCommonBase>()
                         //.Where(x =>
 
                             //x.FromId.Value == currentUserId.Value && x.ToId.Id.Value == peer.Id.Value           // to peer from current
@@ -806,7 +806,7 @@ namespace Telegram.Api.Services.Cache
                 if (dialog != null)
                 {
                     msgs = dialog.Messages
-                        .OfType<TLMessage>()
+                        .OfType<TLMessageCommonBase>()
                         .Cast<TLMessageBase>()
                         .ToList();
                 }
@@ -871,7 +871,7 @@ namespace Telegram.Api.Services.Cache
                 if (dialog != null)
                 {
                     msgs = dialog.Messages
-                        .OfType<TLMessage>()
+                        .OfType<TLMessageCommonBase>()
                         //.Where(x =>
 
                             //x.FromId.Value == currentUserId.Value && x.ToId.Id.Value == peer.Id.Value           // to peer from current
@@ -1014,7 +1014,7 @@ namespace Telegram.Api.Services.Cache
             callback(result);
         }
 
-        public void SyncSendingMessageId(long randomId, int id, Action<TLMessage> callback)
+        public void SyncSendingMessageId(long randomId, int id, Action<TLMessageCommonBase> callback)
         {
             var timer = Stopwatch.StartNew();
 
@@ -1058,7 +1058,7 @@ namespace Telegram.Api.Services.Cache
             callback(result);
         }
 
-        public void SyncSendingMessage(TLMessage message, TLMessageBase previousMessage, Action<TLMessage> callback)
+        public void SyncSendingMessage(TLMessageCommonBase message, TLMessageBase previousMessage, Action<TLMessageCommonBase> callback)
         {
             if (message == null)
             {
@@ -1397,7 +1397,7 @@ namespace Telegram.Api.Services.Cache
             {
                 foreach (var message in messages.Messages)
                 {
-                    var messageCommon = message as TLMessage;
+                    var messageCommon = message as TLMessageCommonBase;
                     if (messageCommon != null)
                     {
                         if (messageCommon.IsOut 
@@ -1538,10 +1538,10 @@ namespace Telegram.Api.Services.Cache
 
         private void SyncMessageInternal(TLPeerBase peer, TLMessageBase message, out TLMessageBase result)
         {
-            TLMessage cachedMessage = null;
+            TLMessageCommonBase cachedMessage = null;
             //if (MessagesContext != null)
             {
-                cachedMessage = (TLMessage) GetCachedMessage(message);
+                cachedMessage = (TLMessageCommonBase) GetCachedMessage(message);
                 //cachedMessage = (TLMessage)MessagesContext[message.Index];
             }
 
@@ -1605,7 +1605,7 @@ namespace Telegram.Api.Services.Cache
                                 readInboxMaxId = channel.ReadInboxMaxId;
                                 if (readInboxMaxId != null)
                                 {
-                                    var messageCommon = message as TLMessage;
+                                    var messageCommon = message as TLMessageCommonBase;
                                     if (messageCommon != null && !messageCommon.IsOut &&
                                         messageCommon.Id > readInboxMaxId.Value)
                                     {
@@ -1616,7 +1616,7 @@ namespace Telegram.Api.Services.Cache
                         }
                     }
 
-                    var cachedMessage = (TLMessage)GetCachedMessage(message);
+                    var cachedMessage = (TLMessageCommonBase)GetCachedMessage(message);
 
                     if (cachedMessage != null)
                     {
@@ -1640,7 +1640,7 @@ namespace Telegram.Api.Services.Cache
                                 readInboxMaxId = channel.ReadInboxMaxId;
                                 if (readInboxMaxId != null)
                                 {
-                                    var messageCommon = message as TLMessage;
+                                    var messageCommon = message as TLMessageCommonBase;
                                     if (messageCommon != null && !messageCommon.IsOut &&
                                         messageCommon.Id > readInboxMaxId.Value)
                                     {
@@ -1946,7 +1946,7 @@ namespace Telegram.Api.Services.Cache
 
                 foreach (var messageBase in dialogs.Messages)
                 {
-                    var message = messageBase as TLMessage;
+                    var message = messageBase as TLMessageCommonBase;
                     if (message != null)
                     {
                         var peerId = message.ToId is TLPeerUser && !message.IsOut? message.FromId.Value : message.ToId.Id;
@@ -1986,10 +1986,10 @@ namespace Telegram.Api.Services.Cache
 
                     foreach (var message in dialogCache.Values)
                     {
-                        TLMessage cachedMessage = null;
+                        TLMessageCommonBase cachedMessage = null;
                         //if (MessagesContext != null)
                         {
-                            cachedMessage = (TLMessage)GetCachedMessage(message);
+                            cachedMessage = (TLMessageCommonBase)GetCachedMessage(message);
                             //cachedMessage = (TLMessage)MessagesContext[message.Index];
                         }
 
