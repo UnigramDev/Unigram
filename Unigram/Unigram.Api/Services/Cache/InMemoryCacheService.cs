@@ -1664,7 +1664,7 @@ namespace Telegram.Api.Services.Cache
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 
             }
