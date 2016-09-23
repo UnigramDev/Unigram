@@ -163,7 +163,7 @@ namespace Telegram.Api.Services
         void SaveDraftCallback(TLInputPeerBase peer, TLDraftMessageBase draft, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void GetInlineBotResultsCallback(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset, Action<TLMessagesBotResults> callback, Action<TLRPCError> faultCallback = null);
         void SetInlineBotResultsCallback(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM, Action<bool> callback, Action<TLRPCError> faultCallback = null);
-        void SendInlineBotResultCallback(TLMessage message, Action<TLMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null);
+        void SendInlineBotResultCallback(TLMessage message, Action<TLMessageCommonBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null);
         void GetDocumentByHashCallback(byte[] sha256, int size, string mimeType, Action<TLDocumentBase> callback, Action<TLRPCError> faultCallback = null);
         void SearchGifsCallback(string q, int offset, Action<TLMessagesFoundGifs> callback, Action<TLRPCError> faultCallback = null);
         void GetSavedGifsCallback(int hash, Action<TLMessagesSavedGifsBase> callback, Action<TLRPCError> faultCallback = null);
@@ -171,7 +171,7 @@ namespace Telegram.Api.Services
         void ReorderStickerSetsCallback(bool masks, TLVector<long> order, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SearchGlobalCallback(string query, int offsetDate, TLInputPeerBase offsetPeer, int offsetId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void ReportSpamCallback(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null);
-        void SendMessageCallback(TLMessage message, Action<TLMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null);
+        void SendMessageCallback(TLMessage message, Action<TLMessageCommonBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null);
         void SendMediaCallback(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void StartBotCallback(TLInputUserBase bot, string startParam, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void ForwardMessageCallback(TLInputPeerBase peer, int fwdMessageId, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);

@@ -81,9 +81,11 @@
                 }
             });
 
-            if (SettingsHelper.SupportedLayer != Constants.SupportedLayer)
+            if (SettingsHelper.SupportedLayer != Constants.SupportedLayer ||
+                SettingsHelper.DatabaseVersion != Constants.DatabaseVersion)
             {
                 SettingsHelper.SupportedLayer = Constants.SupportedLayer;
+                SettingsHelper.DatabaseVersion = Constants.DatabaseVersion;
 
                 deleteIfExists("action_queue.dat");
                 deleteIfExists("action_queue.dat.temp");

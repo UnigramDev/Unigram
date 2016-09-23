@@ -130,12 +130,29 @@ namespace Telegram.Api.Helpers
                     return (int)ApplicationData.Current.LocalSettings.Values["SupportedLayer"];
                 }
 
-                // TODO: maybe we have to remove - 1 when publishing in the store
-                return Constants.SupportedLayer - 1;
+                return Constants.SupportedLayer;
             }
             set
             {
                 ApplicationData.Current.LocalSettings.Values["SupportedLayer"] = value;
+            }
+        }
+
+        public static int DatabaseVersion
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("DatabaseVersion"))
+                {
+                    return (int)ApplicationData.Current.LocalSettings.Values["DatabaseVersion"];
+                }
+
+                // TODO: maybe we have to remove - 1 when publishing in the store
+                return Constants.DatabaseVersion - 1;
+            }
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values["DatabaseVersion"] = value;
             }
         }
     }
