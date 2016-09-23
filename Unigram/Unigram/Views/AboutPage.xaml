@@ -177,9 +177,10 @@
                         <Button Grid.Row="5"
                                 Grid.Column="0"
                                 Content="Abdel Daoudi"
-                                IsEnabled="False"
                                 Padding="0,4"
-                                Style="{ThemeResource TextBlockButtonStyle}" />
+                                Style="{ThemeResource TextBlockButtonStyle}" 
+                                x:Name="btnCoreAbdelWebsite"
+                                Click="btnCoreAbdelWebsite_Click"/>
                         <Button Grid.Row="5"
                                 Grid.Column="1"
                                 Content="@ADeltaXForce"
