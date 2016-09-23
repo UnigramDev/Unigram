@@ -14,107 +14,186 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer>
-            <RelativePanel>
-                <!-- Master - Titlebar -->
-                <RelativePanel x:Name="rpMasterTitlebar"
-                           Style="{StaticResource StyleRPMasterTitleBar}">
-                    <TextBlock x:Name="tblMasterTitle"
-                           x:Uid="About-Titlebar-Title"
-                           Text="ABOUT"
-                           Style="{StaticResource BaseTextBlockStyle}"
-                           RequestedTheme="Dark"
-                           Padding="16,0"
-                           RelativePanel.AlignVerticalCenterWithPanel="True"/>
-                </RelativePanel>
-
-                <!-- Master - Main content -->
-                <RelativePanel x:Name="rpMasterContent"
-                           Padding="12"
-                           ScrollViewer.VerticalScrollMode="Auto"
-                           RelativePanel.AlignLeftWithPanel="True"
-                           RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.Below="rpMasterTitlebar"
-                           RelativePanel.AlignBottomWithPanel="True">
-
-                    <!-- Master - App info and logo -->
-                    <RelativePanel x:Name="rpMasterAppInfo"
-                               RelativePanel.AlignLeftWithPanel="True"
-                               RelativePanel.AlignRightWithPanel="True">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                
+                <!-- Titlebar -->
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="0"
+                            Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
+                    <Grid Height="96"
+                          Width="96">
                         <!-- Logo background -->
-                        <Ellipse x:Name="imgMasterWelcomeLogoBackground"
-                             Height="120" 
-                             Width="120"                              
-                             Fill="{ThemeResource SystemControlBackgroundAccentBrush}"
-                             Margin="0,0,0,6"/>
+                        <Ellipse Height="60" 
+                                 Width="60"                              
+                                 Fill="White"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Center"/>
+                        <Ellipse Height="56" 
+                                 Width="56"                              
+                                 Fill="{ThemeResource TelegramBackgroundAccentBrush}"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Center"/>
                         <!-- Logo -->
-                        <Ellipse x:Name="imgMasterWelcomeLogo"
-                             Height="120"
-                             Width="120"
-                             Margin="0,0,0,0"
-                             RelativePanel.AlignBottomWith="imgMasterWelcomeLogoBackground"
-                             RelativePanel.AlignHorizontalCenterWith="imgMasterWelcomeLogoBackground">
+                        <Ellipse Height="60"
+                                 Width="60"
+                                 Margin="0,0,0,-6"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Center">
                             <Ellipse.Fill>
                                 <ImageBrush ImageSource="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
                             </Ellipse.Fill>
                         </Ellipse>
-
-                        <!-- App info -->
-                        <TextBlock x:Name="tblMasterAppTitle"
-                               x:Uid="About-App-Title"
-                               Padding="16,0"
-                               Text="Unigram"
-                               Style="{StaticResource TitleTextBlockStyle}"
-                               RelativePanel.RightOf="imgMasterWelcomeLogoBackground"/>
-                        <TextBlock x:Name="tblMasterAppVersion"
-                               x:Uid="About-App-Version"
-                               Padding="16,0,0,0"
-                               Text="Version"
-                               Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               RelativePanel.RightOf="imgMasterWelcomeLogoBackground"
-                               RelativePanel.Below="tblMasterAppTitle"/>
-                        <TextBlock x:Name="tblMasterAppVersionNumber"
-                               Padding="4,0,16,0"
-                               Text="Prototype"
-                               Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               RelativePanel.RightOf="tblMasterAppVersion"
-                               RelativePanel.Below="tblMasterAppTitle"/>
-                    </RelativePanel>
-
-
-                    <!-- Master - Made possible by -->
-                    <StackPanel x:Name="spThanks"
-                            Orientation="Vertical"
-                            Margin="0,12,0,0"
-                            RelativePanel.AlignLeftWithPanel="True"
-                            RelativePanel.AlignRightWithPanel="True"
-                            RelativePanel.Below="rpMasterAppInfo">
-                        <TextBlock x:Uid="About-Thanks-Title"
-                               Text="Special Thanks"
-                               Style="{StaticResource TitleTextBlockStyle}"/>
-                        <TextBlock x:Uid="About-Thanks-Intro"
-                               Text="Building this app has not been possible without the help of all these awesome people:"
-                               TextWrapping="Wrap"
-                               FontSize="14"
-                               Padding="0,8,0,0" />
-                        <!-- Core-team -->
-                        <TextBlock 
-                               Margin="0,12,0,6"
-                               Text="Unigram Core-team:"
-                               Style="{StaticResource SubtitleTextBlockStyle}" />
-                        <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                               TextWrapping="Wrap">
-                        - Rick <LineBreak />- Saurav <LineBreak />- Luis <LineBreak />- Fela <LineBreak />- Matei <LineBreak />- Kesava <LineBreak />- Abdel
-                        </TextBlock>
-                        <!-- Insiders -->
-                        <TextBlock Text="... and all the Unigram Insiders!" 
-                               Margin="0,6,0,0"/>
+                    </Grid>
+                    
+                    <!-- App info -->
+                    <StackPanel Orientation="Vertical"
+                                Margin="0,0"
+                                VerticalAlignment="Center">
+                        <TextBlock x:Uid="About-App-Title"
+                                   Text="Unigram"
+                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Uid="About-App-Version"
+                                       Text="Version"
+                                       Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
+                                       Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock x:Name="tblAppVersion"
+                                       Padding="4,0,16,0"
+                                       Text="Prototype"
+                                       Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
+                                       Style="{StaticResource BodyTextBlockStyle}"/>
+                        </StackPanel>
 
                     </StackPanel>
-                </RelativePanel>
-            </RelativePanel>
-        </ScrollViewer>
-        
+                </StackPanel>
+
+                <!-- Main content -->
+                <StackPanel Grid.Row="1"
+                            Padding="12"
+                            ScrollViewer.VerticalScrollMode="Auto">
+                    <TextBlock x:Uid="About-Thanks-Intro"
+                               Text="Thank you for using Unigram! We woudn't have been able to get this far without all help of the community."
+                               TextWrapping="Wrap"
+                               FontSize="14" 
+                               Margin="0,0,0,6"/>
+
+                    <!-- Core-team -->
+                    <TextBlock Margin="0,12,0,6"
+                               Text="Unigram Core-team:"
+                               FontSize="18"
+                               Style="{StaticResource BaseTextBlockStyle}" />
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Row 1 -->
+                        <Button Grid.Row="0"
+                                Grid.Column="0"
+                                Content="Rick Drijvers"
+                                Padding="0,4"
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                x:Name="btnCoreRickWebsite"
+                                Click="btnCoreRickWebsite_Click"/>
+                        <Button Grid.Row="0"
+                                Grid.Column="1"
+                                Content="@IkaragoDev"
+                                Padding="12,4"
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                Click="btnCoreRickTwitter_Click"/>
+
+                        <!-- Row 2 -->
+                        <Button Grid.Row="1"
+                                Grid.Column="0"
+                                Content="Saurav Srivastava"
+                                Padding="0,4"
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                x:Name="btnCoreSauravWebsite"
+                                Click="btnCoreSauravWebsite_Click"/>
+                        <Button Grid.Row="1"
+                                Grid.Column="1"
+                                Content="@gx_saurav"
+                                Padding="12,4"
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                Click="btnCoreSauravTwitter_Click"/>
+
+                        <!-- Row 3 -->
+                        <Button Grid.Row="2"
+                                Grid.Column="0"
+                                Content="Fela Ameghino"
+                                IsEnabled="False"
+                                Padding="0,4"
+                                Style="{ThemeResource TextBlockButtonStyle}" />
+                        <Button Grid.Row="2"
+                                Grid.Column="1"
+                                Content="@FrayxRulez"
+                                Padding="12,4"
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                Click="btnCoreFelaTwitter_Click"/>
+
+                        <!-- Row 4 -->
+                        <Button Grid.Row="3"
+                                Grid.Column="0"
+                                Content="Matei Radu"
+                                IsEnabled="False"
+                                Padding="0,4"
+                                Style="{ThemeResource TextBlockButtonStyle}" />
+                        <Button Grid.Row="3"
+                                Grid.Column="1"
+                                Content="@Mapei92"
+                                Padding="12,4"
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                Click="btnCoreMateiTwitter_Click"/>
+
+                        <!-- Row 5 -->
+                        <Button Grid.Row="4"
+                                Grid.Column="0"
+                                Content="Kesava Prasad Arul"
+                                Padding="0,4"
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                x:Name="btnCoreKesavaWebsite"
+                                Click="btnCoreKesavaWebsite_Click"/>
+                        <Button Grid.Row="4"
+                                Grid.Column="1"
+                                Content="@kesavarul"
+                                Padding="12,4"
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                Click="btnCoreKesavaTwitter_Click"/>
+
+                        <!-- Row 6 -->
+                        <Button Grid.Row="5"
+                                Grid.Column="0"
+                                Content="Abdel Daoudi"
+                                IsEnabled="False"
+                                Padding="0,4"
+                                Style="{ThemeResource TextBlockButtonStyle}" />
+                        <Button Grid.Row="5"
+                                Grid.Column="1"
+                                Content="@ADeltaXForce"
+                                Padding="12,4"
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                Click="btnCoreAbdelTwitter_Click"/>
+                    </Grid>
+
+                    <!-- Insiders -->
+                    <TextBlock Text="... and all the Unigram Insiders!" 
+                               Margin="0,6,0,0"/>
+
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>        
     </Grid>
 </Page>

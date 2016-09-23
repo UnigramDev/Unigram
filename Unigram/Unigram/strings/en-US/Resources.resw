@@ -138,7 +138,7 @@
     <comment>About - Titlebar - Page Title</comment>
   </data>
   <data name="About-Thanks-Intro.Text" xml:space="preserve">
-    <value>Building this app has not been possible without the help of all these awesome people:</value>
+    <value>Thank you for using Unigram! We woudn't have been able to get this far without all help of the community.</value>
     <comment>About - Thanks - Intro</comment>
   </data>
   <data name="CBTN-About.Label" xml:space="preserve">
