@@ -44,6 +44,8 @@ namespace Unigram.Controls
         public ForwardDialog()
         {
             this.InitializeComponent();
+
+            FContactsList.ItemsSource = null;
         }
 
 
@@ -219,7 +221,7 @@ namespace Unigram.Controls
             ForwardMenuBox.MaxHeight = e.NewSize.Height;
         }
 
-        public void InitDialog()
+        public async void InitDialog()
         {
             cancelToast = true;
 
@@ -242,6 +244,12 @@ namespace Unigram.Controls
             currentDialog = null;
 
             ForwardMenuShowStoryboard.Begin();
+
+            if (FContactsList.ItemsSource == null)
+            {
+                await Task.Delay(200);
+                FContactsList.ItemsSource = ViewModel.FSearchDialogs;
+            }
         }
 
         private void NotifInner_Tapped(object sender, TappedRoutedEventArgs e)

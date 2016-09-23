@@ -201,7 +201,6 @@
                     </Grid>
                     <GridView Grid.Row="1" 
                           Margin="0,8,0,0" 
-                          ItemsSource="{Binding FSearchDialogs}"
                           ItemTemplate="{StaticResource ContactsListViewTemplate}"
                           x:Name="FContactsList"
                           SelectionChanged="FContactsList_SelectionChanged">
