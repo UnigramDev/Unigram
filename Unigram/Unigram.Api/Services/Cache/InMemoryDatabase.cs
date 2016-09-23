@@ -92,7 +92,7 @@ namespace Telegram.Api.Services.Cache
             {
                 DialogsContext[dialog.Index] = dialog;
 
-                var topMessage = (TLMessage) dialog.TopMessageItem;
+                var topMessage = (TLMessageCommonBase) dialog.TopMessageItem;
 
                 // add in desc order by Date
                 var isAdded = false;
@@ -105,7 +105,7 @@ namespace Telegram.Api.Services.Cache
                         // TODO: Encrypted var ed = Dialogs[i] as TLEncryptedDialog;
                         if (d != null)
                         {
-                            var currentTopMessage = (TLMessage)d.TopMessageItem;
+                            var currentTopMessage = (TLMessageCommonBase)d.TopMessageItem;
 
                             if (currentTopMessage != null
                                 && currentTopMessage.Date < topMessage.Date)
@@ -478,7 +478,7 @@ namespace Telegram.Api.Services.Cache
             {
                 AddMessageToContext(message);
 
-                var commonMessage = message as TLMessage;
+                var commonMessage = message as TLMessageCommonBase;
                 if (commonMessage != null)
                 {
                     var isUnread = !commonMessage.IsOut && commonMessage.IsUnread;
@@ -730,7 +730,7 @@ namespace Telegram.Api.Services.Cache
             return result;
         }
 
-        private TLDialog GetDialog(TLMessage commonMessage)
+        private TLDialog GetDialog(TLMessageCommonBase commonMessage)
         {
             lock (_dialogsSyncRoot)
             {
@@ -790,7 +790,7 @@ namespace Telegram.Api.Services.Cache
 
             AddMessageToContext(cachedMessage);
 
-            var commonMessage = message as TLMessage;
+            var commonMessage = message as TLMessageCommonBase;
             if (commonMessage == null)
             {
                 return;
@@ -1237,7 +1237,7 @@ namespace Telegram.Api.Services.Cache
                 {
                     for (var j = 0; j < dialog.Messages.Count; j++)
                     {
-                        var messageCommon = dialog.Messages[j] as TLMessageBase;
+                        var messageCommon = dialog.Messages[j] as TLMessageCommonBase;
                         if (messageCommon != null && messageCommon.FromId.Value == user.Id)
                         {
                             if (messageCommon.Id == 1)
@@ -1270,7 +1270,7 @@ namespace Telegram.Api.Services.Cache
                     {
                         for (var i = 0; i < messages.Count; i++)
                         {
-                            var commonMessage = messages[i] as TLMessage;
+                            var commonMessage = messages[i] as TLMessageCommonBase;
                             if (commonMessage != null && !commonMessage.IsOut && commonMessage.IsUnread)
                             {
                                 dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
@@ -1361,7 +1361,7 @@ namespace Telegram.Api.Services.Cache
                     {
                         for (var i = 0; i < messages.Count; i++)
                         {
-                            var commonMessage = messages[i] as TLMessage;
+                            var commonMessage = messages[i] as TLMessageCommonBase;
                             if (commonMessage != null && !commonMessage.IsOut && commonMessage.IsUnread)
                             {
                                 dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
@@ -1403,7 +1403,7 @@ namespace Telegram.Api.Services.Cache
                 RemoveMessageFromContext(message);
                 //MessagesContext.Remove(message.Index);
 
-                var commonMessage = message as TLMessage;
+                var commonMessage = message as TLMessageCommonBase;
                 if (commonMessage != null)
                 {
                     //TLDialog dialog;
@@ -1602,7 +1602,7 @@ namespace Telegram.Api.Services.Cache
 
                     if (updatedIndex >= 0 && updatedIndex < dialog.Messages.Count)
                     {
-                        var messageCommon = dialog.Messages[updatedIndex] as TLMessage;
+                        var messageCommon = dialog.Messages[updatedIndex] as TLMessageCommonBase;
                         if (messageCommon != null)
                         {
                             var clearHistoryMessage = new TLMessageService();

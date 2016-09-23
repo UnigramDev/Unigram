@@ -139,7 +139,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void SendInlineBotResultCallback(TLMessage message, Action<TLMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
+        public void SendInlineBotResultCallback(TLMessage message, Action<TLMessageCommonBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
         {
             var inputPeer = PeerToInputPeer(message.ToId);
             var obj = new TLMessagesSendInlineBotResult { Flags = 0, Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, RandomId = message.RandomId ?? 0, QueryId = message.InlineBotResultQueryId, Id = message.InlineBotResultId };
@@ -726,7 +726,7 @@ namespace Telegram.Api.Services
             return new TLInputPeerEmpty();
         }
 
-        public void SendMessageCallback(TLMessage message, Action<TLMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
+        public void SendMessageCallback(TLMessage message, Action<TLMessageCommonBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
         {
             var inputPeer = PeerToInputPeer(message.ToId);
             var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Message = message.Message, RandomId = message.RandomId.Value };

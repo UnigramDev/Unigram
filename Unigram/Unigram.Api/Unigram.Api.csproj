@@ -746,6 +746,7 @@
     <Compile Include="TL\TLMessageActionHistoryClear.cs" />
     <Compile Include="TL\TLMessageActionPinMessage.cs" />
     <Compile Include="TL\TLMessageBase.cs" />
+    <Compile Include="TL\TLMessageCommonBase.cs" />
     <Compile Include="TL\TLMessageEmpty.cs" />
     <Compile Include="TL\TLMessageEntityBase.cs" />
     <Compile Include="TL\TLMessageEntityBold.cs" />

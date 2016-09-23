@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLMessage : TLMessageBase 
+	public partial class TLMessage : TLMessageCommonBase 
 	{
 		[Flags]
 		public enum Flag : Int32
@@ -24,11 +24,11 @@ namespace Telegram.Api.TL
 			EditDate = (1 << 15),
 		}
 
-		public bool IsOut { get { return Flags.HasFlag(Flag.Out); } set { Flags = value ? (Flags | Flag.Out) : (Flags & ~Flag.Out); } }
-		public bool IsMentioned { get { return Flags.HasFlag(Flag.Mentioned); } set { Flags = value ? (Flags | Flag.Mentioned) : (Flags & ~Flag.Mentioned); } }
-		public bool IsMediaUnread { get { return Flags.HasFlag(Flag.MediaUnread); } set { Flags = value ? (Flags | Flag.MediaUnread) : (Flags & ~Flag.MediaUnread); } }
-		public bool IsSilent { get { return Flags.HasFlag(Flag.Silent); } set { Flags = value ? (Flags | Flag.Silent) : (Flags & ~Flag.Silent); } }
-		public bool IsPost { get { return Flags.HasFlag(Flag.Post); } set { Flags = value ? (Flags | Flag.Post) : (Flags & ~Flag.Post); } }
+		public override bool IsOut { get { return Flags.HasFlag(Flag.Out); } set { Flags = value ? (Flags | Flag.Out) : (Flags & ~Flag.Out); } }
+		public override bool IsMentioned { get { return Flags.HasFlag(Flag.Mentioned); } set { Flags = value ? (Flags | Flag.Mentioned) : (Flags & ~Flag.Mentioned); } }
+		public override bool IsMediaUnread { get { return Flags.HasFlag(Flag.MediaUnread); } set { Flags = value ? (Flags | Flag.MediaUnread) : (Flags & ~Flag.MediaUnread); } }
+		public override bool IsSilent { get { return Flags.HasFlag(Flag.Silent); } set { Flags = value ? (Flags | Flag.Silent) : (Flags & ~Flag.Silent); } }
+		public override bool IsPost { get { return Flags.HasFlag(Flag.Post); } set { Flags = value ? (Flags | Flag.Post) : (Flags & ~Flag.Post); } }
 		public bool HasFromId { get { return Flags.HasFlag(Flag.FromId); } set { Flags = value ? (Flags | Flag.FromId) : (Flags & ~Flag.FromId); } }
 		public bool HasFwdFrom { get { return Flags.HasFlag(Flag.FwdFrom); } set { Flags = value ? (Flags | Flag.FwdFrom) : (Flags & ~Flag.FwdFrom); } }
 		public bool HasViaBotId { get { return Flags.HasFlag(Flag.ViaBotId); } set { Flags = value ? (Flags | Flag.ViaBotId) : (Flags & ~Flag.ViaBotId); } }

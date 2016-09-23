@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLMessageService : TLMessageBase 
+	public partial class TLMessageService : TLMessageCommonBase 
 	{
 		[Flags]
 		public enum Flag : Int32
@@ -17,11 +17,11 @@ namespace Telegram.Api.TL
 			ReplyToMsgId = (1 << 3),
 		}
 
-		public bool IsOut { get { return Flags.HasFlag(Flag.Out); } set { Flags = value ? (Flags | Flag.Out) : (Flags & ~Flag.Out); } }
-		public bool IsMentioned { get { return Flags.HasFlag(Flag.Mentioned); } set { Flags = value ? (Flags | Flag.Mentioned) : (Flags & ~Flag.Mentioned); } }
-		public bool IsMediaUnread { get { return Flags.HasFlag(Flag.MediaUnread); } set { Flags = value ? (Flags | Flag.MediaUnread) : (Flags & ~Flag.MediaUnread); } }
-		public bool IsSilent { get { return Flags.HasFlag(Flag.Silent); } set { Flags = value ? (Flags | Flag.Silent) : (Flags & ~Flag.Silent); } }
-		public bool IsPost { get { return Flags.HasFlag(Flag.Post); } set { Flags = value ? (Flags | Flag.Post) : (Flags & ~Flag.Post); } }
+		public override bool IsOut { get { return Flags.HasFlag(Flag.Out); } set { Flags = value ? (Flags | Flag.Out) : (Flags & ~Flag.Out); } }
+		public override bool IsMentioned { get { return Flags.HasFlag(Flag.Mentioned); } set { Flags = value ? (Flags | Flag.Mentioned) : (Flags & ~Flag.Mentioned); } }
+		public override bool IsMediaUnread { get { return Flags.HasFlag(Flag.MediaUnread); } set { Flags = value ? (Flags | Flag.MediaUnread) : (Flags & ~Flag.MediaUnread); } }
+		public override bool IsSilent { get { return Flags.HasFlag(Flag.Silent); } set { Flags = value ? (Flags | Flag.Silent) : (Flags & ~Flag.Silent); } }
+		public override bool IsPost { get { return Flags.HasFlag(Flag.Post); } set { Flags = value ? (Flags | Flag.Post) : (Flags & ~Flag.Post); } }
 		public bool HasFromId { get { return Flags.HasFlag(Flag.FromId); } set { Flags = value ? (Flags | Flag.FromId) : (Flags & ~Flag.FromId); } }
 		public bool HasReplyToMsgId { get { return Flags.HasFlag(Flag.ReplyToMsgId); } set { Flags = value ? (Flags | Flag.ReplyToMsgId) : (Flags & ~Flag.ReplyToMsgId); } }
 
