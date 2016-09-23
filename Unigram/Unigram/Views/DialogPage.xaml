@@ -725,7 +725,8 @@
         
     </Grid>
 
-        <controls:ForwardDialog Visibility="{Binding ForwardFlyoutMessage, Converter={StaticResource NullToVisibilityConverter}}" />
+        <controls:ForwardDialog Visibility="{Binding ForwardFlyoutMessage, Converter={StaticResource NullToVisibilityConverter}}" 
+                                GoToDialogTapped="ForwardDialog_GoToDialogTapped" />
 
     </Grid>
 </Page>

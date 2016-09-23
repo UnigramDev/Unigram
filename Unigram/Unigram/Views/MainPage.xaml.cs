@@ -231,7 +231,7 @@ namespace Unigram.Views
 
         private async void PivotItem_Loaded(object sender, RoutedEventArgs e)
         {
-            await ViewModel.Contacts.getTLContacts();
+            //await ViewModel.Contacts.getTLContacts();
         }
 
         private void UsersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

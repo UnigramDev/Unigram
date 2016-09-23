@@ -6,9 +6,11 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Unigram.ViewModels;
+using Windows.Data.Xml.Dom;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -25,6 +27,20 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
+        public delegate void GoToDialogEventHandler(TLDialog dialog);
+        public event GoToDialogEventHandler GoToDialogTapped;
+
+        TLDialog currentDialog = null;
+        bool cancelToast;
+        bool pointerOnTopOfToast = false;
+
+        private void OnGoToDialogTapped(TLDialog dialog)
+        {
+            if (GoToDialogTapped != null)
+                GoToDialogTapped(dialog);
+        }
+
+
         public ForwardDialog()
         {
             this.InitializeComponent();
@@ -39,6 +55,9 @@ namespace Unigram.Controls
 
         private void ExitDialog()
         {
+            if (cancelToast)
+                return;
+
             FContactsList.SelectedItem = null;
 
             ViewModel.CancelForward();
@@ -51,12 +70,49 @@ namespace Unigram.Controls
             Windows.UI.ViewManagement.InputPane.GetForCurrentView().Hiding -= ForwardDialog_InputHiding;
         }
 
-
         private async Task PlaySendAnimation()
         {
-            ForwardMenuHideStoryboard2.Begin();
+            double defaultHeight = ForwardMenuBox.Height;
+            cancelToast = false;
 
-            await Task.Delay(200);
+            VerticalAlignment defaultVa = ForwardMenuBox.VerticalAlignment;
+            ForwardMenuBox.VerticalAlignment = VerticalAlignment.Top;
+
+            ForwardMenuBox.Tag = new Tuple<double, VerticalAlignment>(defaultHeight, defaultVa);
+
+            ForwardMenuBoxTransform.Y = (Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().VisibleBounds.Height - ForwardMenuBox.Height) * (defaultVa == VerticalAlignment.Bottom ? 1 : 0.5);
+             
+            Notif.Visibility = Visibility.Visible;
+            ForwardMenuSentStoryboard.Begin();
+
+            await Task.Delay(400);
+
+            ForwardMenuOverlay.Visibility = Visibility.Collapsed;
+
+            pointerOnTopOfToast = false;
+
+            //Avoid closing the NEXT toast here. (close this function before second comes)
+            for (int i = 0; i < 10; i++)
+            {
+                await Task.Delay(400);
+                if (pointerOnTopOfToast)
+                    i = 5;
+                if (cancelToast)
+                    return;
+            }
+            
+
+            ForwardMenuSent2Storybard.Begin();
+
+            await Task.Delay(500);
+            if (cancelToast)
+                return;
+
+            ForwardMenuBox.Tag = null;
+            Notif.Visibility = Visibility.Collapsed;
+            ForwardMenuBox.Height = defaultHeight;
+            ForwardMenuBox.VerticalAlignment = defaultVa;
+            ForwardMenuOverlay.Visibility = Visibility.Visible;
         }
 
         private async Task PlayCancelAnimation()
@@ -96,6 +152,10 @@ namespace Unigram.Controls
 
         private async void ForwardButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            currentDialog = (FContactsList.SelectedItem as TLDialog);
+
+            recieverName.Text = (FContactsList.SelectedItem as TLDialog).FullName;
+
             await ViewModel.Forward((FContactsList.SelectedItem as TLDialog).Peer, ForwardMessage.Text.Trim());
 
             await PlaySendAnimation();
@@ -155,6 +215,46 @@ namespace Unigram.Controls
         private void fDialog_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ForwardMenuBox.MaxHeight = e.NewSize.Height;
+        }
+
+        public void InitDialog()
+        {
+            cancelToast = true;
+
+            var data = ForwardMenuBox.Tag as Tuple<double, VerticalAlignment>;
+
+            if (data != null)
+            {
+                ForwardMenuBox.Tag = null;
+                Notif.Visibility = Visibility.Collapsed;
+                ForwardMenuBox.Height = data.Item1;
+                ForwardMenuBox.VerticalAlignment = data.Item2;
+                ForwardMenuOverlay.Visibility = Visibility.Visible;
+
+                FContactsList.SelectedItem = null;
+                ForwardHeader.Visibility = Visibility.Visible;
+                ForwardSearchBox.Visibility = Visibility.Collapsed;
+                ForwardMessage.Text = "";
+            }
+
+            currentDialog = null;
+
+            ForwardMenuShowStoryboard.Begin();
+        }
+
+        private void NotifInner_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            OnGoToDialogTapped(currentDialog);
+        }
+        
+        private void NotifInner_PointerLeft(object sender, PointerRoutedEventArgs e)
+        {
+            pointerOnTopOfToast = false;
+        }
+
+        private void NotifInner_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            pointerOnTopOfToast = true;
         }
     }
 }
