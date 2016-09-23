@@ -120,6 +120,24 @@ namespace Telegram.Api.Helpers
                 ApplicationData.Current.LocalSettings.Values["ChannelUri"] = value;
             }
         }
+
+        public static int SupportedLayer
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SupportedLayer"))
+                {
+                    return (int)ApplicationData.Current.LocalSettings.Values["SupportedLayer"];
+                }
+
+                // TODO: maybe we have to remove - 1 when publishing in the store
+                return Constants.SupportedLayer - 1;
+            }
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values["SupportedLayer"] = value;
+            }
+        }
     }
 
     //public static class SettingsHelper

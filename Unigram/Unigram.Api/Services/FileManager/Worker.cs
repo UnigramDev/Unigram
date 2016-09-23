@@ -1,10 +1,68 @@
 using System;
 using System.Threading;
+#if !WINDOWS_PHONE
 using System.Threading.Tasks;
+#endif
 using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.FileManager
 {
+#if WINDOWS_PHONE
+    public class Worker
+    {
+        private readonly Thread _thread;
+
+        private readonly ManualResetEvent _resetEvent = new ManualResetEvent(true);
+
+        public ThreadState ThreadState
+        {
+            get { return _thread.ThreadState; }
+        }
+
+        public string Name { get { return _thread.Name; } }
+
+        public Worker(ParameterizedThreadStart start, string name)
+        {
+            _thread = new Thread(state => OnThreadStartInternal(start));
+            _thread.Name = name;
+            //_thread.IsBackground = true;
+            _thread.Start(this);
+        }
+
+        private void OnThreadStartInternal(ParameterizedThreadStart start)
+        {
+            while (true)
+            {
+
+                try
+                {
+                    start(this);
+                }
+                catch (Exception e)
+                {
+                    TLUtils.WriteException(e);
+                }
+
+                _resetEvent.WaitOne();
+            }
+        }
+
+        public bool IsWaiting
+        {
+            get{ return ThreadState == ThreadState.WaitSleepJoin; }
+        }
+
+        public void Start()
+        {
+            _resetEvent.Set();
+        }
+
+        public void Stop()
+        {
+            _resetEvent.Reset();
+        }
+    }
+#else
     public class Worker
     {
         private readonly Task _thread;
@@ -62,4 +120,5 @@ namespace Telegram.Api.Services.FileManager
             _resetEvent.Reset();
         }
     }
+#endif
 }

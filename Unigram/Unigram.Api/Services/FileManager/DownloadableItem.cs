@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.FileManager
@@ -12,13 +11,15 @@ namespace Telegram.Api.Services.FileManager
 
         public TLObject Owner { get; set; }
 
-        public TaskCompletionSource<DownloadableItem> Source { get; set; }
+        public System.Action<DownloadableItem> Callback { get; set; }
+
+        public IList<System.Action<DownloadableItem>> Callbacks { get; set; }
 
         public TLFileLocation Location { get; set; }
 
-        // TODO: public TLInputAudioFileLocation InputAudioLocation { get; set; }
+        public TLInputDocumentFileLocation InputAudioLocation { get; set; }
 
-        // TODO: public TLInputVideoFileLocation InputVideoLocation { get; set; }
+        public TLInputDocumentFileLocation InputVideoLocation { get; set; }
 
         public TLInputDocumentFileLocation InputDocumentLocation { get; set; }
 
@@ -29,5 +30,33 @@ namespace Telegram.Api.Services.FileManager
         public string IsoFileName { get; set; }
 
         public bool Canceled { get; set; }
+
+        public bool SuppressMerge { get; set; }
+
+        #region Http
+
+        public string SourceUri { get; set; }
+
+        public string DestFileName { get; set; }
+
+        public System.Action<DownloadableItem> FaultCallback { get; set; }
+
+        public IList<System.Action<DownloadableItem>> FaultCallbacks { get; set; }
+
+        public double Timeout { get; set; }
+
+        public void IncreaseTimeout()
+        {
+            Timeout = Timeout * 2.0;
+            if (Timeout == 0.0)
+            {
+                Timeout = 4.0;
+            }
+            if (Timeout >= 32.0)
+            {
+                Timeout = 4.0;
+            }
+        }
+        #endregion
     }
 }

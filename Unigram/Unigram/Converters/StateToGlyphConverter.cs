@@ -16,10 +16,10 @@ namespace Unigram.Converters
                 return "\uE600";
 
             if (status == TLMessageState.Confirmed)
-                return "\uE601";
+                return "\uE602";
 
             if (status == TLMessageState.Read)
-                return "\uE602";
+                return "\uE601";
 
             if (status == TLMessageState.Broadcast)
             {

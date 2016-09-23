@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Methods.Channels;
+using Telegram.Api.TL.Methods.Contacts;
 using Telegram.Api.Transport;
 
 namespace Telegram.Api.Services
 {
-    public interface IMTProtoService
+    public partial interface IMTProtoService
     {
+        event EventHandler<TransportCheckedEventArgs> TransportChecked;
+
         string Message { get; }
-        void SetMessageOnTimeAsync(double seconds, string message);
+        void SetMessageOnTime(double seconds, string message);
 
         ITransport GetActiveTransport();
         Tuple<int, int, int> GetCurrentPacketInfo();
@@ -41,206 +45,229 @@ namespace Telegram.Api.Services
         void SaveConfig();
         TLConfig LoadConfig();
 
-        #region Callbacks
-        void GetStateCallbackAsync(Action<TLUpdatesState> callback, Action<TLRPCError> faultCallback = null);
+        void GetStateCallback(Action<TLUpdatesState> callback, Action<TLRPCError> faultCallback = null);
+        void GetDifferenceCallback(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetDifferenceWithoutUpdatesCallback(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null);
 
-        void GetDHConfigCallbackAsync(int version, int randomLength, Action<TLServerDHInnerData> result, Action<TLRPCError> faultCallback = null);
-
-        void GetDifferenceCallbackAsync(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null);
-
-        void SendEncryptedServiceCallbackAsync(TLInputEncryptedChat peer, long randomId, byte[] data, Action<TLMessagesSentEncryptedMessage> callback, Action<TLRPCError> faultCallback = null);
-
-        void AcceptEncryptionCallbackAsync(TLInputEncryptedChat peer, byte[] gb, long keyFingerprint, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null);
-
-        void GetFullChatCallbackAsync(int chatId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback);
-
-        void UpdateChannelCallbackAsync(int channelId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback);
-
-        void GetParticipantCallbackAsync(TLInputChannelBase channelId, TLInputUserBase userId, Action<TLChannelsChannelParticipant> callback, Action<TLRPCError> faultCallback);
-        #endregion
-
-        Task<MTProtoResponse<TLUpdatesState>> GetStateAsync();
-
-        Task<MTProtoResponse<TLUpdatesDifferenceBase>> GetDifferenceAsync(int pts, int date, int qts);
-
-        Task<MTProtoResponse<TLUpdatesDifferenceBase>> GetDifferenceWithoutUpdatesAsync(int pts, int date, int qts);
-
-        Task<MTProtoResponse<bool>> RegisterDeviceAsync(int tokenType, string token);
-
-        Task<MTProtoResponse<bool>> UnregisterDeviceAsync(string token);
+        void RegisterDeviceCallback(int tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void UnregisterDeviceCallback(int tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        
 
         void MessageAcknowledgments(TLVector<long> ids);
 
-        Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber);
+        // auth
+        void SendCodeCallback(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null);
+        void ResendCodeCallback(string phoneNumber, string phoneCodeHash, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
+        void CancelCodeCallback(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void SignInCallback(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null);
+        void CancelSignInAsync();
+        void LogOutAsync(Action callback);
+        void LogOutCallback(Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void LogOutTransportsAsync(Action callback, Action<List<TLRPCError>> faultCallback = null);
+        void SignUpCallback(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Deprecated void SendCallAsync(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+       
+        void SearchCallback(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetDialogsCallback(int offsetDate, int offsetId, TLInputPeerBase offsetPeer, int limit, Action<TLMessagesDialogsBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetHistoryCallback(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        void DeleteMessagesCallback(TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null);
+        void DeleteHistoryCallback(bool justClear, TLInputPeerBase peer, int offset, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null);
+        void DeleteContactCallback(TLInputUserBase id, Action<TLContactsLink> callback, Action<TLRPCError> faultCallback = null);
+        void ReadHistoryCallback(TLInputPeerBase peer, int maxId, int offset, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null);
+        void ReadMessageContentsCallback(TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null);
+        void GetFullChatCallback(int chatId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null);
+        void GetFullUserCallback(TLInputUserBase id, Action<TLUserFull> callback, Action<TLRPCError> faultCallback = null);
+        void GetUsersCallback(TLVector<TLInputUserBase> id, Action<TLVector<TLUserBase>> callback, Action<TLRPCError> faultCallback = null);
 
-        Task<MTProtoResponse<TLAuthAuthorization>> SignInAsync(string phoneNumber, string phoneCodeHash, string phoneCode);
-        Task<MTProtoResponse<TLAuthSentCode>> CancelSignInAsync();
-        
-        Task<MTProtoResponse<bool>> LogOutAsync();
-        void LogOutTransportsAsync();
-        Task<MTProtoResponse<TLAuthAuthorization>> SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName);
-        // DEPRECATED: Task<MTProtoResponse<bool>> SendCallAsync(string phoneNumber, string phoneCodeHash);
-        Task<MTProtoResponse<TLMessagesMessagesBase>> SearchAsync(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit);
+        void SetTypingCallback(TLInputPeerBase peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void SetTypingCallback(TLInputPeerBase peer, TLSendMessageActionBase action, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
-#if LAYER_40
-        Task<MTProtoResponse<TLMessagesDialogsBase>> GetDialogsAsync(int offsetDate, int offsetId, TLInputPeerBase peer, int limit);
-#else
-        void GetDialogsAsync(int? offset, int? maxId, int? limit, Action<TLDialogsBase> callback, Action<TLRPCError> faultCallback = null);
-#endif
-        Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit);
-        Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id);
-        Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteHistoryAsync(TLInputPeerBase peer, int offset);
-        Task<MTProtoResponse<TLContactsLink>> DeleteContactAsync(TLInputUserBase id);
-        Task<MTProtoResponse<TLMessagesAffectedHistory>> ReadHistoryAsync(TLInputPeerBase peer, int maxId);
-        Task<MTProtoResponse<TLMessagesAffectedMessages>> ReadMessageContentsAsync(TLVector<int> id);
-        Task<MTProtoResponse<TLMessagesChatFull>> GetFullChatAsync(int chatId);
-        Task<MTProtoResponse<TLUserFull>> GetFullUserAsync(TLInputUserBase id);
-        Task<MTProtoResponse<TLVector<TLUserBase>>> GetUsersAsync(TLVector<TLInputUserBase> id);
+        void GetContactsCallback(string hash, Action<TLContactsContactsBase> callback, Action<TLRPCError> faultCallback = null);
+        void ImportContactsCallback(TLVector<TLInputContactBase> contacts, bool replace, Action<TLContactsImportedContacts> callback, Action<TLRPCError> faultCallback = null);
 
-        Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, bool typing);
-        Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, TLSendMessageActionBase action);
+        void BlockCallback(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void UnblockCallback(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null); 
+        void GetBlockedCallback(int offset, int limit, Action<TLContactsBlockedBase> callback, Action<TLRPCError> faultCallback = null);
 
-        Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(string hash);
-        Task<MTProtoResponse<TLContactsImportedContacts>> ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace);
+        void UpdateProfileCallback(string firstName, string lastName, string about, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null);
+        void UpdateStatusCallback(bool offline, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
-        Task<MTProtoResponse<bool>> BlockAsync(TLInputUserBase id);
-        Task<MTProtoResponse<bool>> UnblockAsync(TLInputUserBase id);
-        Task<MTProtoResponse<TLContactsBlockedBase>> GetBlockedAsync(int offset, int limit);
+        void GetFileCallback(int dcId, TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFile> callback, Action<TLRPCError> faultCallback = null);
+        void GetFileCallback(TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFile> callback, Action<TLRPCError> faultCallback = null);
+        void SaveFilePartCallback(long fileId, int filePart, byte[] bytes, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void SaveBigFilePartCallback(long fileId, int filePart, int fileTotalParts, byte[] bytes, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
-        Task<MTProtoResponse<TLUserBase>> UpdateProfileAsync(string firstName, string lastName);
-        Task<MTProtoResponse<bool>> UpdateStatusAsync(bool offline);
-
-        Task<MTProtoResponse<TLUploadFile>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit);
-        Task<MTProtoResponse<TLUploadFile>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit);
-        Task<MTProtoResponse<bool>> SaveFilePartAsync(long fileId, int filePart, byte[] bytes);
-        Task<MTProtoResponse<bool>> SaveBigFilePartAsync(long fileId, int filePart, int fileTotalParts, byte[] bytes);
-
-        Task<MTProtoResponse<TLPeerNotifySettingsBase>> GetNotifySettingsAsync(TLInputNotifyPeerBase peer);
-        Task<MTProtoResponse<bool>> UpdateNotifySettingsAsync(TLInputNotifyPeerBase peer, TLInputPeerNotifySettings settings);
-        Task<MTProtoResponse<bool>> ResetNotifySettingsAsync();
+        void GetNotifySettingsCallback(TLInputNotifyPeerBase peer, Action<TLPeerNotifySettingsBase> callback, Action<TLRPCError> faultCallback = null);
+        void UpdateNotifySettingsCallback(TLInputNotifyPeerBase peer, TLInputPeerNotifySettings settings, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void ResetNotifySettingsCallback(Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
         // didn't work
         //void GetUsersAsync(TLVector<TLInputUserBase> id, Action<TLVector<TLUserBase>> callback, Action<TLRPCError> faultCallback = null);
-        Task<MTProtoResponse<TLPhotosPhoto>> UploadProfilePhotoAsync(TLInputFile file, string caption, TLInputGeoPointBase geoPoint, TLInputPhotoCropBase crop);
-        Task<MTProtoResponse<TLPhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id, TLInputPhotoCropBase crop);
+        void UploadProfilePhotoCallback(TLInputFile file, Action<TLPhotosPhoto> callback, Action<TLRPCError> faultCallback = null);
+        void UpdateProfilePhotoCallback(TLInputPhotoBase id, Action<TLPhotoBase> callback, Action<TLRPCError> faultCallback = null);
 
-        Task<MTProtoResponse<TLServerDHInnerData>> GetDHConfigAsync(int version, int randomLength);
-        Task<MTProtoResponse<TLEncryptedChatBase>> RequestEncryptionAsync(TLInputUserBase userId, int randomId, byte[] g_a);
-        Task<MTProtoResponse<TLEncryptedChatBase>> AcceptEncryptionAsync(TLInputEncryptedChat peer, byte[] gb, long keyFingerprint);
-        Task<MTProtoResponse<TLMessagesSentEncryptedMessage>> SendEncryptedAsync(TLInputEncryptedChat peer, long randomId, byte[] data);
-        Task<MTProtoResponse<TLMessagesSentEncryptedFile>> SendEncryptedFileAsync(TLInputEncryptedChat peer, long randomId, byte[] data, TLInputEncryptedFileBase file);
-        Task<MTProtoResponse<bool>> ReadEncryptedHistoryAsync(TLInputEncryptedChat peer, int maxDate);
-        Task<MTProtoResponse<TLMessagesSentEncryptedMessage>> SendEncryptedServiceAsync(TLInputEncryptedChat peer, long randomId, byte[] data);
-        Task<MTProtoResponse<bool>> DiscardEncryptionAsync(int chatId);
-        Task<MTProtoResponse<bool>> SetEncryptedTypingAsync(TLInputEncryptedChat peer, bool typing);
+        void GetDHConfigCallback(int version, int randomLength, Action<TLServerDHInnerData> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Encrypted void RequestEncryptionAsync(TLInputUserBase userId, int randomId, byte[] g_a, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Encrypted void AcceptEncryptionAsync(TLInputEncryptedChat peer, byte[] gb, long keyFingerprint, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Encrypted void SendEncryptedAsync(TLInputEncryptedChat peer, long randomId, byte[] data, Action<TLMessagesSentEncryptedMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null);
+        // TODO: Encrypted void SendEncryptedFileAsync(TLInputEncryptedChat peer, long randomId, byte[] data, TLInputEncryptedFileBase file, Action<TLMessagesSentEncryptedFile> callback, Action fastCallback, Action<TLRPCError> faultCallback = null);
+        // TODO: Encrypted void ReadEncryptedHistoryAsync(TLInputEncryptedChat peer, int maxDate, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Encrypted void SendEncryptedServiceAsync(TLInputEncryptedChat peer, long randomId, byte[] data, Action<TLMessagesSentEncryptedMessage> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Encrypted void DiscardEncryptionAsync(int chatId, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Encrypted void SetEncryptedTypingAsync(TLInputEncryptedChat peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
         void GetConfigInformationAsync(Action<string> callback);
         void GetTransportInformationAsync(Action<string> callback);
-        Task<MTProtoResponse<TLPhotosPhotosBase>> GetUserPhotosAsync(TLInputUserBase userId, int offset, long maxId, int limit);
-        Task<MTProtoResponse<TLNearestDC>> GetNearestDCAsync();
-        Task<MTProtoResponse<TLHelpSupport>> GetSupportAsync();
+        void GetUserPhotosCallback(TLInputUserBase userId, int offset, long maxId, int limit, Action<TLPhotosPhotosBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetNearestDCCallback(Action<TLNearestDC> callback, Action<TLRPCError> faultCallback = null);
+        void GetSupportCallback(Action<TLHelpSupport> callback, Action<TLRPCError> faultCallback = null);
 
-        Task<MTProtoResponse<bool>> ResetAuthorizationsAsync();
+        void ResetAuthorizationsCallback(Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SetInitState();
 
-        Task<MTProtoResponse<TLPong>> PingAsync(long pingId);
-        Task<MTProtoResponse<TLPong>> PingDelayDisconnectAsync(long pingId, int disconnectDelay);
+        void PingCallback(long pingId, Action<TLPong> callback, Action<TLRPCError> faultCallback = null); 
+        void PingDelayDisconnectCallback(long pingId, int disconnectDelay, Action<TLPong> callback, Action<TLRPCError> faultCallback = null);
 
-        Task<MTProtoResponse<TLContactsFound>> SearchAsync(string q, int limit);
-        Task<MTProtoResponse<bool>> CheckUsernameAsync(string username);
-        Task<MTProtoResponse<TLUserBase>> UpdateUsernameAsync(string username);
-        Task<MTProtoResponse<TLAccountDaysTTL>> GetAccountTTLAsync();
-        Task<MTProtoResponse<bool>> SetAccountTTLAsync(TLAccountDaysTTL ttl);
-        Task<MTProtoResponse<bool>> DeleteAccountTTLAsync(string reason);
-        Task<MTProtoResponse<TLAccountPrivacyRules>> GetPrivacyAsync(TLInputPrivacyKeyBase key);
-        Task<MTProtoResponse<TLInputPrivacyRuleBase>> SetPrivacyAsync(TLInputPrivacyKeyBase key, TLVector<TLInputPrivacyRuleBase> rules);
-        Task<MTProtoResponse<TLVector<TLContactStatus>>> GetStatusesAsync();
-        void UpdateTransportInfoAsync(int dcId, string dcIpAddress, int dcPort);
+        void SearchCallback(string q, int limit, Action<TLContactsFound> callback, Action<TLRPCError> faultCallback = null);
+        void CheckUsernameCallback(string username, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void UpdateUsernameCallback(string username, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetAccountTTLCallback(Action<TLAccountDaysTTL> callback, Action<TLRPCError> faultCallback = null);
+        void SetAccountTTLCallback(TLAccountDaysTTL ttl, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void DeleteAccountTTLCallback(string reason, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void GetPrivacyCallback(TLInputPrivacyKeyBase key, Action<TLAccountPrivacyRules> callback, Action<TLRPCError> faultCallback = null);
+        void SetPrivacyCallback(TLInputPrivacyKeyBase key, TLVector<TLInputPrivacyRuleBase> rules, Action<TLAccountPrivacyRules> callback, Action<TLRPCError> faultCallback = null);
+        void GetStatusesCallback(Action<TLVector<TLContactStatus>> callback, Action<TLRPCError> faultCallback = null);
+        void UpdateTransportInfoAsync(int dcId, string dcIpAddress, int dcPort, Action<bool> callback);
 
-        Task<MTProtoResponse<TLContactsResolvedPeer>> ResolveUsernameAsync(string username);
-        Task<MTProtoResponse<TLAuthSentCode>> SendChangePhoneCodeAsync(string phoneNumber);
-        Task<MTProtoResponse<TLUserBase>> ChangePhoneAsync(string phoneNumber, string phoneCodeHash, string phoneCode);
-        Task<MTProtoResponse<TLVector<TLWallPaperBase>>> GetWallpapersAsync();
-        // NO MORE SUPPORTED: Task<MTProtoResponse<TLAllStickersBase>> GetAllStickersAsync(string hash);
+        void ResolveUsernameCallback(string username, Action<TLContactsResolvedPeer> callback, Action<TLRPCError> faultCallback = null);
+        void SendChangePhoneCodeCallback(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
+        void ChangePhoneCallback(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetWallpapersCallback(Action<TLVector<TLWallPaperBase>> callback, Action<TLRPCError> faultCallback = null);
+        void GetAllStickersCallback(byte[] hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null);
 
-        Task<MTProtoResponse<bool>> UpdateDeviceLockedAsync(int period);
+        void UpdateDeviceLockedCallback(int period, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
         void GetSendingQueueInfoAsync(Action<string> callback);
         void GetSyncErrorsAsync(Action<ExceptionInfo, IList<ExceptionInfo>> callback);
-        Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLVector<int> id);
+        void GetMessagesCallback(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
 
         // messages
-        Task<MTProtoResponse<bool>> ReportPeerAsync(TLInputPeerBase peer, TLReportReasonBase reason);
-        Task<MTProtoResponse<bool>> ReportSpamAsync(TLInputPeerBase peer);
-        Task<MTProtoResponse<TLMessage>> SendMessageAsync(TLMessage message);
-        Task<MTProtoResponse<TLUpdatesBase>> SendMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message);
-        Task<MTProtoResponse<TLUpdatesBase>> StartBotAsync(TLInputUserBase bot, string startParam, TLMessage message);
-        // NO MORE SUPPORTED: Task<MTProtoResponse<TLUpdatesBase>> SendBroadcastAsync(TLVector<TLInputUserBase> contacts, TLInputMediaBase inputMedia, TLMessageBase message);
-        Task<MTProtoResponse<TLUpdatesBase>> ForwardMessageAsync(TLInputPeerBase peer, int fwdMessageId, TLMessage message);
-        Task<MTProtoResponse<TLUpdatesBase>> ForwardMessagesAsync(TLInputPeerBase toPeer, TLVector<int> id, IList<TLMessage> messages);
-        Task<MTProtoResponse<TLUpdatesBase>> CreateChatAsync(TLVector<TLInputUserBase> users, string title);
-        Task<MTProtoResponse<TLUpdatesBase>> EditChatTitleAsync(int chatId, string title);
-        Task<MTProtoResponse<TLUpdatesBase>> EditChatPhotoAsync(int chatId, TLInputChatPhotoBase photo);
-        Task<MTProtoResponse<TLUpdatesBase>> AddChatUserAsync(int chatId, TLInputUserBase userId, int fwdLimit);
-        Task<MTProtoResponse<TLUpdatesBase>> DeleteChatUserAsync(int chatId, TLInputUserBase userId);
-        Task<MTProtoResponse<TLMessageMediaBase>> GetWebPagePreviewAsync(string message);
-        Task<MTProtoResponse<TLExportedChatInviteBase>> ExportChatInviteAsync(int chatId);
-        Task<MTProtoResponse<TLChatInviteBase>> CheckChatInviteAsync(string hash);
-        Task<MTProtoResponse<TLUpdatesBase>> ImportChatInviteAsync(string hash);
-        Task<MTProtoResponse<TLMessagesStickerSet>> GetStickerSetAsync(TLInputStickerSetBase stickerset);
-        Task<MTProtoResponse<bool>> InstallStickerSetAsync(TLInputStickerSetBase stickerset);
-        Task<MTProtoResponse<bool>> UninstallStickerSetAsync(TLInputStickerSetBase stickerset);
+        void GetFeaturedStickersCallback(bool full, int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetArchivedStickersCallback(bool full, long offsetId, int limit, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null);
+#if LAYER_42
+        void ReadFeaturedStickersAsync(TLVector<long> id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+#else
+        void ReadFeaturedStickersCallback(Action<bool> callback, Action<TLRPCError> faultCallback = null);
+#endif
+        void GetAllDraftsCallback(Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void SaveDraftCallback(TLInputPeerBase peer, TLDraftMessageBase draft, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void GetInlineBotResultsCallback(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset, Action<TLMessagesBotResults> callback, Action<TLRPCError> faultCallback = null);
+        void SetInlineBotResultsCallback(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void SendInlineBotResultCallback(TLMessage message, Action<TLMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null);
+        void GetDocumentByHashCallback(byte[] sha256, int size, string mimeType, Action<TLDocumentBase> callback, Action<TLRPCError> faultCallback = null);
+        void SearchGifsCallback(string q, int offset, Action<TLMessagesFoundGifs> callback, Action<TLRPCError> faultCallback = null);
+        void GetSavedGifsCallback(int hash, Action<TLMessagesSavedGifsBase> callback, Action<TLRPCError> faultCallback = null);
+        void SaveGifCallback(TLInputDocumentBase id, bool unsave, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void ReorderStickerSetsCallback(bool masks, TLVector<long> order, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void SearchGlobalCallback(string query, int offsetDate, TLInputPeerBase offsetPeer, int offsetId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        void ReportSpamCallback(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void SendMessageCallback(TLMessage message, Action<TLMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null);
+        void SendMediaCallback(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void StartBotCallback(TLInputUserBase bot, string startParam, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void ForwardMessageCallback(TLInputPeerBase peer, int fwdMessageId, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void ForwardMessagesCallback(TLInputPeerBase toPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void CreateChatCallback(TLVector<TLInputUserBase> users, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void EditChatTitleCallback(int chatId, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void EditChatPhotoCallback(int chatId, TLInputChatPhotoBase photo, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void AddChatUserCallback(int chatId, TLInputUserBase userId, int fwdLimit, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void DeleteChatUserCallback(int chatId, TLInputUserBase userId, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetWebPagePreviewCallback(string message, Action<TLMessageMediaBase> callback, Action<TLRPCError> faultCallback = null);
+        void ExportChatInviteCallback(int chatId, Action<TLExportedChatInviteBase> callback, Action<TLRPCError> faultCallback = null);
+        void CheckChatInviteCallback(string hash, Action<TLChatInviteBase> callback, Action<TLRPCError> faultCallback = null);
+        void ImportChatInviteCallback(string hash, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetStickerSetCallback(TLInputStickerSetBase stickerset, Action<TLMessagesStickerSet> callback, Action<TLRPCError> faultCallback = null);
+        void InstallStickerSetCallback(TLInputStickerSetBase stickerset, bool archived, Action<TLMessagesStickerSetInstallResultBase> callback, Action<TLRPCError> faultCallback = null);
+        void UninstallStickerSetCallback(TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void HideReportSpamCallback(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void GetPeerSettingsCallback(TLInputPeerBase peer, Action<TLPeerSettings> callback, Action<TLRPCError> faultCallback = null);
+        void GetBotCallbackAnswerCallback(TLInputPeerBase peer, int messageId, byte[] data, int gameId, Action<TLMessagesBotCallbackAnswer> callback, Action<TLRPCError> faultCallback = null);
+        void GetPeerDialogsCallback(TLVector<TLInputPeerBase> peers, Action<TLMessagesPeerDialogs> callback, Action<TLRPCError> faultCallback = null);
+        void GetRecentStickersCallback(bool attached, int hash, Action<TLMessagesRecentStickersBase> callback, Action<TLRPCError> faultCallback = null);
+        void ClearRecentStickersCallback(bool attached, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void GetUnusedStickersCallback(int limit, Action<TLVector<TLStickerSetCovered>> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Layer 56 void GetAttachedStickersCallback(TLInputStickeredMediaBase media, Action<TLVector<TLStickerSetCovered>> callback, Action<TLRPCError> faultCallback = null);
+
+        // contacts
+        void GetTopPeersCallback(TLContactsGetTopPeers.Flag flags, int offset, int limit, int hash, Action<TLContactsTopPeersBase> callback, Action<TLRPCError> faultCallback = null);
+        void ResetTopPeerRatingCallback(TLTopPeerCategoryBase category, TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
         // channels
-        Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id);
-        Task<MTProtoResponse<TLMessagesChatFull>> UpdateChannelAsync(int channelId);
-        Task<MTProtoResponse<bool>> EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role);
-        Task<MTProtoResponse<TLUpdatesBase>> KickFromChannelAsync(TLChannel channel, TLInputUserBase userId, bool kicked);
-        Task<MTProtoResponse<TLChannelsChannelParticipant>> GetParticipantAsync(TLInputChannelBase inputChannel, TLInputUserBase userId);
-        Task<MTProtoResponse<TLChannelsChannelParticipants>> GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit);
-        Task<MTProtoResponse<TLUpdatesBase>> EditTitleAsync(TLChannel channel, string title);
-        Task<MTProtoResponse<bool>> EditAboutAsync(TLChannel channel, string about);
-        Task<MTProtoResponse<TLUpdatesBase>> EditPhotoAsync(TLChannel channel, TLInputChatPhotoBase photo);
-        Task<MTProtoResponse<TLUpdatesBase>> JoinChannelAsync(TLChannel channel);
-        Task<MTProtoResponse<TLUpdatesBase>> LeaveChannelAsync(TLChannel channel);
-        Task<MTProtoResponse<TLUpdatesBase>> DeleteChannelAsync(TLChannel channel);
-        Task<MTProtoResponse<TLUpdatesBase>> InviteToChannelAsync(TLInputChannelBase channel, TLVector<TLInputUserBase> users);
-        Task<MTProtoResponse<TLMessagesChatFull>> GetFullChannelAsync(TLInputChannelBase channel);
-        Task<MTProtoResponse<TLUpdatesBase>> CreateChannelAsync(int flags, string title, string about);
-        Task<MTProtoResponse<TLExportedChatInviteBase>> ExportInviteAsync(TLInputChannelBase channel);
-        Task<MTProtoResponse<bool>> CheckUsernameAsync(TLInputChannelBase channel, string username);
-        Task<MTProtoResponse<bool>> UpdateUsernameAsync(TLInputChannelBase channel, string username);
-        // TODO: Task<MTProtoResponse<TLMessagesDialogsBase>> GetChannelDialogsAsync(int offset, int limit);
-        // TODO: Task<MTProtoResponse<TLMessagesMessagesBase>> GetImportantHistoryAsync(TLInputChannelBase channel, TLPeerBase peer, bool sync, int offsetId, int addOffset, int limit, int maxId, int minId);
-        Task<MTProtoResponse<bool>> ReadHistoryAsync(TLChannel channel, int maxId);
-        Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLInputChannelBase channel, TLVector<int> id);
+        void GetChannelHistoryCallback(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetMessagesCallback(TLInputChannelBase inputChannel, TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        void UpdateChannelCallback(int? channelId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null);
+        void EditAdminCallback(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void KickFromChannelCallback(TLChannel channel, TLInputUserBase userId, bool kicked, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetParticipantCallback(TLInputChannelBase inputChannel, TLInputUserBase userId, Action<TLChannelsChannelParticipant> callback, Action<TLRPCError> faultCallback = null);
+        void GetParticipantsCallback(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit, Action<TLChannelsChannelParticipants> callback, Action<TLRPCError> faultCallback = null);
+        void EditTitleCallback(TLChannel channel, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void EditAboutCallback(TLChannel channel, string about, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void EditPhotoCallback(TLChannel channel, TLInputChatPhotoBase photo, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void JoinChannelCallback(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void LeaveChannelCallback(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void DeleteChannelCallback(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void InviteToChannelCallback(TLInputChannelBase channel, TLVector<TLInputUserBase> users, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetFullChannelCallback(TLInputChannelBase channel, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null);
+        void CreateChannelCallback(TLChannelsCreateChannel.Flag flags, string title, string about, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void ExportInviteCallback(TLInputChannelBase channel, Action<TLExportedChatInviteBase> callback, Action<TLRPCError> faultCallback = null);
+        void CheckUsernameCallback(TLInputChannelBase channel, string username, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void UpdateUsernameCallback(TLInputChannelBase channel, string username, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Layer 56 void GetImportantHistoryCallback(TLInputChannelBase channel, TLPeerBase peer, bool sync, int? offsetId, int? addOffset, int? limit, int? maxId, int? minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        void ReadHistoryCallback(TLChannel channel, int maxId, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void DeleteMessagesCallback(TLInputChannelBase channel, TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null);
+        void ToggleInvitesCallback(TLInputChannelBase channel, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void ExportMessageLinkCallback(TLInputChannelBase channel, int id, Action<TLExportedMessageLink> callback, Action<TLRPCError> faultCallback = null);
+        void ToggleSignaturesCallback(TLInputChannelBase channel, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetMessageEditDataCallback(TLInputPeerBase peer, int id, Action<TLMessagesMessageEditData> callback, Action<TLRPCError> faultCallback = null);
+        void EditMessageCallback(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void UpdatePinnedMessageCallback(bool silent, TLInputChannelBase channel, int id, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void ReportSpamCallback(TLInputChannelBase channel, TLInputUserBase userId, TLVector<int> id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void DeleteUserHistoryCallback(TLChannel channel, TLInputUserBase userId, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: Layer 56 void GetAdminedPublicChannelsCallback(Action<TLMessagesChats> callback, Action<TLRPCError> faultCallback = null);
+
+        // updates
+        void GetChannelDifferenceCallback(TLInputChannelBase inputChannel, TLChannelMessagesFilterBase filter, int pts, int limit, Action<TLUpdatesChannelDifferenceBase> callback, Action<TLRPCError> faultCallback = null);
 
         // admins
-        Task<MTProtoResponse<TLUpdatesBase>> ToggleChatAdminsAsync(int chatId, bool enabled);
-        Task<MTProtoResponse<bool>> EditChatAdminAsync(int chatId, TLInputUserBase userId, bool isAdmin);
-        // TODO: Probably deprecated: Task<MTProtoResponse<TLUpdatesBase>> DeactivateChatAsync(int chatId, bool enabled);
-        Task<MTProtoResponse<TLUpdatesBase>> MigrateChatAsync(int chatId);
+        void ToggleChatAdminsCallback(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void EditChatAdminCallback(int chatId, TLInputUserBase userId, bool isAdmin, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        // TODO: probably deprecated void DeactivateChatAsync(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void MigrateChatCallback(int chatId, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
 
 
         // account
-        Task<MTProtoResponse<bool>> DeleteAccountAsync(string reason);
-        Task<MTProtoResponse<TLAccountAuthorizations>> GetAuthorizationsAsync();
-        Task<MTProtoResponse<bool>> ResetAuthorizationAsync(long hash);
-        Task<MTProtoResponse<TLAccountPasswordBase>> GetPasswordAsync();
-        Task<MTProtoResponse<TLAccountPasswordSettings>> GetPasswordSettingsAsync(byte[] currentPasswordHash);
-        Task<MTProtoResponse<bool>> UpdatePasswordSettingsAsync(byte[] currentPasswordHash, TLAccountPasswordInputSettings newSettings);
-        Task<MTProtoResponse<TLAuthAuthorization>> CheckPasswordAsync(byte[] passwordHash);
-        Task<MTProtoResponse<TLAuthPasswordRecovery>> RequestPasswordRecoveryAsync();
-        Task<MTProtoResponse<TLAuthAuthorization>> RecoverPasswordAsync(string code);
+        void ReportPeerCallback(TLInputPeerBase peer, TLReportReasonBase reason, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void DeleteAccountCallback(string reason, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void GetAuthorizationsCallback(Action<TLAccountAuthorizations> callback, Action<TLRPCError> faultCallback = null);
+        void ResetAuthorizationCallback(long hash, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void GetPasswordCallback(Action<TLAccountPasswordBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetPasswordSettingsCallback(byte[] currentPasswordHash, Action<TLAccountPasswordSettings> callback, Action<TLRPCError> faultCallback = null);
+        void UpdatePasswordSettingsCallback(byte[] currentPasswordHash, TLAccountPasswordInputSettings newSettings, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void CheckPasswordCallback(byte[] passwordHash, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null);
+        void RequestPasswordRecoveryCallback(Action<TLAuthPasswordRecovery> callback, Action<TLRPCError> faultCallback = null);
+        void RecoverPasswordCallback(string code, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null);
+        void ConfirmPhoneCallback(string phoneCodeHash, string phoneCode, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void SendConfirmPhoneCodeCallback(string hash, bool currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
 
         // help
-        Task<MTProtoResponse<TLHelpAppChangelogBase>> GetAppChangelogAsync(string deviceModel, string systemVersion, string appVersion, string langCode);
+        void GetAppChangelogCallback(string deviceModel, string systemVersion, string appVersion, string langCode, Action<TLHelpAppChangelogBase> callback, Action<TLRPCError> faultCallback = null); 
+        void GetTermsOfServiceCallback(string langCode, Action<TLHelpTermsOfService> callback, Action<TLRPCError> faultCallback = null);
+
 
         // encrypted chats
         void RekeyAsync(TLEncryptedChatBase chat, Action<long> callback);
 
         // background task
-        Task<MTProtoResponse<TLObject>> SendActionsAsync(List<TLObject> actions);
+        void SendActionsAsync(List<TLObject> actions, Action<TLObject, object> callback, Action<TLRPCError> faultCallback = null);
         void ClearQueue();
     }
 }
