@@ -437,7 +437,7 @@ namespace Unigram.ViewModels
 
                 var previousMessage = InsertSendingMessage(forwardedMessage);
 
-                CacheService.SyncSendingMessage(forwardedMessage, previousMessage, toId, async (m) =>
+                CacheService.SyncSendingMessage(forwardedMessage, previousMessage, async (m) =>
                 {
                     await ProtoService.ForwardMessageAsync(toPeer, message.Id, message);
                 });
@@ -484,15 +484,15 @@ namespace Unigram.ViewModels
 
             if (Item.Id != recieverId)
             {
-                await ProtoService.SendMessageAsync(message);
+                await ProtoService.SendMessageAsync(message, () => { });
             }
             else
             {
                 var previousMessage = InsertSendingMessage(message);
 
-                CacheService.SyncSendingMessage(message, previousMessage, toId, async (m) =>
+                CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
                 {
-                    await ProtoService.SendMessageAsync(message);
+                    await ProtoService.SendMessageAsync(message, () => { });
                 });
             }
         }
