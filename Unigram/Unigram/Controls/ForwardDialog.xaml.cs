@@ -49,6 +49,8 @@ namespace Unigram.Controls
 
         private async void ForwardCancel_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            cancelToast = false;
+
             await PlayCancelAnimation();
             ExitDialog();
         }
