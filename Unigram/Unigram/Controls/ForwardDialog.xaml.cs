@@ -54,6 +54,10 @@ namespace Unigram.Controls
             cancelToast = false;
 
             await PlayCancelAnimation();
+
+            if (FContactsList.Items.Count > 0)
+                FContactsList.ScrollIntoView(FContactsList.Items[0]);
+
             ExitDialog();
         }
 
@@ -92,6 +96,9 @@ namespace Unigram.Controls
             await Task.Delay(400);
 
             ForwardMenuOverlay.Visibility = Visibility.Collapsed;
+
+            if (FContactsList.Items.Count > 0)
+                FContactsList.ScrollIntoView(FContactsList.Items[0]);
 
             pointerOnTopOfToast = false;
 
