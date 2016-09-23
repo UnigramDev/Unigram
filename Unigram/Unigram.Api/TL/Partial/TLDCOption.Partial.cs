@@ -12,7 +12,8 @@ namespace Telegram.Api.TL
         [DataMember]
         public String Hostname { get; set; }
 
-
+        [DataMember]
+        public bool IsAuthorized { get; set; }
 
         [DataMember]
         public byte[] AuthKey { get; set; }

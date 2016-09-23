@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Telegram.Api.Extensions;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods.Contacts;
@@ -8,121 +7,121 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
-        public async Task<MTProtoResponse<TLContactsResolvedPeer>> ResolveUsernameAsync(string username)
+        public void ResetTopPeerRatingCallback(TLTopPeerCategoryBase category, TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLContactsResetTopPeerRating { Category = category, Peer = peer };
+
+            SendInformativeMessage<bool>("contacts.resetTopPeerRating", obj, callback.SafeInvoke, faultCallback);
+        }
+
+        public void GetTopPeersCallback(TLContactsGetTopPeers.Flag flags, int offset, int limit, int hash, Action<TLContactsTopPeersBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLContactsGetTopPeers { Flags = flags, Offset  = offset, Limit = limit, Hash = hash };
+
+            SendInformativeMessage<TLContactsTopPeersBase>("contacts.getTopPeers", obj, result =>
+            {
+                var topPeers = result as TLContactsTopPeers;
+                if (topPeers != null)
+                {
+                    _cacheService.SyncUsersAndChats(topPeers.Users, topPeers.Chats,
+                        tuple =>
+                        {
+                            topPeers.Users = tuple.Item1;
+                            topPeers.Chats = tuple.Item2;
+                            callback.SafeInvoke(result);
+                        });
+                }
+                else
+                {
+                    callback.SafeInvoke(result);
+                }
+            }, faultCallback);
+        }
+
+        public void ResolveUsernameCallback(string username, Action<TLContactsResolvedPeer> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsResolveUsername { Username = username };
 
-            var result = await SendInformativeMessage<TLContactsResolvedPeer>("contacts.resolveUsername", obj);
-            if (result.Error == null)
-            {
-                _cacheService.SyncUsersAndChats(result.Value.Users, result.Value.Chats,
-                    tuple =>
-                    {
-                        result.Value.Users = tuple.Item1;
-                        result.Value.Chats = tuple.Item2;
-                    });
-            }
-
-            return result;
+            SendInformativeMessage<TLContactsResolvedPeer>("contacts.resolveUsername", obj,
+                result =>
+                {
+                    _cacheService.SyncUsersAndChats(result.Users, result.Chats, 
+                        tuple =>
+                        {
+                            result.Users = tuple.Item1;
+                            result.Chats = tuple.Item2;
+                            callback.SafeInvoke(result);
+                        });
+                }, 
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLVector<TLContactStatus>>> GetStatusesAsync()
+        public void GetStatusesCallback(Action<TLVector<TLContactStatus>> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsGetStatuses();
 
-            var result = await SendInformativeMessage<TLVector<TLContactStatus>>("contacts.getStatuses", obj);
-            if (result.Error == null)
-            {
-                _cacheService.SyncStatuses(result.Value, null);
-            }
-
-            return result;
+            SendInformativeMessage<TLVector<TLContactStatus>>("contacts.getStatuses", obj, 
+                contacts =>
+                {
+                    _cacheService.SyncStatuses(contacts, callback);
+                }, 
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(string hash)
+        public void GetContactsCallback(string hash, Action<TLContactsContactsBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsGetContacts { Hash = hash };
 
-            var result = await SendInformativeMessage<TLContactsContactsBase>("contacts.getContacts", obj);
-            if (result.Error == null)
-            {
-                var task = new TaskCompletionSource<MTProtoResponse<TLContactsContactsBase>>();
-                _cacheService.SyncContacts(result.Value, (callback) =>
-                {
-                    task.TrySetResult(new MTProtoResponse<TLContactsContactsBase>(callback));
-                });
-                return await task.Task;
-            }
-            return result;
+            SendInformativeMessage<TLContactsContactsBase>("contacts.getContacts", obj, result => _cacheService.SyncContacts(result, callback), faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLContactsImportedContacts>> ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace)
+        public void ImportContactsCallback(TLVector<TLInputContactBase> contacts, bool replace, Action<TLContactsImportedContacts> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsImportContacts { Contacts = contacts, Replace = replace };
 
-            var result = await SendInformativeMessage<TLContactsImportedContacts>("contacts.importContacts", obj);
-            if (result.Error == null)
-            {
-                var task = new TaskCompletionSource<MTProtoResponse<TLContactsImportedContacts>>();
-                _cacheService.SyncContacts(result.Value, (callback) =>
-                {
-                    task.TrySetResult(new MTProtoResponse<TLContactsImportedContacts>(callback));
-                });
-                return await task.Task;
-            }
-            return result;
+            SendInformativeMessage<TLContactsImportedContacts>("contacts.importContacts", obj, result => _cacheService.SyncContacts(result, callback), faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLContactsLink>> DeleteContactAsync(TLInputUserBase id)
+        public void DeleteContactCallback(TLInputUserBase id, Action<TLContactsLink> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsDeleteContact { Id = id };
 
-            var result = await SendInformativeMessage<TLContactsLink>("contacts.deleteContact", obj);
-            if (result.Error == null)
-            {
-                var task = new TaskCompletionSource<MTProtoResponse<TLContactsLink>>();
-                _cacheService.SyncUserLink(result.Value, (callback) =>
-                {
-                    task.TrySetResult(new MTProtoResponse<TLContactsLink>(callback));
-                });
-                await task.Task;
-            }
-            return result;
+            SendInformativeMessage<TLContactsLink>("contacts.deleteContact", obj, result => _cacheService.SyncUserLink(result, callback), faultCallback);
         }
 
-        public Task<MTProtoResponse<bool>> DeleteContactsAsync(TLVector<TLInputUserBase> id)
+        public void DeleteContactsAsync(TLVector<TLInputUserBase> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsDeleteContacts { Id = id };
 
-            return SendInformativeMessage<bool>("contacts.deleteContacts", obj);
+            SendInformativeMessage("contacts.deleteContacts", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<bool>> BlockAsync(TLInputUserBase id)
+        public void BlockCallback(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsBlock { Id = id };
 
-            return SendInformativeMessage<bool>("contacts.block", obj);
+            SendInformativeMessage("contacts.block", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<bool>> UnblockAsync(TLInputUserBase id)
+        public void UnblockCallback(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsUnblock { Id = id };
 
-            return SendInformativeMessage<bool>("contacts.unblock", obj);
+            SendInformativeMessage("contacts.unblock", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLContactsBlockedBase>> GetBlockedAsync(int offset, int limit)
+        public void GetBlockedCallback(int offset, int limit, Action<TLContactsBlockedBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsGetBlocked { Offset = offset, Limit = limit };
 
-            return SendInformativeMessage<TLContactsBlockedBase>("contacts.getBlocked", obj);
+            SendInformativeMessage("contacts.getBlocked", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLContactsFound>> SearchAsync(string q, int limit)
+        public void SearchCallback(string q, int limit, Action<TLContactsFound> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsSearch { Q = q, Limit = limit };
-
-            return SendInformativeMessage<TLContactsFound>("contacts.search", obj);
+            //var invokeWithLayer18 = new TLInvokeWithLayer18 {Data = obj};
+            SendInformativeMessage("contacts.search", obj, callback, faultCallback);
         }
     }
 }

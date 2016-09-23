@@ -38,7 +38,7 @@ namespace Unigram.ViewModels
             _pushService = pushService;
            
             Dialogs = new DialogCollection(protoService, cacheService);
-            SearchDialogs = new DialogCollection(protoService, cacheService);
+            SearchDialogs = new ObservableCollection<TLDialog>();
             Contacts = new ContactsViewModel(ProtoService, cacheService, aggregator);
 
             aggregator.Subscribe(Dialogs);
@@ -47,14 +47,14 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            //await _pushService.RegisterAsync();
+            await _pushService.RegisterAsync();
         }
 
         public ObservableCollection<string> ContactsList = new ObservableCollection<string>();
 
         public DialogCollection Dialogs { get; private set; }
 
-        public DialogCollection SearchDialogs { get; private set; }
+        public ObservableCollection<TLDialog> SearchDialogs { get; private set; }
 
         public ContactsViewModel Contacts { get; private set; }
 
@@ -89,7 +89,7 @@ namespace Unigram.ViewModels
         }
         public string fullName { get; internal set; }
         public string lastSeen { get; internal set; }
-        public int lastSeenEpoch { get; internal set; }
+        public DateTime lastSeenEpoch { get; internal set; }
         public Brush PlaceHolderColor { get; internal set; }
     }
 }

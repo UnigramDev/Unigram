@@ -163,9 +163,12 @@ namespace Unigram.Views
                     // Send the correct message according to the send content
                     var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.Peer, TLMessageState.Sending, true, true, date, txtMessage.Text.Trim(), new TLMessageMediaEmpty(), TLLong.Random(), 0);
                     prgSendStatus.Value = 50;
-                    cacheService.SyncSendingMessage(message, null, dialog.Peer, async (m) =>
+                    cacheService.SyncSendingMessage(message, null, async (m) =>
                     {
-                        await protoService.SendMessageAsync(message);
+                        await protoService.SendMessageAsync(message, () =>
+                        {
+                            // TODO: fast callback
+                        });
                         manualResetEvent.Set();
                         prgSendStatus.Value = 60;
                     });
@@ -176,7 +179,7 @@ namespace Unigram.Views
                 {
                     manualResetEvent.Set();
                 };
-                cacheService.Initialize();
+                cacheService.Init();
                 prgSendStatus.Value = 80;
                 protoService.Initialize();
                 prgSendStatus.Value = 90;

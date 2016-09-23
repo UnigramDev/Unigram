@@ -74,7 +74,7 @@ namespace Unigram.ViewModels
                 }
 
                 var user = CacheService.GetUser(message.UserId) as TLUser;
-                if (user != null)
+                if (user != null && user.IsContact && user.IsSelf == false)
                 {
                     var status = LastSeenHelper.GetLastSeen(user);
                     var listItem = new UsersPanelListItem(user as TLUser);
@@ -111,13 +111,21 @@ namespace Unigram.ViewModels
     {
         public int Compare(UsersPanelListItem x, UsersPanelListItem y)
         {
-            var epoch = y.lastSeenEpoch - x.lastSeenEpoch;
+            var epoch = y.lastSeenEpoch.CompareTo(x.lastSeenEpoch);
             if (epoch == 0)
             {
-                return x.fullName.CompareTo(y.fullName);
+                return y.fullName.CompareTo(x.fullName);
             }
 
             return epoch;
+
+            //var epoch = y.lastSeenEpoch - x.lastSeenEpoch;
+            //if (epoch == 0)
+            //{
+            //    return x.fullName.CompareTo(y.fullName);
+            //}
+
+            //return epoch;
         }
     }
 }

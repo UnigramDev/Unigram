@@ -113,12 +113,12 @@ namespace Telegram.Api.TL
             if (m.FromId > 0) m.HasFromId = true;
             if (m.Media != null) m.HasMedia = true;
 #else
-            var m = new TLMessage36
+            var m = new TLMessage
             {
                 Id = id,
                 FromId = fromId,
                 ToId = toId,
-                Out = TLBool.False,
+                Out = false,
                 _date = date,
                 Message = message,
                 _media = new TLMessageMediaEmpty()
@@ -157,7 +157,7 @@ namespace Telegram.Api.TL
             if (m.Media != null) m.HasMedia = true;
             if (m.ReplyToMsgId != 0) m.HasReplyToMsgId = true;
 #else
-            var m = new TLMessage36
+            var m = new TLMessage
             {
                 FromId = fromId,
                 ToId = toId,
@@ -398,7 +398,7 @@ namespace Telegram.Api.TL
         //    return new int?(seqNo);
         //}
 
-        //public static TLString EncryptMessage(TLObject decryptedMessage, TLEncryptedChatCommon chat)
+        //public static string EncryptMessage(TLObject decryptedMessage, TLEncryptedChatCommon chat)
         //{
         //    var random = new Random();
 
@@ -431,7 +431,7 @@ namespace Telegram.Api.TL
         //    return TLString.FromBigEndianData(resultBytes);
         //}
 
-        //public static TLDecryptedMessageBase DecryptMessage(TLString data, TLEncryptedChat chat, out bool commitChat)
+        //public static TLDecryptedMessageBase DecryptMessage(string data, TLEncryptedChat chat, out bool commitChat)
         //{
         //    commitChat = false;
 
@@ -661,7 +661,7 @@ namespace Telegram.Api.TL
             }
             else
             {
-                WriteLine("Cannot get peer from non TLMessageCommon", LogSeverity.Error);
+                WriteLine("Cannot get peer from non TLMessage", LogSeverity.Error);
             }
 
             return peer;
@@ -964,11 +964,26 @@ namespace Telegram.Api.TL
             return (int)(unixTime / 4294967296);
         }
 
-        public static int? ToTLInt(DateTime date)
+        public static int ToTLInt(DateTime date)
         {
             var unixTime = (long)(Utils.DateTimeToUnixTimestamp(date) * 4294967296); //int * 2^32 + clientDelta
 
-            return new int?((int)(unixTime / 4294967296));
+            return (int)(unixTime / 4294967296);
+        }
+
+        public static int? ToTLInt(byte[] value)
+        {
+            try
+            {
+                var intValue = Convert.ToInt32(value);
+                return intValue;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return null;
         }
 
         public static byte[] GenerateAuthKeyId(byte[] authKey)
