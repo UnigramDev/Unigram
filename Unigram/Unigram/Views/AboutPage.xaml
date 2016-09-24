@@ -106,7 +106,6 @@
                                 Content="Rick Drijvers"
                                 Padding="0,4"
                                 Style="{ThemeResource TextBlockButtonStyle}"
-                                x:Name="btnCoreRickWebsite"
                                 Click="btnCoreRickWebsite_Click"/>
                         <Button Grid.Row="0"
                                 Grid.Column="1"
@@ -121,7 +120,6 @@
                                 Content="Saurav Srivastava"
                                 Padding="0,4"
                                 Style="{ThemeResource TextBlockButtonStyle}"
-                                x:Name="btnCoreSauravWebsite"
                                 Click="btnCoreSauravWebsite_Click"/>
                         <Button Grid.Row="1"
                                 Grid.Column="1"
@@ -136,7 +134,8 @@
                                 Content="Fela Ameghino"
                                 IsEnabled="False"
                                 Padding="0,4"
-                                Style="{ThemeResource TextBlockButtonStyle}" />
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                Click="btnCoreFelaWebsite_Click"/>
                         <Button Grid.Row="2"
                                 Grid.Column="1"
                                 Content="@FrayxRulez"
@@ -150,7 +149,8 @@
                                 Content="Matei Radu"
                                 IsEnabled="False"
                                 Padding="0,4"
-                                Style="{ThemeResource TextBlockButtonStyle}" />
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                Click="btnCoreMateiWebsite_Click"/>
                         <Button Grid.Row="3"
                                 Grid.Column="1"
                                 Content="@Mapei92"
@@ -164,7 +164,6 @@
                                 Content="Kesava Prasad Arul"
                                 Padding="0,4"
                                 Style="{ThemeResource TextBlockButtonStyle}"
-                                x:Name="btnCoreKesavaWebsite"
                                 Click="btnCoreKesavaWebsite_Click"/>
                         <Button Grid.Row="4"
                                 Grid.Column="1"
@@ -179,7 +178,6 @@
                                 Content="Abdel Daoudi"
                                 Padding="0,4"
                                 Style="{ThemeResource TextBlockButtonStyle}" 
-                                x:Name="btnCoreAbdelWebsite"
                                 Click="btnCoreAbdelWebsite_Click"/>
                         <Button Grid.Row="5"
                                 Grid.Column="1"
