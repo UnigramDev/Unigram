@@ -14,7 +14,7 @@ namespace Unigram.Controls
     {
         protected override void OnKeyUp(KeyRoutedEventArgs e)
         {
-            if (e.Key == Windows.System.VirtualKey.Space)
+            if (e.Key == Windows.System.VirtualKey.Space || e.Key == Windows.System.VirtualKey.Enter)
             {
                 var caretPosition = SelectionStart;
                 var result = Emoticon.Pattern.Replace(Text, (match) =>
