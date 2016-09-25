@@ -188,17 +188,29 @@
                         <Setter Target="profilePane.(Grid.RowSpan)" Value="1"/>
                         <Setter Target="profilePane.(Grid.Column)" Value="0"/>
                         <Setter Target="profilePane.(Grid.Row)" Value="0"/>
-                        <Setter Target="elpContentInfoChatIconPicture.Height" Value="120"/>
-                        <Setter Target="elpContentInfoChatIconPicture.Width" Value="120"/>
-                        <Setter Target="elpContentInfoChatIcon.Height" Value="120"/>
-                        <Setter Target="elpContentInfoChatIcon.Width" Value="120"/>
+                        <Setter Target="elpContentInfoChatIconPicture.MinHeight" Value="96"/>
+                        <Setter Target="elpContentInfoChatIconPicture.MinWidth" Value="96"/>
+                        <Setter Target="elpContentInfoChatIcon.MinHeight" Value="120"/>
+                        <Setter Target="elpContentInfoChatIcon.MinWidth" Value="120"/>
                         <Setter Target="profileControlPane.(Grid.RowSpan)" Value="1"/>
                         <Setter Target="profileControlPane.(Grid.Row)" Value="1"/>
                         <Setter Target="profileControlPane.(Grid.ColumnSpan)" Value="2"/>
                         <Setter Target="profileControlPane.(Grid.Column)" Value="0"/>
                         <Setter Target="profileControlPane.Margin" Value="0,12"/>
-                        <Setter Target="elpContentInfoChatIcon.Margin" Value="0,8,0,4"/>
-                        <Setter Target="elpContentInfoChatIconPicture.Margin" Value="0,8,0,4"/>
+                        <Setter Target="grdProfile.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False"/>
+                        <Setter Target="tblUserInfoChatName.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False"/>
+                        <Setter Target="tblUserInfoUserName.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False"/>
+                        <Setter Target="tblUserInfoChatStatus.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False"/>
+                        <Setter Target="tblUserInfoPhone.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False"/>
+                        <Setter Target="tblUserInfoChatName.(RelativePanel.AlignTopWithPanel)" Value="True"/>
+                        <Setter Target="tblUserInfoChatName.(RelativePanel.RightOf)" Value="grdProfile"/>
+                        <Setter Target="tblUserInfoUserName.(RelativePanel.RightOf)" Value="grdProfile"/>
+                        <Setter Target="tblUserInfoChatStatus.(RelativePanel.RightOf)" Value="grdProfile"/>
+                        <Setter Target="tblUserInfoPhone.(RelativePanel.RightOf)" Value="grdProfile"/>
+                        <Setter Target="tblUserInfoChatName.HorizontalAlignment" Value="Left"/>
+                        <Setter Target="tblUserInfoUserName.HorizontalAlignment" Value="Left"/>
+                        <Setter Target="tblUserInfoChatStatus.HorizontalAlignment" Value="Left"/>
+                        <Setter Target="tblUserInfoPhone.HorizontalAlignment" Value="Left"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FilledState">
@@ -210,17 +222,24 @@
                         <Setter Target="profilePane.(Grid.RowSpan)" Value="2"/>
                         <Setter Target="profilePane.(Grid.Column)" Value="0"/>
                         <Setter Target="profilePane.(Grid.Row)" Value="0"/>
-                        <Setter Target="elpContentInfoChatIconPicture.Height" Value="200"/>
-                        <Setter Target="elpContentInfoChatIconPicture.Width" Value="200"/>
-                        <Setter Target="elpContentInfoChatIcon.Height" Value="200"/>
-                        <Setter Target="elpContentInfoChatIcon.Width" Value="200"/>
+                        <Setter Target="elpContentInfoChatIconPicture.MinHeight" Value="200"/>
+                        <Setter Target="elpContentInfoChatIconPicture.MinWidth" Value="200"/>
+                        <Setter Target="elpContentInfoChatIcon.MinHeight" Value="200"/>
+                        <Setter Target="elpContentInfoChatIcon.MinWidth" Value="200"/>
                         <Setter Target="profileControlPane.(Grid.RowSpan)" Value="2"/>
                         <Setter Target="profileControlPane.(Grid.Row)" Value="0"/>
                         <Setter Target="profileControlPane.(Grid.ColumnSpan)" Value="1"/>
                         <Setter Target="profileControlPane.(Grid.Column)" Value="1"/>
                         <Setter Target="profileControlPane.Margin" Value="0,42"/>
-                        <Setter Target="elpContentInfoChatIcon.Margin" Value="0,24,0,12"/>
-                        <Setter Target="elpContentInfoChatIconPicture.Margin" Value="0,24,0,12"/>
+                        <Setter Target="grdProfile.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
+                        <Setter Target="tblUserInfoChatName.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
+                        <Setter Target="tblUserInfoUserName.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
+                        <Setter Target="tblUserInfoChatStatus.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
+                        <Setter Target="tblUserInfoPhone.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
+                        <Setter Target="tblUserInfoChatName.TextAlignment" Value="Center"/>
+                        <Setter Target="tblUserInfoUserName.TextAlignment" Value="Center"/>
+                        <Setter Target="tblUserInfoChatStatus.TextAlignment" Value="Center"/>
+                        <Setter Target="tblUserInfoPhone.TextAlignment" Value="Center"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -234,19 +253,18 @@
             <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
         <Grid x:Name="profilePane" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Grid.RowSpan="2">
-            <StackPanel Margin="0,42,0,0" x:Name="profilePaneStack" VerticalAlignment="Top" >
+            <RelativePanel Margin="0,24,0,24" x:Name="profilePaneStack" VerticalAlignment="Top" >                
                 <!--User icon-->
-                <Grid>
-                    <Ellipse x:Name="elpContentInfoChatIconPicture" Height="200" Width="200" Margin="0,24,0,12">
+                <Grid x:Name="grdProfile" RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="16,8">
+                    <Ellipse x:Name="elpContentInfoChatIconPicture" MinHeight="200" MinWidth="200">
                         <Ellipse.Fill>
                             <ImageBrush ImageSource="{x:Bind ViewModel.photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
                         </Ellipse.Fill>
                     </Ellipse>
                     <Button x:Name="elpContentInfoChatIcon"
                                 HorizontalAlignment="Center"
-                                Width="200"
-                                Height="200"
-                                Margin="0,24,0,12"
+                                MinWidth="200"
+                                MinHeight="200"                                
                                 Padding="0"
                                 BorderThickness="0"
                                 Background="Transparent"                                
@@ -254,13 +272,21 @@
  
                 </Grid>
                 <TextBlock x:Name="tblUserInfoChatName"
+                            MinWidth="300"
+                           RelativePanel.AlignTopWithPanel="False"
+                           RelativePanel.Below="grdProfile"
+                            RelativePanel.AlignHorizontalCenterWithPanel="True"
                                        Visibility="Visible"
                                        HorizontalAlignment="Center"
                                        Text="{x:Bind ViewModel.FullNameField, Mode=OneWay}"
                                        Margin="0,4,0,0"
+                                       TextWrapping="NoWrap"
                                        Style="{ThemeResource SubtitleTextBlockStyle}"
                                        FontWeight="SemiBold" />
-                <TextBlock Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"
+                <TextBlock x:Name="tblUserInfoUserName" Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"
+                                        RelativePanel.Below="tblUserInfoChatName"
+                           MinWidth="300"
+                            RelativePanel.AlignHorizontalCenterWithPanel="True"
                                        Margin="0,4"
                                        HorizontalAlignment="Center"
                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
@@ -271,21 +297,27 @@
                 </TextBlock>
                 <!-- Chat-status (Personal + Group) -->
                 <TextBlock x:Name="tblUserInfoChatStatus"
+                           MinWidth="300"
+                           RelativePanel.Below="tblUserInfoUserName"
+                            RelativePanel.AlignHorizontalCenterWithPanel="True"                          
                                        Visibility="Visible"
                                        HorizontalAlignment="Center"
                                        Text="{x:Bind ViewModel.LastSeen}"
                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                        Style="{ThemeResource BaseTextBlockStyle}"
                                        FontWeight="Normal" />
-                <TextBlock Visibility="Visible"
+                <TextBlock x:Name="tblUserInfoPhone" Visibility="Visible"
+                            MinWidth="300"
+                           RelativePanel.Below="tblUserInfoChatStatus"
+                                       RelativePanel.AlignHorizontalCenterWithPanel="True"
                                        HorizontalAlignment="Center"                                       
-                                       Margin="0,12,0,12"
+                                       Margin="0,16,0,16"
                                        Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                                        Style="{ThemeResource SubtitleTextBlockStyle}"
                                        FontWeight="Medium" >
                     <Run Text="+"/><Run Text="{Binding Item.Phone}"/>
                 </TextBlock>
-            </StackPanel>
+            </RelativePanel>
         </Grid>
         
         <Grid x:Name="profileControlPane" Grid.Column="1" Grid.RowSpan="2" Margin="0,42" >

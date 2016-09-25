@@ -38,7 +38,7 @@ namespace Unigram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            VisualStateManager.GoToState(this, e.NewSize.Width < 800 ? "NarrowState" : "FilledState", false);
+            VisualStateManager.GoToState(this, e.NewSize.Width < 500 ? "NarrowState" : "FilledState", false);
         }
     }
 
