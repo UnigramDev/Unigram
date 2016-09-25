@@ -362,57 +362,280 @@ namespace Unigram.Collections
             if (SettingsHelper.IsAuthorized)
             {
                 var dialogs = _cacheService.GetDialogs();
-                var cachedDialogs = new Dictionary<int, TLDialog>();
-                var clearedDialogs = new List<TLDialog>();
-
-                foreach (var dialog in dialogs)
+                if (dialogs.Count > 0)
                 {
-                    if (!cachedDialogs.ContainsKey(dialog.Peer.Id))
+                    var dictionary = new Dictionary<int, TLDialog>();
+                    var clearedDialogs = new List<TLDialog>();
+                    foreach (var current in dialogs)
                     {
-                        clearedDialogs.Add(dialog);
-                        cachedDialogs[dialog.Peer.Id] = dialog;
+                        if (!dictionary.ContainsKey(current.Index))
+                        {
+                            clearedDialogs.Add(current);
+                            dictionary[current.Index] = current;
+                        }
+                        else
+                        {
+                            var tLDialogBase = dictionary[current.Index];
+                            if (tLDialogBase.Peer is TLPeerUser && current.Peer is TLPeerUser)
+                            {
+                                _cacheService.DeleteDialog(current);
+                            }
+                            else if (tLDialogBase.Peer is TLPeerChat && current.Peer is TLPeerChat)
+                            {
+                                _cacheService.DeleteDialog(current);
+                            }
+                            else if (tLDialogBase.Peer is TLPeerChannel && current.Peer is TLPeerChannel)
+                            {
+                                _cacheService.DeleteDialog(current);
+                            }
+                        }
                     }
-                    else
+
+                    ReorderDrafts(clearedDialogs);
+
+                    Execute.BeginOnUIThread(() =>
                     {
-                        var cached = cachedDialogs[dialog.Peer.Id];
-                        if (cached.Peer is TLPeerUser && dialog.Peer is TLPeerUser)
+                    //this.Status = ((dialogs.get_Count() == 0) ? AppResources.Loading : string.Empty);
+
+                    Clear();
+
+                        int num = 0;
+                        int count = 0;
+                        int num2 = 0;
+                        while (num2 < clearedDialogs.Count && num < 8)
                         {
-                            _cacheService.DeleteDialog(dialog);
+                            Add(clearedDialogs[num2]);
+
+                            var chat = clearedDialogs[num2].With as TLChat;
+                            if (chat == null || !chat.HasMigratedTo)
+                            {
+                                num++;
+                            }
+
+                            num2++;
+                            count++;
                         }
-                        else if (cached.Peer is TLPeerChat && dialog.Peer is TLPeerChat)
+                        if (count < clearedDialogs.Count)
                         {
-                            _cacheService.DeleteDialog(dialog);
+                            Execute.BeginOnUIThread(delegate
+                            {
+                                for (int i = count; i < clearedDialogs.Count; i++)
+                                {
+                                    this.Items.Add(clearedDialogs[i]);
+                                }
+
+                                UpdateItemsAsync(Math.Max(20, this.OfType<TLDialog>().Count()));
+                            });
+                            return;
                         }
+
+                        UpdateItemsAsync(Math.Max(20, this.OfType<TLDialog>().Count()));
+                    });
+                }
+                else
+                {
+                    var response = await _protoService.GetDialogsAsync(0, 0, new TLInputPeerEmpty(), 20);
+                    var result = response.Value;
+                    result.Dialogs = new TLVector<TLDialog>(result.Dialogs.OrderByDescending(x => x.GetDateIndexWithDraft()));
+
+                    foreach (var dialog in result.Dialogs)
+                    {
+                        Add(dialog);
                     }
                 }
 
-                await Execute.BeginOnUIThreadAsync(async () =>
+                //var dialogs = _cacheService.GetDialogs();
+                //var cachedDialogs = new Dictionary<int, TLDialog>();
+                //var clearedDialogs = new List<TLDialog>();
+
+                //foreach (var dialog in dialogs)
+                //{
+                //    if (!cachedDialogs.ContainsKey(dialog.Peer.Id))
+                //    {
+                //        clearedDialogs.Add(dialog);
+                //        cachedDialogs[dialog.Peer.Id] = dialog;
+                //    }
+                //    else
+                //    {
+                //        var cached = cachedDialogs[dialog.Peer.Id];
+                //        if (cached.Peer is TLPeerUser && dialog.Peer is TLPeerUser)
+                //        {
+                //            _cacheService.DeleteDialog(dialog);
+                //        }
+                //        else if (cached.Peer is TLPeerChat && dialog.Peer is TLPeerChat)
+                //        {
+                //            _cacheService.DeleteDialog(dialog);
+                //        }
+                //    }
+                //}
+
+                //await Execute.BeginOnUIThreadAsync(async () =>
+                //{
+                //    //this.Status = ((dialogs.get_Count() == 0) ? AppResources.Loading : string.Empty);
+                //    Clear();
+
+                //    for (int i = 0; i < clearedDialogs.Count && i < 8; i++)
+                //    {
+                //        Add(clearedDialogs[i]);
+                //    }
+
+                //    if (clearedDialogs.Count > 8)
+                //    {
+                //        await Execute.BeginOnUIThreadAsync(async () =>
+                //        {
+                //            for (int i = 8; i < clearedDialogs.Count; i++)
+                //            {
+                //                Add(clearedDialogs[i]);
+                //            }
+
+                //            await UpdateItemsAsync(0, 0, 20);
+                //        });
+
+                //        return;
+                //    }
+
+                //    await UpdateItemsAsync(0, 0, 20);
+                //});
+            }
+        }
+
+        private async void UpdateItemsAsync(int limit)
+        {
+            //base.IsWorking = true;
+
+            var response = await _protoService.GetDialogsAsync(0, 0, new TLInputPeerEmpty(), limit);
+            var result = response.Value;
+            result.Dialogs = new TLVector<TLDialog>(result.Dialogs.OrderByDescending(x => x.GetDateIndexWithDraft()));
+
+            Execute.BeginOnUIThread(() =>
+            {
+                //this.IsWorking = false;
+                //this.IsLastSliceLoaded = (result.Dialogs.Count < limit);
+                //this._offset = limit;
+                bool flag = false;
+                int count = Count;
+                int num = 0;
+                int num2 = 0;
+                while (num < result.Dialogs.Count && num2 < Count)
                 {
-                    //this.Status = ((dialogs.get_Count() == 0) ? AppResources.Loading : string.Empty);
+                    if (count - 1 < num || result.Dialogs[num] != this[num2])
+                    {
+                        var dialog = this[num2] as TLDialog;
+                        if (dialog != null)
+                        {
+                            var messageService = dialog.TopMessageItem as TLMessageService;
+                            //if (messageService != null && messageService.Action is TLMessageActionContactRegistered)
+                            //{
+                            //    num--;
+                            //    goto IL_11D;
+                            //}
+                        }
+
+                        //var encryptedDialog = this[num2] as TLEncryptedDialog;
+                        //if (encryptedDialog == null)
+                        //{
+                        //    flag = true;
+                        //    break;
+                        //}
+                        num--;
+                    }
+                    IL_11D:
+                    num++;
+                    num2++;
+                }
+                if (num < num2)
+                {
+                    for (int i = num; i < num2; i++)
+                    {
+                        if (i < result.Dialogs.Count)
+                        {
+                            this.Items.Add(result.Dialogs[i]);
+                        }
+                    }
+                }
+                //this.Status = ((this.Items.get_Count() == 0 && result.Dialogs.Count == 0) ? string.Format("{0}", AppResources.NoDialogsHere) : string.Empty);
+                if (flag)
+                {
+                    //IEnumerable<TLEncryptedDialog> enumerable = Enumerable.OfType<TLEncryptedDialog>(this.Items);
+                    //int num3 = 0;
+                    //using (IEnumerator<TLEncryptedDialog> enumerator2 = enumerable.GetEnumerator())
+                    //{
+                    //    while (enumerator2.MoveNext())
+                    //    {
+                    //        TLEncryptedDialog current2 = enumerator2.get_Current();
+                    //        for (int j = num3; j < result.Dialogs.Count; j++)
+                    //        {
+                    //            if (current2.GetDateIndexWithDraft() > result.Dialogs[j].GetDateIndexWithDraft())
+                    //            {
+                    //                result.Dialogs.Insert(j, current2);
+                    //                num3 = j;
+                    //                break;
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                    //IEnumerable<TLBroadcastDialog> enumerable2 = Enumerable.OfType<TLBroadcastDialog>(this.Items);
+                    //num3 = 0;
+                    //using (IEnumerator<TLBroadcastDialog> enumerator3 = enumerable2.GetEnumerator())
+                    //{
+                    //    while (enumerator3.MoveNext())
+                    //    {
+                    //        TLBroadcastDialog current3 = enumerator3.get_Current();
+                    //        for (int k = num3; k < result.Dialogs.Count; k++)
+                    //        {
+                    //            if (current3.GetDateIndexWithDraft() > result.Dialogs[k].GetDateIndexWithDraft())
+                    //            {
+                    //                result.Dialogs.Insert(k, current3);
+                    //                num3 = k;
+                    //                break;
+                    //            }
+                    //        }
+                    //    }
+                    //}
+
                     Clear();
 
-                    for (int i = 0; i < clearedDialogs.Count && i < 8; i++)
+                    foreach (var dialog in result.Dialogs)
                     {
-                        Add(clearedDialogs[i]);
+                        Add(dialog);
                     }
 
-                    if (clearedDialogs.Count > 8)
+                    //this.IsLastSliceLoaded = false;
+                    //this._isUpdated = true;
+                    return;
+                }
+                //this._isUpdated = true;
+            });
+            //}, delegate (TLRPCError error)
+            //{
+            //    base.BeginOnUIThread(delegate
+            //    {
+            //        this._isUpdated = true;
+            //        base.Status = string.Empty;
+            //        base.IsWorking = false;
+            //    });
+            //});
+        }
+
+        private static void ReorderDrafts(IList<TLDialog> dialogs)
+        {
+            for (int i = 0; i < dialogs.Count; i++)
+            {
+                var dialog = dialogs[i] as TLDialog;
+                var draftMessage = dialog.Draft as TLDraftMessage;
+                if (draftMessage != null && dialog.GetDateIndexWithDraft() > dialog.GetDateIndex())
+                {
+                    int dateIndexWithDraft = dialog.GetDateIndexWithDraft();
+                    for (int j = 0; j < i; j++)
                     {
-                        await Execute.BeginOnUIThreadAsync(async () =>
+                        if (dateIndexWithDraft >= dialogs[j].GetDateIndexWithDraft())
                         {
-                            for (int i = 8; i < clearedDialogs.Count; i++)
-                            {
-                                Add(clearedDialogs[i]);
-                            }
-
-                            await UpdateItemsAsync(0, 0, 20);
-                        });
-
-                        return;
+                            dialogs.RemoveAt(i);
+                            dialogs.Insert(j, dialog);
+                            break;
+                        }
                     }
-
-                    await UpdateItemsAsync(0, 0, 20);
-                });
+                }
             }
         }
 

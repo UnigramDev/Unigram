@@ -11,6 +11,7 @@ using Telegram.Api.Services.DeviceInfo;
 using Windows.UI.Xaml;
 #elif WINDOWS_PHONE
 using System.Windows.Threading;
+using Microsoft.Devices;
 #endif
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
@@ -20,10 +21,10 @@ using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
 using Telegram.Api.Transport;
 using Telegram.Logs;
-using System.Threading.Tasks;
-using Telegram.Api.TL.Methods.Upload;
-using Telegram.Api.TL.Methods.Auth;
+using Environment = System.Environment;
 using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Methods.Auth;
+using Telegram.Api.TL.Methods.Upload;
 
 namespace Telegram.Api.Services
 {
@@ -41,7 +42,7 @@ namespace Telegram.Api.Services
             var handler = GotUserCountry;
             if (handler != null)
             {
-                handler(this, new CountryEventArgs { Country = country });
+                handler(this, new CountryEventArgs{Country = country});
             }
         }
 
@@ -70,7 +71,19 @@ namespace Telegram.Api.Services
             get { return _config != null ? _config.Country : null; }
         }
 
-        public int CurrentUserId { get; set; }
+        private int _currentUserId;
+        public int CurrentUserId
+        {
+            get
+            {
+                return _currentUserId;
+            }
+            set
+            {
+                _currentUserId = value;
+                
+            }
+        }
 
         public long ClientTicksDelta { get { return _activeTransport.ClientTicksDelta; } }
 
@@ -87,7 +100,7 @@ namespace Telegram.Api.Services
         //        if (_isInitialized != value)
         //        {
         //            _isInitialized = value;
-        //            NotifyOfPropertyChange(() => IsInitialized);
+        //            RaisePropertyChanged(() => IsInitialized);
         //        }
         //    }
         //}
@@ -96,20 +109,22 @@ namespace Telegram.Api.Services
 
         protected virtual void RaiseInitialized()
         {
-            Initialized?.Invoke(this, EventArgs.Empty);
+            var handler = Initialized;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
 
         public event EventHandler InitializationFailed;
 
         protected virtual void RaiseInitializationFailed()
         {
-            InitializationFailed?.Invoke(this, EventArgs.Empty);
+            var handler = InitializationFailed;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
 
         private readonly object _fileTransportRoot = new object();
 
         private readonly object _activeTransportRoot = new object();
-
+        
         private ITransport _activeTransport;
 
         private readonly ITransportService _transportService;
@@ -123,6 +138,10 @@ namespace Telegram.Api.Services
         private readonly IDeviceInfoService _deviceInfo;
 
         private readonly Dictionary<long, HistoryItem> _history = new Dictionary<long, HistoryItem>();
+
+#if DEBUG
+        private readonly Dictionary<long, HistoryItem> _removedHistory = new Dictionary<long, HistoryItem>();
+#endif
 
         public IList<HistoryItem> History
         {
@@ -148,7 +167,9 @@ namespace Telegram.Api.Services
 
         private Timer _deviceLockedTimer;
 
-        public MTProtoService(IDeviceInfoService deviceInfo, IUpdatesService updatesService, ICacheService cacheService, ITransportService transportService, IConnectionService connectionService)
+        private Timer _checkTransportTimer;
+
+        public MTProtoService(IDeviceInfoService deviceInfo,IUpdatesService updatesService, ICacheService cacheService, ITransportService transportService, IConnectionService connectionService)
         {
             var isBackground = deviceInfo != null && deviceInfo.IsBackground;
 
@@ -167,9 +188,9 @@ namespace Telegram.Api.Services
                 keh => { SendStatus += keh; },
                 keh => { SendStatus -= keh; });
 
-            //_statusSubscription = sendStatusEvents
-            //    .Throttle(TimeSpan.FromSeconds(Constants.UpdateStatusInterval))
-            //    .Subscribe(e => UpdateStatusAsync(e.EventArgs.Offline, result => { }));
+            _statusSubscription = sendStatusEvents
+                .Throttle(TimeSpan.FromSeconds(Constants.UpdateStatusInterval))
+                .Subscribe(e => UpdateStatusCallback(e.EventArgs.Offline, result => { }));
 
             _updatesService = updatesService;
             _updatesService.DCOptionsUpdated += OnDCOptionsUpdated;
@@ -178,32 +199,25 @@ namespace Telegram.Api.Services
 
             if (_updatesService != null)
             {
-                //_updatesService.GetDifferenceAsync = GetDifferenceAsync;
-                //_updatesService.GetStateAsync = GetStateAsync;
-                //_updatesService.GetCurrentUserId = GetCurrentUserId;
-                //_updatesService.GetDHConfigAsync = GetDHConfigAsync;
-                //_updatesService.AcceptEncryptionAsync = AcceptEncryptionAsync;
-                //_updatesService.SendEncryptedServiceAsync = SendEncryptedServiceAsync;
-                //_updatesService.SetMessageOnTimeAsync = SetMessageOnTime;
-                //_updatesService.RemoveFromQueue = RemoveFromQueue;
-                //_updatesService.UpdateChannelAsync = UpdateChannelAsync;
-                //_updatesService.GetParticipantAsync = GetParticipantAsync;
-                //_updatesService.GetFullChatAsync = GetFullChatAsync;
-                _updatesService.GetDifferenceAsync = GetDifferenceCallbackAsync;
-                _updatesService.GetStateAsync = GetStateCallbackAsync;
+                _updatesService.GetDifferenceAsync = GetDifferenceCallback;
+                _updatesService.GetStateAsync = GetStateCallback;
                 _updatesService.GetCurrentUserId = GetCurrentUserId;
-                _updatesService.GetDHConfigAsync = GetDHConfigCallbackAsync;
-                _updatesService.AcceptEncryptionAsync = AcceptEncryptionCallbackAsync;
-                _updatesService.SendEncryptedServiceAsync = SendEncryptedServiceCallbackAsync;
-                _updatesService.SetMessageOnTimeAsync = SetMessageOnTimeAsync;
+                _updatesService.GetDHConfigAsync = GetDHConfigCallback;
+                //_updatesService.AcceptEncryptionAsync = AcceptEncryptionAsync;
+                _updatesService.SendEncryptedServiceAsync = SendEncryptedServiceAsync;
+                _updatesService.SetMessageOnTimeAsync = SetMessageOnTime;
                 _updatesService.RemoveFromQueue = RemoveFromQueue;
-                _updatesService.UpdateChannelAsync = UpdateChannelCallbackAsync;
-                _updatesService.GetParticipantAsync = GetParticipantCallbackAsync;
-                _updatesService.GetFullChatAsync = GetFullChatCallbackAsync;
-
+                _updatesService.UpdateChannelAsync = UpdateChannelCallback;
+                _updatesService.GetParticipantAsync = GetParticipantCallback;
+                _updatesService.GetFullChatAsync = GetFullChatCallback;
+                _updatesService.GetFullUserAsync = GetFullUserCallback;
+                _updatesService.GetChannelMessagesAsync = GetMessagesCallback;
             }
 
             _transportService = transportService;
+            _transportService.ConnectionLost += OnConnectionLost;
+            _transportService.FileConnectionLost += OnFileConnectionLost;
+
             lock (_activeTransportRoot)
             {
                 var transportDCId = _activeTransport != null ? _activeTransport.DCId : Constants.FirstServerDCId;
@@ -226,6 +240,11 @@ namespace Telegram.Api.Services
                 }
             }
 
+
+#if DEBUG
+            _checkTransportTimer = new Timer(CheckTransport, this, TimeSpan.FromSeconds(1.0), Timeout.InfiniteTimeSpan);
+#endif
+
             Initialized += OnServiceInitialized;
             InitializationFailed += OnServiceInitializationFailed;
 
@@ -236,6 +255,52 @@ namespace Telegram.Api.Services
             }
 
             Current = this;
+        }
+
+        public event EventHandler<TransportCheckedEventArgs> TransportChecked;
+
+        protected virtual void RaiseTransportChecked(TransportCheckedEventArgs e)
+        {
+            var handler = TransportChecked;
+            if (handler != null) handler(this, e);
+        }
+
+        private void CheckTransport(object state)
+        {
+            //return;
+            ITransport transport = null;
+
+            lock (_activeTransportRoot)
+            {
+                transport = _activeTransport;
+            }
+            var transportId = transport.Id;
+            var sessionId = transport.SessionId;
+            var authKey = transport.AuthKey;
+            var lastReceiveTime = transport.LastReceiveTime;
+            int historyCount;
+            string historyDescription;
+            lock (_historyRoot)
+            {
+                historyCount = _history.Count;
+                historyDescription = string.Join("\n", _history.Values.Select(x => x.Caption + " " + x.Hash));
+            }
+            var currentPacketLength = transport.PacketLength;
+            var lastPacketLength = transport.LastPacketLength;
+
+            RaiseTransportChecked(new TransportCheckedEventArgs
+            {
+                TransportId = transportId,
+                SessionId = sessionId,
+                AuthKey = authKey,
+                LastReceiveTime = lastReceiveTime,
+                HistoryCount = historyCount,
+                HistoryDescription = historyDescription,
+                NextPacketLength = currentPacketLength,
+                LastPacketLength = lastPacketLength
+            });
+
+            _checkTransportTimer.Change(TimeSpan.FromSeconds(1.0), Timeout.InfiniteTimeSpan);
         }
 
         public static IMTProtoService Current { get; protected set; }
@@ -252,7 +317,7 @@ namespace Telegram.Api.Services
             const double timeout = Constants.TimeoutInterval;
             const double delayedTimeout = Constants.DelayedTimeoutInterval;
             const double nonEncryptedTimeout = Constants.NonEncryptedTimeoutInterval;
-
+            
             var timedOutKeys = new List<long>();
             var timedOutValues = new List<HistoryItem>();
             var now = DateTime.Now;
@@ -285,7 +350,12 @@ namespace Telegram.Api.Services
                     {
                         try
                         {
-                            item.FaultCallback.SafeInvoke(new TLRPCError { ErrorCode = 408, ErrorMessage = $"MTProtoService: operation timed out ({timeout}s)" });
+                            item.FaultCallback.SafeInvoke(
+                                new TLRPCError
+                                {
+                                    ErrorCode = (int)TLErrorCode.TIMEOUT,
+                                    ErrorMessage = "MTProtoService: operation timed out (" + timeout + "s)"
+                                });
 #if DEBUG
                             TLUtils.WriteLine(item.Caption + " time out", LogSeverity.Error);
 #endif
@@ -325,12 +395,12 @@ namespace Telegram.Api.Services
                     {
                         try
                         {
-                            //item.FaultCallback.SafeInvoke(
-                            //    new TLRPCError
-                            //    {
-                            //        Code = new int?((int)ErrorCode.TIMEOUT),
-                            //        Message = new string("MTProtoService: operation timed out (" + delayedTimeout + "s)")
-                            //    });
+                            item.FaultCallback.SafeInvoke(
+                                new TLRPCError
+                                {
+                                    ErrorCode = (int)TLErrorCode.TIMEOUT,
+                                    ErrorMessage = "MTProtoService: operation timed out (" + delayedTimeout + "s)"
+                                });
 #if DEBUG
                             TLUtils.WriteLine(item.Caption + " time out", LogSeverity.Error);
 #endif
@@ -361,7 +431,12 @@ namespace Telegram.Api.Services
                         {
                             try
                             {
-                                item.FaultCallback.SafeInvoke(new TLRPCError { ErrorCode = 408, ErrorMessage = $"MTProtoService: operation timed out ({timeout}s)" });
+                                item.FaultCallback.SafeInvoke(
+                                    new TLRPCError
+                                    {
+                                        ErrorCode = (int)TLErrorCode.TIMEOUT,
+                                        ErrorMessage = "MTProtoService: operation timed out (" + timeout + "s)"
+                                    });
 #if DEBUG
                                 TLUtils.WriteLine(item.Caption + " time out", LogSeverity.Error);
 #endif
@@ -377,6 +452,11 @@ namespace Telegram.Api.Services
         }
 
         private void OnConnectionLost(object sender, EventArgs e)
+        {
+            ResetConnection(null);
+        }
+
+        private void OnFileConnectionLost(object sender, EventArgs e)
         {
             ResetConnection(null);
         }
@@ -421,7 +501,7 @@ namespace Telegram.Api.Services
             });
         }
 
-        public void UpdateTransportInfoAsync(int dcId, string dcIpAddress, int dcPort)
+        public void UpdateTransportInfoAsync(int dcId, string dcIpAddress, int dcPort, Action<bool> callback)
         {
             var dcOption = new TLDCOption
             {
@@ -432,7 +512,7 @@ namespace Telegram.Api.Services
             };
 
             var args = new DCOptionsUpdatedEventArgs();
-            args.Update = new TLUpdateDCOptions { DCOptions = new TLVector<TLDCOption> { dcOption } };
+            args.Update = new TLUpdateDCOptions{DCOptions = new TLVector<TLDCOption>{ dcOption }};
 
             OnDCOptionsUpdated(this, args);
 
@@ -461,7 +541,7 @@ namespace Telegram.Api.Services
                 }
             }
 
-            //callback.SafeInvoke(true);
+            callback.SafeInvoke(true);
         }
 
 
@@ -490,15 +570,16 @@ namespace Telegram.Api.Services
                     // 1) update ip address, port, hostname
                     foreach (var oldOption in _config.DCOptions)
                     {
-                        if (newOption.Id == oldOption.Id &&
-                            newOption.IsIpv6 == oldOption.IsIpv6 &&
-                            newOption.IsMediaOnly == oldOption.IsMediaOnly)
+                        if (newOption.Id == oldOption.Id
+                            && newOption.IsIpv6 == oldOption.IsIpv6
+                            && newOption.IsMediaOnly == oldOption.IsMediaOnly
+                            && newOption.IsTcpoOnly == oldOption.IsTcpoOnly)
                         {
                             oldOption.Hostname = newOption.Hostname;
                             oldOption.IpAddress = newOption.IpAddress;
                             oldOption.Port = newOption.Port;
                             // keep AuthKey, SessionId and Salt
-
+                            
                             updated = true;
                         }
                     }
@@ -508,7 +589,7 @@ namespace Telegram.Api.Services
                     {
                         // fix readonly array of dcOption
                         var list = _config.DCOptions.ToList();
-                        list.Add(newOption);
+                        list.Add(newOption); 
                         _config.DCOptions = new TLVector<TLDCOption>(list);
                     }
                 }
@@ -523,10 +604,44 @@ namespace Telegram.Api.Services
 
         private void OnPacketReceived(object sender, DataEventArgs e)
         {
+            var transport = (ITransport) sender;
+#if DEBUG
+            bool byActiveTransport;
+            lock (_activeTransportRoot)
+            {
+                byActiveTransport = transport == _activeTransport;
+            }
+            if (byActiveTransport)
+            {
+                var transportId = transport.Id;
+                var sessionId = transport.SessionId;
+                var authKey = transport.AuthKey;
+                int historyCount;
+                string historyDescription;
+                lock (_historyRoot)
+                {
+                    historyCount = _history.Count;
+                    historyDescription = string.Join("\n", _history.Values.Select(x => x.Caption + " " + x.Hash));
+                }
+
+                RaiseTransportChecked(new TransportCheckedEventArgs
+                {
+                    HistoryCount = historyCount,
+                    HistoryDescription = historyDescription,
+
+                    TransportId = transportId,
+                    SessionId = sessionId,
+                    AuthKey = authKey,
+                    LastReceiveTime = e.LastReceiveTime,
+                    NextPacketLength = e.NextPacketLength,
+                    LastPacketLength = e.Data.Length
+                });
+            }
+#endif
+
             var position = 0;
             var handled = false;
 
-            var transport = (ITransport)sender;
             if (transport.AuthKey == null)
             {
                 try
@@ -542,7 +657,7 @@ namespace Telegram.Api.Services
                             string.Format("OnReceivedBytes by {0} AuthKey==null: invoke historyItem {1} with result {2} (data length={3})",
                                 transport.Id, historyItem.Caption, message.Data.GetType(), e.Data.Length));
 #endif
-                        historyItem.Callback?.TrySetResult(new MTProtoResponse(message.Query));
+                        historyItem.Callback.SafeInvoke(message.Query);
                     }
                     else
                     {
@@ -638,7 +753,7 @@ namespace Telegram.Api.Services
 
                         if (canceledItem.FaultCallback != null)
                         {
-                            //canceledItem.FaultCallback(new TLRPCError { Code = new int?(404) });
+                            canceledItem.FaultCallback(new TLRPCError { ErrorCode = 404 });
                         }
                     }
                 }
@@ -654,7 +769,7 @@ namespace Telegram.Api.Services
             {
                 StartLongPoll();
             }
-
+            
             SendDelayedItemsAsync();
         }
 
@@ -674,7 +789,7 @@ namespace Telegram.Api.Services
 #if LOG_REGISTRATION
                             TLUtils.WriteLog("Dequeue and send delayed item \n" + item);
 #endif
-                            //SendInformativeMessage(item.Caption, item.Object, item.Callback, item.FaultCallback, item.MaxAttempt, item.AttemptFailed);
+                            SendInformativeMessage(item.Caption, item.Object, item.Callback, item.FaultCallback, item.MaxAttempt, item.AttemptFailed);
                         }
 
                         _delayedItems.Clear();
@@ -683,256 +798,258 @@ namespace Telegram.Api.Services
             });
         }
 
-        public async Task Initialize()
+        public void Initialize()
         {
-
-            try
+            Execute.BeginOnThreadPool(() =>
             {
-                var result = TryReadConfig();
-                if (result == null)
+                try
                 {
-
+                    TryReadConfig(
+                        result =>
+                        {
 #if LOG_REGISTRATION
                             TLUtils.WriteLog("Read config with result: " + result);
 #endif
-
+                            if (!result)
+                            {
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("TLUtils.LogRegistration=true");
                                 TLUtils.IsLogEnabled = true;
 #endif
 
-                    lock (_activeTransportRoot)
-                    {
-                        var transportDCId = _activeTransport != null ? _activeTransport.DCId : Constants.FirstServerDCId;
-                        var transportKey = _activeTransport != null ? _activeTransport.AuthKey : null;
-                        var transportSalt = _activeTransport != null ? _activeTransport.Salt : null;
-                        var transportSessionId = _activeTransport != null ? _activeTransport.SessionId : null;
-                        var transportSequenceNumber = _activeTransport != null ? _activeTransport.SequenceNumber : 0;
-                        var transportClientTicksDelta = _activeTransport != null ? _activeTransport.ClientTicksDelta : 0;
-                        bool isCreated;
-                        _activeTransport = _transportService.GetTransport(Constants.FirstServerIpAddress, Constants.FirstServerPort, Type, out isCreated);
-                        if (isCreated)
-                        {
-                            _activeTransport.DCId = Constants.FirstServerDCId;
-                            _activeTransport.AuthKey = transportKey;
-                            _activeTransport.Salt = transportSalt;
-                            _activeTransport.SessionId = transportSessionId;
-                            _activeTransport.SequenceNumber = transportSequenceNumber;
-                            _activeTransport.ClientTicksDelta = transportClientTicksDelta;
-                            _activeTransport.PacketReceived += OnPacketReceived;
-                        }
-                    }
+                                lock (_activeTransportRoot)
+                                {
+                                    var transportDCId = _activeTransport != null ? _activeTransport.DCId : Constants.FirstServerDCId;
+                                    var transportKey = _activeTransport != null ? _activeTransport.AuthKey : null;
+                                    var transportSalt = _activeTransport != null ? _activeTransport.Salt : null;
+                                    var transportSessionId = _activeTransport != null ? _activeTransport.SessionId : null;
+                                    var transportSequenceNumber = _activeTransport != null ? _activeTransport.SequenceNumber : 0;
+                                    var transportClientTicksDelta = _activeTransport != null ? _activeTransport.ClientTicksDelta : 0;
+                                    bool isCreated;
+                                    _activeTransport = _transportService.GetTransport(Constants.FirstServerIpAddress, Constants.FirstServerPort, Type, out isCreated);
+                                    if (isCreated)
+                                    {
+                                        _activeTransport.DCId = Constants.FirstServerDCId;
+                                        _activeTransport.AuthKey = transportKey;
+                                        _activeTransport.Salt = transportSalt;
+                                        _activeTransport.SessionId = transportSessionId;
+                                        _activeTransport.SequenceNumber = transportSequenceNumber;
+                                        _activeTransport.ClientTicksDelta = transportClientTicksDelta;
+                                        _activeTransport.PacketReceived += OnPacketReceived;
+                                    }
+                                }
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("Start generating auth key");
 #endif
-                    var initRequest = await InitAsync();
-                    if (initRequest.Error == null)
-                    {
-                        var tuple = initRequest.Value;
+                                InitAsync(tuple =>
+                                {
 #if LOG_REGISTRATION
                                     TLUtils.WriteLog("Stop generating auth key");
                                     TLUtils.WriteLog("Start help.getNearestDc");
 #endif
-                        lock (_activeTransportRoot)
-                        {
-                            _activeTransport.DCId = Constants.FirstServerDCId;
-                            _activeTransport.AuthKey = tuple.Item1;
-                            _activeTransport.Salt = tuple.Item2;
-                            _activeTransport.SessionId = tuple.Item3;
-                        }
-                        var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Item1);
+                                    lock (_activeTransportRoot)
+                                    {
+                                        _activeTransport.DCId = Constants.FirstServerDCId;
+                                        _activeTransport.AuthKey = tuple.Item1;
+                                        _activeTransport.Salt = tuple.Item2;
+                                        _activeTransport.SessionId = tuple.Item3;
+                                    }
+                                    var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Item1);
 
-                        lock (_authKeysRoot)
-                        {
-                            if (!_authKeys.ContainsKey(authKeyId))
-                            {
-                                _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Item1, AutkKeyId = authKeyId });
-                            }
-                        }
-                        //IsInitialized = true;   // Важно, используется тут, чтобы OnPacketReceived не пытался рассматривать ответ как NonEncryptedMessage
+                                    lock (_authKeysRoot)
+                                    {
+                                        if (!_authKeys.ContainsKey(authKeyId))
+                                        {
+                                            _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Item1, AutkKeyId = authKeyId });
+                                        }
+                                    }
+                                    //IsInitialized = true;   // Важно, используется тут, чтобы OnPacketReceived не пытался рассматривать ответ как NonEncryptedMessage
 
 
-                        var timer = Stopwatch.StartNew();
-                        var nearestDC = await GetNearestDCAsync();
-                        if (nearestDC.Error == null)
-                        {
-
+                                    var timer = Stopwatch.StartNew();
+                                    GetNearestDCCallback(nearestDC =>
+                                    {
 #if LOG_REGISTRATION
                                         TLUtils.WriteLog("Stop help.getNearestDc");
                                         TLUtils.WriteLog("Start help.getConfig");
 #endif
-                            lock (_activeTransportRoot)
-                            {
-                                _activeTransport.DCId = nearestDC.Value.ThisDC;
-                            }
-                            var elapsed = timer.Elapsed;
-                            var timer2 = Stopwatch.StartNew();
-                            var config = await GetConfigAsync();
-                            if (config.Error == null)
-                            {
-                                var elapsed2 = timer2.Elapsed;
-                                var sb = new StringBuilder();
-                                sb.AppendLine("help.getNearestDc " + elapsed.ToString("g"));
-                                sb.AppendLine("help.getConfig " + elapsed2.ToString("g"));
-                                sb.AppendLine("auth time " + _authTimeElapsed.ToString("g"));
-                                Execute.ShowDebugMessage(sb.ToString());
+                                        lock (_activeTransportRoot)
+                                        {
+                                            _activeTransport.DCId = nearestDC.ThisDC;
+                                        }
+                                        var elapsed = timer.Elapsed;
+                                        var timer2 = Stopwatch.StartNew();
+                                        GetConfigAsync(
+                                            config =>
+                                            {
+                                                var elapsed2 = timer2.Elapsed;
+                                                var sb = new StringBuilder();
+                                                sb.AppendLine("help.getNearestDc " + elapsed.ToString("g"));
+                                                sb.AppendLine("help.getConfig " + elapsed2.ToString("g"));
+                                                sb.AppendLine("auth time " + _authTimeElapsed.ToString("g"));
+                                                Execute.ShowDebugMessage(sb.ToString());
 #if LOG_REGISTRATION
                                                 TLUtils.WriteLog("Stop help.getConfig");
 #endif
-                                config.Value.Country = nearestDC.Value.Country.ToString();
+                                                config.Country = nearestDC.Country.ToString();
 
-                                Execute.BeginOnThreadPool(() => RaiseGotUserCountry(config.Value.Country));
+                                                Execute.BeginOnThreadPool(() => RaiseGotUserCountry(config.Country));
 
-                                _config = TLExtensions.Merge(_config, config.Value);
-                                var dcOption = config.Value.DCOptions.First(x => x.IsValidIPv4Option(_activeTransport.DCId));
+                                                _config = TLExtensions.Merge(_config, config);
+                                                var dcOption = config.DCOptions.First(x => x.IsValidIPv4Option(_activeTransport.DCId));
 
-                                dcOption.AuthKey = _activeTransport.AuthKey;
-                                dcOption.Salt = _activeTransport.Salt;
-                                dcOption.SessionId = _activeTransport.SessionId;
+                                                dcOption.AuthKey = _activeTransport.AuthKey;
+                                                dcOption.Salt = _activeTransport.Salt;
+                                                dcOption.SessionId = _activeTransport.SessionId;
 
-                                config.Value.ActiveDCOptionIndex = config.Value.DCOptions.IndexOf(dcOption);
+                                                config.ActiveDCOptionIndex = config.DCOptions.IndexOf(dcOption);
 
-                                _cacheService.SetConfig(config.Value);
-                                RaiseInitialized();
+                                                _cacheService.SetConfig(config);
+                                                RaiseInitialized();
+                                            },
+                                            error => RaiseInitializationFailed());
+                                    },
+                                        error => RaiseInitializationFailed());
+                                },
+                                    error => RaiseInitializationFailed());
                             }
-                        }
-                    }
+                            else
+                            {
+                                var configQ = _config;
+                                var activeDCOPtionIndex = _config.ActiveDCOptionIndex;
+
+
+                                var activeDCOption = configQ.DCOptions[activeDCOPtionIndex];
+                                var getConfigRequired = activeDCOption.Id == null;
+                                // fix to update from 0.1.2.1 to 0.1.2.4
+                                // previously Id is not saved for first DC
+                                lock (_activeTransportRoot)
+                                {
+                                    var transportDCId = _activeTransport != null ? _activeTransport.DCId : 0;
+                                    var transportKey = _activeTransport != null ? _activeTransport.AuthKey : null;
+                                    var transportSalt = _activeTransport != null ? _activeTransport.Salt : null;
+                                    var transportSessionId = _activeTransport != null ? _activeTransport.SessionId : null;
+                                    var transportSequenceNumber = _activeTransport != null ? _activeTransport.SequenceNumber : 0;
+                                    var transportClientTicksDelta = _activeTransport != null ? _activeTransport.ClientTicksDelta : 0;
+                                    bool isCreated;
+                                    _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port, Type, out isCreated);
+                                    if (isCreated)
+                                    {
+                                        _activeTransport.DCId = transportDCId;
+                                        _activeTransport.AuthKey = transportKey;
+                                        _activeTransport.Salt = transportSalt;
+                                        _activeTransport.SessionId = transportSessionId;
+                                        _activeTransport.SequenceNumber = transportSequenceNumber;
+                                        _activeTransport.ClientTicksDelta = transportClientTicksDelta;
+                                        _activeTransport.PacketReceived += OnPacketReceived;
+                                    }
+                                }
+
+                                lock (_activeTransportRoot)
+                                {
+                                    _activeTransport.DCId = getConfigRequired? 0 : activeDCOption.Id;
+                                    _activeTransport.AuthKey = activeDCOption.AuthKey;
+                                    _activeTransport.Salt = activeDCOption.Salt;
+                                    _activeTransport.SessionId = TLLong.Random();
+                                    _activeTransport.ClientTicksDelta = activeDCOption.ClientTicksDelta;
+                                }
+
+                                //fix for version 0.1.3.12
+                                if (activeDCOption.AuthKey == null)
+                                {
+                                    //clear config and try again 
+                                    RaiseAuthorizationRequired(new AuthorizationRequiredEventArgs{ MethodName="Initialize activeDCOption.AuthKey==null", Error = null, AuthKeyId = 0 });
+                                    _config = null;
+                                    _cacheService.SetConfig(_config);
+
+                                    RaiseInitializationFailed();
+
+                                    return;
+                                }
+
+                                var authKeyId = TLUtils.GenerateLongAuthKeyId(activeDCOption.AuthKey);
+                                //Log.Write("Use authKey=" + authKeyId);
+                                lock (_authKeysRoot)
+                                {
+                                    if (!_authKeys.ContainsKey(authKeyId))
+                                    {
+                                        _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = activeDCOption.AuthKey, AutkKeyId = authKeyId });
+                                    }
+                                }
+
+                                if (getConfigRequired)
+                                {
+                                    var timer = Stopwatch.StartNew();
+                                    GetNearestDCCallback(nearestDC =>
+                                    {
+#if LOG_REGISTRATION
+                                        TLUtils.WriteLog("Stop help.getNearestDc");
+                                        TLUtils.WriteLog("Start help.getConfig");
+#endif
+                                        lock (_activeTransportRoot)
+                                        {
+                                            _activeTransport.DCId = nearestDC.ThisDC;
+                                        }
+                                        var elapsed = timer.Elapsed;
+                                        var timer2 = Stopwatch.StartNew();
+                                        GetConfigAsync(
+                                            config =>
+                                            {
+                                                var elapsed2 = timer2.Elapsed;
+                                                var sb = new StringBuilder();
+                                                sb.AppendLine("help.getNearestDc: " + elapsed);
+                                                sb.AppendLine("help.getConfig: " + elapsed2);
+
+                                                Execute.ShowDebugMessage(sb.ToString());
+#if LOG_REGISTRATION
+                                                TLUtils.WriteLog("Stop help.getConfig");
+#endif
+                                                config.Country = nearestDC.Country.ToString();
+                                                _config = TLExtensions.Merge(_config, config);
+                                                var dcOption = config.DCOptions.First(x => x.IsValidIPv4Option(_activeTransport.DCId));
+
+                                                dcOption.AuthKey = _activeTransport.AuthKey;
+                                                dcOption.Salt = _activeTransport.Salt;
+                                                dcOption.SessionId = _activeTransport.SessionId;
+
+                                                config.ActiveDCOptionIndex = config.DCOptions.IndexOf(dcOption);
+                                                _cacheService.SetConfig(config);
+                                                RaiseInitialized();
+                                            },
+                                            error => RaiseInitializationFailed());
+                                    },
+                                        error => RaiseInitializationFailed());
+                                }
+                                else
+                                {
+                                    RaiseInitialized();
+                                }
+
+                            }
+                        });
                 }
-                else
+                catch (Exception e)
                 {
-                    var configQ = _config;
-                    var activeDCOPtionIndex = _config.ActiveDCOptionIndex;
-
-
-                    var activeDCOption = configQ.DCOptions[activeDCOPtionIndex];
-                    var getConfigRequired = activeDCOption.Id == null;
-                    // fix to update from 0.1.2.1 to 0.1.2.4
-                    // previously Id is not saved for first DC
-                    lock (_activeTransportRoot)
-                    {
-                        var transportDCId = _activeTransport != null ? _activeTransport.DCId : 0;
-                        var transportKey = _activeTransport != null ? _activeTransport.AuthKey : null;
-                        var transportSalt = _activeTransport != null ? _activeTransport.Salt : null;
-                        var transportSessionId = _activeTransport != null ? _activeTransport.SessionId : null;
-                        var transportSequenceNumber = _activeTransport != null ? _activeTransport.SequenceNumber : 0;
-                        var transportClientTicksDelta = _activeTransport != null ? _activeTransport.ClientTicksDelta : 0;
-                        bool isCreated;
-                        _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port, Type, out isCreated);
-                        if (isCreated)
-                        {
-                            _activeTransport.DCId = transportDCId;
-                            _activeTransport.AuthKey = transportKey;
-                            _activeTransport.Salt = transportSalt;
-                            _activeTransport.SessionId = transportSessionId;
-                            _activeTransport.SequenceNumber = transportSequenceNumber;
-                            _activeTransport.ClientTicksDelta = transportClientTicksDelta;
-                            _activeTransport.PacketReceived += OnPacketReceived;
-                        }
-                    }
-
-                    lock (_activeTransportRoot)
-                    {
-                        _activeTransport.DCId = getConfigRequired ? 0 : activeDCOption.Id;
-                        _activeTransport.AuthKey = activeDCOption.AuthKey;
-                        _activeTransport.Salt = activeDCOption.Salt;
-                        _activeTransport.SessionId = TLLong.Random();
-                        _activeTransport.ClientTicksDelta = activeDCOption.ClientTicksDelta;
-                    }
-
-                    //fix for version 0.1.3.12
-                    if (activeDCOption.AuthKey == null)
-                    {
-                        //clear config and try again 
-                        RaiseAuthorizationRequired(new AuthorizationRequiredEventArgs { MethodName = "Initialize activeDCOption.AuthKey==null", Error = null, AuthKeyId = 0 });
-                        _config = null;
-                        _cacheService.SetConfig(_config);
-
-                        RaiseInitializationFailed();
-
-                        return;
-                    }
-
-                    var authKeyId = TLUtils.GenerateLongAuthKeyId(activeDCOption.AuthKey);
-                    //Log.Write("Use authKey=" + authKeyId);
-                    lock (_authKeysRoot)
-                    {
-                        if (!_authKeys.ContainsKey(authKeyId))
-                        {
-                            _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = activeDCOption.AuthKey, AutkKeyId = authKeyId });
-                        }
-                    }
-
-                    if (getConfigRequired)
-                    {
-                        var timer = Stopwatch.StartNew();
-                        var nearestDC = await GetNearestDCAsync();
-                        if (nearestDC.Error == null)
-                        {
-
-#if LOG_REGISTRATION
-                            TLUtils.WriteLog("Stop help.getNearestDc");
-                            TLUtils.WriteLog("Start help.getConfig");
-#endif
-                            lock (_activeTransportRoot)
-                            {
-                                _activeTransport.DCId = nearestDC.Value.ThisDC;
-                            }
-                            var elapsed = timer.Elapsed;
-                            var timer2 = Stopwatch.StartNew();
-                            var config = await GetConfigAsync();
-                            if (config.Error == null)
-                            {
-                                var elapsed2 = timer2.Elapsed;
-                                var sb = new StringBuilder();
-                                sb.AppendLine("help.getNearestDc: " + elapsed);
-                                sb.AppendLine("help.getConfig: " + elapsed2);
-
-                                Execute.ShowDebugMessage(sb.ToString());
-#if LOG_REGISTRATION
-                                                TLUtils.WriteLog("Stop help.getConfig");
-#endif
-                                config.Value.Country = nearestDC.Value.Country;
-                                _config = TLExtensions.Merge(_config, config.Value);
-                                var dcOption = config.Value.DCOptions.First(x => x.IsValidIPv4Option(_activeTransport.DCId));
-
-                                dcOption.AuthKey = _activeTransport.AuthKey;
-                                dcOption.Salt = _activeTransport.Salt;
-                                dcOption.SessionId = _activeTransport.SessionId;
-
-                                config.Value.ActiveDCOptionIndex = config.Value.DCOptions.IndexOf(dcOption);
-                                _cacheService.SetConfig(config.Value);
-                                RaiseInitialized();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        RaiseInitialized();
-                    }
+                    TLUtils.WriteException(e);
+                    RaiseInitializationFailed();
                 }
-            }
-            catch (Exception e)
-            {
-                TLUtils.WriteException(e);
-                RaiseInitializationFailed();
-            }
+            });
         }
 
-        private TLConfig TryReadConfig()
+        private void TryReadConfig(Action<bool> callback)
         {
-            TLConfig result = null;
             _cacheService.GetConfigAsync(
                 config =>
                 {
-                    result = config;
+                    _config = config;
+                    if (_config == null)
+                    {
+                        callback(false);
+                        return;
+                    }
+
+                    callback(true);
                 });
-
-            if (result != null)
-            {
-                _config = result;
-            }
-
-            return result;
         }
 
         private void SendAcknowledgments(TLTransportMessage response)
@@ -991,17 +1108,44 @@ namespace Telegram.Api.Services
 
         public void RaiseAuthorizationRequired(AuthorizationRequiredEventArgs args)
         {
-            var handler = AuthorizationRequired;
-            if (handler != null)
-            {
-                handler(this, args);
-            }
+            AuthorizationRequired?.Invoke(this, args);
         }
 
         private void ReceiveBytesAsync(ITransport transport, byte[] bytes)
         {
             try
             {
+                //#if !WIN_RT && DEBUG
+                //                VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
+                //#endif
+                //if (bytes.Length == 4)
+                //{
+                //    if (BitConverter.ToInt32(bytes, 0) == -404)
+                //    {
+
+                //    }
+                //}
+
+                //var position = 0;
+                //var encryptedMessage = (TLEncryptedTransportMessage)new TLEncryptedTransportMessage().FromBytes(bytes, ref position);
+
+                //byte[] authKey2 = null;
+                //lock (_authKeysRoot)
+                //{
+                //    try
+                //    {
+                //        authKey2 = _authKeys[encryptedMessage.AuthKeyId].AuthKey;
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        TLUtils.WriteException("_authKeys", e);
+                //    }
+                //}
+
+                //encryptedMessage.Decrypt(authKey2);
+
+                //position = 0;
+                //TLTransportMessage transportMessage;
                 if (bytes.Length == 4)
                 {
                     if (BitConverter.ToInt32(bytes, 0) == -404)
@@ -1042,28 +1186,44 @@ namespace Telegram.Api.Services
                 //position = 0;
                 TLTransportMessage transportMessage = encryptedMessage.Query as TLTransportMessage;
                 {
-                    if (transportMessage.SessionId != transport.SessionId.Value)
-                    {
-                        throw new Exception("Incorrect session_id");
-                    }
+                    //if (encryptedMessage.Data.Length < 32)
+                    //{
+                    //    var message = string.Format("padding extension data={0} < 32", encryptedMessage.Data.Length);
+                    //    Execute.ShowDebugMessage(message);
+                    //    throw new Exception(message);
+                    //}
+                    //var messageDataLength = BitConverter.ToInt32(encryptedMessage.Data, 28);
+                    //if (32 + messageDataLength > encryptedMessage.Data.Length)
+                    //{
+                    //    var message = string.Format("padding extension data={0} length={1}", encryptedMessage.Data.Length, messageDataLength);
+                    //    Execute.ShowDebugMessage(message);
+                    //    throw new Exception(message);
+                    //}
+                    //transportMessage = TLObject.GetObject<TLTransportMessage>(encryptedMessage.Data, ref position);
+                    //if ((encryptedMessage.Data.Length - position) > 15)
+                    //{
+                    //    var message = string.Format("padding extension data={0} position={1} object={2}", encryptedMessage.Data.Length, position, transportMessage.MessageData);
+                    //    Execute.ShowDebugMessage(message);
+                    //    throw new Exception(message);
+                    //}
+                    //if (transportMessage.SessionId.Value != transport.SessionId.Value)
+                    //{
+                    //    throw new Exception("Incorrect session_id");
+                    //}
                     if ((transportMessage.MsgId % 2) == 0)
                     {
                         throw new Exception("Incorrect message_id");
                     }
 
-                    if (transportMessage != null)
-                    {
-                        transport.UpdateTicksDelta(transportMessage.MsgId);
-                    }
-                    // correct ticks delta on first message
+                    // TODO: maybe delta correction?
 
                     if (_deviceInfo != null && _deviceInfo.IsBackground)
                     {
-
+                        
                     }
 
                     // get acknowledgments
-                    foreach (var acknowledgment in transportMessage.FindInnerObjects<TLMsgsAck>())
+                    foreach (var acknowledgment in TLUtils.FindInnerObjects<TLMsgsAck>(transportMessage))
                     {
                         var ids = acknowledgment.MsgIds;
                         lock (_historyRoot)
@@ -1085,8 +1245,9 @@ namespace Telegram.Api.Services
                     _updatesService.ProcessTransportMessage(transportMessage);
 
                     // bad messages
-                    foreach (var badMessage in transportMessage.FindInnerObjects<TLBadMsgNotification>())
+                    foreach (var badMessage in TLUtils.FindInnerObjects<TLBadMsgNotification>(transportMessage))
                     {
+
                         HistoryItem item = null;
                         lock (_historyRoot)
                         {
@@ -1094,14 +1255,21 @@ namespace Telegram.Api.Services
                             {
                                 item = _history[badMessage.BadMsgId];
                             }
+                            else
+                            {
+                                Execute.ShowDebugMessage("TLBadMessageNotificaiton lost item id=" + badMessage.BadMsgId);
+                            }
                         }
+
+                        Logs.Log.Write(string.Format("{0} {1}", badMessage, item));
 
                         ProcessBadMessage(transportMessage, badMessage, item);
                     }
 
                     // bad server salts
-                    foreach (var badServerSalt in transportMessage.FindInnerObjects<TLBadServerSalt>())
+                    foreach (var badServerSalt in TLUtils.FindInnerObjects<TLBadServerSalt>(transportMessage))
                     {
+
                         lock (_activeTransportRoot)
                         {
                             _activeTransport.Salt = badServerSalt.NewServerSalt;
@@ -1123,7 +1291,13 @@ namespace Telegram.Api.Services
                             {
                                 item = _history[badServerSalt.BadMsgId];
                             }
+                            else
+                            {
+                                Execute.ShowDebugMessage("TLBadServerSalt lost item id=" + badServerSalt.BadMsgId);
+                            }
                         }
+
+                        Logs.Log.Write(string.Format("{0} {1}", badServerSalt, item));
 
                         ProcessBadServerSalt(transportMessage, badServerSalt, item);
                     }
@@ -1139,7 +1313,7 @@ namespace Telegram.Api.Services
                         }
                     }
 
-                    foreach (var pong in transportMessage.FindInnerObjects<TLPong>())
+                    foreach (var pong in TLUtils.FindInnerObjects<TLPong>(transportMessage))
                     {
                         HistoryItem item;
                         lock (_historyRoot)
@@ -1151,39 +1325,79 @@ namespace Telegram.Api.Services
                             }
                             else
                             {
+                                //Execute.ShowDebugMessage("TLPong lost item id=" + pong.MessageId);
                                 continue;
                             }
                         }
 #if DEBUG
-                        NotifyOfPropertyChange(() => History);
+                        RaisePropertyChanged(() => History);
 #endif
 
                         if (item != null)
                         {
-                            item.Callback?.TrySetResult(new MTProtoResponse(pong));
+                            item.Callback.SafeInvoke(pong);
                         }
                     }
 
                     // rpcresults
-                    foreach (var result in transportMessage.FindInnerObjects<TLRPCResult>())
+                    foreach (var result in TLUtils.FindInnerObjects<TLRPCResult>(transportMessage))
                     {
                         HistoryItem historyItem = null;
-
+                        
                         lock (_historyRoot)
                         {
                             if (_history.ContainsKey(result.RequestMsgId))
                             {
                                 historyItem = _history[result.RequestMsgId];
+//#if !DEBUG
                                 _history.Remove(result.RequestMsgId);
+#if DEBUG
+                                _removedHistory[result.RequestMsgId] = new HistoryItem{Caption = historyItem.Caption};
+#endif
+//#endif
                             }
                             else
                             {
+#if DEBUG
+                                if (_removedHistory.ContainsKey(result.RequestMsgId))
+                                {
+                                    var removedHistoryItem = _removedHistory[result.RequestMsgId];
+
+                                    Execute.ShowDebugMessage(string.Format("TLRPCResult LostItem msg_id={0} caption={1} result={2}", result.RequestMsgId, removedHistoryItem != null ? removedHistoryItem.Caption : "null", result.Query));
+                                }
+                                else
+                                {
+                                    HistoryItem removedHistoryItem = null;
+
+                                    Execute.ShowDebugMessage(string.Format("TLRPCResult LostItem msg_id={0} caption={1} result={2}", result.RequestMsgId, removedHistoryItem != null ? removedHistoryItem.Caption : "null", result.Query));
+                                }
+#endif
                                 continue;
                             }
                         }
 #if DEBUG
-                        NotifyOfPropertyChange(() => History);
+                        RaisePropertyChanged(() => History);
+
+                        //if (historyItem != null && historyItem.Caption == "messages.sendMedia")
+                        //{
+                        //    var sendMedia = historyItem.Object as TLSendMedia;
+                        //    if (sendMedia != null)
+                        //    {
+                        //        var inputMedia = sendMedia.Media as TLInputMediaUploadedDocument45;
+                        //        if (inputMedia != null)
+                        //        {
+                        //            var attributeAudio = inputMedia.Attributes.FirstOrDefault(x => x is TLDocumentAttributeAudio46) as TLDocumentAttributeAudio46;
+                        //            if (attributeAudio != null && attributeAudio.Voice)
+                        //            {
+                        //                result.Object = new TLRPCError{Code = 500, Message = new TLString("RPC_CALL_FAILED")};
+                        //                Execute.ShowDebugMessage("Mockup TLRPCError");
+                        //            }
+                        //        }
+                        //    }
+                        //}
 #endif
+
+                        
 
                         //RemoveItemFromSendingQueue(result.RequestMessageId.Value);
 
@@ -1211,18 +1425,17 @@ namespace Telegram.Api.Services
                             var messageData = result.Query;
                             if (messageData is TLGzipPacked)
                             {
-                                messageData = ((TLGzipPacked)messageData).Query;
+                                messageData = ((TLGzipPacked) messageData).Query;
                             }
 
-                            // TODO:
-                            if (/*messageData is TLSentMessageBase ||
-                                messageData is TLStatedMessageBase ||*/
-                                messageData is TLUpdatesBase ||
-                                messageData is TLMessagesSentEncryptedMessage ||
-                                messageData is TLMessagesSentEncryptedFile ||
-                                messageData is TLMessagesAffectedHistory ||
-                                messageData is TLMessagesAffectedMessages ||
-                                historyItem.Object is TLMessagesReadEncryptedHistory)
+                            if (/*messageData is TLSentMessageBase
+                                || messageData is TLStatedMessageBase
+                                ||*/ messageData is TLUpdatesBase
+                                || messageData is TLMessagesSentEncryptedMessage
+                                || messageData is TLMessagesSentEncryptedFile
+                                || messageData is TLMessagesAffectedHistory
+                                || messageData is TLMessagesAffectedMessages
+                                || historyItem.Object is TLMessagesReadEncryptedHistory)
                             {
                                 RemoveFromQueue(historyItem);
                             }
@@ -1232,21 +1445,21 @@ namespace Telegram.Api.Services
 #if DEBUG_UPDATEDCOPTIONS
                                 var dcOption = new TLDCOption
                                 {
-                                    Hostname = new string(""),
-                                    Id = new int?(2),
-                                    IpAddress = new string("109.239.131.193"),
-                                    Port = new int?(80)
+                                    Hostname = new TLString(""),
+                                    Id = 2,
+                                    IpAddress = new TLString("109.239.131.193"),
+                                    Port = 80
                                 };
                                 var dcOptions = new TLVector<TLDCOption> {dcOption};
                                 var update = new TLUpdateDCOptions {DCOptions = dcOptions};
-                                var updateShort = new TLUpdatesShort {Date = new int?(0), Update = update};
+                                var updateShort = new TLUpdatesShort {Date = 0, Update = update};
 
                                 _updatesService.ProcessTransportMessage(new TLTransportMessage{MessageData = updateShort});
 #endif
                             }
                             try
                             {
-                                historyItem.Callback.TrySetResult(new MTProtoResponse(messageData));
+                                historyItem.Callback(messageData);
                             }
                             catch (Exception e)
                             {
@@ -1265,13 +1478,15 @@ namespace Telegram.Api.Services
                 TLUtils.WriteLog("ReceiveBytesAsync Exception=\n" + e);
 #endif
                 TLUtils.WriteException(e);
-
+                
                 ResetConnection(e);
             }
         }
 
-        private async Task ResetConnection(Exception ex)
+        private void ResetConnection(Exception ex)
         {
+            Execute.ShowDebugMessage("ResetConnection");
+
             ClearHistory("ResetConnection", false, ex);
 
             lock (_activeTransportRoot)
@@ -1298,7 +1513,7 @@ namespace Telegram.Api.Services
             }
 
             // to bind authKey to current TCPTransport, get changes, etc...
-            await UpdateStatusAsync(false);
+            UpdateStatusCallback(false, result => { });
         }
 
         public void ClearHistory(string caption, bool createNewSession, Exception e = null)
@@ -1331,16 +1546,56 @@ namespace Telegram.Api.Services
             {
                 foreach (var keyValue in history)
                 {
-                    //if (createNewSession && keyValue.Caption == "updates.getDifference")
-                    //{
-                    //    continue;
-                    //}
-                    keyValue.FaultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = $"MTProtoService.ClearHistory{caption}", /* Exception = e */ });
+                    keyValue.FaultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.ClearHistory " + caption/*TODO: , Exception = e*/});
                 }
             });
         }
 
-        private async Task ProcessRPCError(TLRPCError error, HistoryItem historyItem, long keyId)
+        private void ResetConnection(ITransport transport, Exception ex)
+        {
+            Execute.ShowDebugMessage("ResetConnection dc_id=" + transport.DCId);
+
+            ClearHistory("ResetConnection dc_id=" + transport.DCId, false, ex);
+        }
+
+        public void ClearHistory(string caption, ITransport transport, Exception e = null)
+        {
+            var errorDebugString = string.Format("{0} clear history start {1}", DateTime.Now.ToString("HH:mm:ss.fff"), _history.Count);
+            TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
+
+            _transportService.CloseTransport(transport);
+            // сначала очищаем reqPQ, reqDHParams и setClientDHParams
+            transport.ClearNonEncryptedHistory();
+
+            //затем очищаем help.getNearestDc, help.getConfig и любые другие методы
+            //иначе при вызове faultCallback для help.getNearestDc, help.getConfig и reqPQ снова бы завершился с ошибкой
+            // при вызове ClearNonEncryptedHistory
+            var history = new List<HistoryItem>();
+            lock (_historyRoot)
+            {
+                foreach (var keyValue in _history)
+                {
+                    if (keyValue.Value.DCId == transport.DCId)
+                    {
+                        history.Add(keyValue.Value);
+                    }
+                }
+                foreach (var historyItem in history)
+                {
+                    _history.Remove(historyItem.Hash);
+                }
+            }
+
+            Execute.BeginOnThreadPool(() =>
+            {
+                foreach (var keyValue in history)
+                {
+                    keyValue.FaultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.ClearHistory " + caption/* TODO:, Exception = e*/ });
+                }
+            });
+        }
+
+        private void ProcessRPCError(TLRPCError error, HistoryItem historyItem, long keyId)
         {
             Log.Write(string.Format("RPCError {0} {1}", historyItem.Caption, error));
 
@@ -1358,15 +1613,18 @@ namespace Telegram.Api.Services
                     && historyItem.Caption != "auth.signIn")
                 {
                     //Execute.ShowDebugMessage(string.Format("RPCError {0} {1} (auth required)", historyItem.Caption, error));
-                    RaiseAuthorizationRequired(new AuthorizationRequiredEventArgs { Error = error, MethodName = historyItem.Caption, AuthKeyId = keyId });
+                    RaiseAuthorizationRequired(new AuthorizationRequiredEventArgs{ Error = error, MethodName = historyItem.Caption, AuthKeyId = keyId });
                 }
-                else if (historyItem != null)
+                else if (historyItem != null && historyItem.FaultCallback != null)
                 {
-                    historyItem.FaultCallback?.Invoke(error);
-                    historyItem.Callback.TrySetResult(new MTProtoResponse(error));
+                    historyItem.FaultCallback(error);
                 }
             }
-            else if (error.CodeEquals(TLErrorCode.ERROR_SEE_OTHER) && (error.TypeStarsWith(TLErrorType.NETWORK_MIGRATE) || error.TypeStarsWith(TLErrorType.PHONE_MIGRATE) /*|| error.TypeStarsWith(ErrorType.FILE_MIGRATE)*/ ))
+            else if (error.CodeEquals(TLErrorCode.ERROR_SEE_OTHER)
+                && (error.TypeStarsWith(TLErrorType.NETWORK_MIGRATE)
+                    || error.TypeStarsWith(TLErrorType.PHONE_MIGRATE)
+                    //|| error.TypeStarsWith(ErrorType.FILE_MIGRATE)
+                    ))
             {
 
                 var serverNumber = Convert.ToInt32(
@@ -1376,16 +1634,15 @@ namespace Telegram.Api.Services
                     //.Replace(ErrorType.FILE_MIGRATE.ToString(), string.Empty)
                     .Replace("_", string.Empty));
 
-                if (_config == null
+                if (_config == null 
                     || _config.DCOptions.FirstOrDefault(x => x.IsValidIPv4Option(serverNumber)) == null)
                 {
-                    var config = await GetConfigAsync();
-                    if (config.Error == null)
+                    GetConfigAsync(config =>
                     {
                         // параметры предыдущего подключения не сохраняются, поэтому когда ответ приходит после
                         // подключения к следующему серверу, то не удается расшифровать старые сообщения, пришедшие с 
                         // задержкой с новой солью и authKey
-                        _config = TLExtensions.Merge(_config, config.Value);
+                        _config = TLExtensions.Merge(_config, config);
                         SaveConfig();
                         if (historyItem.Object.GetType() == typeof(TLAuthSendCode))
                         {
@@ -1414,41 +1671,39 @@ namespace Telegram.Api.Services
                             }
 
                             //IsInitialized = false;
-                            var tuple = await InitAsync();
-                            if (tuple.Error == null)
+                            InitAsync(tuple =>
                             {
                                 lock (_activeTransportRoot)
                                 {
                                     _activeTransport.DCId = serverNumber;
-                                    _activeTransport.AuthKey = tuple.Value.Item1;
-                                    _activeTransport.Salt = tuple.Value.Item2;
-                                    _activeTransport.SessionId = tuple.Value.Item3;
+                                    _activeTransport.AuthKey = tuple.Item1;
+                                    _activeTransport.Salt = tuple.Item2;
+                                    _activeTransport.SessionId = tuple.Item3;
                                 }
-                                var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Value.Item1);
+                                var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Item1);
 
                                 lock (_authKeysRoot)
                                 {
                                     if (!_authKeys.ContainsKey(authKeyId))
                                     {
-                                        _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Value.Item1, AutkKeyId = authKeyId });
+                                        _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Item1, AutkKeyId = authKeyId });
                                     }
                                 }
 
-                                dcOption.AuthKey = tuple.Value.Item1;
-                                dcOption.Salt = tuple.Value.Item2;
-                                dcOption.SessionId = tuple.Value.Item3;
+                                dcOption.AuthKey = tuple.Item1;
+                                dcOption.Salt = tuple.Item2;
+                                dcOption.SessionId = tuple.Item3;
 
                                 _config.ActiveDCOptionIndex = _config.DCOptions.IndexOf(dcOption);
                                 _cacheService.SetConfig(_config);
 
                                 //IsInitialized = true;
                                 RaiseInitialized();
-                                // , historyItem.Callback, historyItem.FaultCallback
-                                var response = await SendInformativeMessage<TLObject>(historyItem.Caption, historyItem.Object);
-                            }
-                            else
-                            {
 
+                                SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
+                            },
+                            er =>
+                            {
                                 //restore previous transport
                                 var activeDCOption = _config.DCOptions[_config.ActiveDCOptionIndex];
                                 lock (_activeTransportRoot)
@@ -1470,15 +1725,14 @@ namespace Telegram.Api.Services
                                 TLUtils.WriteLog(string.Format("RPCError restore transport {0} {1}:{2} item {3}", _activeTransport.Id, _activeTransport.Host, _activeTransport.Port, historyItem.Caption));
 #endif
 
-                                // historyItem.FaultCallback.SafeInvoke(er);
-                            }
+                                historyItem.FaultCallback.SafeInvoke(er);
+                            });
                         }
                         else
                         {
-                            var response = await SendInformativeMessage<TLObject>(historyItem.Caption, historyItem.Object);
-                            //MigrateAsync(serverNumber, auth => SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback));
+                            MigrateAsync(serverNumber, auth => SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback));
                         }
-                    }
+                    });
                 }
                 else
                 {
@@ -1512,31 +1766,29 @@ namespace Telegram.Api.Services
                         if (activeDCOption.AuthKey == null)
                         {
                             //IsInitialized = false;
-                            var tuple = await InitAsync();
-                            if (tuple.Error == null)
+                            InitAsync(tuple =>
                             {
-
                                 lock (_activeTransportRoot)
                                 {
                                     _activeTransport.DCId = serverNumber;
-                                    _activeTransport.AuthKey = tuple.Value.Item1;
-                                    _activeTransport.Salt = tuple.Value.Item2;
-                                    _activeTransport.SessionId = tuple.Value.Item3;
+                                    _activeTransport.AuthKey = tuple.Item1;
+                                    _activeTransport.Salt = tuple.Item2;
+                                    _activeTransport.SessionId = tuple.Item3;
                                 }
 
-                                var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Value.Item1);
+                                var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Item1);
 
                                 lock (_authKeysRoot)
                                 {
                                     if (!_authKeys.ContainsKey(authKeyId))
                                     {
-                                        _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Value.Item1, AutkKeyId = authKeyId });
+                                        _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Item1, AutkKeyId = authKeyId });
                                     }
                                 }
 
-                                activeDCOption.AuthKey = tuple.Value.Item1;
-                                activeDCOption.Salt = tuple.Value.Item2;
-                                activeDCOption.SessionId = tuple.Value.Item3;
+                                activeDCOption.AuthKey = tuple.Item1;
+                                activeDCOption.Salt = tuple.Item2;
+                                activeDCOption.SessionId = tuple.Item3;
 
                                 _config.ActiveDCOptionIndex = _config.DCOptions.IndexOf(activeDCOption);
                                 _cacheService.SetConfig(_config);
@@ -1544,12 +1796,10 @@ namespace Telegram.Api.Services
                                 //IsInitialized = true;
                                 RaiseInitialized();
 
-                                SendInformativeMessageInternal<TLObject>(historyItem.Caption, historyItem.Object, historyItem.Callback);
-                                // SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
-                            }
-                            else
+                                SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
+                            },
+                            er =>
                             {
-
                                 //restore previous transport
                                 var activeDCOption2 = _config.DCOptions[_config.ActiveDCOptionIndex];
                                 lock (_activeTransportRoot)
@@ -1571,8 +1821,8 @@ namespace Telegram.Api.Services
                                 TLUtils.WriteLog(string.Format("RPCError restore transport {0} {1}:{2} item {3}", _activeTransport.Id, _activeTransport.Host, _activeTransport.Port, historyItem.Caption));
 #endif
 
-                                //  historyItem.FaultCallback.SafeInvoke(er);
-                            }
+                                historyItem.FaultCallback.SafeInvoke(er);
+                            });
                         }
                         else
                         {
@@ -1598,18 +1848,17 @@ namespace Telegram.Api.Services
                             //IsInitialized = true;
                             RaiseInitialized();
 
-                            SendInformativeMessageInternal<TLObject>(historyItem.Caption, historyItem.Object, historyItem.Callback);
-                            //SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
+                            SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
                         }
                     }
                     else
                     {
-                        SendInformativeMessageInternal<TLObject>(historyItem.Caption, historyItem.Object, historyItem.Callback);
-                        //MigrateAsync(serverNumber, auth => SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback));
+                        MigrateAsync(serverNumber, auth => SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback));
                     }
                 }
             }
-            else if (error.CodeEquals(TLErrorCode.ERROR_SEE_OTHER) && error.TypeStarsWith(TLErrorType.USER_MIGRATE))
+            else if (error.CodeEquals(TLErrorCode.ERROR_SEE_OTHER)
+                && error.TypeStarsWith(TLErrorType.USER_MIGRATE))
             {
                 //return;
 
@@ -1659,8 +1908,7 @@ namespace Telegram.Api.Services
                     _config.ActiveDCOptionIndex = _config.DCOptions.IndexOf(activeDCOption);
                     _cacheService.SetConfig(_config);
 
-                    SendInformativeMessageInternal<TLObject>(historyItem.Caption, historyItem.Object, historyItem.Callback);
-                    // SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
+                    SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
                 }
                 // конец фикса
 
@@ -1759,10 +2007,9 @@ namespace Telegram.Api.Services
                 //}
 
             }
-            else
+            else if (historyItem.FaultCallback != null)
             {
-                historyItem.FaultCallback?.Invoke(error);
-                historyItem.Callback.TrySetResult(new MTProtoResponse(error));
+                historyItem.FaultCallback(error);
             }
         }
 
@@ -1777,13 +2024,13 @@ namespace Telegram.Api.Services
             //        _activeTransport.SetAddress(dcOption.IpAddress.ToString(), dcOption.Port.Value);
 
             //        _isInitialized = false;
-            //        NotifyOfPropertyChange(() => IsInitialized);
+            //        RaisePropertyChanged(() => IsInitialized);
 
             //        _authHelper.InitAsync(tuple =>
             //        {
             //            ImportAuthorizationAsync(exportedAuthorization.Id, exportedAuthorization.Bytes, callback);
             //            _isInitialized = true;
-            //            NotifyOfPropertyChange(() => IsInitialized);
+            //            RaisePropertyChanged(() => IsInitialized);
             //            RaiseInitialized();
             //        });
             //    });
@@ -1806,9 +2053,9 @@ namespace Telegram.Api.Services
                         _history.Remove(historyItem.Hash);
                     }
 #if DEBUG
-                    NotifyOfPropertyChange(() => History);
+                    RaisePropertyChanged(() => History);
 #endif
-
+                    
                     var saveConfig = false;
                     lock (_activeTransportRoot)
                     {
@@ -1826,11 +2073,11 @@ namespace Telegram.Api.Services
                             saveConfig = true;
                             _activeTransport.ClientTicksDelta += serverTime - clientTime;
                             errorInfo.AppendLine("Set ticks delta: " + _activeTransport.ClientTicksDelta + "(" + (serverDateTime - clientDateTime).TotalSeconds + " seconds)");
-                        }
+                        } 
                     }
 
                     TLUtils.WriteLine(errorInfo.ToString(), LogSeverity.Error);
-
+                    
                     if (saveConfig && _config != null)
                     {
                         var dcOption = _config.DCOptions.FirstOrDefault(x => string.Equals(x.IpAddress.ToString(), _activeTransport.Host, StringComparison.OrdinalIgnoreCase));
@@ -1876,12 +2123,12 @@ namespace Telegram.Api.Services
                     {
                         if (_activeTransport.Closed)
                         {
-                            var transportDCId = _activeTransport.DCId;
+                            var transportDCId =  _activeTransport.DCId;
                             var transportKey = _activeTransport.AuthKey;
                             var transportSalt = _activeTransport.Salt;
                             var transportSessionId = _activeTransport.SessionId;
                             var transportSequenceNumber = _activeTransport.SequenceNumber;
-                            var transportClientTicksDelta = _activeTransport.ClientTicksDelta;
+                            var transportClientTicksDelta =_activeTransport.ClientTicksDelta;
                             bool isCreated;
                             _activeTransport = _transportService.GetTransport(_activeTransport.Host, _activeTransport.Port, Type, out isCreated);
                             if (isCreated)
@@ -1896,27 +2143,27 @@ namespace Telegram.Api.Services
                             }
                         }
                     }
-                    Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2,-4} SessionId {3} BadMsgId {4}", string.Format("{0}: {1}", historyItem.Caption, "time"), transportMessage.MsgId, transportMessage.SeqNo, message.SessionId, badMessage.BadMsgId);
+                    //Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2,-4} SessionId {3} BadMsgId {4}", string.Format("{0}: {1}", historyItem.Caption, "time"), transportMessage.MessageId.Value, transportMessage.SeqNo.Value, message.SessionId.Value, badMessage.BadMessageId.Value);
 
                     var captionString = string.Format("{0} {1} {2}", historyItem.Caption, message.SessionId, transportMessage.MsgId);
-                    SendPacketAsync(_activeTransport, captionString, encryptedMessage, (result) => 
-                    {
-                        Debug.WriteLine("@{0} {1} result {2}", string.Format("{0}: {1}", historyItem.Caption, "time"), transportMessage.MsgId, result);
-                    },
-                    (error) =>
-                    {
-                        lock (_historyRoot)
+                    SendPacketAsync(_activeTransport, captionString, encryptedMessage,
+                        result =>
                         {
-                            _history.Remove(historyItem.Hash);
-                        }
-
-#if DEBUG
-                        NotifyOfPropertyChange(() => History);
-#endif
-
-                        faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404 });
-                    });
-
+                            Debug.WriteLine("@{0} {1} result {2}", string.Format("{0}: {1}", historyItem.Caption, "time"), transportMessage.MsgId, result);
+	                
+                        },//ReceiveBytesAsync(result, authKey),
+                        error =>
+                        {
+                            lock (_historyRoot)
+                            {
+                                _history.Remove(historyItem.Hash);
+                            }
+    #if DEBUG
+                            RaisePropertyChanged(() => History);
+    #endif
+                            faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404 });
+                        });
+                    
                     break;
 
                 case 32:
@@ -1945,7 +2192,7 @@ namespace Telegram.Api.Services
                         transportMessage.SeqNo = sequenceNumber;
                         transportMessage.MsgId = _activeTransport.GenerateMessageId(true);
                     }
-                    ((TLTransportMessage)transportMessage).SessionId = _activeTransport.SessionId.Value;
+                    ((TLTransportMessage)transportMessage).SessionId = _activeTransport.SessionId ?? 0;
 
 
                     // TODO: replace with SendInformativeMessage
@@ -1959,7 +2206,7 @@ namespace Telegram.Api.Services
                         _history[historyItem.Hash] = historyItem;
                     }
                     faultCallback = historyItem.FaultCallback;
-
+                    
                     lock (_activeTransportRoot)
                     {
                         if (_activeTransport.Closed)
@@ -1984,20 +2231,17 @@ namespace Telegram.Api.Services
                             }
                         }
                     }
-                    Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2,-4} SessionId {3} BadMsgId {4}", string.Format("{0}: {1}", historyItem.Caption, "seqNo"), transportMessage.MsgId, transportMessage.SeqNo, message.SessionId, badMessage.BadMsgId);
+                    //Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2,-4} SessionId {3} BadMsgId {4}", string.Format("{0}: {1}", historyItem.Caption, "seqNo"), transportMessage.MessageId.Value, transportMessage.SeqNo.Value, message.SessionId.Value, badMessage.BadMessageId.Value);
 
                     captionString = string.Format("{0} {1} {2}", historyItem.Caption, message.SessionId, transportMessage.MsgId);
-                    SendPacketAsync(_activeTransport, captionString, encryptedMessage, (result) =>
-                    {
-                        Debug.WriteLine("@{0} {1} result {2}", string.Format("{0}: {1}", historyItem.Caption, "seqNo"), transportMessage.MsgId, result);
-                    }, 
-                    (error) =>
-                    {
-                        if (faultCallback != null)
+                    SendPacketAsync(_activeTransport, captionString, encryptedMessage,
+                        result =>
                         {
-                            faultCallback.Invoke(null);
-                        }
-                    });
+                            Debug.WriteLine("@{0} {1} result {2}", string.Format("{0}: {1}", historyItem.Caption, "seqNo"), transportMessage.MsgId, result);
+	                
+                        },//ReceiveBytesAsync(result, authKey)}, 
+                        error => { if (faultCallback != null) faultCallback(null); });
+                    
                     break;
             }
         }
@@ -2017,7 +2261,7 @@ namespace Telegram.Api.Services
                 _history.Remove(historyItem.Hash);
             }
 #if DEBUG
-            NotifyOfPropertyChange(() => History);
+            RaisePropertyChanged(() => History);
 #endif
 
             TLUtils.WriteLine("CORRECT SERVER SALT:");
@@ -2048,7 +2292,7 @@ namespace Telegram.Api.Services
                         transportMessage.MsgId = _activeTransport.GenerateMessageId(true);
                         TLUtils.WriteLine("Corrected client time: " + TLUtils.MessageIdString(transportMessage.MsgId));
                     }
-
+                    
                     if (saveConfig && _config != null)
                     {
                         var dcOption = _config.DCOptions.FirstOrDefault(x => string.Equals(x.IpAddress.ToString(), _activeTransport.Host, StringComparison.OrdinalIgnoreCase));
@@ -2058,7 +2302,7 @@ namespace Telegram.Api.Services
                             _cacheService.SetConfig(_config);
                         }
                     }
-
+                   
                     break;
                 case 48:
                     break;
@@ -2070,7 +2314,7 @@ namespace Telegram.Api.Services
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
             lock (_historyRoot)
             {
-                _history[historyItem.Hash] = historyItem;
+                _history[historyItem.Hash] = historyItem; 
             }
             var faultCallback = historyItem.FaultCallback;
 
@@ -2100,17 +2344,13 @@ namespace Telegram.Api.Services
             }
 
             var captionString = string.Format("{0} {1} {2}", historyItem.Caption, message.SessionId, transportMessage.MsgId);
-            SendPacketAsync(_activeTransport, captionString, encryptedMessage, (result) =>
-            {
-                Debug.WriteLine("@{0} {1} result {2}", historyItem.Caption, transportMessage.MsgId, result);
-            }, 
-            (error) =>
-            {
-                if (faultCallback != null)
+            SendPacketAsync(_activeTransport, captionString, encryptedMessage,
+                result =>
                 {
-                    faultCallback.Invoke(new TLRPCError());
-                }
-            });
+                    Debug.WriteLine("@{0} {1} result {2}", historyItem.Caption, transportMessage.MsgId, result);
+	                
+                },//ReceiveBytesAsync(result, authKey)}, 
+                error => { if (faultCallback != null) faultCallback(new TLRPCError()); });
         }
 
 
@@ -2120,8 +2360,7 @@ namespace Telegram.Api.Services
 
         public void RaiseSendStatus(SendStatusEventArgs e)
         {
-            var handler = SendStatus;
-            if (handler != null) handler(this, e);
+            SendStatus?.Invoke(this, e);
         }
 
         public void Dispose()
@@ -2139,14 +2378,14 @@ namespace Telegram.Api.Services
                 if (_message != value)
                 {
                     _message = value;
-                    NotifyOfPropertyChange(() => Message);
+                    RaisePropertyChanged(() => Message);
                 }
             }
         }
 
         private DispatcherTimer _messageScheduler;
 
-        public void SetMessageOnTimeAsync(double seconds, string message)
+        public void SetMessageOnTime(double seconds, string message)
         {
             //Logs.Log.Write(string.Format("MTProtoService.SetMessageOnTime sec={0}, message={1}", seconds, message));
 
@@ -2154,7 +2393,7 @@ namespace Telegram.Api.Services
             {
                 if (_messageScheduler == null)
                 {
-                    _messageScheduler = new DispatcherTimer();
+                    _messageScheduler = new DispatcherTimer(); 
                     _messageScheduler.Tick += MessageScheduler_Tick;
                 }
 
@@ -2193,5 +2432,17 @@ namespace Telegram.Api.Services
         {
             Offline = offline;
         }
+    }
+
+    public class TransportCheckedEventArgs : EventArgs
+    {
+        public int TransportId { get; set; }
+        public long? SessionId { get; set; }
+        public byte[] AuthKey { get; set; }
+        public DateTime? LastReceiveTime { get; set; }
+        public int HistoryCount { get; set; }
+        public int NextPacketLength { get; set; }
+        public int LastPacketLength { get; set; }
+        public string HistoryDescription { get; set; }
     }
 }

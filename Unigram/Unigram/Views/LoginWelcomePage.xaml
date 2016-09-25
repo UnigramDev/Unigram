@@ -14,110 +14,149 @@
     </Page.Transitions>
 
     <Page.Resources>
+        <Style x:Key="IndicatorListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="MinWidth" Value="0"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Grid Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver"/>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="fillColor" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)" BeginTime="00:00:00" Duration="0" To="#3c3c3a"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOverSelected">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="fillColor" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)" BeginTime="00:00:00" Duration="0" To="#3c3c3a"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PressedSelected">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="fillColor" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)" BeginTime="00:00:00" Duration="0" To="#3c3c3a"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Ellipse x:Name="fillColor" IsHitTestVisible="False" Width="8" Height="8" Fill="#bfbfbf" Margin="4,0"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-        <Style x:Key="PhoneCodeTextBoxStyle" TargetType="TextBox">
-            <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}"/>
-            <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}"/>
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-            <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltHighBrush}"/>
-            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"/>
-            <Setter Property="SelectionHighlightColor" Value="{ThemeResource SystemControlHighlightAccentBrush}"/>
-            <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}"/>
-            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto"/>
-            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto"/>
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
+        <Style x:Key="IndicatorListViewStyle" TargetType="ListView">
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="TabNavigation" Value="Once"/>
+            <Setter Property="IsSwipeEnabled" Value="True"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
+            <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False"/>
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled"/>
+            <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="True"/>
+            <Setter Property="ScrollViewer.ZoomMode" Value="Disabled"/>
             <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
-            <Setter Property="Padding" Value="{ThemeResource TextControlThemePadding}"/>
+            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="ItemContainerTransitions">
+                <Setter.Value>
+                    <TransitionCollection>
+                        <AddDeleteThemeTransition/>
+                        <ContentThemeTransition/>
+                        <ReorderThemeTransition/>
+                        <EntranceThemeTransition IsStaggeringEnabled="False"/>
+                    </TransitionCollection>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListView">
+                        <ItemsPresenter FooterTransitions="{TemplateBinding FooterTransitions}" FooterTemplate="{TemplateBinding FooterTemplate}" Footer="{TemplateBinding Footer}" HeaderTemplate="{TemplateBinding HeaderTemplate}" Header="{TemplateBinding Header}" HeaderTransitions="{TemplateBinding HeaderTransitions}" Padding="{TemplateBinding Padding}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!-- Header -->
+        <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+                Height="{ThemeResource AppBarThemeCompactHeight}"/>
 
-        <RelativePanel x:Name="rpMain" >
-            <!-- Master - Titlebar -->
-            <!--<RelativePanel x:Name="rpMasterTitlebar"
-                           Background="{ThemeResource SystemControlBackgroundListMediumBrush}"
-                           Style="{StaticResource StyleRPMasterTitleBar}">
-                <TextBlock x:Name="tblMasterTitle"
-                           x:Uid="Login-Titlebar-Title"
-                           Text="WELCOME TO UNIGRAM" 
-                           Style="{ThemeResource BaseTextBlockStyle}"
-                           Padding="12,0"
-                           RelativePanel.AlignVerticalCenterWithPanel="True"/>
-            </RelativePanel>-->
-
-            <!-- Master - Main content -->
-            <RelativePanel x:Name="rpMasterContent"
-                           RelativePanel.AlignLeftWithPanel="True"
-                           RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.AlignBottomWithPanel="True"
-                           RelativePanel.AlignTopWithPanel="True">
-                <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
-                              RelativePanel.AlignRightWithPanel="True"
-                              RelativePanel.AlignBottomWithPanel="True"
-                              RelativePanel.AlignTopWithPanel="True">
-                    <RelativePanel Padding="16" x:Name="rpScrollContent">
-                        <!-- Logo background -->
-                        <Ellipse Height="160" 
-                                 Width="160" 
-                                 x:Name="imgMasterWelcomeLogoBackground"
+        <Border Background="White" Grid.Row="1">
+            <!-- Black panel needed for the SwapChainPanel -->
+            <Border Width="200" Height="200" Background="Black">
+                <!-- Logo placeholder -->
+                <Grid Background="White">
+                    <Ellipse Height="148" 
+                                 Width="148" 
                                  Fill="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                 RelativePanel.AlignHorizontalCenterWithPanel="True"
-                                 HorizontalAlignment="Center"
-                                 Margin="0,80,0,48"/>
-                        <!-- Logo -->
-                        <Ellipse x:Name="imgMasterWelcomeLogo"
-                                 Height="160"
-                                 Width="160"
-                                 Margin="0,0,0,40"
-                                 RelativePanel.AlignBottomWith="imgMasterWelcomeLogoBackground"
-                                 RelativePanel.AlignHorizontalCenterWith="imgMasterWelcomeLogoBackground">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <!-- Title -->
-                        <TextBlock x:Name="txtMasterTitle"
-                                   Padding="0,0,0,16"
-                                   Text="Welcome to Unigram"
-                                   FontWeight="Bold"
-                                   Style="{ThemeResource TitleTextBlockStyle}"
-                                   RelativePanel.AlignHorizontalCenterWithPanel="True"
-                                   RelativePanel.Below="imgMasterWelcomeLogo"
-                                   Visibility="Visible"/>
-                        <!-- App description -->
-                        <TextBlock x:Name="tblMasterWelcomeIntroText"
-                                   x:Uid="Login-Intro-Intro"
-                                   Padding="16,0"
-                                   Margin="0,0,0,0"
-                                   Text="Unigram is an UWP Telegram-app built by the Windows Community, for the Windows Community"
-                                   TextWrapping="Wrap"
-                                   TextAlignment="Center"
-                                   Style="{ThemeResource BodyTextBlockStyle}"                       
-                                   RelativePanel.AlignRightWithPanel="True"
-                                   RelativePanel.AlignLeftWithPanel="True"
-                                   RelativePanel.Below="txtMasterTitle"/>
-                        <!-- Next button -->
-                        <Button x:Name="btnMasterPhoneInputConfirm"
-                                x:Uid="BTN-Next"
-                                Command="{x:Bind ViewModel.ContinueCommand}"
-                                Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                RequestedTheme="Dark"
-                                Content="Continue"
-                                Padding="24,4"
-                                Margin="0,48,0,0"
-                                RelativePanel.Below="tblMasterWelcomeIntroText"
-                                RelativePanel.AlignHorizontalCenterWithPanel="True"/>
-                    </RelativePanel>
-                </ScrollViewer>
-            </RelativePanel>
-            <!-- END OF Master - Main content-->
-        </RelativePanel>
+                                 HorizontalAlignment="Center"/>
+                    <Ellipse Height="148"
+                                 Width="148"
+                                 Margin="0,12,0,0">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
+                        </Ellipse.Fill>
+                    </Ellipse>
+                </Grid>
+            </Border>
+        </Border>
 
-        <VisualStateManager.VisualStateGroups>
+        <FlipView ItemsSource="{Binding Items}" 
+                  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                  Grid.Row="2">
+            <FlipView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,26">
+                        <TextBlock Padding="12,0,12,12"
+                                   Text="{Binding Title}"
+                                   FontWeight="SemiBold"
+                                   TextAlignment="Center"
+                                   Style="{ThemeResource TitleTextBlockStyle}"/>
+                        <TextBlock Padding="12,0"
+                                   Text="{Binding Text}"
+                                   TextAlignment="Center"
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   MaxWidth="360"/>
+                    </StackPanel>
+                </DataTemplate>
+            </FlipView.ItemTemplate>
+        </FlipView>
+        
+        <Button Content="Continue"
+                Command="{Binding ContinueCommand}"
+                HorizontalAlignment="Stretch" 
+                Grid.Row="3"/>
+
+        <ListView ItemsSource="{Binding Items}" 
+                  ItemContainerStyle="{StaticResource IndicatorListViewItemStyle}"
+                  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                  Style="{StaticResource IndicatorListViewStyle}"
+                  Grid.Row="4"/>
+
+        <!--<VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="DisplayModeStates">
                 <VisualState x:Name="Wide">
                     <VisualState.StateTriggers>
@@ -139,6 +178,6 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
+        </VisualStateManager.VisualStateGroups>-->
     </Grid>
 </Page>

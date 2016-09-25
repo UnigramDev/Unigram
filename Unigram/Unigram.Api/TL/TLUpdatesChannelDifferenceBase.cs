@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public abstract partial class TLUpdatesChannelDifferenceBase : TLObject
 	{
+		public abstract bool IsFinal { get; set; }
 		public Int32 Pts { get; set; }
 		public Int32? Timeout { get; set; }
 		public TLVector<TLChatBase> Chats { get; set; }

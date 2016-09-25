@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Api.Extensions;
-using Telegram.Api.Helpers;
+using Windows.Foundation;
 using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
+using Org.BouncyCastle.Utilities.Net;
+using Telegram.Api.Extensions;
+using Telegram.Api.Helpers;
+using Telegram.Logs;
 
 namespace Telegram.Api.Transport
 {
@@ -25,28 +29,27 @@ namespace Telegram.Api.Transport
 
         private readonly double _timeout;
 
-        private bool _isConnecting;
-
-        private readonly List<Tuple<string, byte[], Action<TcpTransportResult>>> _queue = new List<Tuple<string, byte[], Action<TcpTransportResult>>>();
-
         public TcpTransportWinRT(string host, int port) : base(host, port)
         {
             _timeout = 25.0;
             _socket = new StreamSocket();
-            StreamSocketControl control = _socket.Control;
+            var control = _socket.Control;
             control.QualityOfService = SocketQualityOfService.LowLatency;
         }
 
         private async Task<bool> ConnectAsync(double timeout, Action<TcpTransportResult> faultCallback)
         {
-            bool result;
             try
             {
                 RaiseConnectingAsync();
-                await _socket.ConnectAsync(new HostName(base.Host), base.Port.ToString(CultureInfo.InvariantCulture)).WithTimeout(timeout);
+
+                //var address = IPAddress.IsValidIPv6(Host);
+                await _socket.ConnectAsync(new HostName(Host), Port.ToString(CultureInfo.InvariantCulture)).WithTimeout(timeout);
+
                 _dataReader = new DataReader(_socket.InputStream);
                 _dataReader.InputStreamOptions = InputStreamOptions.Partial;
                 _dataWriter = new DataWriter(_socket.OutputStream);
+
                 lock (_isConnectedSyncRoot)
                 {
                     _isConnecting = false;
@@ -55,89 +58,110 @@ namespace Telegram.Api.Transport
             }
             catch (Exception ex)
             {
-                SocketErrorStatus status = SocketError.GetStatus(ex.HResult);
+                var status = SocketError.GetStatus(ex.HResult);
                 WRITE_LOG("TCPTransportWinRT.ConnectAsync " + status, ex);
-                SocketError.GetStatus(ex.HResult);
+
+                var error = SocketError.GetStatus(ex.HResult);
                 faultCallback.SafeInvoke(new TcpTransportResult(ex));
-                result = false;
-                return result;
+                return false;
             }
-            result = true;
-            return result;
+
+            return true;
         }
 
         private async Task<bool> SendAsync(double timeout, byte[] data, Action<TcpTransportResult> faultCallback)
         {
-            bool result;
             try
             {
                 _dataWriter.WriteBytes(data);
-                await _dataWriter.StoreAsync();
+
+                var storeResult = await _dataWriter.StoreAsync(); //.WithTimeout(timeout);
             }
             catch (Exception ex)
             {
-                SocketErrorStatus status = SocketError.GetStatus(ex.HResult);
+                var status = SocketError.GetStatus(ex.HResult);
                 WRITE_LOG("TCPTransportWinRT.SendAsync " + status, ex);
+
                 faultCallback.SafeInvoke(new TcpTransportResult(ex));
-                result = false;
-                return result;
+                return false;
             }
-            result = true;
-            return result;
+
+            return true;
         }
 
         private async void ReceiveAsync(double timeout)
         {
-            while (!base.Closed)
+            while (true)
             {
-                int num = 0;
+                if (Closed)
+                {
+                    return;
+                }
+
+                int bytesTransferred = 0;
                 try
                 {
-                    num = (int)await _dataReader.LoadAsync(60);
+                    bytesTransferred = (int) await _dataReader.LoadAsync(60); //WithTimeout(timeout);
                 }
                 catch (Exception ex)
                 {
-                    SocketErrorStatus status = SocketError.GetStatus(ex.HResult);
+                    //Log.Write(string.Format("  TCPTransport.ReceiveAsync transport={0} LoadAsync exception={1}", Id, ex));
+                    var status = SocketError.GetStatus(ex.HResult);
                     WRITE_LOG("ReceiveAsync DataReader.LoadAsync " + status, ex);
+
                     if (ex is ObjectDisposedException)
                     {
-                        break;
+                        return;
                     }
                 }
-                if (num > 0)
+
+                if (bytesTransferred > 0)
                 {
-                    DateTime now = DateTime.Now;
-                    if (!base.FirstReceiveTime.HasValue)
+                    //Log.Write(string.Format("  TCPTransport.ReceiveAsync transport={0} bytes_transferred={1}", Id, bytesTransferred));
+                
+                    var now = DateTime.Now;
+
+                    if (!FirstReceiveTime.HasValue)
                     {
-                        base.FirstReceiveTime = new DateTime?(now);
+                        FirstReceiveTime = now;
                         RaiseConnectedAsync();
                     }
-                    base.LastReceiveTime = new DateTime?(now);
-                    byte[] array = new byte[_dataReader.UnconsumedBufferLength];
-                    _dataReader.ReadBytes(array);
-                    base.OnBufferReceived(array, 0, num);
-                    continue;
+
+                    LastReceiveTime = now;
+
+                    var buffer = new byte[_dataReader.UnconsumedBufferLength];
+                    _dataReader.ReadBytes(buffer);
+
+                    OnBufferReceived(buffer, 0, bytesTransferred);
                 }
-                if (!base.Closed)
+                else
                 {
-                    base.Closed = true;
-                    RaiseConnectionLost();
-                    Execute.ShowDebugMessage("TCPTransportWinRT connection lost; close transport");
-                    continue;
+                    //Log.Write(string.Format("  TCPTransport.ReceiveAsync transport={0} bytes_transferred={1} closed={2}", Id, bytesTransferred, Closed));
+                    if (!Closed)
+                    {
+                        Closed = true;
+                        RaiseConnectionLost();
+                        Execute.ShowDebugMessage("TCPTransportWinRT ReceiveAsync connection lost bytesTransferred=0; close transport");
+                    }
                 }
             }
         }
 
+        private bool _isConnecting;
+
+        private readonly List<Tuple<string, byte[], Action<TcpTransportResult>>> _queue = new List<Tuple<string, byte[], Action<TcpTransportResult>>>(); 
+
         public override void SendPacketAsync(string caption, byte[] data, Action<bool> callback, Action<TcpTransportResult> faultCallback = null)
         {
-            DateTime now = DateTime.Now;
-            if (!base.FirstSendTime.HasValue)
+            var now = DateTime.Now;
+            if (!FirstSendTime.HasValue)
             {
-                base.FirstSendTime = new DateTime?(now);
+                FirstSendTime = now;
             }
-            Execute.BeginOnThreadPool(async delegate
+
+            Execute.BeginOnThreadPool(async () =>
             {
-                bool flag = false;
+                bool connect = false;
                 bool isConnected;
                 lock (_isConnectedSyncRoot)
                 {
@@ -145,39 +169,43 @@ namespace Telegram.Api.Transport
                     if (!_isConnected && !_isConnecting)
                     {
                         _isConnecting = true;
-                        flag = true;
+                        connect = true;
                     }
-                    if (flag && caption.StartsWith("msgs_ack"))
+
+                    if (connect
+                        && caption.StartsWith("msgs_ack"))
                     {
                         Execute.ShowDebugMessage("TCPTransportWinRT connect on msgs_ack");
-                        flag = false;
+                        connect = false;
                     }
                 }
+
                 if (!isConnected)
                 {
-                    if (!flag)
+                    if (connect)
+                    {
+                        var connectResult = await ConnectAsync(_timeout, faultCallback);
+                        if (!connectResult) return;
+
+                        var buffer = GetInitBuffer();
+                        var sendResult = await SendAsync(_timeout, buffer, faultCallback);
+                        if (!sendResult) return;
+                        
+                        ReceiveAsync(_timeout);
+
+                        SendQueue(_timeout);
+                    }
+                    else
                     {
                         Enqueue(caption, data, faultCallback);
                         return;
                     }
-                    if (!(await ConnectAsync(_timeout, faultCallback)))
-                    {
-                        return;
-                    }
-                    if (!(await SendAsync(_timeout, new byte[]
-                    {
-                        239
-                    }, faultCallback)))
-                    {
-                        return;
-                    }
-                    ReceiveAsync(_timeout);
-                    SendQueue(_timeout);
                 }
-                if (await SendAsync(_timeout, TcpTransportBase.CreatePacket(data), faultCallback))
-                {
-                    callback.SafeInvoke(true);
-                }
+
+                var sendPacketResult = await SendAsync(_timeout, CreatePacket(data), faultCallback);
+                if (!sendPacketResult) return;
+
+                callback.SafeInvoke(true);
             });
         }
 
@@ -191,27 +219,31 @@ namespace Telegram.Api.Transport
 
         private void SendQueue(double timeout)
         {
-            List<Tuple<string, byte[], Action<TcpTransportResult>>> list = new List<Tuple<string, byte[], Action<TcpTransportResult>>>();
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("SendQueue");
+            var queue = new List<Tuple<string, byte[], Action<TcpTransportResult>>>();
+            var info = new StringBuilder();
+            info.Append("SendQueue");
             lock (_isConnectedSyncRoot)
             {
-                foreach (Tuple<string, byte[], Action<TcpTransportResult>> current in _queue)
+                foreach (var tuple in _queue)
                 {
-                    list.Add(current);
-                    stringBuilder.AppendLine(current.Item1);
+                    queue.Add(tuple);
+                    info.AppendLine(tuple.Item1);
                 }
+
                 _queue.Clear();
             }
-            foreach (Tuple<string, byte[], Action<TcpTransportResult>> current2 in list)
+
+            //Execute.ShowDebugMessage(info.ToString());
+
+            foreach (var tuple in queue)
             {
-                SendAsync(timeout, TcpTransportBase.CreatePacket(current2.Item2), current2.Item3);
+                SendAsync(timeout, CreatePacket(tuple.Item2), tuple.Item3);
             }
         }
 
         public override void Close()
         {
-            base.Closed = true;
+            Closed = true;
             if (_socket != null)
             {
                 _socket.Dispose();
@@ -220,24 +252,28 @@ namespace Telegram.Api.Transport
 
         public override string GetTransportInfo()
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("TCP_WinRT transport");
-            stringBuilder.AppendLine(string.Format("Socket {0}:{1}, Connected={2}, HashCode={3}", new object[]
-            {
-                base.Host,
-                base.Port,
-                _isConnected,
-                _socket.GetHashCode()
-            }));
-            stringBuilder.AppendLine(string.Format("LastReceiveTime={0}", new object[]
-            {
-                base.LastReceiveTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)
-            }));
-            stringBuilder.AppendLine(string.Format("FirstSendTime={0}", new object[]
-            {
-                base.FirstSendTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)
-            }));
-            return stringBuilder.ToString();
+            var info = new StringBuilder();
+            info.AppendLine("TCP_WinRT transport");
+            info.AppendLine(string.Format("Socket {0}:{1}, Connected={2}, HashCode={3}", Host, Port, _isConnected, _socket.GetHashCode()));
+            info.AppendLine(string.Format("LastReceiveTime={0}", LastReceiveTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)));
+            info.AppendLine(string.Format("FirstSendTime={0}", FirstSendTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)));
+
+            return info.ToString();
+        }
+    }
+
+    public static class AsyncExtensions
+    {
+        public static async Task WithTimeout(this IAsyncAction task, double timeout)
+        {
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(timeout));
+            await task.AsTask(cts.Token);
+        }
+
+        public static async Task<T> WithTimeout<T>(this IAsyncOperation<T> task, double timeout)
+        {
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(timeout));
+            return await task.AsTask(cts.Token);
         }
     }
 }

@@ -76,9 +76,9 @@ namespace Unigram.Converters
                 case TLMessageState.Sending:
                     return "\uE600";
                 case TLMessageState.Confirmed:
-                    return "\uE601";
-                case TLMessageState.Read:
                     return "\uE602";
+                case TLMessageState.Read:
+                    return "\uE601";
                 default:
                     return "\uFFFD";
             }
