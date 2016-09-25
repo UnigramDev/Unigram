@@ -42,10 +42,38 @@ namespace Unigram.ViewModels
         public string LastSeen;
         public Visibility LastSeenVisible;
         public string debug;
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private readonly IJumpListService _jumpListService;
+
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IJumpListService jumpListService)
             : base(protoService, cacheService, aggregator)
         {
+            _jumpListService = jumpListService;
         }
+
+
+
+
+
+
+
+
+
+
+
+
         public object photo;
         public string SendTextHolder;
         public TLUser user;
@@ -248,6 +276,8 @@ namespace Unigram.ViewModels
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
                 await FetchMessages(peer,inputPeer);
                 ChatType = 0;
+
+                await _jumpListService.UpdateAsync(user);
             }
             else if (channel != null)
             {

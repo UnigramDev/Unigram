@@ -586,7 +586,6 @@
                              x:Name="txtMessage" 
                              x:Uid="Chat-Input-Message"
                              PlaceholderText="Type your message..."
-                             Text="{Binding SendTextHolder, Mode=TwoWay}"
                              BorderThickness="0" 
                              Padding="14" 
                              TextWrapping="Wrap" 

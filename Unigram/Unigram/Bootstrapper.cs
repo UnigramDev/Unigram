@@ -54,6 +54,7 @@
 
             container.ContainerBuilder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
             container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();
 
             // ViewModels
             container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();

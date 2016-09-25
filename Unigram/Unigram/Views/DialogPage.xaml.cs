@@ -15,6 +15,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -74,7 +75,7 @@ namespace Unigram.Views
 
         private void CheckMessageBoxEmpty()
         {
-            if (txtMessage.Text == "" || txtMessage.Text == null)
+            if (txtMessage.IsEmpty)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnVoiceMessage.Visibility = Visibility.Visible;
@@ -99,23 +100,20 @@ namespace Unigram.Views
                 // If there is text and CTRL is not pressed, send message. Else start new row.
                 if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && btnSendMessage.Visibility == Visibility.Visible)
                 {
-
-                    // TODO working but UGLY workaround: removal of the enter character from message.
-                    // The character itself should not be added to the string from the begining.
-                    // This will create a visual artefact for a fraction of a second, enlarging the 
-                    // message box prior to sending and clearing the it.
-                    txtMessage.Text = txtMessage.Text.Remove(txtMessage.Text.Length - 1);
-                    ViewModel.SendTextHolder = txtMessage.Text;
+                    string text;
+                    txtMessage.Document.GetText(TextGetOptions.None, out text);
+                    text = text.Trim();
+                    ViewModel.SendTextHolder = text;
                     if (ViewModel.SendCommand.CanExecute(null))
                         ViewModel.SendCommand.Execute(null);
-                    txtMessage.Text = "";
+                    txtMessage.Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
                     args.Handled = true;
                 }
             }
             
         }
 
-        private void txtMessage_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
+        private void txtMessage_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
             CheckMessageBoxEmpty();
 
@@ -133,8 +131,11 @@ namespace Unigram.Views
 
         private void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.SendTextHolder = txtMessage.Text;
-            txtMessage.Text = "";
+            string text;
+            txtMessage.Document.GetText(TextGetOptions.None, out text);
+            text = text.Trim();
+            ViewModel.SendTextHolder = text;
+            txtMessage.Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
         }
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)

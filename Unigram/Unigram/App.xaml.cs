@@ -99,12 +99,16 @@ namespace Unigram
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
+            var timer = Stopwatch.StartNew();
             new Bootstrapper().Configure();
+            Debug.WriteLine($"INITIALIZE TIME: {timer.Elapsed}");
             return base.OnInitializeAsync(args);
         }
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
+            var timer = Stopwatch.StartNew();
+
             if (SettingsHelper.IsAuthorized)
             {
                 MTProtoService.Current.CurrentUserId = SettingsHelper.UserId;
@@ -146,6 +150,9 @@ namespace Unigram
                     await VoiceCommandDefinitionManager.InstallCommandDefinitionsFromStorageFileAsync(localVoiceCommands);
 
                     NavigationService.Navigate(typeof(Views.MainPage), launch);
+
+                    timer.Stop();
+                    Debug.WriteLine($"LAUNCH TIME: {timer.Elapsed}");
                 }
             }
             else
