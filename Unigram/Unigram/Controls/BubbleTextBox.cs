@@ -174,7 +174,7 @@ namespace Unigram.Controls
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
 
-                // If there is text and CTRL/Shift is not pressed, send message. Else start new row.
+                // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
                 if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && !IsEmpty)
                 {
                     await SendAsync();
