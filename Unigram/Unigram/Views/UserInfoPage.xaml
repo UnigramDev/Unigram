@@ -252,262 +252,253 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
-        <Grid x:Name="profilePane" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Grid.RowSpan="2">
-            <RelativePanel Margin="0,24,0,24" x:Name="profilePaneStack" VerticalAlignment="Top" >                
-                <!--User icon-->
-                <Grid x:Name="grdProfile" RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="16,8">
-                    <Ellipse x:Name="elpContentInfoChatIconPicture" MinHeight="200" MinWidth="200">
-                        <Ellipse.Fill>
-                            <ImageBrush ImageSource="{x:Bind ViewModel.photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
-                        </Ellipse.Fill>
-                    </Ellipse>
-                    <Button x:Name="elpContentInfoChatIcon"
-                                HorizontalAlignment="Center"
-                                MinWidth="200"
-                                MinHeight="200"                                
-                                Padding="0"
-                                BorderThickness="0"
-                                Background="Transparent"                                
-                                Command="{Binding PhotoCommand}"/>
- 
-                </Grid>
-                <TextBlock x:Name="tblUserInfoChatName"
-                            MinWidth="300"
-                           RelativePanel.AlignTopWithPanel="False"
-                           RelativePanel.Below="grdProfile"
-                            RelativePanel.AlignHorizontalCenterWithPanel="True"
-                                       Visibility="Visible"
-                                       HorizontalAlignment="Center"
-                                       Text="{x:Bind ViewModel.FullNameField, Mode=OneWay}"
-                                       Margin="0,4,0,0"
-                                       TextWrapping="NoWrap"
-                                       Style="{ThemeResource SubtitleTextBlockStyle}"
-                                       FontWeight="SemiBold" />
-                <TextBlock x:Name="tblUserInfoUserName" Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"
-                                        RelativePanel.Below="tblUserInfoChatName"
-                           MinWidth="300"
-                            RelativePanel.AlignHorizontalCenterWithPanel="True"
-                                       Margin="0,4"
-                                       HorizontalAlignment="Center"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                       Style="{ThemeResource BaseTextBlockStyle}"
-                                       FontWeight="Normal">
-                                                        <Run Text="@"/><Run Text="{Binding Item.Username}"/>
+        <RelativePanel x:Name="profilePane" 
+                       Padding="0,24"              
+                       Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" 
+                       VerticalAlignment="Top"
+                       Grid.RowSpan="2">
+            <!--User icon-->
+            <Grid x:Name="grdProfile"
+                  Margin="16,8"
+                  RelativePanel.AlignHorizontalCenterWithPanel="True">
+                <Ellipse x:Name="elpContentInfoChatIconPicture" 
+                         MinHeight="200" 
+                         MinWidth="200">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{x:Bind ViewModel.photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
+                    </Ellipse.Fill>
+                </Ellipse>
+                <Button x:Name="elpContentInfoChatIcon"
+                        HorizontalAlignment="Center"
+                        MinWidth="200"
+                        MinHeight="200"                                
+                        Padding="0"
+                        BorderThickness="0"
+                        Background="Transparent"                                
+                        Command="{Binding PhotoCommand}"/>
 
-                </TextBlock>
-                <!-- Chat-status (Personal + Group) -->
-                <TextBlock x:Name="tblUserInfoChatStatus"
-                           MinWidth="300"
-                           RelativePanel.Below="tblUserInfoUserName"
-                            RelativePanel.AlignHorizontalCenterWithPanel="True"                          
-                                       Visibility="Visible"
-                                       HorizontalAlignment="Center"
-                                       Text="{x:Bind ViewModel.LastSeen}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                       Style="{ThemeResource BaseTextBlockStyle}"
-                                       FontWeight="Normal" />
-                <TextBlock x:Name="tblUserInfoPhone" Visibility="Visible"
-                            MinWidth="300"
-                           RelativePanel.Below="tblUserInfoChatStatus"
-                                       RelativePanel.AlignHorizontalCenterWithPanel="True"
-                                       HorizontalAlignment="Center"                                       
-                                       Margin="0,16,0,16"
-                                       Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
-                                       Style="{ThemeResource SubtitleTextBlockStyle}"
-                                       FontWeight="Medium" >
-                    <Run Text="+"/><Run Text="{Binding Item.Phone}"/>
-                </TextBlock>
-            </RelativePanel>
-        </Grid>
-        
-        <Grid x:Name="profileControlPane" Grid.Column="1" Grid.RowSpan="2" Margin="0,42" >
+            </Grid>
+            <TextBlock x:Name="tblUserInfoChatName"
+                       Visibility="Visible"
+                       HorizontalAlignment="Center"
+                       Text="{x:Bind ViewModel.FullNameField, Mode=OneWay}"
+                       Margin="0,4,0,0"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"
+                       Style="{ThemeResource SubtitleTextBlockStyle}"
+                       FontWeight="SemiBold"
+                       RelativePanel.AlignTopWithPanel="False"
+                       RelativePanel.Below="grdProfile"
+                       RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+            <TextBlock x:Name="tblUserInfoUserName" 
+                       Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"
+                       Margin="0,4"
+                       HorizontalAlignment="Center"
+                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                       Style="{ThemeResource BodyTextBlockStyle}"
+                       TextTrimming="CharacterEllipsis"
+                       RelativePanel.AlignHorizontalCenterWithPanel="True"
+                       RelativePanel.Below="tblUserInfoChatName">
+                <Run Text="@"/><Run Text="{Binding Item.Username}"/>
+            </TextBlock>
+            <!-- Chat-status (Personal + Group) -->
+            <TextBlock x:Name="tblUserInfoChatStatus"                       
+                       Visibility="Visible"
+                       HorizontalAlignment="Center"
+                       Text="{x:Bind ViewModel.LastSeen}"
+                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                       Style="{ThemeResource BodyTextBlockStyle}"
+                       RelativePanel.Below="tblUserInfoUserName"
+                       RelativePanel.AlignHorizontalCenterWithPanel="True" />
+            <TextBlock x:Name="tblUserInfoPhone"
+                       Visibility="Visible"
+                       HorizontalAlignment="Center"                                       
+                       Margin="0,16"
+                       Foreground="{ThemeResource TelegramForegroundAccentBrush}"
+                       Style="{ThemeResource SubtitleTextBlockStyle}"
+                       FontWeight="Medium"
+                       RelativePanel.Below="tblUserInfoChatStatus"
+                       RelativePanel.AlignHorizontalCenterWithPanel="True">
+                <Run Text="+"/><Run Text="{Binding Item.Phone}"/>
+            </TextBlock>
+        </RelativePanel>
+
+        <Grid x:Name="profileControlPane" 
+              Margin="0,42"
+              Grid.Column="1"
+              Grid.RowSpan="2">
             <ScrollViewer>
-            <StackPanel>
-                <local:TableStackPanel 
-                            x:Name="Group2" 
-                            BorderThickness="0,0,0,1"
-                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                            Margin="0,24,0,0">
-                    <controls:HyperButton
-                                Content="Send message" 
-                                Command="{Binding SendMessageCommand}"
-                                Style="{StaticResource HyperButtonStyle}"/>
+                <StackPanel>
+                    <local:TableStackPanel x:Name="Group2" 
+                                           BorderThickness="0,0,0,1"
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                           Margin="0,24,0,0">
+                        <controls:HyperButton Content="Send message" 
+                                              Command="{Binding SendMessageCommand}"
+                                              Style="{StaticResource HyperButtonStyle}"/>
 
-                    <controls:HyperButton
-                                Content="Add contact" 
-                                Command="{Binding AddContactCommand}"
-                                Style="{StaticResource HyperButtonStyle}"/>
+                        <controls:HyperButton Content="Add contact" 
+                                              Command="{Binding AddContactCommand}"
+                                              Style="{StaticResource HyperButtonStyle}"/>
 
-                    <controls:HyperButton
-                                Content="Add to group"
-                                Visibility="{Binding AddToGroupVisibility}"
-                                Style="{StaticResource HyperButtonStyle}"/>
+                        <controls:HyperButton Content="Add to group"
+                                              Visibility="{Binding AddToGroupVisibility}"
+                                              Style="{StaticResource HyperButtonStyle}"/>
 
-                    <controls:HyperButton
-                                Content="Share contact" 
-                                Style="{StaticResource HyperButtonStyle}"/>
+                        <controls:HyperButton Content="Share contact" 
+                                              Style="{StaticResource HyperButtonStyle}"/>
 
-                    <controls:HyperButton 
-                                Content="Help" 
-                                Visibility="{Binding HelpVisibility}"
-                                Style="{StaticResource HyperButtonStyle}"/>
-                </local:TableStackPanel>
+                        <controls:HyperButton Content="Help" 
+                                              Visibility="{Binding HelpVisibility}"
+                                              Style="{StaticResource HyperButtonStyle}"/>
+                    </local:TableStackPanel>
 
-                <local:TableStackPanel 
-                            x:Name="Group3" 
-                            BorderThickness="0,0,0,1"
-                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                            Margin="0,24,0,0">
-                    <controls:HyperButton
-                                Content="Shared media" 
-                                Command="{Binding MediaCommand}"
-                                Style="{StaticResource HyperButtonStyle}" 
-                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                    <local:TableStackPanel x:Name="Group3" 
+                                           BorderThickness="0,0,0,1"
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                           Margin="0,24,0,0">
+                        <controls:HyperButton Content="Shared media" 
+                                              Command="{Binding MediaCommand}"
+                                              Style="{StaticResource HyperButtonStyle}" 
+                                              Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
-                    <controls:HyperCheckButton 
-                                Content="Enabled" 
-                                Tag="Notifications and sounds" 
-                                IsOn="{Binding AreNotificationsEnabled}"
-                                Style="{ThemeResource CheckButtonStyle}"/>
-                </local:TableStackPanel>
+                        <controls:HyperCheckButton Content="Enabled" 
+                                                   Tag="Notifications and sounds" 
+                                                   IsOn="{Binding AreNotificationsEnabled}"
+                                                   Style="{ThemeResource CheckButtonStyle}"/>
+                    </local:TableStackPanel>
 
-                <local:TableStackPanel
-                            x:Name="Group4" 
-                            BorderThickness="0,0,0,1"
-                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                            Margin="0,24">
-                    <controls:HyperButton
-                                Content="Report" 
-                                Command="{Binding ReportCommand}"
-                                Visibility="{Binding ReportVisibility}"
-                                Style="{StaticResource HyperButtonStyle}"/>
+                    <local:TableStackPanel x:Name="Group4" 
+                                           BorderThickness="0,0,0,1"
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                           Margin="0,24">
+                        <controls:HyperButton Content="Report" 
+                                              Command="{Binding ReportCommand}"
+                                              Visibility="{Binding ReportVisibility}"
+                                              Style="{StaticResource HyperButtonStyle}"/>
 
-                    <controls:HyperButton 
-                                Content="Stop bot" 
-                                Command="{Binding BlockCommand}"
-                                Visibility="{Binding StopVisibility}"
-                                Style="{StaticResource HyperButtonStyle}" 
-                                Foreground="Red"/>
+                        <controls:HyperButton Content="Stop bot" 
+                                              Command="{Binding BlockCommand}"
+                                              Visibility="{Binding StopVisibility}"
+                                              Style="{StaticResource HyperButtonStyle}" 
+                                              Foreground="Red"/>
 
-                    <controls:HyperButton 
-                                Content="Restart bot" 
-                                Command="{Binding UnblockCommand}"
-                                Visibility="{Binding UnstopVisibility}"
-                                Style="{StaticResource HyperButtonStyle}" 
-                                Foreground="Red"/>
+                        <controls:HyperButton Content="Restart bot" 
+                                              Command="{Binding UnblockCommand}"
+                                              Visibility="{Binding UnstopVisibility}"
+                                              Style="{StaticResource HyperButtonStyle}" 
+                                              Foreground="Red"/>
 
-                    <controls:HyperButton
-                                Content="Block" 
-                                Command="{Binding BlockCommand}"
-                                Visibility="{Binding BlockVisibility}"
-                                Style="{StaticResource HyperButtonStyle}" 
-                                Foreground="Red"/>
+                        <controls:HyperButton Content="Block" 
+                                              Command="{Binding BlockCommand}"
+                                              Visibility="{Binding BlockVisibility}"
+                                              Style="{StaticResource HyperButtonStyle}" 
+                                              Foreground="Red"/>
 
-                    <controls:HyperButton
-                                Content="Unblock" 
-                                Command="{Binding UnblockCommand}"
-                                Visibility="{Binding UnblockVisibility}"
-                                Style="{StaticResource HyperButtonStyle}" 
-                                Foreground="Red"/>
-                </local:TableStackPanel>
+                        <controls:HyperButton Content="Unblock" 
+                                              Command="{Binding UnblockCommand}"
+                                              Visibility="{Binding UnblockVisibility}"
+                                              Style="{StaticResource HyperButtonStyle}" 
+                                              Foreground="Red"/>
+                    </local:TableStackPanel>
 
-                <!-- ADDITION OF MEMBERS FRAME -->
-               
+                    <!-- ADDITION OF MEMBERS FRAME -->
 
 
-                <!-- Notifications (Personal + Group) -->
-                <!--<RelativePanel x:Name="rpOptionsNotifications"
-                             Margin="0,18"    
-                             RelativePanel.Below="rpOptionsPhone">
-                             <TextBlock x:Name="tblOptionsNotifications"
-                             x:Uid="ChatInfo-Options-NotificationsText"
-                             Text="Notifications" 
-                             Style="{StaticResource SubtitleTextBlockStyle}"
-                             RelativePanel.AlignVerticalCenterWithPanel="True"
-                             RelativePanel.AlignLeftWithPanel="True"/>
-                             <ToggleSwitch x:Name="tsOptionsNotifications"
-                             Margin="60,0,12,0"
-                             Visibility="Visible"
-                             RelativePanel.AlignVerticalCenterWithPanel="True"
-                             RelativePanel.RightOf="tblOptionsNotifications"/>
-                             </RelativePanel>-->
-                <ToggleSwitch x:Name="tsOptionsNotifications"
-                                      x:Uid="ChatInfo-Options-Notifications"
-                                      Header="Show notifications from this chat"
-                                      Margin="0,24"
-                                      Visibility="Collapsed"
-                                      RelativePanel.AlignLeftWithPanel="True"
-                                      RelativePanel.Below="rpOptionsPhone"/>
+
+                    <!-- Notifications (Personal + Group) -->
+                    <!--<RelativePanel x:Name="rpOptionsNotifications"
+                                 Margin="0,18"    
+                                 RelativePanel.Below="rpOptionsPhone">
+                                 <TextBlock x:Name="tblOptionsNotifications"
+                                 x:Uid="ChatInfo-Options-NotificationsText"
+                                 Text="Notifications" 
+                                 Style="{StaticResource SubtitleTextBlockStyle}"
+                                 RelativePanel.AlignVerticalCenterWithPanel="True"
+                                 RelativePanel.AlignLeftWithPanel="True"/>
+                                 <ToggleSwitch x:Name="tsOptionsNotifications"
+                                 Margin="60,0,12,0"
+                                 Visibility="Visible"
+                                 RelativePanel.AlignVerticalCenterWithPanel="True"
+                                 RelativePanel.RightOf="tblOptionsNotifications"/>
+                                 </RelativePanel>-->
+                    <ToggleSwitch x:Name="tsOptionsNotifications"
+                                          x:Uid="ChatInfo-Options-Notifications"
+                                          Header="Show notifications from this chat"
+                                          Margin="0,24"
+                                          Visibility="Collapsed"
+                                          RelativePanel.AlignLeftWithPanel="True"
+                                          RelativePanel.Below="rpOptionsPhone"/>
 
 
-                <!-- Share Media -->
-                <StackPanel x:Name="spOptionsSharedMedia"
-                                    Margin="0,0,0,24"
-                                    Orientation="Vertical"
-                                    RelativePanel.Below="tsOptionsNotifications"
+                    <!-- Share Media -->
+                    <StackPanel x:Name="spOptionsSharedMedia"
+                                        Margin="0,0,0,24"
+                                        Orientation="Vertical"
+                                        RelativePanel.Below="tsOptionsNotifications"
+                                        Visibility="Collapsed">
+                        <TextBlock x:Uid="ChatInfo-Options-SharedMedia-Title"
+                                           Text="Shared media"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                           FontWeight="Normal"
+                                           Margin="0,0,0,2"
+                                           Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                        <Button x:Name="btnOptionsPhotos"
+                                        Visibility="Visible"
+                                        Padding="0,4"
+                                        Content="x photos"
+                                        Style="{ThemeResource TextBlockButtonStyle}"/>
+                    </StackPanel>
+
+
+                    <!-- Search for messages (Personal + Group) -->
+                    <Button x:Name="btnOptionsSearch"
+                                    Background="Transparent"
+                                    Padding="0,8"
+                                    RelativePanel.Below="spOptionsSharedMedia"
                                     Visibility="Collapsed">
-                    <TextBlock x:Uid="ChatInfo-Options-SharedMedia-Title"
-                                       Text="Shared media"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                       FontWeight="Normal"
-                                       Margin="0,0,0,2"
-                                       Style="{ThemeResource SubtitleTextBlockStyle}"/>
-                    <Button x:Name="btnOptionsPhotos"
-                                    Visibility="Visible"
-                                    Padding="0,4"
-                                    Content="x photos"
-                                    Style="{ThemeResource TextBlockButtonStyle}"/>
+                        <Button.Content>
+                            <TextBlock x:Uid="ChatInfo-Options-Search-Title"
+                                               Text="Search for messages"
+                                               FontWeight="Normal"
+                                               Style="{ThemeResource SubtitleTextBlockStyle}" />
+                        </Button.Content>
+                    </Button>
+
+                    <!-- Clear History button (Personal + Group) -->
+                    <Button x:Name="btnOptionsClearHistory"
+                                    Background="Transparent"
+                                    Padding="0,8"
+                                    RelativePanel.Below="btnOptionsSearch"
+                                    Visibility="Collapsed">
+                        <Button.Content>
+                            <TextBlock x:Uid="ChatInfo-Options-ClearHistory-Title"
+                                               Text="Clear History"
+                                               FontWeight="Normal"
+                                               Style="{ThemeResource SubtitleTextBlockStyle}" />
+                        </Button.Content>
+                    </Button>
+
+
+
+                    <!-- Delete chat (Personal only) -->
+                    <Button x:Name="btnOptionsDeleteChat"
+                                    Margin="0,0,0,12"
+                                    Background="Transparent"
+                                    Padding="0,8"
+                                    RelativePanel.Below="btnOptionsClearHistory"
+                                    Visibility="Collapsed">
+                        <Button.Content>
+                            <TextBlock x:Uid="ChatInfo-Options-DeleteChat-Title"
+                                               Text="Delete conversation"
+                                               FontWeight="Normal"
+                                               Style="{ThemeResource SubtitleTextBlockStyle}" />
+                        </Button.Content>
+                    </Button>
                 </StackPanel>
-
-
-                <!-- Search for messages (Personal + Group) -->
-                <Button x:Name="btnOptionsSearch"
-                                Background="Transparent"
-                                Padding="0,8"
-                                RelativePanel.Below="spOptionsSharedMedia"
-                                Visibility="Collapsed">
-                    <Button.Content>
-                        <TextBlock x:Uid="ChatInfo-Options-Search-Title"
-                                           Text="Search for messages"
-                                           FontWeight="Normal"
-                                           Style="{ThemeResource SubtitleTextBlockStyle}" />
-                    </Button.Content>
-                </Button>
-
-                <!-- Clear History button (Personal + Group) -->
-                <Button x:Name="btnOptionsClearHistory"
-                                Background="Transparent"
-                                Padding="0,8"
-                                RelativePanel.Below="btnOptionsSearch"
-                                Visibility="Collapsed">
-                    <Button.Content>
-                        <TextBlock x:Uid="ChatInfo-Options-ClearHistory-Title"
-                                           Text="Clear History"
-                                           FontWeight="Normal"
-                                           Style="{ThemeResource SubtitleTextBlockStyle}" />
-                    </Button.Content>
-                </Button>
-
-
-
-                <!-- Delete chat (Personal only) -->
-                <Button x:Name="btnOptionsDeleteChat"
-                                Margin="0,0,0,12"
-                                Background="Transparent"
-                                Padding="0,8"
-                                RelativePanel.Below="btnOptionsClearHistory"
-                                Visibility="Collapsed">
-                    <Button.Content>
-                        <TextBlock x:Uid="ChatInfo-Options-DeleteChat-Title"
-                                           Text="Delete conversation"
-                                           FontWeight="Normal"
-                                           Style="{ThemeResource SubtitleTextBlockStyle}" />
-                    </Button.Content>
-                </Button>
-            </StackPanel>
             </ScrollViewer>
         </Grid>
     </Grid>
