@@ -151,7 +151,7 @@ namespace Unigram.ViewModels
         public RelayCommand SendCommand => new RelayCommand(SendExecute);
         private async void SendExecute()
         {
-            var result = await ProtoService.SendCodeAsync(PhoneCode.TrimStart('+') + PhoneNumber);
+            var result = await ProtoService.SendCodeAsync(PhoneCode.TrimStart('+') + PhoneNumber, /* TODO: Verify */ null);
             if (result?.IsSucceeded == true)
             {
                 var state = new LoginPhoneCodeViewModel.NavigationParameter

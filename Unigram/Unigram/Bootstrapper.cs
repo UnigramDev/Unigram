@@ -20,6 +20,10 @@
     using Telegram.Api.Transport;
     using ViewModels;
     using Telegram.Api.Services.FileManager;
+    using Telegram.Api;
+    using System.IO;
+    using Windows.Storage;
+
     public class Bootstrapper
     {
         private UnigramContainer container;
@@ -31,6 +35,8 @@
 
         public void Configure()
         {
+            InitializeLayer();
+
             // .SingleIstance() is required to register a singleton service.
             container.ContainerBuilder.RegisterType<MTProtoService>().As<IMTProtoService>().SingleInstance();
             container.ContainerBuilder.RegisterType<TelegramEventAggregator>().As<ITelegramEventAggregator>().SingleInstance();
@@ -48,6 +54,7 @@
 
             container.ContainerBuilder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
             container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();
 
             // ViewModels
             container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();
@@ -65,6 +72,41 @@
             Initialize();
         }
 
+        private void InitializeLayer()
+        {
+            var deleteIfExists = new Action<string>((path) =>
+            {
+                if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, path)))
+                {
+                    File.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, path));
+                }
+            });
+
+            if (SettingsHelper.SupportedLayer != Constants.SupportedLayer ||
+                SettingsHelper.DatabaseVersion != Constants.DatabaseVersion)
+            {
+                SettingsHelper.SupportedLayer = Constants.SupportedLayer;
+                SettingsHelper.DatabaseVersion = Constants.DatabaseVersion;
+
+                deleteIfExists("action_queue.dat");
+                deleteIfExists("action_queue.dat.temp");
+                deleteIfExists("chats.dat");
+                deleteIfExists("chats.dat.temp");
+                deleteIfExists("dialogs.dat");
+                deleteIfExists("dialogs.dat.temp");
+                deleteIfExists("state.dat");
+                deleteIfExists("state.dat.temp");
+                deleteIfExists("users.dat");
+                deleteIfExists("users.dat.temp");
+
+                deleteIfExists("temp_chats.dat");
+                deleteIfExists("temp_dialogs.dat");
+                deleteIfExists("temp_difference.dat");
+                deleteIfExists("temp_state.dat");
+                deleteIfExists("temp_users.dat");
+            }
+        }
+
         private void Initialize()
         {
             Execute.Initialize();
@@ -72,22 +114,23 @@
             var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
             var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
             var updatesService = UnigramContainer.Instance.ResolverType<IUpdatesService>();
-            cacheService.Initialize();
+            cacheService.Init();
             updatesService.GetCurrentUserId = () => protoService.CurrentUserId;
-            updatesService.GetStateAsync = protoService.GetStateCallbackAsync;
-            updatesService.GetDHConfigAsync = protoService.GetDHConfigCallbackAsync;
-            updatesService.GetDifferenceAsync = protoService.GetDifferenceCallbackAsync;
-            updatesService.AcceptEncryptionAsync = protoService.AcceptEncryptionCallbackAsync;
-            updatesService.SendEncryptedServiceAsync = protoService.SendEncryptedServiceCallbackAsync;
-            updatesService.SetMessageOnTimeAsync = protoService.SetMessageOnTimeAsync;
+            updatesService.GetStateAsync = protoService.GetStateCallback;
+            updatesService.GetDHConfigAsync = protoService.GetDHConfigCallback;
+            updatesService.GetDifferenceAsync = protoService.GetDifferenceCallback;
+            //updatesService.AcceptEncryptionAsync = protoService.AcceptEncryptionCallback;
+            //updatesService.SendEncryptedServiceAsync = protoService.SendEncryptedServiceCallback;
+            updatesService.SetMessageOnTimeAsync = protoService.SetMessageOnTime;
             //updatesService.RemoveFromQueue = protoService.RemoveFromQueue;
-            updatesService.UpdateChannelAsync = protoService.UpdateChannelCallbackAsync;
-            updatesService.GetParticipantAsync = protoService.GetParticipantCallbackAsync;
-            updatesService.GetFullChatAsync = protoService.GetFullChatCallbackAsync;
+            updatesService.UpdateChannelAsync = protoService.UpdateChannelCallback;
+            updatesService.GetParticipantAsync = protoService.GetParticipantCallback;
+            updatesService.GetFullChatAsync = protoService.GetFullChatCallback;
             updatesService.LoadStateAndUpdate(() => { });
 
             protoService.AuthorizationRequired += (s, e) =>
             {
+                SettingsHelper.IsAuthorized = false;
                 Debugger.Break();
             };
         }

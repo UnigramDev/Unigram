@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Telegram.Api.TL;
 
 namespace Telegram.Api.Services
@@ -21,7 +20,7 @@ namespace Telegram.Api.Services
         public DateTime SendTime { get; set; }
         public DateTime? SendBeforeTime { get; set; }
         public RequestStatus Status { get; set; }
-        public TaskCompletionSource<MTProtoResponse> Callback { get; set; }
+        public Action<object> Callback { get; set; }
         public Action FastCallback { get; set; }
         public Action<int> AttemptFailed { get; set; }
         public Action<TLRPCError> FaultCallback { get; set; }
@@ -36,7 +35,6 @@ namespace Telegram.Api.Services
 
         public override string ToString()
         {
-
             return string.Format("{0}: {1} {2}", SendTime.ToString("HH:mm:ss.fff"), Caption, GetHashCode());
         }
     }

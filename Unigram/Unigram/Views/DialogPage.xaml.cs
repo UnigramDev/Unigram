@@ -15,6 +15,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -42,7 +43,6 @@ namespace Unigram.Views
 
             Loaded += DialogPage_Loaded;
             CheckMessageBoxEmpty();
-            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
 
@@ -74,7 +74,7 @@ namespace Unigram.Views
 
         private void CheckMessageBoxEmpty()
         {
-            if (txtMessage.Text == "" || txtMessage.Text == null)
+            if (txtMessage.IsEmpty)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnVoiceMessage.Visibility = Visibility.Visible;
@@ -86,36 +86,7 @@ namespace Unigram.Views
             }
         }
 
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
-        {
-
-            // Check if the "Enter" Key is pressed.
-            if ((args.EventType == CoreAcceleratorKeyEventType.SystemKeyDown || args.EventType == CoreAcceleratorKeyEventType.KeyDown) && (args.VirtualKey == VirtualKey.Enter))
-            {
-                // Check if CTRL is also pressed in addition to Enter key.
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-                // If there is text and CTRL is not pressed, send message. Else start new row.
-                if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && btnSendMessage.Visibility == Visibility.Visible)
-                {
-
-                    // TODO working but UGLY workaround: removal of the enter character from message.
-                    // The character itself should not be added to the string from the begining.
-                    // This will create a visual artefact for a fraction of a second, enlarging the 
-                    // message box prior to sending and clearing the it.
-                    txtMessage.Text = txtMessage.Text.Remove(txtMessage.Text.Length - 1);
-                    ViewModel.SendTextHolder = txtMessage.Text;
-                    if (ViewModel.SendCommand.CanExecute(null))
-                        ViewModel.SendCommand.Execute(null);
-                    txtMessage.Text = "";
-                    args.Handled = true;
-                }
-            }
-            
-        }
-
-        private void txtMessage_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
+        private void txtMessage_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
             CheckMessageBoxEmpty();
 
@@ -131,10 +102,9 @@ namespace Unigram.Views
 
         }
 
-        private void btnSendMessage_Click(object sender, RoutedEventArgs e)
+        private async void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.SendTextHolder = txtMessage.Text;
-            txtMessage.Text = "";
+            await txtMessage.SendAsync();
         }
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)

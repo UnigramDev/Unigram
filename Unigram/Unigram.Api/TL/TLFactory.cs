@@ -319,8 +319,6 @@ namespace Telegram.Api.TL
 				case TLType.ChatPhotoEmpty: return (T)(Object)new TLChatPhotoEmpty(from, cache);
 				case TLType.ChatPhoto: return (T)(Object)new TLChatPhoto(from, cache);
 				case TLType.MessageEmpty: return (T)(Object)new TLMessageEmpty(from, cache);
-				case TLType.Message: return (T)(Object)new TLMessage(from, cache);
-				case TLType.MessageService: return (T)(Object)new TLMessageService(from, cache);
 				case TLType.MessageMediaEmpty: return (T)(Object)new TLMessageMediaEmpty(from, cache);
 				case TLType.MessageMediaPhoto: return (T)(Object)new TLMessageMediaPhoto(from, cache);
 				case TLType.MessageMediaGeo: return (T)(Object)new TLMessageMediaGeo(from, cache);
@@ -676,6 +674,8 @@ namespace Telegram.Api.TL
 				case TLType.MessagesStickerSetInstallResultSuccess: return (T)(Object)new TLMessagesStickerSetInstallResultSuccess(from, cache);
 				case TLType.MessagesStickerSetInstallResultArchive: return (T)(Object)new TLMessagesStickerSetInstallResultArchive(from, cache);
 				case TLType.StickerSetCovered: return (T)(Object)new TLStickerSetCovered(from, cache);
+				case TLType.Message: return (T)(Object)new TLMessage(from, cache);
+				case TLType.MessageService: return (T)(Object)new TLMessageService(from, cache);
 				case TLType.RPCResult: return (T)(Object)new TLRPCResult(from, cache);
 				case TLType.MsgContainer: return (T)(Object)new TLMessageContainer(from, cache);
 				case TLType.GzipPacked: return (T)(Object)new TLGzipPacked(from, cache);

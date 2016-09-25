@@ -15,6 +15,20 @@ namespace Telegram.Api.TL
     {
         public ObservableCollection<TLMessageBase> Messages { get; set; } = new ObservableCollection<TLMessageBase>();
 
+        public List<TLMessageBase> CommitMessages { get; set; } = new List<TLMessageBase>();
+
+        public override void ReadFromCache(TLBinaryReader from)
+        {
+            Messages = new ObservableCollection<TLMessageBase>(TLFactory.Read<TLVector<TLMessageBase>>(from, true));
+            CommitMessages = new List<TLMessageBase>(TLFactory.Read<TLVector<TLMessageBase>>(from, true));
+        }
+
+        public override void WriteToCache(TLBinaryWriter to)
+        {
+            to.WriteObject(new TLVector<TLMessageBase>(Messages), true);
+            to.WriteObject(new TLVector<TLMessageBase>(CommitMessages), true);
+        }
+
         public virtual int CountMessages()
         {
             return Messages.Count;
@@ -31,7 +45,7 @@ namespace Telegram.Api.TL
             UnreadCount = dialog.UnreadCount;
 
             //если последнее сообщение отправляется и имеет дату больше, то не меняем
-            if (TopMessage == null && (TopMessageItem == null || TopMessageItem.Date > dialog.TopMessageItem.Date))
+            if (TopMessageItem == null && (TopMessageItem == null || TopMessageItem.Date > dialog.TopMessageItem.Date))
             {
 
 
@@ -133,7 +147,19 @@ namespace Telegram.Api.TL
 
         public long? TopMessageRandomId { get; set; }
 
-        public TLMessageBase TopMessageItem { get; set; }
+        public TLMessageBase _topMessageItem;
+        public TLMessageBase TopMessageItem
+        {
+            get
+            {
+                return _topMessageItem;
+            }
+            set
+            {
+                _topMessageItem = value;
+                RaisePropertyChanged(() => TopMessageItem);
+            }
+        }
 
         public int GetDateIndex()
         {
@@ -158,8 +184,18 @@ namespace Telegram.Api.TL
         }
 
 
-
-        public TLObject With { get; set; }
+        public TLObject _with;
+        public TLObject With
+        {
+            get
+            {
+                return _with;
+            }
+            set
+            {
+                _with = value;
+            }
+        }
 
         public int WithId
         {
@@ -175,6 +211,11 @@ namespace Telegram.Api.TL
                 }
                 return -1;
             }
+        }
+
+        public int Index
+        {
+            get { return Peer != null && Peer.Id != null ? Peer.Id : default(int); }
         }
 
         public TLDialog Self

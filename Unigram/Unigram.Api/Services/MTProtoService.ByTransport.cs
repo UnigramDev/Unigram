@@ -9,40 +9,38 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Telegram.Api.Transport;
-using System.Threading.Tasks;
-using Telegram.Api.TL.Methods;
 using Telegram.Api.TL.Methods.Auth;
 using Telegram.Api.TL.Methods.Upload;
 using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Methods;
 
 namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
-        private Task<MTProtoResponse<TLResPQ>> ReqPQByTransportAsync(ITransport transport, TLInt128 nonce)
+        private void ReqPQByTransportAsync(ITransport transport, TLInt128 nonce, Action<TLResPQ> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLReqPQ { Nonce = nonce };
 
-            return SendNonEncryptedMessageByTransport<TLResPQ>(transport, "req_pq", obj);
+            SendNonEncryptedMessageByTransport(transport, "req_pq", obj, callback, faultCallback);
         }
 
-        private Task<MTProtoResponse<TLServerDHParamsBase>> ReqDHParamsByTransportAsync(ITransport transport, TLInt128 nonce, TLInt128 serverNonce, byte[] p, byte[] q, long publicKeyFingerprint, byte[] encryptedData)
+        private void ReqDHParamsByTransportAsync(ITransport transport, TLInt128 nonce, TLInt128 serverNonce, byte[] p, byte[] q, long publicKeyFingerprint, byte[] encryptedData, Action<TLServerDHParamsBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLReqDHParams { Nonce = nonce, ServerNonce = serverNonce, P = p, Q = q, PublicKeyFingerprint = publicKeyFingerprint, EncryptedData = encryptedData };
 
-            return SendNonEncryptedMessageByTransport<TLServerDHParamsBase>(transport, "req_DH_params", obj);
+            SendNonEncryptedMessageByTransport(transport, "req_DH_params", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLSetClientDHParamsAnswerBase>> SetClientDHParamsByTransportAsync(ITransport transport, TLInt128 nonce, TLInt128 serverNonce, byte[] encryptedData)
+        public void SetClientDHParamsByTransportAsync(ITransport transport, TLInt128 nonce, TLInt128 serverNonce, byte[] encryptedData, Action<TLSetClientDHParamsAnswerBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLSetClientDHParams { Nonce = nonce, ServerNonce = serverNonce, EncryptedData = encryptedData };
 
-            return SendNonEncryptedMessageByTransport<TLSetClientDHParamsAnswerBase>(transport, "set_client_DH_params", obj);
+            SendNonEncryptedMessageByTransport(transport, "set_client_DH_params", obj, callback, faultCallback);
         }
 
-        public async Task<MTProtoResponse<Tuple<byte[], long, long>>> InitializeTransportAsync(ITransport transport)
+        public void InitTransportAsync(ITransport transport, Action<Tuple<byte[], long?, long?>> callback, Action<TLRPCError> faultCallback = null)
         {
-            MTProtoResponse<Tuple<byte[], long, long>> result = null;
             var authTime = Stopwatch.StartNew();
             var newNonce = TLInt256.Random();
 
@@ -50,248 +48,237 @@ namespace Telegram.Api.Services
             TLUtils.WriteLog("Start ReqPQ");
 #endif
             var nonce = TLInt128.Random();
-            var request = await ReqPQByTransportAsync(transport, nonce);
-            var resPQ = request.Value;
-            if (request.Error == null)
-            {
-                var serverNonce = resPQ.ServerNonce;
-                if (nonce != resPQ.Nonce)
+            ReqPQByTransportAsync(
+                transport, 
+                nonce,
+                resPQ =>
                 {
-                    var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
-#if LOG_REGISTRATION
-                    TLUtils.WriteLog("Stop ReqPQ with error " + error);
-#endif
-
-                    result = new MTProtoResponse<Tuple<byte[], long, long>>(null, error);
-
-                    TLUtils.WriteLine(error.ToString());
-                }
-
-#if LOG_REGISTRATION
-                TLUtils.WriteLog("Stop ReqPQ");
-#endif
-                TimeSpan calcTime;
-                Tuple<ulong, ulong> pqPair;
-                var innerData = GetInnerData(resPQ, newNonce, out calcTime, out pqPair);
-                var encryptedInnerData = GetEncryptedInnerData(innerData);
-
-#if LOG_REGISTRATION
-                TLUtils.WriteLog("Start ReqDHParams");
-#endif
-                var reqDHPResult = await ReqDHParamsByTransportAsync(
-                     transport,
-                     resPQ.Nonce,
-                     resPQ.ServerNonce,
-                     innerData.P,
-                     innerData.Q,
-                     resPQ.ServerPublicKeyFingerprints[0],
-                     encryptedInnerData);
-                if (reqDHPResult.Error == null)
-                {
-                    if (nonce != reqDHPResult.Value.Nonce)
+                    var serverNonce = resPQ.ServerNonce;
+                    if (nonce != resPQ.Nonce)
                     {
                         var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                        TLUtils.WriteLog("Stop ReqPQ with error " + error);
 #endif
 
-                        result = new MTProtoResponse<Tuple<byte[], long, long>>(null, error);
-                        TLUtils.WriteLine(error.ToString());
-                    }
-                    if (serverNonce != reqDHPResult.Value.ServerNonce)
-                    {
-                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
-#if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqDHParams with error " + error);
-#endif
-
-                        result = new MTProtoResponse<Tuple<byte[], long, long>>(null, error);
+                        faultCallback?.Invoke(error);
                         TLUtils.WriteLine(error.ToString());
                     }
 
 #if LOG_REGISTRATION
-                    TLUtils.WriteLog("Stop ReqDHParams");
+                    TLUtils.WriteLog("Stop ReqPQ");
 #endif
-                    var random = new SecureRandom();
+                    TimeSpan calcTime;
+                    Tuple<ulong, ulong> pqPair;
+                    var innerData = GetInnerData(resPQ, newNonce, out calcTime, out pqPair);
+                    var encryptedInnerData = GetEncryptedInnerData(innerData);
 
-                    var serverDHParamsOk = reqDHPResult.Value as TLServerDHParamsOk;
-                    if (serverDHParamsOk == null)
-                    {
-                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "Incorrect serverDHParams" };
-                        result = new MTProtoResponse<Tuple<byte[], long, long>>(null, error);
-                        TLUtils.WriteLine(error.ToString());
+#if LOG_REGISTRATION
+                    TLUtils.WriteLog("Start ReqDHParams");
+#endif
+                    ReqDHParamsByTransportAsync(
+                        transport,
+                        resPQ.Nonce,
+                        resPQ.ServerNonce,
+                        innerData.P,
+                        innerData.Q,
+                        resPQ.ServerPublicKeyFingerprints[0],
+                        encryptedInnerData,
+                        serverDHParams =>
+                        {
+                            if (nonce != serverDHParams.Nonce)
+                            {
+                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
+#if LOG_REGISTRATION
+                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+#endif
+
+                                faultCallback?.Invoke(error);
+                                TLUtils.WriteLine(error.ToString());
+                            }
+                            if (serverNonce != serverDHParams.ServerNonce)
+                            {
+                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
+#if LOG_REGISTRATION
+                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+#endif
+
+                                faultCallback?.Invoke(error);
+                                TLUtils.WriteLine(error.ToString());
+                            }
+
+#if LOG_REGISTRATION
+                            TLUtils.WriteLog("Stop ReqDHParams");
+#endif
+                            var random = new SecureRandom();
+
+                            var serverDHParamsOk = serverDHParams as TLServerDHParamsOk;
+                            if (serverDHParamsOk == null)
+                            {
+                                var error = new TLRPCError{ ErrorCode = 404, ErrorMessage = "Incorrect serverDHParams"};
+                                faultCallback?.Invoke(error);
+                                TLUtils.WriteLine(error.ToString());
 #if LOG_REGISTRATION
                             
-                        TLUtils.WriteLog("ServerDHParams " + serverDHParams);  
-#endif                        
-                    }
+                                TLUtils.WriteLog("ServerDHParams " + serverDHParams);  
+#endif
+                                return;
+                            }
 
-                    var aesParams = GetAesKeyIV(resPQ.ServerNonce.ToArray(), newNonce.ToArray());
+                            var aesParams = GetAesKeyIV(resPQ.ServerNonce.ToArray(), newNonce.ToArray());
 
-                    var decryptedAnswerWithHash = Utils.AesIge(serverDHParamsOk.EncryptedAnswer, aesParams.Item1, aesParams.Item2, false);     //NOTE: Remove reverse here
+                            var decryptedAnswerWithHash = Utils.AesIge(serverDHParamsOk.EncryptedAnswer, aesParams.Item1, aesParams.Item2, false);     //NOTE: Remove reverse here
 
-                    //var position = 0;
-                    //var serverDHInnerData = (TLServerDHInnerData)new TLServerDHInnerData().FromBytes(decryptedAnswerWithHash.Skip(20).ToArray(), ref position);
-                    var serverDHInnerData = TLFactory.From<TLServerDHInnerData>(decryptedAnswerWithHash.Skip(20).ToArray());
+                            //var position = 0;
+                            //var serverDHInnerData = (TLServerDHInnerData)new TLServerDHInnerData().FromBytes(decryptedAnswerWithHash.Skip(20).ToArray(), ref position);
+                            var serverDHInnerData = TLFactory.From<TLServerDHInnerData>(decryptedAnswerWithHash.Skip(20).ToArray());
 
-                    var sha1 = Utils.ComputeSHA1(serverDHInnerData.ToArray());
-                    if (!TLUtils.ByteArraysEqual(sha1, decryptedAnswerWithHash.Take(20).ToArray()))
-                    {
-                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect sha1 TLServerDHInnerData" };
+                            var sha1 = Utils.ComputeSHA1(serverDHInnerData.ToArray());
+                            if (!TLUtils.ByteArraysEqual(sha1, decryptedAnswerWithHash.Take(20).ToArray()))
+                            {
+                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect sha1 TLServerDHInnerData" };
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                        result = new MTProtoResponse<Tuple<byte[], long, long>>(null, error);
-                        TLUtils.WriteLine(error.ToString());
-                    }
+                                faultCallback?.Invoke(error);
+                                TLUtils.WriteLine(error.ToString());
+                            }
 
-                    if (!TLUtils.CheckPrime(serverDHInnerData.DHPrime, serverDHInnerData.G))
-                    {
-                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect (p, q) pair" };
+                            if (!TLUtils.CheckPrime(serverDHInnerData.DHPrime, serverDHInnerData.G))
+                            {
+                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect (p, q) pair" };
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                        result = new MTProtoResponse<Tuple<byte[], long, long>>(null, error);
-                        TLUtils.WriteLine(error.ToString());
-                    }
+                                faultCallback?.Invoke(error);
+                                TLUtils.WriteLine(error.ToString());
+                            }
 
-                    if (!TLUtils.CheckGaAndGb(serverDHInnerData.GA, serverDHInnerData.DHPrime))
-                    {
-                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect g_a" };
+                            if (!TLUtils.CheckGaAndGb(serverDHInnerData.GA, serverDHInnerData.DHPrime))
+                            {
+                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect g_a" };
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                        result = new MTProtoResponse<Tuple<byte[], long, long>>(null, error);
-                        TLUtils.WriteLine(error.ToString());
-                    }
+                                faultCallback?.Invoke(error);
+                                TLUtils.WriteLine(error.ToString());
+                            }
 
-                    var bBytes = new byte[256]; //big endian B
-                    random.NextBytes(bBytes);
+                            var bBytes = new byte[256]; //big endian B
+                            random.NextBytes(bBytes);
 
-                    var gbBytes = GetGB(bBytes, serverDHInnerData.G, serverDHInnerData.DHPrime);
+                            var gbBytes = GetGB(bBytes, serverDHInnerData.G, serverDHInnerData.DHPrime);
 
-                    var clientDHInnerData = new TLClientDHInnerData
-                    {
-                        Nonce = resPQ.Nonce,
-                        ServerNonce = resPQ.ServerNonce,
-                        RetryId = 0,
-                        GB = gbBytes
-                    };
+                            var clientDHInnerData = new TLClientDHInnerData
+                            {
+                                Nonce = resPQ.Nonce,
+                                ServerNonce = resPQ.ServerNonce,
+                                RetryId = 0,
+                                GB = gbBytes
+                            };
 
-                    var encryptedClientDHInnerData = GetEncryptedClientDHInnerData(clientDHInnerData, aesParams);
-#if LOG_REGISTRATION
-                    TLUtils.WriteLog("Start SetClientDHParams");  
+                            var encryptedClientDHInnerData = GetEncryptedClientDHInnerData(clientDHInnerData, aesParams);
+#if LOG_REGISTRATION                 
+                            TLUtils.WriteLog("Start SetClientDHParams");  
 #endif
-                    var dhGen = await SetClientDHParamsByTransportAsync(transport, resPQ.Nonce, resPQ.ServerNonce, encryptedClientDHInnerData);
-                    if (dhGen.Error == null)
-                    {
+                            SetClientDHParamsByTransportAsync(
+                                transport,
+                                resPQ.Nonce, 
+                                resPQ.ServerNonce, 
+                                encryptedClientDHInnerData,
+                                dhGen =>
+                                {
+                                    if (nonce != dhGen.Nonce)
+                                    {
+                                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
+#if LOG_REGISTRATION
+                                        TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
+#endif
 
-                        if (nonce != dhGen.Value.Nonce)
+                                        faultCallback?.Invoke(error);
+                                        TLUtils.WriteLine(error.ToString());
+                                    }
+                                    if (serverNonce != dhGen.ServerNonce)
+                                    {
+                                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
+#if LOG_REGISTRATION
+                                        TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
+#endif
+
+                                        faultCallback?.Invoke(error);
+                                        TLUtils.WriteLine(error.ToString());
+                                    }
+
+                                    var dhGenOk = dhGen as TLDHGenOk;
+                                    if (dhGenOk == null)
+                                    {
+                                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "Incorrect dhGen " + dhGen.GetType() };
+                                        if (faultCallback != null) faultCallback(error);
+                                        TLUtils.WriteLine(error.ToString());
+#if LOG_REGISTRATION
+                                        TLUtils.WriteLog("DHGen result " + serverDHParams);
+#endif
+                                        return;
+                                    }
+
+#if LOG_REGISTRATION
+                                    TLUtils.WriteLog("Stop SetClientDHParams");
+#endif
+                                    var getKeyTimer = Stopwatch.StartNew();
+                                    var authKey = GetAuthKey(bBytes, serverDHInnerData.GA.ToBytes(), serverDHInnerData.DHPrime.ToBytes());
+
+#if LOG_REGISTRATION
+                                    var logCountersString = new StringBuilder();
+
+                                    logCountersString.AppendLine("Auth Counters");
+                                    logCountersString.AppendLine();
+                                    logCountersString.AppendLine("pq factorization time: " + calcTime);
+                                    logCountersString.AppendLine("calc auth key time: " + getKeyTimer.Elapsed);
+                                    logCountersString.AppendLine("auth time: " + authTime.Elapsed);
+
+                                    TLUtils.WriteLog(logCountersString.ToString());
+#endif
+                                    //newNonce - little endian
+                                    //authResponse.ServerNonce - little endian
+                                    var salt = GetSalt(newNonce.ToArray(), resPQ.ServerNonce.ToArray());
+                                    var sessionId = new byte[8];
+                                    random.NextBytes(sessionId);
+
+                                    // authKey, salt, sessionId
+                                    callback(new Tuple<byte[], long?, long?>(authKey, new long?(BitConverter.ToInt64(salt, 0)), new long?(BitConverter.ToInt64(sessionId, 0))));
+                                },
+                                error =>
+                                {
+#if LOG_REGISTRATION
+                                    TLUtils.WriteLog("Stop SetClientDHParams with error " + error.ToString());
+#endif
+                                    faultCallback?.Invoke(error);
+                                    TLUtils.WriteLine(error.ToString());
+                                });
+                        },
+                        error =>
                         {
-                            var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
 #if LOG_REGISTRATION
-                            TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
+                            TLUtils.WriteLog("Stop ReqDHParams with error " + error.ToString());
 #endif
-
-                            result = new MTProtoResponse<Tuple<byte[], long, long>>(null, error);
+                            faultCallback?.Invoke(error);
                             TLUtils.WriteLine(error.ToString());
-                        }
-                        if (serverNonce != dhGen.Value.ServerNonce)
-                        {
-                            var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
-#if LOG_REGISTRATION
-                            TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
-#endif
-
-                            result = new MTProtoResponse<Tuple<byte[], long, long>>(null, error);
-                            TLUtils.WriteLine(error.ToString());
-                        }
-
-                        var dhGenOk = dhGen.Value as TLDHGenOk;
-                        if (dhGenOk == null)
-                        {
-                            var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "Incorrect dhGen " + dhGen.GetType() };
-                            result = new MTProtoResponse<Tuple<byte[], long, long>>(null, error);
-                            TLUtils.WriteLine(error.ToString());
-#if LOG_REGISTRATION
-                            TLUtils.WriteLog("DHGen result " + serverDHParams);
-#endif
-
-                        }
-
-#if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop SetClientDHParams");
-#endif
-                        var getKeyTimer = Stopwatch.StartNew();
-                        var authKey = GetAuthKey(bBytes, serverDHInnerData.GA.ToBytes(), serverDHInnerData.DHPrime.ToBytes());
-
-#if LOG_REGISTRATION
-                        var logCountersString = new StringBuilder();
-
-                        logCountersString.AppendLine("Auth Counters");
-                        logCountersString.AppendLine();
-                        logCountersString.AppendLine("pq factorization time: " + calcTime);
-                        logCountersString.AppendLine("calc auth key time: " + getKeyTimer.Elapsed);
-                        logCountersString.AppendLine("auth time: " + authTime.Elapsed);
-
-                        TLUtils.WriteLog(logCountersString.ToString());
-#endif
-                        //newNonce - little endian
-                        //authResponse.ServerNonce - little endian
-                        var salt = GetSalt(newNonce.ToArray(), resPQ.ServerNonce.ToArray());
-                        var sessionId = new byte[8];
-                        random.NextBytes(sessionId);
-
-                        // authKey, salt, sessionId
-                        result = new MTProtoResponse<Tuple<byte[], long, long>>(
-                            new Tuple<byte[], long, long>(
-                                authKey,
-                                BitConverter.ToInt64(salt, 0),
-                                BitConverter.ToInt64(sessionId, 0)));
-                    }
-                    else
-                    {
-
-#if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop SetClientDHParams with error " + error.ToString());
-#endif
-                        result = new MTProtoResponse<Tuple<byte[], long, long>>(null, dhGen.Error);
-
-                        TLUtils.WriteLine(dhGen.Error.ToString());
-
-                    }
-                }
-                else
+                        });
+                },
+                error =>
                 {
-
-
 #if LOG_REGISTRATION
-                    TLUtils.WriteLog("Stop ReqDHParams with error " + error.ToString());
+                    TLUtils.WriteLog("Stop ReqPQ with error " + error.ToString());
 #endif
-
-                    result = new MTProtoResponse<Tuple<byte[], long, long>>(null, reqDHPResult.Error);
-                    TLUtils.WriteLine(reqDHPResult.Error.ToString());
-                }
-            }
-
-            else
-            {
-
-#if LOG_REGISTRATION
-                TLUtils.WriteLog("Stop ReqPQ with error " + error.ToString());
-#endif
-                result = new MTProtoResponse<Tuple<byte[], long, long>>(null, result.Error);
-                TLUtils.WriteLine(result.Error.ToString());
-
-            }
-
-            return result;
+                    faultCallback?.Invoke(error);
+                    TLUtils.WriteLine(error.ToString());
+                });
         }
 
-        public void LogOutTransportsAsync()
+        public void LogOutTransportsAsync(Action callback, Action<List<TLRPCError>> faultCallback = null)
         {
             Execute.BeginOnThreadPool(() =>
             {
@@ -309,22 +296,22 @@ namespace Telegram.Api.Services
                             continue;
                         }
 
-                        var local = i;
+                        var local = i; 
                         var handle = new ManualResetEvent(false);
                         waitHandles.Add(handle);
                         Execute.BeginOnThreadPool(() =>
                         {
                             var dcOption = dcOptions[local];
-                            var request = LogOutAsync().Result;
-                            if (request.Error == null)
-                            {
-                                handle.Set();
-                            }
-                            else
-                            {
-                                errors.Add(request.Error);
-                                handle.Set();
-                            }
+                            LogOutAsync(dcOption.Id,
+                                result =>
+                                {
+                                    handle.Set();
+                                },
+                                error =>
+                                {
+                                    errors.Add(error);
+                                    handle.Set();
+                                });
                         });
                     }
 
@@ -333,26 +320,26 @@ namespace Telegram.Api.Services
                     {
                         if (errors.Count > 0)
                         {
-                            //faultCallback.SafeInvoke(errors);
+                            faultCallback.SafeInvoke(errors);
                         }
                         else
                         {
-                            // callback.SafeInvoke();
+                            callback.SafeInvoke();
                         }
                     }
                     else
                     {
-                        // faultCallback.SafeInvoke(errors);
+                        faultCallback.SafeInvoke(errors);
                     }
                 }
                 else
                 {
-                    // callback.SafeInvoke();
+                    callback.SafeInvoke();
                 }
             });
         }
 
-        public async Task<MTProtoResponse<bool>> LogOutAsync(int dcId)
+        public void LogOutAsync(int dcId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             lock (_activeTransportRoot)
             {
@@ -363,58 +350,47 @@ namespace Telegram.Api.Services
                         TLUtils.WriteException(new Exception("_activeTransport.DCId==0"));
                     }
 
-                    LogOutAsync().Wait();
-                    return new MTProtoResponse<bool>(false);
+                    LogOutCallback(callback, faultCallback);
+                    return;
                 }
             }
 
-            var transport = GetTransportByDCId(dcId);
+            var transport = GetMediaTransportByDCId(dcId);
 
             if (transport == null)
             {
-                return new MTProtoResponse<bool>(true,
-                    new TLRPCError
-                    {
-                        ErrorCode = 404,
-                        ErrorMessage = "LogOutAsync: Empty transport for dc id " + dcId
-                    });
+                faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "LogOutAsync: Empty transport for dc id " + dcId });
+
+                return;
             }
 
             if (transport.AuthKey == null)
             {
-                return new MTProtoResponse<bool>(false,
-                    new TLRPCError
-                    {
-                        ErrorCode = 404,
-                        ErrorMessage = "LogOutAsync: Empty authKey for dc id " + dcId
-                    });
+                faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "LogOutAsync: Empty authKey for dc id " + dcId });
+
+                return;
             }
 
             var obj = new TLAuthLogOut();
 
-            var result = await SendInformativeMessageByTransport<bool>(transport, "auth.logOut", obj);
-            if (result.IsSucceeded)
-            {
-                lock (transport.SyncRoot)
+            SendInformativeMessageByTransport<bool>(transport, "auth.logOut", obj,
+                result =>
                 {
-                    transport.IsInitializing = false;
-                    transport.IsAuthorizing = false;
-                    transport.IsAuthorized = false;
-                }
-
-                return new MTProtoResponse<bool>(true);
-            }
-            else
-            {
-                return new MTProtoResponse<bool>(false);
-            }
+                    lock (transport.SyncRoot)
+                    {
+                        transport.IsInitializing = false;
+                        transport.IsAuthorizing = false;
+                        transport.IsAuthorized = false;
+                    }
+                }, 
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUploadFile>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit)
+        public void GetFileCallback(int dcId, TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFile> callback, Action<TLRPCError> faultCallback = null)
         {
-            MTProtoResponse<TLUploadFile> result = null;
             var obj = new TLUploadGetFile { Location = location, Offset = offset, Limit = limit };
-            var download = false;
+
+            var transport = GetMediaTransportByDCId(dcId);
 
             lock (_activeTransportRoot)
             {
@@ -425,21 +401,16 @@ namespace Telegram.Api.Services
                         TLUtils.WriteException(new Exception("_activeTransport.DCId==0"));
                     }
 
-                    download = true;
-
-                    //return SendInformativeMessage<TLUploadFile>("upload.getFile", obj).Result;
+                    SendInformativeMessageByTransport(transport, string.Format("upload.getFile main dc_id={0} loc=[{5}] o={1} l={2}\ntransport_id={3} session_id={4}", dcId, offset, limit, transport.Id, transport.SessionId, location), obj, callback, faultCallback);
+                    return;
                 }
             }
 
-            if (download)
-            {
-                return await SendInformativeMessage<TLUploadFile>("upload.getFile", obj);
-            }
-
-            var transport = GetTransportByDCId(dcId);
             if (transport == null)
             {
-                return new MTProtoResponse<TLUploadFile>(new TLRPCError { ErrorCode = 404, ErrorMessage = "GetFileAsync: Empty transport for dc id " + dcId });
+                faultCallback.SafeInvoke(new TLRPCError{ ErrorCode = 404, ErrorMessage = "GetFileAsync: Empty transport for dc id " + dcId});
+
+                return;
             }
 
             if (transport.AuthKey == null)
@@ -459,97 +430,94 @@ namespace Telegram.Api.Services
 
                 if (cancelInitializing)
                 {
-                    return new MTProtoResponse<TLUploadFile>(new TLRPCError { ErrorCode = 404, ErrorMessage = "DC " + dcId + " is already initializing" });
+                    faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "DC " + dcId + " is already initializing" });
+                    return;
                 }
 
-                var tuple = await InitializeTransportAsync(transport);
-                if (tuple.Error == null)
-                {
-                    lock (transport.SyncRoot)
+                InitTransportAsync(
+                    transport,
+                    tuple =>
                     {
-                        transport.AuthKey = tuple.Value.Item1;
-                        transport.Salt = tuple.Value.Item2;
-                        transport.SessionId = tuple.Value.Item3;
-
-                        transport.IsInitializing = false;
-                    }
-                    var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Value.Item1);
-
-                    lock (_authKeysRoot)
-                    {
-                        if (!_authKeys.ContainsKey(authKeyId))
+                        lock (transport.SyncRoot)
                         {
-                            _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Value.Item1, AutkKeyId = authKeyId });
+                            transport.AuthKey = tuple.Item1;
+                            transport.Salt = tuple.Item2;
+                            transport.SessionId = tuple.Item3;
+
+                            transport.IsInitializing = false;
                         }
-                    }
+                        var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Item1);
 
-                    var transportExport = await ExportImportAuthorizationAsync(transport);
-
-                    if (transportExport.Error == null)
-                    {
-                        foreach (var dcOption in _config.DCOptions)
+                        lock (_authKeysRoot)
                         {
-                            if (dcOption.Id == transport.DCId)
+                            if (!_authKeys.ContainsKey(authKeyId))
                             {
-                                dcOption.AuthKey = tuple.Value.Item1;
-                                dcOption.Salt = tuple.Value.Item2;
-                                dcOption.SessionId = tuple.Value.Item3;
+                                _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Item1, AutkKeyId = authKeyId });
                             }
                         }
 
-                        _cacheService.SetConfig(_config);
+                        ExportImportAuthorizationAsync(
+                            transport,
+                            () =>
+                            {
+                                foreach (var dcOption in _config.DCOptions)
+                                {
+                                    if (dcOption.Id == transport.DCId)
+                                    {
+                                        dcOption.AuthKey = tuple.Item1;
+                                        dcOption.Salt = tuple.Item2;
+                                        dcOption.SessionId = tuple.Item3;
+                                    }
+                                }
 
-                        var innerRequest = await SendInformativeMessageByTransport<TLUploadFile>(transport, "upload.getFile", obj);
-                        result = new MTProtoResponse<TLUploadFile>(innerRequest.Value);
-                    }
-                    else
+                                _cacheService.SetConfig(_config);
+
+                                SendInformativeMessageByTransport(transport, string.Format("upload.getFile dc_id={0} loc=[{3}] o={1} l={2}", dcId, offset, limit, location), obj, callback, faultCallback);
+                            },
+                            error =>
+                            {
+                                if (!error.CodeEquals(TLErrorCode.NOT_FOUND) &&
+                                    !error.ErrorMessage.ToString().Contains("is already authorizing"))
+                                {
+                                    Execute.ShowDebugMessage("ExportImportAuthorization error " + error);
+                                }
+
+                                faultCallback.SafeInvoke(error);
+                            });
+                    },
+                    error =>
                     {
-                        if (!transportExport.Error.CodeEquals(TLErrorCode.NOT_FOUND) &&
-                            !transportExport.Error.ErrorMessage.ToString().Contains("is already authorizing"))
+                        lock (transport.SyncRoot)
                         {
-                            Execute.ShowDebugMessage("ExportImportAuthorization error " + transportExport.Error);
+                            transport.IsInitializing = false;
                         }
 
-                        result = new MTProtoResponse<TLUploadFile>(transportExport.Error);
-                    }
-
-                }
-                else
-                {
-                    lock (transport.SyncRoot)
-                    {
-                        transport.IsInitializing = false;
-                    }
-
-                    result = new MTProtoResponse<TLUploadFile>(tuple.Error);
-                }
+                        faultCallback.SafeInvoke(error);
+                    });
             }
             else
             {
-                var innerRequest = await ExportImportAuthorizationAsync(transport);
-                if (innerRequest.Error == null)
-                {
-                    var file = await SendInformativeMessageByTransport<TLUploadFile>(transport, "upload.getFile", obj);
-                    result = new MTProtoResponse<TLUploadFile>(file.Value);
-                }
-                else
-                {
-                    if (!innerRequest.Error.CodeEquals(TLErrorCode.NOT_FOUND) &&
-                        !innerRequest.Error.ErrorMessage.ToString().Contains("is already authorizing"))
+                ExportImportAuthorizationAsync(
+                    transport,
+                    () =>
                     {
-                        Execute.ShowDebugMessage("ExportImportAuthorization error " + innerRequest.Error);
-                    }
+                        SendInformativeMessageByTransport(transport, string.Format("upload.getFile dc_id={0} loc=[{3}] o={1} l={2}", dcId, offset, limit, location), obj, callback, faultCallback);
+                    },
+                    error =>
+                    {
+                        if (!error.CodeEquals(TLErrorCode.NOT_FOUND) 
+                            && !error.ErrorMessage.ToString().Contains("is already authorizing"))
+                        {
+                            Execute.ShowDebugMessage("ExportImportAuthorization error " + error);
+                        }
 
-                    result = new MTProtoResponse<TLUploadFile>(innerRequest.Error);
-                }
+                        faultCallback.SafeInvoke(error);
+                    });
             }
-
-            return result;
         }
 
-        private async Task<MTProtoResponse<TLObject>> ExportImportAuthorizationAsync(ITransport toTransport)
+        private void ExportImportAuthorizationAsync(ITransport toTransport, Action callback, Action<TLRPCError> faultCallback = null)
         {
-            MTProtoResponse<TLObject> result = null;
             if (!toTransport.IsAuthorized)
             {
                 bool authorizing = false;
@@ -565,58 +533,74 @@ namespace Telegram.Api.Services
 
                 if (authorizing)
                 {
-                    return new MTProtoResponse<TLObject>(new TLRPCError { ErrorCode = 404, ErrorMessage = $"DC {toTransport.DCId} is already authorizing" });
+                    faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "DC " + toTransport.DCId + " is already authorizing" });
+                    return;
                 }
 
-                var exportedAuthorization = await ExportAuthorizationAsync(toTransport.DCId);
-                if (exportedAuthorization.Error == null)
-                {
-                    var authorization = await ImportAuthorizationByTransportAsync(
-                        toTransport,
-                        exportedAuthorization.Value.Id,
-                        exportedAuthorization.Value.Bytes);
-                    if (authorization.Error == null)
+                ExportAuthorizationAsync(
+                    toTransport.DCId,
+                    exportedAuthorization =>
                     {
+                        ImportAuthorizationByTransportAsync(
+                            toTransport,
+                            exportedAuthorization.Id,
+                            exportedAuthorization.Bytes,
+                            authorization =>
+                            {
+                                lock (toTransport.SyncRoot)
+                                {
+                                    toTransport.IsAuthorized = true; 
+                                    toTransport.IsAuthorizing = false;
+                                }
 
+                                foreach (var dcOption in _config.DCOptions)
+                                {
+                                    if (dcOption.Id == toTransport.DCId)
+                                    {
+                                        dcOption.IsAuthorized = true;
+                                    }
+                                }
+
+                                _cacheService.SetConfig(_config);
+
+                                callback.SafeInvoke();
+                            },
+                            error =>
+                            {
+                                lock (toTransport.SyncRoot)
+                                {
+                                    toTransport.IsAuthorizing = false;
+                                }
+                                faultCallback.SafeInvoke(error);
+                            });
+                        ;
+                    },
+                    error =>
+                    {
                         lock (toTransport.SyncRoot)
                         {
-                            toTransport.IsAuthorized = true;
                             toTransport.IsAuthorizing = false;
                         }
-
-                        result = new MTProtoResponse<TLObject>(null);
-                    }
-                    else
-                    {
-
-                        lock (toTransport.SyncRoot)
-                        {
-                            toTransport.IsAuthorizing = false;
-                        }
-
-                        result = new MTProtoResponse<TLObject>(null, authorization.Error);
-                    }
-                }
-                else
-                {
-                    lock (toTransport.SyncRoot)
-                    {
-                        toTransport.IsAuthorizing = false;
-                    }
-
-                    result = new MTProtoResponse<TLObject>(null, exportedAuthorization.Error);
-                }
+                        faultCallback.SafeInvoke(error);
+                    });
             }
-
-            return result = new MTProtoResponse<TLObject>(null);
+            else
+            {
+                callback.SafeInvoke();
+            }
         }
 
-        private ITransport GetTransportByDCId(int dcId)
+        private ITransport GetMediaTransportByDCId(int dcId)
         {
             ITransport transport;
             lock (_activeTransportRoot)
             {
-                var dcOption = _config.DCOptions.FirstOrDefault(x => x.IsValidIPv4Option(dcId));
+                var dcOption = _config.DCOptions.FirstOrDefault(x => x.IsValidIPv4Option(dcId));// && x.Media.Value);
+
+                if (dcOption == null)
+                {
+                    dcOption = _config.DCOptions.FirstOrDefault(x => x.IsValidIPv4Option(dcId));
+                }
 
                 if (dcOption == null) return null;
 
@@ -626,6 +610,7 @@ namespace Telegram.Api.Services
                 {
                     transport.DCId = dcId;
                     transport.AuthKey = dcOption.AuthKey;
+                    //transport.IsAuthorized = (_activeTransport != null && _activeTransport.DCId == dcOption.Id.Value) || dcOption.IsAuthorized;
                     transport.Salt = dcOption.Salt;
                     transport.SessionId = TLLong.Random();
                     transport.SequenceNumber = 0;
@@ -639,12 +624,10 @@ namespace Telegram.Api.Services
 
         private readonly object _initConnectionSyncRoot = new object();
 
-        private async Task<MTProtoResponse<T>> SendInformativeMessageByTransport<T>(ITransport transport, string caption, TLObject obj,
+        private void SendInformativeMessageByTransport<T>(ITransport transport, string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null,
             int? maxAttempt = null,                 // to send delayed items
             Action<int> attemptFailed = null)       // to send delayed items
         {
-            var callback = new TaskCompletionSource<MTProtoResponse>();
-
             bool isInitialized;
             lock (transport.SyncRoot)
             {
@@ -657,9 +640,10 @@ namespace Telegram.Api.Services
                 {
                     SendTime = DateTime.Now,
                     Caption = caption,
-                    Callback = callback,
                     Object = obj,
+                    Callback = t => callback((T)t),
                     AttemptFailed = attemptFailed,
+                    FaultCallback = faultCallback,
                     MaxAttempt = maxAttempt
                 };
 #if LOG_REGISTRATION
@@ -670,7 +654,7 @@ namespace Telegram.Api.Services
                     _delayedItems.Add(delayedItem);
                 }
 
-                return await callback.Task;
+                return;
             }
 
             lock (transport.SyncRoot)
@@ -684,7 +668,7 @@ namespace Telegram.Api.Services
                     var transportSequenceNumber = transport.SequenceNumber;
                     var transportClientTicksDelta = transport.ClientTicksDelta;
                     bool isCreated;
-                    transport = _transportService.GetTransport(transport.Host, transport.Port, Type, out isCreated);
+                    transport = _transportService.GetFileTransport(transport.Host, transport.Port, Type, out isCreated);
                     if (isCreated)
                     {
                         transport.DCId = transportDCId;
@@ -717,7 +701,8 @@ namespace Telegram.Api.Services
                         SystemVersion = _deviceInfo.SystemVersion
                     };
 
-                    data = new TLInvokeWithLayer { Query = initConnection, Layer = Constants.SupportedLayer };
+                    var withLayerN = new TLInvokeWithLayer { Query = initConnection, Layer = Constants.SupportedLayer };
+                    data = withLayerN;
                     transport.Initiated = true;
                 }
                 else
@@ -731,22 +716,24 @@ namespace Telegram.Api.Services
             }
 
             var authKey = transport.AuthKey;
-            var salt = transport.Salt ?? 0;
-            var sessionId = transport.SessionId ?? 0;
+            var salt = transport.Salt;
+            var sessionId = transport.SessionId;
             var clientsTicksDelta = transport.ClientTicksDelta;
             var dcId = transport.DCId;
-            var transportMessage = CreateTLTransportMessage(salt, sessionId, sequenceNumber, messageId, data);
+            var transportMessage = CreateTLTransportMessage(salt ?? 0, sessionId ?? 0, sequenceNumber, messageId, data);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
             var historyItem = new HistoryItem
             {
                 SendTime = DateTime.Now,
                 Caption = caption,
-                Callback = callback,
                 Object = obj,
                 Message = transportMessage,
+                Callback = t => callback((T)t),
+                FaultCallback = faultCallback,
                 ClientTicksDelta = clientsTicksDelta,
                 Status = RequestStatus.Sent,
+
                 DCId = dcId
             };
 
@@ -755,36 +742,38 @@ namespace Telegram.Api.Services
                 _history[historyItem.Hash] = historyItem;
             }
 #if DEBUG
-            NotifyOfPropertyChange(() => History);
+            RaisePropertyChanged(() => History);
 #endif
 
-            Debug.WriteLine(">> {4} {0, -30} MsgId {1} SeqNo {2, -4} SessionId {3}", caption, transportMessage.MsgId, transportMessage.SeqNo, transportMessage.SessionId, historyItem.DCId);
+            //Debug.WriteLine(">> {4} {0, -30} MsgId {1} SeqNo {2, -4} SessionId {3}", caption, transportMessage.MessageId, transportMessage.SeqNo, transportMessage.SessionId, historyItem.DCId);
             var captionString = string.Format("{0} {1} {2}", caption, transportMessage.SessionId, transportMessage.MsgId);
-            SendPacketAsync(transport, captionString, encryptedMessage, (result) =>
-            {
-                if (!result)
+            SendPacketAsync(transport, captionString,
+                encryptedMessage,
+                result =>
+                {
+                    if (!result)
+                    {
+                        lock (_historyRoot)
+                        {
+                            _history.Remove(historyItem.Hash);
+                        }
+#if DEBUG
+                        RaisePropertyChanged(() => History);
+#endif
+                        faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FastCallback SocketError=" + result });
+                    }
+                },
+                error =>
                 {
                     lock (_historyRoot)
                     {
                         _history.Remove(historyItem.Hash);
                     }
 #if DEBUG
-                    NotifyOfPropertyChange(() => History);
+                    RaisePropertyChanged(() => History);
 #endif
-
-                    callback.TrySetResult(new MTProtoResponse<T>(new TLRPCError { ErrorCode = 404, ErrorMessage = $"FastCallback SocketError={result}" }));
-                }
-            }, 
-            (error) =>
-            {
-                lock (_historyRoot)
-                {
-                    _history.Remove(historyItem.Hash);
-                }
-                callback.TrySetResult(new MTProtoResponse<T>(new TLRPCError { ErrorCode = 404 }));
-            });
-
-            return await callback.Task;
+                    faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404 });
+                });
         }
 
         private void SaveInitConnectionAsync(TLInitConnection initConnection)
@@ -792,7 +781,7 @@ namespace Telegram.Api.Services
             Execute.BeginOnThreadPool(() => TLUtils.SaveObjectToMTProtoFile(_initConnectionSyncRoot, Constants.InitConnectionFileName, initConnection));
         }
 
-        private async Task<MTProtoResponse<T>> SendNonEncryptedMessageByTransport<T>(ITransport transport, string caption, TLObject obj) where T : TLObject
+        private void SendNonEncryptedMessageByTransport<T>(ITransport transport, string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null) where T : TLObject
         {
             PrintCaption(caption);
 
@@ -803,13 +792,12 @@ namespace Telegram.Api.Services
             }
             var message = CreateTLNonEncryptedMessage(messageId, obj);
 
-            var callback = new TaskCompletionSource<MTProtoResponse>();
-
             var historyItem = new HistoryItem
             {
                 Caption = caption,
                 Message = message,
-                Callback = callback,
+                Callback = t => callback((T)t),
+                FaultCallback = faultCallback,
                 SendTime = DateTime.Now,
                 Status = RequestStatus.Sent
             };
@@ -846,22 +834,26 @@ namespace Telegram.Api.Services
             transport.EnqueueNonEncryptedItem(historyItem);
 
             var captionString = string.Format("{0} {1}", caption, guid);
-            SendPacketAsync(transport, captionString, message, (socketError) =>
-            {
-                if (!socketError)
+            SendPacketAsync(transport, captionString, message,
+                socketError =>
+                {
+#if LOG_REGISTRATION
+                    TLUtils.WriteLog(caption + " SocketError=" + socketError);
+#endif
+                    if (!socketError)
+                    {
+                        transport.RemoveNonEncryptedItem(historyItem);
+
+                        // connection is unsuccessfully
+                        faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FastCallback SocketError=" + socketError });
+                    }
+                },
+                error =>
                 {
                     transport.RemoveNonEncryptedItem(historyItem);
-                    callback.TrySetResult(new MTProtoResponse<T>(new TLRPCError { ErrorCode = 404, ErrorMessage = $"FastCallback SocketError={socketError}" }));
-                }
-            }, 
-            (error) =>
-            {
-                transport.RemoveNonEncryptedItem(historyItem);
-                callback.TrySetResult(new MTProtoResponse<T>(new TLRPCError { ErrorCode = 404 }));
-            });
 
-            var taskResult = await callback.Task;
-            return taskResult;
+                    faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404 });
+                });
         }
 
         public void MessageAcknowledgmentsByTransport(ITransport transport, TLVector<long> ids)
@@ -875,8 +867,8 @@ namespace Telegram.Api.Services
             var obj = new TLMsgsAck { MsgIds = ids };
 
             var authKey = transport.AuthKey;
-            var sesseionId = transport.SessionId ?? 0;
-            var salt = transport.Salt ?? 0;
+            var sesseionId = transport.SessionId;
+            var salt = transport.Salt;
 
             int sequenceNumber;
             long messageId;
@@ -885,7 +877,7 @@ namespace Telegram.Api.Services
                 sequenceNumber = transport.SequenceNumber * 2;
                 messageId = transport.GenerateMessageId(true);
             }
-            var transportMessage = CreateTLTransportMessage(salt, sesseionId, sequenceNumber, messageId, obj);
+            var transportMessage = CreateTLTransportMessage(salt ?? 0, sesseionId ?? 0, sequenceNumber, messageId, obj);
             var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
 
             lock (transport.SyncRoot)
@@ -918,7 +910,7 @@ namespace Telegram.Api.Services
 
             lock (_debugRoot)
             {
-                Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2, -4} SessionId {3}\nids:", "msgs_ack", transportMessage.MsgId, transportMessage.SeqNo, transportMessage.SessionId);
+                //Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2, -4} SessionId {3}\nids:", "msgs_ack", transportMessage.MessageId.Value, transportMessage.SeqNo.Value, transportMessage.SessionId.Value);
                 foreach (var id in ids)
                 {
                     Debug.WriteLine(id);
@@ -926,10 +918,16 @@ namespace Telegram.Api.Services
             }
 
             var captionString = string.Format("msgs_ack {0}", transportMessage.MsgId);
-            SendPacketAsync(transport, captionString, encryptedMessage, (result) =>
-            {
-                Debug.WriteLine("@msgs_ack {0} result {1}", transportMessage.MsgId, result);
-            }, (error) => { });
+            SendPacketAsync(transport, captionString, encryptedMessage,
+                result =>
+                {
+                    //Debug.WriteLine("@msgs_ack {0} result {1}", transportMessage.MessageId, result);
+                    //ReceiveBytesAsync(result, authKey);
+                },
+                error =>
+                {
+                    //Debug.WriteLine("<<msgs_ack failed " + transportMessage.MessageId);
+                });
         }
 
         private void ProcessBadMessageByTransport(ITransport transport, TLTransportMessage message, TLBadMsgNotification badMessage, HistoryItem historyItem)
@@ -949,9 +947,9 @@ namespace Telegram.Api.Services
                         _history.Remove(historyItem.Hash);
                     }
 #if DEBUG
-                    NotifyOfPropertyChange(() => History);
+                    RaisePropertyChanged(() => History);
 #endif
-
+                    
                     var saveConfig = false;
                     lock (transport.SyncRoot)
                     {
@@ -968,7 +966,7 @@ namespace Telegram.Api.Services
                         {
                             transport.ClientTicksDelta += serverTime - clientTime;
                             saveConfig = true;
-                            errorInfo.AppendLine("Set ticks delta: " + transport.ClientTicksDelta + "(" + (serverDateTime - clientDateTime).TotalSeconds + " seconds)");
+                            errorInfo.AppendLine("Set ticks delta: " + transport.ClientTicksDelta + "(" + (serverDateTime-clientDateTime).TotalSeconds + " seconds)");
                         }
                     }
 
@@ -983,8 +981,8 @@ namespace Telegram.Api.Services
                     }
 
                     TLUtils.WriteLine(errorInfo.ToString(), LogSeverity.Error);
-
-
+                    
+                
                     // TODO: replace with SendInformativeMessage
                     var transportMessage = (TLContainerTransportMessage)historyItem.Message;
                     int sequenceNumber;
@@ -1041,25 +1039,31 @@ namespace Telegram.Api.Services
                             }
                         }
                     }
-                    Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2,-4} SessionId {3} BadMsgId {4}", string.Format("{0}: {1}", historyItem.Caption, "time"), transportMessage.MsgId, transportMessage.SeqNo, message.SessionId, badMessage.BadMsgId);
+                    //Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2,-4} SessionId {3} BadMsgId {4}", string.Format("{0}: {1}", historyItem.Caption, "time"), transportMessage.MessageId.Value, transportMessage.SeqNo.Value, message.SessionId.Value, badMessage.BadMessageId.Value);
                     var captionString = string.Format("{0} {1} {2}", historyItem.Caption, message.SessionId, transportMessage.MsgId);
+                    SendPacketAsync(transport, captionString,
+                        encryptedMessage,
+                        result =>
+                        {
+                            Debug.WriteLine("@{0} {1} result {2}", string.Format("{0}: {1}", historyItem.Caption, "time"), transportMessage.MsgId, result);
 
-                    SendPacketAsync(transport, captionString, encryptedMessage, (resultApi) =>
-                    {
-                        Debug.WriteLine("@{0} {1} result {2}", string.Format("{0}: {1}", historyItem.Caption, "time"), transportMessage.MsgId, resultApi);
-                    },
-                    (error) =>
+                        },//ReceiveBytesAsync(result, authKey),
+                    error =>
                     {
                         lock (_historyRoot)
                         {
                             _history.Remove(historyItem.Hash);
                         }
-
 #if DEBUG
-                        NotifyOfPropertyChange(() => History);
+                        RaisePropertyChanged(() => History);
 #endif
                         faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404 });
                     });
+
+                    //_activeTransport.SendPacketAsync(historyItem.Caption + " " + transportMessage.MessageId, 
+                    //    encryptedMessage.ToBytes(), result => ReceiveBytesAsync(result, authKey), 
+                    //    () => { if (faultCallback != null) faultCallback(null); });
+
                     break;
 
                 case 32:
@@ -1131,19 +1135,17 @@ namespace Telegram.Api.Services
                             }
                         }
                     }
-                    Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2,-4} SessionId {3} BadMsgId {4}", string.Format("{0}: {1}", historyItem.Caption, "seqNo"), transportMessage.MsgId, transportMessage.SeqNo, message.SessionId, badMessage.BadMsgId);
+                    //Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2,-4} SessionId {3} BadMsgId {4}", string.Format("{0}: {1}", historyItem.Caption, "seqNo"), transportMessage.MessageId.Value, transportMessage.SeqNo.Value, message.SessionId.Value, badMessage.BadMessageId.Value);
                     captionString = string.Format("{0} {1} {2}", historyItem.Caption, message.SessionId, transportMessage.MsgId);
-                    SendPacketAsync(transport, captionString, encryptedMessage, (result) =>
-                    {
-                        Debug.WriteLine("@{0} {1} result {2}", string.Format("{0}: {1}", historyItem.Caption, "seqNo"), transportMessage.MsgId, result);
-                    }, 
-                    (error) =>
-                    {
-                        if (faultCallback != null)
+                    SendPacketAsync(transport, captionString,
+                        encryptedMessage,
+                        result =>
                         {
-                            faultCallback.Invoke(null);
-                        }
-                    });
+                            Debug.WriteLine("@{0} {1} result {2}", string.Format("{0}: {1}", historyItem.Caption, "seqNo"), transportMessage.MsgId, result);
+
+                        },//ReceiveBytesAsync(result, authKey)}, 
+                        error => { if (faultCallback != null) faultCallback(null); });
+
                     break;
             }
         }
@@ -1161,7 +1163,7 @@ namespace Telegram.Api.Services
                 _history.Remove(historyItem.Hash);
             }
 #if DEBUG
-            NotifyOfPropertyChange(() => History);
+            RaisePropertyChanged(() => History);
 #endif
 
             TLUtils.WriteLine("CORRECT SERVER SALT:");
@@ -1250,19 +1252,14 @@ namespace Telegram.Api.Services
             }
 
             var captionString = string.Format("{0} {1}", historyItem.Caption, transportMessage.MsgId);
-
-
-            SendPacketAsync(transport, captionString, encryptedMessage, (result) =>
-            {
-                Debug.WriteLine("@{0} {1} result {2}", historyItem.Caption, transportMessage.MsgId, result);
-            }, 
-            (error) =>
-            {
-                if (faultCallback != null)
+            SendPacketAsync(transport, captionString,
+                encryptedMessage,
+                result =>
                 {
-                    faultCallback.Invoke(new TLRPCError());
-                }
-            });
+                    Debug.WriteLine("@{0} {1} result {2}", historyItem.Caption, transportMessage.MsgId, result);
+
+                },//ReceiveBytesAsync(result, authKey)}, 
+                error => { if (faultCallback != null) faultCallback(new TLRPCError()); });
         }
 
         private void ProcessRPCErrorByTransport(ITransport transport, TLRPCError error, HistoryItem historyItem, long keyId)
@@ -1271,10 +1268,10 @@ namespace Telegram.Api.Services
             {
                 Execute.ShowDebugMessage(string.Format("RPCError ByTransport {2} {0} {1}", historyItem.Caption, error, transport.DCId));
 
-                if (historyItem != null && 
-                    historyItem.Caption != "account.updateStatus" && 
-                    historyItem.Caption != "account.registerDevice" && 
-                    historyItem.Caption != "auth.signIn")
+                if (historyItem != null
+                    && historyItem.Caption != "account.updateStatus"
+                    && historyItem.Caption != "account.registerDevice"
+                    && historyItem.Caption != "auth.signIn")
                 {
                     if (error.TypeEquals(TLErrorType.SESSION_REVOKED))
                     {
@@ -1282,7 +1279,7 @@ namespace Telegram.Api.Services
                     }
                     else
                     {
-                        RaiseAuthorizationRequired(new AuthorizationRequiredEventArgs { MethodName = "ByTransport " + transport.DCId + " " + historyItem.Caption, Error = error, AuthKeyId = keyId });
+                        RaiseAuthorizationRequired(new AuthorizationRequiredEventArgs{MethodName = "ByTransport " + transport.DCId + " " + historyItem.Caption, Error = error, AuthKeyId = keyId});
                     }
                 }
                 else if (historyItem != null && historyItem.FaultCallback != null)
@@ -1290,21 +1287,25 @@ namespace Telegram.Api.Services
                     historyItem.FaultCallback(error);
                 }
             }
-            else if (error.CodeEquals(TLErrorCode.ERROR_SEE_OTHER) && (error.TypeStarsWith(TLErrorType.NETWORK_MIGRATE) || error.TypeStarsWith(TLErrorType.PHONE_MIGRATE) /*|| error.TypeStarsWith(ErrorType.FILE_MIGRATE)*/ ))
+            else if (error.CodeEquals(TLErrorCode.ERROR_SEE_OTHER)
+                && (error.TypeStarsWith(TLErrorType.NETWORK_MIGRATE)
+                    || error.TypeStarsWith(TLErrorType.PHONE_MIGRATE)
+                    //|| error.TypeStarsWith(TLErrorType.FILE_MIGRATE)
+                    ))
             {
                 var serverNumber = Convert.ToInt32(
                     error.GetErrorTypeString()
                     .Replace(TLErrorType.NETWORK_MIGRATE.ToString(), string.Empty)
                     .Replace(TLErrorType.PHONE_MIGRATE.ToString(), string.Empty)
-                    //.Replace(ErrorType.FILE_MIGRATE.ToString(), string.Empty)
+                    //.Replace(TLErrorType.FILE_MIGRATE.ToString(), string.Empty)
                     .Replace("_", string.Empty));
 
                 if (_config == null
                     || _config.DCOptions.FirstOrDefault(x => x.IsValidIPv4Option(serverNumber)) == null)
                 {
-                    var config = GetConfigAsync().Result;
+                    GetConfigAsync(config =>
                     {
-                        _config = TLExtensions.Merge(_config, config.Value);
+                        _config = TLExtensions.Merge(_config, config);
                         SaveConfig();
                         if (historyItem.Object.GetType() == typeof(TLAuthSendCode))
                         {
@@ -1338,58 +1339,60 @@ namespace Telegram.Api.Services
                             {
                                 transport.Initialized = false;
                             }
-                            //InitTransportAsync(transport, tuple =>
-                            //{
-                            //    lock (transport.SyncRoot)
-                            //    {
-                            //        transport.DCId = serverNumber;
-                            //        transport.AuthKey = tuple.Item1;
-                            //        transport.Salt = tuple.Item2;
-                            //        transport.SessionId = tuple.Item3;
-                            //    }
-                            //    var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Item1);
+                            InitTransportAsync(transport, tuple =>
+                            {
+                                lock (transport.SyncRoot)
+                                {
+                                    transport.DCId = serverNumber;
+                                    transport.AuthKey = tuple.Item1;
+                                    transport.Salt = tuple.Item2;
+                                    transport.SessionId = tuple.Item3;
+                                }
+                                var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Item1);
 
-                            //    lock (_authKeysRoot)
-                            //    {
-                            //        if (!_authKeys.ContainsKey(authKeyId))
-                            //        {
-                            //            _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Item1, AutkKeyId = authKeyId });
-                            //        }
-                            //    }
+                                lock (_authKeysRoot)
+                                {
+                                    if (!_authKeys.ContainsKey(authKeyId))
+                                    {
+                                        _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Item1, AutkKeyId = authKeyId });
+                                    }
+                                }
 
-                            //    dcOption.AuthKey = tuple.Item1;
-                            //    dcOption.Salt = tuple.Item2;
-                            //    dcOption.SessionId = tuple.Item3;
+                                dcOption.AuthKey = tuple.Item1;
+                                dcOption.Salt = tuple.Item2;
+                                dcOption.SessionId = tuple.Item3;
 
-                            //    _config.ActiveDCOptionIndex = _config.DCOptions.IndexOf(dcOption);
-                            //    _cacheService.SetConfig(_config);
+                                _config.ActiveDCOptionIndex = _config.DCOptions.IndexOf(dcOption);
+                                _cacheService.SetConfig(_config);
 
-                            //    lock (transport.SyncRoot)
-                            //    {
-                            //        transport.Initialized = true;
-                            //    }
-                            //    RaiseInitialized();
+                                lock (transport.SyncRoot)
+                                {
+                                    transport.Initialized = true;
+                                }
+                                RaiseInitialized();
 
-                            //    SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
-                            //},
-                            //er =>
-                            //{
-                            //    lock (transport.SyncRoot)
-                            //    {
-                            //        transport.Initialized = false;
-                            //    }
-                            //    historyItem.FaultCallback.SafeInvoke(er);
-                            //});
+                                SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
+                            },
+                            er =>
+                            {
+                                lock (transport.SyncRoot)
+                                {
+                                    transport.Initialized = false;
+                                }
+                                historyItem.FaultCallback.SafeInvoke(er);
+                            });
                         }
                         else
                         {
-                            //MigrateAsync(serverNumber, auth => SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback));
+                            MigrateAsync(serverNumber, auth => SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback));
                         }
-                    }
+                    });
+
                 }
                 else
                 {
-                    if (historyItem.Object.GetType() == typeof(TLAuthSendCode) || historyItem.Object.GetType() == typeof(TLUploadGetFile))
+                    if (historyItem.Object.GetType() == typeof(TLAuthSendCode)
+                        || historyItem.Object.GetType() == typeof(TLUploadGetFile))
                     {
                         var activeDCOption = _config.DCOptions.First(x => x.IsValidIPv4Option(serverNumber));
 
@@ -1424,49 +1427,49 @@ namespace Telegram.Api.Services
                             {
                                 transport.Initialized = false;
                             }
-                            //InitTransportAsync(transport, tuple =>
-                            //{
-                            //    lock (transport.SyncRoot)
-                            //    {
-                            //        transport.DCId = serverNumber;
-                            //        transport.AuthKey = tuple.Item1;
-                            //        transport.Salt = tuple.Item2;
-                            //        transport.SessionId = tuple.Item3;
-                            //    }
+                            InitTransportAsync(transport, tuple =>
+                            {
+                                lock (transport.SyncRoot)
+                                {
+                                    transport.DCId = serverNumber;
+                                    transport.AuthKey = tuple.Item1;
+                                    transport.Salt = tuple.Item2;
+                                    transport.SessionId = tuple.Item3;
+                                }
 
-                            //    var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Item1);
+                                var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Item1);
 
-                            //    lock (_authKeysRoot)
-                            //    {
-                            //        if (!_authKeys.ContainsKey(authKeyId))
-                            //        {
-                            //            _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Item1, AutkKeyId = authKeyId });
-                            //        }
-                            //    }
+                                lock (_authKeysRoot)
+                                {
+                                    if (!_authKeys.ContainsKey(authKeyId))
+                                    {
+                                        _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Item1, AutkKeyId = authKeyId });
+                                    }
+                                }
 
-                            //    activeDCOption.AuthKey = tuple.Item1;
-                            //    activeDCOption.Salt = tuple.Item2;
-                            //    activeDCOption.SessionId = tuple.Item3;
+                                activeDCOption.AuthKey = tuple.Item1;
+                                activeDCOption.Salt = tuple.Item2;
+                                activeDCOption.SessionId = tuple.Item3;
 
-                            //    _config.ActiveDCOptionIndex = _config.DCOptions.IndexOf(activeDCOption);
-                            //    _cacheService.SetConfig(_config);
+                                _config.ActiveDCOptionIndex = _config.DCOptions.IndexOf(activeDCOption);
+                                _cacheService.SetConfig(_config);
 
-                            //    lock (transport.SyncRoot)
-                            //    {
-                            //        transport.Initialized = true;
-                            //    }
+                                lock (transport.SyncRoot)
+                                {
+                                    transport.Initialized = true;
+                                }
 
-                            //    RaiseInitialized();
-                            //    SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
-                            //},
-                            //er =>
-                            //{
-                            //    lock (transport.SyncRoot)
-                            //    {
-                            //        transport.Initialized = false;
-                            //    }
-                            //    historyItem.FaultCallback.SafeInvoke(er);
-                            //});
+                                RaiseInitialized();
+                                SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
+                            },
+                            er =>
+                            {
+                                lock (transport.SyncRoot)
+                                {
+                                    transport.Initialized = false;
+                                }
+                                historyItem.FaultCallback.SafeInvoke(er);
+                            });
                         }
                         else
                         {
@@ -1496,12 +1499,12 @@ namespace Telegram.Api.Services
                             }
                             RaiseInitialized();
 
-                            //SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
+                            SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback);
                         }
                     }
                     else
                     {
-                        //MigrateAsync(serverNumber, auth => SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback));
+                        MigrateAsync(serverNumber, auth => SendInformativeMessage(historyItem.Caption, historyItem.Object, historyItem.Callback, historyItem.FaultCallback));
                     }
                 }
             }
@@ -1520,6 +1523,7 @@ namespace Telegram.Api.Services
                 isInitialized = transport.AuthKey != null;
             }
 
+            var position = 0;
             var handled = false;
 
             if (!isInitialized)
@@ -1532,9 +1536,9 @@ namespace Telegram.Api.Services
                     if (item != null)
                     {
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("OnReceivedBytes !IsInitialized try historyItem " + item.Caption);
+                            TLUtils.WriteLog("OnReceivedBytes !IsInitialized try historyItem " + item.Caption);
 #endif
-                        item.Callback.TrySetResult(new MTProtoResponse(message.Query));
+                        item.Callback.SafeInvoke(message.Query);
                     }
                     else
                     {
@@ -1595,17 +1599,13 @@ namespace Telegram.Api.Services
                 //TLTransportMessage transportMessage;
                 //transportMessage = TLObject.GetObject<TLTransportMessage>(encryptedMessage.Data, ref position);
                 var transportMessage = encryptedMessage.Query as TLTransportMessage;
-                if (transportMessage.SessionId != transport.SessionId.Value)
-                {
-                    throw new Exception("Incorrect session_id");
-                }
                 if ((transportMessage.MsgId % 2) == 0)
                 {
                     throw new Exception("Incorrect message_id");
                 }
 
                 // get acknowledgments
-                foreach (var acknowledgment in transportMessage.FindInnerObjects<TLMsgsAck>())
+                foreach (var acknowledgment in TLUtils.FindInnerObjects<TLMsgsAck>(transportMessage))
                 {
                     var ids = acknowledgment.MsgIds;
                     lock (_historyRoot)
@@ -1628,8 +1628,9 @@ namespace Telegram.Api.Services
                 _updatesService.ProcessTransportMessage(transportMessage);
 
                 // bad messages
-                foreach (var badMessage in transportMessage.FindInnerObjects<TLBadMsgNotification>())
+                foreach (var badMessage in TLUtils.FindInnerObjects<TLBadMsgNotification>(transportMessage))
                 {
+
                     HistoryItem item = null;
                     lock (_historyRoot)
                     {
@@ -1638,13 +1639,15 @@ namespace Telegram.Api.Services
                             item = _history[badMessage.BadMsgId];
                         }
                     }
+                    Logs.Log.Write(string.Format("{0} {1} transport={2}", badMessage, item, transport.DCId));
 
                     ProcessBadMessageByTransport(transport, transportMessage, badMessage, item);
                 }
 
                 // bad server salts
-                foreach (var badServerSalt in transportMessage.FindInnerObjects<TLBadServerSalt>())
+                foreach (var badServerSalt in TLUtils.FindInnerObjects<TLBadServerSalt>(transportMessage))
                 {
+
                     lock (transport.SyncRoot)
                     {
                         transport.Salt = badServerSalt.NewServerSalt;
@@ -1657,12 +1660,13 @@ namespace Telegram.Api.Services
                             item = _history[badServerSalt.BadMsgId];
                         }
                     }
+                    Logs.Log.Write(string.Format("{0} {1} transport={2}", badServerSalt, item, transport.DCId));
 
                     ProcessBadServerSaltByTransport(transport, transportMessage, badServerSalt, item);
                 }
 
                 // new session created
-                foreach (var newSessionCreated in transportMessage.FindInnerObjects<TLNewSessionCreated>())
+                foreach (var newSessionCreated in TLUtils.FindInnerObjects<TLNewSessionCreated>(transportMessage))
                 {
                     TLUtils.WritePerformance(string.Format("NEW SESSION CREATED: {0} (old {1})", transportMessage.SessionId, _activeTransport.SessionId));
                     lock (transport.SyncRoot)
@@ -1673,7 +1677,7 @@ namespace Telegram.Api.Services
                 }
 
                 // rpcresults
-                foreach (var result in transportMessage.FindInnerObjects<TLRPCResult>())
+                foreach (var result in TLUtils.FindInnerObjects<TLRPCResult>(transportMessage))
                 {
                     HistoryItem historyItem = null;
 
@@ -1690,7 +1694,7 @@ namespace Telegram.Api.Services
                         }
                     }
 #if DEBUG
-                    NotifyOfPropertyChange(() => History);
+                    RaisePropertyChanged(() => History);
 #endif
 
                     //RemoveItemFromSendingQueue(result.RequestMessageId.Value);
@@ -1725,22 +1729,21 @@ namespace Telegram.Api.Services
                             messageData = ((TLGzipPacked)messageData).Query;
                         }
 
-                        // TODO:
-                        if (/*messageData is TLSentMessageBase || 
-                            messageData is TLStatedMessageBase || */
-                            messageData is TLUpdatesBase || 
-                            messageData is TLMessagesSentEncryptedMessage || 
-                            messageData is TLMessagesSentEncryptedFile ||
-                            messageData is TLMessagesAffectedHistory ||
-                            messageData is TLMessagesAffectedMessages ||
-                            historyItem.Object is TLMessagesReadEncryptedHistory)
+                        if (/*messageData is TLSentMessageBase
+                            || messageData is TLStatedMessageBase
+                            ||*/ messageData is TLUpdatesBase
+                            || messageData is TLMessagesSentEncryptedMessage
+                            || messageData is TLMessagesSentEncryptedFile
+                            || messageData is TLMessagesAffectedHistory
+                            || messageData is TLMessagesAffectedMessages
+                            || historyItem.Object is TLMessagesReadEncryptedHistory)
                         {
                             RemoveFromQueue(historyItem);
                         }
 
                         try
                         {
-                            historyItem.Callback.TrySetResult(new MTProtoResponse(messageData));
+                            historyItem.Callback(messageData);
                         }
                         catch (Exception e)
                         {
@@ -1786,7 +1789,7 @@ namespace Telegram.Api.Services
                     }
                 }
                 // to bind authKey to current TCPTransport
-                UpdateStatusAsync(false);
+                UpdateStatusCallback(false, result => { });
             }
         }
 

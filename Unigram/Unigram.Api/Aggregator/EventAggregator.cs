@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -86,7 +87,7 @@ namespace Telegram.Api.Aggregator {
         /// </summary>
         public static Action<object, object> HandlerResultProcessing = (target, result) => { };
 
-        public static ITelegramEventAggregator Current { get; protected set; }
+        public static ITelegramEventAggregator Instance { get; protected set; }
 
         /// <summary>
         ///   Initializes a new instance of the <see cref = "EventAggregator" /> class.
@@ -94,7 +95,7 @@ namespace Telegram.Api.Aggregator {
         public TelegramEventAggregator() {
             PublicationThreadMarshaller = DefaultPublicationThreadMarshaller;
 
-            Current = this;
+            Instance = this;
         }
 
         /// <summary>
@@ -149,6 +150,8 @@ namespace Telegram.Api.Aggregator {
             }
         }
 
+        public static bool LogPublish { get; set; }
+
         /// <summary>
         ///   Publishes a message.
         /// </summary>
@@ -160,6 +163,14 @@ namespace Telegram.Api.Aggregator {
             if (message == null) {
                 throw new ArgumentNullException("message");
             }
+
+#if DEBUG
+            if (LogPublish)
+            {
+                Debug.WriteLine("Publish " + message.GetType());
+            }
+#endif
+
             Publish(message, PublicationThreadMarshaller);
         }
 

@@ -1,0 +1,3 @@
+[submodule "Unigram/Libraries/Unigram.Rtf"]
+	path = Unigram/Libraries/Unigram.Rtf
+	url = https://github.com/UnigramDev/Unigram.Rtf.git

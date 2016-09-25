@@ -5,155 +5,522 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods;
-using Telegram.Api.TL.Methods.Account;
+using Telegram.Api.TL.Methods.Help;
 using Telegram.Api.TL.Methods.Messages;
 
 namespace Telegram.Api.Services
 {
-    public partial class MTProtoService
+	public partial class MTProtoService
     {
-        public Task<MTProtoResponse<bool>> ReportPeerAsync(TLInputPeerBase peer, TLReportReasonBase reason)
+        // TODO: Layer 56 
+        //public void GetAttachedStickersCallback(TLInputStickeredMediaBase media, Action<TLVector<TLStickerSetCovered>> callback, Action<TLRPCError> faultCallback = null)
+        //{
+        //    var obj = new TLGetAttachedStickers { Media = media };
+
+        //    const string caption = "messages.getAttachedStickers";
+        //    SendInformativeMessage(caption, obj, callback, faultCallback);
+        //}
+
+        public void GetRecentStickersCallback(bool attached, int hash, Action<TLMessagesRecentStickersBase> callback, Action<TLRPCError> faultCallback = null)
         {
-#if DEBUG
-            return Task.FromResult(new MTProtoResponse<bool>(true));
-#endif
-
-            return SendInformativeMessage<bool>("account.reportPeer", new TLAccountReportPeer { Peer = peer, Reason = reason });
-        }
-
-        public Task<MTProtoResponse<bool>> ReportSpamAsync(TLInputPeerBase peer)
-        {
-#if DEBUG
-            return Task.FromResult(new MTProtoResponse<bool>(true));
-#endif
-
-            return SendInformativeMessage<bool>("messages.reportSpam", new TLMessagesReportSpam { Peer = peer });
-        }
-
-        public Task<MTProtoResponse<TLMessageMediaBase>> GetWebPagePreviewAsync(string message)
-        {
-            var obj = new TLMessagesGetWebPagePreview { Message = message };
-
-            const string caption = "messages.getWebPagePreview";
-            return SendInformativeMessage<TLMessageMediaBase>(caption, obj);
-        }
-
-        public async Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickersAsync(int hash)
-        {
-            MTProtoResponse<TLMessagesAllStickersBase> result = null;
-
-            var obj = new TLMessagesGetAllStickers { Hash = hash };
-
-            const string caption = "messages.getAllStickers";
-
-            //Execute.ShowDebugMessage(caption + " hash=" + hash);
-            //SendInformativeMessage(caption, obj, callback, faultCallback);
-            //return;
-
-            var results = new List<TLMessagesStickerSet>();
-            var resultsSyncRoot = new object();
-            var stopwatch = Stopwatch.StartNew();
-            var allStickersBase = await SendInformativeMessage<TLMessagesAllStickersBase>(caption, obj);
-            if (allStickersBase.Error == null)
+            var obj = new TLMessagesGetRecentStickers { Hash = hash };
+            if (attached)
             {
-                var allStickers32 = allStickersBase.Value as TLMessagesAllStickers;
-                if (allStickers32 != null)
-                {
-                    var stickerSetResult = await GetAllStickerSetsAsync(allStickers32);
-                    if (stickerSetResult.Error == null)
-                    {
-
-                        //var messagesStickerSet = stickerSetResult.Value as TLMessagesStickerSet;
-                        //if (messagesStickerSet != null)
-                        //{
-                        //    bool processStickerSets;
-                        //    lock (resultsSyncRoot)
-                        //    {
-                        //        results.Add(messagesStickerSet);
-                        //        processStickerSets = results.Count == allStickers32.Sets.Count;
-                        //    }
-
-                        //    if (processStickerSets)
-                        //    {
-                        //        ProcessStickerSets(allStickers32, results);
-                        //    }
-                        //}
-                    }
-                }
-                else
-                {
-                    result = new MTProtoResponse<TLMessagesAllStickersBase>(null, allStickersBase.Error);
-                }
+                // TODO: Layer 56 obj.SetAttached();
             }
 
-            return result;
+            const string caption = "messages.getRecentStickers";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        private static void ProcessStickerSets(TLMessagesAllStickers allStickers32, List<TLMessagesStickerSet> results)
+        public void ClearRecentStickersCallback(bool attached, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var documentsDict = new Dictionary<long, TLDocumentBase>();
-            var packsDict = new Dictionary<string, TLStickerPack>();
-            foreach (var result in results)
+            var obj = new TLMessagesClearRecentStickers();
+            if (attached)
             {
-                foreach (var pack in result.Packs)
+                // TODO: Layer 56 obj.SetAttached();
+            }
+
+            const string caption = "messages.clearRecentStickers";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void GetUnusedStickersCallback(int limit, Action<TLVector<TLStickerSetCovered>> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetUnusedStickers { Limit = limit };
+
+            const string caption = "messages.getUnusedStickers";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+#if LAYER_42
+        public void ReadFeaturedStickersAsync(TLVector<long> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+#else
+	    public void ReadFeaturedStickersCallback(Action<bool> callback, Action<TLRPCError> faultCallback = null)
+#endif
+        {
+            //#if DEBUG
+            //            callback.SafeInvoke(true);
+            //            return;
+            //#endif 
+
+#if LAYER_42
+            var obj = new TLMessagesReadFeaturedStickers { Id = id };
+#else
+            var obj = new TLMessagesReadFeaturedStickers();
+#endif
+
+            const string caption = "messages.readFeaturedStickers";
+            SendInformativeMessage<bool>(caption, obj, callback.SafeInvoke, faultCallback.SafeInvoke);
+	    }
+
+        public void GetAllDraftsCallback(Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetAllDrafts();
+
+            const string caption = "messages.getAllDrafts";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    var emoticon = pack.Emoticon.ToString();
-                    TLStickerPack currentPack;
-                    if (packsDict.TryGetValue(emoticon, out currentPack))
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
                     {
-                        var docDict = new Dictionary<long, long>();
-                        foreach (var document in currentPack.Documents)
-                        {
-                            docDict[document] = document;
-                        }
-                        foreach (var document in pack.Documents)
-                        {
-                            if (!docDict.ContainsKey(document))
-                            {
-                                docDict[document] = document;
-                                currentPack.Documents.Add(document);
-                            }
-                        }
+                        _updatesService.SetState(multiPts, caption);
                     }
                     else
                     {
-                        packsDict[emoticon] = pack;
+                        _updatesService.ProcessUpdates(result, true);
                     }
-                }
 
-                foreach (var document in result.Documents)
-                {
-                    documentsDict[document.Id] = document;
-                }
-            }
-            // TODO
-            //allStickers32.Packs = new TLVector<TLStickerPack>();
-            //foreach (var pack in packsDict.Values)
-            //{
-            //    allStickers32.Packs.Add(pack);
-            //}
-            //allStickers32.Documents = new TLVector<TLDocumentBase>();
-            //foreach (var document in documentsDict.Values)
-            //{
-            //    allStickers32.Documents.Add(document);
-            //}
+                    callback.SafeInvoke(result);
+                },
+                faultCallback.SafeInvoke);
         }
 
-
-        private Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickerSetsAsync(TLMessagesAllStickers allStickers32)
+        public void SaveDraftCallback(TLInputPeerBase peer, TLDraftMessageBase draft, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var callback = new TaskCompletionSource<MTProtoResponse>();
-            var container = new TLMessageContainer { Messages = new List<TLContainerTransportMessage>() };
-            var historyItems = new List<HistoryItem>();
-            for (var i = 0; i < allStickers32.Sets.Count; i++)
+            var obj = draft.ToSaveDraftObject(peer);
+
+            const string caption = "messages.saveDraft";
+            SendInformativeMessage<bool>(caption, obj,
+                result =>
+                {
+                    callback.SafeInvoke(result);
+                },
+                faultCallback.SafeInvoke);
+        }
+
+        public void GetPeerDialogsCallback(TLVector<TLInputPeerBase> peers, Action<TLMessagesPeerDialogs> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetPeerDialogs { Peers = peers };
+
+            SendInformativeMessage<TLMessagesPeerDialogs>("messages.getPeerDialogs", obj, callback.SafeInvoke, faultCallback);
+        }
+
+        public void GetInlineBotResultsCallback(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset, Action<TLMessagesBotResults> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetInlineBotResults { Flags = 0, Bot = bot, Peer = peer, GeoPoint = geoPoint, Query = query, Offset = offset };
+
+            const string caption = "messages.getInlineBotResults";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void SetInlineBotResultsCallback(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesSetInlineBotResults { Flags = 0, IsGallery = gallery, IsPrivate = pr, QueryId = queryId, Results = results, CacheTime = cacheTime, NextOffset = nextOffset, HasSwitchPm = switchPM != null, SwitchPm = switchPM };
+
+            const string caption = "messages.setInlineBotResults";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void SendInlineBotResultCallback(TLMessage message, Action<TLMessageCommonBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
+        {
+            var inputPeer = PeerToInputPeer(message.ToId);
+            var obj = new TLMessagesSendInlineBotResult { Flags = 0, Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, RandomId = message.RandomId ?? 0, QueryId = message.InlineBotResultQueryId, Id = message.InlineBotResultId };
+
+            // TODO: Layer 56 
+            //if (message.IsChannelMessage)
+            //{
+            //    obj.SetChannelMessage();
+            //}
+
+            var message48 = message as TLMessage;
+            if (message48 != null && message48.IsSilent)
             {
-                var set = allStickers32.Sets[i];
+                obj.IsSilent = true;
+            }
+
+            const string caption = "messages.sendInlineBotResult";
+            SendInlineBotResultAsyncInternal(obj,
+                result =>
+                {
+                    var multiPts = result as ITLMultiPts;
+                    var shortSentMessage = result as TLUpdateShortSentMessage;
+                    if (shortSentMessage != null)
+                    {
+                        // TODO: verify
+                        message.Flags = (TLMessage.Flag)(int)shortSentMessage.Flags;
+                        if (shortSentMessage.HasMedia)
+                        {
+                            // TODO: message._media = shortSentMessage.Media;
+                            message.Media = shortSentMessage.Media;
+                        }
+                        if (shortSentMessage.HasEntities)
+                        {
+                            message.Entities = shortSentMessage.Entities;
+                        }
+
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            message.State = GetMessageStatus(_cacheService, message.ToId);
+                            message.Date = shortSentMessage.Date;
+                            if (shortSentMessage.Media is TLMessageMediaWebPage)
+                            {
+                                message.RaisePropertyChanged(() => message.Media);
+                            }
+
+#if DEBUG
+                            message.Id = shortSentMessage.Id;
+                            message.RaisePropertyChanged(() => message.Id);
+                            message.RaisePropertyChanged(() => message.Date);
+#endif
+                        });
+
+                        _updatesService.SetState(multiPts, caption);
+
+                        message.Id = shortSentMessage.Id;
+                        _cacheService.SyncSendingMessage(message, null, callback);
+                        return;
+                    }
+
+                    var updates = result as TLUpdates;
+                    if (updates != null)
+                    {
+                        foreach (var update in updates.Updates)
+                        {
+                            var updateNewMessage = update as TLUpdateNewMessage;
+                            if (updateNewMessage != null)
+                            {
+                                Execute.BeginOnUIThread(() =>
+                                {
+                                    // faster update web page with inline bots @imdb, @vid, @wiki
+                                    var newMessage = updateNewMessage.Message as TLMessage;
+                                    if (newMessage != null)
+                                    {
+                                        var mediaWebPage = newMessage.Media as TLMessageMediaWebPage;
+                                        if (mediaWebPage != null)
+                                        {
+                                            message.Media = newMessage.Media;
+                                        }
+
+                                        if (mediaWebPage == null)
+                                        {
+                                            Execute.ShowDebugMessage(newMessage.Media.GetType().ToString());
+                                        }
+                                    }
+                                });
+
+                                var messageCommon = updateNewMessage.Message as TLMessage;
+                                if (messageCommon != null)
+                                {
+                                    messageCommon.RandomId = message.RandomId;
+                                    message.Id = messageCommon.Id;
+                                    message.Date = messageCommon.Date;
+                                }
+                            }
+                        }
+
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            message.State = GetMessageStatus(_cacheService, message.ToId);
+                        });
+
+                        if (multiPts != null)
+                        {
+                            _updatesService.SetState(multiPts, caption);
+                        }
+                        else
+                        {
+                            _updatesService.ProcessUpdates(updates);
+                        }
+
+                        callback.SafeInvoke(message);
+                    }
+                },
+                fastCallback,
+                faultCallback.SafeInvoke);
+        }
+
+        public void GetDocumentByHashCallback(byte[] sha256, int size, string mimeType, Action<TLDocumentBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetDocumentByHash { Sha256 = sha256, Size = size, MimeType = mimeType };
+
+            const string caption = "messages.getDocumentByHash";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void SearchGifsCallback(string q, int offset, Action<TLMessagesFoundGifs> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesSearchGifs { Q = q, Offset = offset };
+
+            const string caption = "messages.searchGifs";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void GetSavedGifsCallback(int hash, Action<TLMessagesSavedGifsBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetSavedGifs { Hash = hash };
+
+            const string caption = "messages.getSavedGifs";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void SaveGifCallback(TLInputDocumentBase id, bool unsave, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesSaveGif { Id = id, Unsave = unsave };
+
+            const string caption = "messages.saveGif";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void ReorderStickerSetsCallback(bool masks, TLVector<long> order, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+#if LAYER_42
+            var obj = new TLMessagesReorderStickerSets { Flags = 0, Order = order };
+            if (masks)
+            {
+                obj.SetMasks();
+            }
+#else
+            var obj = new TLMessagesReorderStickerSets { Order = order };
+#endif
+
+            const string caption = "messages.reorderStickerSets";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void ReportSpamCallback(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+#if DEBUG
+            Execute.BeginOnThreadPool(() => callback.SafeInvoke(true));
+            return;
+#endif
+
+            var obj = new TLMessagesReportSpam { Peer = peer };
+
+            const string caption = "messages.reportSpam";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+	    public void GetWebPagePreviewCallback(string message, Action<TLMessageMediaBase> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLMessagesGetWebPagePreview { Message = message };
+
+            const string caption = "messages.getWebPagePreview";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+	    }
+
+        public void GetFeaturedStickersCallback(bool full, int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetFeaturedStickers { Hash = hash };
+
+            const string caption = "messages.getFeaturedStickers";
+
+            var results = new List<TLMessagesStickerSet>();
+            var resultsSyncRoot = new object();
+            SendInformativeMessage<TLMessagesFeaturedStickersBase>(caption, obj,
+                result =>
+                {
+                    var featuredStickers = result as TLMessagesFeaturedStickers;
+                    if (featuredStickers != null && full)
+                    {
+                        GetStickerSetsAsync(featuredStickers, r => callback(r as TLMessagesFeaturedStickersBase),
+                            stickerSetResult =>
+                            {
+                                var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
+                                if (messagesStickerSet != null)
+                                {
+                                    bool processStickerSets;
+                                    lock (resultsSyncRoot)
+                                    {
+                                        results.Add(messagesStickerSet);
+                                        processStickerSets = results.Count == featuredStickers.Sets.Count;
+                                    }
+
+                                    if (processStickerSets)
+                                    {
+                                        ProcessStickerSets(featuredStickers, results);
+                                        featuredStickers.MessagesStickerSets = new TLVector<TLMessagesStickerSet>(results);
+                                        //Execute.ShowDebugMessage(caption + " elapsed=" + stopwatch.Elapsed);
+                                        callback.SafeInvoke(featuredStickers);
+                                    }
+                                }
+                            },
+                            faultCallback);
+                    }
+                    else
+                    {
+                        callback.SafeInvoke(result);
+                    }
+                });
+        }
+
+        public void GetArchivedStickersCallback(bool full, long offsetId, int limit, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetArchivedStickers { OffsetId = offsetId, Limit = limit };
+
+            const string caption = "messages.getArchivedStickers";
+
+            var results = new List<TLMessagesStickerSet>();
+            var resultsSyncRoot = new object();
+            SendInformativeMessage<TLMessagesArchivedStickers>(caption, obj,
+                result => 
+                {
+                    if (full)
+                    {
+                        GetStickerSetsAsync(result, r => callback(r as TLMessagesArchivedStickers),
+                            stickerSetResult =>
+                            {
+                                var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
+                                if (messagesStickerSet != null)
+                                {
+                                    bool processStickerSets;
+                                    lock (resultsSyncRoot)
+                                    {
+                                        results.Add(messagesStickerSet);
+                                        processStickerSets = results.Count == result.Sets.Count;
+                                    }
+
+                                    if (processStickerSets)
+                                    {
+                                        ProcessStickerSets(result, results);
+                                        result.MessagesStickerSets = new TLVector<TLMessagesStickerSet>(results);
+                                        callback.SafeInvoke(result);
+                                    }
+                                }
+                            },
+                            faultCallback);
+                    }
+                    else
+                    {
+                        callback.SafeInvoke(result);
+                    }
+                });
+        }
+
+	    public void GetAllStickersCallback(byte[] hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLMessagesGetAllStickers { Hash = TLUtils.ToTLInt(hash) ?? 0 };
+
+	        const string caption = "messages.getAllStickers";
+            
+	        var results = new List<TLMessagesStickerSet>();
+	        var resultsSyncRoot = new object();
+	        SendInformativeMessage<TLMessagesAllStickersBase>(caption, obj,
+	            result =>
+	            {
+	                var allStickers32 = result as TLMessagesAllStickers;
+	                if (allStickers32 != null)
+	                {
+	                    GetStickerSetsAsync(allStickers32, r => callback(r as TLMessagesAllStickersBase),
+	                        stickerSetResult =>
+	                        {
+	                            var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
+	                            if (messagesStickerSet != null)
+	                            {
+	                                bool processStickerSets;
+	                                lock (resultsSyncRoot)
+	                                {
+	                                    results.Add(messagesStickerSet);
+	                                    processStickerSets = results.Count == allStickers32.Sets.Count;
+	                                }
+
+	                                if (processStickerSets)
+	                                {
+                                        ProcessStickerSets(allStickers32, results);
+
+                                        callback.SafeInvoke(allStickers32);
+	                                }
+	                            }
+	                        },
+	                        faultCallback);
+	                }
+	                else
+	                {
+                        callback.SafeInvoke(result);
+	                }
+	            });
+	    }
+
+	    private static void ProcessStickerSets(ITLStickers stickers, List<TLMessagesStickerSet> results)
+	    {
+	        var documentsDict = new Dictionary<long, TLDocumentBase>();
+	        var packsDict = new Dictionary<string, TLStickerPack>();
+	        foreach (var result in results)
+	        {
+	            foreach (var pack in result.Packs)
+	            {
+	                var emoticon = pack.Emoticon.ToString();
+	                TLStickerPack currentPack;
+                    if (packsDict.TryGetValue(emoticon, out currentPack))
+	                {
+	                    var docDict = new Dictionary<long, long>();
+	                    foreach (var document in currentPack.Documents)
+	                    {
+	                        docDict[document] = document;
+	                    }
+	                    foreach (var document in pack.Documents)
+	                    {
+	                        if (!docDict.ContainsKey(document))
+	                        {
+                                docDict[document] = document;
+                                currentPack.Documents.Add(document);
+	                        }
+	                    }
+	                }
+	                else
+	                {
+                        packsDict[emoticon] = pack;
+	                }
+	            }
+
+	            foreach (var document in result.Documents)
+	            {
+	                documentsDict[document.Id] = document;
+	            }
+	        }
+            stickers.Packs = new TLVector<TLStickerPack>();
+            foreach (var pack in packsDict.Values)
+            {
+                stickers.Packs.Add(pack);
+            }
+            stickers.Documents = new TLVector<TLDocumentBase>();
+	        foreach (var document in documentsDict.Values)
+	        {
+	            stickers.Documents.Add(document);
+	        }
+	    }
+
+	    private void GetStickerSetsAsync(ITLStickers stickers, Action<ITLStickers> callback, Action<object> getStickerSetCallback, Action<TLRPCError> faultCallback)
+	    {
+	        var sets = stickers.Sets;
+	        if (sets.Count == 0)
+	        {
+                callback.SafeInvoke(stickers);
+	            return;
+	        }
+
+	        var container = new TLMessageContainer { Messages = new List<TLContainerTransportMessage>() };
+            var historyItems = new List<HistoryItem>();
+            for (var i = 0; i < sets.Count; i++)
+            {
+                var set = sets[i];
                 var obj = new TLMessagesGetStickerSet { Stickerset = new TLInputStickerSetID { Id = set.Id, AccessHash = set.AccessHash } };
                 int sequenceNumber;
                 long messageId;
@@ -166,6 +533,7 @@ namespace Telegram.Api.Services
 
                 var data = i > 0 ? (TLObject)new TLInvokeAfterMsg { MsgId = container.Messages[i - 1].MsgId, Query = obj } : obj;
 
+                // TODO:!!!
                 var transportMessage = new TLContainerTransportMessage
                 {
                     MsgId = messageId,
@@ -178,9 +546,10 @@ namespace Telegram.Api.Services
                     SendTime = DateTime.Now,
                     Caption = "stickers.containerGetStickerSetPart" + i,
                     Object = obj,
-                    Callback = callback,
                     Message = transportMessage,
+                    Callback = getStickerSetCallback,
                     AttemptFailed = null,
+                    FaultCallback = faultCallback,
                     ClientTicksDelta = ClientTicksDelta,
                     Status = RequestStatus.Sent,
                 };
@@ -198,25 +567,84 @@ namespace Telegram.Api.Services
                 }
             }
 #if DEBUG
-            NotifyOfPropertyChange(() => History);
+            RaisePropertyChanged(() => History);
 #endif
 
-            return SendNonInformativeMessage<TLMessagesAllStickersBase>("stickers.container", container, callback);
+            SendNonInformativeMessage<TLObject>("stickers.container", container, result => callback(null), faultCallback);
+	    }
+
+	    public void GetStickerSetCallback(TLInputStickerSetBase stickerset, Action<TLMessagesStickerSet> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetStickerSet { Stickerset = stickerset };
+
+            const string caption = "messages.getStickerSet";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLMessagesStickerSet>> GetStickerSetAsync(TLInputStickerSetBase stickerset)
+        public void InstallStickerSetCallback(TLInputStickerSetBase stickerset, bool archived, Action<TLMessagesStickerSetInstallResultBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            return SendInformativeMessage<TLMessagesStickerSet>("messages.getStickerSet", new TLMessagesGetStickerSet { Stickerset = stickerset });
+            var obj = new TLMessagesInstallStickerSet { Stickerset = stickerset, Archived = archived };
+
+            const string caption = "messages.installStickerSet";
+
+            var results = new List<TLMessagesStickerSet>();
+            var resultsSyncRoot = new object();
+            SendInformativeMessage<TLMessagesStickerSetInstallResultBase>(caption, obj,
+                result =>
+                {
+                    var resultArchive = result as TLMessagesStickerSetInstallResultArchive;
+                    if (resultArchive != null)
+                    {
+                        GetStickerSetsAsync(resultArchive, r => callback(r as TLMessagesStickerSetInstallResultArchive),
+                            stickerSetResult =>
+                            {
+                                var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
+                                if (messagesStickerSet != null)
+                                {
+
+
+
+                                    var set32 = messagesStickerSet.Set as TLStickerSet;
+                                    if (set32 != null)
+                                    {
+                                        set32.Installed = true;
+                                        set32.Archived = true;
+                                    }
+
+
+
+
+                                    bool processStickerSets;
+                                    lock (resultsSyncRoot)
+                                    {
+                                        results.Add(messagesStickerSet);
+                                        processStickerSets = results.Count == resultArchive.Sets.Count;
+                                    }
+
+                                    if (processStickerSets)
+                                    {
+                                        ProcessStickerSets(resultArchive, results);
+                                        resultArchive.MessagesStickerSets = new TLVector<TLMessagesStickerSet>(results);
+                                        callback.SafeInvoke(result);
+                                    }
+                                }
+                            },
+                            faultCallback);
+                    }
+                    else
+                    {
+                        callback.SafeInvoke(result);
+                    }
+                }, 
+                faultCallback);
         }
 
-        public Task<MTProtoResponse<bool>> InstallStickerSetAsync(TLInputStickerSetBase stickerset)
+        public void UninstallStickerSetCallback(TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            return SendInformativeMessage<bool>("messages.installStickerSet", new TLMessagesInstallStickerSet { Stickerset = stickerset, Archived = false });
-        }
+            var obj = new TLMessagesUninstallStickerSet { Stickerset = stickerset };
 
-        public Task<MTProtoResponse<bool>> UninstallStickerSetAsync(TLInputStickerSetBase stickerset)
-        {
-            return SendInformativeMessage<bool>("messages.uninstallStickerSet", new TLMessagesUninstallStickerSet { Stickerset = stickerset });
+            const string caption = "messages.uninstallStickerSet";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         private static TLMessageState GetMessageStatus(ICacheService cacheService, TLPeerBase peer)
@@ -224,69 +652,30 @@ namespace Telegram.Api.Services
             var status = TLMessageState.Confirmed;
             if (peer is TLPeerUser)
             {
-                var user = cacheService.GetUser(peer.Id);
-                if (user != null)
+                var userBase = cacheService.GetUser(peer.Id);
+                var user = userBase as TLUser;
+                if (userBase != null)
                 {
-                    var botInfo = user.BotInfo as TLBotInfo;
+                    var botInfo = userBase.BotInfo as TLBotInfo;
                     if (botInfo != null)
+                    {
+                        status = TLMessageState.Read;
+                    }
+                    else if (user != null && user.IsSelf)
                     {
                         status = TLMessageState.Read;
                     }
                 }
             }
 
+            //if (peer is TLPeerChannel)
+            //{
+            //    status = TLMessageState.Read;
+            //}
+
             return status;
         }
 
-        // TODO
-        private TLInputPeerBase PeerToInputPeer(TLMessageFwdHeader peer)
-        {
-            if (peer.HasChannelId)
-            {
-                var channel = _cacheService.GetChat(peer.ChannelId.Value) as TLChannel;
-                if (channel != null)
-                {
-                    return new TLInputPeerChannel { ChannelId = peer.ChannelId.Value, AccessHash = channel.AccessHash.Value };
-                }
-            }
-
-            if (peer.HasFromId)
-            {
-                var cachedUser = _cacheService.GetUser(peer.FromId.Value);
-                if (cachedUser != null)
-                {
-                    //var userForeign = cachedUser as TLUserForeign;
-                    //var userRequest = cachedUser as TLUserRequest;
-                    var user = cachedUser as TLUser;
-
-                    //if (userForeign != null)
-                    //{
-                    //    return new TLInputPeerForeign { UserId = userForeign.Id, AccessHash = userForeign.AccessHash };
-                    //}
-
-                    //if (userRequest != null)
-                    //{
-                    //    return new TLInputPeerForeign { UserId = userRequest.Id, AccessHash = userRequest.AccessHash };
-                    //}
-
-                    if (user != null)
-                    {
-                        return user.ToInputPeer();
-                    }
-
-                    //return new TLInputPeerContact { UserId = peer.Id };
-                    return new TLInputPeerUser { UserId = peer.FromId.Value };
-                }
-
-                //return new TLInputPeerContact { UserId = peer.Id };
-                return new TLInputPeerUser { UserId = peer.FromId.Value };
-            }
-
-            //return new TLInputPeerContact { UserId = peer.Id };
-            return new TLInputPeerUser { UserId = peer.FromId.Value };
-        }
-
-        // TODO
         private TLInputPeerBase PeerToInputPeer(TLPeerBase peer)
         {
             if (peer is TLPeerUser)
@@ -300,12 +689,12 @@ namespace Telegram.Api.Services
 
                     //if (userForeign != null)
                     //{
-                    //    return new TLInputPeerForeign { UserId = userForeign.Id, AccessHash = userForeign.AccessHash };
+                    //    return new TLInputPeerUser { UserId = userForeign.Id, AccessHash = userForeign.AccessHash };
                     //}
 
                     //if (userRequest != null)
                     //{
-                    //    return new TLInputPeerForeign { UserId = userRequest.Id, AccessHash = userRequest.AccessHash };
+                    //    return new TLInputPeerUser { UserId = userRequest.Id, AccessHash = userRequest.AccessHash };
                     //}
 
                     if (user != null)
@@ -313,12 +702,10 @@ namespace Telegram.Api.Services
                         return user.ToInputPeer();
                     }
 
-                    //return new TLInputPeerContact { UserId = peer.Id };
-                    return new TLInputPeerUser { UserId = peer.Id };
+                    return new TLInputPeerUser { UserId = peer.Id, AccessHash = 0 };
                 }
 
-                //return new TLInputPeerContact { UserId = peer.Id };
-                return new TLInputPeerUser { UserId = peer.Id };
+                return new TLInputPeerUser { UserId = peer.Id, AccessHash = 0 };
             }
 
             if (peer is TLPeerChannel)
@@ -326,12 +713,7 @@ namespace Telegram.Api.Services
                 var channel = _cacheService.GetChat(peer.Id) as TLChannel;
                 if (channel != null)
                 {
-                    return new TLInputPeerChannel { ChannelId = peer.Id, AccessHash = channel.AccessHash.Value };
-                }
-                else
-                {
-                    // TODO:
-                    return new TLInputPeerChannel { ChannelId = peer.Id };
+                    return new TLInputPeerChannel { ChannelId = peer.Id, AccessHash = channel.AccessHash ?? 0 };
                 }
             }
 
@@ -341,94 +723,103 @@ namespace Telegram.Api.Services
             }
 
             //return new TLInputPeerBroadcast { ChatId = peer.Id };
-            return new TLInputPeerUser { UserId = peer.Id };
+            return new TLInputPeerEmpty();
         }
 
-        public async Task<MTProtoResponse<TLMessage>> SendMessageAsync(TLMessage message)
+        public void SendMessageCallback(TLMessage message, Action<TLMessageCommonBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
         {
-            MTProtoResponse<TLMessage> resultMessage = null;
             var inputPeer = PeerToInputPeer(message.ToId);
             var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Message = message.Message, RandomId = message.RandomId.Value };
 
-            // TODO:
-            //if (message.DisableWebPagePreview)
+            if (message.Entities != null)
+            {
+                obj.Entities = message.Entities;
+                obj.HasEntities = true;
+            }
+
+            // TODO: future
+            //if (message.NoWebpage)
             //{
             //    obj.IsNoWebpage = true;
             //}
 
-            if (_deviceInfo.IsBackground)
-            {
-                obj.IsBackground = true;
-            }
-
-            if (obj.ReplyToMsgId != null)
-            {
-                obj.HasReplyToMsgId = true;
-            }
-
-            //if (!message.HasFromId || message.FromId <= 0) // IsChannelMessage
+            // TODO
+            //if (message.IsChannelMessage)
             //{
-            //    obj.IsBroadcast = true;
+            //    obj.SetChannelMessage();
             //}
 
-            const string caption = "messages.sendMessage";
-            var result = await SendMessageAsyncInternal(obj);
-            if (result.IsSucceeded)
+            var message48 = message as TLMessage;
+            if (message48 != null && message48.IsSilent)
             {
-                var multiPts = result as ITLMultiPts;
-                var shortSentMessage = result.Value as TLUpdateShortSentMessage;
-                if (shortSentMessage != null)
+                obj.IsSilent = true;
+            }
+
+            obj.IsClearDraft = true;
+
+            const string caption = "messages.sendMessage";
+            SendMessageAsyncInternal(obj,
+                result =>
                 {
-                    message.Flags = (TLMessage.Flag)(int)shortSentMessage.Flags;
-                    if (shortSentMessage.HasMedia)
+#if DEBUG
+                    var builder = new StringBuilder();
+                    builder.Append(result.GetType());
+                    var updates = result as TLUpdates;
+                    var updatesShort = result as TLUpdateShort;
+                    if (updates != null)
                     {
-                        message.Media = shortSentMessage.Media;
+                        foreach (var update in updates.Updates)
+                        {
+                            builder.Append(update);
+                        }
                     }
-                    if (shortSentMessage.HasEntities)
+                    else if (updatesShort != null)
                     {
-                        message.Entities = shortSentMessage.Entities;
+                        builder.Append(updatesShort.Update);
                     }
 
-                    Execute.BeginOnUIThread(() =>
+                    Logs.Log.Write(string.Format("{0} result={1}", caption, builder.ToString()));
+#endif
+
+                    var multiPts = result as ITLMultiPts;
+                    
+                    var shortSentMessage = result as TLUpdateShortSentMessage;
+                    if (shortSentMessage != null)
                     {
-                        message.State = GetMessageStatus(_cacheService, message.ToId);
-                        message.Date = shortSentMessage.Date;
-                        if (shortSentMessage.Media is TLMessageMediaWebPage)
+                        // TODO: verify
+                        message.Flags = (TLMessage.Flag)(int)shortSentMessage.Flags;
+                        if (shortSentMessage.HasMedia)
                         {
-                            message.RaisePropertyChanged(() => message.Media);
+                            // TODO: verify
+                            //message._media = shortSentMessage.Media;
+                            message.Media = shortSentMessage.Media;
                         }
+                        if (shortSentMessage.HasEntities)
+                        {
+                            message.Entities = shortSentMessage.Entities;
+                        }
+
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            message.State = GetMessageStatus(_cacheService, message.ToId);
+                            message.Date = shortSentMessage.Date;
+                            if (shortSentMessage.Media is TLMessageMediaWebPage)
+                            {
+                                message.RaisePropertyChanged(() => message.Media);
+                            }
 
 #if DEBUG
-                        message.Id = shortSentMessage.Id;
-                        message.RaisePropertyChanged(() => message.Id);
-                        message.RaisePropertyChanged(() => message.Date);
+                            message.Id = shortSentMessage.Id;
+                            message.RaisePropertyChanged(() => message.Id);
+                            message.RaisePropertyChanged(() => message.Date);
 #endif
-                    });
+                        });
 
-                    message.Id = shortSentMessage.Id;
+                        _updatesService.SetState(multiPts, caption);
 
-                    var task = new TaskCompletionSource<MTProtoResponse<TLMessage>>();
-                    _cacheService.SyncSendingMessage(message, null, message.ToId, (callback) => task.SetResult(new MTProtoResponse<TLMessage>(callback)));
-                    await task.Task;
-                    //return new MTProtoResponse<TLMessage>(message);
-                }
-
-                var updates = result.Value as TLUpdates;
-                if (updates != null)
-                {
-                    foreach (var update in updates.Updates)
-                    {
-                        var updateNewMessage = update as TLUpdateNewMessage;
-                        if (updateNewMessage != null)
-                        {
-                            var messageCommon = updateNewMessage.Message as TLMessage;
-                            if (messageCommon != null)
-                            {
-                                messageCommon.RandomId = message.RandomId;
-                                message.Id = messageCommon.Id;
-                                message.Date = messageCommon.Date;
-                            }
-                        }
+                        message.Id = shortSentMessage.Id;
+                        _cacheService.SyncSendingMessage(message, null, callback);
+                        return;
                     }
 
                     Execute.BeginOnUIThread(() =>
@@ -442,24 +833,22 @@ namespace Telegram.Api.Services
                     }
                     else
                     {
-                        // TODO: notifyNewMessages?
-                        ProcessUpdates(result.Value, new[] { message });
+                        ProcessUpdates(result, new List<TLMessage>{ message });
                     }
 
-                    resultMessage = new MTProtoResponse<TLMessage>(message);
-                }
-            }
-
-            return resultMessage;
+                    callback.SafeInvoke(message);
+                },
+                fastCallback,
+                faultCallback.SafeInvoke);
         }
 
-        private void ProcessUpdates(TLUpdatesBase updatesBase, IList<TLMessage> messages)
-        {
-            var updates = updatesBase as TLUpdates;
-            if (updates != null)
-            {
-                var messagesRandomIndex = new Dictionary<long, TLMessage>();
-                if (messages != null)
+	    private void ProcessUpdates(TLUpdatesBase updatesBase, IList<TLMessage> messages, bool notifyNewMessage = false)
+	    {
+	        var updates = updatesBase as TLUpdates;
+	        if (updates != null)
+	        {
+	            var messagesRandomIndex = new Dictionary<long, TLMessage>();
+	            if (messages != null)
                 {
                     for (var i = 0; i < messages.Count; i++)
                     {
@@ -468,15 +857,17 @@ namespace Telegram.Api.Services
                             messagesRandomIndex[messages[i].RandomId.Value] = messages[i];
                         }
                     }
-                }
+	            }
 
-                var updateNewMessageIndex = new Dictionary<long, TLUpdateNewMessage>();
-                var updateMessageIdList = new List<TLUpdateMessageID>();
+	            var updateNewMessageIndex = new Dictionary<long, TLUpdateNewMessage>();
+	            var updateMessageIdList = new List<TLUpdateMessageID>();
                 for (var i = 0; i < updates.Updates.Count; i++)
                 {
                     var updateNewMessage = updates.Updates[i] as TLUpdateNewMessage;
                     if (updateNewMessage != null)
                     {
+                        ProcessSelfMessage(updateNewMessage.Message);
+
                         updateNewMessageIndex[updateNewMessage.Message.Id] = updateNewMessage;
                         continue;
                     }
@@ -489,519 +880,691 @@ namespace Telegram.Api.Services
                     }
                 }
 
-                foreach (var updateMessageId in updateMessageIdList)
-                {
+	            foreach (var updateMessageId in updateMessageIdList)
+	            {
                     TLUpdateNewMessage updateNewMessage;
                     if (updateNewMessageIndex.TryGetValue(updateMessageId.Id, out updateNewMessage))
                     {
-                        updateNewMessage.Message.RandomId = updateMessageId.RandomId;
+                        var cachedSendingMessage = _cacheService.GetMessage(updateMessageId.RandomId);
+                        if (cachedSendingMessage != null)
+                        {
+                            updateNewMessage.Message.RandomId = updateMessageId.RandomId;
+                        }
                     }
 
-                    TLMessage message;
-                    if (messagesRandomIndex.TryGetValue(updateMessageId.RandomId, out message))
-                    {
-                        message.Id = updateMessageId.Id;
-                        if (updateNewMessage != null)
-                        {
-                            var messageCommon = updateNewMessage.Message as TLMessage;
-                            if (messageCommon != null)
-                            {
+	                TLMessage message;
+	                if (messagesRandomIndex.TryGetValue(updateMessageId.RandomId, out message))
+	                {
+	                    message.Id = updateMessageId.Id;
+	                    if (updateNewMessage != null)
+	                    {
+	                        var messageCommon = updateNewMessage.Message as TLMessage;
+	                        if (messageCommon != null)
+	                        {
                                 message.Date = messageCommon.Date;
+	                        }
+	                    }
+	                }
+	            }
+	        }
+
+            _updatesService.ProcessUpdates(updates, notifyNewMessage);
+	    }
+
+	    public static void ProcessSelfMessage(TLMessageBase messageBase)
+	    {
+	        var messageCommon = messageBase as TLMessage;
+	        if (messageCommon != null
+	            && messageCommon.ToId is TLPeerUser
+	            && messageCommon.FromId != null
+	            && messageCommon.FromId.Value == messageCommon.ToId.Id)
+	        {
+	            messageCommon.IsOut = true;
+                messageCommon.SetUnreadSilent(false);
+            }
+	    }
+
+	    public void GetBotCallbackAnswerCallback(TLInputPeerBase peer, int messageId, byte[] data, int gameId, Action<TLMessagesBotCallbackAnswer> callback, Action<TLRPCError> faultCallback = null)
+        {
+            // TODO: Layer 56
+            var obj = new TLMessagesGetBotCallbackAnswer { Peer = peer, MsgId = messageId, Data = data /*, GameId = gameId*/ };
+
+            const string caption = "messages.getBotCallbackAnswer";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void StartBotCallback(TLInputUserBase bot, string startParam, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesStartBot { Bot = bot, Peer = PeerToInputPeer(message.ToId), RandomId = message.RandomId ?? 0, StartParam = startParam };
+
+            const string caption = "messages.startBot";
+            StartBotAsyncInternal(obj,
+                result =>
+                {
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        message.State = GetMessageStatus(_cacheService, message.ToId);
+                        message.Media.LastProgress = 0.0;
+                        message.Media.DownloadingProgress = 0.0;
+                    });
+
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, new List<TLMessage> { message });
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                () =>
+                {
+                    //TLUtils.WriteLine(caption + " fast result " + message.RandomIndex, LogSeverity.Error);
+                    //fastCallback();
+                },
+                faultCallback.SafeInvoke);
+        }
+
+        public void SendMediaCallback(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesSendMedia { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Media = inputMedia, RandomId = message.RandomId.Value };
+
+            // TODO: verify
+            //if (message.IsChannelMessage)
+            //{
+            //    obj.SetChannelMessage();
+            //}
+
+            var message48 = message as TLMessage;
+            if (message48 != null && message48.IsSilent)
+            {
+                obj.IsSilent = true;
+            }
+
+            const string caption = "messages.sendMedia";
+            SendMediaAsyncInternal(obj,
+                result =>
+                {
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        message.State = GetMessageStatus(_cacheService, message.ToId);
+                        message.Media.LastProgress = 0.0;
+                        message.Media.DownloadingProgress = 0.0;
+                    });
+
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, new List<TLMessage>{message});
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                () =>
+                {
+                    //TLUtils.WriteLine(caption + " fast result " + message.RandomIndex, LogSeverity.Error);
+                    //fastCallback();
+                },
+                faultCallback.SafeInvoke);
+        }
+
+
+
+        public void SendEncryptedAsync(TLInputEncryptedChat peer, long randomId, byte[] data, Action<TLMessagesSentEncryptedMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesSendEncrypted { Peer = peer, RandomId = randomId, Data = data };
+
+            SendEncryptedAsyncInternal(
+                obj,
+                result =>
+                {
+                    callback(result);
+                },
+                () =>
+                {
+                    
+                },
+                faultCallback);
+        }
+
+
+	    public void SendEncryptedFileAsync(TLInputEncryptedChat peer, long randomId, byte[] data, TLInputEncryptedFileBase file, Action<TLMessagesSentEncryptedFile> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLMessagesSendEncryptedFile { Peer = peer, RandomId = randomId, Data = data, File = file };
+
+            SendEncryptedFileAsyncInternal(
+                obj,
+                callback,
+                () =>
+                {
+
+                },
+                faultCallback);
+	    }
+
+	    public void SendEncryptedServiceAsync(TLInputEncryptedChat peer, long randomId, byte[] data, Action<TLMessagesSentEncryptedMessage> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLMessagesSendEncryptedService { Peer = peer, RandomId = randomId, Data = data };
+
+            SendEncryptedServiceAsyncInternal(
+                obj,
+                callback,
+                () =>
+                {
+
+                },
+                faultCallback);
+	    }
+
+	    public void ReadEncryptedHistoryAsync(TLInputEncryptedChat peer, int maxDate, Action<bool> callback,
+	        Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLMessagesReadEncryptedHistory { Peer = peer, MaxDate = maxDate };
+
+            ReadEncryptedHistoryAsyncInternal(obj, callback, () => { }, faultCallback);
+	    }
+
+	    public void SetEncryptedTypingAsync(TLInputEncryptedChat peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLMessagesSetEncryptedTyping { Peer = peer, Typing = typing };
+
+            SendInformativeMessage("messages.setEncryptedTyping", obj, callback, faultCallback);
+	    }
+
+        public void SetTypingCallback(TLInputPeerBase peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var action = typing ? (TLSendMessageActionBase) new TLSendMessageTypingAction() : new TLSendMessageCancelAction();
+            var obj = new TLMessagesSetTyping { Peer = peer, Action = action };
+
+            SendInformativeMessage("messages.setTyping", obj, callback, faultCallback);
+        }
+
+        public void SetTypingCallback(TLInputPeerBase peer, TLSendMessageActionBase action, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesSetTyping { Peer = peer, Action = action ?? new TLSendMessageTypingAction() };
+
+            SendInformativeMessage("messages.setTyping", obj, callback, faultCallback);
+        }
+
+        public void GetMessagesCallback(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetMessages { Id = id };
+
+            SendInformativeMessage("messages.getMessages", obj, callback, faultCallback);
+        }
+
+        public void GetDialogsCallback(int offsetDate, int offsetId, TLInputPeerBase offsetPeer, int limit, Action<TLMessagesDialogsBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetDialogs { OffsetDate = offsetDate, OffsetId = offsetId, OffsetPeer = offsetPeer, Limit = limit };
+            
+            //TLUtils.WriteLine(string.Format("{0} messages.getDialogs offset_date={1} offset_peer={2} offset_id={3} limit={4}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), offsetDate, offsetPeer, offsetId, limit), LogSeverity.Error);          
+            
+            SendInformativeMessage<TLMessagesDialogsBase>("messages.getDialogs", obj, result =>
+            {
+                var dialogsCache = new Dictionary<int, List<TLDialog>>();
+                foreach (var dialogBase in result.Dialogs)
+                {
+                    List<TLDialog> dialogs;
+                    if (dialogsCache.TryGetValue(dialogBase.TopMessage, out dialogs))
+                    {
+                        dialogs.Add(dialogBase);
+                    }
+                    else
+                    {
+                        dialogsCache[dialogBase.TopMessage] = new List<TLDialog>{ dialogBase };
+                    }
+                }
+
+                foreach (var messageBase in result.Messages)
+                {
+                    ProcessSelfMessage(messageBase);
+
+                    var messageCommon = messageBase as TLMessage;
+                    if (messageCommon != null)
+                    {
+                        List<TLDialog> dialogs;
+                        if (dialogsCache.TryGetValue(messageBase.Id, out dialogs))
+                        {
+                            TLDialog dialog53 = null;
+                            if (messageCommon.ToId is TLPeerChannel)
+                            {
+                                dialog53 = dialogs.FirstOrDefault(x => x.Peer is TLPeerChannel && x.Peer.Id == messageCommon.ToId.Id) as TLDialog;
+                            }
+                            else if (messageCommon.ToId is TLPeerChat)
+                            {
+                                dialog53 = dialogs.FirstOrDefault(x => x.Peer is TLPeerChat && x.Peer.Id == messageCommon.ToId.Id) as TLDialog;
+                            }
+                            else if (messageCommon.ToId is TLPeerUser)
+                            {
+                                var peer = messageCommon.IsOut ? messageCommon.ToId : new TLPeerUser{ Id = messageCommon.FromId ?? 0 };
+                                dialog53 = dialogs.FirstOrDefault(x => x.Peer is TLPeerUser && x.Peer.Id == peer.Id) as TLDialog;
+                            }
+                            if (dialog53 != null)
+                            {
+                                if (messageCommon.IsOut)
+                                {
+                                    if (messageCommon.Id > dialog53.ReadOutboxMaxId)
+                                    {
+                                        messageCommon.SetUnreadSilent(true);
+                                    }
+                                }
+                                else
+                                {
+                                    if (messageCommon.Id > dialog53.ReadInboxMaxId)
+                                    {
+                                        messageCommon.SetUnreadSilent(true);
+                                    }
+                                }
                             }
                         }
                     }
                 }
 
-                _updatesService.ProcessUpdates(updates);
-            }
+                //Debug.WriteLine("messages.getDialogs response elapsed=" + stopwatch.Elapsed);
+
+                var r = obj;
+                _cacheService.SyncDialogs(result, callback);
+            }, faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> StartBotAsync(TLInputUserBase bot, string startParam, TLMessage message)
-        {
-            // TODO: Verify parameters
-            //var obj = new TLMessagesStartBot { Bot = bot, ChatId = message.ToId is TLPeerChat ? message.ToId.Id : new int?(0), RandomId = message.RandomId, StartParam = startParam };
-            var obj = new TLMessagesStartBot { Bot = bot, Peer = message.ToId is TLPeerChat ? (TLInputPeerBase)new TLInputPeerChat { ChatId = message.ToId.Id } : new TLInputPeerEmpty(), RandomId = message.RandomId.Value, StartParam = startParam };
-
-            const string caption = "messages.startBot";
-            var result = await StartBotAsyncInternal(obj);
-            if (result.Error == null)
-            {
-
-                Execute.BeginOnUIThread(() =>
-                {
-                    message.State = GetMessageStatus(_cacheService, message.ToId);
-                    //message.Media.LastProgress = 0.0;
-                    //message.Media.DownloadingProgress = 0.0;
-                });
-
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
-                {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, new List<TLMessage> { message });
-                }
-            }
-
-            return result;
-        }
-
-        public async Task<MTProtoResponse<TLUpdatesBase>> SendMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message)
-        {
-            var obj = new TLMessagesSendMedia { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Media = inputMedia, RandomId = message.RandomId.Value };
-
-            //if (message.FromId <= 0) // IsChannelMessage
-            //{
-            //    obj.IsBroadcast = true;
-            //}
-
-            const string caption = "messages.sendMedia";
-            var result = await SendMediaAsyncInternal(obj);
-            if (result.Error == null)
-            {
-
-                Execute.BeginOnUIThread(() =>
-                {
-                    message.State = GetMessageStatus(_cacheService, message.ToId);
-                    //message.Media.LastProgress = 0.0;
-                    //message.Media.DownloadingProgress = 0.0;
-                });
-
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
-                {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, new List<TLMessage> { message });
-                }
-            }
-
-            return result;
-        }
-
-        // NO MORE SUPPORTED:
-        //public async Task<MTProtoResponse<TLUpdatesBase>> SendBroadcastAsync(TLVector<TLInputUserBase> contacts, TLInputMediaBase inputMedia, TLMessage message)
-        //{
-        //    var randomId = new TLVector<long?>();
-        //    for (var i = 0; i < contacts.Count; i++)
-        //    {
-        //        randomId.Add(TLLong.Random());
-        //    }
-
-        //    var obj = new TLSendBroadcast { Contacts = contacts, RandomId = randomId, Message = message.Message, Media = inputMedia };
-
-        //    const string caption = "messages.sendBroadcast";
-        //    var result = await SendInformativeMessage<TLUpdatesBase>(caption, obj);
-        //    if (result.Error == null)
-        //    {
-
-        //        var multiPts = result as ITLMultiPts;
-        //        if (multiPts != null)
-        //        {
-        //            _updatesService.SetState(multiPts, caption);
-        //        }
-        //        else
-        //        {
-        //            ProcessUpdates(result.Value, new List<TLMessage25> { message });
-        //        }
-
-        //        var updates = result.Value as TLUpdates;
-        //        if (updates != null)
-        //        {
-        //            var updateNewMessage = updates.Updates.FirstOrDefault(x => x is TLUpdateNewMessage) as TLUpdateNewMessage;
-        //            if (updateNewMessage != null)
-        //            {
-        //                var messageCommon = updateNewMessage.Message as TLMessageCommon;
-        //                if (messageCommon != null)
-        //                {
-        //                    message.Date = new int?(messageCommon.DateIndex - 1); // Делаем бродкаст после всех чатов, в которые отправили, в списке диалогов
-        //                }
-        //            }
-        //        }
-
-        //        //message.Id = result.Id;
-        //        message.Status = MessageStatus.Confirmed;
-        //    }
-
-        //    return result;
-        //}
-
-
-
-        public Task<MTProtoResponse<TLMessagesSentEncryptedMessage>> SendEncryptedAsync(TLInputEncryptedChat peer, long randomId, byte[] data)
-        {
-            var obj = new TLMessagesSendEncrypted { Peer = peer, RandomId = randomId, Data = data };
-
-            return SendEncryptedAsyncInternal(obj);
-        }
-
-
-        public Task<MTProtoResponse<TLMessagesSentEncryptedFile>> SendEncryptedFileAsync(TLInputEncryptedChat peer, long randomId, byte[] data, TLInputEncryptedFileBase file)
-        {
-            var obj = new TLMessagesSendEncryptedFile { Peer = peer, RandomId = randomId, Data = data, File = file };
-
-            return SendEncryptedFileAsyncInternal(obj);
-        }
-
-        public Task<MTProtoResponse<TLMessagesSentEncryptedMessage>> SendEncryptedServiceAsync(TLInputEncryptedChat peer, long randomId, byte[] data)
-        {
-            var obj = new TLMessagesSendEncryptedService { Peer = peer, RandomId = randomId, Data = data };
-
-            return SendEncryptedServiceAsyncInternal(obj);
-        }
-        public async void SendEncryptedServiceCallbackAsync(TLInputEncryptedChat peer, long randomId, byte[] data, Action<TLMessagesSentEncryptedMessage> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLMessagesSendEncryptedService { Peer = peer, RandomId = randomId, Data = data };
-
-            var result = await SendEncryptedServiceAsyncInternal(obj);
-            if (result?.IsSucceeded == true)
-            {
-                callback?.Invoke(result.Value);
-            }
-            else
-            {
-                faultCallback?.Invoke(result?.Error);
-            }
-        }
-
-
-        public Task<MTProtoResponse<bool>> ReadEncryptedHistoryAsync(TLInputEncryptedChat peer, int maxDate)
-        {
-            var obj = new TLMessagesReadEncryptedHistory { Peer = peer, MaxDate = maxDate };
-
-            return ReadEncryptedHistoryAsyncInternal(obj);
-        }
-
-        public Task<MTProtoResponse<bool>> SetEncryptedTypingAsync(TLInputEncryptedChat peer, bool typing)
-        {
-            var obj = new TLMessagesSetEncryptedTyping { Peer = peer, Typing = typing };
-
-            return SendInformativeMessage<bool>("messages.setEncryptedTyping", obj);
-        }
-
-        public Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, bool typing)
-        {
-            var action = typing ? (TLSendMessageActionBase)new TLSendMessageTypingAction() : new TLSendMessageCancelAction();
-            var obj = new TLMessagesSetTyping { Peer = peer, Action = action };
-
-            return SendInformativeMessage<bool>("messages.setTyping", obj);
-        }
-
-        public Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, TLSendMessageActionBase action)
-        {
-            var obj = new TLMessagesSetTyping { Peer = peer, Action = action ?? new TLSendMessageTypingAction() };
-
-            return SendInformativeMessage<bool>("messages.setTyping", obj);
-        }
-
-        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLVector<int> id)
-        {
-            var obj = new TLMessagesGetMessages { Id = id };
-
-            return SendInformativeMessage<TLMessagesMessagesBase>("messages.getMessages", obj);
-        }
-
-#if LAYER_40
-        public async Task<MTProtoResponse<TLMessagesDialogsBase>> GetDialogsAsync(int offsetDate, int offsetId, TLInputPeerBase peer, int limit)
-        {
-            var obj = new TLMessagesGetDialogs { OffsetDate = offsetDate, OffsetId = offsetId, OffsetPeer = peer, Limit = limit };
-
-            var result = await SendInformativeMessage<TLMessagesDialogsBase>("messages.getDialogs", obj);
-            if (result.Error == null)
-            {
-                var task = new TaskCompletionSource<MTProtoResponse<TLMessagesDialogsBase>>();
-                _cacheService.SyncDialogs(result.Value, (callback) =>
-                {
-                    task.SetResult(new MTProtoResponse<TLMessagesDialogsBase>(callback));
-                });
-                return await task.Task;
-            }
-
-            return result;
-        }
-#else
-        public async Task<MTProtoResponse<TLResPQ>> GetDialogsAsync(int? offset, int? maxId, int? limit, Action<TLDialogsBase> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLGetDialogs { Offset = offset, MaxId = maxId, Limit = limit };
-
-            SendInformativeMessage<TLDialogsBase>("messages.getDialogs", obj, result =>_cacheService.SyncDialogs(result, callback), faultCallback);
-        }
-#endif
-
-        // TODO:
-        //public async Task<MTProtoResponse<TLMessagesDialogsBase>> GetChannelDialogsAsync(int offset, int limit)
-        //{
-        //    var obj = new TLChannelsGetDialogs { Offset = offset, Limit = limit };
-
-        //    var result = await SendInformativeMessage<TLMessagesDialogsBase>("channels.getDialogs", obj);
-        //    if (result.Error == null)
-        //    {
-
-        //        //return;
-        //        var channelsCache = new Context<TLChannel>();
-        //        foreach (var chatBase in result.Value.Chats)
-        //        {
-        //            var channel = chatBase as TLChannel;
-        //            if (channel != null)
-        //            {
-        //                channelsCache[channel.Id] = channel;
-        //            }
-        //        }
-
-        //        var dialogsCache = new Context<TLDialogChannel>();
-        //        foreach (var dialogBase in result.Value.Dialogs)
-        //        {
-        //            var dialogChannel = dialogBase as TLDialogChannel;
-        //            if (dialogChannel != null)
-        //            {
-        //                var channelId = dialogChannel.Peer.Id;
-        //                dialogsCache[channelId] = dialogChannel;
-        //                TLChannel channel;
-        //                if (channelsCache.TryGetValue(channelId, out channel))
-        //                {
-        //                    channel.ReadInboxMaxId = dialogChannel.ReadInboxMaxId;
-        //                    //channel.UnreadCount = dialogChannel.UnreadCount;
-        //                    //channel.UnreadImportantCount = dialogChannel.UnreadImportantCount;
-        //                    channel.NotifySettings = dialogChannel.NotifySettings;
-        //                    //channel.Pts = dialogChannel.Pts;
-        //                }
-        //            }
-        //        }
-
-        //        //_cacheService.SyncChannelDialogs(result, callback);
-        //        _cacheService.SyncUsersAndChats(result.Value.Users, result.Value.Chats, x =>
-        //        {
-        //            _cacheService.MergeMessagesAndChannels(result.Value);
-        //        });
-        //    }
-
-        //    return result;
-        //}
-
-
-        private void GetHistoryAsyncInternal(bool sync, TLPeerBase peer, TLMessagesMessagesBase result)
+        private void GetChannelHistoryAsyncInternal(bool sync, TLPeerBase peer, TLMessagesMessagesBase result, Action<TLMessagesMessagesBase> callback)
         {
             if (sync)
             {
-                _cacheService.SyncMessages(result, peer, false, true, null);
+                _cacheService.SyncPeerMessages(peer, result, false, false, callback);
             }
             else
             {
                 _cacheService.AddChats(result.Chats, results => { });
                 _cacheService.AddUsers(result.Users, results => { });
+                callback(result);
             }
         }
 
-        public async Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit)
-        {
-            var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
-
-            TLUtils.WriteLine(string.Format("{0} {1} messages.getHistory peer={2} offset={3} max_id={4} limit={5}", string.Empty, debugInfo, inputPeer, offset, maxId, limit), LogSeverity.Error);
-            var result = await SendInformativeMessage<TLMessagesMessagesBase>("messages.getHistory", obj);
-            if (result.Error == null)
+        private void GetHistoryAsyncInternal(bool sync, TLPeerBase peer, TLMessagesMessagesBase result, Action<TLMessagesMessagesBase> callback)
+	    {
+            if (sync)
             {
-                var replyId = new TLVector<int>();
-                var waitingList = new List<TLMessage>();
-                if (replyId.Count > 0)
+                _cacheService.SyncPeerMessages(peer, result, false, true, callback);
+            }
+            else
+            {
+                _cacheService.AddChats(result.Chats, results => { });
+                _cacheService.AddUsers(result.Users, results => { });
+                callback(result);
+            }
+	    }
+
+        public void GetHistoryCallback(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = 0, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
+
+            //Debug.WriteLine("UpdateItems start request elapsed=" + (timer != null? timer.Elapsed.ToString() : null));
+
+            SendInformativeMessage<TLMessagesMessagesBase>("messages.getHistory", obj, 
+                result =>
                 {
-                    var messagesResult = await GetMessagesAsync(replyId);
-                    if (messagesResult.Error == null)
+                    //Debug.WriteLine("UpdateItems stop request elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
+
+                    foreach (var message in result.Messages)
                     {
+                        ProcessSelfMessage(message);
+                    }
 
-                        _cacheService.AddChats(result.Value.Chats, results => { });
-                        _cacheService.AddUsers(result.Value.Users, results => { });
+                    var replyId = new TLVector<int>();
+                    var waitingList = new List<TLMessage>();
+                    //for (var i = 0; i < result.Messages.Count; i++)
+                    //{
+                    //    var message25 = result.Messages[i] as TLMessage;
+                    //    if (message25 != null 
+                    //        && message25.ReplyToMsgId != null 
+                    //        && message25.ReplyToMsgId.Value > 0)
+                    //    {
+                    //        var cachedReply = _cacheService.GetMessage(message25.ReplyToMsgId);
+                    //        if (cachedReply != null)
+                    //        {
+                    //            message25.Reply = cachedReply;
+                    //        }
+                    //        else
+                    //        {
+                    //            replyId.Add(message25.ReplyToMsgId);
+                    //            waitingList.Add(message25);
+                    //        }
+                    //    }
+                    //}
 
-                        for (var i = 0; i < messagesResult.Value.Messages.Count; i++)
-                        {
-                            for (var j = 0; j < waitingList.Count; j++)
+                    if (replyId.Count > 0)
+                    {
+                        //Debug.WriteLine("UpdateItems start GetMessages elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
+
+                        GetMessagesCallback(
+                            replyId, 
+                            messagesResult =>
                             {
-                                var messageToReply = messagesResult.Value.Messages[i] as TLMessage;
-                                if (messageToReply != null && messageToReply.Id == waitingList[j].Id)
-                                {
-                                    waitingList[j].Reply = messageToReply;
-                                }
-                            }
-                        }
+                                //Debug.WriteLine("UpdateItems stop GetMessages elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
 
-                        var inputChannelPeer = inputPeer as TLInputPeerChannel;
-                        if (inputChannelPeer != null)
-                        {
-                            var channel = _cacheService.GetChat(inputChannelPeer.ChannelId) as TLChannel;
-                            if (channel != null)
-                            {
-                                var maxIndex = channel.ReadInboxMaxId != null ? channel.ReadInboxMaxId : 0;
-                                foreach (var messageBase in messagesResult.Value.Messages)
+                                _cacheService.AddChats(result.Chats, results => { });
+                                _cacheService.AddUsers(result.Users, results => { });
+
+                                for (var i = 0; i < messagesResult.Messages.Count; i++)
                                 {
-                                    var messageCommon = messageBase as TLMessage;
-                                    if (messageCommon != null &&
-                                        !messageCommon.IsOut &&
-                                        messageCommon.Id > maxIndex)
+                                    for (var j = 0; j < waitingList.Count; j++)
                                     {
-                                        messageCommon.IsUnread = true;
+                                        var messageToReply = messagesResult.Messages[i] as TLMessage;
+                                        if (messageToReply != null
+                                            && messageToReply.Id == waitingList[j].Id)
+                                        {
+                                            waitingList[j].Reply = messageToReply;
+                                        }
                                     }
                                 }
-                            }
-                        }
 
-                        GetHistoryAsyncInternal(sync, peer, result.Value);
+                                var inputChannelPeer = inputPeer as TLInputPeerChannel;
+                                if (inputChannelPeer != null)
+                                {
+                                    var channel = _cacheService.GetChat(inputChannelPeer.ChannelId) as TLChannel;
+                                    if (channel != null)
+                                    {
+                                        var maxIndex = channel.ReadInboxMaxId != null ? channel.ReadInboxMaxId : 0;
+                                        foreach (var messageBase in messagesResult.Messages)
+                                        {
+                                            var messageCommon = messageBase as TLMessage;
+                                            if (messageCommon != null
+                                                && !messageCommon.IsOut
+                                                && messageCommon.Id > maxIndex)
+                                            {
+                                                messageCommon.SetUnread(true);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                //Debug.WriteLine("UpdateItems stop GetMessages GetHistoryAsyncInternal elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
+
+                                GetHistoryAsyncInternal(sync, peer, result, callback);
+                            },
+                            faultCallback);
                     }
-                }
-                else
-                {
-                    GetHistoryAsyncInternal(sync, peer, result.Value);
-                }
-            }
+                    else
+                    {
+                        //Debug.WriteLine("UpdateItems GetHistoryAsyncInternal elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
 
-            return result;
+                        GetHistoryAsyncInternal(sync, peer, result, callback);
+                    }
+                }, 
+                faultCallback);
         }
 
-        public Task<MTProtoResponse<TLMessagesMessagesBase>> SearchAsync(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit)
+
+        public void GetChannelHistoryCallback(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesSearch { Peer = peer, Q = query, Filter = filter, MinDate = minDate, MaxDate = maxDate, Offset = offset, MaxId = maxId, Limit = limit };
+            var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = 0, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
 
-            return SendInformativeMessage<TLMessagesMessagesBase>("messages.search", obj);
+            TLUtils.WriteLine(string.Format("{0} {1} messages.getHistory peer={2} offset={3} max_id={4} limit={5}", string.Empty, debugInfo, inputPeer, offset, maxId, limit), LogSeverity.Error);
+            SendInformativeMessage<TLMessagesMessagesBase>("messages.getHistory", obj,
+                result =>
+                {
+                    var replyId = new TLVector<int>();
+                    var waitingList = new List<TLMessage>();
+                    //for (var i = 0; i < result.Messages.Count; i++)
+                    //{
+                    //    var message25 = result.Messages[i] as TLMessage;
+                    //    if (message25 != null 
+                    //        && message25.ReplyToMsgId != null 
+                    //        && message25.ReplyToMsgId.Value > 0)
+                    //    {
+                    //        var cachedReply = _cacheService.GetMessage(message25.ReplyToMsgId);
+                    //        if (cachedReply != null)
+                    //        {
+                    //            message25.Reply = cachedReply;
+                    //        }
+                    //        else
+                    //        {
+                    //            replyId.Add(message25.ReplyToMsgId);
+                    //            waitingList.Add(message25);
+                    //        }
+                    //    }
+                    //}
+
+                    if (replyId.Count > 0)
+                    {
+                        GetMessagesCallback(
+                            replyId,
+                            messagesResult =>
+                            {
+                                _cacheService.AddChats(result.Chats, results => { });
+                                _cacheService.AddUsers(result.Users, results => { });
+
+                                for (var i = 0; i < messagesResult.Messages.Count; i++)
+                                {
+                                    for (var j = 0; j < waitingList.Count; j++)
+                                    {
+                                        var messageToReply = messagesResult.Messages[i] as TLMessage;
+                                        if (messageToReply != null
+                                            && messageToReply.Id == waitingList[j].Id)
+                                        {
+                                            waitingList[j].Reply = messageToReply;
+                                        }
+                                    }
+                                }
+
+                                var inputChannelPeer = inputPeer as TLInputPeerChannel;
+                                if (inputChannelPeer != null)
+                                {
+                                    var channel = _cacheService.GetChat(inputChannelPeer.ChannelId) as TLChannel;
+                                    if (channel != null)
+                                    {
+                                        var maxIndex = channel.ReadInboxMaxId != null ? channel.ReadInboxMaxId : 0;
+                                        foreach (var messageBase in messagesResult.Messages)
+                                        {
+                                            var messageCommon = messageBase as TLMessage;
+                                            if (messageCommon != null
+                                                && !messageCommon.IsOut
+                                                && messageCommon.Id > maxIndex)
+                                            {
+                                                messageCommon.SetUnread(true);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                GetChannelHistoryAsyncInternal(sync, peer, result, callback);
+                            },
+                            faultCallback);
+                    }
+                    else
+                    {
+                        GetChannelHistoryAsyncInternal(sync, peer, result, callback);
+                    }
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLMessagesAffectedHistory>> ReadHistoryAsync(TLInputPeerBase peer, int maxId)
+        public void SearchCallback(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            //TLUtils.WriteLine(string.Format("{0} messages.search query={1} offset={2} limit={3}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), query, offset, limit), LogSeverity.Error);
+            //Execute.ShowDebugMessage("messages.search filter=" + filter);
+
+            var obj = new TLMessagesSearch { Flags = 0, Peer = peer, Q = query, Filter = filter, MinDate = minDate, MaxDate = maxDate, Offset = offset, MaxId = maxId, Limit = limit };
+            //obj.SetImportant();
+
+            SendInformativeMessage<TLMessagesMessagesBase>("messages.search", obj, result =>
+            {
+                //Execute.ShowDebugMessage("messages.search result " + result.Messages.Count);
+                callback.SafeInvoke(result);
+            }, faultCallback);
+        }
+
+        public void SearchGlobalCallback(string query, int offsetDate, TLInputPeerBase offsetPeer, int offsetId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            TLUtils.WriteLine(string.Format("{0} messages.searchGlobal query={1} offset_date={2} offset_peer={3} offset_id={4} limit={5}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), query, offsetDate, offsetPeer, offsetId, limit), LogSeverity.Error);
+            
+            var obj = new TLMessagesSearchGlobal { Q = query, OffsetDate = offsetDate, OffsetPeer = offsetPeer, OffsetId = offsetId, Limit = limit };
+            
+            SendInformativeMessage<TLMessagesMessagesBase>("messages.searchGlobal", obj, result =>
+            {
+                TLUtils.WriteLine(string.Format("{0} messages.searchGlobal result={1}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), result.Messages.Count), LogSeverity.Error);
+                callback.SafeInvoke(result);
+            }, faultCallback);
+        }
+
+        public void ReadHistoryCallback(TLInputPeerBase peer, int maxId, int offset, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesReadHistory { Peer = peer, MaxId = maxId };
 
             const string caption = "messages.readHistory";
-            var result = await ReadHistoryAsyncInternal(obj);
-            if (result.Error == null)
-            {
-                var multiPts = result.Value as ITLMultiPts;
-                if (multiPts != null)
+            ReadHistoryAsyncInternal(obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    _updatesService.SetState(null, result.Value.Pts, null, null, null, caption);
-                }                
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        _updatesService.SetState(null, result.Pts, null, null, null, caption);
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                () => { },
+                faultCallback.SafeInvoke);
         }
 
-        public async Task<MTProtoResponse<TLMessagesAffectedMessages>> ReadMessageContentsAsync(TLVector<int> id)
+        public void ReadMessageContentsCallback(TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesReadMessageContents { Id = id };
 
             const string caption = "messages.readMessageContents";
-            var result = await ReadMessageContentsAsyncInternal(obj);
-            if (result.Error == null)
-            {
-                var multiPts = result.Value as ITLMultiPts;
-                if (multiPts != null)
+            ReadMessageContentsAsyncInternal(obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    _updatesService.SetState(null, result.Value.Pts, null, null, null, caption);
-                }
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        _updatesService.SetState(null, result.Pts, null, null, null, caption);
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                () => { },
+                faultCallback.SafeInvoke);
         }
 
-        public async Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteHistoryAsync(TLInputPeerBase peer, int offset)
+        public void DeleteHistoryCallback(bool justClear, TLInputPeerBase peer, int offset, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesDeleteHistory { Peer = peer, MaxId = int.MaxValue };
+            var obj = new TLMessagesDeleteHistory { Flags = 0, Peer = peer, MaxId = int.MaxValue };
+
+            if (justClear)
+            {
+                obj.IsJustClear = true;
+            }
 
             const string caption = "messages.deleteHistory";
-            var result = await SendInformativeMessage<TLMessagesAffectedHistory>(caption, obj);
-            if (result.Error == null)
-            {
-                var multiPts = result.Value as ITLMultiPts;
-                if (multiPts != null)
+            SendInformativeMessage<TLMessagesAffectedHistory>(caption, obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    // TODO: Verify Value.PtsCount, before was Seq.
-                    _updatesService.SetState(result.Value.PtsCount, result.Value.Pts, null, null, null, caption);
-                }
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        // TODO: Verify Value.PtsCount, before was Seq.
+                        _updatesService.SetState(result.PtsCount, result.Pts, null, null, null, caption);
+                    }
 
-            return result;
+                    callback(result);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id)
+        public void DeleteMessagesCallback(TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesDeleteMessages { Id = id };
 
             const string caption = "messages.deleteMessages";
-            var result = await SendInformativeMessage<TLMessagesAffectedMessages>(caption, obj);
-            if (result.Error == null)
-            {
-
-                var multiPts = result.Value as ITLMultiPts;
-                if (multiPts != null)
+            SendInformativeMessage<TLMessagesAffectedMessages>(caption, obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    _updatesService.SetState(null, result.Value.Pts, null, null, null, caption);
-                }
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        _updatesService.SetState(null, result.Pts, null, null, null, caption);
+                    }
 
-            return result;
+                    callback(result);
+                },
+                faultCallback);
         }
 
         // TODO: Probably deprecated.
-        //public Task<MTProtoResponse<TLVector<int>>> RestoreMessagesAsync(TLVector<int> id)
+        //public void RestoreMessagesAsync(TLVector<int> id, Action<TLVector<int>> callback, Action<TLRPCError> faultCallback = null)
         //{
-        //    var obj = new TLRestoreMessages { Id = id };
+        //    var obj = new TLMessagesRestoreMessages { Id = id };
 
-        //    return SendInformativeMessage<TLVector<int?>>("messages.restoreMessages", obj);
+        //    SendInformativeMessage("messages.restoreMessages", obj, callback, faultCallback);
         //}
 
-        public Task<MTProtoResponse<TLVector<TLReceivedNotifyMessage>>> ReceivedMessagesAsync(int maxId)
+        public void ReceivedMessagesAsync(int maxId, Action<TLVector<TLReceivedNotifyMessage>> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesReceivedMessages { MaxId = maxId };
 
-            return SendInformativeMessage<TLVector<TLReceivedNotifyMessage>>("messages.receivedMessages", obj);
+            SendInformativeMessage("messages.receivedMessages", obj, callback, faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> ForwardMessageAsync(TLInputPeerBase peer, int fwdMessageId, TLMessage message)
+        public void ForwardMessageCallback(TLInputPeerBase peer, int fwdMessageId, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesForwardMessage { Peer = peer, Id = fwdMessageId, RandomId = message.RandomId.Value };
+            var obj = new TLMessagesForwardMessage { Peer = peer, Id = fwdMessageId, RandomId = message.RandomId ?? 0 };
 
             const string caption = "messages.forwardMessage";
-            var result = await ForwardMessageAsyncInternal(obj);
-            if (result.Error == null)
-            {
-
-                Execute.BeginOnUIThread(() =>
+            ForwardMessageAsyncInternal(obj, 
+                result =>
                 {
-                    message.State = TLMessageState.Confirmed;
-                    //message.Media.LastProgress = 0.0;
-                    //message.Media.DownloadingProgress = 0.0;
-                });
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        message.State = TLMessageState.Confirmed;
+                        message.Media.LastProgress = 0.0;
+                        message.Media.DownloadingProgress = 0.0;
+                    });
 
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
-                {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, new List<TLMessage> { message });
-                }
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, new List<TLMessage> { message });
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                () =>
+                {
+                    
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> ForwardMessagesAsync(TLInputPeerBase toPeer, TLVector<int> id, IList<TLMessage> messages)
+        public void ForwardMessagesCallback(TLInputPeerBase toPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var randomId = new TLVector<long>();
             foreach (var message in messages)
@@ -1009,244 +1572,299 @@ namespace Telegram.Api.Services
                 randomId.Add(message.RandomId.Value);
             }
 
-            var message40 = messages.FirstOrDefault() as TLMessage;
+            TLInputPeerBase fromPeer = null;
+            var message48 = messages.FirstOrDefault() as TLMessage;
+            // TODO: verify
+            //if (message48 != null)
+            //{
+            //    fromPeer = message48.FwdFromChannelPeer;
+            //}
 
-            var obj = new TLMessagesForwardMessages { ToPeer = toPeer, Id = id, RandomId = randomId, FromPeer = PeerToInputPeer(message40.FwdFrom), Flags = 0 };
+            //if (fromPeer == null)
+            //{
+            //    var message40 = messages.FirstOrDefault() as TLMessage;
+            //    if (message40 != null)
+            //    {
+            //        fromPeer = message40.FwdFromChannelPeer ?? PeerToInputPeer(message40.FwdFromPeer);
+            //    }
+            //}
 
-            var result = await ForwardMessagesAsyncInternal(obj);
-            if (result.Error == null)
+            if (message48.HasFwdFrom)
             {
-
-                Execute.BeginOnUIThread(() =>
+                if (message48.FwdFrom.HasChannelId)
                 {
-                    for (var i = 0; i < messages.Count; i++)
-                    {
-                        messages[i].State = TLMessageState.Confirmed;
-                        //messages[i].Media.LastProgress = 0.0;
-                        //messages[i].Media.DownloadingProgress = 0.0;
-                    }
-                });
-
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
-                {
-                    _updatesService.SetState(multiPts, "messages.forwardMessages");
+                    fromPeer = new TLInputPeerChannel { ChannelId = message48.FwdFrom.ChannelId.Value };
                 }
-                else
+                else if (message48.FwdFrom.HasFromId)
                 {
-                    ProcessUpdates(result.Value, messages);
+                    fromPeer = PeerToInputPeer(new TLPeerUser { Id = message48.FwdFrom.FromId.Value });
                 }
-
             }
 
-            return result;
+            var obj = new TLMessagesForwardMessages { ToPeer = toPeer, Id = id, RandomId = randomId, FromPeer = fromPeer, Flags = 0 };
+
+            // TODO: Layer 56
+            //if (message48 != null && message48.IsChannelMessage)
+            //{
+            //    obj.SetChannelMessage();
+            //}
+
+            if (message48 != null && message48.IsSilent)
+            {
+                obj.IsSilent = true;
+            }
+
+            // TODO: Layer 56
+            //if (withMyScore)
+            //{
+            //    obj.SetWithMyScore();
+            //}
+
+            const string caption = "messages.forwardMessages";
+
+            Execute.ShowDebugMessage(string.Format(caption + " to_peer={0} from_peer={1} id={2} flags={3}", toPeer, fromPeer, string.Join(",", id), "TLMessagesForwardMessages.ForwardMessagesFlagsString(obj.Flags)"));
+            //Execute.ShowDebugMessage(caption + string.Format("id={0} random_id={1} from_peer={2} to_peer={3}", obj.Id.FirstOrDefault(), obj.RandomIds.FirstOrDefault(), obj.FromPeer, obj.ToPeer));
+
+            ForwardMessagesAsyncInternal(obj,
+                result =>
+                {
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        for (var i = 0; i < messages.Count; i++)
+                        {
+                            messages[i].State = TLMessageState.Confirmed;
+                            messages[i].Media.LastProgress = 0.0;
+                            messages[i].Media.DownloadingProgress = 0.0;
+                        }
+                    });
+
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, messages);
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                () =>
+                {
+                    
+                },
+                faultCallback.SafeInvoke);
         }
 
-        public Task<MTProtoResponse<TLMessagesChats>> GetChatsAsync(TLVector<int> id)
+        public void GetChatsAsync(TLVector<int> id, Action<TLMessagesChats> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetChats { Id = id };
 
-            return SendInformativeMessage<TLMessagesChats>("messages.getChats", obj);
+            SendInformativeMessage("messages.getChats", obj, callback, faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLMessagesChatFull>> GetFullChatAsync(int chatId)
+        public void GetFullChatCallback(int chatId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetFullChat { ChatId = chatId };
 
-            var result = await SendInformativeMessage<TLMessagesChatFull>("messages.getFullChat", obj);
-            if (result.Error == null)
-            {
-                var task = new TaskCompletionSource<MTProtoResponse<TLMessagesChatFull>>();
-                _cacheService.SyncChat(result.Value, (callback) =>
+            SendInformativeMessage<TLMessagesChatFull>(
+                "messages.getFullChat", obj,
+                messagesChatFull =>
                 {
-                    task.SetResult(new MTProtoResponse<TLMessagesChatFull>(callback));
-                });
-                return await task.Task;
-            }
-
-            return result;
-        }
-        public async void GetFullChatCallbackAsync(int chatId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback)
-        {
-            var obj = new TLMessagesGetFullChat { ChatId = chatId };
-
-            var result = await SendInformativeMessage<TLMessagesChatFull>("messages.getFullChat", obj);
-            if (result.Error == null)
-            {
-                _cacheService.SyncChat(result.Value, callback);
-            }
-            else
-            {
-                faultCallback(result.Error);
-            }
+                    _cacheService.SyncChat(messagesChatFull, result => callback.SafeInvoke(messagesChatFull));
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> EditChatTitleAsync(int chatId, string title)
+        public void EditChatTitleCallback(int chatId, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesEditChatTitle { ChatId = chatId, Title = title };
 
             const string caption = "messages.editChatTitle";
-            var result = await SendInformativeMessage<TLUpdatesBase>(caption, obj);
-            if (result.Error == null)
-            {
-
-                var multiPts = result.Value as ITLMultiPts;
-                if (multiPts != null)
+            SendInformativeMessage<TLUpdatesBase>(caption,
+                obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> EditChatPhotoAsync(int chatId, TLInputChatPhotoBase photo)
+        public void EditChatPhotoCallback(int chatId, TLInputChatPhotoBase photo, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesEditChatPhoto { ChatId = chatId, Photo = photo };
 
             const string caption = "messages.editChatPhoto";
-            var result = await SendInformativeMessage<TLUpdatesBase>(caption, obj);
-            if (result.Error == null)
-            {
-
-                var multiPts = result.Value as ITLMultiPts;
-                if (multiPts != null)
+            SendInformativeMessage<TLUpdatesBase>(caption,
+                obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null, true);
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> AddChatUserAsync(int chatId, TLInputUserBase userId, int fwdLimit)
+        public void AddChatUserCallback(int chatId, TLInputUserBase userId, int fwdLimit, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesAddChatUser { ChatId = chatId, UserId = userId, FwdLimit = fwdLimit };
 
             const string caption = "messages.addChatUser";
-            var result = await SendInformativeMessage<TLUpdatesBase>(caption, obj);
-            if (result.Error == null)
-            {
-
-                var multiPts = result.Value as ITLMultiPts;
-                if (multiPts != null)
+            SendInformativeMessage<TLUpdatesBase>(caption,
+                obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> DeleteChatUserAsync(int chatId, TLInputUserBase userId)
+        public void DeleteChatUserCallback(int chatId, TLInputUserBase userId, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesDeleteChatUser { ChatId = chatId, UserId = userId };
 
             const string caption = "messages.deleteChatUser";
-            var result = await SendInformativeMessage<TLUpdatesBase>(caption, obj);
-            if (result.Error == null)
-            {
-
-                var multiPts = result.Value as ITLMultiPts;
-                if (multiPts != null)
+            SendInformativeMessage<TLUpdatesBase>(caption,
+                obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> CreateChatAsync(TLVector<TLInputUserBase> users, string title)
+        public void CreateChatCallback(TLVector<TLInputUserBase> users, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesCreateChat { Users = users, Title = title };
 
             const string caption = "messages.createChat";
-            var result = await SendInformativeMessage<TLUpdatesBase>(caption, obj);
-            if (result.Error == null)
-            {
-
-                var multiPts = result.Value as ITLMultiPts;
-                if (multiPts != null)
+            SendInformativeMessage<TLUpdatesBase>(caption,
+                obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public Task<MTProtoResponse<TLExportedChatInviteBase>> ExportChatInviteAsync(int chatId)
+        public void ExportChatInviteCallback(int chatId, Action<TLExportedChatInviteBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesExportChatInvite { ChatId = chatId };
 
-            return SendInformativeMessage<TLExportedChatInviteBase>("messages.exportChatInvite", obj);
+            SendInformativeMessage("messages.exportChatInvite", obj, callback, faultCallback);
         }
 
-        public Task<MTProtoResponse<TLChatInviteBase>> CheckChatInviteAsync(string hash)
+        public void CheckChatInviteCallback(string hash, Action<TLChatInviteBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesCheckChatInvite { Hash = hash };
 
-            return SendInformativeMessage<TLChatInviteBase>("messages.checkChatInvite", obj);
+            SendInformativeMessage<TLChatInviteBase>("messages.checkChatInvite", obj, 
+                result =>
+                {
+                    var chatInvite = result as TLChatInvite;
+                    if (chatInvite != null)
+                    {
+                        _cacheService.SyncUsers(chatInvite.Participants, participants =>
+                        {
+                            chatInvite.Participants = participants;
+                            callback.SafeInvoke(result);
+                        });
+                    }
+                    else
+                    {
+                        callback.SafeInvoke(result);
+                    }
+                }
+                , faultCallback);
         }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> ImportChatInviteAsync(string hash)
+        public void ImportChatInviteCallback(string hash, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesImportChatInvite { Hash = hash };
 
             const string caption = "messages.importChatInvite";
-            var result = await SendInformativeMessage<TLUpdatesBase>(caption, obj);
-            if (result.Error == null)
-            {
-
-                var updates = result.Value as TLUpdates;
-                if (updates != null)
+            SendInformativeMessage<TLUpdatesBase>(caption,
+                obj,
+                result =>
                 {
-                    _cacheService.SyncUsersAndChats(updates.Users, updates.Chats, tuple => { });
-                }
+                    var updates = result as TLUpdates;
+                    if (updates != null)
+                    {
+                        _cacheService.SyncUsersAndChats(updates.Users, updates.Chats, tuple => { });
+                    }
 
-                var multiPts = result.Value as ITLMultiPts;
-                if (multiPts != null)
-                {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
 
-            return result;
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
         }
 
-        public Task<MTProtoResponse<TLObject>> SendActionsAsync(List<TLObject> actions)
-        {
-            var callback = new TaskCompletionSource<MTProtoResponse>();
-            var container = new TLMessageContainer { Messages = new List<TLContainerTransportMessage>() };
-            var historyItems = new List<HistoryItem>();
-            for (var i = 0; i < actions.Count; i++)
-            {
-                var obj = actions[i];
+	    public void SendActionsAsync(List<TLObject> actions, Action<TLObject, object> callback, Action<TLRPCError> faultCallback = null)
+	    {
+	        var container = new TLMessageContainer { Messages = new List<TLContainerTransportMessage>() };
+	        var historyItems = new List<HistoryItem>();
+	        for (var i = 0; i < actions.Count; i++)
+	        {
+	            var obj = actions[i];
                 int sequenceNumber;
                 long messageId;
                 lock (_activeTransportRoot)
@@ -1256,8 +1874,8 @@ namespace Telegram.Api.Services
                     messageId = _activeTransport.GenerateMessageId(true);
                 }
 
-                var data = i > 0 ? new TLInvokeAfterMsg { MsgId = container.Messages[i - 1].MsgId, Query = obj } : obj;
-                var invokeWithoutUpdates = new TLInvokeWithoutUpdates { Query = data };
+	            var data = i > 0 ? new TLInvokeAfterMsg {MsgId = container.Messages[i - 1].MsgId, Query = obj} : obj;
+	            var invokeWithoutUpdates = new TLInvokeWithoutUpdates {Query = data};
 
                 var transportMessage = new TLContainerTransportMessage
                 {
@@ -1266,24 +1884,22 @@ namespace Telegram.Api.Services
                     Query = invokeWithoutUpdates
                 };
 
-
                 var historyItem = new HistoryItem
                 {
                     SendTime = DateTime.Now,
                     Caption = "messages.containerPart" + i,
                     Object = obj,
                     Message = transportMessage,
-                    Callback = callback,
-                    //Callback = result => callback(obj, result),
+                    Callback = result => callback(obj, result),
                     AttemptFailed = null,
-                    //FaultCallback = faultCallback,
+                    FaultCallback = faultCallback,
                     ClientTicksDelta = ClientTicksDelta,
                     Status = RequestStatus.Sent,
                 };
                 historyItems.Add(historyItem);
 
                 container.Messages.Add(transportMessage);
-            }
+	        }
 
 
             lock (_historyRoot)
@@ -1294,107 +1910,124 @@ namespace Telegram.Api.Services
                 }
             }
 #if DEBUG
-            NotifyOfPropertyChange(() => History);
+            RaisePropertyChanged(() => History);
 #endif
 
-            return SendNonInformativeMessage<TLObject>("messages.container", container, callback);
-            // return SendNonInformativeMessage<TLObject>("messages.container", container);
-        }
+            SendNonInformativeMessage<TLObject>("messages.container", container, result => callback(null, result), faultCallback);
+	    }
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> ToggleChatAdminsAsync(int chatId, bool enabled)
-        {
+	    public void ToggleChatAdminsCallback(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+	    {
             var obj = new TLMessagesToggleChatAdmins { ChatId = chatId, Enabled = enabled };
 
             const string caption = "messages.toggleChatAdmins";
-            var result = await SendInformativeMessage<TLUpdatesBase>(caption, obj);
-            if (result.Error == null)
-            {
-
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
 
-            return result;
-        }
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
+	    }
 
-        public Task<MTProtoResponse<bool>> EditChatAdminAsync(int chatId, TLInputUserBase userId, bool isAdmin)
-        {
+        public void EditChatAdminCallback(int chatId, TLInputUserBase userId, bool isAdmin, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+	    {
             var obj = new TLMessagesEditChatAdmin { ChatId = chatId, UserId = userId, IsAdmin = isAdmin };
 
-            return SendInformativeMessage<bool>("messages.editChatAdmin", obj);
-        }
+            SendInformativeMessage("messages.editChatAdmin", obj, callback, faultCallback);
+	    }
 
         // TODO: Probably deprecated
-        //public async Task<MTProtoResponse<TLUpdatesBase>> DeactivateChatAsync(int chatId, bool enabled)
+        //public void DeactivateChatAsync(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         //{
         //    var obj = new TLDeactivateChat { ChatId = chatId, Enabled = enabled };
 
         //    const string caption = "messages.deactivateChat";
-        //    var result = await SendInformativeMessage<TLUpdatesBase>(caption, obj);
-        //    if (result.Error == null)
-        //    {
-        //        var multiPts = result as ITLMultiPts;
-        //        if (multiPts != null)
+        //    SendInformativeMessage<TLUpdatesBase>(caption, obj,
+        //        result =>
         //        {
-        //            _updatesService.SetState(multiPts, caption);
-        //        }
-        //        else
-        //        {
-        //            ProcessUpdates(result.Value, null);
-        //        }
-        //    }
+        //            var multiPts = result as ITLMultiPts;
+        //            if (multiPts != null)
+        //            {
+        //                _updatesService.SetState(multiPts, caption);
+        //            }
+        //            else
+        //            {
+        //                ProcessUpdates(result, null);
+        //            }
 
-        //    return result;
+        //            callback.SafeInvoke(result);
+        //        },
+        //        faultCallback);
         //}
 
-        public async Task<MTProtoResponse<TLUpdatesBase>> MigrateChatAsync(int chatId)
+        public void HideReportSpamCallback(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+	    {
+            var obj = new TLMessagesHideReportSpam { Peer = peer };
+
+            const string caption = "messages.hideReportSpam";
+            SendInformativeMessage<bool>(caption, obj, callback.SafeInvoke, faultCallback);
+	    }
+
+        public void GetPeerSettingsCallback(TLInputPeerBase peer, Action<TLPeerSettings> callback, Action<TLRPCError> faultCallback = null)
         {
+            var obj = new TLMessagesGetPeerSettings { Peer = peer };
+
+            const string caption = "messages.getPeerSettings";
+            SendInformativeMessage<TLPeerSettings>(caption, obj, callback.SafeInvoke, faultCallback);
+        }
+
+	    public void MigrateChatCallback(int chatId, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+	    {
             var obj = new TLMessagesMigrateChat { ChatId = chatId };
 
             const string caption = "messages.migrateChat";
-            var result = await SendInformativeMessage<TLUpdatesBase>(caption, obj);
-            if (result.Error == null)
-            {
-                var multiPts = result as ITLMultiPts;
-                if (multiPts != null)
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
                 {
-                    _updatesService.SetState(multiPts, caption);
-                }
-                else
-                {
-                    ProcessUpdates(result.Value, null);
-                }
-            }
-
-            return result;
-        }
-
-        public int SendingMessages
-        {
-            get
-            {
-                var result = 0;
-                lock (_historyRoot)
-                {
-                    foreach (var historyItem in _history.Values)
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
                     {
-                        if (historyItem.Caption.StartsWith("messages.containerPart"))
-                        {
-                            result++;
-                            break;
-                        }
+                        _updatesService.SetState(multiPts, caption);
                     }
-                }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
 
-                return result;
-            }
-        }
-    }
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
+	    } 
+
+	    public int SendingMessages
+	    {
+	        get
+	        {
+	            var result = 0;
+	            lock (_historyRoot)
+	            {
+	                foreach (var historyItem in _history.Values)
+	                {
+	                    if (historyItem.Caption.StartsWith("messages.containerPart"))
+	                    {
+	                        result++;
+	                        break;
+	                    }
+	                }
+	            }
+
+	            return result;
+	        }
+	    }
+	}
 }
