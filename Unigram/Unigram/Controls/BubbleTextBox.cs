@@ -321,9 +321,26 @@ namespace Unigram.Controls
 
         public override void RtfControl(string key, bool hasParameter, int parameter)
         {
-            if (key == "'" && hasParameter)
+            if (_firstPard && key == "'" && hasParameter)
             {
-                _groupText += (char)parameter;
+                if (_field.HasValue && _lastKey == "fldinst")
+                {
+                    _groupText += (char)parameter;
+                }
+                else if (_field.HasValue && _lastKey.Equals("fldrslt"))
+                {
+                    _groupText += (char)parameter;
+                }
+                else if (_bold || _italic)
+                {
+                    _groupText += (char)parameter;
+                }
+                else
+                {
+                    _groupText += (char)parameter;
+                    HandleBasicText();
+                    _groupText = string.Empty;
+                }
             }
         }
 
