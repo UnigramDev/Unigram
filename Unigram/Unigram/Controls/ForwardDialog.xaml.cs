@@ -182,12 +182,6 @@ namespace Unigram.Controls
             }
         }
 
-        private void fDialog_Loaded(object sender, RoutedEventArgs e)
-        {
-            Windows.UI.ViewManagement.InputPane.GetForCurrentView().Showing += ForwardDialog_InputShowing;
-            Windows.UI.ViewManagement.InputPane.GetForCurrentView().Hiding += ForwardDialog_InputHiding;
-        }
-
         VerticalAlignment origVa = VerticalAlignment.Center;
         double origHeight = -1;
         private void ForwardDialog_InputHiding(Windows.UI.ViewManagement.InputPane sender, Windows.UI.ViewManagement.InputPaneVisibilityEventArgs args)
@@ -251,6 +245,9 @@ namespace Unigram.Controls
             currentDialog = null;
 
             ForwardMenuShowStoryboard.Begin();
+
+            Windows.UI.ViewManagement.InputPane.GetForCurrentView().Showing += ForwardDialog_InputShowing;
+            Windows.UI.ViewManagement.InputPane.GetForCurrentView().Hiding += ForwardDialog_InputHiding;
 
             if (FContactsList.ItemsSource == null)
             {
