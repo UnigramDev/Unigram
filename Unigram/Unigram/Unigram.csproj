@@ -108,6 +108,7 @@
     <Compile Include="Common\Attached.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\Emoticon.cs" />
+    <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\FluidGridView.cs" />
     <Compile Include="Common\IncrementalCollection.cs" />
     <Compile Include="Common\KeyedList.cs" />

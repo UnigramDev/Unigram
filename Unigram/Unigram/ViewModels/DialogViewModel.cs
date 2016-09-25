@@ -356,6 +356,11 @@ namespace Unigram.ViewModels
         public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
         private async void SendMessage(string args)
         {
+            await SendMessageAsync(null, args != null);
+        }
+
+        public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool sticker)
+        {
             var messageText = SendTextHolder;
 
             TLPeerBase toId = null;
@@ -380,7 +385,7 @@ namespace Unigram.ViewModels
 
             TLDocument document = null;
             TLMessageMediaBase media = null;
-            if (args != null)
+            if (sticker)
             {
                 messageText = string.Empty;
 
@@ -401,7 +406,10 @@ namespace Unigram.ViewModels
             }
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
-            var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, media, TLLong.Random(), 0);
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, media, TLLong.Random(), null);
+
+            message.Entities = entities != null ? new TLVector<TLMessageEntityBase>(entities) : null;
+            message.HasEntities = entities != null;
 
             if (Reply != null)
             {

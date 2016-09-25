@@ -137,7 +137,7 @@ namespace Telegram.Api.TL
             string message, 
             TLMessageMediaBase media,
             long randomId,
-            int replyToMsgId)
+            int? replyToMsgId)
         {
 #if LAYER_40
             var m = new TLMessage
