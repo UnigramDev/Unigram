@@ -40,7 +40,7 @@ namespace Unigram.Common
                 }
             }
 
-            Debugger.Break();
+           // Debugger.Break();
             return Tuple.Create("Undefinited", DateTime.Now.AddYears(-30));
         }
     }

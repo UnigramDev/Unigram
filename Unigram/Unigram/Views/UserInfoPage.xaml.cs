@@ -38,65 +38,65 @@ namespace Unigram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            VisualStateManager.GoToState(this, e.NewSize.Width < 500 ? "NarrowState" : "FilledState", false);
+            VisualStateManager.GoToState(this, e.NewSize.Width < 800 ? "NarrowState" : "FilledState", false);
         }
     }
 
     // Experiment
     public class TableStackPanel : StackPanel
     {
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (finalSize.Width >= 500)
-            {
-                //Margin = new Thickness(12, 0, 12, 0);
-                //CornerRadius = new CornerRadius(8);
-                //BorderThickness = new Thickness(0);
+        //protected override Size ArrangeOverride(Size finalSize)
+        //{
+        //    if (finalSize.Width >= 500)
+        //    {
+        //        //Margin = new Thickness(12, 0, 12, 0);
+        //        //CornerRadius = new CornerRadius(8);
+        //        //BorderThickness = new Thickness(0);
 
-                HyperButton first = null;
-                HyperButton last = null;
+        //        HyperButton first = null;
+        //        HyperButton last = null;
 
-                foreach (var item in Children)
-                {
-                    if (item.Visibility == Visibility.Visible)
-                    {
-                        if (first == null)
-                        {
-                            first = item as HyperButton;
-                        }
+        //        foreach (var item in Children)
+        //        {
+        //            if (item.Visibility == Visibility.Visible)
+        //            {
+        //                if (first == null)
+        //                {
+        //                    first = item as HyperButton;
+        //                }
 
-                        last = item as HyperButton;
+        //                last = item as HyperButton;
 
-                        if (last != null)
-                        {
-                            last.BorderBrush = Application.Current.Resources["SystemControlForegroundBaseLowBrush"] as SolidColorBrush;
-                        }
-                    }
-                }
+        //                if (last != null)
+        //                {
+        //                    last.BorderBrush = Application.Current.Resources["SystemControlForegroundBaseLowBrush"] as SolidColorBrush;
+        //                }
+        //            }
+        //        }
 
-                var lastRadius = new CornerRadius(0, 0, 8, 8);
+        //        var lastRadius = new CornerRadius(0, 0, 8, 8);
 
-                if (first != null)
-                {
-                    if (first == last)
-                    {
-                        last.CornerRadius = new CornerRadius(8, 8, 8, 8);
-                        last.BorderBrush = null;
-                    }
-                    else
-                    {
-                        first.CornerRadius = new CornerRadius(8, 8, 0, 0);
+        //        if (first != null)
+        //        {
+        //            if (first == last)
+        //            {
+        //                last.CornerRadius = new CornerRadius(8, 8, 8, 8);
+        //                last.BorderBrush = null;
+        //            }
+        //            else
+        //            {
+        //                first.CornerRadius = new CornerRadius(8, 8, 0, 0);
 
-                        if (last != null)
-                        {
-                            last.CornerRadius = new CornerRadius(0, 0, 8, 8);
-                            last.BorderBrush = null;
-                        }
-                    }
-                }
-            }
+        //                if (last != null)
+        //                {
+        //                    last.CornerRadius = new CornerRadius(0, 0, 8, 8);
+        //                    last.BorderBrush = null;
+        //                }
+        //            }
+        //        }
+        //    }
 
-            return base.ArrangeOverride(finalSize);
-        }
+        //    return base.ArrangeOverride(finalSize);
+        //}
     }
 }
