@@ -43,7 +43,6 @@ namespace Unigram.Views
 
             Loaded += DialogPage_Loaded;
             CheckMessageBoxEmpty();
-            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
 
@@ -87,32 +86,6 @@ namespace Unigram.Views
             }
         }
 
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
-        {
-
-            // Check if the "Enter" Key is pressed.
-            if ((args.EventType == CoreAcceleratorKeyEventType.SystemKeyDown || args.EventType == CoreAcceleratorKeyEventType.KeyDown) && (args.VirtualKey == VirtualKey.Enter))
-            {
-                // Check if CTRL is also pressed in addition to Enter key.
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-                // If there is text and CTRL is not pressed, send message. Else start new row.
-                if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && btnSendMessage.Visibility == Visibility.Visible)
-                {
-                    string text;
-                    txtMessage.Document.GetText(TextGetOptions.None, out text);
-                    text = text.Trim();
-                    ViewModel.SendTextHolder = text;
-                    if (ViewModel.SendCommand.CanExecute(null))
-                        ViewModel.SendCommand.Execute(null);
-                    txtMessage.Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
-                    args.Handled = true;
-                }
-            }
-            
-        }
-
         private void txtMessage_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
             CheckMessageBoxEmpty();
@@ -129,13 +102,9 @@ namespace Unigram.Views
 
         }
 
-        private void btnSendMessage_Click(object sender, RoutedEventArgs e)
+        private async void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
-            string text;
-            txtMessage.Document.GetText(TextGetOptions.None, out text);
-            text = text.Trim();
-            ViewModel.SendTextHolder = text;
-            txtMessage.Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
+            await txtMessage.SendAsync();
         }
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
