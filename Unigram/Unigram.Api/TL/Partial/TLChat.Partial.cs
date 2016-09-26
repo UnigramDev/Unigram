@@ -49,5 +49,16 @@ namespace Telegram.Api.TL
 
         public int ReadOutboxMaxId { get; set; }
 
+        public override void ReadFromCache(TLBinaryReader from)
+        {
+            ReadInboxMaxId = from.ReadInt32();
+            ReadOutboxMaxId = from.ReadInt32();
+        }
+
+        public override void WriteToCache(TLBinaryWriter to)
+        {
+            to.Write(ReadInboxMaxId);
+            to.Write(ReadOutboxMaxId);
+        }
     }
 }
