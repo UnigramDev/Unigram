@@ -1,0 +1,77 @@
+﻿<ResourceDictionary
+    x:Class="Unigram.Themes.Media"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:models="using:Telegram.Api.TL"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <DataTemplate x:Key="WebPageMediaTemplate" x:DataType="models:TLMessageMediaWebPage">
+        <Grid Margin="0,8,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>
+
+            <StackPanel Margin="0,0,0,2" Grid.Column="1">
+                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="WebPageSmallPhotoMediaTemplate" x:DataType="models:TLMessageMediaWebPage">
+        <Grid Margin="0,8,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>
+
+            <StackPanel Margin="0,0,0,2" Grid.Column="1">
+                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+            </StackPanel>
+
+            <Image Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" MaxWidth="88" MaxHeight="88" Margin="12,0,0,0" VerticalAlignment="Top" Grid.Column="2"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="WebPagePhotoMediaTemplate" x:DataType="models:TLMessageMediaWebPage">
+        <Grid Margin="0,8,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>
+
+            <StackPanel Grid.Column="1">
+                <StackPanel Margin="0,0,0,8" Visibility="{x:Bind Webpage.SummaryVisibility}">
+                    <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                </StackPanel>
+                
+                <!-- TODO: video timing -->
+                <Image Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" Stretch="Uniform" MaxWidth="400" MaxHeight="400" HorizontalAlignment="Left"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+
+    <selectors:MediaTemplateSelector x:Key="MediaTemplateSelector"
+        WebPageTemplate="{StaticResource WebPageMediaTemplate}"
+        WebPagePhotoTemplate="{StaticResource WebPagePhotoMediaTemplate}"
+        WebPageSmallPhotoTemplate="{StaticResource WebPageSmallPhotoMediaTemplate}"/>
+
+</ResourceDictionary>
