@@ -603,7 +603,6 @@
                             Visibility="Collapsed"
                             IsEnabled="True"
                             Width="48"
-                            Command="{Binding SendCommand}"
                             MinHeight="48" 
                             Background="{ThemeResource TelegramBackgroundAccentBrush}"                                      
                             VerticalAlignment="Stretch"
