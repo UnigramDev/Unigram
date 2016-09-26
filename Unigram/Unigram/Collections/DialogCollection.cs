@@ -13,6 +13,7 @@ using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
+using Telegram.Logs;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
@@ -23,8 +24,6 @@ namespace Unigram.Collections
         IHandle<TopMessageUpdatedEventArgs>,
         IHandle<TLUpdateUserName>,
         IHandle<UpdateCompletedEventArgs>,
-        //IHandle<UploadableItem>,
-        IHandle<DownloadableItem>,
         IHandle<DialogAddedEventArgs>,
         IHandle<DialogRemovedEventArgs>,
         IHandle<TLUpdateEditMessage>,
@@ -46,42 +45,131 @@ namespace Unigram.Collections
         }
 
         #region Handles
-        public void Handle(DownloadableItem item)
+
+        public void Handle(TopMessageUpdatedEventArgs e)
         {
-            //var userProfilePhoto = item.Owner as TLUserProfilePhoto;
-            //if (userProfilePhoto == null)
-            //{
-            //    var chatPhoto = item.Owner as TLChatPhoto;
-            //    if (chatPhoto != null)
-            //    {
-            //        var chat = _cacheService.GetChat(chatPhoto);
-            //        if (chat != null)
-            //        {
-            //            chat.RaisePropertyChanged(() => chat.Photo);
-            //            return;
-            //        }
+            e.Dialog.RaisePropertyChanged(() => e.Dialog.With);
 
-            //        var channel = _cacheService.GetChannel(chatPhoto);
-            //        if (channel != null)
-            //        {
-            //            channel.RaisePropertyChanged(() => channel.Photo);
-            //            return;
-            //        }
+            Execute.BeginOnUIThread(() =>
+            {
+                try
+                {
+                    var chat = e.Dialog.With as TLChat;
+                    if (chat != null)
+                    {
+                        var dialog = e.Dialog as TLDialog;
+                        if (dialog != null)
+                        {
+                            var serviceMessage = dialog.TopMessageItem as TLMessageService;
+                            if (serviceMessage != null)
+                            {
+                                var migrateAction = serviceMessage.Action as TLMessageActionChatMigrateTo;
+                                if (migrateAction != null)
+                                {
+                                    Remove(e.Dialog);
+                                    return;
+                                }
+                            }
+                        }
+                    }
 
-            //        Execute.ShowDebugMessage("Handle TLChatPhoto chat=null");
-            //    }
+                    var channel = e.Dialog.With as TLChannel;
+                    if (channel != null)
+                    {
+                        var dialog = e.Dialog as TLDialog;
+                        if (dialog != null)
+                        {
+                            var messageService = dialog.TopMessageItem as TLMessageService;
+                            if (messageService != null)
+                            {
+                                var deleteUserAction = messageService.Action as TLMessageActionChatDeleteUser;
+                                if (deleteUserAction != null && deleteUserAction.UserId == SettingsHelper.UserId)
+                                {
+                                    Remove(e.Dialog);
+                                    return;
+                                }
+                            }
+                        }
+                    }
 
-            //    return;
-            //}
+                    // TODO: e.Dialog.TypingString = null;
 
-            //var user = _cacheService.GetUser(userProfilePhoto) as TLUser;
-            //if (user != null)
-            //{
-            //    user.RaisePropertyChanged(() => user.Photo);
-            //    return;
-            //}
+                    var currentPosition = IndexOf(e.Dialog);
+                    if (currentPosition < 0)
+                    {
+                        var already = this.FirstOrDefault(x => x.Index == e.Dialog.Index);
+                        if (already != null)
+                        {
+                            currentPosition = IndexOf(already);
+                        }
+                    }
 
-            //Execute.ShowDebugMessage("Handle TLUserProfilePhoto user=null");
+                    var index = currentPosition;
+
+                    for (int i = 0; i < Count; i++)
+                    {
+                        if (i != currentPosition && this[i].GetDateIndexWithDraft() <= e.Dialog.GetDateIndexWithDraft())
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    if (currentPosition == -1 && currentPosition == index)
+                    {
+                        // TODO
+                        //Telegram.Api.Helpers.Execute.ShowDebugMessage(string.Concat(new object[]
+                        //{
+                        //    "TLDialog with=",
+                        //    e.Dialog.With,
+                        //    " curPos=newPos=-1 isLastSliceLoaded=",
+                        //    this.IsLastSliceLoaded
+                        //}));
+                        //if (!this.IsLastSliceLoaded)
+                        //{
+                        //    return;
+                        //}
+                        //Add(e.Dialog);
+                    }
+
+                    if (currentPosition != index)
+                    {
+                        if (currentPosition >= 0 && currentPosition < index)
+                        {
+                            if (currentPosition + 1 == index)
+                            {
+                                this[currentPosition].RaisePropertyChanged(() => this[currentPosition].Self);
+                                this[currentPosition].RaisePropertyChanged(() => this[currentPosition].UnreadCount);
+                            }
+                            else
+                            {
+                                Remove(e.Dialog);
+                                Insert(index - 1, e.Dialog);
+                            }
+                        }
+                        else
+                        {
+                            Remove(e.Dialog);
+                            Insert(index, e.Dialog);
+                        }
+                    }
+                    else
+                    {
+                        if (/*!this.IsLastSliceLoaded &&*/ Count > 0 && this[Count - 1].GetDateIndexWithDraft() > e.Dialog.GetDateIndexWithDraft())
+                        {
+                            Remove(e.Dialog);
+                        }
+
+                        this[currentPosition].RaisePropertyChanged(() => this[currentPosition].Self);
+                        this[currentPosition].RaisePropertyChanged(() => this[currentPosition].UnreadCount);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Write(string.Format("DialogsViewModel.Handle OnTopMessageUpdatedEventArgs ex " + ex, new object[0]), null);
+                    throw ex;
+                }
+            });
         }
 
         public void Handle(TLUpdateEditMessage update)
@@ -226,59 +314,6 @@ namespace Unigram.Collections
                 {
                     Remove(dialog);
                 }
-            });
-        }
-
-        public void Handle(TopMessageUpdatedEventArgs message)
-        {
-            message.Dialog.RaisePropertyChanged(() => message.Dialog.With);
-
-            Execute.BeginOnUIThread(() =>
-            {
-                //message.Dialog.TypingString = null;
-                var currentPosition = IndexOf(message.Dialog);
-                var index = currentPosition;
-                for (int i = 0; i < Count; i++)
-                {
-                    if (i != currentPosition && this[i].GetDateIndex() <= message.Dialog.GetDateIndex())
-                    {
-                        index = i;
-                        break;
-                    }
-                }
-                if (currentPosition == index)
-                {
-                    if (currentPosition == -1)
-                    {
-                        return;
-                    }
-
-                    if (HasMoreItems && Count > 0 && this[Count - 1].GetDateIndex() > message.Dialog.GetDateIndex())
-                    {
-                        Remove(message.Dialog);
-                    }
-
-                    this[currentPosition].RaisePropertyChanged(() => this[currentPosition].Self);
-                    this[currentPosition].RaisePropertyChanged(() => this[currentPosition].UnreadCount);
-                    return;
-                }
-
-                if (currentPosition < 0 || currentPosition >= index)
-                {
-                    Remove(message.Dialog);
-                    Insert(index, message.Dialog);
-                    return;
-                }
-
-                if (currentPosition + 1 == index)
-                {
-                    this[currentPosition].RaisePropertyChanged(() => this[currentPosition].Self);
-                    this[currentPosition].RaisePropertyChanged(() => this[currentPosition].UnreadCount);
-                    return;
-                }
-
-                Remove(message.Dialog);
-                Insert(index - 1, message.Dialog);
             });
         }
 

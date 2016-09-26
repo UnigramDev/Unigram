@@ -8,7 +8,7 @@ using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLChat : INotifyPropertyChanged
+    public partial class TLChat : ITLReadMaxId, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public override void RaisePropertyChanged(string propertyName)
@@ -44,5 +44,10 @@ namespace Telegram.Api.TL
                 //}
             }
         }
+
+        public int ReadInboxMaxId { get; set; }
+
+        public int ReadOutboxMaxId { get; set; }
+
     }
 }
