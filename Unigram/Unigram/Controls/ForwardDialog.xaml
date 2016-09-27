@@ -198,17 +198,25 @@
                                 HorizontalAlignment="Right"
                                 Tapped="ForwardCancel_Tapped" />
                     </Grid>
-                    <GridView Grid.Row="1" 
-                          Margin="0,8,0,0" 
-                          ItemTemplate="{StaticResource ContactsListViewTemplate}"
-                          x:Name="FContactsList"
-                          SelectionChanged="FContactsList_SelectionChanged">
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapGrid Orientation="Horizontal" HorizontalAlignment="Center"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                    </GridView>
+                    <Grid Grid.Row="1">
+                        <GridView Margin="0,8,0,0" 
+                                  ItemTemplate="{StaticResource ContactsListViewTemplate}"
+                                  x:Name="FContactsList"
+                                  SelectionChanged="FContactsList_SelectionChanged">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Horizontal" HorizontalAlignment="Center"/>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                        </GridView>
+                        <ProgressBar x:Name="forwardingProgressBar"
+                                     IsIndeterminate="True"
+                                     Visibility="Collapsed"
+                                     Foreground="{ThemeResource AppBarButtonForeground}"
+                                     VerticalAlignment="Top"
+                                     HorizontalAlignment="Stretch" />
+
+                    </Grid>
 
                     <Grid Grid.Row="2" Background="Gray" />
                     <Grid Grid.Row="3">

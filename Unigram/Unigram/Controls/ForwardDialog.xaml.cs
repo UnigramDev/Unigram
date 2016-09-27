@@ -164,6 +164,8 @@ namespace Unigram.Controls
         private async void ForwardButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             ForwardButton.IsEnabled = false;
+            forwardingProgressBar.Visibility = Visibility.Visible;
+            forwardingProgressBar.IsIndeterminate = true;
 
             currentDialog = (FContactsList.SelectedItem as TLDialog);
 
@@ -173,8 +175,6 @@ namespace Unigram.Controls
 
             await PlaySendAnimation();
             ExitDialog();
-
-            ForwardButton.IsEnabled = true;
         }
 
         private void ForwardMessage_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -248,6 +248,10 @@ namespace Unigram.Controls
             }
 
             currentDialog = null;
+
+            ForwardButton.IsEnabled = true;
+            forwardingProgressBar.Visibility = Visibility.Collapsed;
+            forwardingProgressBar.IsIndeterminate = false;
 
             ForwardMenuShowStoryboard.Begin();
 
