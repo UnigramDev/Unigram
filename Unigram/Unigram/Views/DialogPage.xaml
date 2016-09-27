@@ -343,87 +343,94 @@
         
         <!-- Main content -->
         <RelativePanel Grid.Row="1">
+            <!-- Pinned message -->
+            <Grid x:Name="grdPinnedMessage"
+                  Visibility="Collapsed"
+                  Background="{ThemeResource TelegramBackgroundAccentBrush}"
+                  Height="48"
+                  RelativePanel.AlignLeftWithPanel="True"
+                  RelativePanel.AlignRightWithPanel="True"
+                  RelativePanel.AlignTopWithPanel="True">
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="48"/>
+                </Grid.ColumnDefinitions>
+                
+                <Button x:Name="btnPinnedMessage"
+                        Grid.Column="0"
+                        RequestedTheme="Dark"
+                        Padding="8,0"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Background="Transparent">
+                    <Button.Content>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Icon -->
+                            <TextBlock Grid.Column="0"
+                                       Grid.Row="0"
+                                       Grid.RowSpan="2"
+                                       Margin="0,0,12,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Text="&#xE840;"
+                                       RequestedTheme="Dark"
+                                       FontFamily="Segoe MDL2 Assets"
+                                       FontSize="20"/>
+
+                            <!-- User -->
+                            <TextBlock Grid.Column="1"
+                                       Grid.Row="0"
+                                       Text="User"
+                                       TextTrimming="CharacterEllipsis"
+                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                       RequestedTheme="Dark" />
+                            <!-- Message -->
+                            <TextBlock Grid.Column="1"
+                                       Grid.Row="1"
+                                       Text="Super duper important message I need to tell about"
+                                       RequestedTheme="Dark"
+                                       Style="{ThemeResource BodyTextBlockStyle}"
+                                       TextTrimming="CharacterEllipsis"
+                                       HorizontalAlignment="Stretch"/>
+
+                        </Grid>
+                    </Button.Content>
+                </Button>
+
+                <!-- Close button -->
+                <Button x:Name="btnClosePinnedMessage"
+                        Grid.Column="1"
+                        RequestedTheme="Dark"
+                        Background="Transparent"
+                        Content="&#xE106;"
+                        FontFamily="Segoe MDL2 Assets"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Click="btnClosePinnedMessage_Click"/>
+            </Grid>
+            
             <Grid RelativePanel.AlignLeftWithPanel="True"
                   RelativePanel.AlignRightWithPanel="True"
-                  RelativePanel.AlignTopWithPanel="True"
+                  RelativePanel.Below="grdPinnedMessage"
                   RelativePanel.Above="rpInput">
                 <Image Source="ms-appx:///Assets/Images/DefaultBackground.jpg" 
                        Stretch="UniformToFill"/>
-                <StackPanel Orientation="Vertical">
-                    <!-- Pin message -->
-                    <Grid x:Name="grdPinnedMessage"
-                          Visibility="Collapsed"
-                          Background="{ThemeResource TelegramBackgroundAccentBrush}"
-                          Height="48">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="48"/>
-                        </Grid.ColumnDefinitions>
-                        <Button x:Name="btnPinnedMessage"
-                                Grid.Column="0"
-                                RequestedTheme="Dark"
-                                Padding="8,0"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Stretch"
-                                VerticalContentAlignment="Stretch"
-                                Background="Transparent">
-                            <Button.Content>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
 
-                                    <!-- Icon -->
-                                    <TextBlock Grid.Column="0"
-                                               Grid.Row="0"
-                                               Grid.RowSpan="2"
-                                               Margin="0,0,12,0"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               Text="&#xE840;"
-                                               RequestedTheme="Dark"
-                                               FontFamily="Segoe MDL2 Assets"
-                                               FontSize="20"/>
-
-                                    <!-- User -->
-                                    <TextBlock Grid.Column="1"
-                                               Grid.Row="0"
-                                               Text="User"
-                                               TextTrimming="CharacterEllipsis"
-                                               Style="{ThemeResource BaseTextBlockStyle}"
-                                               RequestedTheme="Dark" />
-                                    <!-- Message -->
-                                    <TextBlock Grid.Column="1"
-                                               Grid.Row="1"
-                                               Text="Super duper important message I need to tell about"
-                                               RequestedTheme="Dark"
-                                               Style="{ThemeResource BodyTextBlockStyle}"
-                                               TextTrimming="CharacterEllipsis"
-                                               HorizontalAlignment="Stretch"/>
-
-                                </Grid>
-                            </Button.Content>
-                        </Button>
-
-                        <!-- Close button -->
-                        <Button x:Name="btnClosePinnedMessage"
-                                Grid.Column="1"
-                                RequestedTheme="Dark"
-                                Background="Transparent"
-                                Content="&#xE106;"
-                                FontFamily="Segoe MDL2 Assets"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"/>
-                    </Grid>
-                    <controls:BubbleListView x:Name="lvDialogs" 
-                                             ItemsSource="{Binding Source={StaticResource MessagesSource}}"
-                                             ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
-                                             SelectionMode="None">
+                <controls:BubbleListView x:Name="lvDialogs" 
+                                         ItemsSource="{Binding Source={StaticResource MessagesSource}}"
+                                         ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
+                                         SelectionMode="None">
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ItemsStackPanel GroupHeaderPlacement="Left"
@@ -557,7 +564,6 @@
                             </GroupStyle>
                         </ListView.GroupStyle>
                     </controls:BubbleListView>
-                </StackPanel>
             </Grid>
             
             <!-- Input pane -->

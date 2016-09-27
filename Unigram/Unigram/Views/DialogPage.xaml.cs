@@ -162,5 +162,10 @@ namespace Unigram.Views
             imgSingleImgThumbnail.Source = null;
             CheckMessageBoxEmpty();
         }
+
+        private void btnClosePinnedMessage_Click(object sender, RoutedEventArgs e)
+        {
+            grdPinnedMessage.Visibility = Visibility.Collapsed;
+        }
     }
 }
