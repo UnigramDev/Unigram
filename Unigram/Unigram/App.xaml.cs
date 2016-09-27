@@ -71,31 +71,31 @@ namespace Unigram
 #endif
         }
 
-        /// <summary>
-        /// Initializes the app service on the host process 
-        /// </summary>
-        protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
-        {
-            base.OnBackgroundActivated(args);
+        /////// <summary>
+        /////// Initializes the app service on the host process 
+        /////// </summary>
+        ////protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+        ////{
+        ////    base.OnBackgroundActivated(args);
 
-            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails)
-            {
-                appServiceDeferral = args.TaskInstance.GetDeferral();
-                AppServiceTriggerDetails details = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
-                Connection = details.AppServiceConnection;
-            }
-            else if (args.TaskInstance.TriggerDetails is RawNotification)
-            {
-                var task = new NotificationTask();
-                task.Run(args.TaskInstance);
-            }
-            else if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail)
-            {
-                // TODO: upgrade the task to take advanges from in-process execution.
-                var task = new InteractiveTask();
-                task.Run(args.TaskInstance);
-            }
-        }
+        ////    if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails)
+        ////    {
+        ////        appServiceDeferral = args.TaskInstance.GetDeferral();
+        ////        AppServiceTriggerDetails details = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
+        ////        Connection = details.AppServiceConnection;
+        ////    }
+        ////    else if (args.TaskInstance.TriggerDetails is RawNotification)
+        ////    {
+        ////        var task = new NotificationTask();
+        ////        task.Run(args.TaskInstance);
+        ////    }
+        ////    else if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail)
+        ////    {
+        ////        // TODO: upgrade the task to take advanges from in-process execution.
+        ////        var task = new InteractiveTask();
+        ////        task.Run(args.TaskInstance);
+        ////    }
+        ////}
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {

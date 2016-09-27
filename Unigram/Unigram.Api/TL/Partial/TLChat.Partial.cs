@@ -8,7 +8,7 @@ using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLChat : INotifyPropertyChanged
+    public partial class TLChat : ITLReadMaxId, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public override void RaisePropertyChanged(string propertyName)
@@ -43,6 +43,22 @@ namespace Telegram.Api.TL
                 //    CustomFlags = c.CustomFlags;
                 //}
             }
+        }
+
+        public int ReadInboxMaxId { get; set; }
+
+        public int ReadOutboxMaxId { get; set; }
+
+        public override void ReadFromCache(TLBinaryReader from)
+        {
+            ReadInboxMaxId = from.ReadInt32();
+            ReadOutboxMaxId = from.ReadInt32();
+        }
+
+        public override void WriteToCache(TLBinaryWriter to)
+        {
+            to.Write(ReadInboxMaxId);
+            to.Write(ReadOutboxMaxId);
         }
     }
 }

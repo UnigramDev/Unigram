@@ -603,7 +603,6 @@
                             Visibility="Collapsed"
                             IsEnabled="True"
                             Width="48"
-                            Command="{Binding SendCommand}"
                             MinHeight="48" 
                             Background="{ThemeResource TelegramBackgroundAccentBrush}"                                      
                             VerticalAlignment="Stretch"
@@ -619,24 +618,7 @@
                         </Button.Content>
                     </Button>
 
-                    <!-- Voice Record-button -->
-                    <Button x:Name="btnVoiceMessage"
-                            Visibility="Visible"
-                            Width="48"
-                            MinHeight="48" 
-                            Background="Transparent"                                      
-                            VerticalAlignment="Stretch"
-                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                            Click="btnVoiceMessage_Click"
-                            Grid.Column="1"
-                            Grid.Row="1">
-                        <Button.Content>
-                            <TextBlock FontFamily="Segoe MDL2 Assets" 
-                                       FontSize="20"
-                                       Text="&#xE720;"
-                                       RequestedTheme="Dark"/>
-                        </Button.Content>
-                    </Button>
+                    <controls:GlyphButton x:Name="btnVoiceMessage" Click="btnVoiceMessage_Click" Glyph="&#xE720;" Grid.Column="1" Grid.Row="1"/>
                 </Grid>
             </RelativePanel>
         </RelativePanel>
