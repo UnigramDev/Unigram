@@ -19,7 +19,7 @@ namespace Unigram.ViewModels
         public ObservableCollection<UsersPanelListItem> TempList = new ObservableCollection<UsersPanelListItem>();
         public object photo;
         public string FullNameField { get; internal set; }
-        public string LastSeen { get; internal set; }
+        public string Status { get; internal set; }
         public ChatInfoViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) : base(protoService, cacheService, aggregator)
         {
         }
@@ -30,18 +30,18 @@ namespace Unigram.ViewModels
             var chat = parameter as TLInputPeerChat;
             if (channel != null)
             {
-                TLInputChannel x = new TLInputChannel();
+                TLInputChannel x = new TLInputChannel();                
                 x.ChannelId = channel.ChannelId;
                 x.AccessHash = channel.AccessHash;
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);
                 FullNameField = channelDetails.Value.Chats[0].FullName;
-                photo = (TLChatPhotoBase)channelDetails.Value.Chats[0].Photo;
+                Status = ((TLChannelFull)channelDetails.Value.FullChat).About;
+                photo = channelDetails.Value.Chats[0].Photo;
             }
             if (chat != null)
             {
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
                 FullNameField = chatDetails.Value.Chats[0].FullName;
-                photo = (TLChatPhotoBase)chatDetails.Value.Chats[0].Photo;
             }
             TempList.Clear();
             UsersList.Clear();

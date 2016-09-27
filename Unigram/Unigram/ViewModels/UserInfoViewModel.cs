@@ -37,6 +37,7 @@ namespace Unigram.ViewModels
         public object photo;
         public string FullNameField { get; internal set; }
         public string LastSeen { get; internal set; }
+        public TLUser user;
         public UserInfoViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
@@ -71,27 +72,7 @@ namespace Unigram.ViewModels
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             //TODO : SET PROPERTY AND VISIBILITY BINDINGS FOR CHATS AND CHANNELS
-            var user = parameter as TLUser;
-            var channel = parameter as TLInputPeerChannel;
-            var chat = parameter as TLInputPeerChat;
-            if (channel != null)
-            {
-                TLInputChannel x = new TLInputChannel();
-                x.ChannelId = channel.ChannelId;
-                x.AccessHash = channel.AccessHash;
-                var channelDetails = await ProtoService.GetFullChannelAsync(x);
-                FullNameField = channelDetails.Value.Chats[0].FullName;
-                photo = (TLChatPhotoBase)channelDetails.Value.Chats[0].Photo;
-            }
-            if (chat != null)
-            {
-                var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
-                FullNameField = chatDetails.Value.Chats[0].FullName;
-                photo = (TLChatPhotoBase)chatDetails.Value.Chats[0].Photo;
-            }
-            TempList.Clear();
-            UsersList.Clear();
-            getMembers(channel, chat);
+            user = parameter as TLUser;           
             if (user != null)
             {
                 FullNameField = user.FullName;
@@ -113,55 +94,11 @@ namespace Unigram.ViewModels
                     RaisePropertyChanged(() => StopVisibility);
                     RaisePropertyChanged(() => UnstopVisibility);
                 }
-                var Status = Unigram.Common.LastSeenHelper.GetLastSeen(user);
-                              
+                var Status = Unigram.Common.LastSeenHelper.GetLastSeen(user);                              
                 LastSeen = Status.Item1;
                 Aggregator.Subscribe(this);
             }
-        }
-        public async Task getMembers(TLInputPeerChannel channel, TLInputPeerChat chat)
-        {
-            
-            if(channel!=null)
-            {
-                //set visibility
-                TLInputChannel x = new TLInputChannel();                
-                x.ChannelId = channel.ChannelId;
-                x.AccessHash = channel.AccessHash;
-                var participants = await ProtoService.GetParticipantsAsync(x, null, 0, int.MaxValue);
-                foreach (var item in participants.Value.Users)
-                {
-                    var User = item as TLUser;
-                    var TempX = new UsersPanelListItem(User);
-                    var Status = LastSeenHelper.GetLastSeen(User);
-                    TempX.fullName = User.FullName;
-                    TempX.lastSeen = Status.Item1;
-                    TempX.Photo = TempX._parent.Photo;
-                    TempList.Add(TempX);
-                }               
-            }
-
-            if (chat != null)
-            {
-                //set visibility
-                var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
-                foreach (var item in chatDetails.Value.Users)
-                {
-                    var User = item as TLUser;
-                    var TempX = new UsersPanelListItem(User);
-                    var Status = LastSeenHelper.GetLastSeen(User);
-                    TempX.fullName = User.FullName;
-                    TempX.lastSeen = Status.Item1;
-                    TempX.Photo = TempX._parent.Photo;
-                    TempList.Add(TempX);
-                }
-            }
-
-            foreach (var item in TempList.OrderByDescending(person => person.lastSeen))
-            {
-                UsersList.Add(item);
-            }
-        }
+        }        
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
             Aggregator.Unsubscribe(this);
@@ -227,6 +164,13 @@ namespace Unigram.ViewModels
 
                 await test.OnNavigatedToAsync(Item, NavigationMode.New, new Dictionary<string, object>());
             }
+        }
+        public RelayCommand SendMessageCommand =>new RelayCommand(SendMessage);
+
+        private void SendMessage()
+        {
+            if(user!=null)
+            NavigationService.Navigate(typeof(DialogPage), user);
         }
 
         public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
