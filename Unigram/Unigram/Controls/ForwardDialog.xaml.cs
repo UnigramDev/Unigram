@@ -163,6 +163,8 @@ namespace Unigram.Controls
 
         private async void ForwardButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            ForwardButton.IsEnabled = false;
+
             currentDialog = (FContactsList.SelectedItem as TLDialog);
 
             recieverName.Text = (FContactsList.SelectedItem as TLDialog).FullName;
@@ -171,6 +173,8 @@ namespace Unigram.Controls
 
             await PlaySendAnimation();
             ExitDialog();
+
+            ForwardButton.IsEnabled = true;
         }
 
         private void ForwardMessage_KeyDown(object sender, KeyRoutedEventArgs e)
