@@ -142,6 +142,11 @@ namespace Unigram.Controls
 
         private void ForwardSearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            DoSearch();
+        }
+
+        private void DoSearch()
+        {
             if (ForwardSearchBox.Text != "")
             {
                 if (FContactsList.ItemsSource != ViewModel.FSearchDialogs)
@@ -240,18 +245,22 @@ namespace Unigram.Controls
                 ForwardMenuBox.Height = data.Item1;
                 ForwardMenuBox.VerticalAlignment = data.Item2;
                 ForwardMenuOverlay.Visibility = Visibility.Visible;
-
-                FContactsList.SelectedItem = null;
-                ForwardHeader.Visibility = Visibility.Visible;
-                ForwardSearchBox.Visibility = Visibility.Collapsed;
-                ForwardMessage.Text = "";
             }
+
+
+            FContactsList.SelectedItem = null;
+            ForwardHeader.Visibility = Visibility.Visible;
+            ForwardSearchBox.Visibility = Visibility.Collapsed;
+            ForwardMessage.Text = "";
 
             currentDialog = null;
 
             ForwardButton.IsEnabled = true;
             forwardingProgressBar.Visibility = Visibility.Collapsed;
             forwardingProgressBar.IsIndeterminate = false;
+
+            ForwardSearchBox.Text = "";
+            DoSearch();
 
             ForwardMenuShowStoryboard.Begin();
 
