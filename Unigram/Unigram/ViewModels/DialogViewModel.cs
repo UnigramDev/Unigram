@@ -410,45 +410,83 @@ namespace Unigram.ViewModels
             var message = ForwardFlyoutMessage as TLMessage;
 
 
-            if ((Item == null) || (Item.Id != recieverId))
+            var messageClone = CreateClone(message);
+            await ProtoService.ForwardMessageAsync(toPeer, messageClone.Id, messageClone);
+
+            if ((Item != null) && (Item.Id == recieverId))
             {
-                message.RandomId = TLLong.Random();
-                await ProtoService.ForwardMessageAsync(toPeer, message.Id, message);
-            }
-            else
-            {
-                //TODO: Fix this.
-
-                var messageClone = CreateClone(message);
-
-                messageClone.RandomId = TLLong.Random();
-
-                messageClone.FwdFrom = new TLMessageFwdHeader()
-                {
-                    FromId = message.FromId,
-                    Date = message.Date,
-                    HasFromId = true
-                };
-                messageClone.HasFwdFrom = true;
-                messageClone.FromId = SettingsHelper.UserId;
-
-                //Force reload From property (for the new UserId) by creating a clone.
-                var forwardedMessage = CreateClone(messageClone);
-
-                var previousMessage = InsertSendingMessage(forwardedMessage);
-
-                CacheService.SyncSendingMessage(forwardedMessage, previousMessage, async (m) =>
-                {
-                    await ProtoService.ForwardMessageAsync(toPeer, message.Id, message);
-                });
+                await ReloadMessages();
             }
         }
 
+        private async Task ReloadMessages()
+        {
+            Messages.Clear();
+            Messages.Groups.Clear();
+            loaded = 0;
+            await FetchMessages(peer, inputPeer);
+        }
 
-        //TODO: Create this function.
         private TLMessage CreateClone(TLMessage message)
         {
-            return message;
+            TLMessage clone = new TLMessage();
+
+            clone.Date = message.Date;
+            clone.EditDate = message.EditDate;
+            if (message.Entities == null)
+                clone.Entities = null;
+            else
+                clone.Entities = new TLVector<TLMessageEntityBase>(message.Entities);
+            clone.Flags = message.Flags;
+            clone.FromId = message.FromId;
+
+            clone.FwdFrom = new TLMessageFwdHeader();
+
+            if (message.HasFwdFrom)
+            {
+                clone.FwdFrom.ChannelId = message.FwdFrom.ChannelId;
+                clone.FwdFrom.ChannelPost = message.FwdFrom.ChannelPost;
+                clone.FwdFrom.Date = message.FwdFrom.Date;
+                clone.FwdFrom.Flags = message.FwdFrom.Flags;
+                clone.FwdFrom.FromId = message.FwdFrom.FromId;
+                clone.FwdFrom.HasChannelId = message.FwdFrom.HasChannelId;
+                clone.FwdFrom.HasChannelPost = message.FwdFrom.HasChannelPost;
+                clone.FwdFrom.HasFromId = message.FwdFrom.HasFromId;
+            }
+
+            clone.HasEditDate = message.HasEditDate;
+            clone.HasEntities = message.HasEntities;
+            clone.HasFromId = message.HasFromId;
+            clone.HasFwdFrom = message.HasFwdFrom;
+            clone.HasMedia = message.HasMedia;
+            clone.HasReplyMarkup = message.HasReplyMarkup;
+            clone.HasReplyToMsgId = message.HasReplyToMsgId;
+            clone.HasViaBotId = message.HasViaBotId;
+            clone.HasViews = message.HasViews;
+            clone.Id = message.Id;
+            clone.InlineBotResultId = message.InlineBotResultId;
+            clone.InlineBotResultQueryId = message.InlineBotResultQueryId;
+            clone.IsFirst = message.IsFirst;
+            clone.IsMediaUnread = message.IsMediaUnread;
+            clone.IsMentioned = message.IsMentioned;
+            clone.IsOut = message.IsOut;
+            clone.IsPost = message.IsPost;
+            clone.IsSilent = message.IsSilent;
+            clone.IsUnread = message.IsUnread;
+            clone.Message = message.Message;
+            clone.Reply = message.Reply;
+            clone.ReplyMarkup = message.ReplyMarkup;
+            clone.ReplyToMsgId = message.ReplyToMsgId;
+            clone.State = message.State;
+            clone.ToId = message.ToId;
+            clone.ViaBotId = message.ViaBotId;
+            clone.Views = message.Views;
+
+            clone.Media = message.Media;
+
+            clone.RandomId = TLLong.Random();
+
+            return clone;
         }
 
         #endregion
