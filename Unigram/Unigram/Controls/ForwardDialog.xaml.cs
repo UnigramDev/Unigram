@@ -181,6 +181,7 @@ namespace Unigram.Controls
         {
             if (e.Key == VirtualKey.Enter)
             {
+                ForwardButton.Focus(FocusState.Programmatic);
                 ForwardButton_Tapped(this, new TappedRoutedEventArgs());
                 e.Handled = true; // Fix a bug causing this event to fire twice.
             }
