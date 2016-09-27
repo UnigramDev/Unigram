@@ -255,7 +255,7 @@
         <RelativePanel x:Name="profilePane" 
                        Padding="0,24"              
                        Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" 
-                       VerticalAlignment="Top"
+                       VerticalAlignment="Stretch"
                        Grid.RowSpan="2">
             <!--User icon-->
             <Grid x:Name="grdProfile"

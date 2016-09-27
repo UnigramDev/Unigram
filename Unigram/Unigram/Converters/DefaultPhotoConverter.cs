@@ -197,7 +197,7 @@ namespace Unigram.Converters
                     //}
 
                     var fileLocation = photoSize.Location as TLFileLocation;
-                    if (fileLocation != null && (photoMedia == null /*|| !photoMedia.IsCanceled*/))
+                    if (fileLocation != null /*&& (photoMedia == null || !photoMedia.IsCanceled)*/)
                     {
                         return ReturnOrEnqueueImage(false, fileLocation, photo, photoSize.Size, photoMedia);
                     }

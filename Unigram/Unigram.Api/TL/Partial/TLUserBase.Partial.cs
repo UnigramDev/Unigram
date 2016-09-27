@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Telegram.Api.TL
 {
-    public abstract partial class TLUserBase
+    public abstract partial class TLUserBase : ITLReadMaxId
     {
         public TLContact Contact { get; set; }
 
@@ -117,6 +117,23 @@ namespace Telegram.Api.TL
                 return Id.ToString();
             }
         }
+
         #endregion
+
+        public int ReadInboxMaxId { get; set; }
+
+        public int ReadOutboxMaxId { get; set; }
+
+        public override void ReadFromCache(TLBinaryReader from)
+        {
+            ReadInboxMaxId = from.ReadInt32();
+            ReadOutboxMaxId = from.ReadInt32();
+        }
+
+        public override void WriteToCache(TLBinaryWriter to)
+        {
+            to.Write(ReadInboxMaxId);
+            to.Write(ReadOutboxMaxId);
+        }
     }
 }
