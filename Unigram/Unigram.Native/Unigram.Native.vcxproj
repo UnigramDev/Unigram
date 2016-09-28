@@ -102,31 +102,37 @@
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>Debug</MappedPlatform>
+    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>Release</MappedPlatform>
+    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>ARM\Debug</MappedPlatform>
+    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>ARM\Release</MappedPlatform>
+    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>x64\Debug</MappedPlatform>
+    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <GenerateManifest>false</GenerateManifest>
     <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>x64\Release</MappedPlatform>
+    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -141,7 +147,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>..\$(MappedPlatform)\libwebp\libwebp.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,7 +163,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>..\$(MappedPlatform)\libwebp\libwebp.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -173,7 +179,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>..\$(MappedPlatform)\libwebp\libwebp.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -189,7 +195,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>..\$(MappedPlatform)\libwebp\libwebp.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -205,7 +211,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>..\$(MappedPlatform)\libwebp\libwebp.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -221,13 +227,16 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>..\$(MappedPlatform)\libwebp\libwebp.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="COMHelper.h" />
+    <ClInclude Include="IVirtualImageSourceRenderer.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="WebPFrame.h" />
-    <ClInclude Include="WebPImage.h" />
+    <ClInclude Include="Video\VideoImageSourceRenderer.h" />
+    <ClInclude Include="WebP\WebPFrame.h" />
+    <ClInclude Include="WebP\WebPImage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -238,8 +247,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="WebPFrame.cpp" />
-    <ClCompile Include="WebPImage.cpp" />
+    <ClCompile Include="Video\VideoImageSourceRenderer.cpp" />
+    <ClCompile Include="WebP\WebPFrame.cpp" />
+    <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Libraries\libwebp\libwebp.vcxproj">
