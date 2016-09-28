@@ -267,11 +267,9 @@
             <Grid x:Name="grdProfile"
                   Margin="16,8"
                   RelativePanel.AlignHorizontalCenterWithPanel="True">
-                <Ellipse x:Name="elpContentInfoChatIconColor" Margin="12,0" Width="200" Height="200" Fill="Purple" VerticalAlignment="Center"/><!-- Placeholder fill  -->
+                <Ellipse x:Name="elpContentInfoChatIconColor" Width="200" Height="200" Fill="Purple" VerticalAlignment="Center"/><!-- Placeholder fill  -->
                 <TextBlock Margin="12,0" FontSize="96" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.FullNameField, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Ellipse x:Name="elpContentInfoChatIconPicture" 
-                         MinHeight="200" 
-                         MinWidth="200">
+                <Ellipse x:Name="elpContentInfoChatIconPicture" Width="200" Height="200">
                     <Ellipse.Fill>
                         <ImageBrush ImageSource="{x:Bind ViewModel.photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
                     </Ellipse.Fill>
