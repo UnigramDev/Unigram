@@ -23,7 +23,6 @@
     </Page.Transitions>
 
     <Page.Resources>
-
         <Style x:Key="IconMenuFlyoutItem" TargetType="MenuFlyoutItem">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -36,10 +35,10 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="MenuFlyoutItem">
                         <Grid x:Name="LayoutRoot"
-                      Background="{TemplateBinding Background}"
-                      BorderBrush="{TemplateBinding BorderBrush}"
-                      BorderThickness="{TemplateBinding BorderThickness}"
-                      Padding="0,12">
+                              Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              Padding="0,12">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal">
@@ -102,12 +101,12 @@
                                 <!--<FontIcon Margin="0,0,12,0" Glyph="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />-->
                                 <SymbolIcon Margin="12,0"  Symbol="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBlock x:Name="TextBlock"
-                                   Margin="8,0"
-                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                   Foreground="{TemplateBinding Foreground}"
-                                   Text="{TemplateBinding Text}"
-                                   TextTrimming="Clip" />
+                                           Margin="8,0"
+                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           Text="{TemplateBinding Text}"
+                                           TextTrimming="Clip" />
                             </StackPanel>
                         </Grid>
                     </ControlTemplate>
@@ -139,18 +138,18 @@
                 </Grid.ColumnDefinitions>
                 <Border Visibility="{x:Bind ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,0" Margin="0,0,12,0">
                     <ContentControl
-                    Content="{x:Bind ReplyInfo, Mode=OneWay}" 
-                    ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
-                    RequestedTheme="Dark">
+                        Content="{x:Bind ReplyInfo, Mode=OneWay}" 
+                        ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                        RequestedTheme="Dark">
                         <!-- 
-                    common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
-                    -->
+                             common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
+                        -->
                         <ContentControl.Resources>
                             <!-- 
-                        Fela: We have to define here all the brushes we want to override
-                              in the sticker templates.
-                              Resources should be defined here to not override them in the rest of the app
-                        -->
+                                 Fela: We have to define here all the brushes we want to override
+                                 in the sticker templates.
+                                 Resources should be defined here to not override them in the rest of the app
+                            -->
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
@@ -160,8 +159,8 @@
 
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
                     <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                       common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                       MaxWidth="128" MaxHeight="128" Margin="2"/>
+                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                           MaxWidth="128" MaxHeight="128" Margin="2"/>
 
                     <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <StackPanel Orientation="Horizontal">
@@ -181,8 +180,8 @@
                 </Grid.ColumnDefinitions>
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
                     <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                       common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                       MaxWidth="128" MaxHeight="128" Margin="2"/>
+                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                           MaxWidth="128" MaxHeight="128" Margin="2"/>
 
                     <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
@@ -191,18 +190,18 @@
 
                 <Border Visibility="{x:Bind ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
                     <ContentControl
-                    Content="{x:Bind ReplyInfo, Mode=OneWay}" 
-                    ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
-                    RequestedTheme="Dark">
+                        Content="{x:Bind ReplyInfo, Mode=OneWay}" 
+                        ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                        RequestedTheme="Dark">
                         <!-- 
-                    common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
-                    -->
+                             common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
+                        -->
                         <ContentControl.Resources>
                             <!-- 
-                        Fela: We have to define here all the brushes we want to override
-                              in the sticker templates.
-                              Resources should be defined here to not override them in the rest of the app
-                        -->
+                                 Fela: We have to define here all the brushes we want to override
+                                 in the sticker templates.
+                                 Resources should be defined here to not override them in the rest of the app
+                            -->
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
@@ -220,8 +219,8 @@
                 </Grid.ColumnDefinitions>
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
                     <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                       common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                       MaxWidth="128" MaxHeight="128" Margin="2"/>
+                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                           MaxWidth="128" MaxHeight="128" Margin="2"/>
 
                     <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
@@ -230,18 +229,18 @@
 
                 <Border Visibility="{x:Bind ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
                     <ContentControl
-                    Content="{x:Bind ReplyInfo, Mode=OneWay}" 
-                    ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
-                    RequestedTheme="Dark">
+                        Content="{x:Bind ReplyInfo, Mode=OneWay}" 
+                        ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
+                        RequestedTheme="Dark">
                         <!-- 
-                    common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
-                    -->
+                             common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
+                        -->
                         <ContentControl.Resources>
                             <!-- 
-                        Fela: We have to define here all the brushes we want to override
-                              in the sticker templates.
-                              Resources should be defined here to not override them in the rest of the app
-                        -->
+                                 Fela: We have to define here all the brushes we want to override
+                                 in the sticker templates.
+                                 Resources should be defined here to not override them in the rest of the app
+                            -->
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
@@ -266,12 +265,12 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewHeaderItem">
                         <ContentPresenter x:Name="ContentPresenter"
-                            Margin="{TemplateBinding Padding}"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                          Margin="{TemplateBinding Padding}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -331,12 +330,12 @@
                             </VisualStateManager.VisualStateGroups>
 
                             <TextBlock
-                                                        x:Name="ContentPresenter"
-                                                        Padding="{TemplateBinding Padding}"
-                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                        AutomationProperties.AccessibilityView="Raw"
-                                                        Text="&#xE10A;"/>
+                                x:Name="ContentPresenter"
+                                Padding="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="&#xE10A;"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -388,13 +387,15 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="48" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Titlebar -->
-        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+              Height="{ThemeResource AppBarThemeCompactHeight}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
@@ -421,13 +422,13 @@
                         </Grid>
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                             <TextBlock x:Name="tblDialogName"
-                                    Text="{x:Bind Path=ViewModel.DialogTitle}"
-                                    Style="{StaticResource BaseTextBlockStyle}"/>
+                                       Text="{x:Bind Path=ViewModel.DialogTitle}"
+                                       Style="{StaticResource BaseTextBlockStyle}"/>
                             <TextBlock x:Name="tblDialogStatus"
-                                    Visibility="{x:Bind ViewModel.LastSeenVisible}"
-                                    Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Bind ViewModel.LastSeen}" />
+                                       Visibility="{x:Bind ViewModel.LastSeenVisible}"
+                                       Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Text="{x:Bind ViewModel.LastSeen}" />
                         </StackPanel>
                     </Grid>
                 </Button.Content>
@@ -446,25 +447,25 @@
                     <Flyout>
                         <StackPanel Margin="-8">
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
-                                             x:Name="cbtnReportSpam"
-                                             x:Uid="FCBTN-ReportSpam"
-                                             Tag="ReportHacked"
-                                             Text="Report spam" />
+                                            x:Name="cbtnReportSpam"
+                                            x:Uid="FCBTN-ReportSpam"
+                                            Tag="ReportHacked"
+                                            Text="Report spam" />
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                                             x:Name="cbtnSearch"
-                                             x:Uid="FCBTN-Search"
-                                             Tag="Find"
-                                             Text="Search" />
+                                            x:Name="cbtnSearch"
+                                            x:Uid="FCBTN-Search"
+                                            Tag="Find"
+                                            Text="Search" />
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
-                                             x:Name="cbtnPinToStart"
-                                             x:Uid="FCBTN-Pin"
-                                             Tag="Pin"
-                                             Text="Pin to Start"/>
+                                            x:Name="cbtnPinToStart"
+                                            x:Uid="FCBTN-Pin"
+                                            Tag="Pin"
+                                            Text="Pin to Start"/>
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
-                                             x:Name="cbtnBackgroundImage"
-                                             x:Uid="FCBTN-BackgroundImage"
-                                             Tag="Pictures"
-                                             Text="Change background image" />
+                                            x:Name="cbtnBackgroundImage"
+                                            x:Uid="FCBTN-BackgroundImage"
+                                            Tag="Pictures"
+                                            Text="Change background image" />
                         </StackPanel>
                     </Flyout>
                 </Button.Flyout>
@@ -472,426 +473,373 @@
         </Grid>
         <!-- END OF Titlebar -->
 
-        <!-- Main content -->
-        <RelativePanel Grid.Row="1">
-            <!-- Pinned message -->
-            <Grid x:Name="grdPinnedMessage"
-                  Visibility="{x:Bind ViewModel.pinnedMessageVisible}"
-                  Background="{ThemeResource TelegramBackgroundAccentBrush}"
-                  Height="48"
-                  RelativePanel.AlignLeftWithPanel="True"
+        <Image Source="ms-appx:///Assets/Images/DefaultBackground.jpg" Stretch="UniformToFill" Grid.Row="1" Grid.RowSpan="2"/>
+
+        <Grid x:Name="grdPinnedMessage"
+              Visibility="{x:Bind ViewModel.pinnedMessageVisible}"
+              Background="{ThemeResource TelegramBackgroundAccentBrush}"
+              Height="{ThemeResource AppBarThemeCompactHeight}"
+              Grid.Row="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="48"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="btnPinnedMessage" Style="{StaticResource EmptyButtonStyle}" RequestedTheme="Dark">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Icon -->
+                    <Rectangle Fill="White" Width="2" Margin="12,0,0,0"/>
+
+                    <StackPanel Margin="8,0,0,2" Grid.Column="1">
+                        <TextBlock Text="Pinned message" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind ViewModel.pinnedMessage}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
+                    </StackPanel>
+                </Grid>
+            </Button>
+
+            <!-- Close button -->
+            <controls:GlyphButton Click="btnClosePinnedMessage_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="1"/>
+        </Grid>
+            
+        <controls:BubbleListView x:Name="lvDialogs" 
+                                 ItemsSource="{Binding Source={StaticResource MessagesSource}}"
+                                 ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
+                                 SelectionMode="None"
+                                 Grid.Row="2">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel GroupHeaderPlacement="Left"
+                                     ItemsUpdatingScrollMode="KeepLastItemInView"
+                                     VerticalAlignment="Bottom" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemContainerStyleSelector>
+                <selectors:MessageStyleSelector>
+                    <selectors:MessageStyleSelector.MessageStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                            <Setter Property="TabNavigation" Value="Local"/>
+                            <Setter Property="IsHoldingEnabled" Value="True"/>
+                            <Setter Property="Padding" Value="12,0,12,0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewItem">
+                                        <ListViewItemPresenter
+                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            SelectionCheckMarkVisualEnabled="True"
+                                            CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                            CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                            DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                            DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                            FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                            FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                            PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                            PointerOverBackground="Transparent"
+                                            PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                            SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
+                                            SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                            SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
+                                            PressedBackground="Transparent"
+                                            SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
+                                            DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                            DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                            ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            ContentMargin="{TemplateBinding Padding}"
+                                            CheckMode="Inline"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </selectors:MessageStyleSelector.MessageStyle>
+                    <selectors:MessageStyleSelector.ServiceStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                            <Setter Property="TabNavigation" Value="Local"/>
+                            <Setter Property="IsHoldingEnabled" Value="True"/>
+                            <Setter Property="Padding" Value="12,0,12,0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewItem">
+                                        <ListViewItemPresenter
+                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            SelectionCheckMarkVisualEnabled="False"
+                                            CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                            CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                            DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                            DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                            FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                            FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                            PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                            PointerOverBackground="Transparent"
+                                            PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                            SelectedBackground="Transparent"
+                                            SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                            SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
+                                            PressedBackground="Transparent"
+                                            SelectedPressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
+                                            DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                            DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                            ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            ContentMargin="{TemplateBinding Padding}"
+                                            CheckMode="Inline"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </selectors:MessageStyleSelector.ServiceStyle>
+                </selectors:MessageStyleSelector>
+            </ListView.ItemContainerStyleSelector>
+            <ListView.Header>
+                <Border Height="6"/>
+            </ListView.Header>
+            <ListView.Footer>
+                <Border Height="6"/>
+            </ListView.Footer>
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplateSelector>
+                        <selectors:MessageGroupTemplateSelector>
+                            <selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
+                                <DataTemplate x:DataType="viewmodels:MessageGroup">
+                                    <Grid>
+                                        <Ellipse Width="32" Height="32" Fill="Red" Margin="12,12,0,0"/>
+                                        <Border CornerRadius="32" Width="32" Height="32" Margin="12,12,0,0">
+                                            <Border.Background>
+                                                <ImageBrush ImageSource="{x:Bind From.Photo, Converter={StaticResource DefaultPhotoConverter}, Mode=OneWay}"/>
+                                            </Border.Background>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
+                            <selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
+                                <DataTemplate>
+                                    <Rectangle Width="44"/>
+                                </DataTemplate>
+                            </selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
+                        </selectors:MessageGroupTemplateSelector>
+                    </GroupStyle.HeaderTemplateSelector>
+                </GroupStyle>
+            </ListView.GroupStyle>
+        </controls:BubbleListView>
+
+        <!-- Input pane -->
+        <RelativePanel x:Name="rpInput"
+                       MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                       BorderThickness="0,1,0,0"
+                       BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
+                       Visibility="Visible"
+                       RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.AlignRightWithPanel="True"
+                       RelativePanel.AlignBottomWithPanel="True"
+                       Grid.Row="3">
+            <!-- Image thumbnail -->
+            <Button x:Name="btnRemoveSingleImgThumbnail"
+                    Visibility="Collapsed"
+                    Content="&#xE106;"
+                    Height="36"
+                    Width="36"
+                    FontFamily="Segoe MDL2 Assets"
+                    RequestedTheme="Dark"
+                    Canvas.ZIndex="10"
+                    RelativePanel.AlignLeftWithPanel="True"
+                    RelativePanel.AlignTopWithPanel="True"
+                    Click="btnRemoveSingleImgThumbnail_Click"/>
+            <Image x:Name="imgSingleImgThumbnail" 
+                   Visibility="Collapsed"
+                   Stretch="UniformToFill"
+                   VerticalAlignment="Center" 
+                   HorizontalAlignment="Center"
+                   MaxHeight="240"
+                   Margin="0,0,48,0"
+                   RelativePanel.AlignLeftWithPanel="True"
+                   RelativePanel.AlignRightWithPanel="True"
+                   RelativePanel.AlignTopWithPanel="True"
+                   RelativePanel.AlignBottomWithPanel="True" />
+            <Grid RelativePanel.AlignLeftWithPanel="True"
                   RelativePanel.AlignRightWithPanel="True"
-                  RelativePanel.AlignTopWithPanel="True">
-
+                  RelativePanel.AlignTopWithPanel="True"
+                  RelativePanel.AlignBottomWithPanel="True" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+                <Grid Visibility="{Binding ReplyInfo, Converter={StaticResource NullToVisibilityConverter}}" Grid.ColumnSpan="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="44"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" Visibility="{Binding ReplyVisibility}" BorderBrush="#2fa9e2" Foreground="#0e7acd" Style="{StaticResource MediaControlStyle}" -->
 
-                <Button x:Name="btnPinnedMessage"
-                        Grid.Column="0"
-                        RequestedTheme="Dark"
-                        Padding="8,0"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        VerticalContentAlignment="Stretch"
-                        Background="Transparent">
+                    <ContentControl Content="{Binding ReplyInfo}" 
+                                    ContentTemplateSelector="{StaticResource ReplyTemplateSelector}"
+                                    Margin="-8,-1,0,-5" 
+                                    Grid.Column="1">
+                        <ContentControl.ContentTransitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition/>
+                            </TransitionCollection>
+                        </ContentControl.ContentTransitions>
+                        <ContentControl.Style>
+                            <Style TargetType="ContentControl">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ContentControl">
+                                            <Border>
+                                                <ContentPresenter x:Name="ContentPresenter"
+                                                                  BorderBrush="{x:Null}"
+                                                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                                                  Content="{TemplateBinding Content}"
+                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                  Padding="{TemplateBinding Padding}"
+                                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                  AutomationProperties.AccessibilityView="Raw"
+                                                                  Tag="{TemplateBinding Background}"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
+
+                    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                        <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
+                    </Border>
+
+                    <Button Command="{Binding ClearReplyCommand}" IsTabStop="False" Style="{StaticResource CloseButtonStyle}" Width="48" Height="48" VerticalAlignment="Stretch" Grid.Column="2"/>
+                </Grid>
+                <!-- Message input -->
+                <controls:BubbleTextBox
+                    x:Name="txtMessage" 
+                    x:Uid="Chat-Input-Message"
+                    PlaceholderText="Type your message..."
+                    BorderThickness="0" 
+                    Padding="48,12,0,12" 
+                    TextWrapping="Wrap" 
+                    InputScope="Text" 
+                    IsSpellCheckEnabled="True"
+                    VerticalAlignment="Bottom" 
+                    VerticalContentAlignment="Bottom"
+                    MinHeight="48"
+                    MaxHeight="84"
+                    AcceptsReturn="True"
+                    TextChanging="txtMessage_TextChanging"
+                    Grid.ColumnSpan="2"
+                    Grid.Row="1"/>
+                <!-- Send-button -->
+                <Button x:Name="btnSendMessage"  
+                        Visibility="Collapsed"
+                        IsEnabled="True"
+                        Width="48"
+                        MinHeight="48" 
+                        Background="{ThemeResource TelegramBackgroundAccentBrush}"                                      
+                        VerticalAlignment="Stretch"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        Click="btnSendMessage_Click"
+                        Grid.Column="3"
+                        Grid.Row="1">
                     <Button.Content>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Icon -->
-                            <TextBlock Grid.Column="0"
-                                       Grid.Row="0"
-                                       Grid.RowSpan="2"
-                                       Margin="0,0,12,0"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Text="&#xE840;"
-                                       RequestedTheme="Dark"
-                                       FontFamily="Segoe MDL2 Assets"
-                                       FontSize="20"/>
-
-                            <!-- User -->
-                            <TextBlock Grid.Column="1"
-                                       Grid.Row="0"
-                                       Text="{x:Bind ViewModel.pinnedMessageSender}"
-                                       TextTrimming="CharacterEllipsis"
-                                       Style="{ThemeResource BaseTextBlockStyle}"
-                                       RequestedTheme="Dark" />
-                            <!-- Message -->
-                            <TextBlock Grid.Column="1"
-                                       Grid.Row="1"
-                                       Text="{x:Bind ViewModel.pinnedMessage}"
-                                       RequestedTheme="Dark"
-                                       Style="{ThemeResource BodyTextBlockStyle}"
-                                       TextTrimming="CharacterEllipsis"
-                                       HorizontalAlignment="Stretch"/>
-
-                        </Grid>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" 
+                                   FontSize="20"
+                                   Text="&#xE122;"
+                                   RequestedTheme="Dark"/>
                     </Button.Content>
                 </Button>
 
-                <!-- Close button -->
-                <Button x:Name="btnClosePinnedMessage"
-                        Grid.Column="1"
-                        RequestedTheme="Dark"
-                        Background="Transparent"
-                        Content="&#xE106;"
-                        FontFamily="Segoe MDL2 Assets"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Click="btnClosePinnedMessage_Click"/>
-            </Grid>
-            
-            <Grid RelativePanel.AlignLeftWithPanel="True"
-                  RelativePanel.AlignRightWithPanel="True"
-                  RelativePanel.Below="grdPinnedMessage"
-                  RelativePanel.Above="rpInput">
-                <Image Source="ms-appx:///Assets/Images/DefaultBackground.jpg" 
-                       Stretch="UniformToFill"/>
+                <controls:GlyphButton x:Name="btnStickers" 
+                                      Command="{Binding SendCommand}"
+                                      CommandParameter="ciao"
+                                      Glyph="&#xE606;" 
+                                      FontFamily="{ThemeResource TelegramThemeFontFamily}" 
+                                      Grid.Column="2"
+                                      Grid.Row="1"/>
+                <controls:GlyphButton x:Name="btnVoiceMessage"
+                                      Click="btnVoiceMessage_Click"
+                                      Glyph="&#xE720;" 
+                                      Grid.Column="3"
+                                      Grid.Row="1"/>
 
-                <controls:BubbleListView x:Name="lvDialogs" 
-                                         ItemsSource="{Binding Source={StaticResource MessagesSource}}"
-                                         ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
-                                         SelectionMode="None">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsStackPanel GroupHeaderPlacement="Left"
-                                                 ItemsUpdatingScrollMode="KeepLastItemInView"
-                                                 VerticalAlignment="Bottom" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemContainerStyleSelector>
-                        <selectors:MessageStyleSelector>
-                            <selectors:MessageStyleSelector.MessageStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                    <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                                    <Setter Property="TabNavigation" Value="Local"/>
-                                    <Setter Property="IsHoldingEnabled" Value="True"/>
-                                    <Setter Property="Padding" Value="12,0,12,0"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                    <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
-                                    <Setter Property="MinHeight" Value="0"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ListViewItem">
-                                                <ListViewItemPresenter
-                                                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                        SelectionCheckMarkVisualEnabled="True"
-                                                        CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                                        CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                                        DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
-                                                        DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                                                        FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
-                                                        FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                                        PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                                        PointerOverBackground="Transparent"
-                                                        PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                                        SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
-                                                        SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                                        SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
-                                                        PressedBackground="Transparent"
-                                                        SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
-                                                        DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                                        DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                        ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                        ContentMargin="{TemplateBinding Padding}"
-                                                        CheckMode="Inline"/>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </selectors:MessageStyleSelector.MessageStyle>
-                            <selectors:MessageStyleSelector.ServiceStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                    <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                                    <Setter Property="TabNavigation" Value="Local"/>
-                                    <Setter Property="IsHoldingEnabled" Value="True"/>
-                                    <Setter Property="Padding" Value="12,0,12,0"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                    <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
-                                    <Setter Property="MinHeight" Value="0"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ListViewItem">
-                                                <ListViewItemPresenter
-                                                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                        SelectionCheckMarkVisualEnabled="False"
-                                                        CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                                        CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                                        DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
-                                                        DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                                                        FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
-                                                        FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                                        PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                                        PointerOverBackground="Transparent"
-                                                        PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                                        SelectedBackground="Transparent"
-                                                        SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                                        SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
-                                                        PressedBackground="Transparent"
-                                                        SelectedPressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
-                                                        DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                                        DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                        ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                        ContentMargin="{TemplateBinding Padding}"
-                                                        CheckMode="Inline"/>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </selectors:MessageStyleSelector.ServiceStyle>
-                        </selectors:MessageStyleSelector>
-                    </ListView.ItemContainerStyleSelector>
-                    <ListView.Header>
-                        <Border Height="6"/>
-                    </ListView.Header>
-                    <ListView.Footer>
-                        <Border Height="6"/>
-                    </ListView.Footer>
-                    <ListView.GroupStyle>
-                        <GroupStyle>
-                            <GroupStyle.HeaderTemplateSelector>
-                                <selectors:MessageGroupTemplateSelector>
-                                    <selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
-                                        <DataTemplate x:DataType="viewmodels:MessageGroup">
-                                            <Grid>
-                                                <Ellipse Width="32" Height="32" Fill="Red" Margin="12,12,0,0"/>
-                                                <Border CornerRadius="32" Width="32" Height="32" Margin="12,12,0,0">
-                                                    <Border.Background>
-                                                        <ImageBrush ImageSource="{x:Bind From.Photo, Converter={StaticResource DefaultPhotoConverter}, Mode=OneWay}"/>
-                                                    </Border.Background>
-                                                </Border>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
-                                    <selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
-                                        <DataTemplate>
-                                            <Rectangle Width="44"/>
-                                        </DataTemplate>
-                                    </selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
-                                </selectors:MessageGroupTemplateSelector>
-                            </GroupStyle.HeaderTemplateSelector>
-                        </GroupStyle>
-                    </ListView.GroupStyle>
-                </controls:BubbleListView>
-            </Grid>
-
-            <!-- Input pane -->
-            <RelativePanel x:Name="rpInput"
-                           MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                           BorderThickness="0,2,0,0"
-                           BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
-                           Visibility="Visible"
-                           RelativePanel.AlignLeftWithPanel="True"
-                           RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.AlignBottomWithPanel="True">
-                <!-- Image thumbnail -->
-                <Button x:Name="btnRemoveSingleImgThumbnail"
-                        Visibility="Collapsed"
-                        Content="&#xE106;"
-                        Height="36"
-                        Width="36"
-                        FontFamily="Segoe MDL2 Assets"
-                        RequestedTheme="Dark"
-                        Canvas.ZIndex="10"
-                        RelativePanel.AlignLeftWithPanel="True"
-                        RelativePanel.AlignTopWithPanel="True"
-                        Click="btnRemoveSingleImgThumbnail_Click"/>
-                <Image x:Name="imgSingleImgThumbnail" 
-                       Visibility="Collapsed"
-                       Stretch="UniformToFill"
-                       VerticalAlignment="Center" 
-                       HorizontalAlignment="Center"
-                       MaxHeight="240"
-                       Margin="0,0,48,0"
-                       RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignRightWithPanel="True"
-                       RelativePanel.AlignTopWithPanel="True"
-                       RelativePanel.AlignBottomWithPanel="True" />
-                <Grid RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignRightWithPanel="True"
-                       RelativePanel.AlignTopWithPanel="True"
-                       RelativePanel.AlignBottomWithPanel="True" >
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid Visibility="{Binding ReplyInfo, Converter={StaticResource NullToVisibilityConverter}}" Grid.ColumnSpan="4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="44"/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <!-- ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" Visibility="{Binding ReplyVisibility}" BorderBrush="#2fa9e2" Foreground="#0e7acd" Style="{StaticResource MediaControlStyle}" -->
-
-                        <ContentControl Content="{Binding ReplyInfo}" 
-                                        ContentTemplateSelector="{StaticResource ReplyTemplateSelector}"
-                                        Margin="-8,-1,0,-5" 
-                                        Grid.Column="1">
-                            <ContentControl.ContentTransitions>
-                                <TransitionCollection>
-                                    <EntranceThemeTransition/>
-                                </TransitionCollection>
-                            </ContentControl.ContentTransitions>
-                            <ContentControl.Style>
-                                <Style TargetType="ContentControl">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ContentControl">
-                                                <Border>
-                                                    <ContentPresenter x:Name="ContentPresenter"
-                                                            BorderBrush="{x:Null}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                                            Content="{TemplateBinding Content}"
-                                                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                            Padding="{TemplateBinding Padding}"
-                                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                            AutomationProperties.AccessibilityView="Raw"
-                                                            Tag="{TemplateBinding Background}"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </ContentControl.Style>
-                        </ContentControl>
-
-                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                            <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
-                        </Border>
-
-                        <Button Command="{Binding ClearReplyCommand}" IsTabStop="False" Style="{StaticResource CloseButtonStyle}" Width="44" Height="Auto" VerticalAlignment="Stretch" Grid.Column="2"/>
-                    </Grid>
-                    <!-- Message input -->
-                    <controls:BubbleTextBox
-                             x:Name="txtMessage" 
-                             x:Uid="Chat-Input-Message"
-                             PlaceholderText="Type your message..."
-                             BorderThickness="0" 
-                             Padding="14" 
-                             TextWrapping="Wrap" 
-                             InputScope="Text" 
-                             IsSpellCheckEnabled="True"
-                             VerticalAlignment="Bottom" 
-                             VerticalContentAlignment="Bottom"
-                             MinHeight="48"
-                             MaxHeight="84"
-                             AcceptsReturn="True"
-                             TextChanging="txtMessage_TextChanging"
-                             Grid.Column="1"
-                             Grid.Row="1"/>
-                    <!-- Send-button -->
-                    <Button x:Name="btnSendMessage"  
-                            Visibility="Collapsed"
-                            IsEnabled="True"
-                            Width="48"
-                            MinHeight="48" 
-                            Background="{ThemeResource TelegramBackgroundAccentBrush}"                                      
-                            VerticalAlignment="Stretch"
-                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                            Click="btnSendMessage_Click"
-                            Grid.Column="3"
-                            Grid.Row="1">
-                        <Button.Content>
-                            <TextBlock FontFamily="Segoe MDL2 Assets" 
-                                       FontSize="20"
-                                       Text="&#xE122;"
-                                       RequestedTheme="Dark"/>
-                        </Button.Content>
-                    </Button>
-
-                    <controls:GlyphButton x:Name="btnStickers" 
-                                          Command="{Binding SendCommand}"
-                                          CommandParameter="ciao"
-                                          Glyph="&#xE606;" 
-                                          FontFamily="{ThemeResource TelegramThemeFontFamily}" 
-                                          Grid.Column="2"
-                                          Grid.Row="1"/>
-                    <controls:GlyphButton x:Name="btnVoiceMessage"
-                                          Click="btnVoiceMessage_Click"
-                                          Glyph="&#xE720;" 
-                                          Grid.Column="3"
-                                          Grid.Row="1"/>
-
-                    <controls:GlyphButton Glyph="&#xE16C;" Grid.Row="1">
-                        <Button.Flyout>
-                            <Flyout>
-                                <StackPanel Name="SP" Margin="-8" Padding="0">
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
+                <controls:GlyphButton Glyph="&#xE16C;" Grid.Row="1">
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel Name="SP" Margin="-8" Padding="0">
+                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
                                                 x:Name="fcbtnAttachCamera"
                                                 x:Uid="FCBTN-Camera"
                                                 Tag="Camera"
                                                 MinWidth="160"
                                                 Text="Camera" />
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
+                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
                                                 x:Name="fcbtnAttachVideo"
                                                 x:Uid="FCBTN-Video"
                                                 Text="Video" 
                                                 MinWidth="160"
                                                 Tag="Video"/>
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                                                 x:Name="fcbtnAttachLocation"
                                                 x:Uid="FCBTN-Location"
                                                 Text="Location" 
                                                 MinWidth="160"
                                                 Tag="Map"/>
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                                                 x:Name="fcbtnAttachContact"
                                                 x:Uid="FCBTN-Contact"
                                                 Text="Contact"
                                                 MinWidth="160"
                                                 Tag="ContactInfo"/>
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                                                 x:Name="fcbtnAttachFile"
                                                 x:Uid="FCBTN-File"
                                                 Text="File"
                                                 MinWidth="160"
                                                 Tag="OpenFile"/>
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                                                 x:Name="fcbtnAttachPhoto"
                                                 x:Uid="FCBTN-Photo"
                                                 Tag="Pictures"
                                                 Text="Pictures"
                                                 MinWidth="160"
                                                 Click="fcbtnAttachPhoto_Click"/>
-                                </StackPanel>
-                            </Flyout>
-                        </Button.Flyout>
-                    </controls:GlyphButton>
-                </Grid>
-            </RelativePanel>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </controls:GlyphButton>
+            </Grid>
         </RelativePanel>
-        <!-- END OF Main content -->
     </Grid>
 </Page>

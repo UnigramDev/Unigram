@@ -104,21 +104,10 @@ namespace Unigram.ViewModels
             }
         }
         public TLInputPeerChannel channel;
-        private TLPeerChannel _channelItem;
-        public TLPeerChannel channelItem
-         {
-            get
-            {
-                return _channelItem;
-            }
-             set
-            {
-                Set(ref _channelItem, value);
-            }
-        }
+
         public TLInputPeerChat chat;
-        private TLPeerChat _chatItem;
-        public TLPeerChat chatItem
+        private TLPeerBase _chatItem;
+        public TLPeerBase peerItem
         {
             get
             {
@@ -277,6 +266,7 @@ namespace Unigram.ViewModels
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
+                peerItem = new TLPeerUser { Id = user.Id };
                 await FetchMessages(peer,inputPeer);
                 ChatType = 0;
 
@@ -311,7 +301,7 @@ namespace Unigram.ViewModels
                 inputPeer = new TLInputPeerChannel { ChannelId = x.ChannelId, AccessHash = x.AccessHash };
                 Peer = new TLInputPeerChannel { ChannelId = x.ChannelId, AccessHash = x.AccessHash };
                 await FetchMessages(peer, inputPeer);
-                channelItem = new TLPeerChannel { Id = channel.ChannelId };
+                peerItem = new TLPeerChannel { Id = channel.ChannelId };
                 ChatType = 2;
             }
             else if (chat != null)
@@ -325,10 +315,95 @@ namespace Unigram.ViewModels
                 inputPeer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };
                 Peer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };
                 await FetchMessages(peer, inputPeer);
-                chatItem = new TLPeerChat { Id = chat.ChatId };
+                peerItem = new TLPeerChat { Id = chat.ChatId };
                 ChatType = 1;
             }
+
+            var dialog = CacheService.GetDialog(peerItem);
+            if (dialog != null && dialog.HasDraft)
+            {
+                var draft = dialog.Draft as TLDraftMessage;
+                if (draft != null)
+                {
+                    ProcessDraftReply(draft);
+                }
+            }
         }
+
+        public async void ProcessDraftReply(TLDraftMessage draft)
+        {
+            var shouldFetch = false;
+
+            var replyId = draft.ReplyToMsgId;
+            if (replyId != null && replyId.Value != 0)
+            {
+                var channelId = new int?();
+                //var channel = message.ToId as TLPeerChat;
+                //if (channel != null)
+                //{
+                //    channelId = channel.Id;
+                //}
+                // TODO: verify
+                if (Peer is TLInputPeerChannel)
+                {
+                    channelId = peer.Id;
+                }
+
+                var reply = CacheService.GetMessage(replyId.Value, channelId);
+                if (reply != null)
+                {
+                    Reply = reply;
+                }
+                else
+                {
+                    shouldFetch = true;
+                }
+            }
+
+            if (shouldFetch)
+            {
+                Task<MTProtoResponse<TLMessagesMessagesBase>> task = null;
+
+                if (Peer is TLInputPeerChannel)
+                {
+                    // TODO: verify
+                    //var first = replyToMsgs.FirstOrDefault();
+                    //if (first.ToId is TLPeerChat)
+                    //{
+                    //    task = ProtoService.GetMessagesAsync(new TLVector<int> { draft.ReplyToMsgId.Value });
+                    //}
+                    //else
+                    {
+                        var peer = Peer as TLInputPeerChannel;
+                        task = ProtoService.GetMessagesAsync(new TLInputChannel { ChannelId = peer.ChannelId, AccessHash = peer.AccessHash }, new TLVector<int> { draft.ReplyToMsgId.Value });
+                    }
+                }
+                else
+                {
+                    task = ProtoService.GetMessagesAsync(new TLVector<int> { draft.ReplyToMsgId.Value });
+                }
+
+                var result = await task;
+                if (result.IsSucceeded)
+                {
+                    CacheService.AddChats(result.Value.Chats, (results) => { });
+                    CacheService.AddUsers(result.Value.Users, (results) => { });
+
+                    for (int j = 0; j < result.Value.Messages.Count; j++)
+                    {
+                        if (draft.ReplyToMsgId.Value == result.Value.Messages[j].Id)
+                        {
+                            Reply = result.Value.Messages[j];
+                        }
+                    }
+                }
+                else
+                {
+                    Execute.ShowDebugMessage("messages.getMessages error " + result.Error);
+                }
+            }
+        }
+
 
         #region Reply 
 
@@ -392,12 +467,12 @@ namespace Unigram.ViewModels
                     toPeer = new TLInputPeerUser { UserId = Item.Id, AccessHash = ((TLUser)Item).AccessHash ?? 0 };
                     break;
                 case 1:
-                    toId = new TLPeerChat { Id = int.Parse(chatItem.Id.ToString()) };
-                    toPeer = new TLInputPeerChat { ChatId = chatItem.Id };
+                    toId = new TLPeerChat { Id = int.Parse(peerItem.Id.ToString()) };
+                    toPeer = new TLInputPeerChat { ChatId = peerItem.Id };
                     break;
                 case 2:
-                    toId = new TLPeerChannel { Id = int.Parse(channelItem.Id.ToString()) };
-                    toPeer = new TLInputPeerChannel { ChannelId = channelItem.Id };
+                    toId = new TLPeerChannel { Id = int.Parse(peerItem.Id.ToString()) };
+                    toPeer = new TLInputPeerChannel { ChannelId = peerItem.Id };
                     break;
             }
 
