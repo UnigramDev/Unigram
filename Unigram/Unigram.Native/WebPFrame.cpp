@@ -5,7 +5,7 @@ using namespace Windows::Storage;
 using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::Storage::Streams;
 using namespace Microsoft::WRL;
-using namespace Unigram::WebP;
+using namespace Unigram::Native;
 using namespace Platform;
 
 WebPFrame::WebPFrame()

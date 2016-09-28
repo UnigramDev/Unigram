@@ -30,9 +30,9 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : UnigramViewModelBase
     {
-        int ChatType=-1;
+        int ChatType = -1;
         //0 if private, 1 if group, 2 if supergroup/channel
-        int loadCount =15;
+        int loadCount = 15;
         int loaded = 0;
         public TLPeerBase peer;
         public TLInputPeerBase inputPeer;
@@ -40,6 +40,9 @@ namespace Unigram.ViewModels
         public Brush PlaceHolderColor { get; internal set; }
         public string DialogTitle;
         public string LastSeen;
+        public string pinnedMessage;
+        public string pinnedMessageSender;
+        public Visibility pinnedMessageVisible = Visibility.Collapsed;
         public Visibility LastSeenVisible;
         public string debug;
 
@@ -60,6 +63,9 @@ namespace Unigram.ViewModels
         public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IJumpListService jumpListService)
             : base(protoService, cacheService, aggregator)
         {
+            FDialogs = new DialogCollection(protoService, cacheService);
+            FSearchDialogs = new DialogCollection(protoService, cacheService);
+
             _jumpListService = jumpListService;
         }
 
@@ -81,7 +87,7 @@ namespace Unigram.ViewModels
         public TLUserBase Item
         {
             get
-            {                
+            {
                 return _item;
             }
             set
@@ -103,12 +109,12 @@ namespace Unigram.ViewModels
         public TLInputPeerChannel channel;
         private TLPeerChannel _channelItem;
         public TLPeerChannel channelItem
-         {
+        {
             get
             {
                 return _channelItem;
             }
-             set
+            set
             {
                 Set(ref _channelItem, value);
             }
@@ -157,9 +163,9 @@ namespace Unigram.ViewModels
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Value.Messages);
-
                 foreach (var item in result.Value.Messages)
                 {
+                    
                     Messages.Insert(0, item);
                 }
             }
@@ -262,7 +268,7 @@ namespace Unigram.ViewModels
             user = parameter as TLUser;
             if (user != null)
             {
-         
+
                 //Happy Birthday Alexmitter xD
                 Messages.Clear();
                 Item = user;
@@ -274,18 +280,33 @@ namespace Unigram.ViewModels
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
                 inputPeer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
-                await FetchMessages(peer,inputPeer);
+                await FetchMessages(peer, inputPeer);
                 ChatType = 0;
 
                 await _jumpListService.UpdateAsync(user);
             }
             else if (channel != null)
             {
-                TLInputChannel x=new TLInputChannel();                
+                TLInputChannel x = new TLInputChannel();
+
                 x.ChannelId = channel.ChannelId;
                 x.AccessHash = channel.AccessHash;
-                var channelDetails = await ProtoService.GetFullChannelAsync(x);                
+                var channelDetails = await ProtoService.GetFullChannelAsync(x);
                 DialogTitle = channelDetails.Value.Chats[0].FullName;
+                var channelFull=(TLChannelFull)channelDetails.Value.FullChat;
+                if (channelFull.HasPinnedMsgId)
+                {
+                    pinnedMessageVisible = Visibility.Visible;
+                    var msgId = channelFull.PinnedMsgId;
+                    TLVector<int> temp = new TLVector<int>(1) { msgId.GetValueOrDefault() };
+                    var y = await ProtoService.GetMessagesAsync(x, temp);
+                    pinnedMessage = ((TLMessage)y.Value.Messages[0]).Message;
+                    pinnedMessageSender = y.Value.Users[0].FullName;
+                }
+                else
+                {
+                    pinnedMessageVisible = Visibility.Collapsed;
+                }
                 PlaceHolderColor = BindConvert.Current.Bubble(channelDetails.Value.Chats[0].Id);
                 photo = channelDetails.Value.Chats[0].Photo;
                 LastSeenVisible = Visibility.Collapsed;
@@ -300,7 +321,7 @@ namespace Unigram.ViewModels
             {
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
                 DialogTitle = chatDetails.Value.Chats[0].FullName;
-                photo =chatDetails.Value.Chats[0].Photo;
+                photo = chatDetails.Value.Chats[0].Photo;
                 PlaceHolderColor = BindConvert.Current.Bubble(chatDetails.Value.Chats[0].Id);
                 LastSeenVisible = Visibility.Collapsed;
                 peer = new TLPeerUser { Id = SettingsHelper.UserId };
@@ -352,6 +373,217 @@ namespace Unigram.ViewModels
         public RelayCommand ClearReplyCommand => new RelayCommand(() => { Reply = null; });
 
         #endregion
+
+        #region Forward
+
+        private TLMessageBase _forwardFlyoutMessage = null;
+
+        public TLMessageBase ForwardFlyoutMessage
+        {
+            get { return _forwardFlyoutMessage; }
+            set
+            {
+                _forwardFlyoutMessage = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public DialogCollection FDialogs { get; private set; }
+
+        public DialogCollection FSearchDialogs { get; private set; }
+
+        internal void CancelForward()
+        {
+            ForwardFlyoutMessage = null;
+        }
+
+        public void GetSearchDialogs(string query)
+        {
+            try
+            {
+                FSearchDialogs.Clear();
+            }
+            catch { }
+
+            foreach (var dialog in this.FDialogs)
+            {
+                try
+                {
+                    if (dialog.FullName.ToLower().Contains(query.ToLower()))
+                    {
+                        FSearchDialogs.Add(dialog);
+                    }
+                }
+                catch { }
+            }
+        }
+
+        internal async Task Forward(TLPeerBase reciever, string message)
+        {
+            if (message.Length > 0)
+            {
+                try
+                {
+                    await SendSimpleTextMessageToAUser(message, reciever.Id);
+                }
+                catch { }
+            }
+            try
+            {
+                await SendForwardedMessage(reciever.Id);
+            }
+            catch { }
+        }
+
+        private async Task SendForwardedMessage(int recieverId)
+        {
+            TLPeerBase toId = null;
+            TLInputPeerBase toPeer = null;
+
+            switch (ChatType)
+            {
+                case 0:
+                    toId = new TLPeerUser { Id = int.Parse(Item.Id.ToString()) };
+                    toPeer = new TLInputPeerUser { UserId = recieverId, AccessHash = (InMemoryCacheService.Current.GetUser(recieverId) as TLUser).AccessHash ?? 0 };
+                    break;
+                case 1:
+                    toId = new TLPeerChat { Id = int.Parse(chatItem.Id.ToString()) };
+                    toPeer = new TLInputPeerChat { ChatId = recieverId };
+                    break;
+                case 2:
+                    toId = new TLPeerChannel { Id = int.Parse(channelItem.Id.ToString()) };
+                    toPeer = new TLInputPeerChannel { ChannelId = recieverId };
+                    break;
+            }
+
+            var message = ForwardFlyoutMessage as TLMessage;
+
+
+            var messageClone = CreateClone(message);
+            await ProtoService.ForwardMessageAsync(toPeer, messageClone.Id, messageClone);
+
+            if ((Item != null) && (Item.Id == recieverId))
+            {
+                await ReloadMessages();
+            }
+        }
+
+        private async Task ReloadMessages()
+        {
+            Messages.Clear();
+            Messages.Groups.Clear();
+            loaded = 0;
+            await FetchMessages(peer, inputPeer);
+        }
+
+        private TLMessage CreateClone(TLMessage message)
+        {
+            TLMessage clone = new TLMessage();
+
+            clone.Date = message.Date;
+            clone.EditDate = message.EditDate;
+            if (message.Entities == null)
+                clone.Entities = null;
+            else
+                clone.Entities = new TLVector<TLMessageEntityBase>(message.Entities);
+            clone.Flags = message.Flags;
+            clone.FromId = message.FromId;
+
+            clone.FwdFrom = new TLMessageFwdHeader();
+
+            if (message.HasFwdFrom)
+            {
+                clone.FwdFrom.ChannelId = message.FwdFrom.ChannelId;
+                clone.FwdFrom.ChannelPost = message.FwdFrom.ChannelPost;
+                clone.FwdFrom.Date = message.FwdFrom.Date;
+                clone.FwdFrom.Flags = message.FwdFrom.Flags;
+                clone.FwdFrom.FromId = message.FwdFrom.FromId;
+                clone.FwdFrom.HasChannelId = message.FwdFrom.HasChannelId;
+                clone.FwdFrom.HasChannelPost = message.FwdFrom.HasChannelPost;
+                clone.FwdFrom.HasFromId = message.FwdFrom.HasFromId;
+            }
+
+            clone.HasEditDate = message.HasEditDate;
+            clone.HasEntities = message.HasEntities;
+            clone.HasFromId = message.HasFromId;
+            clone.HasFwdFrom = message.HasFwdFrom;
+            clone.HasMedia = message.HasMedia;
+            clone.HasReplyMarkup = message.HasReplyMarkup;
+            clone.HasReplyToMsgId = message.HasReplyToMsgId;
+            clone.HasViaBotId = message.HasViaBotId;
+            clone.HasViews = message.HasViews;
+            clone.Id = message.Id;
+            clone.InlineBotResultId = message.InlineBotResultId;
+            clone.InlineBotResultQueryId = message.InlineBotResultQueryId;
+            clone.IsFirst = message.IsFirst;
+            clone.IsMediaUnread = message.IsMediaUnread;
+            clone.IsMentioned = message.IsMentioned;
+            clone.IsOut = message.IsOut;
+            clone.IsPost = message.IsPost;
+            clone.IsSilent = message.IsSilent;
+            clone.IsUnread = message.IsUnread;
+            clone.Message = message.Message;
+            clone.Reply = message.Reply;
+            clone.ReplyMarkup = message.ReplyMarkup;
+            clone.ReplyToMsgId = message.ReplyToMsgId;
+            clone.State = message.State;
+            clone.ToId = message.ToId;
+            clone.ViaBotId = message.ViaBotId;
+            clone.Views = message.Views;
+
+            clone.Media = message.Media;
+
+            clone.RandomId = TLLong.Random();
+
+            return clone;
+        }
+
+        #endregion
+
+
+        private async Task SendSimpleTextMessageToAUser(string text, int recieverId)
+        {
+            var messageText = text;
+
+            TLPeerBase toId = null;
+            TLInputPeerBase toPeer = null;
+
+            switch (ChatType)
+            {
+                case 0:
+                    toId = new TLPeerUser { Id = recieverId };
+                    toPeer = new TLInputPeerUser { UserId = recieverId, AccessHash = (InMemoryCacheService.Current.GetUser(recieverId) as TLUser).AccessHash ?? 0 };
+                    break;
+                case 1:
+                    toId = new TLPeerChat { Id = recieverId };
+                    toPeer = new TLInputPeerChat { ChatId = recieverId };
+                    break;
+                case 2:
+                    toId = new TLPeerChannel { Id = recieverId };
+                    toPeer = new TLInputPeerChannel { ChannelId = recieverId };
+                    break;
+            }
+
+            TLMessageMediaBase media = new TLMessageMediaEmpty();
+
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, media, TLLong.Random(), 0);
+
+            if (Item.Id != recieverId)
+            {
+                await ProtoService.SendMessageAsync(message, () => { });
+            }
+            else
+            {
+                var previousMessage = InsertSendingMessage(message);
+
+                CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+                {
+                    await ProtoService.SendMessageAsync(message, () => { });
+                });
+            }
+        }
+
 
         public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
         private async void SendMessage(string args)
@@ -633,6 +865,8 @@ namespace Unigram.ViewModels
             _parent = parent.Groups;
 
             From = from;
+            if (fromId == null)
+                FromId = 33303409;
             FromId = fromId;
             ToId = toId;
             IsOut = isOut;

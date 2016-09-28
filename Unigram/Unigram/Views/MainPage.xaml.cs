@@ -150,10 +150,11 @@ namespace Unigram.Views
                     var ciccio = dialog.With as TLChat;
                     ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChat { ChatId = ciccio.Id });
                 }
+               
                 else if (dialog.With is TLChannel)
                 {
-                    var ciccio = dialog.With as TLChannel;
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChannel { ChannelId = ciccio.Id, AccessHash = ciccio.AccessHash.Value });
+                    var ciccio = dialog.With as TLChannel;                    
+                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChannel { ChannelId = ciccio.Id, AccessHash = ciccio.AccessHash ?? 0 });
                 }
             }
         }
@@ -231,7 +232,7 @@ namespace Unigram.Views
 
         private async void PivotItem_Loaded(object sender, RoutedEventArgs e)
         {
-            await ViewModel.Contacts.getTLContacts();
+            //await ViewModel.Contacts.getTLContacts();
         }
 
         private void UsersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -121,6 +121,9 @@
     <Compile Include="Controls\BubbleListView.cs" />
     <Compile Include="Controls\BubbleListViewItem.cs" />
     <Compile Include="Controls\BubbleTextBox.cs" />
+    <Compile Include="Controls\ForwardDialog.xaml.cs">
+      <DependentUpon>ForwardDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Items\DialogListViewItem.xaml.cs">
       <DependentUpon>DialogListViewItem.xaml</DependentUpon>
     </Compile>
@@ -281,6 +284,7 @@
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-150.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-400.png" />
+    <Content Include="Assets\Logos\Placeholder\Placeholder-2.png" />
     <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-100.png" />
     <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-125.png" />
     <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-150.png" />
@@ -339,6 +343,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Page Include="Controls\ForwardDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Items\DialogListViewItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -492,7 +500,7 @@
       <Project>{cf4c1fc3-bc51-4297-a7e1-493fcffe940b}</Project>
       <Name>Unigram.Tasks</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Unigram.WebP\Unigram.WebP.vcxproj">
+    <ProjectReference Include="..\Unigram.Native\Unigram.Native.vcxproj">
       <Project>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</Project>
       <Name>Unigram.WebP</Name>
     </ProjectReference>

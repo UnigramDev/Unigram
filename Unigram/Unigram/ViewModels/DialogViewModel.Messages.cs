@@ -55,7 +55,26 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
         private void MessageForwardExecute(TLMessageBase message)
         {
+            ForwardFlyoutMessage = null;
+
+            if (message == null) return;
+
+            var serviceMessage = message as TLMessageService;
+            if (serviceMessage != null)
+            {
+                var action = serviceMessage.Action;
+                // TODO: 
+                //if (action is TLMessageActionEmpty || action is TLMessageActionUnreadMessages)
+                //{
+                //    return;
+                //}
+            }
+
+            if (message.Id <= 0) return;
+
+            ForwardFlyoutMessage = message;
         }
+
 
         #endregion
 

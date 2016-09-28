@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Themes"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:viewmodels="using:Unigram.ViewModels"
+    xmlns:models="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -37,8 +38,29 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="ReplyPhotoTemplate">
+        <Grid DataContext="{Binding Reply}" Margin="0,4,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,6,0"/>
+
+            <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="42" Height="42" Grid.Column="1">
+                <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
+            </Border>
+
+            <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="2">
+                <TextBlock Text="{Binding From.FullName}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
+                <TextBlock Text="Photo" Foreground="{ThemeResource MessageSubtleLabelBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
     <selectors:ReplyTemplateSelector x:Key="ReplyTemplateSelector"
-                ReplyTextTemplate="{StaticResource ReplyTextTemplate}"/>
+        ReplyTextTemplate="{StaticResource ReplyTextTemplate}"
+        ReplyPhotoTemplate="{StaticResource ReplyPhotoTemplate}"/>
 
     <!--<selectors:ReplyTemplateSelector x:Key="ReplyTemplateSelector"
                 ForwardedMessagesTemplate="{StaticResource ForwardedMessagesTemplate}"
