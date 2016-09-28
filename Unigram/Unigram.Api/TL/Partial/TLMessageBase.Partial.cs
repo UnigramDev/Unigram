@@ -99,7 +99,7 @@ namespace Telegram.Api.TL
         {
             get
             {
-                if (_from == null)
+                if (_from == null && FromId.HasValue)
                     _from = InMemoryCacheService.Current.GetUser(FromId.Value) as TLUser;
 
                 return _from;

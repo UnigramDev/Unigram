@@ -188,10 +188,13 @@
                         <Setter Target="profilePane.(Grid.RowSpan)" Value="1"/>
                         <Setter Target="profilePane.(Grid.Column)" Value="0"/>
                         <Setter Target="profilePane.(Grid.Row)" Value="0"/>
+                        <Setter Target="InitialName.FontSize" Value="24" />
                         <Setter Target="elpContentInfoChatIconPicture.MinHeight" Value="96"/>
                         <Setter Target="elpContentInfoChatIconPicture.MinWidth" Value="96"/>
                         <Setter Target="elpContentInfoChatIcon.MinHeight" Value="120"/>
                         <Setter Target="elpContentInfoChatIcon.MinWidth" Value="120"/>
+                        <Setter Target="elpContentInfoChatIconColor.MinHeight" Value="96"/>
+                        <Setter Target="elpContentInfoChatIconColor.MinWidth" Value="96"/>
                         <Setter Target="profileControlPane.(Grid.RowSpan)" Value="1"/>
                         <Setter Target="profileControlPane.(Grid.Row)" Value="1"/>
                         <Setter Target="profileControlPane.(Grid.ColumnSpan)" Value="2"/>
@@ -215,17 +218,20 @@
                 </VisualState>
                 <VisualState x:Name="FilledState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="500"/>
+                        <AdaptiveTrigger MinWindowWidth="720"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="profilePane.(Grid.ColumnSpan)" Value="1"/>
                         <Setter Target="profilePane.(Grid.RowSpan)" Value="2"/>
                         <Setter Target="profilePane.(Grid.Column)" Value="0"/>
                         <Setter Target="profilePane.(Grid.Row)" Value="0"/>
+                        <Setter Target="InitialName.FontSize" Value="96" />
                         <Setter Target="elpContentInfoChatIconPicture.MinHeight" Value="200"/>
                         <Setter Target="elpContentInfoChatIconPicture.MinWidth" Value="200"/>
                         <Setter Target="elpContentInfoChatIcon.MinHeight" Value="200"/>
                         <Setter Target="elpContentInfoChatIcon.MinWidth" Value="200"/>
+                        <Setter Target="elpContentInfoChatIconColor.MinHeight" Value="200"/>
+                        <Setter Target="elpContentInfoChatIconColor.MinWidth" Value="200"/>
                         <Setter Target="profileControlPane.(Grid.RowSpan)" Value="2"/>
                         <Setter Target="profileControlPane.(Grid.Row)" Value="0"/>
                         <Setter Target="profileControlPane.(Grid.ColumnSpan)" Value="1"/>
@@ -261,6 +267,8 @@
             <Grid x:Name="grdProfile"
                   Margin="16,8"
                   RelativePanel.AlignHorizontalCenterWithPanel="True">
+                <Ellipse x:Name="elpContentInfoChatIconColor" Margin="12,0" Width="200" Height="200" Fill="Purple" VerticalAlignment="Center"/><!-- Placeholder fill  -->
+                <TextBlock Margin="12,0" FontSize="96" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.FullNameField, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <Ellipse x:Name="elpContentInfoChatIconPicture" 
                          MinHeight="200" 
                          MinWidth="200">

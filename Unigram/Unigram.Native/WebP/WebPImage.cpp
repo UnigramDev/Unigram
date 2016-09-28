@@ -6,7 +6,7 @@
 using namespace Windows::Storage;
 using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::Storage::Streams;
-using namespace Unigram::WebP;
+using namespace Unigram::Native;
 using namespace Platform;
 
 WebPImage::WebPImage()
@@ -83,7 +83,7 @@ WebPImage^ WebPImage::CreateFromByteArray(const Array<uint8> ^bytes)
 	return image;
 }
 
-WriteableBitmap ^ Unigram::WebP::WebPImage::DecodeFromBuffer(IBuffer ^ buffer)
+WriteableBitmap ^ Unigram::Native::WebPImage::DecodeFromBuffer(IBuffer ^ buffer)
 {
 	ComPtr<IBufferByteAccess> bufferByteAccess;
 	reinterpret_cast<IInspectable*>(buffer)->QueryInterface(IID_PPV_ARGS(&bufferByteAccess));
@@ -108,7 +108,7 @@ WriteableBitmap^ WebPImage::DecodeFromByteArray(const Array<uint8> ^bytes)
 	return CreateWriteableBitmapFromWebPData(webPData);
 }
 
-WriteableBitmap ^ Unigram::WebP::WebPImage::CreateWriteableBitmapFromWebPData(WebPData webPData)
+WriteableBitmap ^ Unigram::Native::WebPImage::CreateWriteableBitmapFromWebPData(WebPData webPData)
 {
 	auto spDemuxer = std::unique_ptr<WebPDemuxer, decltype(&WebPDemuxDelete)>
 	{
@@ -162,7 +162,7 @@ WriteableBitmap ^ Unigram::WebP::WebPImage::CreateWriteableBitmapFromWebPData(We
 	return nullptr;
 }
 
-IRandomAccessStream^ Unigram::WebP::WebPImage::Encode(const Array<uint8> ^bytes)
+IRandomAccessStream^ Unigram::Native::WebPImage::Encode(const Array<uint8> ^bytes)
 {
 	auto vBuffer = std::vector<uint8_t>(bytes->Length);
 	std::copy(bytes->begin(), bytes->end(), vBuffer.begin());

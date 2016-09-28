@@ -2,10 +2,19 @@
 
 #include <collection.h>
 #include <ppltasks.h>
+
 #include <wrl.h>
 #include <robuffer.h>
+
 #include <webp\decode.h>
 #include <webp\demux.h>
+
+#include <mfobjects.h>
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mfreadwrite.h>
+
+#include "COMHelper.h"
 
 class WebPDemuxerWrapper
 {

@@ -493,7 +493,7 @@
       <Project>{cf4c1fc3-bc51-4297-a7e1-493fcffe940b}</Project>
       <Name>Unigram.Tasks</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Unigram.WebP\Unigram.WebP.vcxproj">
+    <ProjectReference Include="..\Unigram.Native\Unigram.Native.vcxproj">
       <Project>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</Project>
       <Name>Unigram.WebP</Name>
     </ProjectReference>
