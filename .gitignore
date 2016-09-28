@@ -243,3 +243,7 @@ _Pvt_Extensions
 /Unigram/Unigram.VC.dll
 /Unigram/Unigram.VC.VC.opendb
 /Unigram/Unigram.VC.db
+/Unigram/Unigram/Views/UserInfoPageNew.xaml
+/Unigram/Unigram/Views/UserInfoPageNew.xaml.cs
+/Unigram/Unigram/Views/UserInfoPage - Copy.xaml
+/Unigram/Unigram/Views/ChatInfoPage - Copy.xaml.cs

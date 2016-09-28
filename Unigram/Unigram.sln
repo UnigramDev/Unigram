@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram.Tasks", "Unigram.Ta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram.DesktopService", "Unigram.DesktopService\Unigram.DesktopService.csproj", "{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.WebP", "Unigram.WebP\Unigram.WebP.vcxproj", "{1B521E77-46BD-4D60-89F6-D68E9BB9ABFF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native", "Unigram.Native\Unigram.Native.vcxproj", "{1B521E77-46BD-4D60-89F6-D68E9BB9ABFF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{C385BB20-B82D-496E-A38D-835D017AC0EA}"
 EndProject

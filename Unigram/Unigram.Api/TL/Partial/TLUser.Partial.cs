@@ -35,8 +35,8 @@ namespace Telegram.Api.TL
                 //    return string.Format("{0} {1}", ExtendedInfo.FirstName, ExtendedInfo.LastName);
                 //}
 
-                var firstName = FirstName != null ? FirstName.ToString() : string.Empty;
-                var lastName = LastName != null ? LastName.ToString() : string.Empty;
+                var firstName = FirstName ?? string.Empty;
+                var lastName = LastName ?? string.Empty;
 
                 if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
                 {

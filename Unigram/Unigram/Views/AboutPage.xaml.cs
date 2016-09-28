@@ -97,10 +97,27 @@
             var success = await Windows.System.Launcher.LaunchUriAsync(url);
         }
 
+        private void btnCoreFelaWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            // No website... yet? :)
+        }
+
+        private void btnCoreMateiWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            // No website... yet? :)
+        }
+
         private async void btnCoreKesavaWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             var url = new Uri(@"http://fb.com/kesavaprasadarul");
             var success = await Windows.System.Launcher.LaunchUriAsync(url);
         }
+
+        private async void btnCoreAbdelWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var url = new Uri(@"https://adeltax.com/");
+            var success = await Windows.System.Launcher.LaunchUriAsync(url);
+        }
+
     }
 }

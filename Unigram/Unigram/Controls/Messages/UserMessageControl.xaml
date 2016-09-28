@@ -64,6 +64,11 @@
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}" 
                 Grid.Row="3"/>-->
 
+                <ContentControl
+                    Content="{x:Bind ViewModel.Media, Mode=OneWay}"
+                    ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
+                    Grid.Row="3"/>
+
                 <Border x:Name="StatusControl"
                     VerticalAlignment="Bottom" 
                     HorizontalAlignment="Right"

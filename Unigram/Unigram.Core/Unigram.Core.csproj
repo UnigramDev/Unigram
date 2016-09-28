@@ -116,7 +116,13 @@
     <Compile Include="Notifications\LiveTile.cs" />
     <Compile Include="Notifications\Toast.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rtf\RtfLex.cs" />
+    <Compile Include="Rtf\RtfReader.cs" />
+    <Compile Include="Rtf\RtfSarParser.cs" />
+    <Compile Include="Rtf\RtfToken.cs" />
+    <Compile Include="Rtf\RtfTokenType.cs" />
     <Compile Include="Services\DialogsService.cs" />
+    <Compile Include="Services\JumpListService.cs" />
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\IExtendedDeviceInfoService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />

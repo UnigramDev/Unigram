@@ -39,7 +39,8 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <FontIcon Glyph="&#xE125;" 
+                <FontIcon x:Name="fiType"
+                          Glyph="&#xE125;" 
                           Visibility="{Binding GroupChat}"
                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                           VerticalAlignment="Bottom"

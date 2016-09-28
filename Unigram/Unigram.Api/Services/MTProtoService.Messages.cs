@@ -734,6 +734,7 @@ namespace Telegram.Api.Services
             if (message.Entities != null)
             {
                 obj.Entities = message.Entities;
+                obj.HasEntities = true;
             }
 
             // TODO: future

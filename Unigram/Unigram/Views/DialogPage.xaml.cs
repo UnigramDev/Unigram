@@ -15,6 +15,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -39,13 +40,9 @@ namespace Unigram.Views
             InitializeComponent();
 
             DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
-
             Loaded += DialogPage_Loaded;
             CheckMessageBoxEmpty();
-            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
-
-
 
         private void DialogPage_Loaded(object sender, RoutedEventArgs e)
         {
@@ -69,53 +66,25 @@ namespace Unigram.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
         }
 
         private void CheckMessageBoxEmpty()
         {
-            if (txtMessage.Text == "" || txtMessage.Text == null)
+            if (txtMessage.IsEmpty)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
+                btnStickers.Visibility = Visibility.Visible;
                 btnVoiceMessage.Visibility = Visibility.Visible;
             }
             else
             {
+                btnStickers.Visibility = Visibility.Collapsed;
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
                 btnSendMessage.Visibility = Visibility.Visible;
             }
         }
 
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
-        {
-
-            // Check if the "Enter" Key is pressed.
-            if ((args.EventType == CoreAcceleratorKeyEventType.SystemKeyDown || args.EventType == CoreAcceleratorKeyEventType.KeyDown) && (args.VirtualKey == VirtualKey.Enter))
-            {
-                // Check if CTRL is also pressed in addition to Enter key.
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-                // If there is text and CTRL is not pressed, send message. Else start new row.
-                if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && btnSendMessage.Visibility == Visibility.Visible)
-                {
-
-                    // TODO working but UGLY workaround: removal of the enter character from message.
-                    // The character itself should not be added to the string from the begining.
-                    // This will create a visual artefact for a fraction of a second, enlarging the 
-                    // message box prior to sending and clearing the it.
-                    txtMessage.Text = txtMessage.Text.Remove(txtMessage.Text.Length - 1);
-                    ViewModel.SendTextHolder = txtMessage.Text;
-                    if (ViewModel.SendCommand.CanExecute(null))
-                        ViewModel.SendCommand.Execute(null);
-                    txtMessage.Text = "";
-                    args.Handled = true;
-                }
-            }
-            
-        }
-
-        private void txtMessage_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
+        private void txtMessage_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
             CheckMessageBoxEmpty();
 
@@ -131,10 +100,9 @@ namespace Unigram.Views
 
         }
 
-        private void btnSendMessage_Click(object sender, RoutedEventArgs e)
+        private async void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.SendTextHolder = txtMessage.Text;
-            txtMessage.Text = "";
+            await txtMessage.SendAsync();
         }
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
@@ -142,11 +110,11 @@ namespace Unigram.Views
             var user = ViewModel.user;
             var channel = ViewModel.channel;
             var chat = ViewModel.chat;
-            if(user!=null)
+            if (user!=null) //Se non è zuppa allora è pan bagnato
                 ViewModel.NavigationService.Navigate(typeof(UserInfoPage), user);
-            if(channel!=null)
+            else if (channel!=null)
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), channel);
-            if (chat != null)
+            else if (chat != null)
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), chat);
 
         }
@@ -168,19 +136,23 @@ namespace Unigram.Views
                 picker.FileTypeFilter.Add(".jpeg");
 
                 // Get the file
-                StorageFile file = await picker.PickSingleFileAsync();
-                BitmapImage img = new BitmapImage();
-
-                using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
+                var file = await picker.PickSingleFileAsync();
+                if (file != null)
                 {
-                    await img.SetSourceAsync(stream);
-                }
+                    var img = new BitmapImage();
 
-                imgSingleImgThumbnail.Source = img;
-                imgSingleImgThumbnail.Visibility = Visibility.Visible;
-                btnRemoveSingleImgThumbnail.Visibility = Visibility.Visible;
-                btnVoiceMessage.Visibility = Visibility.Collapsed;
-                btnSendMessage.Visibility = Visibility.Visible;
+                    // If image is big on mobile all will explode!
+                    using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
+                    {
+                        await img.SetSourceAsync(stream);
+                    }
+
+                    imgSingleImgThumbnail.Source = img;
+                    imgSingleImgThumbnail.Visibility = Visibility.Visible;
+                    btnRemoveSingleImgThumbnail.Visibility = Visibility.Visible;
+                    btnVoiceMessage.Visibility = Visibility.Collapsed;
+                    btnSendMessage.Visibility = Visibility.Visible;
+                }
             }
             catch { }
         }
@@ -209,6 +181,12 @@ namespace Unigram.Views
                 var ciccio = dialog.With as TLChannel;
                 ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChannel { ChannelId = ciccio.Id, AccessHash = ciccio.AccessHash.Value });
             }
+        }
+
+        private void btnClosePinnedMessage_Click(object sender, RoutedEventArgs e)
+        {
+            grdPinnedMessage.Visibility = Visibility.Collapsed;
+
         }
     }
 }
