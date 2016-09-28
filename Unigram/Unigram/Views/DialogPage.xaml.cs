@@ -158,8 +158,6 @@ namespace Unigram.Views
             imgSingleImgThumbnail.Source = null;
             CheckMessageBoxEmpty();
         }
-
-<<<<<<< HEAD
         private void btnSendMessage_Focus(object sender, RoutedEventArgs e)
         {
             if (txtMessage.FocusState == FocusState.Unfocused)
@@ -174,8 +172,7 @@ namespace Unigram.Views
             }
         }
 
-=======
->>>>>>> origin/development
+
         private void btnClosePinnedMessage_Click(object sender, RoutedEventArgs e)
         {
             grdPinnedMessage.Visibility = Visibility.Collapsed;
