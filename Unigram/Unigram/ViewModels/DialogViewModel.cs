@@ -40,6 +40,9 @@ namespace Unigram.ViewModels
         public Brush PlaceHolderColor { get; internal set; }
         public string DialogTitle;
         public string LastSeen;
+        public string pinnedMessage;
+        public string pinnedMessageSender;
+        public Visibility pinnedMessageVisible = Visibility.Collapsed;
         public Visibility LastSeenVisible;
         public string debug;
 
@@ -157,9 +160,9 @@ namespace Unigram.ViewModels
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Value.Messages);
-
                 foreach (var item in result.Value.Messages)
                 {
+                    
                     Messages.Insert(0, item);
                 }
             }
@@ -281,11 +284,26 @@ namespace Unigram.ViewModels
             }
             else if (channel != null)
             {
+
                 TLInputChannel x=new TLInputChannel();                
                 x.ChannelId = channel.ChannelId;
                 x.AccessHash = channel.AccessHash;
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);                
                 DialogTitle = channelDetails.Value.Chats[0].FullName;
+                var channelFull=(TLChannelFull)channelDetails.Value.FullChat;
+                if (channelFull.HasPinnedMsgId)
+                {
+                    pinnedMessageVisible = Visibility.Visible;
+                    var msgId = channelFull.PinnedMsgId;
+                    TLVector<int> temp = new TLVector<int>(1) { msgId.GetValueOrDefault() };
+                    var y = await ProtoService.GetMessagesAsync(x, temp);
+                    pinnedMessage = ((TLMessage)y.Value.Messages[0]).Message;
+                    pinnedMessageSender = y.Value.Users[0].FullName;
+                }
+                else
+                {
+                    pinnedMessageVisible = Visibility.Collapsed;
+                }
                 PlaceHolderColor = BindConvert.Current.Bubble(channelDetails.Value.Chats[0].Id);
                 photo = channelDetails.Value.Chats[0].Photo;
                 LastSeenVisible = Visibility.Collapsed;
@@ -633,6 +651,8 @@ namespace Unigram.ViewModels
             _parent = parent.Groups;
 
             From = from;
+            if (fromId == null)
+                FromId = 33303409;
             FromId = fromId;
             ToId = toId;
             IsOut = isOut;

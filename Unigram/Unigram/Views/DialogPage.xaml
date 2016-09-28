@@ -476,7 +476,7 @@
         <RelativePanel Grid.Row="1">
             <!-- Pinned message -->
             <Grid x:Name="grdPinnedMessage"
-                  Visibility="Collapsed"
+                  Visibility="{x:Bind ViewModel.pinnedMessageVisible}"
                   Background="{ThemeResource TelegramBackgroundAccentBrush}"
                   Height="48"
                   RelativePanel.AlignLeftWithPanel="True"
@@ -522,14 +522,14 @@
                             <!-- User -->
                             <TextBlock Grid.Column="1"
                                        Grid.Row="0"
-                                       Text="User"
+                                       Text="{x:Bind ViewModel.pinnedMessageSender}"
                                        TextTrimming="CharacterEllipsis"
                                        Style="{ThemeResource BaseTextBlockStyle}"
                                        RequestedTheme="Dark" />
                             <!-- Message -->
                             <TextBlock Grid.Column="1"
                                        Grid.Row="1"
-                                       Text="Super duper important message I need to tell about"
+                                       Text="{x:Bind ViewModel.pinnedMessage}"
                                        RequestedTheme="Dark"
                                        Style="{ThemeResource BodyTextBlockStyle}"
                                        TextTrimming="CharacterEllipsis"
@@ -550,7 +550,7 @@
                         VerticalAlignment="Stretch"
                         Click="btnClosePinnedMessage_Click"/>
             </Grid>
-
+            
             <Grid RelativePanel.AlignLeftWithPanel="True"
                   RelativePanel.AlignRightWithPanel="True"
                   RelativePanel.Below="grdPinnedMessage"
