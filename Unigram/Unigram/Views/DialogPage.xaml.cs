@@ -40,12 +40,9 @@ namespace Unigram.Views
             InitializeComponent();
 
             DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
-
             Loaded += DialogPage_Loaded;
             CheckMessageBoxEmpty();
         }
-
-
 
         private void DialogPage_Loaded(object sender, RoutedEventArgs e)
         {
@@ -69,7 +66,6 @@ namespace Unigram.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
         }
 
         private void CheckMessageBoxEmpty()
@@ -112,11 +108,11 @@ namespace Unigram.Views
             var user = ViewModel.user;
             var channel = ViewModel.channel;
             var chat = ViewModel.chat;
-            if(user!=null)
+            if (user!=null) //Se non è zuppa allora è pan bagnato
                 ViewModel.NavigationService.Navigate(typeof(UserInfoPage), user);
-            if(channel!=null)
+            else if (channel!=null)
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), channel);
-            if (chat != null)
+            else if (chat != null)
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), chat);
 
         }
@@ -161,6 +157,25 @@ namespace Unigram.Views
             btnRemoveSingleImgThumbnail.Visibility = Visibility.Collapsed;
             imgSingleImgThumbnail.Source = null;
             CheckMessageBoxEmpty();
+        }
+
+        private void btnSendMessage_Focus(object sender, RoutedEventArgs e)
+        {
+            if (txtMessage.FocusState == FocusState.Unfocused)
+            {
+                txtMessage.Margin = new Thickness(48,0,0,0);
+                btnMore.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                txtMessage.Margin = new Thickness(0);
+                btnMore.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void btnClosePinnedMessage_Click(object sender, RoutedEventArgs e)
+        {
+            grdPinnedMessage.Visibility = Visibility.Collapsed;
         }
     }
 }

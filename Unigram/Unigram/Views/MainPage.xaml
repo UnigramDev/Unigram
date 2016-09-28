@@ -99,7 +99,7 @@
                         </ListView.HeaderTemplate>-->
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="vms:UsersPanelListItem">
-                                <Grid Margin="0,4,0,8">
+                                <Grid Margin="0,4,0,4">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>

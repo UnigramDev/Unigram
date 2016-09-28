@@ -23,6 +23,98 @@
     </Page.Transitions>
 
     <Page.Resources>
+
+        <Style x:Key="IconMenuFlyoutItem" TargetType="MenuFlyoutItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="Padding" Value="{ThemeResource MenuFlyoutItemThemePadding}" />
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuFlyoutItem">
+                        <Grid x:Name="LayoutRoot"
+                      Background="{TemplateBinding Background}"
+                      BorderBrush="{TemplateBinding BorderBrush}"
+                      BorderThickness="{TemplateBinding BorderThickness}"
+                      Padding="0,12">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="TextBlock" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="TextBlock" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation Storyboard.TargetName="TextBlock" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckPlaceholderStates">
+                                    <VisualState x:Name="NoPlaceholder" />
+                                    <VisualState x:Name="CheckPlaceholder">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Margin">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="PaddingSizeStates">
+                                    <VisualState x:Name="DefaultPadding" />
+                                    <VisualState x:Name="NarrowPadding">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Padding">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MenuFlyoutItemThemePaddingNarrow}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <StackPanel Orientation="Horizontal">
+                                <!--<FontIcon Margin="0,0,12,0" Glyph="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />-->
+                                <SymbolIcon Margin="12,0"  Symbol="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                <TextBlock x:Name="TextBlock"
+                                   Margin="8,0"
+                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   Text="{TemplateBinding Text}"
+                                   TextTrimming="Clip" />
+                            </StackPanel>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <CollectionViewSource x:Name="MessagesSource" IsSourceGrouped="True" Source="{Binding Messages.Groups}"/>
 
         <!-- Teorically temporary location, but we'll see -->
@@ -302,52 +394,170 @@
         </Grid.RowDefinitions>
         
         <!-- Titlebar -->
-        <Button x:Name="btnDialogInfo"
-                Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+        <Grid Grid.Row="0" Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
+            <!-- Prevent "click effect" to the entire titlebar and other stuff -->
+            <Button x:Name="btnDialogInfo"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 Padding="0"
-                Grid.Row="0" Click="btnDialogInfo_Click">
-            <Button.Content>
-                <StackPanel Orientation="Horizontal">
-                    <!--User icon-->
-                    <Grid>
-                    <Ellipse Margin="12,0" Width="40" Height="40" Fill="{x:Bind ViewModel.PlaceHolderColor}" VerticalAlignment="Top"/>
-                    <TextBlock Margin="12,0" Foreground="White" x:Name="InitialName" Text="" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <Ellipse x:Name="elpDialogIcon"
-                             Width="40"
-                             Height="40"
-                             Margin="12,0">
-                        <Ellipse.Fill>
-                            <ImageBrush ImageSource="{x:Bind ViewModel.photo, Converter={StaticResource DefaultPhotoConverter}}" />
-                        </Ellipse.Fill>
-                    </Ellipse>
-                    </Grid>
-                    <StackPanel Orientation="Vertical"
+                Click="btnDialogInfo_Click" Background="{x:Null}"
+                Margin="0,0,48,0">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal" Height="40">
+                        <!--User icon-->
+                        <Grid>
+                            <Ellipse Margin="12,0" Width="40" Height="40" Fill="{x:Bind ViewModel.PlaceHolderColor}" VerticalAlignment="Center"/>
+                            <TextBlock Margin="12,0" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.DialogTitle, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Ellipse x:Name="elpDialogIcon"
+                                Width="40"
+                                Height="40"
+                                Margin="12,0">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="{x:Bind ViewModel.photo, Converter={StaticResource DefaultPhotoConverter}}" />
+                                </Ellipse.Fill>
+                            </Ellipse>
+                        </Grid>
+                        <StackPanel Orientation="Vertical"
                                 VerticalAlignment="Center">
-                        <TextBlock x:Name="tblDialogName"
-                                   Text="{x:Bind Path=ViewModel.DialogTitle}"
-                                   FontSize="16"
-                                   Style="{StaticResource BaseTextBlockStyle}"/>
-                        <TextBlock x:Name="tblDialogStatus"
-                                   Visibility="{x:Bind ViewModel.LastSeenVisible}"
-                                   Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
-                                   FontSize="12"
-                                   Text="{x:Bind ViewModel.LastSeen}" />
+                            <TextBlock x:Name="tblDialogName"
+                                    Text="{x:Bind Path=ViewModel.DialogTitle}"
+                                    FontSize="16"
+                                    Style="{StaticResource BaseTextBlockStyle}"/>
+                            <TextBlock x:Name="tblDialogStatus"
+                                    Visibility="{x:Bind ViewModel.LastSeenVisible}"
+                                    Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
+                                    FontSize="12"
+                                    Text="{x:Bind ViewModel.LastSeen}" />
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </Button.Content>
-        </Button>
+                </Button.Content>
+            </Button>
+            <Button x:Name="btnOptions"
+                    HorizontalAlignment="Right"
+                    Padding="0"
+                    Height="48"
+                    Width="48"
+                    Background="{x:Null}">
+                <Button.Content>
+                    <SymbolIcon Symbol="More" />
+                </Button.Content>
+                <Button.Flyout>
+                    <Flyout>
+                        <StackPanel Margin="-8">
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
+                                             x:Name="cbtnReportSpam"
+                                             x:Uid="FCBTN-ReportSpam"
+                                             Tag="ReportHacked"
+                                             Text="Report spam" />
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                             x:Name="cbtnSearch"
+                                             x:Uid="FCBTN-Search"
+                                             Tag="Find"
+                                             Text="Search" />
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
+                                             x:Name="cbtnPinToStart"
+                                             x:Uid="FCBTN-Pin"
+                                             Tag="Pin"
+                                             Text="Pin to Start"/>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
+                                             x:Name="cbtnBackgroundImage"
+                                             x:Uid="FCBTN-BackgroundImage"
+                                             Tag="Pictures"
+                                             Text="Change background image" />
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </Grid>
         <!-- END OF Titlebar -->
         
         <!-- Main content -->
         <RelativePanel Grid.Row="1">
+            <!-- Pinned message -->
+            <Grid x:Name="grdPinnedMessage"
+                  Visibility="Collapsed"
+                  Background="{ThemeResource TelegramBackgroundAccentBrush}"
+                  Height="48"
+                  RelativePanel.AlignLeftWithPanel="True"
+                  RelativePanel.AlignRightWithPanel="True"
+                  RelativePanel.AlignTopWithPanel="True">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="48"/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="btnPinnedMessage"
+                        Grid.Column="0"
+                        RequestedTheme="Dark"
+                        Padding="8,0"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Background="Transparent">
+                    <Button.Content>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Icon -->
+                            <TextBlock Grid.Column="0"
+                                       Grid.Row="0"
+                                       Grid.RowSpan="2"
+                                       Margin="0,0,12,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Text="&#xE840;"
+                                       RequestedTheme="Dark"
+                                       FontFamily="Segoe MDL2 Assets"
+                                       FontSize="20"/>
+
+                            <!-- User -->
+                            <TextBlock Grid.Column="1"
+                                       Grid.Row="0"
+                                       Text="User"
+                                       TextTrimming="CharacterEllipsis"
+                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                       RequestedTheme="Dark" />
+                            <!-- Message -->
+                            <TextBlock Grid.Column="1"
+                                       Grid.Row="1"
+                                       Text="Super duper important message I need to tell about"
+                                       RequestedTheme="Dark"
+                                       Style="{ThemeResource BodyTextBlockStyle}"
+                                       TextTrimming="CharacterEllipsis"
+                                       HorizontalAlignment="Stretch"/>
+
+                        </Grid>
+                    </Button.Content>
+                </Button>
+
+                <!-- Close button -->
+                <Button x:Name="btnClosePinnedMessage"
+                        Grid.Column="1"
+                        RequestedTheme="Dark"
+                        Background="Transparent"
+                        Content="&#xE106;"
+                        FontFamily="Segoe MDL2 Assets"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Click="btnClosePinnedMessage_Click"/>
+            </Grid>
+
             <Grid RelativePanel.AlignLeftWithPanel="True"
                   RelativePanel.AlignRightWithPanel="True"
-                  RelativePanel.AlignTopWithPanel="True"
+                  RelativePanel.Below="grdPinnedMessage"
                   RelativePanel.Above="rpInput">
-                <Image Source="ms-appx:///Assets/Images/DefaultBackground.jpg" Stretch="UniformToFill"/>
+                <Image Source="ms-appx:///Assets/Images/DefaultBackground.jpg" 
+                       Stretch="UniformToFill"/>
+
                 <controls:BubbleListView x:Name="lvDialogs" 
                                          ItemsSource="{Binding Source={StaticResource MessagesSource}}"
                                          ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
@@ -355,8 +565,8 @@
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel GroupHeaderPlacement="Left"
-                                             ItemsUpdatingScrollMode="KeepLastItemInView"
-                                             VerticalAlignment="Bottom" />
+                                                 ItemsUpdatingScrollMode="KeepLastItemInView"
+                                                 VerticalAlignment="Bottom" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemContainerStyleSelector>
@@ -378,29 +588,29 @@
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ListViewItem">
                                                 <ListViewItemPresenter
-                                                    ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                    SelectionCheckMarkVisualEnabled="True"
-                                                    CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                                    CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
-                                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
-                                                    FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                                    PointerOverBackground="Transparent"
-                                                    PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                                    SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
-                                                    SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                                    SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
-                                                    PressedBackground="Transparent"
-                                                    SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
-                                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                    ContentMargin="{TemplateBinding Padding}"
-                                                    CheckMode="Inline"/>
+                                                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                        SelectionCheckMarkVisualEnabled="True"
+                                                        CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                        CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                        DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                                        DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                                        FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                                        FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                        PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                        PointerOverBackground="Transparent"
+                                                        PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                        SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
+                                                        SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                        SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
+                                                        PressedBackground="Transparent"
+                                                        SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
+                                                        DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                        DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                        ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                        ContentMargin="{TemplateBinding Padding}"
+                                                        CheckMode="Inline"/>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -423,29 +633,29 @@
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ListViewItem">
                                                 <ListViewItemPresenter
-                                                    ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                    SelectionCheckMarkVisualEnabled="False"
-                                                    CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                                    CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                                    DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
-                                                    DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                                                    FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
-                                                    FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                                    PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                                    PointerOverBackground="Transparent"
-                                                    PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                                    SelectedBackground="Transparent"
-                                                    SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                                    SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
-                                                    PressedBackground="Transparent"
-                                                    SelectedPressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
-                                                    DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                    ContentMargin="{TemplateBinding Padding}"
-                                                    CheckMode="Inline"/>
+                                                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                        SelectionCheckMarkVisualEnabled="False"
+                                                        CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                        CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                        DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                                        DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                                        FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                                        FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                        PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                        PointerOverBackground="Transparent"
+                                                        PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                        SelectedBackground="Transparent"
+                                                        SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                        SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
+                                                        PressedBackground="Transparent"
+                                                        SelectedPressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
+                                                        DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                        DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                        ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                        ContentMargin="{TemplateBinding Padding}"
+                                                        CheckMode="Inline"/>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -486,7 +696,7 @@
                     </ListView.GroupStyle>
                 </controls:BubbleListView>
             </Grid>
-            
+
             <!-- Input pane -->
             <RelativePanel x:Name="rpInput"
                            MinHeight="{ThemeResource AppBarThemeCompactHeight}"
@@ -597,7 +807,8 @@
                              MaxHeight="84"
                              AcceptsReturn="True"
                              TextChanging="txtMessage_TextChanging"
-                             Grid.Row="1"/>
+                             Grid.Row="1" Margin="48,0,0,0"
+                             GotFocus="btnSendMessage_Focus" LostFocus="btnSendMessage_Focus"/>
                     <!-- Send-button -->
                     <Button x:Name="btnSendMessage"  
                             Visibility="Collapsed"
@@ -619,87 +830,78 @@
                     </Button>
 
                     <controls:GlyphButton x:Name="btnVoiceMessage" Click="btnVoiceMessage_Click" Glyph="&#xE720;" Grid.Column="1" Grid.Row="1"/>
+
+                    <Button x:Name="btnMore"
+                            Visibility="Visible"
+                            Width="48"
+                            MinHeight="48" 
+                            Background="Transparent"                                      
+                            VerticalAlignment="Stretch"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            Click="btnVoiceMessage_Click"
+                            Grid.Column="0"
+                            Grid.Row="1">
+                        <Button.Content>
+                            <SymbolIcon Symbol="Attach"/>
+                        </Button.Content>
+                        <Button.Flyout>
+                            <Flyout>
+                                <StackPanel Name="SP" Margin="-8" Padding="0">
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
+                                                x:Name="fcbtnAttachCamera"
+                                                x:Uid="FCBTN-Camera"
+                                                Tag="Camera"
+                                                MinWidth="80"
+                                                Text="Camera" />
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
+                                                x:Name="fcbtnAttachVideo"
+                                                x:Uid="FCBTN-Video"
+                                                Text="Video" 
+                                                MinWidth="80"
+                                                Tag="Video"/>
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                                x:Name="fcbtnAttachLocation"
+                                                x:Uid="FCBTN-Location"
+                                                Text="Location" 
+                                                MinWidth="80"
+                                                Tag="Map"/>
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                                x:Name="fcbtnAttachContact"
+                                                x:Uid="FCBTN-Contact"
+                                                Text="Contact"
+                                                MinWidth="80"
+                                                Tag="ContactInfo"/>
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                                x:Name="fcbtnAttachFile"
+                                                x:Uid="FCBTN-File"
+                                                Text="File"
+                                                MinWidth="80"
+                                                Tag="OpenFile"/>
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                                x:Name="fcbtnAttachPhoto"
+                                                x:Uid="FCBTN-Photo"
+                                                Tag="Pictures"
+                                                Text="Pictures"
+                                                MinWidth="80"
+                                                Click="fcbtnAttachPhoto_Click"/>
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                                x:Uid="CBTN-Stickers"
+                                                MinWidth="80"
+                                                Text="Stickers"
+                                                Tag="Stickers" 
+                                                Command="{Binding SendCommand}"
+                                                CommandParameter="ciao">
+                                        <!--<AppBarButton.Icon>
+                                            <FontIcon Glyph="&#xE606;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
+                                        </AppBarButton.Icon>-->
+                                    </MenuFlyoutItem>
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
                 </Grid>
             </RelativePanel>
         </RelativePanel>
         <!-- END OF Main content -->        
-        
-        <!-- Commandbar -->
-        <CommandBar x:Name="commandbar"
-                    Grid.Row="2">
-            <!-- Primary commands (visible in bar) -->
-            <CommandBar.PrimaryCommands>
-                <AppBarButton x:Name="cbtnAttachment"
-                              x:Uid="CBTN-Attachment"
-                              Icon="Attach"
-                              Label="Attachment">
-                    <!-- Attachment options -->
-                    <AppBarButton.Flyout>
-                        <MenuFlyout>
-                            <!-- Please try to add camera capabilities with the W10 file picker first
-                                 if that's not possible for all platforms, then enable the Camera-button here and 
-                                 write something for that -->
-                            <MenuFlyoutItem x:Name="fcbtnAttachCamera"
-                                            x:Uid="FCBTN-Camera"
-                                            Text="Camera" />
-                            <MenuFlyoutItem x:Name="fcbtnAttachPhoto"
-                                            x:Uid="FCBTN-Photo"
-                                            Text="Photo" 
-                                            MinWidth="180"
-                                            Click="fcbtnAttachPhoto_Click"/>
-                            <MenuFlyoutItem x:Name="fcbtnAttachVideo"
-                                            x:Uid="FCBTN-Video"
-                                            Text="Video" />
-                            <MenuFlyoutItem x:Name="fcbtnAttachLocation"
-                                            x:Uid="FCBTN-Location"
-                                            Text="Location" />
-                            <MenuFlyoutItem x:Name="fcbtnAttachFile"
-                                            x:Uid="FCBTN-File"
-                                            Text="File" />
-                            <MenuFlyoutItem x:Name="fcbtnAttachContact"
-                                            x:Uid="FCBTN-Contact"
-                                            Text="Contact" />
-                        </MenuFlyout>
-                    </AppBarButton.Flyout>
-                </AppBarButton>
-                <AppBarButton x:Name="cbtnStickers"
-                              x:Uid="CBTN-Stickers"
-                              Label="Stickers"
-                              Command="{Binding SendCommand}"
-                              CommandParameter="ciao">
-                    <AppBarButton.Icon>
-                        <FontIcon Glyph="&#xE606;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
-                    </AppBarButton.Icon>
-                    <FlyoutBase.AttachedFlyout>
-                        <Flyout>
-                            <Grid Height="240"
-                                  Width="264">
-                                <TextBlock Text="Soon..."
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
-                            </Grid>
-                        </Flyout>
-                    </FlyoutBase.AttachedFlyout>
-                </AppBarButton>
-            </CommandBar.PrimaryCommands>
-
-            <!-- Secondary Commands (hidden in sub menu) -->
-            <CommandBar.SecondaryCommands>
-                <AppBarButton x:Name="cbtnReportSpam"
-                              x:Uid="CBTN-ReportSpam"
-                              Icon="ReportHacked"
-                              Label="Report spam" />
-                <AppBarButton x:Name="cbtnSearch"
-                              x:Uid="CBTN-Search"
-                              Icon="Find"
-                              Label="Search" />
-                <AppBarButton x:Name="cbtnPinToStart"
-                              x:Uid="CBTN-Pin"
-                              Icon="Pin"
-                              Label="Pin to Start"/>
-            </CommandBar.SecondaryCommands>
-        </CommandBar>
-        <!-- END OF - Commandbar -->
-
     </Grid>
 </Page>

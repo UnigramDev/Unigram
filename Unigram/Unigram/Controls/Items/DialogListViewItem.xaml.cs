@@ -59,6 +59,7 @@ namespace Unigram.Controls.Items
                 UpdateStateIcon();
                 UpdateUnreadCount();
                 UpdatePicture();
+                //UpdateChannelType();
             }
         }
 
@@ -523,6 +524,19 @@ namespace Unigram.Controls.Items
             }
 
             return false;
+        }
+
+        private void UpdateChannelType()
+        {
+            if (ViewModel != null)
+            {
+                var chatType = ViewModel.Peer as TLPeerBase;
+
+                if (chatType.TypeId == TLType.PeerChat)
+                    fiType.Glyph = "\uE125";
+                else if(chatType.TypeId == TLType.PeerChannel)
+                    fiType.Glyph = "\uE1D7";
+            }
         }
 
         private bool CanDeleteDialog(ref MenuFlyoutItem menuItem)
