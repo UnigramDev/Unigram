@@ -313,57 +313,57 @@
                     <ScrollViewer>
                         <StackPanel>
                             <local:TableStackPanel x:Name="Group2" 
-                                           BorderThickness="0,0,0,1"
-                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                           Margin="0,24,0,0">
+                                                   BorderThickness="0,0,0,1"
+                                                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                                   Margin="0,24,0,0">
                                 <controls:HyperButton Content="Manage Administrators" 
-                                              Style="{StaticResource HyperButtonStyle}"/>
+                                                      Style="{StaticResource HyperButtonStyle}"/>
 
                                 <controls:HyperButton Content="Convert to Supergroup" 
-                                              Style="{StaticResource HyperButtonStyle}"/>
+                                                      Style="{StaticResource HyperButtonStyle}"/>
 
                                 <controls:HyperButton Content="Revoke Invite Link"
-                                              Style="{StaticResource HyperButtonStyle}"/>
+                                                      Style="{StaticResource HyperButtonStyle}"/>
 
                                 <controls:HyperButton Content="http://www.batmantrolls.com/thisisnotagroup"  
-                                              Tag="Invite Link"
-                                              Style="{StaticResource SubtitleButtonStyle}"/>
+                                                      Tag="Invite Link"
+                                                      Style="{StaticResource SubtitleButtonStyle}"/>
                             </local:TableStackPanel>
 
                             <local:TableStackPanel x:Name="Group3" 
-                                           BorderThickness="0,0,0,1"
-                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                           Margin="0,24,0,0">
+                                                   BorderThickness="0,0,0,1"
+                                                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                                   Margin="0,24,0,0">
                                 <controls:HyperButton Content="Shared media" 
-                                              Command="{Binding MediaCommand}"
-                                              Style="{StaticResource HyperButtonStyle}" 
-                                              Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                                                      Command="{Binding MediaCommand}"
+                                                      Style="{StaticResource HyperButtonStyle}" 
+                                                      Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
                                 <controls:HyperCheckButton Content="Enabled" 
-                                                   Tag="Notifications and sounds" 
-                                                   IsOn="{Binding AreNotificationsEnabled}"
-                                                   Style="{ThemeResource CheckButtonStyle}"/>
+                                                           Tag="Notifications and sounds" 
+                                                           IsOn="{Binding AreNotificationsEnabled}"
+                                                           Style="{ThemeResource CheckButtonStyle}"/>
                             </local:TableStackPanel>
 
                             <local:TableStackPanel x:Name="Group4" 
-                                           BorderThickness="0,0,0,1"
-                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                           Margin="0,24">
+                                                   BorderThickness="0,0,0,1"
+                                                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                                   Margin="0,24">
                                 <controls:HyperButton Content="Clear History" 
-                                              Style="{StaticResource HyperButtonStyle}"/>
+                                                      Style="{StaticResource HyperButtonStyle}"/>
                                 <!--For Chats-->
                                 <controls:HyperButton Content="Delete and Exit" 
-                                              Command="{Binding BlockCommand}"
-                                              Visibility="{Binding StopVisibility}"
-                                              Style="{StaticResource HyperButtonStyle}" 
-                                              Foreground="Red"/>
+                                                      Command="{Binding BlockCommand}"
+                                                      Visibility="{Binding StopVisibility}"
+                                                      Style="{StaticResource HyperButtonStyle}" 
+                                                      Foreground="Red"/>
                                 <!--For Channels-->
                                 <controls:HyperButton Content="Leave Group" 
-                                              Style="{StaticResource HyperButtonStyle}" 
-                                              Foreground="Red"/>
+                                                      Style="{StaticResource HyperButtonStyle}" 
+                                                      Foreground="Red"/>
                             </local:TableStackPanel>
                         </StackPanel>
                     </ScrollViewer>
@@ -374,16 +374,15 @@
                     </PivotItem.Header>
                     <ScrollViewer>
                         <local:TableStackPanel x:Name="membersGroup"
-                                           BorderThickness="0,0,0,1"
-                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                           Margin="0,24">
+                                               BorderThickness="0,0,0,1"
+                                               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                               BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                               Margin="0,24">
                             <ListView x:Name="UsersListView"
-                              ItemsSource="{x:Bind ViewModel.UsersList}" SelectionChanged="UsersListView_SelectionChanged"
-                                     >
+                                      ItemsSource="{x:Bind ViewModel.UsersList}" SelectionChanged="UsersListView_SelectionChanged">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="vms:UsersPanelListItem">
-                                        <Grid Margin="0,4,0,4">
+                                        <Grid Margin="0,4,0,8">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
@@ -401,16 +400,15 @@
                                             </Ellipse>
                                             <TextBlock Text="{x:Bind fullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                             <TextBlock Text="{x:Bind lastSeen}" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"
-                                               Style="{ThemeResource CaptionTextBlockStyle}" 
-                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                       TextTrimming="CharacterEllipsis" 
-                       TextWrapping="NoWrap" 
-                       MaxLines="1"/>
+                                                       Style="{ThemeResource CaptionTextBlockStyle}" 
+                                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                       TextTrimming="CharacterEllipsis" 
+                                                       TextWrapping="NoWrap" 
+                                                       MaxLines="1"/>
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
-
                         </local:TableStackPanel>
                     </ScrollViewer>
                 </PivotItem>

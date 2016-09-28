@@ -73,10 +73,12 @@ namespace Unigram.Views
             if (txtMessage.IsEmpty)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
+                btnStickers.Visibility = Visibility.Visible;
                 btnVoiceMessage.Visibility = Visibility.Visible;
             }
             else
             {
+                btnStickers.Visibility = Visibility.Collapsed;
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
                 btnSendMessage.Visibility = Visibility.Visible;
             }
@@ -134,19 +136,23 @@ namespace Unigram.Views
                 picker.FileTypeFilter.Add(".jpeg");
 
                 // Get the file
-                StorageFile file = await picker.PickSingleFileAsync();
-                BitmapImage img = new BitmapImage();
-
-                using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
+                var file = await picker.PickSingleFileAsync();
+                if (file != null)
                 {
-                    await img.SetSourceAsync(stream);
-                }
+                    var img = new BitmapImage();
 
-                imgSingleImgThumbnail.Source = img;
-                imgSingleImgThumbnail.Visibility = Visibility.Visible;
-                btnRemoveSingleImgThumbnail.Visibility = Visibility.Visible;
-                btnVoiceMessage.Visibility = Visibility.Collapsed;
-                btnSendMessage.Visibility = Visibility.Visible;
+                    // If image is big on mobile all will explode!
+                    using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
+                    {
+                        await img.SetSourceAsync(stream);
+                    }
+
+                    imgSingleImgThumbnail.Source = img;
+                    imgSingleImgThumbnail.Visibility = Visibility.Visible;
+                    btnRemoveSingleImgThumbnail.Visibility = Visibility.Visible;
+                    btnVoiceMessage.Visibility = Visibility.Collapsed;
+                    btnSendMessage.Visibility = Visibility.Visible;
+                }
             }
             catch { }
         }
@@ -159,23 +165,6 @@ namespace Unigram.Views
             CheckMessageBoxEmpty();
         }
 
-<<<<<<< HEAD
-        private void btnSendMessage_Focus(object sender, RoutedEventArgs e)
-        {
-            if (txtMessage.FocusState == FocusState.Unfocused)
-            {
-                txtMessage.Margin = new Thickness(48,0,0,0);
-                btnMore.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                txtMessage.Margin = new Thickness(0);
-                btnMore.Visibility = Visibility.Collapsed;
-            }
-        }
-
-=======
->>>>>>> origin/development
         private void btnClosePinnedMessage_Click(object sender, RoutedEventArgs e)
         {
             grdPinnedMessage.Visibility = Visibility.Collapsed;
