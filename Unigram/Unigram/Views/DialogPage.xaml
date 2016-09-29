@@ -796,7 +796,8 @@
 
                 <controls:GlyphButton Glyph="&#xE16C;" Grid.Row="1">
                     <Button.Flyout>
-                        <Flyout>
+                        <Flyout ScrollViewer.VerticalScrollMode="Disabled"
+                                ScrollViewer.VerticalScrollBarVisibility="Hidden">
                             <StackPanel Name="SP" Margin="-8" Padding="0">
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
                                                 x:Name="fcbtnAttachCamera"
@@ -804,6 +805,13 @@
                                                 Tag="Camera"
                                                 MinWidth="160"
                                                 Text="Camera" />
+                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                                x:Name="fcbtnAttachPhoto"
+                                                x:Uid="FCBTN-Photo"
+                                                Tag="Pictures"
+                                                Text="Pictures"
+                                                MinWidth="160"
+                                                Click="fcbtnAttachPhoto_Click"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
                                                 x:Name="fcbtnAttachVideo"
                                                 x:Uid="FCBTN-Video"
@@ -828,13 +836,7 @@
                                                 Text="File"
                                                 MinWidth="160"
                                                 Tag="OpenFile"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                                                x:Name="fcbtnAttachPhoto"
-                                                x:Uid="FCBTN-Photo"
-                                                Tag="Pictures"
-                                                Text="Pictures"
-                                                MinWidth="160"
-                                                Click="fcbtnAttachPhoto_Click"/>
+
                             </StackPanel>
                         </Flyout>
                     </Button.Flyout>
