@@ -194,6 +194,7 @@ namespace Telegram.Api.TL
             set
             {
                 _with = value;
+                RaisePropertyChanged(() => With);
             }
         }
 

@@ -53,7 +53,6 @@ namespace Unigram.Views
         {
             if (lvDialogs.ScrollingHost.VerticalOffset == 0)
                 UpdateTask();
-            lvDialogs.ScrollingHost.UpdateLayout();
         }
 
         public async Task UpdateTask()
