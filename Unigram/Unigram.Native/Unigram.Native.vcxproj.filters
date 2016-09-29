@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="WebP">
+      <UniqueIdentifier>{d7592a26-0f4e-44d1-ad1b-3f45b9ac3dd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Video">
+      <UniqueIdentifier>{2c18282a-db77-41b3-a6f0-5f3e734da98e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="WebP\WebPFrame.cpp">
+      <Filter>WebP</Filter>
+    </ClCompile>
+    <ClCompile Include="WebP\WebPImage.cpp">
+      <Filter>WebP</Filter>
+    </ClCompile>
+    <ClCompile Include="Video\VideoImageSourceRenderer.cpp">
+      <Filter>Video</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="WebP\WebPFrame.h">
+      <Filter>WebP</Filter>
+    </ClInclude>
+    <ClInclude Include="WebP\WebPImage.h">
+      <Filter>WebP</Filter>
+    </ClInclude>
+    <ClInclude Include="COMHelper.h" />
+    <ClInclude Include="IVirtualImageSourceRenderer.h" />
+    <ClInclude Include="Video\VideoImageSourceRenderer.h">
+      <Filter>Video</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

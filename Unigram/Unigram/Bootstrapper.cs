@@ -54,6 +54,7 @@
 
             container.ContainerBuilder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
             container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();
 
             // ViewModels
             container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();
@@ -63,7 +64,8 @@
             container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogViewModel>();
-            container.ContainerBuilder.RegisterType<UserInfoViewModel>(); // .SingleInstance();
+            container.ContainerBuilder.RegisterType<UserInfoViewModel>();
+            container.ContainerBuilder.RegisterType<ChatInfoViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
 
             container.Build();

@@ -218,6 +218,7 @@ namespace Unigram.Common
                          type == TLType.MessageEntityBotCommand)
                 {
                     object data = text.Substring(entity.Offset, entity.Length);
+
                     var hyper = new Hyperlink();
                     hyper.Click += (s, args) => Hyperlink_Navigate(type, data);
                     hyper.Inlines.Add(new Run { Text = (string)data });
@@ -225,17 +226,23 @@ namespace Unigram.Common
                     paragraph.Inlines.Add(hyper);
                 }
                 else if (type == TLType.MessageEntityTextUrl ||
-                         type == TLType.MessageEntityMentionName)
+                         type == TLType.MessageEntityMentionName ||
+                         type == TLType.InputMessageEntityMentionName)
                 {
                     object data;
                     if (type == TLType.MessageEntityTextUrl)
                     {
                         data = ((TLMessageEntityTextUrl)entity).Url;
                     }
-                    else
+                    else if (type == TLType.MessageEntityMentionName)
                     {
                         data = ((TLMessageEntityMentionName)entity).UserId;
                     }
+                    else // if(type == TLType.InputMessageEntityMentionName)
+                    {
+                        data = ((TLInputMessageEntityMentionName)entity).UserId;
+                    }
+
                     var hyper = new Hyperlink();
                     hyper.Click += (s, args) => Hyperlink_Navigate(type, data);
                     hyper.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
@@ -392,19 +399,24 @@ namespace Unigram.Common
 
         private static async void Hyperlink_Navigate(TLType type, object data)
         {
-            if (type == TLType.MessageEntityMentionName)
+            if (type == TLType.InputMessageEntityMentionName)
             {
-                // TODO: not the right way
-                //var response = await MTProtoService.Current.GetUsersAsync(new TLVector<TLInputUserBase>(new[] { new TLInputUser { UserId = (int)data } }));
-                //if (response.IsSucceeded && response.Value.Count > 0)
-                //{
-                //    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                //    if (service != null)
-                //    {
-                //        service.Navigate(typeof(UserInfoPage), response.Value[0]);
-                //    }
-                //}
-
+                var peerUser = data as TLInputUser;
+                if (peerUser != null)
+                {
+                    var user = InMemoryCacheService.Current.GetUser(peerUser.UserId);
+                    if (user != null)
+                    {
+                        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                        if (service != null)
+                        {
+                            service.Navigate(typeof(UserInfoPage), user);
+                        }
+                    }
+                }
+            }
+            else if(type == TLType.MessageEntityMentionName)
+            {
                 var user = InMemoryCacheService.Current.GetUser((int)data);
                 if (user != null)
                 {

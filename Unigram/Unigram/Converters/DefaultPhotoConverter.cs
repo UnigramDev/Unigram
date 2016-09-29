@@ -12,7 +12,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Dependency;
-using Unigram.WebP;
+using Unigram.Native;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -197,7 +197,7 @@ namespace Unigram.Converters
                     //}
 
                     var fileLocation = photoSize.Location as TLFileLocation;
-                    if (fileLocation != null && (photoMedia == null /*|| !photoMedia.IsCanceled*/))
+                    if (fileLocation != null /*&& (photoMedia == null || !photoMedia.IsCanceled)*/)
                     {
                         return ReturnOrEnqueueImage(false, fileLocation, photo, photoSize.Size, photoMedia);
                     }

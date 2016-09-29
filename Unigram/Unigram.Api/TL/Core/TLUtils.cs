@@ -107,7 +107,8 @@ namespace Telegram.Api.TL
                 IsOut = false,
                 Date = date,
                 Message = message,
-                Media = new TLMessageMediaEmpty()
+                Media = new TLMessageMediaEmpty(),
+                IsUnread = true,
             };
 
             if (m.FromId > 0) m.HasFromId = true;
@@ -137,7 +138,7 @@ namespace Telegram.Api.TL
             string message, 
             TLMessageMediaBase media,
             long randomId,
-            int replyToMsgId)
+            int? replyToMsgId)
         {
 #if LAYER_40
             var m = new TLMessage

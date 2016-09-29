@@ -9,7 +9,7 @@ using namespace Microsoft::WRL;
 
 namespace Unigram
 {
-	namespace WebP
+	namespace Native
 	{
 		[Windows::Foundation::Metadata::WebHostHidden]
 		public ref class WebPFrame sealed
