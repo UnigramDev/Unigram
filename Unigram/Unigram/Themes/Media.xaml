@@ -35,6 +35,12 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="GifMediaTemplate" x:DataType="models:TLMessageMediaDocument">
+        <Grid>
+            <Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="320" MaxHeight="320"/>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="WebPageMediaTemplate" x:DataType="models:TLMessageMediaWebPage">
         <Grid Margin="0,8,0,6">
             <Grid.ColumnDefinitions>

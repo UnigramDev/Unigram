@@ -86,7 +86,8 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
-                                            <Grid x:Name="ButtonLayoutGrid" BorderBrush="{ThemeResource TextBoxButtonBorderThemeBrush}"
+                                            <Grid x:Name="ButtonLayoutGrid"
+                                                  BorderBrush="{ThemeResource TextBoxButtonBorderThemeBrush}"
                                                   BorderThickness="{TemplateBinding BorderThickness}"
                                                   Background="{ThemeResource TextBoxButtonBackgroundThemeBrush}">
                                                 <VisualStateManager.VisualStateGroups>
@@ -288,7 +289,6 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Border Background="#FFFFFF" Grid.Row="1" Grid.ColumnSpan="3"/>
                         <Border x:Name="BackgroundElement"
                                 Grid.Row="1"
                                 Background="{TemplateBinding Background}"

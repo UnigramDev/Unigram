@@ -59,8 +59,7 @@
                             <controls:SearchTextBox x:Name="txtSearch" 
                                                     Margin="12,8" 
                                                     PlaceholderText="Search messages or users"
-                                                    TextChanged="txtSearch_TextChanged"
-                                                    RequestedTheme="Light"/>
+                                                    TextChanged="txtSearch_TextChanged"/>
                         </ListView.Header>
                         <ListView.Footer>
                             <Border Height="6"/>

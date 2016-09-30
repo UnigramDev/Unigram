@@ -15,8 +15,16 @@ using Windows::Foundation::TypedEventHandler;
 VideoImageSourceRenderer::VideoImageSourceRenderer(int width, int height) :
 	m_width(width),
 	m_height(height),
+	m_initialized(false),
 	m_timer(ref new DispatcherTimer())
 {
+	//auto ratioX = (double)320 / width;
+	//auto ratioY = (double)320 / height;
+	//auto ratio = min(ratioX, ratioY);
+
+	//m_width = (int)(width * ratio);
+	//m_height = (int)(height * ratio);
+
 	auto application = Application::Current;
 	m_eventTokens[0] = application->Suspending += ref new SuspendingEventHandler(this, &VideoImageSourceRenderer::OnSuspending);
 	m_eventTokens[1] = m_timer->Tick += ref new Windows::Foundation::EventHandler<Platform::Object ^>(this, &VideoImageSourceRenderer::OnTick);
@@ -181,9 +189,35 @@ void VideoImageSourceRenderer::Draw(RECT const& drawingBounds)
 	BYTE *pData = NULL;
 	hr = pBuffer->Lock(&pData, NULL, NULL);
 
+	int pOffset = 0;
+	const int size = m_width * m_height * 4;
+	std::vector<byte> pOutput(size);
+
+	for (int i = 0; i < (m_width * m_height) / 2; ++i)
+	{
+		int y0 = pData[0];
+		int u0 = pData[1];
+		int y1 = pData[2];
+		int v0 = pData[3];
+		pData += 4;
+		int c = y0 - 16;
+		int d = u0 - 128;
+		int e = v0 - 128;
+		pOutput[pOffset + 0] = clip((298 * c + 516 * d + 128) >> 8, 0, 255); // blue
+		pOutput[pOffset + 1] = clip((298 * c - 100 * d - 208 * e + 128) >> 8, 0, 255); // green
+		pOutput[pOffset + 2] = clip((298 * c + 409 * e + 128) >> 8, 0, 255); // red
+		pOutput[pOffset + 3] = 255;
+		c = y1 - 16;
+		pOutput[pOffset + 4] = clip((298 * c + 516 * d + 128) >> 8, 0, 255); // blue
+		pOutput[pOffset + 5] = clip((298 * c - 100 * d - 208 * e + 128) >> 8, 0, 255); // green
+		pOutput[pOffset + 6] = clip((298 * c + 409 * e + 128) >> 8, 0, 255); // red
+		pOutput[pOffset + 7] = 255;
+		pOffset += 8;
+	}
+
 	ComPtr<ID2D1Bitmap> bitmap;
-	D2D1_BITMAP_PROPERTIES properties = { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE, 96.0f, 96.0f };
-	ThrowIfFailed(m_d2dDeviceContext->CreateBitmap(D2D1::SizeU(m_width, m_height), pData, m_width * 4, &properties, &bitmap));
+	D2D1_BITMAP_PROPERTIES properties = { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED, 96.0f, 96.0f };
+	ThrowIfFailed(m_d2dDeviceContext->CreateBitmap(D2D1::SizeU(m_width, m_height), pOutput.data(), m_width * 4, &properties, &bitmap));
 
 	m_d2dDeviceContext->DrawBitmap(bitmap.Get());
 
@@ -216,13 +250,18 @@ void VideoImageSourceRenderer::Invalidate(Boolean resize)
 
 void VideoImageSourceRenderer::NotifyUpdatesNeeded()
 {
+	if (m_initialized == false)
+	{
+		return;
+	}
+
 	ULONG drawingBoundsCount = 0;
 	ThrowIfFailed(m_imageSourceNative->GetUpdateRectCount(&drawingBoundsCount));
 
 	auto drawingBounds = std::make_unique<RECT[]>(drawingBoundsCount);
 	ThrowIfFailed(m_imageSourceNative->GetUpdateRects(drawingBounds.get(), drawingBoundsCount));
 
-	for (uint32 i = 0; i < drawingBoundsCount; i++)
+	for (uint32 i = 0; i < min(1, drawingBoundsCount); i++)
 	{
 		Draw(drawingBounds[i]);
 	}
@@ -246,7 +285,7 @@ void VideoImageSourceRenderer::Initialize(String^ path)
 	IMFMediaType *pType = NULL;
 
 	hr = ppSourceReader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &pNativeType);
-	hr = ConvertVideoTypeToUncompressedType(pNativeType, MFVideoFormat_RGB32, &pType);
+	hr = ConvertVideoTypeToUncompressedType(pNativeType, MFVideoFormat_YUY2, &pType);
 	hr = ppSourceReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, pType);
 
 	UINT32 pNumerator;
@@ -261,9 +300,7 @@ void VideoImageSourceRenderer::Initialize(String^ path)
 	m_timer->Interval = t;
 	m_timer->Start();
 
-	//pBuffer->Release();
-	//ppSample->Release();
-	//ppSourceReader->Release();
+	m_initialized = true;
 }
 
 void VideoImageSourceRenderer::OnTick(Platform::Object ^sender, Platform::Object ^args)

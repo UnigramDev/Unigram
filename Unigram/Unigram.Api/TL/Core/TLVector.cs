@@ -40,24 +40,26 @@ namespace Telegram.Api.TL
 
         public override TLType TypeId { get { return TLType.Vector; } }
 
-        public override void Read(TLBinaryReader from, bool fromCache)
+        public override void Read(TLBinaryReader from, bool cache)
         {
             //var type2 = (TLType)from.ReadUInt32();
-            var count = from.ReadUInt32();
+            var count = from.ReadInt32();
             for (int i = 0; i < count; i++)
             {
-                _items.Add(TLFactory.Read<T>(from, fromCache));
+                _items.Add(TLFactory.Read<T>(from, cache));
             }
         }
 
-        public override void Write(TLBinaryWriter to, bool toCache)
+        public override void Write(TLBinaryWriter to, bool cache)
         {
-            to.Write(0x1CB5C415);
-            to.Write((uint)_items.Count());
+            var notNull = _items.Where(x => x != null).ToList();
 
-            foreach (var item in _items)
+            to.Write(0x1CB5C415);
+            to.Write(notNull.Count());
+
+            foreach (var item in notNull)
             {
-                TLFactory.Write(to, item, toCache);
+                TLFactory.Write(to, item, cache);
             }
         }
 

@@ -18,6 +18,11 @@ namespace Unigram
 {
 	namespace Native 
 	{
+		template <typename T>
+		T clip(const T& n, const T& lower, const T& upper) {
+			return max(lower, min(n, upper));
+		}
+
 		[Windows::Foundation::Metadata::WebHostHidden]
 		public ref class VideoImageSourceRenderer sealed : public IVirtualImageSourceRenderer
 		{
@@ -59,6 +64,7 @@ namespace Unigram
 
 			int m_width;
 			int m_height;
+			bool m_initialized;
 
 			Windows::Foundation::EventRegistrationToken m_eventTokens[2];
 

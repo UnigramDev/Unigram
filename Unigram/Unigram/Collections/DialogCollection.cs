@@ -46,6 +46,21 @@ namespace Unigram.Collections
 
         #region Handles
 
+        public void Handle(UpdateCompletedEventArgs args)
+        {
+            var dialogs = _cacheService.GetDialogs();
+            ReorderDrafts(dialogs);
+            Execute.BeginOnUIThread(() =>
+            {
+                Clear();
+
+                foreach (var dialog in dialogs)
+                {
+                    Add(dialog);
+                }
+            });
+        }
+
         public void Handle(TopMessageUpdatedEventArgs e)
         {
             e.Dialog.RaisePropertyChanged(() => e.Dialog.With);
@@ -253,20 +268,6 @@ namespace Unigram.Collections
                             return;
                         }
                     }
-                }
-            });
-        }
-
-        public void Handle(UpdateCompletedEventArgs args)
-        {
-            var dialogs = _cacheService.GetDialogs();
-            Execute.BeginOnUIThread(() =>
-            {
-                Clear();
-
-                foreach (var dialog in dialogs)
-                {
-                    Add(dialog);
                 }
             });
         }

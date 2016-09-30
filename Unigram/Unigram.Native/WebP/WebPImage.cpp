@@ -198,14 +198,24 @@ IRandomAccessStream^ Unigram::Native::WebPImage::Encode(const Array<uint8> ^byte
 			throw ref new FailureException(ref new String(L"WebPGetFeatures failed"));
 		}
 
-		uint8_t* pixels = new uint8_t[(iter.width * 4) * iter.height];
+		auto ratioX = (double)256 / iter.width;
+		auto ratioY = (double)256 / iter.height;
+		auto ratio = min(ratioX, ratioY);
 
+		auto width = (int)(iter.width * ratio);
+		auto height = (int)(iter.height * ratio);
+
+		uint8_t* pixels = new uint8_t[(width * 4) * height];
+
+		config.options.scaled_width = width;
+		config.options.scaled_height = height;
+		config.options.use_scaling = 1;
 		config.options.no_fancy_upsampling = 1;
 		config.output.colorspace = MODE_bgrA;
 		config.output.is_external_memory = 1;
 		config.output.u.RGBA.rgba = pixels;
-		config.output.u.RGBA.stride = iter.width * 4;
-		config.output.u.RGBA.size = (iter.width * 4) * iter.height;
+		config.output.u.RGBA.stride = width * 4;
+		config.output.u.RGBA.size = (width * 4) * height;
 
 		ret = WebPDecode(iter.fragment.bytes, iter.fragment.size, &config);
 
@@ -234,11 +244,11 @@ IRandomAccessStream^ Unigram::Native::WebPImage::Encode(const Array<uint8> ^byte
 		piEncoder->CreateNewFrame(&frame, &propertyBag);
 
 		frame->Initialize(propertyBag.Get());
-		frame->SetSize(iter.width, iter.height);
+		frame->SetSize(width, height);
 
 		WICPixelFormatGUID format = GUID_WICPixelFormat32bppPBGRA;
 		frame->SetPixelFormat(&format);
-		frame->WritePixels(iter.height, iter.width * 4, (iter.width * 4) * iter.height, pixels);
+		frame->WritePixels(height, width * 4, (width * 4) * height, pixels);
 
 		frame->Commit();
 		piEncoder->Commit();
