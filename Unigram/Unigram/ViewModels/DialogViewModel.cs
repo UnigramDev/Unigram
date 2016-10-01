@@ -320,13 +320,24 @@ namespace Unigram.ViewModels
             }
 
             var dialog = CacheService.GetDialog(peerItem);
-            if (dialog != null && dialog.HasDraft)
+            if (dialog != null)
             {
-                var draft = dialog.Draft as TLDraftMessage;
-                if (draft != null)
-                {
-                    ProcessDraftReply(draft);
+                if (dialog.HasDraft) {
+                    var draft = dialog.Draft as TLDraftMessage;
+                    if (draft != null) {
+                        ProcessDraftReply(draft);
+                    }
                 }
+                int unread = dialog.UnreadCount;
+                if (inputPeer is TLInputPeerChannel) {
+                    var asChannel = new TLChannel { Id = (inputPeer as TLInputPeerChannel).ChannelId, AccessHash = inputPeer.AccessHash };
+                    await ProtoService.ReadHistoryAsync(asChannel, Messages.Last().Id);
+                } else {
+                    await ProtoService.ReadHistoryAsync(inputPeer, Messages.Last().Id, 0);
+                }
+                dialog.UnreadCount = dialog.UnreadCount - unread; // in case any new messages come in during that split second
+                dialog.RaisePropertyChanged("UnreadCount"); // otherwise it won't update on the main page
+                
             }
         }
 
