@@ -23,17 +23,47 @@
         <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
     </Style>
 
-    <DataTemplate x:Key="ReplyTextTemplate">
+    <DataTemplate x:Key="ReplyAudioTemplate">
         <Grid DataContext="{Binding Reply}" Margin="0,4,0,8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2"/>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Height="36"/>
 
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
                 <TextBlock Text="{Binding From.FullName}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
-                <TextBlock Text="{Binding Message}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
+                <TextBlock Text="Audio" Foreground="{ThemeResource MessageSubtleLabelBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ReplyContactTemplate">
+        <Grid DataContext="{Binding Reply}" Margin="0,4,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Height="36"/>
+
+            <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
+                <TextBlock Text="{Binding From.FullName}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
+                <TextBlock Text="Contact" Foreground="{ThemeResource MessageSubtleLabelBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ReplyGeoPointTemplate">
+        <Grid DataContext="{Binding Reply}" Margin="0,4,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Height="36"/>
+
+            <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
+                <TextBlock Text="{Binding From.FullName}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
+                <TextBlock Text="Location" Foreground="{ThemeResource MessageSubtleLabelBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -45,9 +75,9 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,6,0"/>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Height="36" Margin="0,0,6,0"/>
 
-            <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="42" Height="42" Grid.Column="1">
+            <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="36" Height="36" Grid.Column="1">
                 <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
             </Border>
 
@@ -58,9 +88,68 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="ReplyTextTemplate">
+        <Grid DataContext="{Binding Reply}" Margin="0,4,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Height="36"/>
+
+            <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
+                <TextBlock Text="{Binding From.FullName}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Message}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ReplyVenueTemplate">
+        <Grid DataContext="{Binding Reply}" Margin="0,4,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Height="36"/>
+
+            <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
+                <TextBlock Text="{Binding From.FullName}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
+                <TextBlock Foreground="{ThemeResource MessageSubtleLabelBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}">
+                    <Run Text="Location,"/>
+                    <Run Text="{Binding Media.Title}"/>
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ReplyVideoTemplate">
+        <Grid DataContext="{Binding Reply}" Margin="0,4,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Height="36" Margin="0,0,6,0"/>
+
+            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="36" Height="36" Grid.Column="1">
+                <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
+                <SymbolIcon Symbol="Play" Foreground="White"/>
+            </Grid>
+
+            <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="2">
+                <TextBlock Text="{Binding From.FullName}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
+                <TextBlock Text="Video" Foreground="{ThemeResource MessageSubtleLabelBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
     <selectors:ReplyTemplateSelector x:Key="ReplyTemplateSelector"
+        ReplyAudioTemplate="{StaticResource ReplyAudioTemplate}"
+        ReplyContactTemplate="{StaticResource ReplyContactTemplate}"
+        ReplyGeoPointTemplate="{StaticResource ReplyGeoPointTemplate}"
+        ReplyPhotoTemplate="{StaticResource ReplyPhotoTemplate}"
         ReplyTextTemplate="{StaticResource ReplyTextTemplate}"
-        ReplyPhotoTemplate="{StaticResource ReplyPhotoTemplate}"/>
+        ReplyVenueTemplate="{StaticResource ReplyVenueTemplate}"
+        ReplyVideoTemplate="{StaticResource ReplyVideoTemplate}"/>
 
     <!--<selectors:ReplyTemplateSelector x:Key="ReplyTemplateSelector"
                 ForwardedMessagesTemplate="{StaticResource ForwardedMessagesTemplate}"

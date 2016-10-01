@@ -213,6 +213,8 @@ namespace Unigram.Selectors
                         //    return ForwardVideoTemplate;
                         case TLType.MessageMediaGeo:
                             return ReplyGeoPointTemplate;
+                        case TLType.MessageMediaVenue:
+                            return ReplyVenueTemplate;
                         case TLType.MessageMediaContact:
                             return ReplyContactTemplate;
                         case TLType.MessageMediaEmpty:
@@ -264,87 +266,50 @@ namespace Unigram.Selectors
         }
 
         public DataTemplate EditAudioTemplate { get; set; }
-
         public DataTemplate EditContactTemplate { get; set; }
-
         public DataTemplate EditDocumentTemplate { get; set; }
-
         public DataTemplate EditGeoPointTemplate { get; set; }
-
         public DataTemplate EditGifTemplate { get; set; }
-
         public DataTemplate EditPhotoTemplate { get; set; }
-
         public DataTemplate EditStickerTemplate { get; set; }
-
         public DataTemplate EditTextTemplate { get; set; }
-
         public DataTemplate EditUnsupportedTemplate { get; set; }
-
         public DataTemplate EditVideoTemplate { get; set; }
-
         public DataTemplate EditVoiceMessageTemplate { get; set; }
 
         public DataTemplate ForwardAudioTemplate { get; set; }
-
         public DataTemplate ForwardContactTemplate { get; set; }
-
         public DataTemplate ForwardDocumentTemplate { get; set; }
-
         public DataTemplate ForwardedMessagesTemplate { get; set; }
-
         public DataTemplate ForwardEmptyTemplate { get; set; }
-
         public DataTemplate ForwardGeoPointTemplate { get; set; }
-
         public DataTemplate ForwardGifTemplate { get; set; }
-
         public DataTemplate ForwardPhotoTemplate { get; set; }
-
         public DataTemplate ForwardStickerTemplate { get; set; }
-
         public DataTemplate ForwardTextTemplate { get; set; }
-
         public DataTemplate ForwardUnsupportedTemplate { get; set; }
-
         public DataTemplate ForwardVideoTemplate { get; set; }
-
         public DataTemplate ForwardVoiceMessageTemplate { get; set; }
 
         public DataTemplate ReplyAudioTemplate { get; set; }
-
         public DataTemplate ReplyContactTemplate { get; set; }
-
         public DataTemplate ReplyDocumentTemplate { get; set; }
-
         public DataTemplate ReplyEmptyTemplate { get; set; }
-
         public DataTemplate ReplyGeoPointTemplate { get; set; }
-
         public DataTemplate ReplyGifTemplate { get; set; }
-
         public DataTemplate ReplyLoadingTemplate { get; set; }
-
         public DataTemplate ReplyPhotoTemplate { get; set; }
-
         public DataTemplate ReplyServicePhotoTemplate { get; set; }
-
         public DataTemplate ReplyServiceTextTemplate { get; set; }
-
         public DataTemplate ReplyStickerTemplate { get; set; }
-
         public DataTemplate ReplyTextTemplate { get; set; }
-
         public DataTemplate ReplyUnsupportedTemplate { get; set; }
-
+        public DataTemplate ReplyVenueTemplate { get; set; }
         public DataTemplate ReplyVideoTemplate { get; set; }
-
         public DataTemplate ReplyVoiceMessageTemplate { get; set; }
 
         public DataTemplate WebPageEmptyTemplate { get; set; }
-
         public DataTemplate WebPagePendingTemplate { get; set; }
-
         public DataTemplate WebPageTemplate { get; set; }
     }
 }

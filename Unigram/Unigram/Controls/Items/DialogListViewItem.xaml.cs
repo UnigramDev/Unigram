@@ -466,6 +466,19 @@ namespace Unigram.Controls.Items
             Highlight.Visibility = ViewModel?.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private void UpdateChannelType()
+        {
+            if (ViewModel != null)
+            {
+                var chatType = ViewModel.Peer as TLPeerBase;
+
+                if (chatType.TypeId == TLType.PeerChat)
+                    fiType.Glyph = "\uE125";
+                else if (chatType.TypeId == TLType.PeerChannel)
+                    fiType.Glyph = "\uE1D7";
+            }
+        }
+
         #region Context menu
         private static MenuFlyout _menuFlyout = new MenuFlyout();
         private static MenuFlyoutItem _menuItemClearHistory;
@@ -524,19 +537,6 @@ namespace Unigram.Controls.Items
             }
 
             return false;
-        }
-
-        private void UpdateChannelType()
-        {
-            if (ViewModel != null)
-            {
-                var chatType = ViewModel.Peer as TLPeerBase;
-
-                if (chatType.TypeId == TLType.PeerChat)
-                    fiType.Glyph = "\uE125";
-                else if(chatType.TypeId == TLType.PeerChannel)
-                    fiType.Glyph = "\uE1D7";
-            }
         }
 
         private bool CanDeleteDialog(ref MenuFlyoutItem menuItem)
