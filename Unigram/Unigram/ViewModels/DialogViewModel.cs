@@ -446,7 +446,7 @@ namespace Unigram.ViewModels
 
         public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool sticker)
         {
-            var messageText = SendTextHolder.Replace('\r', '\n');
+            var messageText = SendTextHolder?.Replace('\r', '\n');
 
             TLDocument document = null;
             TLMessageMediaBase media = null;

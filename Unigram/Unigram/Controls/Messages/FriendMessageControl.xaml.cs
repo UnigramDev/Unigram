@@ -108,25 +108,25 @@ namespace Unigram.Controls.Messages
 
         private void StatusToFullMedia()
         {
-            if (LayoutRoot.BorderThickness.Bottom != 0)
+            if (StatusControl.Padding.Left != 6)
             {
                 StatusControl.Padding = new Thickness(6, 2, 6, 4);
                 StatusControl.Background = StatusDarkBackgroundBrush;
                 StatusLabel.Foreground = StatusDarkForegroundBrush;
 
-                LayoutRoot.BorderThickness = new Thickness(0);
+                //LayoutRoot.BorderThickness = new Thickness(0);
             }
         }
 
         private void StatusToDefault()
         {
-            if (LayoutRoot.BorderThickness.Bottom != 2)
+            if (StatusControl.Padding.Left != 0)
             {
                 StatusControl.Padding = new Thickness(0, 0, 6, 0);
                 StatusControl.Background = null;
                 StatusLabel.Foreground = StatusLightLabelForegroundBrush;
 
-                LayoutRoot.BorderThickness = new Thickness(0, 0, 0, 2);
+                //LayoutRoot.BorderThickness = new Thickness(0, 0, 0, 2);
             }
         }
 

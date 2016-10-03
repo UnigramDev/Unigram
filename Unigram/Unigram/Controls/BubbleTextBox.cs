@@ -217,10 +217,12 @@ namespace Unigram.Controls
         private void FormatText()
         {
             string text;
-            Document.GetText(TextGetOptions.FormatRtf, out text);
+            Document.GetText(TextGetOptions.NoHidden, out text);
 
             var caretPosition = Document.Selection.StartPosition;
-            var result = Emoticon.Pattern.Replace(text, (match) =>
+            var result = Emoticon.Pattern.Matches(text);
+
+            foreach (Match match in result)
             {
                 var emoticon = match.Groups[1].Value;
                 var emoji = Emoticon.Replace(emoticon);
@@ -233,11 +235,29 @@ namespace Unigram.Controls
                     emoji = $" {emoji}";
                 }
 
-                return emoji;
-            });
+                Document.GetRange(match.Index, match.Index + match.Length).SetText(TextSetOptions.None, emoji);
+            }
 
-            Document.SetText(TextSetOptions.FormatRtf, result.TrimEnd("\\par\r\n}\r\n\0") + "}\r\n\0");
             Document.Selection.SetRange(caretPosition, caretPosition);
+
+            //var result = Emoticon.Pattern.Replace(text, (match) =>
+            //{
+            //    var emoticon = match.Groups[1].Value;
+            //    var emoji = Emoticon.Replace(emoticon);
+            //    if (match.Index + match.Length < caretPosition)
+            //    {
+            //        caretPosition += emoji.Length - emoticon.Length;
+            //    }
+            //    if (match.Value.StartsWith(" "))
+            //    {
+            //        emoji = $" {emoji}";
+            //    }
+
+            //    return emoji;
+            //});
+
+            //Document.SetText(TextSetOptions.FormatRtf, result.TrimEnd("\\par\r\n}\r\n\0") + "}\r\n\0");
+            //Document.Selection.SetRange(caretPosition, caretPosition);
         }
 
         public async Task SendAsync()
