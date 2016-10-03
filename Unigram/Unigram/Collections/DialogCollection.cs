@@ -41,7 +41,8 @@ namespace Unigram.Collections
             _cacheService = cacheService;
 
             HasMoreItems = false;
-            InitializeAsync();
+            LoadMoreItemsAsync(20);
+            //InitializeAsync();
         }
 
         #region Handles
@@ -345,50 +346,41 @@ namespace Unigram.Collections
         {
             return AsyncInfo.Run(async (token) =>
             {
-                if (Count == 0)
+                var lastDate = 0;
+                var lastMsgId = 0;
+                var lastPeer = (TLInputPeerBase)new TLInputPeerEmpty();
+
+                var last = this.LastOrDefault();
+                if (last != null && last.TopMessageItem != null)
                 {
-                    await InitializeAsync();
-                }
-                else
-                {
-                    var lastDate = 0;
-                    var lastMsgId = 0;
-                    var lastPeer = (TLInputPeerBase)new TLInputPeerEmpty();
+                    lastDate = last.TopMessageItem.Date;
+                    lastMsgId = last.TopMessage;
 
-                    var last = this.LastOrDefault();
-                    if (last != null && last.TopMessageItem != null)
+                    if (last.Peer is TLPeerUser)
                     {
-                        lastDate = last.TopMessageItem.Date;
-                        lastMsgId = last.TopMessage;
-
-                        if (last.Peer is TLPeerUser)
-                        {
-                            lastPeer = new TLInputPeerUser { UserId = last.Peer.Id };
-                        }
-                        else if (last.Peer is TLPeerChat)
-                        {
-                            lastPeer = new TLInputPeerChat { ChatId = last.Peer.Id };
-                        }
-                        else if (last.Peer is TLPeerChannel)
-                        {
-                            lastPeer = new TLInputPeerChannel { ChannelId = last.Peer.Id };
-                        }
+                        lastPeer = new TLInputPeerUser { UserId = last.Peer.Id };
                     }
-                    else
+                    else if (last.Peer is TLPeerChat)
                     {
-                        //HasMoreItems = false;
-                        return new LoadMoreItemsResult { Count = 0 };
+                        lastPeer = new TLInputPeerChat { ChatId = last.Peer.Id };
                     }
-
-                    var response = await _protoService.GetDialogsAsync(lastDate, lastMsgId, lastPeer, 20);
-                    if (response.IsSucceeded)
+                    else if (last.Peer is TLPeerChannel)
                     {
-                        foreach (var item in response.Value.Dialogs)
-                        {
-                            Add(item);
-                        }
+                        lastPeer = new TLInputPeerChannel { ChannelId = last.Peer.Id };
                     }
                 }
+
+                var response = await _protoService.GetDialogsAsync(lastDate, lastMsgId, lastPeer, 200);
+                if (response.IsSucceeded)
+                {
+                    foreach (var item in response.Value.Dialogs)
+                    {
+                        Add(item);
+                    }
+
+                    return new LoadMoreItemsResult { Count = (uint)response.Value.Dialogs.Count };
+                }
+
                 return new LoadMoreItemsResult { Count = 20 };
             });
         }

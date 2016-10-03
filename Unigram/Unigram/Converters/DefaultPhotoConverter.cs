@@ -169,7 +169,7 @@ namespace Unigram.Converters
             var photo = value as TLPhoto;
             if (photo != null)
             {
-                double num = 311.0;
+                double num = 400;
                 double num2;
                 if (double.TryParse((string)parameter, out num2))
                 {
@@ -369,7 +369,7 @@ namespace Unigram.Converters
                 var tLPhoto2 = webpage.Photo as TLPhoto;
                 if (tLPhoto2 != null)
                 {
-                    double num3 = 311.0;
+                    double num3 = 400;
                     double num4;
                     if (double.TryParse((string)parameter, out num4))
                     {

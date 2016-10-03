@@ -119,17 +119,18 @@ namespace Unigram.Views
                 var dialog = e.ClickedItem as TLDialog;
                 if (dialog.With is TLUserBase)
                 {
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.With);
+                    var user = dialog.With as TLUserBase;
+                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
                 }
                 else if (dialog.With is TLChat)
                 {
-                    var ciccio = dialog.With as TLChat;
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChat { ChatId = ciccio.Id });
+                    var chat = dialog.With as TLChat;
+                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = chat.Id });
                 }
                 else if (dialog.With is TLChannel)
                 {
-                    var ciccio = dialog.With as TLChannel;
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChannel { ChannelId = ciccio.Id, AccessHash = ciccio.AccessHash.Value });
+                    var channel = dialog.With as TLChannel;
+                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
                 }
             }
         }
@@ -141,21 +142,7 @@ namespace Unigram.Views
                 _lastSelected = lvMasterChats.SelectedItem;
 
                 var dialog = lvMasterChats.SelectedItem as TLDialog;
-                if (dialog.With is TLUserBase)
-                {
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.With);
-                }
-                else if (dialog.With is TLChat)
-                {
-                    var ciccio = dialog.With as TLChat;
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChat { ChatId = ciccio.Id });
-                }
-               
-                else if (dialog.With is TLChannel)
-                {
-                    var ciccio = dialog.With as TLChannel;                    
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChannel { ChannelId = ciccio.Id, AccessHash = ciccio.AccessHash ?? 0 });
-                }
+                ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.With);
             }
         }
 

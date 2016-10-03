@@ -58,7 +58,7 @@ namespace Unigram.Views
         public async Task UpdateTask()
         {
             isLoading = true;
-            await ViewModel.FetchMessages(ViewModel.peer, ViewModel.inputPeer);
+            await ViewModel.FetchMessages(ViewModel.Peer);
             isLoading = false;
         }
 
@@ -106,15 +106,12 @@ namespace Unigram.Views
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
         {
-            var user = ViewModel.user;
-            var channel = ViewModel.channel;
-            var chat = ViewModel.chat;
-            if (user!=null) //Se non è zuppa allora è pan bagnato
-                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), user);
-            else if (channel!=null)
-                ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), channel);
-            else if (chat != null)
-                ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), chat);
+            if (ViewModel.With is TLUserBase) //Se non è zuppa allora è pan bagnato
+                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), ViewModel.With);
+            else if (ViewModel.With is TLChannel)
+                ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
+            else if (ViewModel.With is TLChat)
+                ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
 
         }
 

@@ -815,18 +815,11 @@ namespace Telegram.Api.TL
                 return new TLPeerChat { Id = chat.ChatId };
             }
 
-            // TODO: is this needed?
-            //var contact = inputPeer as TLInputPeerContact;
-            //if (contact != null)
-            //{
-            //    return new TLPeerUser { Id = contact.UserId };
-            //}
-
-            //var foreign = inputPeer as TLInputPeerForeign;
-            //if (foreign != null)
-            //{
-            //    return new TLPeerUser { Id = foreign.UserId };
-            //}
+            var user = inputPeer as TLInputPeerUser;
+            if (user != null)
+            {
+                return new TLPeerUser { Id = user.UserId };
+            }
 
             var self = inputPeer as TLInputPeerSelf;
             if (self != null)

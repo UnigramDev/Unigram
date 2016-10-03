@@ -184,6 +184,12 @@ namespace Telegram.Api.TL
             return documentMedia != null && IsGif(documentMedia.Document as TLDocument);
         }
 
+        public static bool IsGif(TLDocumentBase documentBase)
+        {
+            var document = documentBase as TLDocument;
+            return document != null && IsGif(document);
+        }
+
         public static bool IsGif(TLDocument document)
         {
             if (document != null && document.MimeType.Equals("video/mp4", StringComparison.OrdinalIgnoreCase))

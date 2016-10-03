@@ -114,142 +114,6 @@
             </Setter>
         </Style>
 
-        <CollectionViewSource x:Name="MessagesSource" IsSourceGrouped="True" Source="{Binding Messages.Groups}"/>
-
-        <!-- Teorically temporary location, but we'll see -->
-        <MenuFlyout x:Key="MessageMenuFlyout">
-            <MenuFlyout.MenuFlyoutPresenterStyle>
-                <Style TargetType="MenuFlyoutPresenter">
-                    <Setter Property="RequestedTheme" Value="Light"/>
-                </Style>
-            </MenuFlyout.MenuFlyoutPresenterStyle>
-            <MenuFlyoutItem Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
-            <MenuFlyoutItem Text="Copy"/>
-            <MenuFlyoutItem Text="Edit" Visibility="Collapsed"/>
-            <MenuFlyoutItem Text="Forward"/>
-            <MenuFlyoutItem Text="Delete"/>
-        </MenuFlyout>
-
-        <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Border Visibility="{x:Bind ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,0" Margin="0,0,12,0">
-                    <ContentControl
-                        Content="{x:Bind ReplyInfo, Mode=OneWay}" 
-                        ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
-                        RequestedTheme="Dark">
-                        <!-- 
-                             common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
-                        -->
-                        <ContentControl.Resources>
-                            <!-- 
-                                 Fela: We have to define here all the brushes we want to override
-                                 in the sticker templates.
-                                 Resources should be defined here to not override them in the rest of the app
-                            -->
-                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                        </ContentControl.Resources>
-                    </ContentControl>
-                </Border>
-
-                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
-
-                    <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
-                            <FontIcon Glyph="{x:Bind State, Converter={StaticResource StateToGlyphConverter}, Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="White" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
-                        </StackPanel>
-                    </Border>
-                </Grid>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="FriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
-
-                    <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
-                        <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
-                    </Border>
-                </Grid>
-
-                <Border Visibility="{x:Bind ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
-                    <ContentControl
-                        Content="{x:Bind ReplyInfo, Mode=OneWay}" 
-                        ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
-                        RequestedTheme="Dark">
-                        <!-- 
-                             common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
-                        -->
-                        <ContentControl.Resources>
-                            <!-- 
-                                 Fela: We have to define here all the brushes we want to override
-                                 in the sticker templates.
-                                 Resources should be defined here to not override them in the rest of the app
-                            -->
-                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                        </ContentControl.Resources>
-                    </ContentControl>
-                </Border>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="ChatFriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
-
-                    <Border Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
-                        <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
-                    </Border>
-                </Grid>
-
-                <Border Visibility="{x:Bind ReplyVisibility}" Background="#54000000" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
-                    <ContentControl
-                        Content="{x:Bind ReplyInfo, Mode=OneWay}" 
-                        ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
-                        RequestedTheme="Dark">
-                        <!-- 
-                             common:Attached.Tapped="{Binding Dialog.MessageOpenReplyCommand, Source={StaticResource Locator}}"
-                        -->
-                        <ContentControl.Resources>
-                            <!-- 
-                                 Fela: We have to define here all the brushes we want to override
-                                 in the sticker templates.
-                                 Resources should be defined here to not override them in the rest of the app
-                            -->
-                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                        </ContentControl.Resources>
-                    </ContentControl>
-                </Border>
-            </Grid>
-        </DataTemplate>
-
         <Style TargetType="ListViewHeaderItem">
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
             <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
@@ -342,6 +206,112 @@
             </Setter>
         </Style>
 
+        <CollectionViewSource x:Name="MessagesSource" IsSourceGrouped="True" Source="{Binding Messages.Groups}"/>
+
+        <!-- Teorically temporary location, but we'll see -->
+        <MenuFlyout x:Key="MessageMenuFlyout">
+            <MenuFlyout.MenuFlyoutPresenterStyle>
+                <Style TargetType="MenuFlyoutPresenter">
+                    <Setter Property="RequestedTheme" Value="Light"/>
+                </Style>
+            </MenuFlyout.MenuFlyoutPresenterStyle>
+            <MenuFlyoutItem Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
+            <MenuFlyoutItem Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy"/>
+            <MenuFlyoutItem Text="Edit" Visibility="Collapsed"/>
+            <MenuFlyoutItem Text="Forward"/>
+            <MenuFlyoutItem Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete"/>
+        </MenuFlyout>
+
+        <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Border Visibility="{x:Bind ReplyVisibility}" Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,0" Margin="0,0,12,0">
+                    <controls:MessageReferenceControl Message="{x:Bind Reply, Mode=OneWay}">
+                        <controls:MessageReferenceControl.Resources>
+                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                        </controls:MessageReferenceControl.Resources>
+                    </controls:MessageReferenceControl>
+                </Border>
+
+                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
+                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+
+                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                            <FontIcon Glyph="{x:Bind State, Converter={StaticResource StateToGlyphConverter}, Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="White" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FriendStickerTemplate" x:DataType="models:TLMessage">
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
+                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+
+                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                        <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                    </Border>
+                </Grid>
+
+                <Border Visibility="{x:Bind ReplyVisibility}" Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
+                    <controls:MessageReferenceControl Message="{x:Bind Reply, Mode=OneWay}">
+                        <controls:MessageReferenceControl.Resources>
+                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                        </controls:MessageReferenceControl.Resources>
+                    </controls:MessageReferenceControl>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ChatFriendStickerTemplate" x:DataType="models:TLMessage">
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
+                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+
+                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                        <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                    </Border>
+                </Grid>
+
+                <Border Visibility="{x:Bind ReplyVisibility}" Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
+                    <controls:MessageReferenceControl Message="{x:Bind Reply, Mode=OneWay}">
+                        <controls:MessageReferenceControl.Resources>
+                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                        </controls:MessageReferenceControl.Resources>
+                    </controls:MessageReferenceControl>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
             <StackPanel Margin="0,12">
@@ -356,7 +326,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="UnreadMessageTemplate">
-            <Border Background="#7f89a0b4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12" RenderTransformOrigin="0.5,0.5">
+            <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12" RenderTransformOrigin="0.5,0.5">
                 <!--<TextBlock Text="{Binding Converter={StaticResource ServiceMessageToTextConverter}}" Foreground="White" Style="{ThemeResource BodyTextBlockStyle}"/>-->
             </Border>
         </DataTemplate>
@@ -487,21 +457,29 @@
                 <ColumnDefinition Width="48"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="btnPinnedMessage" Style="{StaticResource EmptyButtonStyle}">
-                <Grid VerticalAlignment="Center">
+            <Button x:Name="btnPinnedMessage" Padding="12,0" Style="{StaticResource EmptyButtonStyle}">
+                <controls:MessageReferenceControl IsPinned="True" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0">
+                    <controls:MessageReferenceControl.Resources>
+                        <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
+                        <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                        <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                        <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                    </controls:MessageReferenceControl.Resources>
+                </controls:MessageReferenceControl>
+                <!--<Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Icon -->
+                    --><!-- Icon --><!--
                     <Rectangle Fill="White" Width="2" Margin="12,0,0,0"/>
 
                     <StackPanel Margin="8,0,0,2" Grid.Column="1">
                         <TextBlock Text="Pinned message" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
                         <TextBlock Text="{x:Bind ViewModel.pinnedMessage}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
                     </StackPanel>
-                </Grid>
+                </Grid>-->
             </Button>
 
             <!-- Close button -->
@@ -511,6 +489,7 @@
         <controls:BubbleListView x:Name="lvDialogs" 
                                  ItemsSource="{Binding Source={StaticResource MessagesSource}}"
                                  ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
+                                 ItemContainerTransitions="{x:Null}"
                                  SelectionMode="None"
                                  Grid.Row="2">
             <ListView.ItemsPanel>
@@ -742,7 +721,7 @@
                         <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
                     </Border>
 
-                    <Button Command="{Binding ClearReplyCommand}" IsTabStop="False" Style="{StaticResource CloseButtonStyle}" Width="48" Height="48" VerticalAlignment="Stretch" Grid.Column="2"/>
+                    <controls:GlyphButton Command="{Binding ClearReplyCommand}" IsTabStop="False" Glyph="&#xE106;" FontSize="16" Grid.Column="2"/>
                 </Grid>
                 <!-- Message input -->
                 <controls:BubbleTextBox
@@ -750,7 +729,7 @@
                     x:Uid="Chat-Input-Message"
                     PlaceholderText="Type your message..."
                     BorderThickness="0" 
-                    Padding="48,12,0,12" 
+                    Padding="48,13,0,12" 
                     TextWrapping="Wrap" 
                     InputScope="Text" 
                     IsSpellCheckEnabled="True"

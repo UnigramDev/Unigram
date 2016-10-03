@@ -2,7 +2,7 @@
     x:Class="Unigram.Themes.Media"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Controls"
+    xmlns:local="using:Unigram.Controls.Media"
     xmlns:common="using:Unigram.Common"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:models="using:Telegram.Api.TL"
@@ -10,19 +10,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <DataTemplate x:Key="PhotoTemplate" x:DataType="models:TLMessageMediaPhoto">
+    <DataTemplate x:Key="MediaPhotoTemplate" x:DataType="models:TLMessageMediaPhoto">
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
             <Rectangle Fill="Black" MinWidth="96" MinHeight="96"/>
-            <!--<controls:ImageControl TelegramSource="{Binding Self}" MaxWidth="400" MaxHeight="400">
-                <i:Interaction.Behaviors>
-                    <behaviors:PhotoAspectRatioBehavior Source="{Binding Self}"/>
-                </i:Interaction.Behaviors>
-            </controls:ImageControl>-->
-
             <Image Source="{Binding Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="400" MaxHeight="400" Stretch="Uniform"/>
 
             <!--<controls:ProgressBarRing 
@@ -30,14 +20,46 @@
                     common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
                     Maximum="1" 
                     Visibility="Collapsed"/>-->
-
-            <RichTextBlock common:MessageHelper.Caption="{Binding Caption}" Margin="0,4,0,0" Visibility="Collapsed" Grid.Row="1"/>
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="GifMediaTemplate" x:DataType="models:TLMessageMediaDocument">
+    <DataTemplate x:Key="MediaVideoTemplate" x:DataType="models:TLMessageMediaPhoto">
+        <Grid>
+            <Rectangle Fill="Black" MinWidth="96" MinHeight="96"/>
+            <Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="400" MaxHeight="400" Stretch="Uniform"/>
+
+            <Border Width="48" Height="48" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                <SymbolIcon Symbol="Play" Foreground="White"/>
+            </Border>
+
+            <!--<controls:ProgressBarRing 
+                    SmoothValue="{Binding UploadingProgress}"
+                    common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
+                    Maximum="1" 
+                    Visibility="Collapsed"/>-->
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaGifTemplate" x:DataType="models:TLMessageMediaDocument">
         <Grid>
             <Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="320" MaxHeight="320"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaAudioTemplate" x:DataType="models:TLMessageMediaDocument">
+        <Grid>
+            <local:VoiceMediaControl/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaGeoPointTemplate" x:DataType="models:TLMessageMediaGeo">
+        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Image Source="{Binding Geo, Converter={StaticResource VenueToStaticImageConverter}}" MaxWidth="320" MaxHeight="240"/>
+            <Border Width="20" Height="20" CornerRadius="10" Background="#54000000">
+                <Border CornerRadius="10" Margin="1" Background="White">
+                    <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
+                </Border>
+            </Border>
         </Grid>
     </DataTemplate>
 
@@ -100,8 +122,15 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="MediaEmptyTemplate"/>
+
 
     <selectors:MediaTemplateSelector x:Key="MediaTemplateSelector"
+        EmptyTemplate="{StaticResource MediaEmptyTemplate}"
+        AudioTemplate="{StaticResource MediaAudioTemplate}"
+        GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
+        PhotoTemplate="{StaticResource MediaPhotoTemplate}"
+        VideoTemplate="{StaticResource MediaVideoTemplate}"
         WebPageTemplate="{StaticResource WebPageMediaTemplate}"
         WebPagePhotoTemplate="{StaticResource WebPagePhotoMediaTemplate}"
         WebPageSmallPhotoTemplate="{StaticResource WebPageSmallPhotoMediaTemplate}"/>

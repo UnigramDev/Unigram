@@ -58,6 +58,8 @@ namespace Unigram.Controls
             Paste += OnPaste;
 #endif
             SelectionChanged += OnSelectionChanged;
+
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         private void Bold_Click(object sender, RoutedEventArgs e)
@@ -166,9 +168,28 @@ namespace Unigram.Controls
             }
         }
 
-        protected override async void OnKeyDown(KeyRoutedEventArgs e)
+        //protected override async void OnKeyDown(KeyRoutedEventArgs e)
+        //{
+        //    if (e.Key == VirtualKey.Enter)
+        //    {
+        //        // Check if CTRL or Shift is also pressed in addition to Enter key.
+        //        var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+        //        var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+
+        //        // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
+        //        if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && !IsEmpty)
+        //        {
+        //            e.Handled = true;
+        //            await SendAsync();
+        //        }
+        //    }
+
+        //    base.OnKeyDown(e);
+        //}
+
+        private async void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (e.Key == VirtualKey.Enter)
+            if (args.VirtualKey == VirtualKey.Enter && FocusState != FocusState.Unfocused)
             {
                 // Check if CTRL or Shift is also pressed in addition to Enter key.
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
@@ -177,16 +198,9 @@ namespace Unigram.Controls
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
                 if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && !IsEmpty)
                 {
+                    args.Handled = true;
                     await SendAsync();
                 }
-                else
-                {
-                    base.OnKeyDown(e);
-                }
-            }
-            else
-            {
-                base.OnKeyDown(e);
             }
         }
 

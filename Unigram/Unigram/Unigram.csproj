@@ -132,6 +132,10 @@
     <Compile Include="Controls\Items\SharedFileListViewItem.xaml.cs">
       <DependentUpon>SharedFileListViewItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MediaControl.cs" />
+    <Compile Include="Controls\Media\VoiceMediaControl.xaml.cs">
+      <DependentUpon>VoiceMediaControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\ChatFriendMessageControl.xaml.cs">
       <DependentUpon>ChatFriendMessageControl.xaml</DependentUpon>
     </Compile>
@@ -147,6 +151,9 @@
       <DependentUpon>PhotosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PivotRadioButton.cs" />
+    <Compile Include="Controls\MessageReferenceControl.xaml.cs">
+      <DependentUpon>MessageReferenceControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SearchTextBox.cs" />
     <Compile Include="Controls\Items\SimpleDialogListViewItem.xaml.cs">
       <DependentUpon>SimpleDialogListViewItem.xaml</DependentUpon>
@@ -166,6 +173,7 @@
     <Compile Include="Converters\ReplyInfoToGlyphConverter.cs" />
     <Compile Include="Converters\StateToGlyphConverter.cs" />
     <Compile Include="Converters\TLIntToDateTimeConverter.cs" />
+    <Compile Include="Converters\VenueToStaticImageConverter.cs" />
     <Compile Include="Helpers\ColorHelper.cs" />
     <Compile Include="Helpers\PhraseListHelper.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
@@ -190,6 +198,7 @@
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
     <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />
+    <Compile Include="ViewModels\DialogViewModel.Handle.cs" />
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
     <Compile Include="ViewModels\LoginPasswordViewModel.cs" />
     <Compile Include="ViewModels\LoginPhoneCodeViewModel.cs" />
@@ -356,6 +365,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Media\VoiceMediaControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Messages\ChatFriendMessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -373,6 +386,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Items\SimpleDialogListViewItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MessageReferenceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

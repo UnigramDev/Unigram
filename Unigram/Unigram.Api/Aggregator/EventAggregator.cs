@@ -4,7 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
-namespace Telegram.Api.Aggregator {
+namespace Telegram.Api.Aggregator
+{
     /// <summary>
     ///   A marker interface for classes that subscribe to messages.
     /// </summary>
@@ -14,7 +15,8 @@ namespace Telegram.Api.Aggregator {
     ///   Denotes a class which can handle a particular type of message.
     /// </summary>
     /// <typeparam name = "TMessage">The type of message to handle.</typeparam>
-    public interface IHandle<TMessage> : IHandle {  //don't use contravariance here
+    public interface IHandle<TMessage> : IHandle
+    {  //don't use contravariance here
         /// <summary>
         ///   Handles the message.
         /// </summary>
@@ -25,7 +27,8 @@ namespace Telegram.Api.Aggregator {
     /// <summary>
     ///   Enables loosely-coupled publication of and subscription to events.
     /// </summary>
-    public interface ITelegramEventAggregator {
+    public interface ITelegramEventAggregator
+    {
         /// <summary>
         ///   Gets or sets the default publication thread marshaller.
         /// </summary>
@@ -74,7 +77,8 @@ namespace Telegram.Api.Aggregator {
     /// <summary>
     ///   Enables loosely-coupled publication of and subscription to events.
     /// </summary>
-    public class TelegramEventAggregator : ITelegramEventAggregator {
+    public class TelegramEventAggregator : ITelegramEventAggregator
+    {
         readonly List<Handler> handlers = new List<Handler>();
 
         /// <summary>
@@ -92,7 +96,8 @@ namespace Telegram.Api.Aggregator {
         /// <summary>
         ///   Initializes a new instance of the <see cref = "EventAggregator" /> class.
         /// </summary>
-        public TelegramEventAggregator() {
+        public TelegramEventAggregator()
+        {
             PublicationThreadMarshaller = DefaultPublicationThreadMarshaller;
 
             Instance = this;
@@ -112,20 +117,25 @@ namespace Telegram.Api.Aggregator {
         /// </summary>
         /// <param name="messageType">The message type to check with</param>
         /// <returns>True if any handler is found, false if not.</returns>
-        public bool HandlerExistsFor(Type messageType) {
-                return handlers.Any(handler => handler.Handles(messageType) & !handler.IsDead);
+        public bool HandlerExistsFor(Type messageType)
+        {
+            return handlers.Any(handler => handler.Handles(messageType) & !handler.IsDead);
         }
 
         /// <summary>
         ///   Subscribes an instance to all events declared through implementations of <see cref = "IHandle{T}" />
         /// </summary>
         /// <param name = "subscriber">The instance to subscribe for event publication.</param>
-        public virtual void Subscribe(object subscriber) {
-            if (subscriber == null) {
+        public virtual void Subscribe(object subscriber)
+        {
+            if (subscriber == null)
+            {
                 throw new ArgumentNullException("subscriber");
             }
-            lock(handlers) {
-                if (handlers.Any(x => x.Matches(subscriber))) {
+            lock (handlers)
+            {
+                if (handlers.Any(x => x.Matches(subscriber)))
+                {
                     return;
                 }
 
@@ -137,14 +147,18 @@ namespace Telegram.Api.Aggregator {
         ///   Unsubscribes the instance from all events.
         /// </summary>
         /// <param name = "subscriber">The instance to unsubscribe.</param>
-        public virtual void Unsubscribe(object subscriber) {
-            if (subscriber == null) {
+        public virtual void Unsubscribe(object subscriber)
+        {
+            if (subscriber == null)
+            {
                 throw new ArgumentNullException("subscriber");
             }
-            lock(handlers) {
+            lock (handlers)
+            {
                 var found = handlers.FirstOrDefault(x => x.Matches(subscriber));
 
-                if (found != null) {
+                if (found != null)
+                {
                     handlers.Remove(found);
                 }
             }
@@ -159,8 +173,10 @@ namespace Telegram.Api.Aggregator {
         /// <remarks>
         ///   Does not marshall the the publication to any special thread by default.
         /// </remarks>
-        public virtual void Publish(object message) {
-            if (message == null) {
+        public virtual void Publish(object message)
+        {
+            if (message == null)
+            {
                 throw new ArgumentNullException("message");
             }
 
@@ -179,16 +195,20 @@ namespace Telegram.Api.Aggregator {
         /// </summary>
         /// <param name = "message">The message instance.</param>
         /// <param name = "marshal">Allows the publisher to provide a custom thread marshaller for the message publication.</param>
-        public virtual void Publish(object message, Action<System.Action> marshal) {
-            if (message == null){
+        public virtual void Publish(object message, Action<System.Action> marshal)
+        {
+            if (message == null)
+            {
                 throw new ArgumentNullException("message");
             }
-            if (marshal == null) {
+            if (marshal == null)
+            {
                 throw new ArgumentNullException("marshal");
             }
 
             Handler[] toNotify;
-            lock (handlers) {
+            lock (handlers)
+            {
                 toNotify = handlers.ToArray();
             }
 
@@ -199,23 +219,28 @@ namespace Telegram.Api.Aggregator {
                     .Where(handler => !handler.Handle(messageType, message))
                     .ToList();
 
-                if(dead.Any()) {
-                    lock(handlers) {
+                if (dead.Any())
+                {
+                    lock (handlers)
+                    {
                         dead.Apply(x => handlers.Remove(x));
                     }
                 }
             });
         }
 
-        class Handler {
+        class Handler
+        {
             readonly WeakReference reference;
             readonly Dictionary<Type, MethodInfo> supportedHandlers = new Dictionary<Type, MethodInfo>();
 
-            public bool IsDead {
+            public bool IsDead
+            {
                 get { return reference.Target == null; }
             }
 
-            public Handler(object handler) {
+            public Handler(object handler)
+            {
                 reference = new WeakReference(handler);
 
 #if WIN_RT
@@ -223,7 +248,8 @@ namespace Telegram.Api.Aggregator {
                 var interfaces = handler.GetType().GetTypeInfo().ImplementedInterfaces
                     .Where(x => handlerInfo.IsAssignableFrom(x.GetTypeInfo()) && x.GetTypeInfo().IsGenericType);
 
-                foreach (var @interface in interfaces) {
+                foreach (var @interface in interfaces)
+                {
                     var type = @interface.GenericTypeArguments[0];
                     var method = @interface.GetTypeInfo().DeclaredMethods.First(x => x.Name == "Handle");
                     supportedHandlers[type] = method;
@@ -240,29 +266,36 @@ namespace Telegram.Api.Aggregator {
 #endif
             }
 
-            public bool Matches(object instance) {
+            public bool Matches(object instance)
+            {
                 return reference.Target == instance;
             }
 
-            public bool Handle(Type messageType, object message) {
+            public bool Handle(Type messageType, object message)
+            {
                 var target = reference.Target;
-                if (target == null) {
+                if (target == null)
+                {
                     return false;
                 }
 
-                foreach(var pair in supportedHandlers) {
-                    if(pair.Key.IsAssignableFrom(messageType)) {
+                foreach (var pair in supportedHandlers)
+                {
+                    if (pair.Key.IsAssignableFrom(messageType))
+                    {
                         var result = pair.Value.Invoke(target, new[] { message });
-                        if (result != null) {
+                        if (result != null)
+                        {
                             HandlerResultProcessing(target, result);
                         }
                     }
                 }
-                
+
                 return true;
             }
 
-            public bool Handles(Type messageType) {
+            public bool Handles(Type messageType)
+            {
                 return supportedHandlers.Any(pair => pair.Key.IsAssignableFrom(messageType));
             }
         }

@@ -66,18 +66,24 @@ namespace Unigram.ViewModels
         {
             if (message == null) return;
 
-            var dataPackage = new DataPackage();
+            string text = null;
+
             var media = message.Media as ITLMediaCaption;
-            if (media != null)
+            if (media != null && !string.IsNullOrWhiteSpace(media.Caption))
             {
-                dataPackage.SetText(media.Caption);
+                text = media.Caption;
             }
-            else
+            else if (!string.IsNullOrWhiteSpace(message.Message))
             {
-                dataPackage.SetText(message.Message);
+                text = message.Message;
             }
 
-            Clipboard.SetContent(dataPackage);
+            if (text != null)
+            {
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(text);
+                Clipboard.SetContent(dataPackage);
+            }
         }
 
         #endregion
@@ -95,14 +101,14 @@ namespace Unigram.ViewModels
             var result = await dialog.ShowAsync();
             if (result != null && result.Label == "Si")
             {
-                var list = new List<TLMessageBase>() { message };
+                var messages = new List<TLMessageBase>() { message };
                 if (message.Id == 0 && message.RandomId != 0L)
                 {
-                    DeleteMessagesInternal(null, list);
+                    DeleteMessagesInternal(null, messages);
                     return;
                 }
 
-                DeleteMessages(null, null, list, null, DeleteMessagesInternal);
+                DeleteMessages(null, null, messages, null, DeleteMessagesInternal);
             }
         }
 
@@ -132,7 +138,7 @@ namespace Unigram.ViewModels
                     Messages.Remove(messages[j]);
                 }
 
-                //RaisePropertyChanged(() => With);
+                RaisePropertyChanged(() => With);
 
                 //this.IsEmptyDialog = (this.Items.get_Count() == 0 && this.LazyItems.get_Count() == 0);
                 //this.NotifyOfPropertyChange<TLObject>(() => this.With);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-   public class BubbleListView: ListView
+   public class BubbleListView : ListView
     {
         public ScrollViewer ScrollingHost { get; private set; }
 
@@ -24,8 +25,10 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
+        private int count;
         protected override DependencyObject GetContainerForItemOverride()
         {
+            Debug.WriteLine($"New listview item: {++count}");
             return new BubbleListViewItem(this);
         }
     }

@@ -104,7 +104,7 @@ namespace Telegram.Api.TL
                 position = 0;
             }
 
-            for (var i = 0; i < messages.Count; i++)
+            for (var i = messages.Count - 1; i >= 0; i--)
             {
                 if (messages[i].Id == 0)
                 {
@@ -136,6 +136,47 @@ namespace Telegram.Api.TL
             }
 
             return position;
+
+
+            ////var position = -1;
+
+            ////if (messages.Count == 0)
+            ////{
+            ////    position = 0;
+            ////}
+
+            ////for (var i = 0; i < messages.Count; i++)
+            ////{
+            ////    if (messages[i].Id == 0)
+            ////    {
+            ////        if (messages[i].Date < message.Date)
+            ////        {
+            ////            position = i;
+            ////            break;
+            ////        }
+
+            ////        continue;
+            ////    }
+
+            ////    if (messages[i].Id == message.Id)
+            ////    {
+            ////        position = -1;
+            ////        break;
+            ////    }
+            ////    if (messages[i].Id < message.Id)
+            ////    {
+            ////        position = i;
+            ////        break;
+            ////    }
+            ////}
+
+            ////if (position != -1)
+            ////{
+            ////    //message._isAnimated = position == 0;
+            ////    messages.Insert(position, message);
+            ////}
+
+            ////return position;
         }
 
 
