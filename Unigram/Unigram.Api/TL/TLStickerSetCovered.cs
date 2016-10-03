@@ -3,9 +3,8 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLStickerSetCovered : TLObject 
+	public partial class TLStickerSetCovered : TLStickerSetCoveredBase 
 	{
-		public TLStickerSet Set { get; set; }
 		public TLDocumentBase Cover { get; set; }
 
 		public TLStickerSetCovered() { }

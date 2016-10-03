@@ -13,10 +13,12 @@ namespace Telegram.Api.TL.Methods.Messages
 		{
 			Silent = (1 << 5),
 			Background = (1 << 6),
+			WithMyScore = (1 << 8),
 		}
 
 		public bool IsSilent { get { return Flags.HasFlag(Flag.Silent); } set { Flags = value ? (Flags | Flag.Silent) : (Flags & ~Flag.Silent); } }
 		public bool IsBackground { get { return Flags.HasFlag(Flag.Background); } set { Flags = value ? (Flags | Flag.Background) : (Flags & ~Flag.Background); } }
+		public bool IsWithMyScore { get { return Flags.HasFlag(Flag.WithMyScore); } set { Flags = value ? (Flags | Flag.WithMyScore) : (Flags & ~Flag.WithMyScore); } }
 
 		public Flag Flags { get; set; }
 		public TLInputPeerBase FromPeer { get; set; }
@@ -44,8 +46,6 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			UpdateFlags();
-
 			to.Write(0x708E0195);
 			to.Write((Int32)Flags);
 			to.WriteObject(FromPeer, cache);
@@ -53,10 +53,6 @@ namespace Telegram.Api.TL.Methods.Messages
 			to.WriteObject(RandomId, cache);
 			to.WriteObject(ToPeer, cache);
 			if (cache) WriteToCache(to);
-		}
-
-		private void UpdateFlags()
-		{
 		}
 	}
 }

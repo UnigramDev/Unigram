@@ -8,6 +8,15 @@ namespace Telegram.Api.TL.Methods.Messages
 	/// </summary>
 	public partial class TLMessagesGetArchivedStickers : TLObject
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			Masks = (1 << 0),
+		}
+
+		public bool IsMasks { get { return Flags.HasFlag(Flag.Masks); } set { Flags = value ? (Flags | Flag.Masks) : (Flags & ~Flag.Masks); } }
+
+		public Flag Flags { get; set; }
 		public Int64 OffsetId { get; set; }
 		public Int32 Limit { get; set; }
 
@@ -21,6 +30,7 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			Flags = (Flag)from.ReadInt32();
 			OffsetId = from.ReadInt64();
 			Limit = from.ReadInt32();
 			if (cache) ReadFromCache(from);
@@ -28,7 +38,8 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0x906E241F);
+			to.Write(0x57F17692);
+			to.Write((Int32)Flags);
 			to.Write(OffsetId);
 			to.Write(Limit);
 			if (cache) WriteToCache(to);

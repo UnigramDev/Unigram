@@ -18,15 +18,13 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			File = TLFactory.Read<TLInputFileBase>(from, cache);
-			Crop = TLFactory.Read<TLInputPhotoCropBase>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0x94254732);
+			to.Write(0x927C55B4);
 			to.WriteObject(File, cache);
-			to.WriteObject(Crop, cache);
 			if (cache) WriteToCache(to);
 		}
 	}

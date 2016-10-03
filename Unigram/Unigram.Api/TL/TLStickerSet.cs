@@ -11,11 +11,13 @@ namespace Telegram.Api.TL
 			Installed = (1 << 0),
 			Archived = (1 << 1),
 			Official = (1 << 2),
+			Masks = (1 << 3),
 		}
 
 		public bool IsInstalled { get { return Flags.HasFlag(Flag.Installed); } set { Flags = value ? (Flags | Flag.Installed) : (Flags & ~Flag.Installed); } }
 		public bool IsArchived { get { return Flags.HasFlag(Flag.Archived); } set { Flags = value ? (Flags | Flag.Archived) : (Flags & ~Flag.Archived); } }
 		public bool IsOfficial { get { return Flags.HasFlag(Flag.Official); } set { Flags = value ? (Flags | Flag.Official) : (Flags & ~Flag.Official); } }
+		public bool IsMasks { get { return Flags.HasFlag(Flag.Masks); } set { Flags = value ? (Flags | Flag.Masks) : (Flags & ~Flag.Masks); } }
 
 		public Flag Flags { get; set; }
 		public Int64 Id { get; set; }
@@ -47,8 +49,6 @@ namespace Telegram.Api.TL
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			UpdateFlags();
-
 			to.Write(0xCD303B41);
 			to.Write((Int32)Flags);
 			to.Write(Id);
@@ -58,10 +58,6 @@ namespace Telegram.Api.TL
 			to.Write(Count);
 			to.Write(Hash);
 			if (cache) WriteToCache(to);
-		}
-
-		private void UpdateFlags()
-		{
 		}
 	}
 }

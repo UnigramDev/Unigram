@@ -7,6 +7,7 @@ namespace Telegram.Api.TL
 	{
 		public TLInputFileBase File { get; set; }
 		public String Caption { get; set; }
+		public TLVector<TLInputDocumentBase> Stickers { get; set; }
 		public TLInputGeoPointBase GeoPoint { get; set; }
 		public String MimeType { get; set; }
 		public TLVector<TLDocumentAttributeBase> Attributes { get; set; }

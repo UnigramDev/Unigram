@@ -6,12 +6,9 @@ namespace Telegram.Api.TL.Methods.Photos
 	/// <summary>
 	/// RCP method photos.uploadProfilePhoto
 	/// </summary>
-	public partial class TLPhotosUploadProfilePhoto : TLObject, ITLMediaCaption
+	public partial class TLPhotosUploadProfilePhoto : TLObject
 	{
 		public TLInputFileBase File { get; set; }
-		public String Caption { get; set; }
-		public TLInputGeoPointBase GeoPoint { get; set; }
-		public TLInputPhotoCropBase Crop { get; set; }
 
 		public TLPhotosUploadProfilePhoto() { }
 		public TLPhotosUploadProfilePhoto(TLBinaryReader from, bool cache = false)
@@ -24,19 +21,13 @@ namespace Telegram.Api.TL.Methods.Photos
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			File = TLFactory.Read<TLInputFileBase>(from, cache);
-			Caption = from.ReadString();
-			GeoPoint = TLFactory.Read<TLInputGeoPointBase>(from, cache);
-			Crop = TLFactory.Read<TLInputPhotoCropBase>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0xD50F9C88);
+			to.Write(0x4F32C098);
 			to.WriteObject(File, cache);
-			to.Write(Caption);
-			to.WriteObject(GeoPoint, cache);
-			to.WriteObject(Crop, cache);
 			if (cache) WriteToCache(to);
 		}
 	}

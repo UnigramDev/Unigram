@@ -8,6 +8,15 @@ namespace Telegram.Api.TL.Methods.Messages
 	/// </summary>
 	public partial class TLMessagesSaveRecentSticker : TLObject
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			Attached = (1 << 0),
+		}
+
+		public bool IsAttached { get { return Flags.HasFlag(Flag.Attached); } set { Flags = value ? (Flags | Flag.Attached) : (Flags & ~Flag.Attached); } }
+
+		public Flag Flags { get; set; }
 		public TLInputDocumentBase Id { get; set; }
 		public Boolean Unsave { get; set; }
 
@@ -21,6 +30,7 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Id = TLFactory.Read<TLInputDocumentBase>(from, cache);
 			Unsave = from.ReadBoolean();
 			if (cache) ReadFromCache(from);
@@ -28,7 +38,8 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0x348E39BF);
+			to.Write(0x392718F8);
+			to.Write((Int32)Flags);
 			to.WriteObject(Id, cache);
 			to.Write(Unsave);
 			if (cache) WriteToCache(to);

@@ -8,6 +8,8 @@ namespace Telegram.Api.TL.Methods.Messages
 	/// </summary>
 	public partial class TLMessagesReadFeaturedStickers : TLObject
 	{
+		public TLVector<Int64> Id { get; set; }
+
 		public TLMessagesReadFeaturedStickers() { }
 		public TLMessagesReadFeaturedStickers(TLBinaryReader from, bool cache = false)
 		{
@@ -18,12 +20,14 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			Id = TLFactory.Read<TLVector<Int64>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0xE21CBB);
+			to.Write(0x5B118126);
+			to.WriteObject(Id, cache);
 			if (cache) WriteToCache(to);
 		}
 	}

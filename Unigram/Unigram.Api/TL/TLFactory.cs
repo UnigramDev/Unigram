@@ -51,6 +51,7 @@ namespace Telegram.Api.TL
 				case TLType.AuthRecoverPassword: return (T)(Object)new TLAuthRecoverPassword(from, cache);
 				case TLType.AuthResendCode: return (T)(Object)new TLAuthResendCode(from, cache);
 				case TLType.AuthCancelCode: return (T)(Object)new TLAuthCancelCode(from, cache);
+				case TLType.AuthDropTempAuthKeys: return (T)(Object)new TLAuthDropTempAuthKeys(from, cache);
 				case TLType.AccountRegisterDevice: return (T)(Object)new TLAccountRegisterDevice(from, cache);
 				case TLType.AccountUnregisterDevice: return (T)(Object)new TLAccountUnregisterDevice(from, cache);
 				case TLType.AccountUpdateNotifySettings: return (T)(Object)new TLAccountUpdateNotifySettings(from, cache);
@@ -127,7 +128,6 @@ namespace Telegram.Api.TL
 				case TLType.MessagesSendEncryptedService: return (T)(Object)new TLMessagesSendEncryptedService(from, cache);
 				case TLType.MessagesReceivedQueue: return (T)(Object)new TLMessagesReceivedQueue(from, cache);
 				case TLType.MessagesReadMessageContents: return (T)(Object)new TLMessagesReadMessageContents(from, cache);
-				case TLType.MessagesGetStickers: return (T)(Object)new TLMessagesGetStickers(from, cache);
 				case TLType.MessagesGetAllStickers: return (T)(Object)new TLMessagesGetAllStickers(from, cache);
 				case TLType.MessagesGetWebPagePreview: return (T)(Object)new TLMessagesGetWebPagePreview(from, cache);
 				case TLType.MessagesExportChatInvite: return (T)(Object)new TLMessagesExportChatInvite(from, cache);
@@ -163,8 +163,13 @@ namespace Telegram.Api.TL
 				case TLType.MessagesGetRecentStickers: return (T)(Object)new TLMessagesGetRecentStickers(from, cache);
 				case TLType.MessagesSaveRecentSticker: return (T)(Object)new TLMessagesSaveRecentSticker(from, cache);
 				case TLType.MessagesClearRecentStickers: return (T)(Object)new TLMessagesClearRecentStickers(from, cache);
-				case TLType.MessagesGetUnusedStickers: return (T)(Object)new TLMessagesGetUnusedStickers(from, cache);
 				case TLType.MessagesGetArchivedStickers: return (T)(Object)new TLMessagesGetArchivedStickers(from, cache);
+				case TLType.MessagesGetMaskStickers: return (T)(Object)new TLMessagesGetMaskStickers(from, cache);
+				case TLType.MessagesGetAttachedStickers: return (T)(Object)new TLMessagesGetAttachedStickers(from, cache);
+				case TLType.MessagesSetGameScore: return (T)(Object)new TLMessagesSetGameScore(from, cache);
+				case TLType.MessagesSetInlineGameScore: return (T)(Object)new TLMessagesSetInlineGameScore(from, cache);
+				case TLType.MessagesGetGameHighScores: return (T)(Object)new TLMessagesGetGameHighScores(from, cache);
+				case TLType.MessagesGetInlineGameHighScores: return (T)(Object)new TLMessagesGetInlineGameHighScores(from, cache);
 				case TLType.UpdatesGetState: return (T)(Object)new TLUpdatesGetState(from, cache);
 				case TLType.UpdatesGetDifference: return (T)(Object)new TLUpdatesGetDifference(from, cache);
 				case TLType.UpdatesGetChannelDifference: return (T)(Object)new TLUpdatesGetChannelDifference(from, cache);
@@ -266,6 +271,7 @@ namespace Telegram.Api.TL
 				case TLType.InputMediaGifExternal: return (T)(Object)new TLInputMediaGifExternal(from, cache);
 				case TLType.InputMediaPhotoExternal: return (T)(Object)new TLInputMediaPhotoExternal(from, cache);
 				case TLType.InputMediaDocumentExternal: return (T)(Object)new TLInputMediaDocumentExternal(from, cache);
+				case TLType.InputMediaGame: return (T)(Object)new TLInputMediaGame(from, cache);
 				case TLType.InputChatPhotoEmpty: return (T)(Object)new TLInputChatPhotoEmpty(from, cache);
 				case TLType.InputChatUploadedPhoto: return (T)(Object)new TLInputChatUploadedPhoto(from, cache);
 				case TLType.InputChatPhoto: return (T)(Object)new TLInputChatPhoto(from, cache);
@@ -276,8 +282,6 @@ namespace Telegram.Api.TL
 				case TLType.InputFileLocation: return (T)(Object)new TLInputFileLocation(from, cache);
 				case TLType.InputEncryptedFileLocation: return (T)(Object)new TLInputEncryptedFileLocation(from, cache);
 				case TLType.InputDocumentFileLocation: return (T)(Object)new TLInputDocumentFileLocation(from, cache);
-				case TLType.InputPhotoCropAuto: return (T)(Object)new TLInputPhotoCropAuto(from, cache);
-				case TLType.InputPhotoCrop: return (T)(Object)new TLInputPhotoCrop(from, cache);
 				case TLType.InputAppEvent: return (T)(Object)new TLInputAppEvent(from, cache);
 				case TLType.PeerUser: return (T)(Object)new TLPeerUser(from, cache);
 				case TLType.PeerChat: return (T)(Object)new TLPeerChat(from, cache);
@@ -327,6 +331,7 @@ namespace Telegram.Api.TL
 				case TLType.MessageMediaDocument: return (T)(Object)new TLMessageMediaDocument(from, cache);
 				case TLType.MessageMediaWebPage: return (T)(Object)new TLMessageMediaWebPage(from, cache);
 				case TLType.MessageMediaVenue: return (T)(Object)new TLMessageMediaVenue(from, cache);
+				case TLType.MessageMediaGame: return (T)(Object)new TLMessageMediaGame(from, cache);
 				case TLType.MessageActionEmpty: return (T)(Object)new TLMessageActionEmpty(from, cache);
 				case TLType.MessageActionChatCreate: return (T)(Object)new TLMessageActionChatCreate(from, cache);
 				case TLType.MessageActionChatEditTitle: return (T)(Object)new TLMessageActionChatEditTitle(from, cache);
@@ -340,6 +345,7 @@ namespace Telegram.Api.TL
 				case TLType.MessageActionChannelMigrateFrom: return (T)(Object)new TLMessageActionChannelMigrateFrom(from, cache);
 				case TLType.MessageActionPinMessage: return (T)(Object)new TLMessageActionPinMessage(from, cache);
 				case TLType.MessageActionHistoryClear: return (T)(Object)new TLMessageActionHistoryClear(from, cache);
+				case TLType.MessageActionGameScore: return (T)(Object)new TLMessageActionGameScore(from, cache);
 				case TLType.Dialog: return (T)(Object)new TLDialog(from, cache);
 				case TLType.PhotoEmpty: return (T)(Object)new TLPhotoEmpty(from, cache);
 				case TLType.Photo: return (T)(Object)new TLPhoto(from, cache);
@@ -511,6 +517,8 @@ namespace Telegram.Api.TL
 				case TLType.SendMessageUploadDocumentAction: return (T)(Object)new TLSendMessageUploadDocumentAction(from, cache);
 				case TLType.SendMessageGeoLocationAction: return (T)(Object)new TLSendMessageGeoLocationAction(from, cache);
 				case TLType.SendMessageChooseContactAction: return (T)(Object)new TLSendMessageChooseContactAction(from, cache);
+				case TLType.SendMessageGamePlayAction: return (T)(Object)new TLSendMessageGamePlayAction(from, cache);
+				case TLType.SendMessageGameStopAction: return (T)(Object)new TLSendMessageGameStopAction(from, cache);
 				case TLType.ContactsFound: return (T)(Object)new TLContactsFound(from, cache);
 				case TLType.InputPrivacyKeyStatusTimestamp: return (T)(Object)new TLInputPrivacyKeyStatusTimestamp(from, cache);
 				case TLType.InputPrivacyKeyChatInvite: return (T)(Object)new TLInputPrivacyKeyChatInvite(from, cache);
@@ -536,6 +544,7 @@ namespace Telegram.Api.TL
 				case TLType.DocumentAttributeVideo: return (T)(Object)new TLDocumentAttributeVideo(from, cache);
 				case TLType.DocumentAttributeAudio: return (T)(Object)new TLDocumentAttributeAudio(from, cache);
 				case TLType.DocumentAttributeFilename: return (T)(Object)new TLDocumentAttributeFilename(from, cache);
+				case TLType.DocumentAttributeHasStickers: return (T)(Object)new TLDocumentAttributeHasStickers(from, cache);
 				case TLType.MessagesStickersNotModified: return (T)(Object)new TLMessagesStickersNotModified(from, cache);
 				case TLType.MessagesStickers: return (T)(Object)new TLMessagesStickers(from, cache);
 				case TLType.StickerPack: return (T)(Object)new TLStickerPack(from, cache);
@@ -575,6 +584,7 @@ namespace Telegram.Api.TL
 				case TLType.KeyboardButtonRequestPhone: return (T)(Object)new TLKeyboardButtonRequestPhone(from, cache);
 				case TLType.KeyboardButtonRequestGeoLocation: return (T)(Object)new TLKeyboardButtonRequestGeoLocation(from, cache);
 				case TLType.KeyboardButtonSwitchInline: return (T)(Object)new TLKeyboardButtonSwitchInline(from, cache);
+				case TLType.KeyboardButtonGame: return (T)(Object)new TLKeyboardButtonGame(from, cache);
 				case TLType.KeyboardButtonRow: return (T)(Object)new TLKeyboardButtonRow(from, cache);
 				case TLType.ReplyKeyboardHide: return (T)(Object)new TLReplyKeyboardHide(from, cache);
 				case TLType.ReplyKeyboardForceReply: return (T)(Object)new TLReplyKeyboardForceReply(from, cache);
@@ -630,9 +640,11 @@ namespace Telegram.Api.TL
 				case TLType.InputBotInlineMessageMediaGeo: return (T)(Object)new TLInputBotInlineMessageMediaGeo(from, cache);
 				case TLType.InputBotInlineMessageMediaVenue: return (T)(Object)new TLInputBotInlineMessageMediaVenue(from, cache);
 				case TLType.InputBotInlineMessageMediaContact: return (T)(Object)new TLInputBotInlineMessageMediaContact(from, cache);
+				case TLType.InputBotInlineMessageGame: return (T)(Object)new TLInputBotInlineMessageGame(from, cache);
 				case TLType.InputBotInlineResult: return (T)(Object)new TLInputBotInlineResult(from, cache);
 				case TLType.InputBotInlineResultPhoto: return (T)(Object)new TLInputBotInlineResultPhoto(from, cache);
 				case TLType.InputBotInlineResultDocument: return (T)(Object)new TLInputBotInlineResultDocument(from, cache);
+				case TLType.InputBotInlineResultGame: return (T)(Object)new TLInputBotInlineResultGame(from, cache);
 				case TLType.BotInlineMessageMediaAuto: return (T)(Object)new TLBotInlineMessageMediaAuto(from, cache);
 				case TLType.BotInlineMessageText: return (T)(Object)new TLBotInlineMessageText(from, cache);
 				case TLType.BotInlineMessageMediaGeo: return (T)(Object)new TLBotInlineMessageMediaGeo(from, cache);
@@ -674,6 +686,15 @@ namespace Telegram.Api.TL
 				case TLType.MessagesStickerSetInstallResultSuccess: return (T)(Object)new TLMessagesStickerSetInstallResultSuccess(from, cache);
 				case TLType.MessagesStickerSetInstallResultArchive: return (T)(Object)new TLMessagesStickerSetInstallResultArchive(from, cache);
 				case TLType.StickerSetCovered: return (T)(Object)new TLStickerSetCovered(from, cache);
+				case TLType.StickerSetMultiCovered: return (T)(Object)new TLStickerSetMultiCovered(from, cache);
+				case TLType.MaskCoords: return (T)(Object)new TLMaskCoords(from, cache);
+				case TLType.InputStickeredMediaPhoto: return (T)(Object)new TLInputStickeredMediaPhoto(from, cache);
+				case TLType.InputStickeredMediaDocument: return (T)(Object)new TLInputStickeredMediaDocument(from, cache);
+				case TLType.Game: return (T)(Object)new TLGame(from, cache);
+				case TLType.InputGameID: return (T)(Object)new TLInputGameID(from, cache);
+				case TLType.InputGameShortName: return (T)(Object)new TLInputGameShortName(from, cache);
+				case TLType.HighScore: return (T)(Object)new TLHighScore(from, cache);
+				case TLType.MessagesHighScores: return (T)(Object)new TLMessagesHighScores(from, cache);
 				case TLType.Message: return (T)(Object)new TLMessage(from, cache);
 				case TLType.MessageService: return (T)(Object)new TLMessageService(from, cache);
 				case TLType.RPCResult: return (T)(Object)new TLRPCResult(from, cache);

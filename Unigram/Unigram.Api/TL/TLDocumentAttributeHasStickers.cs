@@ -3,15 +3,15 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLInputPhotoCropAuto : TLInputPhotoCropBase 
+	public partial class TLDocumentAttributeHasStickers : TLDocumentAttributeBase 
 	{
-		public TLInputPhotoCropAuto() { }
-		public TLInputPhotoCropAuto(TLBinaryReader from, bool cache = false)
+		public TLDocumentAttributeHasStickers() { }
+		public TLDocumentAttributeHasStickers(TLBinaryReader from, bool cache = false)
 		{
 			Read(from, cache);
 		}
 
-		public override TLType TypeId { get { return TLType.InputPhotoCropAuto; } }
+		public override TLType TypeId { get { return TLType.DocumentAttributeHasStickers; } }
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
@@ -20,7 +20,7 @@ namespace Telegram.Api.TL
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0xADE6B004);
+			to.Write(0x9801D2F7);
 			if (cache) WriteToCache(to);
 		}
 	}

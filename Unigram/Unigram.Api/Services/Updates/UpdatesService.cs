@@ -1938,14 +1938,12 @@ namespace Telegram.Api.Services.Updates
             if (updateStickerSetsOrder != null)
             {
                 Execute.ShowDebugMessage("TLUpdateStickerSetsOrder56");
-                
-                // TODO: Layer 56
-                //var updateStickerSetsOrder56 = updateStickerSetsOrder as TLUpdateStickerSetsOrder;
-                //if (updateStickerSetsOrder56 != null && updateStickerSetsOrder56.Masks)
-                //{
-                //    return true;
-                //}
-                
+
+                if (updateStickerSetsOrder.IsMasks)
+                {
+                    return true;
+                }
+
                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateStickerSetsOrder));
 
                 return true;

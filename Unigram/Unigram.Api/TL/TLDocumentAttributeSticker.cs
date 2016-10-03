@@ -5,8 +5,20 @@ namespace Telegram.Api.TL
 {
 	public partial class TLDocumentAttributeSticker : TLDocumentAttributeBase 
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			Mask = (1 << 1),
+			MaskCoords = (1 << 0),
+		}
+
+		public bool IsMask { get { return Flags.HasFlag(Flag.Mask); } set { Flags = value ? (Flags | Flag.Mask) : (Flags & ~Flag.Mask); } }
+		public bool HasMaskCoords { get { return Flags.HasFlag(Flag.MaskCoords); } set { Flags = value ? (Flags | Flag.MaskCoords) : (Flags & ~Flag.MaskCoords); } }
+
+		public Flag Flags { get; set; }
 		public String Alt { get; set; }
 		public TLInputStickerSetBase Stickerset { get; set; }
+		public TLMaskCoords MaskCoords { get; set; }
 
 		public TLDocumentAttributeSticker() { }
 		public TLDocumentAttributeSticker(TLBinaryReader from, bool cache = false)
@@ -18,17 +30,28 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Alt = from.ReadString();
 			Stickerset = TLFactory.Read<TLInputStickerSetBase>(from, cache);
+			if (HasMaskCoords) MaskCoords = TLFactory.Read<TLMaskCoords>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0x3A556302);
+			UpdateFlags();
+
+			to.Write(0x6319D612);
+			to.Write((Int32)Flags);
 			to.Write(Alt);
 			to.WriteObject(Stickerset, cache);
+			if (HasMaskCoords) to.WriteObject(MaskCoords, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasMaskCoords = MaskCoords != null;
 		}
 	}
 }

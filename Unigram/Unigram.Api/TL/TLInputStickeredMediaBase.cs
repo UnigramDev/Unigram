@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public abstract partial class TLInputPhotoCropBase : TLObject
+	public abstract partial class TLInputStickeredMediaBase : TLObject
 	{
 	}
 }
