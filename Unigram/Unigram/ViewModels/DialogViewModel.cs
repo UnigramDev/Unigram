@@ -211,10 +211,12 @@ namespace Unigram.ViewModels
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             loaded = 0;
+
             var participant = GetParticipant(parameter as TLPeerBase);
-            var channel = parameter as TLChannel;
-            var chat = parameter as TLChat;
-            var user = parameter as TLUser;
+            var channel = participant as TLChannel;
+            var chat = participant as TLChat;
+            var user = participant as TLUser;
+
             if (user != null)
             {
                 With = user;

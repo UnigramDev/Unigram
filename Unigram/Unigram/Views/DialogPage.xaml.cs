@@ -39,8 +39,6 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            NavigationCacheMode = NavigationCacheMode.Required;
-
             DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
             Loaded += DialogPage_Loaded;
             CheckMessageBoxEmpty();
