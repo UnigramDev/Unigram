@@ -58,8 +58,9 @@ namespace Unigram.Views
             if (MasterDetail.NavigationService == null)
             {
                 MasterDetail.Initialize("Main");
-                ViewModel.NavigationService = MasterDetail.NavigationService;
             }
+
+            ViewModel.NavigationService = MasterDetail.NavigationService;
 
             if (e.Parameter is string)
             {
@@ -72,6 +73,7 @@ namespace Unigram.Views
                         var user = ViewModel.CacheService.GetUser(int.Parse(data["from_id"]));
                         if (user != null)
                         {
+                            ClearNavigation();
                             ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
                         }
                     }
@@ -80,6 +82,7 @@ namespace Unigram.Views
                         var chat = ViewModel.CacheService.GetChat(int.Parse(data["chat_id"]));
                         if (chat != null)
                         {
+                            ClearNavigation();
                             ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = chat.Id });
                         }
                     }
@@ -88,10 +91,25 @@ namespace Unigram.Views
                         var chat = ViewModel.CacheService.GetChat(int.Parse(data["channel_id"]));
                         if (chat != null)
                         {
+                            ClearNavigation();
                             ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = chat.Id });
                         }
                     }
                 }
+            }
+        }
+
+        private void ClearNavigation()
+        {
+            while (ViewModel.NavigationService.Frame.BackStackDepth > 1)
+            {
+                ViewModel.NavigationService.Frame.BackStack.RemoveAt(1);
+            }
+
+            if (ViewModel.NavigationService.CanGoBack)
+            {
+                ViewModel.NavigationService.GoBack();
+                ViewModel.NavigationService.Frame.ForwardStack.Clear();
             }
         }
 
@@ -218,7 +236,7 @@ namespace Unigram.Views
             if (UsersListView.SelectedItem != null && _lastSelectedContact != UsersListView.SelectedItem && UsersListView.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 var user = UsersListView.SelectedItem as UsersPanelListItem;
-                ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user._parent.Id });
             }
         }
     }
