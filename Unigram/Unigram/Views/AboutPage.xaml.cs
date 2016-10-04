@@ -84,6 +84,12 @@
             var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
         }
 
+        private async void btnThanksTelegramDesktopTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var uriTwitter = new Uri(@"https://twitter.com/telegramdesktop");
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
+        }
+
         // Websites
         private async void btnCoreRickWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
@@ -118,6 +124,5 @@
             var url = new Uri(@"https://adeltax.com/");
             var success = await Windows.System.Launcher.LaunchUriAsync(url);
         }
-
     }
 }
