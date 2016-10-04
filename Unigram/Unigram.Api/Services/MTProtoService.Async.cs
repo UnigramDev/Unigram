@@ -65,7 +65,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
-        public Task<MTProtoResponse<TLMessagesBotCallbackAnswer>> GetBotAsyncAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, int gameId)
+        public Task<MTProtoResponse<TLMessagesBotCallbackAnswer>> GetBotCallbackAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, int gameId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesBotCallbackAnswer>>();
             GetBotCallbackAnswerCallback(peer, messageId, data, gameId, (callback) =>

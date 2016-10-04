@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
 using Windows.UI.Popups;
 
 namespace Unigram.ViewModels
@@ -62,9 +64,30 @@ namespace Unigram.ViewModels
         #region Copy
 
         public RelayCommand<TLMessage> MessageCopyCommand => new RelayCommand<TLMessage>(MessageCopyExecute);
-        private void MessageCopyExecute(TLMessage message)
+        private async void MessageCopyExecute(TLMessage message)
         {
             if (message == null) return;
+
+            if (message.Media is TLMessageMediaGame)
+            {
+                var gameMedia = message.Media as TLMessageMediaGame;
+
+                var button = message.ReplyMarkup.Rows.SelectMany(x => x.Buttons).OfType<TLKeyboardButtonGame>().FirstOrDefault();
+                if (button != null)
+                {
+                    var responseBot = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, 1);
+                    if (responseBot.IsSucceeded && responseBot.Value.IsHasUrl && responseBot.Value.HasUrl)
+                    {
+                        var user = CacheService.GetUser(message.ViaBotId) as TLUser;
+                        if (user != null)
+                        {
+                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = responseBot.Value.Url, Username = user.Username, Title = gameMedia.Game.Title });
+                        }
+                    }
+                }
+
+                return;
+            }
 
             string text = null;
 

@@ -154,7 +154,7 @@ namespace Unigram.ViewModels
             var result = await ProtoService.SendCodeAsync(PhoneCode.TrimStart('+') + PhoneNumber, /* TODO: Verify */ null);
             if (result?.IsSucceeded == true)
             {
-                var state = new LoginPhoneCodeViewModel.NavigationParameter
+                var state = new LoginPhoneCodePage.NavigationParameters
                 {
                     PhoneNumber = PhoneCode.TrimStart('+') + PhoneNumber,
                     PhoneCodeHash = result.Value.PhoneCodeHash,

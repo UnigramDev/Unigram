@@ -55,5 +55,12 @@ namespace Unigram.Views
                 pbarLoading.Visibility = Visibility.Visible;
             }
         }
+
+        public class NavigationParameters
+        {
+            public string PhoneNumber { get; set; }
+
+            public string PhoneCodeHash { get; set; }
+        }
     }
 }

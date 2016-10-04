@@ -579,8 +579,7 @@ namespace Unigram.Common
                     var channel = InMemoryCacheService.Current.GetChannel((string)data);
                     if (channel != null)
                     {
-                        // TODO
-
+                        service.Navigate(typeof(ChatInfoPage), new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 });
                         return;
                     }
 
@@ -602,11 +601,15 @@ namespace Unigram.Common
                         var peerChannel = response.Value.Peer as TLPeerChannel;
                         if (peerChannel != null || peerChat != null)
                         {
-                            // TODO:
-
+                            // TODO
                             return;
                         }
 
+                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                    }
+                    else
+                    {
+                        // TODO
                         await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
                     }
                 }

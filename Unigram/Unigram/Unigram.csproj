@@ -118,6 +118,7 @@
     <Compile Include="Common\ListCollectionView.cs" />
     <Compile Include="Common\MessageHelper.cs" />
     <Compile Include="Common\Patterns.cs" />
+    <Compile Include="Common\ServiceHelper.cs" />
     <Compile Include="Controls\BubbleListView.cs" />
     <Compile Include="Controls\BubbleListViewItem.cs" />
     <Compile Include="Controls\BubbleTextBox.cs" />
@@ -231,6 +232,9 @@
     </Compile>
     <Compile Include="Views\DialogSharedMediaPage.xaml.cs">
       <DependentUpon>DialogSharedMediaPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GamePage.xaml.cs">
+      <DependentUpon>GamePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
@@ -455,6 +459,10 @@
     <Page Include="Views\DialogSharedMediaPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\GamePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HomePage.xaml">
       <Generator>MSBuild:Compile</Generator>
