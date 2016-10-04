@@ -58,6 +58,8 @@ namespace Unigram.Controls
 
         private bool GetMessageTemplate(TLObject obj)
         {
+            Visibility = Visibility.Collapsed;
+
             var message = obj as TLMessage;
             if (message != null)
             {

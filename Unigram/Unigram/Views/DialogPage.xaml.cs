@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
@@ -11,7 +15,9 @@ using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
+using Windows.Storage.Search;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
@@ -38,6 +44,8 @@ namespace Unigram.Views
         public DialogPage()
         {
             InitializeComponent();
+
+            ListGallery.ItemsSource = new PicturesCollection();
 
             DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
             Loaded += DialogPage_Loaded;
@@ -164,6 +172,84 @@ namespace Unigram.Views
         private void btnClosePinnedMessage_Click(object sender, RoutedEventArgs e)
         {
             grdPinnedMessage.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    public class PicturesCollection : ObservableCollection<BitmapImage>, ISupportIncrementalLoading
+    {
+        private bool hasMoreItems = true;
+        public bool HasMoreItems
+        {
+            get { return hasMoreItems; }
+        }
+
+        public StorageFileQueryResult Query { get; private set; }
+
+        public uint StartIndex { get; private set; }
+
+        private CoreDispatcher _dispatcher;
+
+        public PicturesCollection()
+        {
+            hasMoreItems = false;
+
+            var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, new string[] { ".jpg", ".png", ".bmp", ".gif", ".mp4" });
+            queryOptions.FolderDepth = FolderDepth.Deep;
+
+            Query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
+            Query.ContentsChanged += OnContentsChanged;
+            StartIndex = 0;
+
+            _dispatcher = Window.Current.Dispatcher;
+        }
+
+        private async void OnContentsChanged(IStorageQueryResultBase sender, object args)
+        {
+            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                StartIndex = 0;
+                Clear();
+            });
+        }
+
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        {
+            return Task.Run(async () =>
+            {
+                uint resultCount = 0;
+                var result = await Query.GetFilesAsync(StartIndex, 10);
+                StartIndex += (uint)result.Count;
+
+                if (result.Count == 0)
+                {
+                    hasMoreItems = false;
+                }
+                else
+                {
+                    resultCount = (uint)result.Count();
+
+                    await _dispatcher.RunAsync(
+                    CoreDispatcherPriority.Normal,
+                    async () =>
+                    {
+                        foreach (var file in result)
+                        {
+                            using (var thumbnail = await file.GetThumbnailAsync(ThumbnailMode.ListView, 240, ThumbnailOptions.UseCurrentScale))
+                            {
+                                if (thumbnail != null)
+                                {
+                                    var bitmapImage = new BitmapImage();
+                                    bitmapImage.SetSource(thumbnail);
+                                    Add(bitmapImage);
+                                }
+                            }
+                        }
+                    });
+                }
+
+                return new LoadMoreItemsResult() { Count = resultCount };
+
+            }).AsAsyncOperation();
         }
     }
 }

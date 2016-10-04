@@ -779,6 +779,17 @@
                         <Flyout ScrollViewer.VerticalScrollMode="Disabled"
                                 ScrollViewer.VerticalScrollBarVisibility="Hidden">
                             <StackPanel Name="SP" Margin="-8" Padding="0">
+                                <ListView x:Name="ListGallery" Margin="-4,-3,-4,0"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                          ScrollViewer.HorizontalScrollMode="Auto"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          ScrollViewer.VerticalScrollMode="Disabled">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding}" Width="48" Height="48"/>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
                                                 x:Name="fcbtnAttachCamera"
                                                 x:Uid="FCBTN-Camera"
