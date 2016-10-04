@@ -293,7 +293,7 @@ namespace Unigram.Controls
                     {
                         if (!string.IsNullOrEmpty(attribute.Alt))
                         {
-                            ServiceLabel.Text = $"{attribute.Alt} (sticker)";
+                            ServiceLabel.Text = $"{attribute.Alt} Sticker";
                         }
                     }
                 }

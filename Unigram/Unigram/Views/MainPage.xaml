@@ -115,6 +115,7 @@
                                                 <ImageBrush ImageSource="{x:Bind _parent.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
                                             </Ellipse.Fill>
                                         </Ellipse>
+                                        <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
                                     </Grid>
                                     <TextBlock Text="{x:Bind fullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                     <TextBlock Text="{x:Bind lastSeen}" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"

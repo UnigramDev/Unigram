@@ -25,40 +25,67 @@ namespace Unigram.ViewModels
 
         public async Task getTLContacts()
         {
-            var response = await ProtoService.GetContactsAsync(string.Empty);
+            var temp = new List<UsersPanelListItem>();
+
+            var contacts = CacheService.GetContacts();
+            foreach (var item in contacts.OfType<TLUser>())
+            {
+                var user = item as TLUser;
+                if (user.IsSelf)
+                {
+                    Self = user;
+                    continue;
+                }
+
+                var status = LastSeenHelper.GetLastSeen(user);
+                var listItem = new UsersPanelListItem(user as TLUser);
+                listItem.fullName = user.FullName;
+                listItem.lastSeen = status.Item1;
+                listItem.lastSeenEpoch = status.Item2;
+                listItem.Photo = listItem._parent.Photo;
+                listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+
+                temp.Add(listItem);
+            }
+
+            var input = string.Join(",", contacts.Select(x => x.Id).Union(new[] { SettingsHelper.UserId }).OrderBy(x => x));
+            var hash = MD5Core.GetHash(input);
+            var hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
+
+            var response = await ProtoService.GetContactsAsync(hex);
             if (response.IsSucceeded && response.Value is TLContactsContacts)
             {
                 var result = response.Value as TLContactsContacts;
-                var temp = new List<UsersPanelListItem>();
-
-                foreach (var item in result.Users)
+                if (result != null)
                 {
-                    var user = item as TLUser;
-                    if (user.IsSelf)
+                    foreach (var item in result.Users.OfType<TLUser>())
                     {
-                        Self = user;
-                        continue;
+                        var user = item as TLUser;
+                        if (user.IsSelf)
+                        {
+                            Self = user;
+                            continue;
+                        }
+
+                        var status = LastSeenHelper.GetLastSeen(user);
+                        var listItem = new UsersPanelListItem(user as TLUser);
+                        listItem.fullName = user.FullName;
+                        listItem.lastSeen = status.Item1;
+                        listItem.lastSeenEpoch = status.Item2;
+                        listItem.Photo = listItem._parent.Photo;
+                        listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+
+                        temp.Add(listItem);
                     }
-
-                    var status = LastSeenHelper.GetLastSeen(user);
-                    var listItem = new UsersPanelListItem(user as TLUser);
-                    listItem.fullName = user.FullName;
-                    listItem.lastSeen = status.Item1;
-                    listItem.lastSeenEpoch = status.Item2;
-                    listItem.Photo = listItem._parent.Photo;
-                    listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
-
-                    temp.Add(listItem);
                 }
-
-                //Super Inefficient Method below to sort alphabetically, TODO: FIX IT
-                foreach (var item in temp.OrderByDescending(person => person.lastSeenEpoch))
-                {
-                    Items.Add(item);
-                }
-
-                Aggregator.Subscribe(this);
             }
+
+            foreach (var item in temp)
+            {
+                Items.Add(item);
+            }
+
+            Aggregator.Subscribe(this);
         }
 
         #region Handle
