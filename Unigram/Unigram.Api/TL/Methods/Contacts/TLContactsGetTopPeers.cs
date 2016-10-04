@@ -48,18 +48,12 @@ namespace Telegram.Api.TL.Methods.Contacts
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			UpdateFlags();
-
 			to.Write(0xD4982DB5);
 			to.Write((Int32)Flags);
 			to.Write(Offset);
 			to.Write(Limit);
 			to.Write(Hash);
 			if (cache) WriteToCache(to);
-		}
-
-		private void UpdateFlags()
-		{
 		}
 	}
 }

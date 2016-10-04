@@ -8,6 +8,16 @@ namespace Telegram.Api.TL.Methods.Messages
 	/// </summary>
 	public partial class TLMessagesClearRecentStickers : TLObject
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			Attached = (1 << 0),
+		}
+
+		public bool IsAttached { get { return Flags.HasFlag(Flag.Attached); } set { Flags = value ? (Flags | Flag.Attached) : (Flags & ~Flag.Attached); } }
+
+		public Flag Flags { get; set; }
+
 		public TLMessagesClearRecentStickers() { }
 		public TLMessagesClearRecentStickers(TLBinaryReader from, bool cache = false)
 		{
@@ -18,12 +28,14 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			Flags = (Flag)from.ReadInt32();
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0xAB02E5D2);
+			to.Write(0x8999602D);
+			to.Write((Int32)Flags);
 			if (cache) WriteToCache(to);
 		}
 	}

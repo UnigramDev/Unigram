@@ -5,6 +5,5 @@ namespace Telegram.Api.TL
 {
 	public abstract partial class TLInputChatPhotoBase : TLObject
 	{
-		public TLInputPhotoCropBase Crop { get; set; }
 	}
 }

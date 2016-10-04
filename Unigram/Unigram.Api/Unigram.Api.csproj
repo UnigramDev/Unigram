@@ -143,14 +143,6 @@
     <Compile Include="TL\Core\ITLStickers.cs" />
     <Compile Include="TL\Core\TLActionInfo.cs" />
     <Compile Include="TL\Local\TLMessagesContainer.cs" />
-    <Compile Include="TL\Partial\TLDraftMessageBase.Partial.cs" />
-    <Compile Include="TL\Partial\TLInputFileLocationBase.Partial.cs" />
-    <Compile Include="TL\Partial\TLMessageMediaBase.Partial.cs" />
-    <Compile Include="TL\Partial\TLMessagesAllStickers.Partial.cs" />
-    <Compile Include="TL\Partial\TLMessagesArchivedStickers.Partial.cs" />
-    <Compile Include="TL\Partial\TLMessagesFeaturedStickers.Partial.cs" />
-    <Compile Include="TL\Partial\TLMessagesStickerSetInstallResultArchive.Partial.cs" />
-    <Compile Include="TL\Partial\TLPeerBase.Partial.cs" />
     <Compile Include="TL\Methods\Account\TLAccountChangePhone.cs" />
     <Compile Include="TL\Methods\Account\TLAccountCheckUsername.cs" />
     <Compile Include="TL\Methods\Account\TLAccountConfirmPhone.cs" />
@@ -181,6 +173,7 @@
     <Compile Include="TL\Methods\Auth\TLAuthCancelCode.cs" />
     <Compile Include="TL\Methods\Auth\TLAuthCheckPassword.cs" />
     <Compile Include="TL\Methods\Auth\TLAuthCheckPhone.cs" />
+    <Compile Include="TL\Methods\Auth\TLAuthDropTempAuthKeys.cs" />
     <Compile Include="TL\Methods\Auth\TLAuthExportAuthorization.cs" />
     <Compile Include="TL\Methods\Auth\TLAuthImportAuthorization.cs" />
     <Compile Include="TL\Methods\Auth\TLAuthImportBotAuthorization.cs" />
@@ -263,6 +256,7 @@
     <Compile Include="TL\Methods\Messages\TLMessagesGetAllDrafts.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetAllStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetArchivedStickers.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesGetAttachedStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetBotCallbackAnswer.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetChats.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetDHConfig.cs" />
@@ -270,8 +264,11 @@
     <Compile Include="TL\Methods\Messages\TLMessagesGetDocumentByHash.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetFeaturedStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetFullChat.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesGetGameHighScores.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetHistory.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetInlineBotResults.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesGetInlineGameHighScores.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesGetMaskStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetMessageEditData.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetMessages.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetMessagesViews.cs" />
@@ -279,9 +276,7 @@
     <Compile Include="TL\Methods\Messages\TLMessagesGetPeerSettings.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetRecentStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetSavedGifs.cs" />
-    <Compile Include="TL\Methods\Messages\TLMessagesGetStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetStickerSet.cs" />
-    <Compile Include="TL\Methods\Messages\TLMessagesGetUnusedStickers.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesGetWebPagePreview.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesHideReportSpam.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesImportChatInvite.cs" />
@@ -310,7 +305,9 @@
     <Compile Include="TL\Methods\Messages\TLMessagesSendMessage.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSetBotCallbackAnswer.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSetEncryptedTyping.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesSetGameScore.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSetInlineBotResults.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesSetInlineGameScore.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSetTyping.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesStartBot.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesToggleChatAdmins.cs" />
@@ -340,6 +337,15 @@
     <Compile Include="TL\Methods\Upload\TLUploadSaveFilePart.cs" />
     <Compile Include="TL\Methods\Users\TLUsersGetFullUser.cs" />
     <Compile Include="TL\Methods\Users\TLUsersGetUsers.cs" />
+    <Compile Include="TL\Partial\TLDraftMessageBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLInputFileLocationBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLInputPeerBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLMessageMediaBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLMessagesAllStickers.Partial.cs" />
+    <Compile Include="TL\Partial\TLMessagesArchivedStickers.Partial.cs" />
+    <Compile Include="TL\Partial\TLMessagesFeaturedStickers.Partial.cs" />
+    <Compile Include="TL\Partial\TLMessagesStickerSetInstallResultArchive.Partial.cs" />
+    <Compile Include="TL\Partial\TLPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannel.Partial.cs" />
     <Compile Include="TL\Partial\TLChat.Partial.cs" />
     <Compile Include="TL\Partial\TLChatPhoto.Partial.cs" />
@@ -568,6 +574,7 @@
     <Compile Include="TL\TLDocumentAttributeAudio.cs" />
     <Compile Include="TL\TLDocumentAttributeBase.cs" />
     <Compile Include="TL\TLDocumentAttributeFilename.cs" />
+    <Compile Include="TL\TLDocumentAttributeHasStickers.cs" />
     <Compile Include="TL\TLDocumentAttributeImageSize.cs" />
     <Compile Include="TL\TLDocumentAttributeSticker.cs" />
     <Compile Include="TL\TLDocumentAttributeVideo.cs" />
@@ -600,6 +607,7 @@
     <Compile Include="TL\TLFoundGifCached.cs" />
     <Compile Include="TL\TLFutureSalt.cs" />
     <Compile Include="TL\TLFutureSalts.cs" />
+    <Compile Include="TL\TLGame.cs" />
     <Compile Include="TL\TLGeoPoint.cs" />
     <Compile Include="TL\TLGeoPointBase.cs" />
     <Compile Include="TL\TLGeoPointEmpty.cs" />
@@ -612,11 +620,13 @@
     <Compile Include="TL\TLHelpNoAppUpdate.cs" />
     <Compile Include="TL\TLHelpSupport.cs" />
     <Compile Include="TL\TLHelpTermsOfService.cs" />
+    <Compile Include="TL\TLHighScore.cs" />
     <Compile Include="TL\TLHttpWait.cs" />
     <Compile Include="TL\TLImportedContact.cs" />
     <Compile Include="TL\TLInlineBotSwitchPM.cs" />
     <Compile Include="TL\TLInputAppEvent.cs" />
     <Compile Include="TL\TLInputBotInlineMessageBase.cs" />
+    <Compile Include="TL\TLInputBotInlineMessageGame.cs" />
     <Compile Include="TL\TLInputBotInlineMessageID.cs" />
     <Compile Include="TL\TLInputBotInlineMessageMediaAuto.cs" />
     <Compile Include="TL\TLInputBotInlineMessageMediaContact.cs" />
@@ -626,6 +636,7 @@
     <Compile Include="TL\TLInputBotInlineResult.cs" />
     <Compile Include="TL\TLInputBotInlineResultBase.cs" />
     <Compile Include="TL\TLInputBotInlineResultDocument.cs" />
+    <Compile Include="TL\TLInputBotInlineResultGame.cs" />
     <Compile Include="TL\TLInputBotInlineResultPhoto.cs" />
     <Compile Include="TL\TLInputChannel.cs" />
     <Compile Include="TL\TLInputChannelBase.cs" />
@@ -651,6 +662,9 @@
     <Compile Include="TL\TLInputFileBig.cs" />
     <Compile Include="TL\TLInputFileLocation.cs" />
     <Compile Include="TL\TLInputFileLocationBase.cs" />
+    <Compile Include="TL\TLInputGameBase.cs" />
+    <Compile Include="TL\TLInputGameID.cs" />
+    <Compile Include="TL\TLInputGameShortName.cs" />
     <Compile Include="TL\TLInputGeoPoint.cs" />
     <Compile Include="TL\TLInputGeoPointBase.cs" />
     <Compile Include="TL\TLInputGeoPointEmpty.cs" />
@@ -659,6 +673,7 @@
     <Compile Include="TL\TLInputMediaDocument.cs" />
     <Compile Include="TL\TLInputMediaDocumentExternal.cs" />
     <Compile Include="TL\TLInputMediaEmpty.cs" />
+    <Compile Include="TL\TLInputMediaGame.cs" />
     <Compile Include="TL\TLInputMediaGeoPoint.cs" />
     <Compile Include="TL\TLInputMediaGifExternal.cs" />
     <Compile Include="TL\TLInputMediaPhoto.cs" />
@@ -697,9 +712,6 @@
     <Compile Include="TL\TLInputPhoneContact.cs" />
     <Compile Include="TL\TLInputPhoto.cs" />
     <Compile Include="TL\TLInputPhotoBase.cs" />
-    <Compile Include="TL\TLInputPhotoCrop.cs" />
-    <Compile Include="TL\TLInputPhotoCropAuto.cs" />
-    <Compile Include="TL\TLInputPhotoCropBase.cs" />
     <Compile Include="TL\TLInputPhotoEmpty.cs" />
     <Compile Include="TL\TLInputPrivacyKeyBase.cs" />
     <Compile Include="TL\TLInputPrivacyKeyChatInvite.cs" />
@@ -715,6 +727,9 @@
     <Compile Include="TL\TLInputReportReasonPornography.cs" />
     <Compile Include="TL\TLInputReportReasonSpam.cs" />
     <Compile Include="TL\TLInputReportReasonViolence.cs" />
+    <Compile Include="TL\TLInputStickeredMediaBase.cs" />
+    <Compile Include="TL\TLInputStickeredMediaDocument.cs" />
+    <Compile Include="TL\TLInputStickeredMediaPhoto.cs" />
     <Compile Include="TL\TLInputStickerSetBase.cs" />
     <Compile Include="TL\TLInputStickerSetEmpty.cs" />
     <Compile Include="TL\TLInputStickerSetID.cs" />
@@ -726,11 +741,13 @@
     <Compile Include="TL\TLKeyboardButton.cs" />
     <Compile Include="TL\TLKeyboardButtonBase.cs" />
     <Compile Include="TL\TLKeyboardButtonCallback.cs" />
+    <Compile Include="TL\TLKeyboardButtonGame.cs" />
     <Compile Include="TL\TLKeyboardButtonRequestGeoLocation.cs" />
     <Compile Include="TL\TLKeyboardButtonRequestPhone.cs" />
     <Compile Include="TL\TLKeyboardButtonRow.cs" />
     <Compile Include="TL\TLKeyboardButtonSwitchInline.cs" />
     <Compile Include="TL\TLKeyboardButtonUrl.cs" />
+    <Compile Include="TL\TLMaskCoords.cs" />
     <Compile Include="TL\TLMessage.cs" />
     <Compile Include="TL\TLMessageActionBase.cs" />
     <Compile Include="TL\TLMessageActionChannelCreate.cs" />
@@ -744,6 +761,7 @@
     <Compile Include="TL\TLMessageActionChatJoinedByLink.cs" />
     <Compile Include="TL\TLMessageActionChatMigrateTo.cs" />
     <Compile Include="TL\TLMessageActionEmpty.cs" />
+    <Compile Include="TL\TLMessageActionGameScore.cs" />
     <Compile Include="TL\TLMessageActionHistoryClear.cs" />
     <Compile Include="TL\TLMessageActionPinMessage.cs" />
     <Compile Include="TL\TLMessageBase.cs" />
@@ -767,6 +785,7 @@
     <Compile Include="TL\TLMessageMediaContact.cs" />
     <Compile Include="TL\TLMessageMediaDocument.cs" />
     <Compile Include="TL\TLMessageMediaEmpty.cs" />
+    <Compile Include="TL\TLMessageMediaGame.cs" />
     <Compile Include="TL\TLMessageMediaGeo.cs" />
     <Compile Include="TL\TLMessageMediaPhoto.cs" />
     <Compile Include="TL\TLMessageMediaUnsupported.cs" />
@@ -796,6 +815,7 @@
     <Compile Include="TL\TLMessagesFeaturedStickersNotModified.cs" />
     <Compile Include="TL\TLMessagesFilterBase.cs" />
     <Compile Include="TL\TLMessagesFoundGifs.cs" />
+    <Compile Include="TL\TLMessagesHighScores.cs" />
     <Compile Include="TL\TLMessagesMessageEditData.cs" />
     <Compile Include="TL\TLMessagesMessages.cs" />
     <Compile Include="TL\TLMessagesMessagesBase.cs" />
@@ -883,6 +903,8 @@
     <Compile Include="TL\TLSendMessageActionBase.cs" />
     <Compile Include="TL\TLSendMessageCancelAction.cs" />
     <Compile Include="TL\TLSendMessageChooseContactAction.cs" />
+    <Compile Include="TL\TLSendMessageGamePlayAction.cs" />
+    <Compile Include="TL\TLSendMessageGameStopAction.cs" />
     <Compile Include="TL\TLSendMessageGeoLocationAction.cs" />
     <Compile Include="TL\TLSendMessageRecordAudioAction.cs" />
     <Compile Include="TL\TLSendMessageRecordVideoAction.cs" />
@@ -899,6 +921,8 @@
     <Compile Include="TL\TLStickerPack.cs" />
     <Compile Include="TL\TLStickerSet.cs" />
     <Compile Include="TL\TLStickerSetCovered.cs" />
+    <Compile Include="TL\TLStickerSetCoveredBase.cs" />
+    <Compile Include="TL\TLStickerSetMultiCovered.cs" />
     <Compile Include="TL\TLStorageFileGif.cs" />
     <Compile Include="TL\TLStorageFileJpeg.cs" />
     <Compile Include="TL\TLStorageFileMov.cs" />

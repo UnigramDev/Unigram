@@ -226,7 +226,7 @@ namespace Unigram.Controls.Items
                                 if (attribute != null)
                                 {
                                     //return $"{text}{attribute.Alt} ({Resources.Sticker.ToLower()})";
-                                    return $"{text}{attribute.Alt} (sticker)";
+                                    return $"{text}{attribute.Alt} Sticker";
                                 }
                             }
 

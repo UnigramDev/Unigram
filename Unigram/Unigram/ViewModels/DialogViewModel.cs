@@ -30,18 +30,14 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : UnigramViewModelBase
     {
-        int ChatType=-1;
-        //0 if private, 1 if group, 2 if supergroup/channel
-        int loadCount =15;
+        int loadCount = 15;
         int loaded = 0;
-        public TLPeerBase peer;
-        public TLInputPeerBase inputPeer;
+
         public MessageCollection Messages { get; private set; } = new MessageCollection();
+
         public Brush PlaceHolderColor { get; internal set; }
         public string DialogTitle;
         public string LastSeen;
-        public string pinnedMessage;
-        public string pinnedMessageSender;
         public Visibility pinnedMessageVisible = Visibility.Collapsed;
         public Visibility LastSeenVisible;
         public string debug;
@@ -72,65 +68,14 @@ namespace Unigram.ViewModels
 
 
 
+        private TLDialog _currentDialog;
 
-
-
+        public TLObject With { get; set; }
 
 
         public object photo;
         public string SendTextHolder;
-        public TLUser user;
-        private TLUserBase _item;
-        public TLUserBase Item
-        {
-            get
-            {                
-                return _item;
-            }
-            set
-            {
-                Set(ref _item, value);
-            }
-        }
-        public TLUserBase Self
-        {
-            get
-            {
-                return _item;
-            }
-            set
-            {
-                Set(ref _item, value);
-            }
-        }
-        public TLInputPeerChannel channel;
 
-        public TLInputPeerChat chat;
-        private TLPeerBase _chatItem;
-        public TLPeerBase peerItem
-        {
-            get
-            {
-                return _chatItem;
-            }
-            set
-            {
-                Set(ref _chatItem, value);
-            }
-        }
-
-        private TLInputPeerBase _peerBase;
-        public TLInputPeerBase selfPeerBase
-        {
-            get
-            {
-                return _peerBase;
-            }
-            set
-            {
-                Set(ref _peerBase, value);
-            }
-        }
         private TLInputPeerBase _peer;
         public TLInputPeerBase Peer
         {
@@ -143,20 +88,34 @@ namespace Unigram.ViewModels
                 Set(ref _peer, value);
             }
         }
-        public async Task FetchMessages(TLPeerBase peer, TLInputPeerBase inputPeer)
+
+        private TLMessageBase _pinnedMessage;
+        public TLMessageBase PinnedMessage
         {
-            var result = await ProtoService.GetHistoryAsync(inputPeer, peer, false, loaded, int.MaxValue, loadCount);
+            get
+            {
+                return _pinnedMessage;
+            }
+            set
+            {
+                Set(ref _pinnedMessage, value);
+            }
+        }
+
+        public async Task FetchMessages(TLInputPeerBase inputPeer)
+        {
+            var result = await ProtoService.GetHistoryAsync(inputPeer, new TLPeerUser { Id = SettingsHelper.UserId }, false, loaded, int.MaxValue, loadCount);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Value.Messages);
+
                 foreach (var item in result.Value.Messages)
                 {
-                    
                     Messages.Insert(0, item);
                 }
-            }
 
-            loaded += loadCount;
+                loaded += loadCount;
+            }
         }
 
         public async void ProcessReplies(IList<TLMessageBase> messages)
@@ -183,6 +142,8 @@ namespace Unigram.ViewModels
                         if (reply != null)
                         {
                             messages[i].Reply = reply;
+                            messages[i].RaisePropertyChanged(() => replyToMsgs[i].Reply);
+                            messages[i].RaisePropertyChanged(() => replyToMsgs[i].ReplyInfo);
                         }
                         else
                         {
@@ -234,6 +195,7 @@ namespace Unigram.ViewModels
                             if (message != null && message.ReplyToMsgId.Value == result.Value.Messages[j].Id)
                             {
                                 replyToMsgs[k].Reply = result.Value.Messages[j];
+                                replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].Reply);
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].ReplyInfo);
                             }
                         }
@@ -249,77 +211,78 @@ namespace Unigram.ViewModels
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             loaded = 0;
-            channel = parameter as TLInputPeerChannel;
-            chat = parameter as TLInputPeerChat;
-            user = parameter as TLUser;
+
+            var participant = GetParticipant(parameter as TLPeerBase);
+            var channel = participant as TLChannel;
+            var chat = participant as TLChat;
+            var user = participant as TLUser;
+
             if (user != null)
             {
-         
+                With = user;
+                Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
+
                 //Happy Birthday Alexmitter xD
                 Messages.Clear();
-                Item = user;
                 photo = user.Photo;
-                DialogTitle = Item.FullName;
-                PlaceHolderColor = BindConvert.Current.Bubble(Item.Id);
+                DialogTitle = user.FullName;
+                PlaceHolderColor = BindConvert.Current.Bubble(user.Id);
                 LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
                 LastSeenVisible = Visibility.Visible;
-                peer = new TLPeerUser { Id = SettingsHelper.UserId };
-                inputPeer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
-                peerItem = new TLPeerUser { Id = user.Id };
-                await FetchMessages(peer,inputPeer);
-                ChatType = 0;
+
+                await FetchMessages(Peer);
 
                 await _jumpListService.UpdateAsync(user);
             }
             else if (channel != null)
             {
+                With = channel;
+                Peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 };
 
-                TLInputChannel x=new TLInputChannel();                
-                x.ChannelId = channel.ChannelId;
-                x.AccessHash = channel.AccessHash;
-                var channelDetails = await ProtoService.GetFullChannelAsync(x);                
+                var input = new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 };
+                var channelDetails = await ProtoService.GetFullChannelAsync(input);
                 DialogTitle = channelDetails.Value.Chats[0].FullName;
-                var channelFull=(TLChannelFull)channelDetails.Value.FullChat;
+
+                var channelFull = (TLChannelFull)channelDetails.Value.FullChat;
                 if (channelFull.HasPinnedMsgId)
                 {
                     pinnedMessageVisible = Visibility.Visible;
-                    var msgId = channelFull.PinnedMsgId;
-                    TLVector<int> temp = new TLVector<int>(1) { msgId.GetValueOrDefault() };
-                    var y = await ProtoService.GetMessagesAsync(x, temp);
-                    pinnedMessage = ((TLMessage)y.Value.Messages[0]).Message;
-                    pinnedMessageSender = y.Value.Users[0].FullName;
+
+                    var y = await ProtoService.GetMessagesAsync(input, new TLVector<int>() { channelFull.PinnedMsgId ?? 0 });
+                    if (y.IsSucceeded)
+                    {
+                        PinnedMessage = y.Value.Messages.FirstOrDefault();
+                    }
                 }
                 else
                 {
                     pinnedMessageVisible = Visibility.Collapsed;
                 }
+
                 PlaceHolderColor = BindConvert.Current.Bubble(channelDetails.Value.Chats[0].Id);
                 photo = channelDetails.Value.Chats[0].Photo;
                 LastSeenVisible = Visibility.Collapsed;
-                peer = new TLPeerUser { Id = SettingsHelper.UserId };
-                inputPeer = new TLInputPeerChannel { ChannelId = x.ChannelId, AccessHash = x.AccessHash };
-                Peer = new TLInputPeerChannel { ChannelId = x.ChannelId, AccessHash = x.AccessHash };
-                await FetchMessages(peer, inputPeer);
-                peerItem = new TLPeerChannel { Id = channel.ChannelId };
-                ChatType = 2;
+
+                await FetchMessages(Peer);
             }
             else if (chat != null)
             {
-                var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
+                With = chat;
+                Peer = new TLInputPeerChat { ChatId = chat.Id };
+
+                var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
                 DialogTitle = chatDetails.Value.Chats[0].FullName;
-                photo =chatDetails.Value.Chats[0].Photo;
+                photo = chatDetails.Value.Chats[0].Photo;
                 PlaceHolderColor = BindConvert.Current.Bubble(chatDetails.Value.Chats[0].Id);
                 LastSeenVisible = Visibility.Collapsed;
-                peer = new TLPeerUser { Id = SettingsHelper.UserId };
-                inputPeer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };
-                Peer = new TLInputPeerChat { ChatId = chat.ChatId, AccessHash = chat.AccessHash };
-                await FetchMessages(peer, inputPeer);
-                peerItem = new TLPeerChat { Id = chat.ChatId };
-                ChatType = 1;
+
+                await FetchMessages(Peer);
             }
 
-            var dialog = CacheService.GetDialog(peerItem);
+            _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
+
+            var dialog = _currentDialog;
             if (dialog != null && dialog.HasDraft)
             {
                 var draft = dialog.Draft as TLDraftMessage;
@@ -328,6 +291,37 @@ namespace Unigram.ViewModels
                     ProcessDraftReply(draft);
                 }
             }
+
+            Aggregator.Subscribe(this);
+        }
+
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            Aggregator.Unsubscribe(this);
+            return base.OnNavigatedFromAsync(pageState, suspending);
+        }
+
+        private TLObject GetParticipant(TLPeerBase peer)
+        {
+            var user = peer as TLPeerUser;
+            if (user != null)
+            {
+                return CacheService.GetUser(user.UserId);
+            }
+
+            var chat = peer as TLPeerChat;
+            if (chat != null)
+            {
+                return CacheService.GetChat(chat.ChatId);
+            }
+
+            var channel = peer as TLPeerChannel;
+            if (channel != null)
+            {
+                return CacheService.GetChat(channel.ChannelId);
+            }
+
+            return null;
         }
 
         public async void ProcessDraftReply(TLDraftMessage draft)
@@ -346,7 +340,7 @@ namespace Unigram.ViewModels
                 // TODO: verify
                 if (Peer is TLInputPeerChannel)
                 {
-                    channelId = peer.Id;
+                    channelId = Peer.ToPeer().Id;
                 }
 
                 var reply = CacheService.GetMessage(replyId.Value, channelId);
@@ -454,27 +448,7 @@ namespace Unigram.ViewModels
 
         public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool sticker)
         {
-            var messageText = SendTextHolder;
-
-            TLPeerBase toId = null;
-            TLInputPeerBase toPeer = null;
-            int replyToId = 0;
-
-            switch (ChatType)
-            {
-                case 0:
-                    toId = new TLPeerUser { Id = int.Parse(Item.Id.ToString()) };
-                    toPeer = new TLInputPeerUser { UserId = Item.Id, AccessHash = ((TLUser)Item).AccessHash ?? 0 };
-                    break;
-                case 1:
-                    toId = new TLPeerChat { Id = int.Parse(peerItem.Id.ToString()) };
-                    toPeer = new TLInputPeerChat { ChatId = peerItem.Id };
-                    break;
-                case 2:
-                    toId = new TLPeerChannel { Id = int.Parse(peerItem.Id.ToString()) };
-                    toPeer = new TLInputPeerChannel { ChannelId = peerItem.Id };
-                    break;
-            }
+            var messageText = SendTextHolder?.Replace('\r', '\n');
 
             TLDocument document = null;
             TLMessageMediaBase media = null;
@@ -499,7 +473,7 @@ namespace Unigram.ViewModels
             }
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
-            var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, messageText, media, TLLong.Random(), null);
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, messageText, media, TLLong.Random(), null);
 
             message.Entities = entities != null ? new TLVector<TLMessageEntityBase>(entities) : null;
             message.HasEntities = entities != null;
@@ -686,7 +660,7 @@ namespace Unigram.ViewModels
                 Groups.Insert(index == 0 ? 0 : Groups.Count, group); // TODO: should not be 0 all the time
             }
 
-            group.Insert(index - group.FirstIndex, item);
+            group.Insert(Math.Max(0, index - group.FirstIndex), item);
         }
 
         protected override void RemoveItem(int index)

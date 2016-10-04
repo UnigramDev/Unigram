@@ -16,7 +16,7 @@ namespace Telegram.Api
 
         public const int DatabaseVersion = 1;
 
-        public const int SupportedLayer = 55;
+        public const int SupportedLayer = 57;
 
         public const int SecretSupportedLayer = 23;
 

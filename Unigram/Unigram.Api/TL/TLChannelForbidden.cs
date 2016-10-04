@@ -37,18 +37,12 @@ namespace Telegram.Api.TL
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			UpdateFlags();
-
 			to.Write(0x8537784F);
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			to.Write(AccessHash);
 			to.Write(Title);
 			if (cache) WriteToCache(to);
-		}
-
-		private void UpdateFlags()
-		{
 		}
 	}
 }

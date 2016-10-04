@@ -36,12 +36,17 @@ namespace Unigram.Common
                         return Tuple.Create("Last seen within a month", DateTime.Now.AddYears(-4));
                     case TLType.UserStatusEmpty:
                     default:
-                        return Tuple.Create("Last seen long time ago", DateTime.Now.AddYears(-5));
+                        return Tuple.Create("Last seen a long time ago", DateTime.Now.AddYears(-5));
                 }
             }
 
+            if (User.IsBot)
+            {
+                // TODO
+            }
+
            // Debugger.Break();
-            return Tuple.Create("Undefinited", DateTime.Now.AddYears(-30));
+            return Tuple.Create("Last seen a long time ago", DateTime.Now.AddYears(-30));
         }
     }
 }

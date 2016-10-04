@@ -65,7 +65,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
-        public Task<MTProtoResponse<TLMessagesBotCallbackAnswer>> GetBotAsyncAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, int gameId)
+        public Task<MTProtoResponse<TLMessagesBotCallbackAnswer>> GetBotCallbackAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, int gameId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesBotCallbackAnswer>>();
             GetBotCallbackAnswerCallback(peer, messageId, data, gameId, (callback) =>
@@ -282,19 +282,6 @@ namespace Telegram.Api.Services
             }, (faultCallback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        public Task<MTProtoResponse<TLVector<TLStickerSetCovered>>> GetUnusedStickersAsync(int limit)
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLStickerSetCovered>>>();
-            GetUnusedStickersCallback(limit, (callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLVector<TLStickerSetCovered>>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLVector<TLStickerSetCovered>>(faultCallback));
             });
             return tsc.Task;
         }
@@ -1729,10 +1716,10 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
-        public Task<MTProtoResponse<bool>> ReadFeaturedStickersAsync()
+        public Task<MTProtoResponse<bool>> ReadFeaturedStickersAsync(TLVector<long> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ReadFeaturedStickersCallback((callback) =>
+            ReadFeaturedStickersCallback(id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -3789,19 +3776,18 @@ namespace Telegram.Api.Services
         //    return tsc.Task;
         //}
 
-        //// TODO: Layer 56 
-        ////public Task<MTProtoResponse<TLVector<TLStickerSetCovered>>> GetAttachedStickersAsync(TLInputStickeredMediaBase media)
-        ////{
-        ////    var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLStickerSetCovered>>>();
-        ////    GetAttachedStickersCallback(media, (callback) =>
-        ////    {
-        ////        tsc.TrySetResult(new MTProtoResponse<TLVector<TLStickerSetCovered>>(callback));
-        ////    }, (faultCallback) =>
-        ////    {
-        ////        tsc.TrySetResult(new MTProtoResponse<TLVector<TLStickerSetCovered>>(faultCallback));
-        ////    });
-        ////    return tsc.Task;
-        ////}
+        public Task<MTProtoResponse<TLVector<TLStickerSetCoveredBase>>> GetAttachedStickersAsync(TLInputStickeredMediaBase media)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLStickerSetCoveredBase>>>();
+            GetAttachedStickersCallback(media, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<TLStickerSetCoveredBase>>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<TLStickerSetCoveredBase>>(faultCallback));
+            });
+            return tsc.Task;
+        }
 
         //public Task<MTProtoResponse<TLUpdatesBase>> AddChatUserAsync(int chatId, TLInputUserBase userId, int fwdLimit)
         //{

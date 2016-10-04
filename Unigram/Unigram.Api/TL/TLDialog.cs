@@ -20,11 +20,7 @@ namespace Telegram.Api.TL
 		public Int32 TopMessage { get; set; }
 		public Int32 ReadInboxMaxId { get; set; }
 		public Int32 ReadOutboxMaxId { get; set; }
-		public Int32 UnreadCount
-        {
-            get;
-            set;
-        }
+		public Int32 UnreadCount { get; set; }
 		public TLPeerNotifySettingsBase NotifySettings { get; set; }
 		public Int32? Pts { get; set; }
 		public TLDraftMessageBase Draft { get; set; }

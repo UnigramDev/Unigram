@@ -22,6 +22,8 @@ namespace Telegram.Api.TL
 		public String Query { get; set; }
 		public TLGeoPointBase Geo { get; set; }
 		public TLInputBotInlineMessageID MsgId { get; set; }
+		public Int64 ChatInstance { get; set; }
 		public Byte[] Data { get; set; }
+		public String GameShortName { get; set; }
 	}
 }

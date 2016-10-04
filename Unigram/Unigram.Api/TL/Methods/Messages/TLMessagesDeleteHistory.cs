@@ -38,17 +38,11 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			UpdateFlags();
-
 			to.Write(0x1C015B09);
 			to.Write((Int32)Flags);
 			to.WriteObject(Peer, cache);
 			to.Write(MaxId);
 			if (cache) WriteToCache(to);
-		}
-
-		private void UpdateFlags()
-		{
 		}
 	}
 }

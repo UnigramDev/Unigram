@@ -22,12 +22,12 @@ namespace Unigram.ViewModels
 
             // TODO: put them in a separate file?
             // TODO: localization
-            Items.Add(new WelcomeTour { Title = "Welcome to Unigram", Text = "Unigram is an UWP Telegram-app built by the Windows Community, for the Windows Community" });
-            Items.Add(new WelcomeTour { Title = "Welcome to Unigram", Text = "Unigram is an UWP Telegram-app built by the Windows Community, for the Windows Community" });
-            Items.Add(new WelcomeTour { Title = "Welcome to Unigram", Text = "Unigram is an UWP Telegram-app built by the Windows Community, for the Windows Community" });
-            Items.Add(new WelcomeTour { Title = "Welcome to Unigram", Text = "Unigram is an UWP Telegram-app built by the Windows Community, for the Windows Community" });
-            Items.Add(new WelcomeTour { Title = "Welcome to Unigram", Text = "Unigram is an UWP Telegram-app built by the Windows Community, for the Windows Community" });
-            Items.Add(new WelcomeTour { Title = "Welcome to Unigram", Text = "Unigram is an UWP Telegram-app built by the Windows Community, for the Windows Community" });
+            Items.Add(new WelcomeTour { Title = "Unigram", Text = "Unigram is a Telegram Universal app built by the Windows Community, for the Windows Community" });
+            Items.Add(new WelcomeTour { Title = "Fast", Text = "**Telegram** delivers messages faster\nthan any other application." });
+            Items.Add(new WelcomeTour { Title = "Free", Text = "**Telegram** is free forever. No ads.\nNo subscription fees." });
+            Items.Add(new WelcomeTour { Title = "Powerful", Text = "**Telegram** has no limits on\nthe size of your media and chats." });
+            Items.Add(new WelcomeTour { Title = "Secure", Text = "**Telegram** keeps your messages\nsafe from hacker attacks." });
+            Items.Add(new WelcomeTour { Title = "Cloud-Based", Text = "**Telegram** lets you access your\nmessages from multiple devices." });
             SelectedItem = Items[0];
         }
 

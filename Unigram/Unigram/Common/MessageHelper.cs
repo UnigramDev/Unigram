@@ -37,6 +37,8 @@ namespace Unigram.Common
 
         public static void SetMessage(DependencyObject obj, TLMessageBase value)
         {
+            // TODO: shitty hack!!!
+            obj.SetValue(MessageProperty, null);
             obj.SetValue(MessageProperty, value);
         }
 
@@ -53,7 +55,13 @@ namespace Unigram.Common
             var message17 = newValue as TLMessage;
             if (message17 != null)
             {
-                sender.Visibility = (message17.Media == null || message17.Media is TLMessageMediaEmpty || message17.Media is TLMessageMediaWebPage ? Visibility.Visible : Visibility.Collapsed);
+                var caption = false;
+                if (message17.Media is ITLMediaCaption)
+                {
+                    caption = !string.IsNullOrWhiteSpace(((ITLMediaCaption)message17.Media).Caption);
+                }
+
+                sender.Visibility = (message17.Media == null || message17.Media is TLMessageMediaEmpty || message17.Media is TLMessageMediaWebPage || caption ? Visibility.Visible : Visibility.Collapsed);
             }
             var message = newValue as TLMessage;
             if (message != null && sender.Visibility == Visibility.Visible)
@@ -63,13 +71,18 @@ namespace Unigram.Common
 
                 if (message.HasEntities)
                 {
-                    Debug.WriteLine("USING ENTITIES INSTEAD OF REGEX");
-
                     ReplaceEntities(message, paragraph, foreground);
                 }
                 else
                 {
-                    ReplaceAll(message, message.Message, paragraph, sender.Foreground, true);
+                    var text = message.Message;
+                    var captionMedia = message.Media as ITLMediaCaption;
+                    if (captionMedia != null && !string.IsNullOrWhiteSpace(captionMedia.Caption))
+                    {
+                        text = captionMedia.Caption;
+                    }
+
+                    ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
                 if (message17?.Media is TLMessageMediaEmpty || message17?.Media == null)
@@ -84,8 +97,14 @@ namespace Unigram.Common
                     }
                     else
                     {
+                        var placeholder = message.IsOut ? $"  {date}  " : $"  {date}";
+                        if (message.HasEditDate)
+                        {
+                            placeholder = "edited" + placeholder;
+                        }
+
                         //paragraph.Inlines.Add(new Run { Text = "\t" + new string('\u00a0', date.Length + (message.IsOut ? 12 : 8)) });
-                        paragraph.Inlines.Add(new Run { Text = message.IsOut ? $"  {date}  " : $"  {date}", Foreground = null });
+                        paragraph.Inlines.Add(new Run { Text = placeholder, Foreground = null });
                     }
 
                     //paragraph.Inlines.Add(new Run { Text = message.Out.Value ? $"  {date}  " : $"  {date}", Foreground = null });
@@ -160,18 +179,29 @@ namespace Unigram.Common
             sender.Visibility = string.IsNullOrWhiteSpace(newValue) ? Visibility.Collapsed : Visibility.Visible;
 
             if (oldValue == newValue) return;
+            if (newValue != null)
+            {
+                var foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x0f, 0x7d, 0xc7));
+                var paragraph = new Paragraph();
+                ReplaceAll(null, newValue, paragraph, sender.Foreground, true);
 
-            var foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x0f, 0x7d, 0xc7));
-            var paragraph = new Paragraph();
-            ReplaceAll(null, newValue, paragraph, sender.Foreground, true);
+                var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
+                var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
+                var date = new DateTime(2015, 09, 05, 12, 59, 59, DateTimeKind.Local).ToString(shortTimePattern, cultureInfo);
 
-            var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
-            var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
-            var date = new DateTime(2015, 09, 05, 12, 59, 59, DateTimeKind.Local).ToString(shortTimePattern, cultureInfo);
-            paragraph.Inlines.Add(new Run { Text = $"  {date}  " });
+                if (IsAnyCharacterRightToLeft(newValue))
+                {
+                    paragraph.Inlines.Add(new LineBreak());
+                }
+                else
+                {
+                    //paragraph.Inlines.Add(new Run { Text = "\t" + new string('\u00a0', date.Length + (message.IsOut ? 12 : 8)) });
+                    paragraph.Inlines.Add(new Run { Text = $"  {date}  ", Foreground = null });
+                }
 
-            sender.Blocks.Clear();
-            sender.Blocks.Add(paragraph);
+                sender.Blocks.Clear();
+                sender.Blocks.Add(paragraph);
+            }
         }
         #endregion
 
@@ -549,8 +579,7 @@ namespace Unigram.Common
                     var channel = InMemoryCacheService.Current.GetChannel((string)data);
                     if (channel != null)
                     {
-                        // TODO
-
+                        service.Navigate(typeof(ChatInfoPage), new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 });
                         return;
                     }
 
@@ -572,11 +601,15 @@ namespace Unigram.Common
                         var peerChannel = response.Value.Peer as TLPeerChannel;
                         if (peerChannel != null || peerChat != null)
                         {
-                            // TODO:
-
+                            // TODO
                             return;
                         }
 
+                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                    }
+                    else
+                    {
+                        // TODO
                         await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
                     }
                 }

@@ -5,6 +5,15 @@ namespace Telegram.Api.TL
 {
 	public partial class TLPhoto : TLPhotoBase 
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			HasStickers = (1 << 0),
+		}
+
+		public bool IsHasStickers { get { return Flags.HasFlag(Flag.HasStickers); } set { Flags = value ? (Flags | Flag.HasStickers) : (Flags & ~Flag.HasStickers); } }
+
+		public Flag Flags { get; set; }
 		public Int64 AccessHash { get; set; }
 		public Int32 Date { get; set; }
 		public TLVector<TLPhotoSizeBase> Sizes { get; set; }
@@ -19,6 +28,7 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt64();
 			AccessHash = from.ReadInt64();
 			Date = from.ReadInt32();
@@ -28,7 +38,8 @@ namespace Telegram.Api.TL
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0xCDED42FE);
+			to.Write(0x9288DD29);
+			to.Write((Int32)Flags);
 			to.Write(Id);
 			to.Write(AccessHash);
 			to.Write(Date);

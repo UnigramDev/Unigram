@@ -27,6 +27,7 @@
                 <ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
             </Ellipse.Fill>
         </Ellipse>
+        <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
 
         <Grid VerticalAlignment="Top" Margin="8,0,0,0" Grid.Column="2">
             <Grid.ColumnDefinitions>

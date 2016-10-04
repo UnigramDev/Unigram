@@ -5,6 +5,15 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateStickerSetsOrder : TLUpdateBase 
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			Masks = (1 << 0),
+		}
+
+		public bool IsMasks { get { return Flags.HasFlag(Flag.Masks); } set { Flags = value ? (Flags | Flag.Masks) : (Flags & ~Flag.Masks); } }
+
+		public Flag Flags { get; set; }
 		public TLVector<Int64> Order { get; set; }
 
 		public TLUpdateStickerSetsOrder() { }
@@ -17,13 +26,15 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Order = TLFactory.Read<TLVector<Int64>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0xF0DFB451);
+			to.Write(0xBB2D201);
+			to.Write((Int32)Flags);
 			to.WriteObject(Order, cache);
 			if (cache) WriteToCache(to);
 		}

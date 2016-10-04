@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
 using Windows.UI.Popups;
 
 namespace Unigram.ViewModels
@@ -62,22 +64,49 @@ namespace Unigram.ViewModels
         #region Copy
 
         public RelayCommand<TLMessage> MessageCopyCommand => new RelayCommand<TLMessage>(MessageCopyExecute);
-        private void MessageCopyExecute(TLMessage message)
+        private async void MessageCopyExecute(TLMessage message)
         {
             if (message == null) return;
 
-            var dataPackage = new DataPackage();
-            var media = message.Media as ITLMediaCaption;
-            if (media != null)
+            if (message.Media is TLMessageMediaGame)
             {
-                dataPackage.SetText(media.Caption);
-            }
-            else
-            {
-                dataPackage.SetText(message.Message);
+                var gameMedia = message.Media as TLMessageMediaGame;
+
+                var button = message.ReplyMarkup.Rows.SelectMany(x => x.Buttons).OfType<TLKeyboardButtonGame>().FirstOrDefault();
+                if (button != null)
+                {
+                    var responseBot = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, 1);
+                    if (responseBot.IsSucceeded && responseBot.Value.IsHasUrl && responseBot.Value.HasUrl)
+                    {
+                        var user = CacheService.GetUser(message.ViaBotId) as TLUser;
+                        if (user != null)
+                        {
+                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = responseBot.Value.Url, Username = user.Username, Title = gameMedia.Game.Title });
+                        }
+                    }
+                }
+
+                return;
             }
 
-            Clipboard.SetContent(dataPackage);
+            string text = null;
+
+            var media = message.Media as ITLMediaCaption;
+            if (media != null && !string.IsNullOrWhiteSpace(media.Caption))
+            {
+                text = media.Caption;
+            }
+            else if (!string.IsNullOrWhiteSpace(message.Message))
+            {
+                text = message.Message;
+            }
+
+            if (text != null)
+            {
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(text);
+                Clipboard.SetContent(dataPackage);
+            }
         }
 
         #endregion
@@ -95,14 +124,14 @@ namespace Unigram.ViewModels
             var result = await dialog.ShowAsync();
             if (result != null && result.Label == "Si")
             {
-                var list = new List<TLMessageBase>() { message };
+                var messages = new List<TLMessageBase>() { message };
                 if (message.Id == 0 && message.RandomId != 0L)
                 {
-                    DeleteMessagesInternal(null, list);
+                    DeleteMessagesInternal(null, messages);
                     return;
                 }
 
-                DeleteMessages(null, null, list, null, DeleteMessagesInternal);
+                DeleteMessages(null, null, messages, null, DeleteMessagesInternal);
             }
         }
 
@@ -132,7 +161,7 @@ namespace Unigram.ViewModels
                     Messages.Remove(messages[j]);
                 }
 
-                //RaisePropertyChanged(() => With);
+                RaisePropertyChanged(() => With);
 
                 //this.IsEmptyDialog = (this.Items.get_Count() == 0 && this.LazyItems.get_Count() == 0);
                 //this.NotifyOfPropertyChange<TLObject>(() => this.With);

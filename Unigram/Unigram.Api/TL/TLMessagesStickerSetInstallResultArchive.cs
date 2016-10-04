@@ -5,7 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessagesStickerSetInstallResultArchive : TLMessagesStickerSetInstallResultBase 
 	{
-		public TLVector<TLStickerSetCovered> Sets { get; set; }
+		public TLVector<TLStickerSetCoveredBase> Sets { get; set; }
 
 		public TLMessagesStickerSetInstallResultArchive() { }
 		public TLMessagesStickerSetInstallResultArchive(TLBinaryReader from, bool cache = false)
@@ -17,7 +17,7 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Sets = TLFactory.Read<TLVector<TLStickerSetCovered>>(from, cache);
+			Sets = TLFactory.Read<TLVector<TLStickerSetCoveredBase>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 

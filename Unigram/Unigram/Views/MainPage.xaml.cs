@@ -34,9 +34,11 @@ namespace Unigram.Views
 
         private object _lastSelected;
         private object _lastSelectedContact;
+
         public MainPage()
         {
             InitializeComponent();
+
             NavigationCacheMode = NavigationCacheMode.Required;
 
             DataContext = UnigramContainer.Instance.ResolverType<MainViewModel>();
@@ -49,15 +51,16 @@ namespace Unigram.Views
             OnStateChanged(null, null);
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             Frame.BackStack.Clear();
 
             if (MasterDetail.NavigationService == null)
             {
                 MasterDetail.Initialize("Main");
-                ViewModel.NavigationService = MasterDetail.NavigationService;
             }
+
+            ViewModel.NavigationService = MasterDetail.NavigationService;
 
             if (e.Parameter is string)
             {
@@ -68,22 +71,45 @@ namespace Unigram.Views
                     if (data.ContainsKey("from_id"))
                     {
                         var user = ViewModel.CacheService.GetUser(int.Parse(data["from_id"]));
-                        if (user == null)
-                        {
-                            // TODO: ViewModel.ProtoService.GetUsersAsync
-                            var users = await ViewModel.ProtoService.GetUsersAsync(new TLVector<TLInputUserBase>(new[] { new TLInputUser { UserId = int.Parse(data["from_id"]) } }));
-                            if (users.IsSucceeded)
-                            {
-                                user = users.Value[0];
-                            }
-                        }
-
                         if (user != null)
                         {
-                            ViewModel.NavigationService.Navigate(typeof(UserInfoPage), user);
+                            ClearNavigation();
+                            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                        }
+                    }
+                    else if (data.ContainsKey("chat_id"))
+                    {
+                        var chat = ViewModel.CacheService.GetChat(int.Parse(data["chat_id"]));
+                        if (chat != null)
+                        {
+                            ClearNavigation();
+                            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = chat.Id });
+                        }
+                    }
+                    else if (data.ContainsKey("channel_id"))
+                    {
+                        var chat = ViewModel.CacheService.GetChat(int.Parse(data["channel_id"]));
+                        if (chat != null)
+                        {
+                            ClearNavigation();
+                            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = chat.Id });
                         }
                     }
                 }
+            }
+        }
+
+        private void ClearNavigation()
+        {
+            while (ViewModel.NavigationService.Frame.BackStackDepth > 1)
+            {
+                ViewModel.NavigationService.Frame.BackStack.RemoveAt(1);
+            }
+
+            if (ViewModel.NavigationService.CanGoBack)
+            {
+                ViewModel.NavigationService.GoBack();
+                ViewModel.NavigationService.Frame.ForwardStack.Clear();
             }
         }
 
@@ -117,20 +143,7 @@ namespace Unigram.Views
                 _lastSelected = e.ClickedItem;
 
                 var dialog = e.ClickedItem as TLDialog;
-                if (dialog.With is TLUserBase)
-                {
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.With);
-                }
-                else if (dialog.With is TLChat)
-                {
-                    var ciccio = dialog.With as TLChat;
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChat { ChatId = ciccio.Id });
-                }
-                else if (dialog.With is TLChannel)
-                {
-                    var ciccio = dialog.With as TLChannel;
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChannel { ChannelId = ciccio.Id, AccessHash = ciccio.AccessHash.Value });
-                }
+                ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
             }
         }
 
@@ -141,21 +154,7 @@ namespace Unigram.Views
                 _lastSelected = lvMasterChats.SelectedItem;
 
                 var dialog = lvMasterChats.SelectedItem as TLDialog;
-                if (dialog.With is TLUserBase)
-                {
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.With);
-                }
-                else if (dialog.With is TLChat)
-                {
-                    var ciccio = dialog.With as TLChat;
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChat { ChatId = ciccio.Id });
-                }
-               
-                else if (dialog.With is TLChannel)
-                {
-                    var ciccio = dialog.With as TLChannel;                    
-                    ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLInputPeerChannel { ChannelId = ciccio.Id, AccessHash = ciccio.AccessHash ?? 0 });
-                }
+                ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
             }
         }
 
@@ -192,14 +191,11 @@ namespace Unigram.Views
 
         private void ChangeListState()
         {
-            Visibility act = Visibility.Collapsed;
-            Visibility act1 = Visibility.Visible;
-
-            cbtnMasterDeleteSelected.Visibility = act;
-            cbtnMasterMuteSelected.Visibility = act;
-            cbtnCancelSelection.Visibility = act;
-            cbtnMasterSelect.Visibility = act1;
-            cbtnMasterNewChat.Visibility = act1;
+            cbtnMasterDeleteSelected.Visibility = Visibility.Collapsed;
+            cbtnMasterMuteSelected.Visibility = Visibility.Collapsed;
+            cbtnCancelSelection.Visibility = Visibility.Collapsed;
+            cbtnMasterSelect.Visibility = Visibility.Visible;
+            cbtnMasterNewChat.Visibility = Visibility.Visible;
             lvMasterChats.SelectionMode = ListViewSelectionMode.Single;
             SystemNavigationManager.GetForCurrentView().BackRequested -= Select_BackRequested;
 
@@ -239,12 +235,9 @@ namespace Unigram.Views
         {
             if (UsersListView.SelectedItem != null && _lastSelectedContact != UsersListView.SelectedItem && UsersListView.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                var x = UsersListView.SelectedItem as UsersPanelListItem;
-                TLDialog dialog = new TLDialog();
-                dialog.With = x._parent;
-                ViewModel.NavigationService.Navigate(typeof(Views.DialogPage), dialog.With);
+                var user = UsersListView.SelectedItem as UsersPanelListItem;
+                ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user._parent.Id });
             }
-
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Unigram.Core.Services
 
         public object Deserialize(string parameter)
         {
-            return Deserialize<TLObject>(parameter);
+            return Deserialize<object>(parameter);
         }
 
         public T Deserialize<T>(string parameter)

@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLMessagesFeaturedStickers : TLMessagesFeaturedStickersBase 
 	{
 		public Int32 Hash { get; set; }
-		public TLVector<TLStickerSetCovered> Sets { get; set; }
+		public TLVector<TLStickerSetCoveredBase> Sets { get; set; }
 		public TLVector<Int64> Unread { get; set; }
 
 		public TLMessagesFeaturedStickers() { }
@@ -20,7 +20,7 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
 			Hash = from.ReadInt32();
-			Sets = TLFactory.Read<TLVector<TLStickerSetCovered>>(from, cache);
+			Sets = TLFactory.Read<TLVector<TLStickerSetCoveredBase>>(from, cache);
 			Unread = TLFactory.Read<TLVector<Int64>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}

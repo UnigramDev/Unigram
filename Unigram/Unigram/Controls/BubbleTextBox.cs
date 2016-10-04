@@ -58,6 +58,8 @@ namespace Unigram.Controls
             Paste += OnPaste;
 #endif
             SelectionChanged += OnSelectionChanged;
+
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         private void Bold_Click(object sender, RoutedEventArgs e)
@@ -166,9 +168,28 @@ namespace Unigram.Controls
             }
         }
 
-        protected override async void OnKeyDown(KeyRoutedEventArgs e)
+        //protected override async void OnKeyDown(KeyRoutedEventArgs e)
+        //{
+        //    if (e.Key == VirtualKey.Enter)
+        //    {
+        //        // Check if CTRL or Shift is also pressed in addition to Enter key.
+        //        var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+        //        var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+
+        //        // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
+        //        if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && !IsEmpty)
+        //        {
+        //            e.Handled = true;
+        //            await SendAsync();
+        //        }
+        //    }
+
+        //    base.OnKeyDown(e);
+        //}
+
+        private async void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (e.Key == VirtualKey.Enter)
+            if (args.VirtualKey == VirtualKey.Enter && FocusState != FocusState.Unfocused)
             {
                 // Check if CTRL or Shift is also pressed in addition to Enter key.
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
@@ -177,16 +198,9 @@ namespace Unigram.Controls
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
                 if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && !IsEmpty)
                 {
+                    args.Handled = true;
                     await SendAsync();
                 }
-                else
-                {
-                    base.OnKeyDown(e);
-                }
-            }
-            else
-            {
-                base.OnKeyDown(e);
             }
         }
 
@@ -203,10 +217,12 @@ namespace Unigram.Controls
         private void FormatText()
         {
             string text;
-            Document.GetText(TextGetOptions.FormatRtf, out text);
+            Document.GetText(TextGetOptions.NoHidden, out text);
 
             var caretPosition = Document.Selection.StartPosition;
-            var result = Emoticon.Pattern.Replace(text, (match) =>
+            var result = Emoticon.Pattern.Matches(text);
+
+            foreach (Match match in result)
             {
                 var emoticon = match.Groups[1].Value;
                 var emoji = Emoticon.Replace(emoticon);
@@ -219,11 +235,29 @@ namespace Unigram.Controls
                     emoji = $" {emoji}";
                 }
 
-                return emoji;
-            });
+                Document.GetRange(match.Index, match.Index + match.Length).SetText(TextSetOptions.None, emoji);
+            }
 
-            Document.SetText(TextSetOptions.FormatRtf, result.TrimEnd("\\par\r\n}\r\n\0") + "}\r\n\0");
             Document.Selection.SetRange(caretPosition, caretPosition);
+
+            //var result = Emoticon.Pattern.Replace(text, (match) =>
+            //{
+            //    var emoticon = match.Groups[1].Value;
+            //    var emoji = Emoticon.Replace(emoticon);
+            //    if (match.Index + match.Length < caretPosition)
+            //    {
+            //        caretPosition += emoji.Length - emoticon.Length;
+            //    }
+            //    if (match.Value.StartsWith(" "))
+            //    {
+            //        emoji = $" {emoji}";
+            //    }
+
+            //    return emoji;
+            //});
+
+            //Document.SetText(TextSetOptions.FormatRtf, result.TrimEnd("\\par\r\n}\r\n\0") + "}\r\n\0");
+            //Document.Selection.SetRange(caretPosition, caretPosition);
         }
 
         public async Task SendAsync()

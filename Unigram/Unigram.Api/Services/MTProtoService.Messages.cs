@@ -18,21 +18,20 @@ namespace Telegram.Api.Services
 {
 	public partial class MTProtoService
     {
-        // TODO: Layer 56 
-        //public void GetAttachedStickersCallback(TLInputStickeredMediaBase media, Action<TLVector<TLStickerSetCovered>> callback, Action<TLRPCError> faultCallback = null)
-        //{
-        //    var obj = new TLGetAttachedStickers { Media = media };
+        public void GetAttachedStickersCallback(TLInputStickeredMediaBase media, Action<TLVector<TLStickerSetCoveredBase>> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetAttachedStickers { Media = media };
 
-        //    const string caption = "messages.getAttachedStickers";
-        //    SendInformativeMessage(caption, obj, callback, faultCallback);
-        //}
+            const string caption = "messages.getAttachedStickers";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
 
         public void GetRecentStickersCallback(bool attached, int hash, Action<TLMessagesRecentStickersBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetRecentStickers { Hash = hash };
             if (attached)
             {
-                // TODO: Layer 56 obj.SetAttached();
+                obj.IsAttached = true;
             }
 
             const string caption = "messages.getRecentStickers";
@@ -44,37 +43,16 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesClearRecentStickers();
             if (attached)
             {
-                // TODO: Layer 56 obj.SetAttached();
+                obj.IsAttached = true;
             }
 
             const string caption = "messages.clearRecentStickers";
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void GetUnusedStickersCallback(int limit, Action<TLVector<TLStickerSetCovered>> callback, Action<TLRPCError> faultCallback = null)
+        public void ReadFeaturedStickersCallback(TLVector<long> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesGetUnusedStickers { Limit = limit };
-
-            const string caption = "messages.getUnusedStickers";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
-        }
-
-#if LAYER_42
-        public void ReadFeaturedStickersAsync(TLVector<long> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
-#else
-	    public void ReadFeaturedStickersCallback(Action<bool> callback, Action<TLRPCError> faultCallback = null)
-#endif
-        {
-            //#if DEBUG
-            //            callback.SafeInvoke(true);
-            //            return;
-            //#endif 
-
-#if LAYER_42
             var obj = new TLMessagesReadFeaturedStickers { Id = id };
-#else
-            var obj = new TLMessagesReadFeaturedStickers();
-#endif
 
             const string caption = "messages.readFeaturedStickers";
             SendInformativeMessage<bool>(caption, obj, callback.SafeInvoke, faultCallback.SafeInvoke);
@@ -143,12 +121,6 @@ namespace Telegram.Api.Services
         {
             var inputPeer = PeerToInputPeer(message.ToId);
             var obj = new TLMessagesSendInlineBotResult { Flags = 0, Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, RandomId = message.RandomId ?? 0, QueryId = message.InlineBotResultQueryId, Id = message.InlineBotResultId };
-
-            // TODO: Layer 56 
-            //if (message.IsChannelMessage)
-            //{
-            //    obj.SetChannelMessage();
-            //}
 
             var message48 = message as TLMessage;
             if (message48 != null && message48.IsSilent)
@@ -927,7 +899,7 @@ namespace Telegram.Api.Services
 	    public void GetBotCallbackAnswerCallback(TLInputPeerBase peer, int messageId, byte[] data, int gameId, Action<TLMessagesBotCallbackAnswer> callback, Action<TLRPCError> faultCallback = null)
         {
             // TODO: Layer 56
-            var obj = new TLMessagesGetBotCallbackAnswer { Peer = peer, MsgId = messageId, Data = data /*, GameId = gameId*/ };
+            var obj = new TLMessagesGetBotCallbackAnswer { Peer = peer, MsgId = messageId, Data = data, IsGame = Convert.ToBoolean(gameId) };
 
             const string caption = "messages.getBotCallbackAnswer";
             SendInformativeMessage(caption, obj, callback, faultCallback);
@@ -1603,22 +1575,15 @@ namespace Telegram.Api.Services
 
             var obj = new TLMessagesForwardMessages { ToPeer = toPeer, Id = id, RandomId = randomId, FromPeer = fromPeer, Flags = 0 };
 
-            // TODO: Layer 56
-            //if (message48 != null && message48.IsChannelMessage)
-            //{
-            //    obj.SetChannelMessage();
-            //}
-
             if (message48 != null && message48.IsSilent)
             {
                 obj.IsSilent = true;
             }
 
-            // TODO: Layer 56
-            //if (withMyScore)
-            //{
-            //    obj.SetWithMyScore();
-            //}
+            if (withMyScore)
+            {
+                obj.IsWithMyScore = true;
+            }
 
             const string caption = "messages.forwardMessages";
 

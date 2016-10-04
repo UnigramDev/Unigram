@@ -1129,7 +1129,7 @@ namespace Telegram.Api.Services.Updates
             if (updateEditChannelMessage != null)
             {
                 Execute.ShowDebugMessage(string.Format("updateEditChannelMessage channel_pts={0} channel_ptscount={1} message={2}", updateEditChannelMessage.Pts, updateEditChannelMessage.PtsCount, updateEditChannelMessage.Message));
-                var commonMessage = updateEditChannelMessage.Message as TLMessage;
+                var commonMessage = updateEditChannelMessage.Message as TLMessageCommonBase;
                 if (commonMessage != null)
                 {
                     var peer = commonMessage.ToId;
@@ -1161,7 +1161,7 @@ namespace Telegram.Api.Services.Updates
             var updateNewChannelMessage = update as TLUpdateNewChannelMessage;
             if (updateNewChannelMessage != null)
             {
-                var commonMessage = updateNewChannelMessage.Message as TLMessage;
+                var commonMessage = updateNewChannelMessage.Message as TLMessageCommonBase;
                 if (commonMessage != null)
                 {
                     var peer = commonMessage.ToId;
@@ -1217,7 +1217,7 @@ namespace Telegram.Api.Services.Updates
             var updateNewMessage = update as TLUpdateNewMessage;
             if (updateNewMessage != null)
             {
-                var commonMessage = updateNewMessage.Message as TLMessage;
+                var commonMessage = updateNewMessage.Message as TLMessageCommonBase;
                 if (commonMessage != null)
                 {
                     MTProtoService.ProcessSelfMessage(commonMessage);
@@ -1357,11 +1357,11 @@ namespace Telegram.Api.Services.Updates
                         SetReadMaxId(dialog53.With as ITLReadMaxId, updateReadHistory.MaxId, outbox);
                     }
 
-                    var notifyMessages = new List<TLMessage>();
+                    var notifyMessages = new List<TLMessageCommonBase>();
                     var maxId = updateReadHistory.MaxId;
                     for (int i = 0; i < dialog.Messages.Count; i++)
                     {
-                        var message = dialog.Messages[i] as TLMessage;
+                        var message = dialog.Messages[i] as TLMessageCommonBase;
                         if (message != null)
                         {
                             if (message.Id != 0
@@ -1382,7 +1382,7 @@ namespace Telegram.Api.Services.Updates
                         }
                     }
 
-                    var topMessage = dialog.TopMessageItem as TLMessage;
+                    var topMessage = dialog.TopMessageItem as TLMessageCommonBase;
                     if (topMessage != null)
                     {
                         if (topMessage.Id <= maxId)
@@ -1451,9 +1451,9 @@ namespace Telegram.Api.Services.Updates
                         SetReadMaxId(dialog53.With as ITLReadMaxId, updateReadChannelOutbox.MaxId, true);
                     }
 
-                    var messages = new List<TLMessage>();
+                    var messages = new List<TLMessageCommonBase>();
 
-                    var topMessage = dialog.TopMessageItem as TLMessage;
+                    var topMessage = dialog.TopMessageItem as TLMessageCommonBase;
                     if (topMessage != null
                         && topMessage.IsOut
                         && topMessage.Id <= updateReadChannelOutbox.MaxId)
@@ -1465,7 +1465,7 @@ namespace Telegram.Api.Services.Updates
 
                     foreach (var messageBase in dialog.Messages)
                     {
-                        var message = messageBase as TLMessage;
+                        var message = messageBase as TLMessageCommonBase;
                         if (message != null && message.IsUnread && message.IsOut)
                         {
                             if (message.Id != 0 && message.Id < updateReadChannelOutbox.MaxId)
@@ -1502,7 +1502,7 @@ namespace Telegram.Api.Services.Updates
             {
                 //Execute.ShowDebugMessage(string.Format("TLUpdateReadChannelInbox channel_id={0} max_id={1}", updateReadChannelInbox.ChannelId, updateReadChannelInbox.MaxId));
 
-                var messages = new List<TLMessage>();
+                var messages = new List<TLMessageCommonBase>();
 
                 var readMaxId = _cacheService.GetChat(updateReadChannelInbox.ChannelId) as ITLReadMaxId;
                 if (readMaxId != null)
@@ -1520,7 +1520,7 @@ namespace Telegram.Api.Services.Updates
                         SetReadMaxId(dialog53.With as ITLReadMaxId, updateReadChannelInbox.MaxId, false);
                     }
 
-                    var topMessage = dialog.TopMessageItem as TLMessage;
+                    var topMessage = dialog.TopMessageItem as TLMessageCommonBase;
                     if (topMessage != null
                         && !topMessage.IsOut
                         && topMessage.Id <= updateReadChannelInbox.MaxId)
@@ -1532,7 +1532,7 @@ namespace Telegram.Api.Services.Updates
 
                     foreach (var messageBase in dialog.Messages)
                     {
-                        var message = messageBase as TLMessage;
+                        var message = messageBase as TLMessageCommonBase;
                         if (message != null && message.IsUnread && !message.IsOut)
                         {
                             if (message.Id != 0 && message.Id < updateReadChannelInbox.MaxId)
@@ -1568,10 +1568,10 @@ namespace Telegram.Api.Services.Updates
             if (updateReadMessages != null)
             {
                 var dialogs = new Dictionary<int, TLDialog>();
-                var messages = new List<TLMessage>(updateReadMessages.Messages.Count);
+                var messages = new List<TLMessageCommonBase>(updateReadMessages.Messages.Count);
                 foreach (var readMessageId in updateReadMessages.Messages)
                 {
-                    var message = _cacheService.GetMessage(readMessageId) as TLMessage;
+                    var message = _cacheService.GetMessage(readMessageId) as TLMessageCommonBase;
                     if (message != null)
                     {
                         messages.Add(message);
@@ -1938,14 +1938,12 @@ namespace Telegram.Api.Services.Updates
             if (updateStickerSetsOrder != null)
             {
                 Execute.ShowDebugMessage("TLUpdateStickerSetsOrder56");
-                
-                // TODO: Layer 56
-                //var updateStickerSetsOrder56 = updateStickerSetsOrder as TLUpdateStickerSetsOrder;
-                //if (updateStickerSetsOrder56 != null && updateStickerSetsOrder56.Masks)
-                //{
-                //    return true;
-                //}
-                
+
+                if (updateStickerSetsOrder.IsMasks)
+                {
+                    return true;
+                }
+
                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateStickerSetsOrder));
 
                 return true;
@@ -3373,7 +3371,7 @@ namespace Telegram.Api.Services.Updates
 
                     for (var i = 0; i < newChatMessageList.Count; i++)
                     {
-                        var message = newChatMessageList[i].Message as TLMessage;
+                        var message = newChatMessageList[i].Message as TLMessageCommonBase;
                         if (message != null && message.IsOut == outbox)
                         {
                             if (message.IsOut == outbox
@@ -3404,7 +3402,7 @@ namespace Telegram.Api.Services.Updates
 
                     for (var i = 0; i < newMessageList.Count; i++)
                     {
-                        var message = newMessageList[i].Message as TLMessage;
+                        var message = newMessageList[i].Message as TLMessageCommonBase;
                         if (message != null)
                         {
                             if (message.IsOut == outbox
@@ -3444,7 +3442,7 @@ namespace Telegram.Api.Services.Updates
             var newMessage = updateBase as TLUpdateNewMessage;
             if (newMessage != null)
             {
-                var message = newMessage.Message as TLMessage;
+                var message = newMessage.Message as TLMessageCommonBase;
                 if (message != null
                     && message.IsUnread)
                 {
