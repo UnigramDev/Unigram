@@ -40,7 +40,6 @@ namespace Unigram.Views
 
         public BindConvert Convert => BindConvert.Current;
 
-        public bool isLoading = false;
         public DialogPage()
         {
             InitializeComponent();
@@ -54,20 +53,20 @@ namespace Unigram.Views
 
         private void DialogPage_Loaded(object sender, RoutedEventArgs e)
         {
+            _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
+            lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
             lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
         }
 
         private void LvScroller_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (lvDialogs.ScrollingHost.VerticalOffset == 0)
+            if (lvDialogs.ScrollingHost.VerticalOffset < 1)
                 UpdateTask();
         }
 
         public async Task UpdateTask()
         {
-            isLoading = true;
-            await ViewModel.FetchMessages(ViewModel.Peer);
-            isLoading = false;
+            await ViewModel.LoadNextSliceAsync();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
