@@ -500,6 +500,7 @@
                                      ItemsSource="{Binding Messages}"
                                      ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                                      ItemContainerTransitions="{x:Null}"
+                                     ShowsScrollingPlaceholders="False"
                                      SelectionMode="None"
                                      Grid.ColumnSpan="2">
                 <ListView.ItemsPanel>

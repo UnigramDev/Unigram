@@ -660,14 +660,8 @@ namespace Unigram.ViewModels
             var next = index > 0 ? this[index - 1] : null;
             var previous = index < Count - 1 ? this[index + 1] : null;
 
-            if (previous != null)
-            {
-                UpdateAttach(previous, item);
-            }
-            else
-            {
-                UpdateAttach(item, next);
-            }
+            UpdateAttach(previous, item);
+            UpdateAttach(item, next);
         }
 
         private void UpdateAttach(TLMessageBase item, TLMessageBase previous)

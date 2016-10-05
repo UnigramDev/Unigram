@@ -71,19 +71,22 @@ namespace Unigram.Views
                         if (item != null && (item.IsFirst || i == index0) && (!item.IsOut || item.IsPost))
                         {
                             var text = "0";
-                            if (i == 0)
-                            {
-                                text = $"Max(0, Reference.Y + Scrolling.Translation.Y)"; // Compression effect
-                            }
-                            else if (i == index0 && itemsPerGroup > 0)
-                            {
-                                text = "0";
-                            }
-                            else if (i == index0)
-                            {
-                                text = $"Min(0, Reference.Y + Scrolling.Translation.Y)";
-                            }
-                            else
+                            //if (i == 0)
+                            //{
+                            //    _wasFirst[i] = true;
+                            //    text = $"Max(0, Reference.Y + Scrolling.Translation.Y)"; // Compression effect
+                            //}
+                            //else if (i == index0 && itemsPerGroup > 0)
+                            //{
+                            //    _wasFirst[i] = true;
+                            //    text = "0";
+                            //}
+                            //else if (i == index0)
+                            //{
+                            //    _wasFirst[i] = true;
+                            //    text = $"Min(0, Reference.Y + Scrolling.Translation.Y + {container.ActualHeight})";
+                            //}
+                            //else
                             {
                                 text = "Reference.Y + Scrolling.Translation.Y";
                             }
@@ -93,8 +96,10 @@ namespace Unigram.Views
                             expression.SetVector3Parameter("Reference", visual.Offset);
                             expression.SetReferenceParameter("Scrolling", props);
 
-                            if (_inUse.ContainsKey(i))
+                            if (_inUse.ContainsKey(i) && _wasFirst.ContainsKey(i))
                             {
+                                _wasFirst.Remove(i);
+
                                 var border = _inUse[i] as Border;
                                 var ellipse = ElementCompositionPreview.GetElementVisual(border.Child);
                                 ellipse.StopAnimation("Offset.Y");
@@ -127,6 +132,7 @@ namespace Unigram.Views
             Colors.Blue
         };
 
+        private Dictionary<int, bool> _wasFirst = new Dictionary<int, bool>();
         private List<int> _items = new List<int>();
         private Stack<UIElement> _cache = new Stack<UIElement>();
         private Dictionary<int, FrameworkElement> _inUse = new Dictionary<int, FrameworkElement>();
