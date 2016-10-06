@@ -67,37 +67,38 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            //TODO : SET PROPERTY AND VISIBILITY BINDINGS FOR CHATS AND CHANNELS
-            var peer = parameter as TLPeerUser;           
+            var user = parameter as TLUser;
+            var peer = parameter as TLPeerUser;
             if (peer != null)
             {
-                var user = CacheService.GetUser(peer.Id) as TLUser;
-                if (user != null)
+                user = CacheService.GetUser(peer.Id) as TLUser;
+            }
+
+            if (user != null)
+            {
+                FullNameField = user.FullName;
+                Item = user;
+                RaisePropertyChanged(() => AreNotificationsEnabled);
+                RaisePropertyChanged(() => PhoneVisibility);
+                RaisePropertyChanged(() => AddToGroupVisibility);
+                RaisePropertyChanged(() => HelpVisibility);
+                RaisePropertyChanged(() => ReportVisibility);
+
+                var result = await ProtoService.GetFullUserAsync(user.ToInputUser());
+                if (result.IsSucceeded)
                 {
-                    FullNameField = user.FullName;
-                    Item = user;
-                    RaisePropertyChanged(() => AreNotificationsEnabled);
-                    RaisePropertyChanged(() => PhoneVisibility);
-                    RaisePropertyChanged(() => AddToGroupVisibility);
-                    RaisePropertyChanged(() => HelpVisibility);
-                    RaisePropertyChanged(() => ReportVisibility);
-
-                    var result = await ProtoService.GetFullUserAsync(user.ToInputUser());
-                    if (result.IsSucceeded)
-                    {
-                        Full = result.Value;
-                        RaisePropertyChanged(() => AboutVisibility);
-                        RaisePropertyChanged(() => BlockVisibility);
-                        RaisePropertyChanged(() => UnblockVisibility);
-                        RaisePropertyChanged(() => StopVisibility);
-                        RaisePropertyChanged(() => UnstopVisibility);
-                    }
-
-                    var Status = LastSeenHelper.GetLastSeen(user);
-                    LastSeen = Status.Item1;
-
-                    Aggregator.Subscribe(this);
+                    Full = result.Value;
+                    RaisePropertyChanged(() => AboutVisibility);
+                    RaisePropertyChanged(() => BlockVisibility);
+                    RaisePropertyChanged(() => UnblockVisibility);
+                    RaisePropertyChanged(() => StopVisibility);
+                    RaisePropertyChanged(() => UnstopVisibility);
                 }
+
+                var Status = LastSeenHelper.GetLastSeen(user);
+                LastSeen = Status.Item1;
+
+                Aggregator.Subscribe(this);
             }
         }        
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)

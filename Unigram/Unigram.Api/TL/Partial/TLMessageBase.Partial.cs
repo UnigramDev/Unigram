@@ -576,20 +576,27 @@ namespace Telegram.Api.TL
             }
         }
 
-        private TLObject _forwardFrom;
-        public TLObject ForwardFrom
+        private TLUserBase _fwdFromUser;
+        public TLUserBase FwdFromUser
         {
             get
             {
-                if (_forwardFrom == null && HasFwdFrom && FwdFrom != null)
-                {
-                    if (FwdFrom.HasFromId)
-                        _forwardFrom = InMemoryCacheService.Current.GetUser(FwdFrom.FromId);
-                    else if (FwdFrom.HasChannelId)
-                        _forwardFrom = InMemoryCacheService.Current.GetChat(FwdFrom.ChannelId);
-                }
+                if (_fwdFromUser == null && HasFwdFrom && FwdFrom != null && FwdFrom.HasFromId)
+                    _fwdFromUser = InMemoryCacheService.Current.GetUser(FwdFrom.FromId);
 
-                return _forwardFrom;
+                return _fwdFromUser;
+            }
+        }
+
+        private TLChatBase _fwdFromChannel;
+        public TLChatBase FwdFromChannel
+        {
+            get
+            {
+                if (_fwdFromChannel == null && HasFwdFrom && FwdFrom != null && FwdFrom.HasChannelId)
+                    _fwdFromChannel = InMemoryCacheService.Current.GetChat(FwdFrom.ChannelId);
+
+                return _fwdFromChannel;
             }
         }
 
