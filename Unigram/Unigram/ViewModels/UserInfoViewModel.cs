@@ -39,8 +39,8 @@ namespace Unigram.ViewModels
         {
         }
 
-        private TLUserBase _item;
-        public TLUserBase Item
+        private TLUser _item;
+        public TLUser Item
         {
             get
             {

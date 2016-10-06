@@ -564,6 +564,18 @@ namespace Telegram.Api.TL
             }
         }
 
+        private TLUser _viaBot;
+        public TLUser ViaBot
+        {
+            get
+            {
+                if (_viaBot == null && HasViaBotId && ViaBotId.HasValue)
+                    _viaBot = InMemoryCacheService.Current.GetUser(ViaBotId.Value) as TLUser;
+
+                return _viaBot;
+            }
+        }
+
         public long InlineBotResultQueryId { get; set; }
 
         public string InlineBotResultId { get; set; }
