@@ -100,7 +100,7 @@ namespace Telegram.Api.TL
             get
             {
                 if (_from == null && FromId.HasValue)
-                    _from = InMemoryCacheService.Current.GetUser(FromId.Value) as TLUser;
+                    _from = InMemoryCacheService.Current.GetUser(FromId) as TLUser;
 
                 return _from;
             }
@@ -570,9 +570,26 @@ namespace Telegram.Api.TL
             get
             {
                 if (_viaBot == null && HasViaBotId && ViaBotId.HasValue)
-                    _viaBot = InMemoryCacheService.Current.GetUser(ViaBotId.Value) as TLUser;
+                    _viaBot = InMemoryCacheService.Current.GetUser(ViaBotId) as TLUser;
 
                 return _viaBot;
+            }
+        }
+
+        private TLObject _forwardFrom;
+        public TLObject ForwardFrom
+        {
+            get
+            {
+                if (_forwardFrom == null && HasFwdFrom && FwdFrom != null)
+                {
+                    if (FwdFrom.HasFromId)
+                        _forwardFrom = InMemoryCacheService.Current.GetUser(FwdFrom.FromId);
+                    else if (FwdFrom.HasChannelId)
+                        _forwardFrom = InMemoryCacheService.Current.GetChat(FwdFrom.ChannelId);
+                }
+
+                return _forwardFrom;
             }
         }
 

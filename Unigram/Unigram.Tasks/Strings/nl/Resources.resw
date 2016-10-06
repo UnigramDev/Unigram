@@ -118,207 +118,201 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AUTH_REGION" xml:space="preserve">
-    <value>Login from a new device {0}, location: {1}</value>
+    <value>Ingelogd vanaf een nieuw apparaat: {0}, locatie: {1}</value>
   </data>
   <data name="AUTH_UNKNOWN" xml:space="preserve">
-    <value>Login from a new device {0}</value>
+    <value>Ingelogd vanaf een nieuw apparaat: {0}</value>
   </data>
   <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
-    <value>posted a voice message</value>
+    <value>plaatste een spraakbericht</value>
   </data>
   <data name="CHANNEL_MESSAGE_CONTACT" xml:space="preserve">
-    <value>posted a contact</value>
+    <value>plaatste een contact</value>
   </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
-    <value>posted a document</value>
+    <value>plaatste een bestand</value>
   </data>
   <data name="CHANNEL_MESSAGE_FWDS" xml:space="preserve">
-    <value>posted {1} forwarded messages</value>
+    <value>plaatste {1} doorgestuurde bericht(en)</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
-    <value>invited you to play {1}</value>
+    <value>wilt {1} met je spelen</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
-    <value>posted a map</value>
+    <value>plaatste een locatie</value>
   </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
-    <value>posted a GIF</value>
+    <value>plaatste een GIF</value>
   </data>
   <data name="CHANNEL_MESSAGE_NOTEXT" xml:space="preserve">
-    <value>posted a message</value>
+    <value>plaatste een bericht</value>
   </data>
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
-    <value>posted a photo</value>
+    <value>plaatste een foto</value>
   </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
-    <value>posted a {1}sticker</value>
+    <value>plaatste een {1}sticker</value>
   </data>
   <data name="CHANNEL_MESSAGE_TEXT" xml:space="preserve">
     <value>{1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
-    <value>posted a video</value>
+    <value>plaatste een video</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
-    <value>{0} invited {2} to the group</value>
+    <value>{0} heeft {2} uitgenodigd voor de groep</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
-    <value>{0} invited you to the group</value>
+    <value>{0} heeft je uitgenodigd voor de groep</value>
   </data>
   <data name="CHAT_CREATED" xml:space="preserve">
-    <value>{0} invited you to the group</value>
+    <value>{0} heeft je uitgenodigd voor de groep</value>
   </data>
   <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
-    <value>{0} kicked {2} from the group</value>
+    <value>{0} heeft {2} verwijderd uit de groep</value>
   </data>
   <data name="CHAT_DELETE_YOU" xml:space="preserve">
-    <value>{0} kicked you from the group</value>
+    <value>{0} heeft je verwijderd uit de groep</value>
   </data>
   <data name="CHAT_JOINED" xml:space="preserve">
-    <value>{0} has joined the group</value>
+    <value>{0} is nu lid van de groep</value>
   </data>
   <data name="CHAT_LEFT" xml:space="preserve">
-    <value>{0} has left the group</value>
+    <value>{0} heeft de groep verlaten</value>
   </data>
   <data name="CHAT_MESSAGE_AUDIO" xml:space="preserve">
-    <value>{0} sent a voice message to the group</value>
+    <value>{0} heeft een spraakbericht gestuurd naar de groep</value>
   </data>
   <data name="CHAT_MESSAGE_CONTACT" xml:space="preserve">
-    <value>{0} shared a contact in the group</value>
+    <value>{0} heeft een contact gedeeld met de groep</value>
   </data>
   <data name="CHAT_MESSAGE_DOC" xml:space="preserve">
-    <value>{0} sent a document to the group</value>
+    <value>{0} heeft een bestand gestuurd naar de groep</value>
   </data>
   <data name="CHAT_MESSAGE_FWDS" xml:space="preserve">
-    <value>{0} forwarded {2} messages to the group</value>
+    <value>{0} heeft {2} berichten naar de groep doorgestuurd</value>
   </data>
   <data name="CHAT_MESSAGE_GAME" xml:space="preserve">
-    <value>{0} invited the group to play {2}</value>
+    <value>{0} wilt {2} met de groep spelen</value>
   </data>
   <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
-    <value>{0} sent a map to the group</value>
+    <value>{0} heeft een kaart gestuurd naar de groep</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
-    <value>{0} sent a GIF to the group</value>
+    <value>{0} heeft een GIF gestuurd naar de groep</value>
   </data>
   <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
-    <value>{0} sent a message to the group</value>
+    <value>{0} heeft een bericht gestuurd naar de groep</value>
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
-    <value>{0} sent a photo to the group</value>
+    <value>{0} heeft een foto gestuurd naar de groep</value>
   </data>
   <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
-    <value>{0} sent a {2}sticker to the group</value>
+    <value>{0} heeft een {2}sticker gestuurd naar de groep</value>
   </data>
   <data name="CHAT_MESSAGE_TEXT" xml:space="preserve">
     <value>{0}: {2}</value>
   </data>
   <data name="CHAT_MESSAGE_VIDEO" xml:space="preserve">
-    <value>{0} sent a video to the group</value>
+    <value>{0} heeft een video gestuurd naar de groep</value>
   </data>
   <data name="CHAT_PHOTO_EDITED" xml:space="preserve">
-    <value>{0} edited the group's photo</value>
+    <value>{0} heeft de afbeelding van de groep gewijzigd</value>
   </data>
   <data name="CHAT_RETURNED" xml:space="preserve">
-    <value>{0} has returned to the group</value>
+    <value>{0} is weer lid van de groep</value>
   </data>
   <data name="CHAT_TITLE_EDITED" xml:space="preserve">
-    <value>{0} edited the group's name</value>
+    <value>{0} heeft de naam van de groep gewijzigd</value>
   </data>
   <data name="CONTACT_ACTIVATED" xml:space="preserve">
-    <value>{0} helped you activate your account!</value>
+    <value>{0} heeft je geholpen je account te activeren!</value>
   </data>
   <data name="CONTACT_JOINED" xml:space="preserve">
-    <value>{0} joined Telegram!</value>
-  </data>
-  <data name="CONTACT_PHOTO" xml:space="preserve">
-    <value>updated profile photo</value>
+    <value>{0} heeft nu Telegram!</value>
   </data>
   <data name="DC_UPDATE" xml:space="preserve">
-    <value>Open this notification to update app settings</value>
+    <value>Open deze melding om de app-instellingen bij te werken</value>
   </data>
   <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
-    <value>You have a new message{0}</value>
+    <value>Je hebt een nieuw bericht{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
-    <value>Your encryption request was accepted{0}</value>
+    <value>Je encryptieverzoek is geaccepteerd{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>New encryption request{0}</value>
-  </data>
-  <data name="GEOCHAT_CHECKIN" xml:space="preserve">
-    <value>{0} has checked-in</value>
+    <value>Nieuw encryptieverzoek{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
-    <value>You have a new message{0}</value>
+    <value>Je hebt een nieuw bericht{0}</value>
   </data>
   <data name="MESSAGE_AUDIO" xml:space="preserve">
-    <value>sent you a voice message</value>
+    <value>heeft je een spraakbericht gestuurd</value>
   </data>
   <data name="MESSAGE_CONTACT" xml:space="preserve">
-    <value>shared a contact with you</value>
+    <value>heeft een contact met je gedeeld</value>
   </data>
   <data name="MESSAGE_DOC" xml:space="preserve">
-    <value>sent you a file</value>
+    <value>heeft je een bestand gestuurd</value>
   </data>
   <data name="MESSAGE_FWDS" xml:space="preserve">
-    <value>forwarded you {1} messages</value>
+    <value>heeft {1} berichten doorgestuurd</value>
   </data>
   <data name="MESSAGE_GAME" xml:space="preserve">
-    <value>invited you to play {1}</value>
+    <value>wilt {1} met je spelen</value>
   </data>
   <data name="MESSAGE_GEO" xml:space="preserve">
-    <value>sent you a map</value>
+    <value>heeft je een locatie gestuurd</value>
   </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
-    <value>sent you a GIF</value>
+    <value>heeft je een GIF gestuurd</value>
   </data>
   <data name="MESSAGE_NOTEXT" xml:space="preserve">
-    <value>sent you a message</value>
+    <value>heeft je een bericht gestuurd</value>
   </data>
   <data name="MESSAGE_PHOTO" xml:space="preserve">
-    <value>sent you a photo</value>
+    <value>heeft je een foto gestuurd</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
-    <value>sent you a {1}sticker</value>
+    <value>heeft je een {1}sticker gestuurd</value>
   </data>
   <data name="MESSAGE_TEXT" xml:space="preserve">
     <value>{1}</value>
   </data>
   <data name="MESSAGE_VIDEO" xml:space="preserve">
-    <value>sent you a video</value>
+    <value>heeft je een video gestuurd</value>
   </data>
   <data name="PINNED_AUDIO" xml:space="preserve">
-    <value>pinned a voice message</value>
+    <value>heeft een spraakbericht vastgezet</value>
   </data>
   <data name="PINNED_CONTACT" xml:space="preserve">
-    <value>pinned a contact</value>
+    <value>heeft een contact vastgezet</value>
   </data>
   <data name="PINNED_DOC" xml:space="preserve">
-    <value>pinned a file</value>
+    <value>heeft een bestand vastgezet</value>
   </data>
   <data name="PINNED_GAME" xml:space="preserve">
-    <value>pinned a game</value>
+    <value>heeft een spel vastgezet</value>
   </data>
   <data name="PINNED_GEO" xml:space="preserve">
-    <value>pinned a map</value>
+    <value>heeft een locatie vastgezet</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
-    <value>pinned a GIF</value>
+    <value>heeft een GIF vastgezet</value>
   </data>
   <data name="PINNED_NOTEXT" xml:space="preserve">
-    <value>pinned a message</value>
+    <value>heeft een bericht vastgezet</value>
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
-    <value>pinned a photo</value>
+    <value>heeft een foto vastgezet</value>
   </data>
   <data name="PINNED_STICKER" xml:space="preserve">
-    <value>pinned a {1}sticker</value>
+    <value>heeft een sticker {1}vastgezet</value>
   </data>
   <data name="PINNED_TEXT" xml:space="preserve">
-    <value>pinned "{1}"</value>
+    <value>heeft "{1}" vastgezet</value>
   </data>
   <data name="PINNED_VIDEO" xml:space="preserve">
-    <value>pinned a video</value>
+    <value>heeft een video vastgezet</value>
   </data>
 </root>
