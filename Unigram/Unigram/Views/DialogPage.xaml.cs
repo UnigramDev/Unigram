@@ -114,12 +114,11 @@ namespace Unigram.Views
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.With is TLUserBase) //Se non è zuppa allora è pan bagnato
-                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), ViewModel.With);
+                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), ViewModel.Peer.ToPeer());
             else if (ViewModel.With is TLChannel)
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
             else if (ViewModel.With is TLChat)
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
-
         }
 
         private async void fcbtnAttachPhoto_Click(object sender, RoutedEventArgs e)
