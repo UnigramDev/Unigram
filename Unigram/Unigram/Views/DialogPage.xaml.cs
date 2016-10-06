@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -53,21 +54,30 @@ namespace Unigram.Views
 
         private void DialogPage_Loaded(object sender, RoutedEventArgs e)
         {
-            _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
-            lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
+            //_panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
+            //lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
+
             lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
         }
 
-        private void LvScroller_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        //private bool _isAlreadyLoading;
+        //private bool _isAlreadyCalled;
+
+        private async void LvScroller_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (lvDialogs.ScrollingHost.VerticalOffset < 1)
-                UpdateTask();
+            if (lvDialogs.ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
+            {
+                await ViewModel.LoadNextSliceAsync();
+            }
+
+            //if (lvDialogs.ScrollingHost.VerticalOffset < 1)
+            //    UpdateTask();
         }
 
-        public async Task UpdateTask()
-        {
-            await ViewModel.LoadNextSliceAsync();
-        }
+        //public async Task UpdateTask()
+        //{
+        //    await ViewModel.LoadNextSliceAsync();
+        //}
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {

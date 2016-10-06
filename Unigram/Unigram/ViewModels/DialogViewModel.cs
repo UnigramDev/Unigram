@@ -25,6 +25,7 @@ using System.ComponentModel;
 using Windows.UI.Xaml;
 using Unigram.Converters;
 using Windows.UI.Xaml.Media;
+using System.Diagnostics;
 
 namespace Unigram.ViewModels
 {
@@ -105,6 +106,8 @@ namespace Unigram.ViewModels
         {
             if (_isLoadingNextSlice) return;
             _isLoadingNextSlice = true;
+
+            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
             var maxId = int.MaxValue;
 

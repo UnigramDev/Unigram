@@ -159,7 +159,7 @@ namespace Unigram.Controls
             {
                 if (!string.IsNullOrWhiteSpace(photoMedia.Caption))
                 {
-                    ServiceLabel.Text += ",";
+                    ServiceLabel.Text += ", ";
                     MessageLabel.Text += photoMedia.Caption;
                 }
 
@@ -197,7 +197,7 @@ namespace Unigram.Controls
             var venueMedia = message.Media as TLMessageMediaVenue;
             if (venueMedia != null && !string.IsNullOrWhiteSpace(venueMedia.Title))
             {
-                ServiceLabel.Text += ",";
+                ServiceLabel.Text += ", ";
                 MessageLabel.Text = venueMedia.Title;
             }
 
@@ -249,7 +249,7 @@ namespace Unigram.Controls
             {
                 if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
                 {
-                    ServiceLabel.Text += ",";
+                    ServiceLabel.Text += ", ";
                     MessageLabel.Text += documentMedia.Caption;
                 }
 
