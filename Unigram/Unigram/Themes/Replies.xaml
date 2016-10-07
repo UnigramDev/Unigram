@@ -98,7 +98,7 @@
 
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
                 <TextBlock Text="{Binding From.FullName}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
-                <TextBlock Text="{Binding Message}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
+                <TextBlock Text="{Binding Message}" Foreground="{ThemeResource MessageSubtleLabelBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
             </StackPanel>
         </Grid>
     </DataTemplate>

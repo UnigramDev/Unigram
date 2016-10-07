@@ -100,7 +100,7 @@ namespace Telegram.Api.TL
             get
             {
                 if (_from == null && FromId.HasValue)
-                    _from = InMemoryCacheService.Current.GetUser(FromId.Value) as TLUser;
+                    _from = InMemoryCacheService.Current.GetUser(FromId) as TLUser;
 
                 return _from;
             }
@@ -561,6 +561,42 @@ namespace Telegram.Api.TL
                         }
                     }
                 }
+            }
+        }
+
+        private TLUser _viaBot;
+        public TLUser ViaBot
+        {
+            get
+            {
+                if (_viaBot == null && HasViaBotId && ViaBotId.HasValue)
+                    _viaBot = InMemoryCacheService.Current.GetUser(ViaBotId) as TLUser;
+
+                return _viaBot;
+            }
+        }
+
+        private TLUserBase _fwdFromUser;
+        public TLUserBase FwdFromUser
+        {
+            get
+            {
+                if (_fwdFromUser == null && HasFwdFrom && FwdFrom != null && FwdFrom.HasFromId)
+                    _fwdFromUser = InMemoryCacheService.Current.GetUser(FwdFrom.FromId);
+
+                return _fwdFromUser;
+            }
+        }
+
+        private TLChatBase _fwdFromChannel;
+        public TLChatBase FwdFromChannel
+        {
+            get
+            {
+                if (_fwdFromChannel == null && HasFwdFrom && FwdFrom != null && FwdFrom.HasChannelId)
+                    _fwdFromChannel = InMemoryCacheService.Current.GetChat(FwdFrom.ChannelId);
+
+                return _fwdFromChannel;
             }
         }
 

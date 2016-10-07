@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -40,7 +41,6 @@ namespace Unigram.Views
 
         public BindConvert Convert => BindConvert.Current;
 
-        public bool isLoading = false;
         public DialogPage()
         {
             InitializeComponent();
@@ -54,26 +54,30 @@ namespace Unigram.Views
 
         private void DialogPage_Loaded(object sender, RoutedEventArgs e)
         {
+            //_panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
+            //lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
+
             lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
         }
 
-        private void LvScroller_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        //private bool _isAlreadyLoading;
+        //private bool _isAlreadyCalled;
+
+        private async void LvScroller_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (lvDialogs.ScrollingHost.VerticalOffset == 0)
-                UpdateTask();
+            if (lvDialogs.ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
+            {
+                await ViewModel.LoadNextSliceAsync();
+            }
+
+            //if (lvDialogs.ScrollingHost.VerticalOffset < 1)
+            //    UpdateTask();
         }
 
-        public async Task UpdateTask()
-        {
-            isLoading = true;
-            await ViewModel.FetchMessages(ViewModel.Peer);
-            isLoading = false;
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-        }
+        //public async Task UpdateTask()
+        //{
+        //    await ViewModel.LoadNextSliceAsync();
+        //}
 
         private void CheckMessageBoxEmpty()
         {
@@ -94,12 +98,6 @@ namespace Unigram.Views
         private void txtMessage_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
             CheckMessageBoxEmpty();
-
-            // TODO Prevent "Enter" from being added to message string when pressed for sending.
-            // See "Dispatcher_AcceleratorKeyActivated" for more info.
-
-            // TODO Save text to draft if not being send
-
         }
 
         private void btnVoiceMessage_Click(object sender, RoutedEventArgs e)
@@ -115,12 +113,11 @@ namespace Unigram.Views
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.With is TLUserBase) //Se non è zuppa allora è pan bagnato
-                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), ViewModel.With);
+                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), ViewModel.Peer.ToPeer());
             else if (ViewModel.With is TLChannel)
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
             else if (ViewModel.With is TLChat)
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
-
         }
 
         private async void fcbtnAttachPhoto_Click(object sender, RoutedEventArgs e)

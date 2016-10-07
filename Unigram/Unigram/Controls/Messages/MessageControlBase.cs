@@ -12,6 +12,7 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
@@ -33,6 +34,91 @@ namespace Unigram.Controls.Messages
         //    };
         //}
 
+        protected void OnMessageChanged(TextBlock paragraph)
+        {
+            paragraph.Inlines.Clear();
+
+            var message = DataContext as TLMessage;
+            if (message != null)
+            {
+                //if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel) && !IsFullMedia(message.Media))
+                //{
+                //    paragraph.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId) });
+                //}
+
+                if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel) && (paragraph.Inlines.Count > 0 || !IsFullMedia(message.Media)))
+                {
+                    //if (message.HasFwdFrom)
+                    //    paragraph.Inlines.Insert(0, new LineBreak());
+
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId) });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+
+                    paragraph.Inlines.Add(hyperlink);
+                }
+
+                if (message.HasFwdFrom)
+                {
+                    if (paragraph.Inlines.Count > 0)
+                        paragraph.Inlines.Add(new LineBreak());
+
+                    paragraph.Inlines.Add(new Run { Text = "Forwarded from " });
+
+                    var name = string.Empty;
+
+                    var chat = message.FwdFromChannel;
+                    if (chat != null)
+                    {
+                        name = chat.FullName;
+                    }
+
+                    var user = message.FwdFromUser;
+                    if (user != null)
+                    {
+                        if (name.Length > 0)
+                        {
+                            name += $" ({user.FullName})";
+                        }
+                        else
+                        {
+                            name = user.FullName;
+                        }
+                    }
+
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = name });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+
+                    paragraph.Inlines.Add(hyperlink);
+                }
+
+                if (message.ViaBot != null)
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = "@" + message.ViaBot.Username });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+
+                    paragraph.Inlines.Add(new Run { Text = paragraph.Inlines.Count > 0 ? " via " : "via " });
+                    paragraph.Inlines.Add(hyperlink);
+                }
+
+                if (paragraph.Inlines.Count > 0)
+                {
+                    paragraph.Inlines.Add(new Run { Text = " " });
+                    paragraph.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    paragraph.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                paragraph.Visibility = Visibility.Collapsed;
+            }
+        }
+
         /// <summary>
         /// x:Bind hack
         /// </summary>
@@ -46,6 +132,8 @@ namespace Unigram.Controls.Messages
 
         protected static bool IsFullMedia(TLMessageMediaBase media)
         {
+            if (media == null) return false;
+
             if (media.TypeId == TLType.MessageMediaGeo) return true;
             if (media.TypeId == TLType.MessageMediaPhoto) return true;
             if (media.TypeId == TLType.MessageMediaDocument)
@@ -60,6 +148,8 @@ namespace Unigram.Controls.Messages
 
         protected static bool IsInlineMedia(TLMessageMediaBase media)
         {
+            if (media == null) return false;
+
             if (media.TypeId == TLType.MessageMediaContact) return true;
             if (media.TypeId == TLType.MessageMediaVenue) return true;
             if (media.TypeId == TLType.MessageMediaPhoto)

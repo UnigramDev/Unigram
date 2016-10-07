@@ -25,14 +25,12 @@ using System.ComponentModel;
 using Windows.UI.Xaml;
 using Unigram.Converters;
 using Windows.UI.Xaml.Media;
+using System.Diagnostics;
 
 namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : UnigramViewModelBase
     {
-        int loadCount = 15;
-        int loaded = 0;
-
         public MessageCollection Messages { get; private set; } = new MessageCollection();
 
         public Brush PlaceHolderColor { get; internal set; }
@@ -102,9 +100,26 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task FetchMessages(TLInputPeerBase inputPeer)
+        private bool _isLoadingNextSlice;
+
+        public async Task LoadNextSliceAsync()
         {
-            var result = await ProtoService.GetHistoryAsync(inputPeer, new TLPeerUser { Id = SettingsHelper.UserId }, false, loaded, int.MaxValue, loadCount);
+            if (_isLoadingNextSlice) return;
+            _isLoadingNextSlice = true;
+
+            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
+
+            var maxId = int.MaxValue;
+
+            for (int i = 0; i < Messages.Count; i++)
+            {
+                if (Messages[i].Id != 0 && Messages[i].Id < maxId)
+                {
+                    maxId = Messages[i].Id;
+                }
+            }
+
+            var result = await ProtoService.GetHistoryAsync(Peer, new TLPeerUser { Id = SettingsHelper.UserId }, false, 0, maxId, 15);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Value.Messages);
@@ -113,9 +128,9 @@ namespace Unigram.ViewModels
                 {
                     Messages.Insert(0, item);
                 }
-
-                loaded += loadCount;
             }
+
+            _isLoadingNextSlice = false;
         }
 
         public async void ProcessReplies(IList<TLMessageBase> messages)
@@ -210,8 +225,6 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            loaded = 0;
-
             var participant = GetParticipant(parameter as TLPeerBase);
             var channel = participant as TLChannel;
             var chat = participant as TLChat;
@@ -230,8 +243,6 @@ namespace Unigram.ViewModels
                 LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
                 LastSeenVisible = Visibility.Visible;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
-
-                await FetchMessages(Peer);
 
                 await _jumpListService.UpdateAsync(user);
             }
@@ -263,8 +274,6 @@ namespace Unigram.ViewModels
                 PlaceHolderColor = BindConvert.Current.Bubble(channelDetails.Value.Chats[0].Id);
                 photo = channelDetails.Value.Chats[0].Photo;
                 LastSeenVisible = Visibility.Collapsed;
-
-                await FetchMessages(Peer);
             }
             else if (chat != null)
             {
@@ -276,9 +285,9 @@ namespace Unigram.ViewModels
                 photo = chatDetails.Value.Chats[0].Photo;
                 PlaceHolderColor = BindConvert.Current.Bubble(chatDetails.Value.Chats[0].Id);
                 LastSeenVisible = Visibility.Collapsed;
-
-                await FetchMessages(Peer);
             }
+
+            await LoadNextSliceAsync();
 
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
 
@@ -647,114 +656,151 @@ namespace Unigram.ViewModels
 
     public class MessageCollection : ObservableCollection<TLMessageBase>
     {
-        public ObservableCollection<MessageGroup> Groups { get; private set; } = new ObservableCollection<MessageGroup>();
-
         protected override void InsertItem(int index, TLMessageBase item)
         {
             base.InsertItem(index, item);
 
-            var group = GroupForIndex(index);
-            if (group == null || group?.FromId != item.FromId)
-            {
-                group = new MessageGroup(this, item.From, item.FromId, item.ToId, item is TLMessage ? ((TLMessage)item).IsOut : false);
-                Groups.Insert(index == 0 ? 0 : Groups.Count, group); // TODO: should not be 0 all the time
-            }
+            var next = index > 0 ? this[index - 1] : null;
+            var previous = index < Count - 1 ? this[index + 1] : null;
 
-            group.Insert(Math.Max(0, index - group.FirstIndex), item);
+            UpdateAttach(previous, item);
+            UpdateAttach(item, next);
         }
 
-        protected override void RemoveItem(int index)
+        private void UpdateAttach(TLMessageBase item, TLMessageBase previous)
         {
-            base.RemoveItem(index);
+            if (item == null) return;
 
-            var group = GroupForIndex(index);
-            if (group != null)
+            var isItemPost = false;
+            if (item is TLMessage) isItemPost = ((TLMessage)item).IsPost;
+
+            if (!isItemPost)
             {
-                group.RemoveAt(index - group.FirstIndex);
-            }
-        }
-
-        private MessageGroup GroupForIndex(int index)
-        {
-            if (index == 0)
-            {
-                return Groups.FirstOrDefault();
-            }
-            else if (index == Count - 1)
-            {
-                return Groups.LastOrDefault();
-            }
-            else
-            {
-                return Groups.FirstOrDefault(x => x.FirstIndex >= index && x.LastIndex <= index);
-            }
-        }
-    }
-
-    public class MessageGroup : ObservableCollection<TLMessageBase>
-    {
-        private ObservableCollection<MessageGroup> _parent;
-
-        public MessageGroup(MessageCollection parent, TLUser from, int? fromId, TLPeerBase toId, bool isOut)
-        {
-            _parent = parent.Groups;
-
-            From = from;
-            if (fromId == null)
-                FromId = 33303409;
-            FromId = fromId;
-            ToId = toId;
-            IsOut = isOut;
-        }
-
-        public TLUser From { get; private set; }
-
-        public int? FromId { get; private set; }
-
-        public TLPeerBase ToId { get; private set; }
-
-        public bool IsOut { get; private set; }
-
-        public int FirstIndex
-        {
-            get
-            {
-                var count = 0;
-                var index = _parent.IndexOf(this);
-                if (index > 0)
+                var attach = false;
+                if (previous != null)
                 {
-                    count = _parent[index - 1].LastIndex + 1;
+                    var isPreviousPost = false;
+                    if (previous is TLMessage) isPreviousPost = ((TLMessage)previous).IsPost;
+
+                    attach = !isPreviousPost &&
+                             !(previous is TLMessageService) &&
+                             !(previous is TLMessageEmpty) &&
+                             previous.FromId == item.FromId &&
+                             item.Date - previous.Date < 900;
                 }
 
-                return count;
+                item.IsFirst = !attach;
             }
         }
 
-        public int LastIndex
-        {
-            get
-            {
-                return FirstIndex + Math.Max(0, Count - 1);
-            }
-        }
+        //public ObservableCollection<MessageGroup> Groups { get; private set; } = new ObservableCollection<MessageGroup>();
 
-        protected override void InsertItem(int index, TLMessageBase item)
-        {
-            // TODO: experimental
-            if (index == 0)
-            {
-                if (Count > 0)
-                    this[0].IsFirst = false;
+        //protected override void InsertItem(int index, TLMessageBase item)
+        //{
+        //    base.InsertItem(index, item);
 
-                item.IsFirst = true;
-            }
+        //    var group = GroupForIndex(index);
+        //    if (group == null || group?.FromId != item.FromId)
+        //    {
+        //        group = new MessageGroup(this, item.From, item.FromId, item.ToId, item is TLMessage ? ((TLMessage)item).IsOut : false);
+        //        Groups.Insert(index == 0 ? 0 : Groups.Count, group); // TODO: should not be 0 all the time
+        //    }
 
-            base.InsertItem(index, item);
-        }
+        //    group.Insert(Math.Max(0, index - group.FirstIndex), item);
+        //}
 
-        protected override void RemoveItem(int index)
-        {
-            base.RemoveItem(index);
-        }
+        //protected override void RemoveItem(int index)
+        //{
+        //    base.RemoveItem(index);
+
+        //    var group = GroupForIndex(index);
+        //    if (group != null)
+        //    {
+        //        group.RemoveAt(index - group.FirstIndex);
+        //    }
+        //}
+
+        //private MessageGroup GroupForIndex(int index)
+        //{
+        //    if (index == 0)
+        //    {
+        //        return Groups.FirstOrDefault();
+        //    }
+        //    else if (index == Count - 1)
+        //    {
+        //        return Groups.LastOrDefault();
+        //    }
+        //    else
+        //    {
+        //        return Groups.FirstOrDefault(x => x.FirstIndex >= index && x.LastIndex <= index);
+        //    }
+        //}
     }
+
+    //public class MessageGroup : ObservableCollection<TLMessageBase>
+    //{
+    //    private ObservableCollection<MessageGroup> _parent;
+
+    //    public MessageGroup(MessageCollection parent, TLUser from, int? fromId, TLPeerBase toId, bool isOut)
+    //    {
+    //        _parent = parent.Groups;
+
+    //        From = from;
+    //        if (fromId == null)
+    //            FromId = 33303409;
+    //        FromId = fromId;
+    //        ToId = toId;
+    //        IsOut = isOut;
+    //    }
+
+    //    public TLUser From { get; private set; }
+
+    //    public int? FromId { get; private set; }
+
+    //    public TLPeerBase ToId { get; private set; }
+
+    //    public bool IsOut { get; private set; }
+
+    //    public int FirstIndex
+    //    {
+    //        get
+    //        {
+    //            var count = 0;
+    //            var index = _parent.IndexOf(this);
+    //            if (index > 0)
+    //            {
+    //                count = _parent[index - 1].LastIndex + 1;
+    //            }
+
+    //            return count;
+    //        }
+    //    }
+
+    //    public int LastIndex
+    //    {
+    //        get
+    //        {
+    //            return FirstIndex + Math.Max(0, Count - 1);
+    //        }
+    //    }
+
+    //    protected override void InsertItem(int index, TLMessageBase item)
+    //    {
+    //        // TODO: experimental
+    //        if (index == 0)
+    //        {
+    //            if (Count > 0)
+    //                this[0].IsFirst = false;
+
+    //            item.IsFirst = true;
+    //        }
+
+    //        base.InsertItem(index, item);
+    //    }
+
+    //    protected override void RemoveItem(int index)
+    //    {
+    //        base.RemoveItem(index);
+    //    }
+    //}
 }

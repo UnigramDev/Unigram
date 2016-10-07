@@ -231,14 +231,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="COMHelper.h" />
-    <ClInclude Include="IVirtualImageSourceRenderer.h" />
+    <ClInclude Include="BufferLock.h" />
+    <ClInclude Include="DemuxerWrapper.h" />
+    <ClInclude Include="Helpers\COMHelper.h" />
+    <ClInclude Include="Helpers\DebugHelper.h" />
+    <ClInclude Include="Helpers\MathHelper.h" />
+    <ClInclude Include="Helpers\MediaFoundationHelper.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Video\VideoImageSourceRenderer.h" />
+    <ClInclude Include="Video\VideoImageSourceRendererFactory.h" />
+    <ClInclude Include="Video\VirtualImageSourceRendererCallback.h" />
     <ClInclude Include="WebP\WebPFrame.h" />
     <ClInclude Include="WebP\WebPImage.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BufferLock.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -248,6 +255,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Video\VideoImageSourceRenderer.cpp" />
+    <ClCompile Include="Video\VideoImageSourceRendererFactory.cpp" />
+    <ClCompile Include="Video\VirtualImageSourceRendererCallback.cpp" />
     <ClCompile Include="WebP\WebPFrame.cpp" />
     <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>

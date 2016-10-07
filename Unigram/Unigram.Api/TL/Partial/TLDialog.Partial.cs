@@ -110,7 +110,7 @@ namespace Telegram.Api.TL
                 {
                     if (messages[i].Date < message.Date)
                     {
-                        position = i;
+                        position = i + 1;
                         break;
                     }
 
@@ -124,59 +124,57 @@ namespace Telegram.Api.TL
                 }
                 if (messages[i].Id < message.Id)
                 {
-                    position = i;
+                    position = i + 1;
                     break;
                 }
             }
 
             if (position != -1)
             {
-                //message._isAnimated = position == 0;
                 messages.Insert(position, message);
             }
 
             return position;
 
+            //var position = -1;
 
-            ////var position = -1;
+            //if (messages.Count == 0)
+            //{
+            //    position = 0;
+            //}
 
-            ////if (messages.Count == 0)
-            ////{
-            ////    position = 0;
-            ////}
+            //for (var i = 0; i < messages.Count; i++)
+            //{
+            //    if (messages[i].Id == 0)
+            //    {
+            //        if (messages[i].Date < message.Date)
+            //        {
+            //            position = i;
+            //            break;
+            //        }
 
-            ////for (var i = 0; i < messages.Count; i++)
-            ////{
-            ////    if (messages[i].Id == 0)
-            ////    {
-            ////        if (messages[i].Date < message.Date)
-            ////        {
-            ////            position = i;
-            ////            break;
-            ////        }
+            //        continue;
+            //    }
 
-            ////        continue;
-            ////    }
+            //    if (messages[i].Id == message.Id)
+            //    {
+            //        position = -1;
+            //        break;
+            //    }
+            //    if (messages[i].Id < message.Id)
+            //    {
+            //        position = i;
+            //        break;
+            //    }
+            //}
 
-            ////    if (messages[i].Id == message.Id)
-            ////    {
-            ////        position = -1;
-            ////        break;
-            ////    }
-            ////    if (messages[i].Id < message.Id)
-            ////    {
-            ////        position = i;
-            ////        break;
-            ////    }
-            ////}
+            //if (position != -1)
+            //{
+            //    //message._isAnimated = position == 0;
+            //    messages.Insert(position, message);
+            //}
 
-            ////if (position != -1)
-            ////{
-            ////    //message._isAnimated = position == 0;
-            ////    messages.Insert(position, message);
-            ////}
-
-            ////return position;
+            //return position;
         }
 
 

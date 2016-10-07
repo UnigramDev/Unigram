@@ -26,25 +26,21 @@ using System.Linq;
 
 namespace Unigram.ViewModels
 {
-    
     public class UserInfoViewModel : UnigramViewModelBase,
         IHandle<TLUpdateUserBlocked>,
         IHandle<TLUpdateNotifySettings>,
         IHandle
     {
-        public ObservableCollection<UsersPanelListItem> UsersList = new ObservableCollection<UsersPanelListItem>();
-        public ObservableCollection<UsersPanelListItem> TempList = new ObservableCollection<UsersPanelListItem>();
-        public object photo;
         public string FullNameField { get; internal set; }
         public string LastSeen { get; internal set; }
-        public TLUser user;
+
         public UserInfoViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
 
-        private TLUserBase _item;
-        public TLUserBase Item
+        private TLUser _item;
+        public TLUser Item
         {
             get
             {
@@ -71,13 +67,17 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            //TODO : SET PROPERTY AND VISIBILITY BINDINGS FOR CHATS AND CHANNELS
-            user = parameter as TLUser;           
+            var user = parameter as TLUser;
+            var peer = parameter as TLPeerUser;
+            if (peer != null)
+            {
+                user = CacheService.GetUser(peer.Id) as TLUser;
+            }
+
             if (user != null)
             {
                 FullNameField = user.FullName;
                 Item = user;
-                photo = (TLUserProfilePhotoBase)user.Photo;
                 RaisePropertyChanged(() => AreNotificationsEnabled);
                 RaisePropertyChanged(() => PhoneVisibility);
                 RaisePropertyChanged(() => AddToGroupVisibility);
@@ -94,8 +94,10 @@ namespace Unigram.ViewModels
                     RaisePropertyChanged(() => StopVisibility);
                     RaisePropertyChanged(() => UnstopVisibility);
                 }
-                var Status = Unigram.Common.LastSeenHelper.GetLastSeen(user);                              
+
+                var Status = LastSeenHelper.GetLastSeen(user);
                 LastSeen = Status.Item1;
+
                 Aggregator.Subscribe(this);
             }
         }        
@@ -165,12 +167,14 @@ namespace Unigram.ViewModels
                 await test.OnNavigatedToAsync(Item, NavigationMode.New, new Dictionary<string, object>());
             }
         }
-        public RelayCommand SendMessageCommand =>new RelayCommand(SendMessage);
 
-        private void SendMessage()
+        public RelayCommand SendMessageCommand =>new RelayCommand(SendMessageExecute);
+        private void SendMessageExecute()
         {
-            if(user!=null)
-            NavigationService.Navigate(typeof(DialogPage), user);
+            if (Item != null)
+            {
+                NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = Item.Id });
+            }
         }
 
         public RelayCommand MediaCommand => new RelayCommand(MediaExecute);

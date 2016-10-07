@@ -206,8 +206,6 @@
             </Setter>
         </Style>
 
-        <CollectionViewSource x:Name="MessagesSource" IsSourceGrouped="True" Source="{Binding Messages.Groups}"/>
-
         <!-- Teorically temporary location, but we'll see -->
         <MenuFlyout x:Key="MessageMenuFlyout">
             <MenuFlyout.MenuFlyoutPresenterStyle>
@@ -485,146 +483,159 @@
             <!-- Close button -->
             <controls:GlyphButton Click="btnClosePinnedMessage_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="1"/>
         </Grid>
-            
-        <controls:BubbleListView x:Name="lvDialogs" 
-                                 ItemsSource="{Binding Source={StaticResource MessagesSource}}"
-                                 ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
-                                 ItemContainerTransitions="{x:Null}"
-                                 SelectionMode="None"
-                                 Grid.Row="2">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel GroupHeaderPlacement="Left"
-                                     ItemsUpdatingScrollMode="KeepLastItemInView"
-                                     VerticalAlignment="Bottom" />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemContainerStyleSelector>
-                <selectors:MessageStyleSelector>
-                    <selectors:MessageStyleSelector.MessageStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                            <Setter Property="TabNavigation" Value="Local"/>
-                            <Setter Property="IsHoldingEnabled" Value="True"/>
-                            <Setter Property="Padding" Value="12,0,12,0"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
-                            <Setter Property="MinHeight" Value="0"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ListViewItem">
-                                        <ListViewItemPresenter
-                                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                                            SelectionCheckMarkVisualEnabled="True"
-                                            CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                            CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                            DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
-                                            DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                                            FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
-                                            FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                            PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                            PointerOverBackground="Transparent"
-                                            PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                            SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
-                                            SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                            SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
-                                            PressedBackground="Transparent"
-                                            SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
-                                            DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                            DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                            ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                            ContentMargin="{TemplateBinding Padding}"
-                                            CheckMode="Inline"/>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </selectors:MessageStyleSelector.MessageStyle>
-                    <selectors:MessageStyleSelector.ServiceStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                            <Setter Property="TabNavigation" Value="Local"/>
-                            <Setter Property="IsHoldingEnabled" Value="True"/>
-                            <Setter Property="Padding" Value="12,0,12,0"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
-                            <Setter Property="MinHeight" Value="0"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ListViewItem">
-                                        <ListViewItemPresenter
-                                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                                            SelectionCheckMarkVisualEnabled="False"
-                                            CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                            CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                            DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
-                                            DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                                            FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
-                                            FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                            PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                            PointerOverBackground="Transparent"
-                                            PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                            SelectedBackground="Transparent"
-                                            SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                            SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
-                                            PressedBackground="Transparent"
-                                            SelectedPressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
-                                            DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                            DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                            ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                            ContentMargin="{TemplateBinding Padding}"
-                                            CheckMode="Inline"/>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </selectors:MessageStyleSelector.ServiceStyle>
-                </selectors:MessageStyleSelector>
-            </ListView.ItemContainerStyleSelector>
-            <ListView.Header>
-                <Border Height="6"/>
-            </ListView.Header>
-            <ListView.Footer>
-                <Border Height="6"/>
-            </ListView.Footer>
-            <ListView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.HeaderTemplateSelector>
-                        <selectors:MessageGroupTemplateSelector>
-                            <selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
-                                <DataTemplate x:DataType="viewmodels:MessageGroup">
-                                    <Grid>
-                                        <Ellipse Width="32" Height="32" Fill="Red" Margin="12,12,0,0"/>
-                                        <Border CornerRadius="32" Width="32" Height="32" Margin="12,12,0,0">
-                                            <Border.Background>
-                                                <ImageBrush ImageSource="{x:Bind From.Photo, Converter={StaticResource DefaultPhotoConverter}, Mode=OneWay}"/>
-                                            </Border.Background>
-                                        </Border>
-                                    </Grid>
-                                </DataTemplate>
-                            </selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
-                            <selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
-                                <DataTemplate>
-                                    <Rectangle Width="44"/>
-                                </DataTemplate>
-                            </selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
-                        </selectors:MessageGroupTemplateSelector>
-                    </GroupStyle.HeaderTemplateSelector>
-                </GroupStyle>
-            </ListView.GroupStyle>
-        </controls:BubbleListView>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="44"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Canvas x:Name="Headers" SizeChanged="Headers_SizeChanged">
+                <Canvas.Clip>
+                    <RectangleGeometry/>
+                </Canvas.Clip>
+            </Canvas>
+
+            <controls:BubbleListView x:Name="lvDialogs" 
+                                     ItemsSource="{Binding Messages}"
+                                     ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
+                                     ItemContainerTransitions="{x:Null}"
+                                     ShowsScrollingPlaceholders="False"
+                                     SelectionMode="None"
+                                     Grid.ColumnSpan="2">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"
+                                         VerticalAlignment="Bottom" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemContainerStyleSelector>
+                    <selectors:MessageStyleSelector>
+                        <selectors:MessageStyleSelector.MessageStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                                <Setter Property="TabNavigation" Value="Local"/>
+                                <Setter Property="IsHoldingEnabled" Value="True"/>
+                                <Setter Property="Padding" Value="12,0,12,0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+                                <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListViewItem">
+                                            <ListViewItemPresenter
+                                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                SelectionCheckMarkVisualEnabled="True"
+                                                CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                                DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                                FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                                FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                PointerOverBackground="Transparent"
+                                                PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
+                                                SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
+                                                PressedBackground="Transparent"
+                                                SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
+                                                DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                ContentMargin="{TemplateBinding Padding}"
+                                                CheckMode="Inline"/>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </selectors:MessageStyleSelector.MessageStyle>
+                        <selectors:MessageStyleSelector.ServiceStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                                <Setter Property="TabNavigation" Value="Local"/>
+                                <Setter Property="IsHoldingEnabled" Value="True"/>
+                                <Setter Property="Padding" Value="12,0,12,0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+                                <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListViewItem">
+                                            <ListViewItemPresenter
+                                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                SelectionCheckMarkVisualEnabled="False"
+                                                CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                                DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                                FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                                FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                PointerOverBackground="Transparent"
+                                                PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                SelectedBackground="Transparent"
+                                                SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
+                                                PressedBackground="Transparent"
+                                                SelectedPressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
+                                                DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                ContentMargin="{TemplateBinding Padding}"
+                                                CheckMode="Inline"/>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </selectors:MessageStyleSelector.ServiceStyle>
+                    </selectors:MessageStyleSelector>
+                </ListView.ItemContainerStyleSelector>
+                <ListView.Header>
+                    <Border Height="6"/>
+                </ListView.Header>
+                <ListView.Footer>
+                    <Border Height="6"/>
+                </ListView.Footer>
+                <!--<ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplateSelector>
+                            <selectors:MessageGroupTemplateSelector>
+                                <selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
+                                    <DataTemplate x:DataType="viewmodels:MessageGroup">
+                                        <Grid>
+                                            <Ellipse Width="32" Height="32" Fill="Red" Margin="12,12,0,0"/>
+                                            <Border CornerRadius="32" Width="32" Height="32" Margin="12,12,0,0">
+                                                <Border.Background>
+                                                    <ImageBrush ImageSource="{x:Bind From.Photo, Converter={StaticResource DefaultPhotoConverter}, Mode=OneWay}"/>
+                                                </Border.Background>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
+                                <selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
+                                    <DataTemplate>
+                                        <Rectangle Width="44"/>
+                                    </DataTemplate>
+                                </selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
+                            </selectors:MessageGroupTemplateSelector>
+                        </GroupStyle.HeaderTemplateSelector>
+                    </GroupStyle>
+                </ListView.GroupStyle>-->
+            </controls:BubbleListView>
+        </Grid>
 
         <!-- Input pane -->
         <RelativePanel x:Name="rpInput"

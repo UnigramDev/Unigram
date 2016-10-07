@@ -224,6 +224,9 @@
     <Compile Include="Views\DialogInfoAdminsPage.xaml.cs">
       <DependentUpon>DialogInfoAdminsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DialogPage.Bubbles.xaml.cs">
+      <DependentUpon>DialogPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DialogPage.xaml.cs">
       <DependentUpon>DialogPage.xaml</DependentUpon>
     </Compile>

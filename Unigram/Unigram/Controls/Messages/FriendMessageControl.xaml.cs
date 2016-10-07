@@ -29,10 +29,18 @@ namespace Unigram.Controls.Messages
             DataContextChanged += (s, args) =>
             {
                 if (ViewModel != null) Bindings.Update();
+                //if (ViewModel != null) OnMessageChanged(HeaderLabel);
             };
         }
 
         #region Adaptive part
+
+        private Visibility UpdateFirst(bool isFirst)
+        {
+            OnMessageChanged(HeaderLabel);
+            return isFirst ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         private void OnMediaChanged(object sender, EventArgs e)
         {
             OnMediaChanged();

@@ -136,7 +136,7 @@ namespace Unigram.Controls
             if (ThumbRoot != null)
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
-            TitleLabel.Text = IsPinned ? "Pinned message" : message.From?.FullName ?? string.Empty;
+            TitleLabel.Text = GetFromLabel(message);
             ServiceLabel.Text = string.Empty;
             MessageLabel.Text = message.Message;
 
@@ -151,7 +151,7 @@ namespace Unigram.Controls
             if (ThumbRoot != null)
                 ThumbRoot.Visibility = Visibility.Visible;
 
-            TitleLabel.Text = IsPinned ? "Pinned message" : message.From?.FullName ?? string.Empty;
+            TitleLabel.Text = GetFromLabel(message);
             ServiceLabel.Text = "Photo";
 
             var photoMedia = message.Media as TLMessageMediaPhoto;
@@ -159,7 +159,7 @@ namespace Unigram.Controls
             {
                 if (!string.IsNullOrWhiteSpace(photoMedia.Caption))
                 {
-                    ServiceLabel.Text += ",";
+                    ServiceLabel.Text += ", ";
                     MessageLabel.Text += photoMedia.Caption;
                 }
 
@@ -190,14 +190,14 @@ namespace Unigram.Controls
             if (ThumbRoot != null)
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
-            TitleLabel.Text = IsPinned ? "Pinned message" : message.From?.FullName ?? string.Empty;
+            TitleLabel.Text = GetFromLabel(message);
             ServiceLabel.Text = "Location";
             MessageLabel.Text = string.Empty;
 
             var venueMedia = message.Media as TLMessageMediaVenue;
             if (venueMedia != null && !string.IsNullOrWhiteSpace(venueMedia.Title))
             {
-                ServiceLabel.Text += ",";
+                ServiceLabel.Text += ", ";
                 MessageLabel.Text = venueMedia.Title;
             }
 
@@ -211,7 +211,7 @@ namespace Unigram.Controls
             if (ThumbRoot != null)
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
-            TitleLabel.Text = IsPinned ? "Pinned message" : message.From?.FullName ?? string.Empty;
+            TitleLabel.Text = GetFromLabel(message);
             ServiceLabel.Text = "Contact";
             MessageLabel.Text = string.Empty;
 
@@ -225,7 +225,7 @@ namespace Unigram.Controls
             if (ThumbRoot != null)
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
-            TitleLabel.Text = IsPinned ? "Pinned message" : message.From?.FullName ?? string.Empty;
+            TitleLabel.Text = GetFromLabel(message);
             ServiceLabel.Text = "Audio";
             MessageLabel.Text = string.Empty;
 
@@ -240,7 +240,7 @@ namespace Unigram.Controls
             if (ThumbRoot != null)
                 ThumbRoot.Visibility = Visibility.Visible;
 
-            TitleLabel.Text = IsPinned ? "Pinned message" : message.From?.FullName ?? string.Empty;
+            TitleLabel.Text = GetFromLabel(message);
             ServiceLabel.Text = "Video";
             MessageLabel.Text = string.Empty;
 
@@ -249,7 +249,7 @@ namespace Unigram.Controls
             {
                 if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
                 {
-                    ServiceLabel.Text += ",";
+                    ServiceLabel.Text += ", ";
                     MessageLabel.Text += documentMedia.Caption;
                 }
 
@@ -266,7 +266,7 @@ namespace Unigram.Controls
             if (ThumbRoot != null)
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
-            TitleLabel.Text = IsPinned ? "Pinned message" : message.From?.FullName ?? string.Empty;
+            TitleLabel.Text = GetFromLabel(message);
             ServiceLabel.Text = "GIF";
             MessageLabel.Text = string.Empty;
 
@@ -280,7 +280,7 @@ namespace Unigram.Controls
             if (ThumbRoot != null)
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
-            TitleLabel.Text = IsPinned ? "Pinned message" : message.From?.FullName ?? string.Empty;
+            TitleLabel.Text = GetFromLabel(message);
             ServiceLabel.Text = "Sticker";
             MessageLabel.Text = string.Empty;
 
@@ -311,7 +311,7 @@ namespace Unigram.Controls
             if (ThumbRoot != null)
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
-            TitleLabel.Text = IsPinned ? "Pinned message" : message.From?.FullName ?? string.Empty;
+            TitleLabel.Text = GetFromLabel(message);
             ServiceLabel.Text = message.Message;
             MessageLabel.Text = string.Empty;
 
@@ -343,5 +343,21 @@ namespace Unigram.Controls
         }
 
         #endregion
+
+        private string GetFromLabel(TLMessage message)
+        {
+            if (IsPinned)
+            {
+                return "Pinned message";
+            }
+
+            var from = message.From?.FullName ?? string.Empty;
+            if (message.ViaBot != null)
+            {
+                from += $" via @{message.ViaBot.Username}";
+            }
+
+            return from;
+        }
     }
 }

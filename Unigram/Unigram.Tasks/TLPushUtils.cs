@@ -15,48 +15,6 @@ namespace Unigram.Tasks
 {
     internal static class TLPushUtils
     {
-        private static readonly Dictionary<string, string> _locKeys = new Dictionary<string, string>
-        {
-            { "MESSAGE_FWDS", "forwarded you {1} messages" },
-            { "MESSAGE_TEXT", "{1}" },
-            { "MESSAGE_NOTEXT", "sent you a message" },
-            { "MESSAGE_PHOTO", "sent you a photo" },
-            { "MESSAGE_VIDEO", "sent you a video" },
-            { "MESSAGE_DOC", "sent you a document" },
-            { "MESSAGE_AUDIO", "sent you a voice message" },
-            { "MESSAGE_CONTACT", "shared a contact with you" },
-            { "MESSAGE_GEO", "sent you a map" },
-            { "MESSAGE_STICKER", "sent you a {1} sticker" },
-            { "CHAT_MESSAGE_FWDS", "{0} forwarded {2} messages to the group" },
-            { "CHAT_MESSAGE_TEXT", "{0}: {2}" },
-            { "CHAT_MESSAGE_NOTEXT", "{0} sent a message to the group" },
-            { "CHAT_MESSAGE_PHOTO", "{0} sent a photo to the group" },
-            { "CHAT_MESSAGE_VIDEO", "{0} sent a video to the group" },
-            { "CHAT_MESSAGE_DOC", "{0} sent a document to the group" },
-            { "CHAT_MESSAGE_AUDIO", "{0} sent a voice message to the group" },
-            { "CHAT_MESSAGE_CONTACT", "{0} shared a contact in the group" },
-            { "CHAT_MESSAGE_GEO", "{0} sent a map to the group" },
-            { "CHAT_MESSAGE_STICKER", "{0} sent a {2} sticker to the group" },
-            { "CHAT_CREATED", "{0} invited you to the group" },
-            { "CHAT_TITLE_EDITED", "{0} edited the group's name" },
-            { "CHAT_PHOTO_EDITED", "{0} edited the group's photo" },
-            { "CHAT_ADD_MEMBER", "{0} invited {2} to the group" },
-            { "CHAT_ADD_YOU", "{0} invited you to the group" },
-            { "CHAT_DELETE_MEMBER", "{0} kicked {2} from the group" },
-            { "CHAT_DELETE_YOU", "{0} kicked you from the group" },
-            { "CHAT_LEFT", "{0} has left the group" },
-            { "CHAT_RETURNED", "{0} has returned to the group" },
-            { "GEOCHAT_CHECKIN", "{0} has checked-in" },
-            { "CONTACT_JOINED", "{0} joined the App!" },
-            { "AUTH_UNKNOWN", "New login from unrecognized device {0}" },
-            { "AUTH_REGION", "New login from unrecognized device {0}, location: {1}" },
-            { "CONTACT_PHOTO", "updated profile photo" },
-            { "ENCRYPTION_REQUEST", "You have a new message" },
-            { "ENCRYPTION_ACCEPT", "You have a new message" },
-            { "ENCRYPTED_MESSAGE", "You have a new message" },
-            { "DC_UPDATE", "Open this notification to update app settings" }
-        };
-
         public static void UpdateToastAndTiles(RawNotification rawNotification)
         {
             var payload = (rawNotification != null) ? rawNotification.Content : null;
@@ -126,20 +84,28 @@ namespace Unigram.Tasks
 
         private static string GetCaption(TLPushData data)
         {
-            var locKey = data.loc_key;
-            if (locKey == null)
+            var loc_key = data.loc_key;
+            if (loc_key == null)
             {
                 return "locKey=null";
             }
-            if (locKey.StartsWith("CHAT") || locKey.StartsWith("GEOCHAT"))
+            if (loc_key.StartsWith("CHAT") || loc_key.StartsWith("GEOCHAT"))
             {
                 return data.loc_args[1];
             }
-            if (locKey.StartsWith("MESSAGE"))
+            if (loc_key.StartsWith("MESSAGE"))
             {
                 return data.loc_args[0];
             }
-            if (locKey.StartsWith("AUTH") || locKey.StartsWith("CONTACT") || locKey.StartsWith("ENCRYPTION"))
+            if (loc_key.StartsWith("CHANNEL"))
+            {
+                return data.loc_args[0];
+            }
+            if (loc_key.StartsWith("PINNED"))
+            {
+                return data.loc_args[0];
+            }
+            if (loc_key.StartsWith("AUTH") || loc_key.StartsWith("CONTACT") || loc_key.StartsWith("ENCRYPTED") || loc_key.StartsWith("ENCRYPTION"))
             {
                 return "Telegram";
             }
@@ -178,19 +144,26 @@ namespace Unigram.Tasks
 
         private static string GetMessage(TLPushData data)
         {
-            string loc_key = data.loc_key;
+            var loc_key = data.loc_key;
             if (loc_key == null)
             {
                 return string.Empty;
             }
 
-            string text;
-            if (_locKeys.TryGetValue(loc_key, out text))
+            //string text;
+            //if (_locKeys.TryGetValue(loc_key, out text))
+            //{
+            //    return string.Format(text, data.loc_args);
+            //}
+
+            var resourceLoader = ResourceLoader.GetForViewIndependentUse("Unigram.Tasks/Resources");
+            var text = resourceLoader.GetString(loc_key);
+            if (text != string.Empty)
             {
-                return string.Format(text, data.loc_args);
+                return string.Format(text, data.loc_args).Replace("\r\n", "\n").Replace("\n", " ");
             }
 
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
             if (data.loc_args != null)
             {
                 stringBuilder.AppendLine("loc_args");

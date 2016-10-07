@@ -16,10 +16,15 @@ namespace Telegram.Api.TL
             Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
-        public string FullName
+        public override string FullName
         {
             get
             {
+                if (IsSelf)
+                {
+                    return "You";
+                }
+
                 //if (this is TLUserEmpty)
                 //{
                 //    return "Empty user";

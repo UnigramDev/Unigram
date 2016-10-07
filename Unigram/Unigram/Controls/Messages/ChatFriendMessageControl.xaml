@@ -14,7 +14,7 @@
     d:DesignWidth="400">
 
     <!-- TODO: not the right way -->
-    <Border Height="10" Visibility="{x:Bind (Visibility)ViewModel.IsFirst, Mode=OneWay}"/>
+    <Border Height="10" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <Border x:Name="LayoutRoot"
             Margin="{ThemeResource MessageContentMargin}" 
@@ -33,22 +33,12 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="FullNameLabel" 
-                       Text="{x:Bind ViewModel.From.FullName}" 
-                       Foreground="{x:Bind Convert.Bubble(ViewModel.FromId)}"
-                       Visibility="{x:Bind (Visibility)ViewModel.IsFirst, Mode=OneWay}"
-                       Margin="0,0,0,2" 
-                       Style="{ThemeResource BaseTextBlockStyle}"/>
-
-            <TextBlock x:Name="ForwardControl"
-                       Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
-                       Visibility="{x:Bind (Visibility)ViewModel.HasFwdFrom}" 
+            <TextBlock x:Name="HeaderLabel" 
                        Margin="0,0,0,2"
-                       Style="{ThemeResource BaseTextBlockStyle}" 
-                       Grid.Row="1">
-                <Run Text="Forwarded from"/>
-                <Run Text="{x:Bind ViewModel.FwdFrom.Flags}"/>
-            </TextBlock>
+                       Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
+                       Style="{ThemeResource BaseTextBlockStyle}"
+                       Visibility="Collapsed"
+                       Grid.Row="0"/>
 
             <!--<ContentControl
                  Content="{x:Bind ViewModel.ReplyInfo, Mode=OneWay}" 

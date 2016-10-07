@@ -1,11 +1,10 @@
 ﻿#pragma once
+#include <ppl.h>
+#include <ppltasks.h>
+#include <pplcancellation_token.h>
+#include <wrl\wrappers\corewrappers.h>
+#include "VirtualImageSourceRendererCallback.h"
 
-#include "IVirtualImageSourceRenderer.h"
-
-#pragma comment(lib, "d2d1.lib")
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "dxguid.lib")
 
 using namespace Platform;
 using namespace Windows::Storage;
@@ -13,67 +12,77 @@ using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::Storage::Streams;
 using namespace Windows::Foundation;
 using namespace Microsoft::WRL;
+using namespace Microsoft::WRL::Wrappers;
+using namespace Windows::ApplicationModel;
+using namespace Windows::UI::Xaml::Data;
+using Windows::Foundation::Metadata::WebHostHiddenAttribute;
+using Windows::Foundation::Metadata::DefaultOverloadAttribute;
+
+using namespace concurrency;
 
 namespace Unigram
 {
-	namespace Native 
+	namespace Native
 	{
-		template <typename T>
-		T clip(const T& n, const T& lower, const T& upper) {
-			return max(lower, min(n, upper));
-		}
+		ref class VideoImageSourceRendererFactory;
 
-		[Windows::Foundation::Metadata::WebHostHidden]
-		public ref class VideoImageSourceRenderer sealed : public IVirtualImageSourceRenderer
+		[Bindable]
+		[WebHostHidden]
+		public ref class VideoImageSourceRenderer sealed : public INotifyPropertyChanged
 		{
 		public:
-			VideoImageSourceRenderer(int width, int height);
+			virtual	event PropertyChangedEventHandler^ PropertyChanged;
 
-			void Initialize(String^ path);
-
-			virtual event PropertyChangedEventHandler^ PropertyChanged;
-
-			virtual property VirtualSurfaceImageSource^ ImageSource
+			property VirtualSurfaceImageSource^ ImageSource
 			{
 				VirtualSurfaceImageSource^ get();
 			}
 
-			virtual void NotifyUpdatesNeeded();
+			[DefaultOverload]
+			void SetSource(_In_ Windows::Foundation::Uri^ uri);
+			void SetSource(_In_ Windows::Storage::Streams::IRandomAccessStream^ stream);
+			void SetSource(_In_ Windows::Media::Core::IMediaSource^ mediaSource);
+
+		internal:
+			VideoImageSourceRenderer(int maximumWidth, int maximumHeight, _In_ VideoImageSourceRendererFactory^ owner);
+
+			HRESULT OnUpdatesNeeded();
+			HRESULT OnTimerTick();
+
 		private:
 			~VideoImageSourceRenderer();
 
-
-			void OnSuspending(_In_ Object^ sender, _In_ Windows::ApplicationModel::SuspendingEventArgs^ args);
-			void CreateDeviceResources();
-			void CreateDeviceIndependentResources();
-			void Draw(_In_ RECT const& drawingBounds);
-			void BeginDraw(_In_ RECT const& drawingBounds);
-			void EndDraw();
-			void Invalidate(Boolean resize);
-
-			DispatcherTimer^ m_timer;
+			void Reset();
+			void Initialize();
+			void NotifyPropertyChanged(_In_ String^ propertyName);
+			void OnSurfaceContentLost(_In_ Object^ sender, _In_ Object^ args);
+			void OnEnteredBackground(_In_ Object^ sender, _In_ EnteredBackgroundEventArgs^ args);
+			void OnLeavingBackground(_In_ Object^ sender, _In_ LeavingBackgroundEventArgs^ args);
+			HRESULT Draw(_In_ RECT const& drawingBounds);
+			HRESULT BeginDraw(_In_ RECT const& drawingBounds, _Out_ ID2D1DeviceContext** deviceContext);
+			HRESULT EndDraw(_In_ ID2D1DeviceContext* deviceContext);
+			HRESULT InitializeImageSource();
+			HRESULT Invalidate(bool resize);
+			task<void> UpdateFrames(cancellation_token& ct);
+			static HRESULT InitializeSourceReader(_In_ IMFSourceReader* sourceReader, SIZE& frameSize, _Out_ float* frameRate);
+			static HRESULT ConvertVideoTypeToUncompressedType(_In_ IMFMediaType* pType, _In_ const GUID& subtype, SIZE& frameSize, _Out_ IMFMediaType** ppType);
 
 			VirtualSurfaceImageSource^ m_imageSource;
+			VideoImageSourceRendererFactory^ m_owner;
 			ComPtr<VirtualImageSourceRendererCallback> m_updatesCallback;
 			ComPtr<IVirtualSurfaceImageSourceNative> m_imageSourceNative;
-			ComPtr<ID3D11Device> m_d3dDevice;
-			ComPtr<ID2D1Device> m_d2dDevice;
-			ComPtr<ID2D1DeviceContext> m_d2dDeviceContext;
-
-			ComPtr<IMFSourceReader> ppSourceReader;
-
-			int m_width;
-			int m_height;
-			bool m_initialized;
-
-			Windows::Foundation::EventRegistrationToken m_eventTokens[2];
-
-
-
-
-			static HRESULT ConvertVideoTypeToUncompressedType(IMFMediaType *pType, const GUID& subtype, IMFMediaType **ppType);
-
-			void OnTick(Platform::Object ^sender, Platform::Object ^args);
+			ComPtr<ISurfaceImageSourceNativeWithD2D> m_imageSourceNativeD2D;
+			ComPtr<IMFSourceReader> m_sourceReader;
+			CriticalSection m_criticalSection;
+			concurrency::cancellation_token_source m_cancellationTokenSource;
+			Windows::Foundation::EventRegistrationToken m_eventTokens[3];
+			std::vector<ComPtr<ID2D1Bitmap>> m_frames;
+			bool m_isUpdatingFrames;
+			int m_frameIndex;
+			int64 m_hiddenTicks;
+			int64 m_maximumHiddenTicks;
+			SIZE m_size;
+			const SIZE m_maximumSize;
 		};
 	}
 }
