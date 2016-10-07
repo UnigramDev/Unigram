@@ -42,11 +42,11 @@ namespace Unigram.Views
     {
         private ItemsStackPanel _panel;
 
-        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private void OnViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
         {
             if (ViewModel.Peer is TLInputPeerUser)
             {
-                lvDialogs.ScrollingHost.ViewChanged -= OnViewChanged;
+                lvDialogs.ScrollingHost.ViewChanging -= OnViewChanging;
                 return;
             }
 
@@ -137,14 +137,6 @@ namespace Unigram.Views
         private Stack<UIElement> _cache = new Stack<UIElement>();
         private Dictionary<int, FrameworkElement> _inUse = new Dictionary<int, FrameworkElement>();
 
-        private void Cache()
-        {
-            foreach (var ellipse in Headers.Children)
-            {
-                _cache.Push(ellipse as Border);
-            }
-        }
-
         private void Cache(int first, int last)
         {
             _items.RemoveAll(x => x < first || x > last);
@@ -159,14 +151,6 @@ namespace Unigram.Views
                     _inUse.Remove(item.Key);
                     Headers.Children.Remove(item.Value);
                 }
-            }
-        }
-
-        private void Update()
-        {
-            foreach (var item in _cache)
-            {
-                Headers.Children.Remove(item);
             }
         }
 

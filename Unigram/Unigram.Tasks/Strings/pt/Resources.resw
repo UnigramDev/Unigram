@@ -118,61 +118,61 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AUTH_REGION" xml:space="preserve">
-    <value>Logou de um novo dispositivo {0}, local: {1}</value>
+    <value>Início de sessão a partir de um novo dispositivo {0}, local: {1}</value>
   </data>
   <data name="AUTH_UNKNOWN" xml:space="preserve">
-    <value>Logou de um novo dispositivo {0}</value>
+    <value>Início de sessão a partir de um novo dispositivo {0}</value>
   </data>
   <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
-    <value>postou uma mensagem de voz</value>
+    <value>publicou uma mensagem de voz</value>
   </data>
   <data name="CHANNEL_MESSAGE_CONTACT" xml:space="preserve">
-    <value>postou um contato</value>
+    <value>publicou um contacto</value>
   </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
-    <value>postou um documento</value>
+    <value>publicou um documento</value>
   </data>
   <data name="CHANNEL_MESSAGE_FWDS" xml:space="preserve">
-    <value>postou {1} mensagens encaminhadas</value>
+    <value>publicou {1} mensagens reencaminhadas</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
-    <value>te convidou para jogar {1}</value>
+    <value>convidou-te para jogar {1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
-    <value>postou um mapa</value>
+    <value>publicou um mapa</value>
   </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
-    <value>postou um GIF</value>
+    <value>publicou um GIF</value>
   </data>
   <data name="CHANNEL_MESSAGE_NOTEXT" xml:space="preserve">
-    <value>postou uma mensagem</value>
+    <value>publicou uma mensagem</value>
   </data>
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
-    <value>postou uma foto</value>
+    <value>publicou uma foto</value>
   </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
-    <value>postou um {1}sticker</value>
+    <value>publicou um {1}sticker</value>
   </data>
   <data name="CHANNEL_MESSAGE_TEXT" xml:space="preserve">
     <value>{1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
-    <value>postou um vídeo</value>
+    <value>publicou um vídeo</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
     <value>{0} convidou {2} para o grupo</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
-    <value>{0} convidou você para o grupo</value>
+    <value>{0} convidou-te para o grupo</value>
   </data>
   <data name="CHAT_CREATED" xml:space="preserve">
-    <value>{0} convidou você para o grupo</value>
+    <value>{0} convidou-te para o grupo</value>
   </data>
   <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
     <value>{0} removeu {2} do grupo</value>
   </data>
   <data name="CHAT_DELETE_YOU" xml:space="preserve">
-    <value>{0} removeu você do grupo</value>
+    <value>{0} removeu-te do grupo</value>
   </data>
   <data name="CHAT_JOINED" xml:space="preserve">
     <value>{0} entrou no grupo</value>
@@ -184,13 +184,13 @@
     <value>{0} enviou uma mensagem de voz para o grupo</value>
   </data>
   <data name="CHAT_MESSAGE_CONTACT" xml:space="preserve">
-    <value>{0} compartilhou um contato no grupo</value>
+    <value>{0} partilhou um contacto no grupo</value>
   </data>
   <data name="CHAT_MESSAGE_DOC" xml:space="preserve">
-    <value>{0} enviou um arquivo para o grupo</value>
+    <value>{0} enviou um ficheiro para o grupo</value>
   </data>
   <data name="CHAT_MESSAGE_FWDS" xml:space="preserve">
-    <value>{0} encaminhou {2} mensagens para o grupo</value>
+    <value>{0} reencaminhou {2} mensagens para o grupo</value>
   </data>
   <data name="CHAT_MESSAGE_GAME" xml:space="preserve">
     <value>{0} convidou o grupo para jogar {2}</value>
@@ -208,7 +208,7 @@
     <value>{0} enviou uma foto para o grupo</value>
   </data>
   <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
-    <value>{0} enviou um {2}sticker ao grupo</value>
+    <value>{0} enviou um {2}sticker para o grupo</value>
   </data>
   <data name="CHAT_MESSAGE_TEXT" xml:space="preserve">
     <value>{0}: {2}</value>
@@ -226,40 +226,40 @@
     <value>{0} alterou o nome do grupo</value>
   </data>
   <data name="CONTACT_ACTIVATED" xml:space="preserve">
-    <value>{0} ajudou a ativar sua conta!</value>
+    <value>{0} ajudou a activar a tua conta!</value>
   </data>
   <data name="CONTACT_JOINED" xml:space="preserve">
     <value>{0} entrou para o Telegram!</value>
   </data>
   <data name="DC_UPDATE" xml:space="preserve">
-    <value>Abra essa notificação para atualizar as configurações</value>
+    <value>Abra esta notificação para atualizar as definições da aplicação</value>
   </data>
   <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
-    <value>Você tem uma nova mensagem{0}</value>
+    <value>Tens uma nova mensagem{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
-    <value>Pedido de criptografia aceito{0}</value>
+    <value>Pedido de encriptação aceite{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>Nova criptografia solicitada{0}</value>
+    <value>Nova pedido de encriptação{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
-    <value>Você tem uma nova mensagem{0}</value>
+    <value>Tens uma nova mensagem{0}</value>
   </data>
   <data name="MESSAGE_AUDIO" xml:space="preserve">
     <value>enviou uma mensagem de voz</value>
   </data>
   <data name="MESSAGE_CONTACT" xml:space="preserve">
-    <value>compartilhou um contato</value>
+    <value>partilhou um contato</value>
   </data>
   <data name="MESSAGE_DOC" xml:space="preserve">
-    <value>lhe enviou um arquivo</value>
+    <value>enviou-te um arquivo</value>
   </data>
   <data name="MESSAGE_FWDS" xml:space="preserve">
-    <value>encaminhou para você {1} mensagens</value>
+    <value>reencaminhou {1} mensagens para ti</value>
   </data>
   <data name="MESSAGE_GAME" xml:space="preserve">
-    <value>te convidou para jogar {1}</value>
+    <value>convidou-te para jogar {1}</value>
   </data>
   <data name="MESSAGE_GEO" xml:space="preserve">
     <value>enviou uma localização</value>
@@ -271,48 +271,48 @@
     <value>enviou uma mensagem</value>
   </data>
   <data name="MESSAGE_PHOTO" xml:space="preserve">
-    <value>te enviou uma foto</value>
+    <value>enviou-te uma foto</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
-    <value>lhe enviou {1}sticker</value>
+    <value>enviou-te um {1}sticker</value>
   </data>
   <data name="MESSAGE_TEXT" xml:space="preserve">
     <value>{1}</value>
   </data>
   <data name="MESSAGE_VIDEO" xml:space="preserve">
-    <value>enviou um vídeo</value>
+    <value>enviou-te um vídeo</value>
   </data>
   <data name="PINNED_AUDIO" xml:space="preserve">
-    <value>fixou uma mensagem de voz</value>
+    <value>afixou uma mensagem de voz</value>
   </data>
   <data name="PINNED_CONTACT" xml:space="preserve">
-    <value>fixou um contato</value>
+    <value>afixou um contacto</value>
   </data>
   <data name="PINNED_DOC" xml:space="preserve">
-    <value>fixou um arquivo</value>
+    <value>afixou um ficheiro</value>
   </data>
   <data name="PINNED_GAME" xml:space="preserve">
-    <value>fixou um jogo</value>
+    <value>afixou um jogo</value>
   </data>
   <data name="PINNED_GEO" xml:space="preserve">
-    <value>fixou um mapa</value>
+    <value>afixou um mapa</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
-    <value>fixou um GIF</value>
+    <value>afixou um GIF</value>
   </data>
   <data name="PINNED_NOTEXT" xml:space="preserve">
-    <value>fixou uma mensagem</value>
+    <value>afixou uma mensagem</value>
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
-    <value>fixou uma foto</value>
+    <value>afixou uma foto</value>
   </data>
   <data name="PINNED_STICKER" xml:space="preserve">
-    <value>fixou um {1}sticker</value>
+    <value>afixou um {1}sticker</value>
   </data>
   <data name="PINNED_TEXT" xml:space="preserve">
-    <value>fixou "{1}"</value>
+    <value>afixou "{1}"</value>
   </data>
   <data name="PINNED_VIDEO" xml:space="preserve">
-    <value>fixou um vídeo</value>
+    <value>afixou um vídeo</value>
   </data>
 </root>

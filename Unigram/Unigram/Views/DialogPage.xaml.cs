@@ -55,7 +55,7 @@ namespace Unigram.Views
         private void DialogPage_Loaded(object sender, RoutedEventArgs e)
         {
             //_panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
-            //lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
+            //lvDialogs.ScrollingHost.ViewChanging += OnViewChanging;
 
             lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
         }
