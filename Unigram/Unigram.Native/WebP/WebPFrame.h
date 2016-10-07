@@ -1,4 +1,5 @@
 #pragma once
+#include "DemuxerWrapper.h"
 
 using namespace Platform;
 using namespace Windows::Storage;
