@@ -55,7 +55,7 @@ namespace Unigram.Views
         private void DialogPage_Loaded(object sender, RoutedEventArgs e)
         {
             //_panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
-            //lvDialogs.ScrollingHost.ViewChanging += OnViewChanging;
+            //lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
 
             lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
         }
@@ -79,11 +79,6 @@ namespace Unigram.Views
         //    await ViewModel.LoadNextSliceAsync();
         //}
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-        }
-
         private void CheckMessageBoxEmpty()
         {
             if (txtMessage.IsEmpty)
@@ -103,12 +98,6 @@ namespace Unigram.Views
         private void txtMessage_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
             CheckMessageBoxEmpty();
-
-            // TODO Prevent "Enter" from being added to message string when pressed for sending.
-            // See "Dispatcher_AcceleratorKeyActivated" for more info.
-
-            // TODO Save text to draft if not being send
-
         }
 
         private void btnVoiceMessage_Click(object sender, RoutedEventArgs e)

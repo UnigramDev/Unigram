@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,11 +43,11 @@ namespace Unigram.Views
     {
         private ItemsStackPanel _panel;
 
-        private void OnViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             if (ViewModel.Peer is TLInputPeerUser)
             {
-                lvDialogs.ScrollingHost.ViewChanging -= OnViewChanging;
+                lvDialogs.ScrollingHost.ViewChanged -= OnViewChanged;
                 return;
             }
 
@@ -71,32 +72,41 @@ namespace Unigram.Views
                         if (item != null && (item.IsFirst || i == index0) && (!item.IsOut || item.IsPost))
                         {
                             var text = "0";
-                            //if (i == 0)
-                            //{
-                            //    _wasFirst[i] = true;
-                            //    text = $"Max(0, Reference.Y + Scrolling.Translation.Y)"; // Compression effect
-                            //}
-                            //else if (i == index0 && itemsPerGroup > 0)
-                            //{
-                            //    _wasFirst[i] = true;
-                            //    text = "0";
-                            //}
-                            //else if (i == index0)
-                            //{
-                            //    _wasFirst[i] = true;
-                            //    text = $"Min(0, Reference.Y + Scrolling.Translation.Y + {container.ActualHeight})";
-                            //}
-                            //else
+                            if (i == 0)
+                            {
+                                _wasFirst[i] = true;
+                                text = "Max(0, Reference.Y + Scrolling.Translation.Y)"; // Compression effect
+                                text = "0";
+                            }
+                            else if (i == index0 && itemsPerGroup > 0)
+                            {
+                                _wasFirst[i] = true;
+                                text = "0";
+                            }
+                            else if (i == index0)
+                            {
+                                _wasFirst[i] = true;
+                                text = "Min(0, Reference.Y + Scrolling.Translation.Y)";
+                            }
+                            else
                             {
                                 text = "Reference.Y + Scrolling.Translation.Y";
                             }
 
                             var visual = ElementCompositionPreview.GetElementVisual(container);
+                            var offset = visual.Offset;
+                            if (offset.Y == 0)
+                            {
+                                var transform = container.TransformToVisual(lvDialogs);
+                                var point = transform.TransformPoint(new Point());
+                                offset = new Vector3(0, (float)point.Y, 0);
+                            }
+
                             var expression = visual.Compositor.CreateExpressionAnimation(text);
-                            expression.SetVector3Parameter("Reference", visual.Offset);
+                            expression.SetVector3Parameter("Reference", offset); //visual.Offset);
                             expression.SetReferenceParameter("Scrolling", props);
 
-                            if (_inUse.ContainsKey(i) && _wasFirst.ContainsKey(i))
+                            if (_inUse.ContainsKey(i) && _wasFirst.ContainsKey(i) && i != index0)
                             {
                                 _wasFirst.Remove(i);
 
@@ -113,6 +123,10 @@ namespace Unigram.Views
                             }
 
                             itemsPerGroup = 0;
+                        }
+                        else if (item != null && item.IsOut)
+                        {
+
                         }
                         else
                         {
@@ -132,9 +146,9 @@ namespace Unigram.Views
             Colors.Blue
         };
 
-        private Dictionary<int, bool> _wasFirst = new Dictionary<int, bool>();
         private List<int> _items = new List<int>();
         private Stack<UIElement> _cache = new Stack<UIElement>();
+        private Dictionary<int, bool> _wasFirst = new Dictionary<int, bool>();
         private Dictionary<int, FrameworkElement> _inUse = new Dictionary<int, FrameworkElement>();
 
         private void Cache(int first, int last)

@@ -13,6 +13,11 @@ namespace Unigram.Common
     {
         public static Tuple<string, DateTime> GetLastSeen(TLUser User)
         {
+            if (User.IsSelf)
+            {
+                return Tuple.Create("Chat with yourself", DateTime.Now);
+            }
+
             if (User.HasStatus && User.Status != null)
             {
                 switch (User.Status.TypeId)
