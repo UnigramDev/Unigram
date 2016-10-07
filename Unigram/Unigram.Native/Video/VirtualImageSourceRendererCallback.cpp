@@ -2,7 +2,7 @@
 #include "VideoImageSourceRenderer.h"
 #include "VirtualImageSourceRendererCallback.h"
 
-using namespace Mp4ImageSourceRenderer;
+using namespace Unigram::Native;
 
 static HMODULE GetModuleHandle(LPCTSTR libFileName)
 {

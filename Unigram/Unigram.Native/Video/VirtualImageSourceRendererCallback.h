@@ -29,34 +29,35 @@ using Windows::Foundation::Metadata::WebHostHiddenAttribute;
 using Windows::UI::Xaml::Data::BindableAttribute;
 using Windows::UI::Xaml::Media::Imaging::VirtualSurfaceImageSource;
 
-namespace Mp4ImageSourceRenderer
+namespace Unigram
 {
-
-	ref class VideoImageSourceRenderer;
-
-	class VirtualImageSourceRendererCallback WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IVirtualSurfaceUpdatesCallbackNative, IMFAsyncCallback>
+	namespace Native 
 	{
-	public:
-		VirtualImageSourceRendererCallback(_In_ VideoImageSourceRenderer^ renderer);
-		~VirtualImageSourceRendererCallback();
+		ref class VideoImageSourceRenderer;
 
-		HRESULT StartTimer(int64 duration);
-		HRESULT ResumeTimer();
-		HRESULT StopTimer();
-		STDMETHODIMP UpdatesNeeded();
-		STDMETHODIMP Invoke(_In_ IMFAsyncResult* pAsyncResult);
-		STDMETHODIMP GetParameters(_Out_ DWORD* pdwFlags, _Out_ DWORD* pdwQueue);
-
-		inline const bool IsTimerRunning() const
+		class VirtualImageSourceRendererCallback WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IVirtualSurfaceUpdatesCallbackNative, IMFAsyncCallback>
 		{
-			return m_timerKey != NULL;
-		}
+		public:
+			VirtualImageSourceRendererCallback(_In_ VideoImageSourceRenderer^ renderer);
+			~VirtualImageSourceRendererCallback();
 
-	private:
-		int64 m_duration;
-		MFWORKITEM_KEY m_timerKey;
-		VideoImageSourceRenderer^ m_renderer;
-		DispatchedHandler^ m_timerDispatchedHandler;
-	};
+			HRESULT StartTimer(int64 duration);
+			HRESULT ResumeTimer();
+			HRESULT StopTimer();
+			STDMETHODIMP UpdatesNeeded();
+			STDMETHODIMP Invoke(_In_ IMFAsyncResult* pAsyncResult);
+			STDMETHODIMP GetParameters(_Out_ DWORD* pdwFlags, _Out_ DWORD* pdwQueue);
 
+			inline const bool IsTimerRunning() const
+			{
+				return m_timerKey != NULL;
+			}
+
+		private:
+			int64 m_duration;
+			MFWORKITEM_KEY m_timerKey;
+			VideoImageSourceRenderer^ m_renderer;
+			DispatchedHandler^ m_timerDispatchedHandler;
+		};
+	}
 }

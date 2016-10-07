@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "VideoImageSourceRendererFactory.h"
 
-using namespace Mp4ImageSourceRenderer;
+using namespace Unigram::Native;
 using Windows::UI::Xaml::Media::CompositionTarget;
 
 VideoImageSourceRendererFactory::VideoImageSourceRendererFactory()

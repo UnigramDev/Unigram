@@ -327,7 +327,12 @@ namespace Unigram.Controls.Items
                             int currentUserId = MTProtoService.Current.CurrentUserId;
                             if (currentUserId == from)
                             {
-                                return "You: ";
+                                if (dialog.Index != from)
+                                {
+                                    return "You: ";
+                                }
+
+                                return string.Empty;
                                 //return Resources.You + ": ";
                             }
                             else

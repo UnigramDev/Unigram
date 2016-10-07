@@ -3,46 +3,47 @@
 
 using Windows::ApplicationModel::Core::CoreApplication;
 
-namespace Mp4ImageSourceRenderer
+namespace Unigram
 {
-
-	[WebHostHidden]
-	public ref class VideoImageSourceRendererFactory sealed
+	namespace Native
 	{
-	public:
-		VideoImageSourceRendererFactory();
-
-		VideoImageSourceRenderer^ CreateRenderer(int maximumWidth, int maximumHeight);
-
-	internal:
-		event Windows::Foundation::EventHandler<Object^>^ SurfaceContentLost;
-
-		ID2D1Device* GetDevice()
+		[WebHostHidden]
+		public ref class VideoImageSourceRendererFactory sealed
 		{
-			auto lock = m_criticalSection.Lock();
-			return m_d2dDevice.Get();
-		}
+		public:
+			VideoImageSourceRendererFactory();
 
-		ID2D1DeviceContext* GetDeviceContext()
-		{
-			auto lock = m_criticalSection.Lock();
-			return m_d2dDeviceContext.Get();
-		}
+			VideoImageSourceRenderer^ CreateRenderer(int maximumWidth, int maximumHeight);
 
-		HRESULT NotifyDeviceContentLost();
+		internal:
+			event Windows::Foundation::EventHandler<Object^>^ SurfaceContentLost;
 
-	private:
-		~VideoImageSourceRendererFactory();
+			ID2D1Device* GetDevice()
+			{
+				auto lock = m_criticalSection.Lock();
+				return m_d2dDevice.Get();
+			}
 
-		void OnSuspending(_In_ Object^ sender, _In_ SuspendingEventArgs^ args);
-		void OnSurfaceContentLost(_In_ Object^ sender, _In_ Object^ args);
-		HRESULT CreateDeviceResources();
+			ID2D1DeviceContext* GetDeviceContext()
+			{
+				auto lock = m_criticalSection.Lock();
+				return m_d2dDeviceContext.Get();
+			}
 
-		ComPtr<ID3D11Device> m_d3dDevice;
-		ComPtr<ID2D1Device> m_d2dDevice;
-		ComPtr<ID2D1DeviceContext> m_d2dDeviceContext;
-		CriticalSection m_criticalSection;
-		Windows::Foundation::EventRegistrationToken m_eventTokens[2];
-	};
+			HRESULT NotifyDeviceContentLost();
 
+		private:
+			~VideoImageSourceRendererFactory();
+
+			void OnSuspending(_In_ Object^ sender, _In_ SuspendingEventArgs^ args);
+			void OnSurfaceContentLost(_In_ Object^ sender, _In_ Object^ args);
+			HRESULT CreateDeviceResources();
+
+			ComPtr<ID3D11Device> m_d3dDevice;
+			ComPtr<ID2D1Device> m_d2dDevice;
+			ComPtr<ID2D1DeviceContext> m_d2dDeviceContext;
+			CriticalSection m_criticalSection;
+			Windows::Foundation::EventRegistrationToken m_eventTokens[2];
+		};
+	}
 }

@@ -6,7 +6,7 @@
 #include "VideoImageSourceRendererFactory.h"
 #include "VideoImageSourceRenderer.h"
 
-using namespace Mp4ImageSourceRenderer;
+using namespace Unigram::Native;
 using namespace Platform;
 using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::Storage;
