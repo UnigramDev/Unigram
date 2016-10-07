@@ -200,7 +200,7 @@ IRandomAccessStream^ Unigram::Native::WebPImage::Encode(const Array<uint8> ^byte
 
 		auto ratioX = (double)256 / iter.width;
 		auto ratioY = (double)256 / iter.height;
-		auto ratio = min(ratioX, ratioY);
+		auto ratio = std::min(ratioX, ratioY);
 
 		auto width = (int)(iter.width * ratio);
 		auto height = (int)(iter.height * ratio);

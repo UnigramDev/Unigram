@@ -7,6 +7,9 @@
     <Filter Include="Video">
       <UniqueIdentifier>{2c18282a-db77-41b3-a6f0-5f3e734da98e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Helpers">
+      <UniqueIdentifier>{903ec3d1-7f79-41e7-a41d-2ef61411b312}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -19,6 +22,13 @@
     <ClCompile Include="Video\VideoImageSourceRenderer.cpp">
       <Filter>Video</Filter>
     </ClCompile>
+    <ClCompile Include="BufferLock.cpp" />
+    <ClCompile Include="Video\VirtualImageSourceRendererCallback.cpp">
+      <Filter>Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Video\VideoImageSourceRendererFactory.cpp">
+      <Filter>Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -28,9 +38,27 @@
     <ClInclude Include="WebP\WebPImage.h">
       <Filter>WebP</Filter>
     </ClInclude>
-    <ClInclude Include="COMHelper.h" />
-    <ClInclude Include="IVirtualImageSourceRenderer.h" />
     <ClInclude Include="Video\VideoImageSourceRenderer.h">
+      <Filter>Video</Filter>
+    </ClInclude>
+    <ClInclude Include="DemuxerWrapper.h" />
+    <ClInclude Include="BufferLock.h" />
+    <ClInclude Include="Helpers\COMHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\MediaFoundationHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\MathHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\DebugHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\VideoImageSourceRendererFactory.h">
+      <Filter>Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Video\VirtualImageSourceRendererCallback.h">
       <Filter>Video</Filter>
     </ClInclude>
   </ItemGroup>
