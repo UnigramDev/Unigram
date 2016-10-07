@@ -1,270 +1,172 @@
 ﻿#include "pch.h"
-#include "VideoImageSourceRenderer.h"
 #include <propvarutil.h>
+#include "Helpers\MathHelper.h"
+#include "Helpers\MediaFoundationHelper.h"
+#include "BufferLock.h"
+#include "VideoImageSourceRendererFactory.h"
+#include "VideoImageSourceRenderer.h"
 
-using namespace Unigram::Native;
+using namespace Mp4ImageSourceRenderer;
 using namespace Platform;
 using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::Storage;
 using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::Storage::Streams;
 using namespace Microsoft::WRL;
-using namespace Windows::ApplicationModel;
+using Windows::ApplicationModel::Core::CoreApplication;
 using Windows::Foundation::TypedEventHandler;
 
-VideoImageSourceRenderer::VideoImageSourceRenderer(int width, int height) :
-	m_width(width),
-	m_height(height),
-	m_initialized(false),
-	m_timer(ref new DispatcherTimer())
+VideoImageSourceRenderer::VideoImageSourceRenderer(int maximumWidth, int maximumHeight, VideoImageSourceRendererFactory^ owner) :
+	m_frameIndex(-1),
+	m_hiddenTicks(-1),
+	m_maximumHiddenTicks(0),
+	m_isUpdatingFrames(false),
+	m_size({}),
+	m_maximumSize({ maximumWidth, maximumHeight }),
+	m_owner(owner)
 {
-	//auto ratioX = (double)320 / width;
-	//auto ratioY = (double)320 / height;
-	//auto ratio = min(ratioX, ratioY);
-
-	//m_width = (int)(width * ratio);
-	//m_height = (int)(height * ratio);
+	m_updatesCallback = Make<VirtualImageSourceRendererCallback>(this);
 
 	auto application = Application::Current;
-	m_eventTokens[0] = application->Suspending += ref new SuspendingEventHandler(this, &VideoImageSourceRenderer::OnSuspending);
-	m_eventTokens[1] = m_timer->Tick += ref new Windows::Foundation::EventHandler<Platform::Object ^>(this, &VideoImageSourceRenderer::OnTick);
+	m_eventTokens[0] = application->EnteredBackground += ref new EnteredBackgroundEventHandler(this, &VideoImageSourceRenderer::OnEnteredBackground);
+	m_eventTokens[1] = application->LeavingBackground += ref new LeavingBackgroundEventHandler(this, &VideoImageSourceRenderer::OnLeavingBackground);
+	m_eventTokens[2] = m_owner->SurfaceContentLost += ref new EventHandler<Object^>(this, &VideoImageSourceRenderer::OnSurfaceContentLost);
 
-	//auto displayInformation = DisplayInformation::GetForCurrentView();
-	//m_eventTokens[1] = displayInformation->DpiChanged += ref new TypedEventHandler<DisplayInformation^, Object^>(this, &VideoImageSourceRenderer::OnDpiChanged);
-	//m_compositionScale.x = m_compositionScale.y = displayInformation->LogicalDpi / 96.0f;
-	//m_compositionScale.x = m_compositionScale.y = 1.0f;
-
-	m_updatesCallback = Make<VirtualImageSourceRendererCallback>(this);
-	m_imageSource = ref new VirtualSurfaceImageSource(static_cast<int32>(m_width), static_cast<int32>(m_height), true);
-
-	CreateDeviceIndependentResources();
-	CreateDeviceResources();
+	ThrowIfFailed(InitializeImageSource());
 }
 
 VideoImageSourceRenderer::~VideoImageSourceRenderer()
 {
-	MFShutdown();
-
-	Application::Current->Suspending -= m_eventTokens[0];
-	//DisplayInformation::GetForCurrentView()->DpiChanged -= m_eventTokens[1];
+	m_owner->SurfaceContentLost -= m_eventTokens[3];
 }
 
-void VideoImageSourceRenderer::OnSuspending(Object^ sender, SuspendingEventArgs^ args)
+HRESULT VideoImageSourceRenderer::BeginDraw(RECT const& drawingBounds, ID2D1DeviceContext** ppDeviceContext)
 {
-	ComPtr<IDXGIDevice3> dxgiDevice;
-	m_d3dDevice.As(&dxgiDevice);
-	dxgiDevice->Trim();
-}
-
-void VideoImageSourceRenderer::CreateDeviceResources()
-{
-	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-
-	//#if defined(_DEBUG)     
-	//			creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
-	//#endif 
-
-	const D3D_FEATURE_LEVEL featureLevels[] =
+	HRESULT result;
+	POINT offset;
+	ComPtr<ID2D1DeviceContext> deviceContext;
+	if (SUCCEEDED(result = m_imageSourceNativeD2D->BeginDraw(drawingBounds, IID_PPV_ARGS(&deviceContext), &offset)))
 	{
-		D3D_FEATURE_LEVEL_11_1,
-		D3D_FEATURE_LEVEL_11_0,
-		D3D_FEATURE_LEVEL_10_1,
-		D3D_FEATURE_LEVEL_10_0,
-		D3D_FEATURE_LEVEL_9_3,
-		D3D_FEATURE_LEVEL_9_2,
-		D3D_FEATURE_LEVEL_9_1,
-	};
-
-	ThrowIfFailed(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, creationFlags, featureLevels,
-		ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &m_d3dDevice, nullptr, nullptr));
-
-	ComPtr<IDXGIDevice> dxgiDevice;
-	ThrowIfFailed(m_d3dDevice.As(&dxgiDevice));
-	ThrowIfFailed(D2D1CreateDevice(dxgiDevice.Get(), nullptr, &m_d2dDevice));
-	ThrowIfFailed(m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &m_d2dDeviceContext));
-
-	m_d2dDeviceContext->SetUnitMode(D2D1_UNIT_MODE_DIPS);
-	m_d2dDeviceContext->SetDpi(96.0f, 96.0f);
-	m_d2dDeviceContext->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
-
-	ThrowIfFailed(reinterpret_cast<IUnknown*>(m_imageSource)->QueryInterface(IID_PPV_ARGS(&m_imageSourceNative)));
-	ThrowIfFailed(m_imageSourceNative->SetDevice(dxgiDevice.Get()));
-	ThrowIfFailed(m_imageSourceNative->RegisterForUpdatesNeeded(m_updatesCallback.Get()));
-
-	//TODO: Create device dependent resources here
-}
-
-void VideoImageSourceRenderer::CreateDeviceIndependentResources()
-{
-	//TODO: Create device independent resources here
-}
-
-void VideoImageSourceRenderer::BeginDraw(RECT const& drawingBounds)
-{
-	POINT offset = {};
-	ComPtr<IDXGISurface> surface;
-
-	auto result = m_imageSourceNative->BeginDraw(drawingBounds, &surface, &offset);
-	if (SUCCEEDED(result))
-	{
-		D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(
-			D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-			D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-			96.0f, 96.0f);
-
-		ComPtr<ID2D1Bitmap1> bitmap;
-		ThrowIfFailed(m_d2dDeviceContext->CreateBitmapFromDxgiSurface(surface.Get(), &bitmapProperties, &bitmap));
-
-		m_d2dDeviceContext->BeginDraw();
-		m_d2dDeviceContext->SetTarget(bitmap.Get());
-		//m_d2dDeviceContext->PushAxisAlignedClip(D2D1::RectF(static_cast<float>(offset.x), static_cast<float>(offset.y),
-		//	static_cast<float>(offset.x + (drawingBounds.right - drawingBounds.left)),
-		//	std::ceil(m_stickerSize.height * static_cast<float>(offset.y + (drawingBounds.bottom - drawingBounds.top))) / (m_stickerSize.height)),
-		//	D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-		m_d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Translation(static_cast<float>(offset.x - drawingBounds.left),
+		deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(static_cast<float>(offset.x - drawingBounds.left),
 			static_cast<float>(offset.y - drawingBounds.top)));
-		m_d2dDeviceContext->Clear(D2D1::ColorF(D2D1::ColorF::Black, 0.0f));
+		deviceContext->Clear(D2D1::ColorF(D2D1::ColorF::Black, 0.0f));
 	}
-	else if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
+	else if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET || result == E_SURFACE_CONTENTS_LOST)
 	{
-		CreateDeviceResources();
-		ThrowIfFailed(m_imageSourceNative->Invalidate(drawingBounds));
+		result = m_owner->NotifyDeviceContentLost();
 	}
-	else
-	{
-		ThrowIfFailed(result);
-	}
+
+	*ppDeviceContext = deviceContext.Detach();
+	return result;
 }
 
-void VideoImageSourceRenderer::EndDraw()
+HRESULT VideoImageSourceRenderer::EndDraw(ID2D1DeviceContext* deviceContext)
 {
-	m_d2dDeviceContext->SetTransform(D2D1::IdentityMatrix());
-	//m_d2dDeviceContext->PopAxisAlignedClip();
-	m_d2dDeviceContext->SetTarget(nullptr);
-	ThrowIfFailed(m_d2dDeviceContext->EndDraw());
-
-	ThrowIfFailed(m_imageSourceNative->EndDraw());
+	deviceContext->SetTransform(D2D1::IdentityMatrix());
+	return m_imageSourceNativeD2D->EndDraw();
 }
 
-void VideoImageSourceRenderer::Draw(RECT const& drawingBounds)
+HRESULT VideoImageSourceRenderer::Draw(RECT const& drawingBounds)
 {
-	BeginDraw(drawingBounds);
+	HRESULT result;
+	auto lock = m_criticalSection.Lock();
 
-	DWORD pdwActualStreamIndex;
-	DWORD pdwStreamFlags;
-	LONGLONG pllTimestamp;
-	ComPtr<IMFSample> ppSample;
-	HRESULT hr = ppSourceReader->ReadSample(
-		MF_SOURCE_READER_FIRST_VIDEO_STREAM,
-		0,
-		&pdwActualStreamIndex,
-		&pdwStreamFlags,
-		&pllTimestamp,
-		&ppSample);
-
-	if (ppSample == NULL)
+	ComPtr<ID2D1DeviceContext> deviceContext;
+	if (SUCCEEDED(result = BeginDraw(drawingBounds, &deviceContext)))
 	{
-		PROPVARIANT var;
-		PropVariantInit(&var);
-		var.vt = VT_I8;
-		var.hVal.QuadPart = 0;
-		if (SUCCEEDED(hr))
-		{
-			hr = ppSourceReader->SetCurrentPosition(GUID_NULL, var);
-			PropVariantClear(&var);
-		}
+		if (!m_frames.empty())
+			deviceContext->DrawBitmap(m_frames[m_frameIndex].Get());
 
-		hr = ppSourceReader->ReadSample(
-			MF_SOURCE_READER_FIRST_VIDEO_STREAM,
-			0,
-			&pdwActualStreamIndex,
-			&pdwStreamFlags,
-			&pllTimestamp,
-			&ppSample);
+		result = EndDraw(deviceContext.Get());
 	}
 
-	ComPtr<IMFMediaBuffer> pBuffer;
-	hr = ppSample->ConvertToContiguousBuffer(&pBuffer);
-
-	BYTE *pData = NULL;
-	hr = pBuffer->Lock(&pData, NULL, NULL);
-
-	int pOffset = 0;
-	const int size = m_width * m_height * 4;
-	std::vector<byte> pOutput(size);
-
-	for (int i = 0; i < (m_width * m_height) / 2; ++i)
-	{
-		int y0 = pData[0];
-		int u0 = pData[1];
-		int y1 = pData[2];
-		int v0 = pData[3];
-		pData += 4;
-		int c = y0 - 16;
-		int d = u0 - 128;
-		int e = v0 - 128;
-		pOutput[pOffset + 0] = clip((298 * c + 516 * d + 128) >> 8, 0, 255); // blue
-		pOutput[pOffset + 1] = clip((298 * c - 100 * d - 208 * e + 128) >> 8, 0, 255); // green
-		pOutput[pOffset + 2] = clip((298 * c + 409 * e + 128) >> 8, 0, 255); // red
-		pOutput[pOffset + 3] = 255;
-		c = y1 - 16;
-		pOutput[pOffset + 4] = clip((298 * c + 516 * d + 128) >> 8, 0, 255); // blue
-		pOutput[pOffset + 5] = clip((298 * c - 100 * d - 208 * e + 128) >> 8, 0, 255); // green
-		pOutput[pOffset + 6] = clip((298 * c + 409 * e + 128) >> 8, 0, 255); // red
-		pOutput[pOffset + 7] = 255;
-		pOffset += 8;
-	}
-
-	ComPtr<ID2D1Bitmap> bitmap;
-	D2D1_BITMAP_PROPERTIES properties = { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED, 96.0f, 96.0f };
-	ThrowIfFailed(m_d2dDeviceContext->CreateBitmap(D2D1::SizeU(m_width, m_height), pOutput.data(), m_width * 4, &properties, &bitmap));
-
-	m_d2dDeviceContext->DrawBitmap(bitmap.Get());
-
-	pBuffer->Unlock();
-
-	EndDraw();
+	return result;
 }
 
-void VideoImageSourceRenderer::Invalidate(Boolean resize)
+HRESULT VideoImageSourceRenderer::Invalidate(bool resize)
 {
 	if (m_imageSourceNative == nullptr)
-		ThrowException(WS_E_INVALID_OPERATION);
+		return WS_E_INVALID_OPERATION;
 
+	HRESULT result;
 	if (resize)
-	{
-		//m_renderSize.cx = static_cast<int32>(m_stickersPerRow * m_stickerSize.width);
-		//m_renderSize.cy = static_cast<int32>(m_stickerSize.height * ceil(m_stickerDefinitions.size() / static_cast<float>(m_stickersPerRow)));
+		ReturnIfFailed(result, m_imageSourceNative->Resize(m_size.cx, m_size.cy));
 
-		//ThrowIfFailed(m_imageSourceNative->Resize(static_cast<int32>(m_renderSize.cx), static_cast<int32>(m_renderSize.cy)));
-
-		//OnPropertyChanged(L"RenderSize");
-	}
-
-	RECT bounds = {};
-	bounds.right = static_cast<int32>(m_width);
-	bounds.bottom = static_cast<int32>(m_height);
-
-	ThrowIfFailed(m_imageSourceNative->Invalidate(bounds));
+	RECT bounds = { 0 ,0, m_size.cx ,m_size.cy };
+	return m_imageSourceNative->Invalidate(bounds);
 }
 
-void VideoImageSourceRenderer::NotifyUpdatesNeeded()
+void VideoImageSourceRenderer::NotifyPropertyChanged(String^ propertyName)
 {
-	if (m_initialized == false)
+	PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
+}
+
+HRESULT VideoImageSourceRenderer::OnUpdatesNeeded()
+{
+	HRESULT result;
+	ULONG drawingBoundsCount;
+	ReturnIfFailed(result, m_imageSourceNative->GetUpdateRectCount(&drawingBoundsCount));
+
+	auto drawingBounds = std::vector<RECT>(drawingBoundsCount);
+	ReturnIfFailed(result, m_imageSourceNative->GetUpdateRects(drawingBounds.data(), drawingBoundsCount));
+
+	for (uint32 i = 0; i < std::min(1UL, drawingBoundsCount); i++)
 	{
-		return;
+		ReturnIfFailed(result, Draw(drawingBounds[i]));
 	}
 
-	ULONG drawingBoundsCount = 0;
-	ThrowIfFailed(m_imageSourceNative->GetUpdateRectCount(&drawingBoundsCount));
+	return S_OK;
+}
 
-	auto drawingBounds = std::make_unique<RECT[]>(drawingBoundsCount);
-	ThrowIfFailed(m_imageSourceNative->GetUpdateRects(drawingBounds.get(), drawingBoundsCount));
+HRESULT VideoImageSourceRenderer::OnTimerTick()
+{
+	auto lock = m_criticalSection.Lock();
 
-	for (uint32 i = 0; i < min(1, drawingBoundsCount); i++)
+	RECT bounds;
+	if (SUCCEEDED(m_imageSourceNative->GetVisibleBounds(&bounds)) && bounds.right > bounds.left && bounds.bottom > bounds.top)
 	{
-		Draw(drawingBounds[i]);
+		if (m_frames.empty())
+		{
+			if (!m_isUpdatingFrames && m_sourceReader != nullptr)
+			{
+				m_cancellationTokenSource.cancel();
+				m_cancellationTokenSource = concurrency::cancellation_token_source();
+				UpdateFrames(m_cancellationTokenSource.get_token());
+			}
+		}
+		else
+		{
+			m_hiddenTicks = 0;
+			m_frameIndex = (m_frameIndex + 1) % m_frames.size();
+
+			Draw(bounds);
+		}
 	}
+	else if (++m_hiddenTicks >= m_maximumHiddenTicks)
+	{
+		m_cancellationTokenSource.cancel();
+		m_frames.clear();
+		m_frameIndex = -1;
+		m_hiddenTicks = -1;
+		m_maximumHiddenTicks = 0;
+	}
+
+	return S_OK;
+}
+
+HRESULT VideoImageSourceRenderer::InitializeImageSource()
+{
+	HRESULT result;
+	m_imageSource = ref new VirtualSurfaceImageSource(0, 0, false);
+
+	ReturnIfFailed(result, reinterpret_cast<IUnknown*>(m_imageSource)->QueryInterface(IID_PPV_ARGS(&m_imageSourceNativeD2D)));
+	ReturnIfFailed(result, m_imageSourceNativeD2D->SetDevice(m_owner->GetDevice()));
+
+	ReturnIfFailed(result, m_imageSourceNativeD2D.As(&m_imageSourceNative));
+	ReturnIfFailed(result, m_imageSourceNative->RegisterForUpdatesNeeded(m_updatesCallback.Get()));
+
+	NotifyPropertyChanged(L"ImageSource");
+	return S_OK;
 }
 
 VirtualSurfaceImageSource^ VideoImageSourceRenderer::ImageSource::get()
@@ -272,107 +174,220 @@ VirtualSurfaceImageSource^ VideoImageSourceRenderer::ImageSource::get()
 	return m_imageSource;
 }
 
-void VideoImageSourceRenderer::Initialize(String^ path)
+void VideoImageSourceRenderer::OnSurfaceContentLost(Object^ sender, Object^ args)
 {
-	auto pathData = path->Data();
-
-	MFStartup(MF_VERSION, MFSTARTUP_LITE);
-
-	/*ComPtr<IMFSourceReader> ppSourceReader;*/
-	HRESULT hr = MFCreateSourceReaderFromURL(pathData, NULL, &ppSourceReader);
-
-	IMFMediaType *pNativeType = NULL;
-	IMFMediaType *pType = NULL;
-
-	hr = ppSourceReader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &pNativeType);
-	hr = ConvertVideoTypeToUncompressedType(pNativeType, MFVideoFormat_YUY2, &pType);
-	hr = ppSourceReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, pType);
-
-	UINT32 pNumerator;
-	UINT32 pDenominator;
-	MFGetAttributeRatio(pNativeType, MF_MT_FRAME_RATE, &pNumerator, &pDenominator);
-
-	float frameRate = static_cast<float>(pNumerator) / static_cast<float>(pDenominator);
-
-	TimeSpan t;
-	t.Duration = std::floor(frameRate);
-
-	m_timer->Interval = t;
-	m_timer->Start();
-
-	m_initialized = true;
+	ThrowIfFailed(InitializeImageSource());
+	Reset();
+	Initialize();
 }
 
-void VideoImageSourceRenderer::OnTick(Platform::Object ^sender, Platform::Object ^args)
+void VideoImageSourceRenderer::OnEnteredBackground(Object^ sender, EnteredBackgroundEventArgs^ args)
 {
-	RECT bounds;
-	m_imageSourceNative->GetVisibleBounds(&bounds);
-	if (bounds.right - bounds.left > 0 && bounds.bottom - bounds.top > 0) 
+	auto lock = m_criticalSection.Lock();
+
+	m_cancellationTokenSource.cancel();
+	m_frames.clear();
+	m_frameIndex = -1;
+	m_hiddenTicks = -1;
+	m_maximumHiddenTicks = 0;
+	m_updatesCallback->StopTimer();
+}
+
+void VideoImageSourceRenderer::OnLeavingBackground(Object^ sender, LeavingBackgroundEventArgs^ args)
+{
+	auto lock = m_criticalSection.Lock();
+
+	m_updatesCallback->ResumeTimer();
+}
+
+void VideoImageSourceRenderer::SetSource(Windows::Foundation::Uri^ uri)
+{
+	auto lock = m_criticalSection.Lock();
+
+	Reset();
+
+	if (uri != nullptr)
 	{
-		Invalidate(false);
+		CreateSourceReader(uri, &m_sourceReader);
+		Initialize();
 	}
 }
 
-HRESULT VideoImageSourceRenderer::ConvertVideoTypeToUncompressedType(IMFMediaType *pType, const GUID& subtype, IMFMediaType **ppType)
+void VideoImageSourceRenderer::SetSource(Windows::Storage::Streams::IRandomAccessStream^ stream)
 {
-	IMFMediaType *pTypeUncomp = NULL;
+	auto lock = m_criticalSection.Lock();
 
-	HRESULT hr = S_OK;
-	GUID majortype = { 0 };
-	MFRatio par = { 0 };
+	Reset();
 
-	hr = pType->GetMajorType(&majortype);
-
-	if (majortype != MFMediaType_Video)
+	if (stream != nullptr)
 	{
-		return ERROR;
+		CreateSourceReader(stream, &m_sourceReader);
+		Initialize();
 	}
+}
 
-	if (SUCCEEDED(hr))
+void VideoImageSourceRenderer::SetSource(Windows::Media::Core::IMediaSource^ mediaSource)
+{
+	auto lock = m_criticalSection.Lock();
+
+	Reset();
+
+	if (mediaSource != nullptr)
 	{
-		hr = MFCreateMediaType(&pTypeUncomp);
+		CreateSourceReader(mediaSource, &m_sourceReader);
+		Initialize();
 	}
+}
 
-	if (SUCCEEDED(hr))
+void VideoImageSourceRenderer::Reset()
+{
+	m_cancellationTokenSource.cancel();
+	m_frames.clear();
+	m_frameIndex = -1;
+	m_hiddenTicks = -1;
+	m_maximumHiddenTicks = 0;
+	m_size = {};
+	m_sourceReader.Reset();
+
+	ThrowIfFailed(m_updatesCallback->StopTimer());
+	ThrowIfFailed(Invalidate(true));
+}
+
+void VideoImageSourceRenderer::Initialize()
+{
+	float frameRate;
+	SIZE frameSize = m_maximumSize;
+	ThrowIfFailed(InitializeSourceReader(m_sourceReader.Get(), frameSize, &frameRate));
+
+	auto frameDuration = static_cast<int64>(std::round(10000000.0f / frameRate));
+	m_size = frameSize;
+	m_maximumHiddenTicks = 30000000 / frameDuration;
+	m_hiddenTicks = m_maximumHiddenTicks;
+
+	ThrowIfFailed(Invalidate(true));
+	ThrowIfFailed(m_updatesCallback->StartTimer(frameDuration));
+}
+
+task<void> VideoImageSourceRenderer::UpdateFrames(cancellation_token& ct)
+{
+	return create_task([this, ct]
 	{
-		hr = pType->CopyAllItems(pTypeUncomp);
-	}
+		SIZE frameSize;
+		ComPtr<IMFSourceReader> sourceReader;
+		ComPtr<ID2D1DeviceContext> deviceContext;
 
-	if (SUCCEEDED(hr))
-	{
-		hr = pTypeUncomp->SetGUID(MF_MT_SUBTYPE, subtype);
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		hr = pTypeUncomp->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, TRUE);
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		hr = MFGetAttributeRatio(
-			pTypeUncomp,
-			MF_MT_PIXEL_ASPECT_RATIO,
-			(UINT32*)&par.Numerator,
-			(UINT32*)&par.Denominator
-		);
-
-		if (FAILED(hr))
 		{
-			hr = MFSetAttributeRatio(
-				pTypeUncomp,
-				MF_MT_PIXEL_ASPECT_RATIO,
-				1, 1
-			);
+			auto lock = m_criticalSection.Lock();
+
+			m_isUpdatingFrames = true;
+			sourceReader = m_sourceReader;
+			deviceContext = m_owner->GetDeviceContext();
+			frameSize = m_size;
 		}
-	}
 
-	if (SUCCEEDED(hr))
+		PROPVARIANT positionVariant = {};
+		positionVariant.vt = VT_I8;
+		ThrowIfFailed(sourceReader->SetCurrentPosition(GUID_NULL, positionVariant));
+
+		DWORD flags = 0;
+		ComPtr<IMFSample> sample;
+		uint32 offset = 0;
+		std::vector<ComPtr<ID2D1Bitmap>> frames;
+
+		do
+		{
+			ThrowIfFailed(sourceReader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, nullptr, &flags, nullptr, &sample));
+
+			if (sample == nullptr)
+				continue;
+
+			ComPtr<ID2D1Bitmap> bitmap;
+			D2D1_BITMAP_PROPERTIES properties = { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED, 96.0f, 96.0f };
+			BufferLock bufferLock(sample.Get());
+			ThrowIfFailed(deviceContext->CreateBitmap(D2D1::SizeU(frameSize.cx, frameSize.cy),
+				bufferLock.GetBuffer(), frameSize.cx * sizeof(DWORD), &properties, &bitmap));
+
+			frames.push_back(bitmap);
+
+		} while (!(flags &  MF_SOURCE_READERF_ENDOFSTREAM || ct.is_canceled()));
+
+		return create_task(m_imageSource->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+			ref new DispatchedHandler([this, ct, frames]
+		{
+			auto lock = m_criticalSection.Lock();
+
+			m_isUpdatingFrames = false;
+
+			if (ct.is_canceled())
+			{
+				m_frames.clear();
+				m_frameIndex = -1;
+				m_hiddenTicks = -1;
+			}
+			else
+			{
+				m_frames = frames;
+				m_frameIndex = 0;
+				m_hiddenTicks = 0;
+
+				Invalidate(false);
+			}
+		}, CallbackContext::Any)));
+	}, task_continuation_context::use_arbitrary());
+}
+
+HRESULT VideoImageSourceRenderer::InitializeSourceReader(IMFSourceReader* sourceReader, SIZE& frameSize, float* frameRate)
+{
+	HRESULT result;
+	ReturnIfFailed(result, sourceReader->SetStreamSelection(MF_SOURCE_READER_ALL_STREAMS, FALSE));
+
+	ComPtr<IMFMediaType> nativeMediaType;
+	ReturnIfFailed(result, sourceReader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &nativeMediaType));
+
+	ComPtr<IMFMediaType> mediaType;
+	ReturnIfFailed(result, ConvertVideoTypeToUncompressedType(nativeMediaType.Get(), MFVideoFormat_RGB32, frameSize, &mediaType));
+	ReturnIfFailed(result, sourceReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, mediaType.Get()));
+
+	UINT32 numerator;
+	UINT32 denominator;
+	if (SUCCEEDED(MFGetAttributeRatio(mediaType.Get(), MF_MT_FRAME_RATE, &numerator, &denominator)))
+		*frameRate = (static_cast<float>(numerator) / static_cast<float>(denominator));
+
+	return sourceReader->SetStreamSelection(MF_SOURCE_READER_FIRST_VIDEO_STREAM, TRUE);
+}
+
+HRESULT VideoImageSourceRenderer::ConvertVideoTypeToUncompressedType(IMFMediaType* pType, const GUID& subtype, SIZE& frameSize, IMFMediaType** ppType)
+{
+	HRESULT result;
+	GUID majorType;
+	ReturnIfFailed(result, pType->GetMajorType(&majorType));
+	if (majorType != MFMediaType_Video)
+		return MF_E_INVALIDMEDIATYPE;
+
+	ComPtr<IMFMediaType> uncompressedType;
+	ReturnIfFailed(result, MFCreateMediaType(&uncompressedType));
+	ReturnIfFailed(result, pType->CopyAllItems(uncompressedType.Get()));
+	ReturnIfFailed(result, uncompressedType->SetGUID(MF_MT_SUBTYPE, subtype));
+	ReturnIfFailed(result, uncompressedType->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, TRUE));
+
+	UINT32 width;
+	UINT32 height;
+	ReturnIfFailed(result, MFGetAttributeSize(pType, MF_MT_FRAME_SIZE, &width, &height));
+	if (width > height)
 	{
-		*ppType = pTypeUncomp;
-		(*ppType)->AddRef();
+		frameSize.cy = static_cast<LONG>(static_cast<float>(frameSize.cx * height) / static_cast<float>(width));
+	}
+	else
+	{
+		frameSize.cx = static_cast<LONG>(static_cast<float>(frameSize.cy * width) / static_cast<float>(height));
 	}
 
-	pTypeUncomp->Release();
-	return hr;
+	ReturnIfFailed(result, MFSetAttributeSize(uncompressedType.Get(), MF_MT_FRAME_SIZE, frameSize.cx, frameSize.cy));
+
+	MFRatio ratio = { 0 };
+	if (FAILED(result = MFGetAttributeRatio(uncompressedType.Get(), MF_MT_PIXEL_ASPECT_RATIO, (UINT32*)&ratio.Numerator, (UINT32*)&ratio.Denominator)))
+		ReturnIfFailed(result, MFSetAttributeRatio(uncompressedType.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1));
+
+	*ppType = uncompressedType.Detach();
+	return result;
 }
