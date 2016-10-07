@@ -373,13 +373,21 @@ HRESULT VideoImageSourceRenderer::ConvertVideoTypeToUncompressedType(IMFMediaTyp
 	UINT32 width;
 	UINT32 height;
 	ReturnIfFailed(result, MFGetAttributeSize(pType, MF_MT_FRAME_SIZE, &width, &height));
-	if (width > height)
+	if (width > frameSize.cx || height > frameSize.cy)
 	{
-		frameSize.cy = static_cast<LONG>(static_cast<float>(frameSize.cx * height) / static_cast<float>(width));
+		if (width > height)
+		{
+			frameSize.cy = static_cast<LONG>(static_cast<float>(frameSize.cx * height) / static_cast<float>(width));
+		}
+		else
+		{
+			frameSize.cx = static_cast<LONG>(static_cast<float>(frameSize.cy * width) / static_cast<float>(height));
+		}
 	}
-	else
+	else 
 	{
-		frameSize.cx = static_cast<LONG>(static_cast<float>(frameSize.cy * width) / static_cast<float>(height));
+		frameSize.cx = width;
+		frameSize.cy = height;
 	}
 
 	ReturnIfFailed(result, MFSetAttributeSize(uncompressedType.Get(), MF_MT_FRAME_SIZE, frameSize.cx, frameSize.cy));
