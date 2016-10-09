@@ -59,7 +59,7 @@ namespace Unigram.Controls.Items
                 UpdateStateIcon();
                 UpdateUnreadCount();
                 UpdatePicture();
-                //UpdateChannelType();
+                UpdateChannelType();
             }
         }
 
@@ -475,12 +475,11 @@ namespace Unigram.Controls.Items
         {
             if (ViewModel != null)
             {
-                var chatType = ViewModel.Peer as TLPeerBase;
-
-                if (chatType.TypeId == TLType.PeerChat)
-                    fiType.Glyph = "\uE125";
-                else if (chatType.TypeId == TLType.PeerChannel)
-                    fiType.Glyph = "\uE1D7";
+                var channel = ViewModel.With as TLChannel;
+                if (channel != null)
+                {
+                    fiType.Glyph = channel.IsBroadcast ? "\uE789" : "\uE125";
+                }
             }
         }
 

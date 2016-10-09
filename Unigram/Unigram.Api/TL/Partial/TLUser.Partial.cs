@@ -20,11 +20,6 @@ namespace Telegram.Api.TL
         {
             get
             {
-                if (IsSelf)
-                {
-                    return "You";
-                }
-
                 //if (this is TLUserEmpty)
                 //{
                 //    return "Empty user";

@@ -141,7 +141,7 @@ namespace Unigram.ViewModels
             var remoteMessages = new TLVector<int>();
             for (int i = 0; i < messages.Count; i++)
             {
-                if (messages[i].RandomId != 0L)
+                if (messages[i].RandomId.HasValue && messages[i].RandomId != 0L)
                 {
                     cachedMessages.Add(messages[i].RandomId.Value);
                 }
