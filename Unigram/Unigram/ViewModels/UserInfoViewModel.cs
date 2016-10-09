@@ -31,7 +31,6 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateNotifySettings>,
         IHandle
     {
-        public string FullNameField { get; internal set; }
         public string LastSeen { get; internal set; }
 
         public UserInfoViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
@@ -76,7 +75,6 @@ namespace Unigram.ViewModels
 
             if (user != null)
             {
-                FullNameField = user.FullName;
                 Item = user;
                 RaisePropertyChanged(() => AreNotificationsEnabled);
                 RaisePropertyChanged(() => PhoneVisibility);

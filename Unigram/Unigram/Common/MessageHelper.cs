@@ -69,7 +69,7 @@ namespace Unigram.Common
                 var foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x0f, 0x7d, 0xc7));
                 var paragraph = new Paragraph();
 
-                if (message.HasEntities)
+                if (message.HasEntities && message.Entities != null)
                 {
                     ReplaceEntities(message, paragraph, foreground);
                 }

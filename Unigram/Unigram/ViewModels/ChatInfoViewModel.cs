@@ -20,35 +20,49 @@ namespace Unigram.ViewModels
         public ObservableCollection<UsersPanelListItem> UsersList = new ObservableCollection<UsersPanelListItem>();
         public ObservableCollection<UsersPanelListItem> TempList = new ObservableCollection<UsersPanelListItem>();
         public object photo;
-        public string FullNameField { get; internal set; }
         public string Status { get; internal set; }
         public ChatInfoViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) : base(protoService, cacheService, aggregator)
         {
         }
+
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            FullNameField = "Hello!";
             var channel = parameter as TLInputPeerChannel;
             var chat = parameter as TLInputPeerChat;
+
+            Item = CacheService.GetChat(chat?.ChatId ?? channel?.ChannelId);
+
             if (channel != null)
             {
                 TLInputChannel x = new TLInputChannel();                
                 x.ChannelId = channel.ChannelId;
                 x.AccessHash = channel.AccessHash;
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);
-                FullNameField = channelDetails.Value.Chats[0].FullName;
                 Status = ((TLChannelFull)channelDetails.Value.FullChat).About;
                 photo = channelDetails.Value.Chats[0].Photo;
             }
             if (chat != null)
             {
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
-                FullNameField = chatDetails.Value.Chats[0].FullName;
             }
             TempList.Clear();
             UsersList.Clear();
             getMembers(channel, chat);
         }
+
+        private TLChatBase _item;
+        public TLChatBase Item
+        {
+            get
+            {
+                return _item;
+            }
+            set
+            {
+                Set(ref _item, value);
+            }
+        }
+
         public async Task getMembers(TLInputPeerChannel channel, TLInputPeerChat chat)
         {
 

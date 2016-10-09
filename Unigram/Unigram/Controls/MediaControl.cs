@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.TL;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
@@ -17,7 +18,14 @@ namespace Unigram.Controls
             }
             set
             {
-                Content = value;
+                if (value is TLMessageMediaEmpty)
+                {
+                    Content = null;
+                }
+                else
+                {
+                    Content = value;
+                }
                 ContentChanged?.Invoke(this, EventArgs.Empty);
             }
         }

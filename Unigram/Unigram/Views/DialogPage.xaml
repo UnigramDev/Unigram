@@ -385,7 +385,7 @@
                         <!--User icon-->
                         <Grid Width="36" Height="36" Margin="12,0">
                             <Ellipse Fill="{x:Bind ViewModel.PlaceHolderColor}" VerticalAlignment="Center"/>
-                            <TextBlock Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.DialogTitle, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.With, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <Ellipse x:Name="elpDialogIcon">
                                 <Ellipse.Fill>
                                     <ImageBrush ImageSource="{x:Bind ViewModel.photo, Converter={StaticResource DefaultPhotoConverter}}" />
