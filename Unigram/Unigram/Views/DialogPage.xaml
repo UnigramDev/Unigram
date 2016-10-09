@@ -23,6 +23,10 @@
     </Page.Transitions>
 
     <Page.Resources>
+        <Style TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        
         <Style x:Key="IconMenuFlyoutItem" TargetType="MenuFlyoutItem">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />

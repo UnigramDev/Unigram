@@ -25,15 +25,12 @@ namespace Unigram.ViewModels
 
         public async Task getTLContacts()
         {
-            var temp = new List<UsersPanelListItem>();
-
             var contacts = CacheService.GetContacts();
             foreach (var item in contacts.OfType<TLUser>())
             {
                 var user = item as TLUser;
                 if (user.IsSelf)
                 {
-                    Self = user;
                     continue;
                 }
 
@@ -45,7 +42,7 @@ namespace Unigram.ViewModels
                 listItem.Photo = listItem._parent.Photo;
                 listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
 
-                temp.Add(listItem);
+                Items.Add(listItem);
             }
 
             var input = string.Join(",", contacts.Select(x => x.Id).Union(new[] { SettingsHelper.UserId }).OrderBy(x => x));
@@ -63,7 +60,6 @@ namespace Unigram.ViewModels
                         var user = item as TLUser;
                         if (user.IsSelf)
                         {
-                            Self = user;
                             continue;
                         }
 
@@ -75,17 +71,33 @@ namespace Unigram.ViewModels
                         listItem.Photo = listItem._parent.Photo;
                         listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
 
-                        temp.Add(listItem);
+                        Items.Add(listItem);
                     }
                 }
             }
 
-            foreach (var item in temp)
-            {
-                Items.Add(item);
-            }
-
             Aggregator.Subscribe(this);
+        }
+
+        public async Task GetSelfAsync()
+        {
+            var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
+            if (response.IsSucceeded)
+            {
+                var user = response.Value.FirstOrDefault() as TLUser;
+                if (user != null)
+                {
+                    var status = LastSeenHelper.GetLastSeen(user);
+                    var listItem = new UsersPanelListItem(user as TLUser);
+                    listItem.fullName = user.FullName;
+                    listItem.lastSeen = status.Item1;
+                    listItem.lastSeenEpoch = status.Item2;
+                    listItem.Photo = listItem._parent.Photo;
+                    listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+
+                    Self = listItem;
+                }
+            }
         }
 
         #region Handle
@@ -120,8 +132,8 @@ namespace Unigram.ViewModels
 
         public SortedObservableCollection<UsersPanelListItem> Items { get; private set; }
 
-        private TLUser _self;
-        public TLUser Self
+        private UsersPanelListItem _self;
+        public UsersPanelListItem Self
         {
             get
             {

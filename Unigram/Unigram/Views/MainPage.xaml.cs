@@ -229,6 +229,7 @@ namespace Unigram.Views
         private async void PivotItem_Loaded(object sender, RoutedEventArgs e)
         {
             await ViewModel.Contacts.getTLContacts();
+            await ViewModel.Contacts.GetSelfAsync();
         }
 
         private void UsersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -238,6 +239,11 @@ namespace Unigram.Views
                 var user = UsersListView.SelectedItem as UsersPanelListItem;
                 ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user._parent.Id });
             }
+        }
+
+        private void Self_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self?._parent.Id ?? 0 });
         }
     }
 }

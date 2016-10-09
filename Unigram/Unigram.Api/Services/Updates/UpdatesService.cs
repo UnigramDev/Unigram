@@ -1179,24 +1179,28 @@ namespace Telegram.Api.Services.Updates
 
                         if (!commonMessage.IsOut)
                         {
-                            var readInboxMaxId = channel.ReadInboxMaxId != null ? channel.ReadInboxMaxId.Value : 0;
+                            var readInboxMaxId = channel.ReadInboxMaxId ?? 0;
 
                             if (commonMessage.Id <= readInboxMaxId)
                             {
                                 commonMessage.SetUnreadSilent(false);
                             }
+                            else
+                            {
+                                commonMessage.SetUnreadSilent(true);
+                            }
                         }
                         else
                         {
-                            var channel49 = channel as TLChannel;
-                            if (channel49 != null)
-                            {
-                                var readOutboxMaxId = channel49.ReadOutboxMaxId != null ? channel49.ReadOutboxMaxId.Value : 0;
+                            var readOutboxMaxId = channel.ReadOutboxMaxId ?? 0;
 
-                                if (commonMessage.Id <= readOutboxMaxId)
-                                {
-                                    commonMessage.SetUnreadSilent(false);
-                                }
+                            if (commonMessage.Id <= readOutboxMaxId)
+                            {
+                                commonMessage.SetUnreadSilent(false);
+                            }
+                            else
+                            {
+                                commonMessage.SetUnreadSilent(true);
                             }
                         }
                     }
