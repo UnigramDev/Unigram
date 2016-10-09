@@ -5,38 +5,88 @@
 #include <Mferror.h>
 #include <mfapi.h>
 #include "COMHelper.h"
+#include "DebugHelper.h"
 
 using Microsoft::WRL::ComPtr;
+using Platform::COMException;
 
-inline void CreateSourceReader(_In_ Windows::Foundation::Uri^ uri, _Out_ IMFSourceReader** pSourceReader)
+inline HRESULT CreateSourceReader(_In_ Windows::Foundation::Uri^ uri,
+	_In_ IMFDXGIDeviceManager* dxgiDeviceManager, _Out_ IMFSourceReader** ppSourceReader)
 {
+	HRESULT result;
 	ComPtr<IMFAttributes> attributes;
-	ThrowIfFailed(MFCreateAttributes(&attributes, 1));
-	ThrowIfFailed(attributes->SetUINT32(MF_SOURCE_READER_ENABLE_ADVANCED_VIDEO_PROCESSING, TRUE));
+	if (dxgiDeviceManager == nullptr)
+	{
+		ReturnIfFailed(result, MFCreateAttributes(&attributes, 1));
+	}
+	else
+	{
+		ReturnIfFailed(result, MFCreateAttributes(&attributes, 2));
+		ReturnIfFailed(result, attributes->SetUnknown(MF_SOURCE_READER_D3D_MANAGER, dxgiDeviceManager));
+	}
 
-	ThrowIfFailed(MFCreateSourceReaderFromURL(uri->RawUri->Data(), attributes.Get(), pSourceReader));
+	ReturnIfFailed(result, attributes->SetUINT32(MF_SOURCE_READER_ENABLE_ADVANCED_VIDEO_PROCESSING, TRUE));
+
+	return MFCreateSourceReaderFromURL(uri->RawUri->Data(), attributes.Get(), ppSourceReader);
 }
 
-inline void CreateSourceReader(_In_ Windows::Storage::Streams::IRandomAccessStream^ stream, _Out_ IMFSourceReader** pSourceReader)
+inline HRESULT CreateSourceReader(_In_ Windows::Foundation::Uri^ uri, _Out_ IMFSourceReader** ppSourceReader)
 {
+	return CreateSourceReader(uri, nullptr, ppSourceReader);
+}
+
+inline HRESULT CreateSourceReader(_In_ Windows::Storage::Streams::IRandomAccessStream^ stream,
+	_In_ IMFDXGIDeviceManager* dxgiDeviceManager, _Out_ IMFSourceReader** ppSourceReader)
+{
+	HRESULT result;
 	ComPtr<IMFByteStream> spMFByteStream;
-	ThrowIfFailed(MFCreateMFByteStreamOnStreamEx(reinterpret_cast<IUnknown*>(stream), &spMFByteStream));
+	ReturnIfFailed(result, MFCreateMFByteStreamOnStreamEx(reinterpret_cast<IUnknown*>(stream), &spMFByteStream));
 
 	ComPtr<IMFAttributes> attributes;
-	ThrowIfFailed(MFCreateAttributes(&attributes, 1));
-	ThrowIfFailed(attributes->SetUINT32(MF_SOURCE_READER_ENABLE_ADVANCED_VIDEO_PROCESSING, TRUE));
+	if (dxgiDeviceManager == nullptr)
+	{
+		ReturnIfFailed(result, MFCreateAttributes(&attributes, 1));
+	}
+	else
+	{
+		ReturnIfFailed(result, MFCreateAttributes(&attributes, 2));
+		ReturnIfFailed(result, attributes->SetUnknown(MF_SOURCE_READER_D3D_MANAGER, dxgiDeviceManager));
+	}
 
-	ThrowIfFailed(MFCreateSourceReaderFromByteStream(spMFByteStream.Get(), attributes.Get(), pSourceReader));
+	ReturnIfFailed(result, attributes->SetUINT32(MF_SOURCE_READER_ENABLE_ADVANCED_VIDEO_PROCESSING, TRUE));
+
+	return MFCreateSourceReaderFromByteStream(spMFByteStream.Get(), attributes.Get(), ppSourceReader);
 }
 
-inline void CreateSourceReader(_In_ Windows::Media::Core::IMediaSource^ pMediaSource, _Out_ IMFSourceReader** pSourceReader)
+inline HRESULT CreateSourceReader(_In_ Windows::Storage::Streams::IRandomAccessStream^ stream, _Out_ IMFSourceReader** ppSourceReader)
 {
-	ComPtr<IMFMediaSource> mfMediaSource;
-	ThrowIfFailed(MFGetService(reinterpret_cast<IUnknown*>(pMediaSource), MF_MEDIASOURCE_SERVICE, IID_PPV_ARGS(&mfMediaSource)));
-	
-	ComPtr<IMFAttributes> attributes;
-	ThrowIfFailed(MFCreateAttributes(&attributes, 1));
-	ThrowIfFailed(attributes->SetUINT32(MF_SOURCE_READER_ENABLE_ADVANCED_VIDEO_PROCESSING, TRUE));
+	return CreateSourceReader(stream, nullptr, ppSourceReader);
+}
 
-	ThrowIfFailed(MFCreateSourceReaderFromMediaSource(mfMediaSource.Get(), attributes.Get(), pSourceReader));
+inline HRESULT CreateSourceReader(_In_ Windows::Media::Core::IMediaSource^ mediaSource,
+	_In_ IMFDXGIDeviceManager* dxgiDeviceManager, _Out_ IMFSourceReader** ppSourceReader)
+{
+	HRESULT result;
+	ComPtr<IMFMediaSource> mfMediaSource;
+	ReturnIfFailed(result, MFGetService(reinterpret_cast<IUnknown*>(mediaSource), MF_MEDIASOURCE_SERVICE, IID_PPV_ARGS(&mfMediaSource)));
+
+	ComPtr<IMFAttributes> attributes;
+	if (dxgiDeviceManager == nullptr)
+	{
+		ReturnIfFailed(result, MFCreateAttributes(&attributes, 1));
+	}
+	else
+	{
+		ReturnIfFailed(result, MFCreateAttributes(&attributes, 2));
+		ReturnIfFailed(result, attributes->SetUnknown(MF_SOURCE_READER_D3D_MANAGER, dxgiDeviceManager));
+	}
+
+	ReturnIfFailed(result, attributes->SetUINT32(MF_SOURCE_READER_ENABLE_ADVANCED_VIDEO_PROCESSING, TRUE));
+
+	return MFCreateSourceReaderFromMediaSource(mfMediaSource.Get(), attributes.Get(), ppSourceReader);
+}
+
+inline HRESULT CreateSourceReader(_In_ Windows::Media::Core::IMediaSource^ mediaSource, _Out_ IMFSourceReader** ppSourceReader)
+{
+	return CreateSourceReader(mediaSource, nullptr, ppSourceReader);
 }

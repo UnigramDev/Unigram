@@ -231,21 +231,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedImageSource\VirtualImageSourceRendererCallback.h" />
     <ClInclude Include="BufferLock.h" />
     <ClInclude Include="DemuxerWrapper.h" />
+    <ClInclude Include="GIFMediaSource\GIFByteStreamHandler.h" />
+    <ClInclude Include="GIFMediaSource\GIFMediaSource.h" />
     <ClInclude Include="Helpers\COMHelper.h" />
     <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="Helpers\MathHelper.h" />
     <ClInclude Include="Helpers\MediaFoundationHelper.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Video\VideoImageSourceRenderer.h" />
-    <ClInclude Include="Video\VideoImageSourceRendererFactory.h" />
-    <ClInclude Include="Video\VirtualImageSourceRendererCallback.h" />
+    <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRenderer.h" />
+    <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.h" />
+    <ClInclude Include="AnimatedImageSource\FramesCacheStore.h" />
+    <ClInclude Include="AnimatedImageSource\MediaFoundationExtensions.h" />
     <ClInclude Include="WebP\WebPFrame.h" />
     <ClInclude Include="WebP\WebPImage.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatedImageSource\VirtualImageSourceRendererCallback.cpp" />
     <ClCompile Include="BufferLock.cpp" />
+    <ClCompile Include="GIFMediaSource\GIFByteStreamHandler.cpp" />
+    <ClCompile Include="GIFMediaSource\GIFMediaSource.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -254,9 +261,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Video\VideoImageSourceRenderer.cpp" />
-    <ClCompile Include="Video\VideoImageSourceRendererFactory.cpp" />
-    <ClCompile Include="Video\VirtualImageSourceRendererCallback.cpp" />
+    <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRenderer.cpp" />
+    <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.cpp" />
+    <ClCompile Include="AnimatedImageSource\FramesCacheStore.cpp" />
+    <ClCompile Include="AnimatedImageSource\MediaFoundationExtensions.cpp" />
     <ClCompile Include="WebP\WebPFrame.cpp" />
     <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>
