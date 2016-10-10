@@ -119,7 +119,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var result = await ProtoService.GetHistoryAsync(Peer, new TLPeerUser { Id = SettingsHelper.UserId }, false, 0, maxId, 15);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, maxId, 15);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Value.Messages);

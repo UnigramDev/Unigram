@@ -166,6 +166,7 @@
         AudioTemplate="{StaticResource MediaAudioTemplate}"
         DocumentTemplate="{StaticResource MediaDocumentTemplate}"
         GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
+        GifTemplate="{StaticResource MediaGifTemplate}"
         PhotoTemplate="{StaticResource MediaPhotoTemplate}"
         VideoTemplate="{StaticResource MediaVideoTemplate}"
         WebPageTemplate="{StaticResource WebPageMediaTemplate}"
