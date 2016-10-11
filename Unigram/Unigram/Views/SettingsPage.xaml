@@ -14,6 +14,11 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
         <RelativePanel>
             <!-- Master - Titlebar -->
             <RelativePanel x:Name="rpMasterTitlebar"
