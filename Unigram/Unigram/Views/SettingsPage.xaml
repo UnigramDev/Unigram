@@ -9,13 +9,37 @@
       mc:Ignorable="d">
     <Page.Transitions>
         <TransitionCollection>
-            <EdgeUIThemeTransition Edge="Right"/>
+            <NavigationThemeTransition>
+                <ContinuumNavigationTransitionInfo />
+            </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <RelativePanel>
-            <!-- Master - Titlebar -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <!-- Titlebar -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+              Height="{ThemeResource AppBarThemeCompactHeight}">
+            <TextBlock x:Uid="Settings-Titlebar-Title"
+                       Text="SETTINGS"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       RequestedTheme="Dark"
+                       VerticalAlignment="Center"
+                       Margin="12,0"/>
+        </Grid>
+
+        <TextBlock Grid.Row="1"
+                   Text="Soon..."
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+
+        <!--<RelativePanel>
+            --><!-- Master - Titlebar --><!--
             <RelativePanel x:Name="rpMasterTitlebar"
                            Style="{StaticResource StyleRPMasterTitleBar}">
                 <TextBlock x:Name="tblMasterTitle"
@@ -26,7 +50,7 @@
                            Padding="16,0"
                            RelativePanel.AlignVerticalCenterWithPanel="True" />
             </RelativePanel>
-            <!-- Master - Main content -->
+            --><!-- Master - Main content --><!--
             <RelativePanel x:Name="rpMasterContent"
                            VerticalAlignment="Stretch"
                            HorizontalAlignment="Stretch"
@@ -39,7 +63,7 @@
                               RelativePanel.AlignTopWithPanel="True"
                               RelativePanel.AlignBottomWithPanel="True">              
                     <RelativePanel>
-                        <!-- Relative panel for user info -->
+                        --><!-- Relative panel for user info --><!--
                         <RelativePanel x:Name="rpUserInfo"
                                        Margin="12,24"
                                        Padding="0,0,0,24"
@@ -50,7 +74,7 @@
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignTopWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True">
-                            <!--User icon-->
+                            --><!--User icon--><!--
                             <Ellipse x:Name="elpUserIcon"
                                      Width="108"
                                      Height="108"
@@ -61,7 +85,7 @@
                                 </Ellipse.Fill>
                             </Ellipse>
 
-                            <!--User details-->
+                            --><!--User details--><!--
                             <StackPanel x:Name="spUserInfo"
                                         Margin="12,0"
                                         RelativePanel.AlignVerticalCenterWithPanel="True"
@@ -91,7 +115,7 @@
                             </StackPanel>
                         </RelativePanel>
 
-                        <!--Settings for user-->
+                        --><!--Settings for user--><!--
                         <RelativePanel x:Name="rpSettings"
                                        Margin="12"
                                        RelativePanel.Below="rpUserInfo"
@@ -100,13 +124,13 @@
                                        RelativePanel.AlignLeftWithPanel="True"
                                        RelativePanel.AlignRightWithPanel="True"
                                        RelativePanel.AlignBottomWithPanel="True">
-                            <!-- switch to toggle location permissions-->
+                            --><!-- switch to toggle location permissions--><!--
                             <StackPanel x:Name="spSettingsLocationPermission">
                                 <ToggleSwitch x:Name="tsSettingsLocationPermission"
                                               x:Uid="Settings-Settings-LocationPermission"
                                               Header="Let Unigram use your location"/>
                             </StackPanel>
-                            <!-- switch to toggle sync with people hub permisson-->
+                            --><!-- switch to toggle sync with people hub permisson--><!--
                             <StackPanel x:Name="spSettingsSyncPeopleHub"
                                         RelativePanel.Below="spSettingsLocationPermission"
                                         Margin="0,24">
@@ -114,7 +138,7 @@
                                               x:Uid="Settings-Settings-SyncPeopleHub"
                                               Header="Sync with People Hub"/>
                             </StackPanel>
-                            <!-- Takes to notification and sounds-->
+                            --><!-- Takes to notification and sounds--><!--
                             <Button x:Name="btnSettingsNotificationSounds"
                                     Background="Transparent"
                                     Padding="0,4"
@@ -128,7 +152,7 @@
                                 </Button.Content>
                             </Button>
 
-                            <!-- Takes to privacy and security-->
+                            --><!-- Takes to privacy and security--><!--
                             <Button x:Name="btnSettingsPrivacySecurity"
                                     Background="Transparent"
                                     Margin="0,8,0,0"
@@ -142,7 +166,7 @@
                                 </Button.Content>                                
                             </Button>
 
-                            <!--Takes to chat settings-->
+                            --><!--Takes to chat settings--><!--
                             <Button x:Name="btnSettingsChatSettings"
                                     Background="Transparent"
                                     Margin="0,8,0,0"
@@ -156,12 +180,12 @@
                                 </Button.Content>
                             </Button>
                         </RelativePanel>
-                        <!-- End of Master - Settings -->
+                        --><!-- End of Master - Settings --><!--
                     </RelativePanel>                                   
                 </ScrollViewer>             
             </RelativePanel>
-            <!-- END OF Master - Main Content -->
-        </RelativePanel>
+            --><!-- END OF Master - Main Content --><!--
+        </RelativePanel>-->
 
     </Grid>
 </Page>

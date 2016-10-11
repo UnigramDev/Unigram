@@ -281,16 +281,22 @@ namespace Telegram.Api.TL
         {
             get
             {
-                var user = With as TLUserBase;
-                if (user != null)
+                var userBase = With as TLUserBase;
+                if (userBase != null)
                 {
-                    if (user.Id == 333000)
+                    var user = With as TLUser;
+                    if (user != null && user.IsSelf)
+                    {
+                        return "You";
+                    }
+
+                    if (userBase.Id == 333000)
                     {
                         //return AppResources.AppName;
                         return "Telegram";
                     }
 
-                    if (user.Id == 777000)
+                    if (userBase.Id == 777000)
                     {
                         //return AppResources.TelegramNotifications;
                         return "Telegram";
@@ -315,12 +321,12 @@ namespace Telegram.Api.TL
 
                     //                    }
 
-                    if (user is TLUserEmpty /*|| user is TLUserDeleted*/)
+                    if (userBase is TLUserEmpty /*|| user is TLUserDeleted*/)
                     {
 
                     }
 
-                    return user.FullName.Trim();
+                    return userBase.FullName.Trim();
                 }
 
                 var channel = With as TLChannel;

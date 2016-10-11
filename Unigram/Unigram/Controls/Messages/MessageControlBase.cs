@@ -41,16 +41,8 @@ namespace Unigram.Controls.Messages
             var message = DataContext as TLMessage;
             if (message != null)
             {
-                //if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel) && !IsFullMedia(message.Media))
-                //{
-                //    paragraph.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId) });
-                //}
-
                 if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel) && (paragraph.Inlines.Count > 0 || !IsFullMedia(message.Media)))
                 {
-                    //if (message.HasFwdFrom)
-                    //    paragraph.Inlines.Insert(0, new LineBreak());
-
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId) });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
@@ -96,10 +88,9 @@ namespace Unigram.Controls.Messages
                 if (message.ViaBot != null)
                 {
                     var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = "@" + message.ViaBot.Username });
+                    hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
 
-                    paragraph.Inlines.Add(new Run { Text = paragraph.Inlines.Count > 0 ? " via " : "via " });
                     paragraph.Inlines.Add(hyperlink);
                 }
 

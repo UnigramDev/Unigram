@@ -169,6 +169,7 @@
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DateTimeToFormatConverter.cs" />
     <Compile Include="Converters\DefaultPhotoConverter.cs" />
+    <Compile Include="Converters\FileSizeConverter.cs" />
     <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\ReplyInfoToGlyphConverter.cs" />

@@ -259,7 +259,7 @@
                   Margin="16,8"
                   RelativePanel.AlignHorizontalCenterWithPanel="True">
                 <Ellipse x:Name="elpContentInfoChatIconColor" Width="200" Height="200" Fill="Purple" VerticalAlignment="Center"/> <!-- Placeholder fill  -->
-                <TextBlock FontSize="96" Margin="12,0" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.FullNameField, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock FontSize="96" Margin="12,0" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.Item, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <Ellipse x:Name="elpContentInfoChatIconPicture" Width="200" Height="200">
                     <Ellipse.Fill>
                         <ImageBrush ImageSource="{x:Bind ViewModel.photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
@@ -278,7 +278,7 @@
             <TextBlock x:Name="tblUserInfoChatName"
                        Visibility="Visible"
                        HorizontalAlignment="Center"
-                       Text="{x:Bind ViewModel.FullNameField, Mode=OneWay}"
+                       Text="{x:Bind ViewModel.Item.FullName, Mode=OneWay}"
                        Margin="0,4,0,0"
                        TextWrapping="NoWrap"
                        TextTrimming="CharacterEllipsis"

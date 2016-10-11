@@ -4,11 +4,14 @@
     <Filter Include="WebP">
       <UniqueIdentifier>{d7592a26-0f4e-44d1-ad1b-3f45b9ac3dd5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Video">
-      <UniqueIdentifier>{2c18282a-db77-41b3-a6f0-5f3e734da98e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Helpers">
       <UniqueIdentifier>{903ec3d1-7f79-41e7-a41d-2ef61411b312}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AnimatedImageSource">
+      <UniqueIdentifier>{2c18282a-db77-41b3-a6f0-5f3e734da98e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GIFImageSource">
+      <UniqueIdentifier>{0ec7378e-5825-462d-b0c1-434e00766d95}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -19,15 +22,25 @@
     <ClCompile Include="WebP\WebPImage.cpp">
       <Filter>WebP</Filter>
     </ClCompile>
-    <ClCompile Include="Video\VideoImageSourceRenderer.cpp">
-      <Filter>Video</Filter>
-    </ClCompile>
     <ClCompile Include="BufferLock.cpp" />
-    <ClCompile Include="Video\VirtualImageSourceRendererCallback.cpp">
-      <Filter>Video</Filter>
+    <ClCompile Include="AnimatedImageSource\MediaFoundationExtensions.cpp" />
+    <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRenderer.cpp">
+      <Filter>AnimatedImageSource</Filter>
     </ClCompile>
-    <ClCompile Include="Video\VideoImageSourceRendererFactory.cpp">
-      <Filter>Video</Filter>
+    <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.cpp">
+      <Filter>AnimatedImageSource</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedImageSource\VirtualImageSourceRendererCallback.cpp">
+      <Filter>AnimatedImageSource</Filter>
+    </ClCompile>
+    <ClCompile Include="GIFMediaSource\GIFByteStreamHandler.cpp">
+      <Filter>GIFImageSource</Filter>
+    </ClCompile>
+    <ClCompile Include="GIFMediaSource\GIFMediaSource.cpp">
+      <Filter>GIFImageSource</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedImageSource\FramesCacheStore.cpp">
+      <Filter>AnimatedImageSource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -37,9 +50,6 @@
     </ClInclude>
     <ClInclude Include="WebP\WebPImage.h">
       <Filter>WebP</Filter>
-    </ClInclude>
-    <ClInclude Include="Video\VideoImageSourceRenderer.h">
-      <Filter>Video</Filter>
     </ClInclude>
     <ClInclude Include="DemuxerWrapper.h" />
     <ClInclude Include="BufferLock.h" />
@@ -55,11 +65,24 @@
     <ClInclude Include="Helpers\DebugHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Video\VideoImageSourceRendererFactory.h">
-      <Filter>Video</Filter>
+    <ClInclude Include="AnimatedImageSource\MediaFoundationExtensions.h" />
+    <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRenderer.h">
+      <Filter>AnimatedImageSource</Filter>
     </ClInclude>
-    <ClInclude Include="Video\VirtualImageSourceRendererCallback.h">
-      <Filter>Video</Filter>
+    <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.h">
+      <Filter>AnimatedImageSource</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedImageSource\VirtualImageSourceRendererCallback.h">
+      <Filter>AnimatedImageSource</Filter>
+    </ClInclude>
+    <ClInclude Include="GIFMediaSource\GIFByteStreamHandler.h">
+      <Filter>GIFImageSource</Filter>
+    </ClInclude>
+    <ClInclude Include="GIFMediaSource\GIFMediaSource.h">
+      <Filter>GIFImageSource</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedImageSource\FramesCacheStore.h">
+      <Filter>AnimatedImageSource</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

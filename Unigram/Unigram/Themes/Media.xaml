@@ -10,6 +10,44 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <DataTemplate x:Key="MediaDocumentTemplate">
+        <Grid MinWidth="260">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Width="48" Height="48" VerticalAlignment="Top">
+                <Rectangle Fill="{ThemeResource MessageMediaBackgroundBrush}"/>
+                <Border>
+                    <Border>
+                        <SymbolIcon Symbol="Download" Foreground="{ThemeResource MessageMediaForegroundBrush}"/>
+                    </Border>
+                </Border>
+                <!--<controls:ImageControl TelegramSource="{Binding Document}" Stretch="UniformToFill"/>-->
+
+                <!--<controls:ProgressBarRing 
+                    Background="Transparent"
+                    Foreground="{ThemeResource MessageMediaForegroundBrush}"
+                    SmoothValue="{Binding DownloadingProgress}" 
+                    common:Attached.Tapped="{Binding Dialog.MediaCancelDownloadingCommand, Source={StaticResource Locator}}"
+                    Maximum="1" 
+                    Visibility="Collapsed"/>
+
+                <controls:ProgressBarRing 
+                    Background="Transparent"
+                    Foreground="{ThemeResource MessageMediaForegroundBrush}"
+                    SmoothValue="{Binding UploadingProgress}"
+                    common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
+                    Maximum="1" 
+                    Visibility="Collapsed"/>-->
+            </Grid>
+            <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
+                <TextBlock Text="{Binding Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource CaptionTextBlockStyle}"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="MediaPhotoTemplate" x:DataType="models:TLMessageMediaPhoto">
         <Grid Background="Black" MinWidth="96" MinHeight="96">
             <Image Source="{Binding Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="400" MaxHeight="400" Stretch="Uniform"/>
@@ -126,7 +164,9 @@
     <selectors:MediaTemplateSelector x:Key="MediaTemplateSelector"
         EmptyTemplate="{StaticResource MediaEmptyTemplate}"
         AudioTemplate="{StaticResource MediaAudioTemplate}"
+        DocumentTemplate="{StaticResource MediaDocumentTemplate}"
         GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
+        GifTemplate="{StaticResource MediaGifTemplate}"
         PhotoTemplate="{StaticResource MediaPhotoTemplate}"
         VideoTemplate="{StaticResource MediaVideoTemplate}"
         WebPageTemplate="{StaticResource WebPageMediaTemplate}"

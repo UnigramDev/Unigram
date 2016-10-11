@@ -4,7 +4,8 @@
 #include <pplcancellation_token.h>
 #include <wrl\wrappers\corewrappers.h>
 #include "VirtualImageSourceRendererCallback.h"
-
+#include "BufferLock.h"
+#include "FramesCacheStore.h"
 
 using namespace Platform;
 using namespace Windows::Storage;
@@ -24,11 +25,12 @@ namespace Unigram
 {
 	namespace Native
 	{
-		ref class VideoImageSourceRendererFactory;
+
+		ref class AnimatedImageSourceRendererFactory;
 
 		[Bindable]
 		[WebHostHidden]
-		public ref class VideoImageSourceRenderer sealed : public INotifyPropertyChanged
+		public ref class AnimatedImageSourceRenderer sealed : public INotifyPropertyChanged
 		{
 		public:
 			virtual	event PropertyChangedEventHandler^ PropertyChanged;
@@ -44,45 +46,57 @@ namespace Unigram
 			void SetSource(_In_ Windows::Media::Core::IMediaSource^ mediaSource);
 
 		internal:
-			VideoImageSourceRenderer(int maximumWidth, int maximumHeight, _In_ VideoImageSourceRendererFactory^ owner);
+			AnimatedImageSourceRenderer(int maximumWidth, int maximumHeight, _In_ AnimatedImageSourceRendererFactory^ owner);
 
 			HRESULT OnUpdatesNeeded();
 			HRESULT OnTimerTick();
 
 		private:
-			~VideoImageSourceRenderer();
+			struct FrameBitmapsResult WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IUnknown>
+			{
+				FrameBitmapsResult(D2D1_SIZE_U frameSize) :
+					FrameSize(frameSize),
+					CacheStore(Make<FramesCacheStore>())
+				{
+				}
+
+				D2D1_SIZE_U FrameSize;
+				ComPtr<FramesCacheStore> CacheStore;
+			};
+
+			~AnimatedImageSourceRenderer();
 
 			void Reset();
-			void Initialize();
+			void Initialize(ComPtr<IMFSourceReader>& sourceReader);
 			void NotifyPropertyChanged(_In_ String^ propertyName);
 			void OnSurfaceContentLost(_In_ Object^ sender, _In_ Object^ args);
 			void OnEnteredBackground(_In_ Object^ sender, _In_ EnteredBackgroundEventArgs^ args);
 			void OnLeavingBackground(_In_ Object^ sender, _In_ LeavingBackgroundEventArgs^ args);
 			HRESULT Draw(_In_ RECT const& drawingBounds);
-			HRESULT BeginDraw(_In_ RECT const& drawingBounds, _Out_ ID2D1DeviceContext** deviceContext);
-			HRESULT EndDraw(_In_ ID2D1DeviceContext* deviceContext);
 			HRESULT InitializeImageSource();
 			HRESULT Invalidate(bool resize);
-			task<void> UpdateFrames(cancellation_token& ct);
-			static HRESULT InitializeSourceReader(_In_ IMFSourceReader* sourceReader, SIZE& frameSize, _Out_ float* frameRate);
-			static HRESULT ConvertVideoTypeToUncompressedType(_In_ IMFMediaType* pType, _In_ const GUID& subtype, SIZE& frameSize, _Out_ IMFMediaType** ppType);
 
+			static task<ComPtr<FrameBitmapsResult>> CreateFrameBitmapsAsync(D2D1_SIZE_U maximumSize, ComPtr<ID2D1DeviceContext>& d2dDeviceContext,
+				ComPtr<IMFSourceReader>& sourceReader, cancellation_token& ct);
+			static HRESULT InitializeSourceReader(_In_ IMFSourceReader* sourceReader, _Out_ D2D1_SIZE_U* frameSize);
+			static HRESULT ConvertVideoTypeToUncompressedType(_In_ IMFMediaType* pType, _In_ const GUID& subtype, _Out_ D2D1_SIZE_U* frameSize, _Out_ IMFMediaType** ppType);
+
+			ComPtr<ID2D1Bitmap> m_frameBitmap;
+			ComPtr<FramesCacheStore> m_framesCacheStore;
 			VirtualSurfaceImageSource^ m_imageSource;
-			VideoImageSourceRendererFactory^ m_owner;
+			AnimatedImageSourceRendererFactory^ m_owner;
 			ComPtr<VirtualImageSourceRendererCallback> m_updatesCallback;
 			ComPtr<IVirtualSurfaceImageSourceNative> m_imageSourceNative;
-			ComPtr<ISurfaceImageSourceNativeWithD2D> m_imageSourceNativeD2D;
-			ComPtr<IMFSourceReader> m_sourceReader;
+
+			//Not using ISurfaceImageSourceNativeWithD2D due to a bug that makes the VirtualSurfaceImageSource unusable after resuming from background
+			//ComPtr<ISurfaceImageSourceNativeWithD2D> m_imageSourceNativeD2D;
 			CriticalSection m_criticalSection;
 			concurrency::cancellation_token_source m_cancellationTokenSource;
 			Windows::Foundation::EventRegistrationToken m_eventTokens[3];
-			std::vector<ComPtr<ID2D1Bitmap>> m_frames;
-			bool m_isUpdatingFrames;
 			int m_frameIndex;
-			int64 m_hiddenTicks;
-			int64 m_maximumHiddenTicks;
-			SIZE m_size;
-			const SIZE m_maximumSize;
+			D2D1_SIZE_U m_size;
+			const D2D1_SIZE_U m_maximumSize;
 		};
+
 	}
 }

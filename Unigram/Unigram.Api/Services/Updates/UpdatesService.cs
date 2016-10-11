@@ -1179,24 +1179,28 @@ namespace Telegram.Api.Services.Updates
 
                         if (!commonMessage.IsOut)
                         {
-                            var readInboxMaxId = channel.ReadInboxMaxId != null ? channel.ReadInboxMaxId.Value : 0;
+                            var readInboxMaxId = channel.ReadInboxMaxId ?? 0;
 
                             if (commonMessage.Id <= readInboxMaxId)
                             {
                                 commonMessage.SetUnreadSilent(false);
                             }
+                            else
+                            {
+                                commonMessage.SetUnreadSilent(true);
+                            }
                         }
                         else
                         {
-                            var channel49 = channel as TLChannel;
-                            if (channel49 != null)
-                            {
-                                var readOutboxMaxId = channel49.ReadOutboxMaxId != null ? channel49.ReadOutboxMaxId.Value : 0;
+                            var readOutboxMaxId = channel.ReadOutboxMaxId ?? 0;
 
-                                if (commonMessage.Id <= readOutboxMaxId)
-                                {
-                                    commonMessage.SetUnreadSilent(false);
-                                }
+                            if (commonMessage.Id <= readOutboxMaxId)
+                            {
+                                commonMessage.SetUnreadSilent(false);
+                            }
+                            else
+                            {
+                                commonMessage.SetUnreadSilent(true);
                             }
                         }
                     }
@@ -1223,16 +1227,50 @@ namespace Telegram.Api.Services.Updates
                     MTProtoService.ProcessSelfMessage(commonMessage);
 
                     TLPeerBase peer;
+                    ITLReadMaxId readMaxId;
                     if (commonMessage.ToId is TLPeerChat)
                     {
                         peer = commonMessage.ToId;
+                        readMaxId = _cacheService.GetChat(peer.Id) as ITLReadMaxId;
                     }
                     else
                     {
                         peer = commonMessage.IsOut ? commonMessage.ToId : new TLPeerUser { Id = commonMessage.FromId ?? 0 };
+                        readMaxId = _cacheService.GetUser(peer.Id) as ITLReadMaxId;
                     }
 
-                    if (commonMessage.RandomId != 0)
+                    // TODO: is this right?
+                    if (readMaxId != null)
+                    {
+                        if (!commonMessage.IsOut)
+                        {
+                            var readInboxMaxId = readMaxId.ReadInboxMaxId;
+
+                            if (commonMessage.Id <= readInboxMaxId)
+                            {
+                                commonMessage.SetUnreadSilent(false);
+                            }
+                            else
+                            {
+                                commonMessage.SetUnreadSilent(true);
+                            }
+                        }
+                        else
+                        {
+                            var readOutboxMaxId = readMaxId.ReadOutboxMaxId;
+
+                            if (commonMessage.Id <= readOutboxMaxId)
+                            {
+                                commonMessage.SetUnreadSilent(false);
+                            }
+                            else
+                            {
+                                commonMessage.SetUnreadSilent(true);
+                            }
+                        }
+                    }
+
+                    if (commonMessage.RandomId.HasValue && commonMessage.RandomId != 0)
                     {
 #if DEBUG
                         Log.Write("TLUpdateNewMessage " + updateNewMessage.Message);

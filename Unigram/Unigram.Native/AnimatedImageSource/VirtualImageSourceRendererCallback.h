@@ -9,6 +9,9 @@
 #include <wrl\module.h>
 #include <wrl\client.h>
 #include <DirectXMath.h> 
+#include <Wincodec.h>
+#include <mfobjects.h>
+#include <mfapi.h>
 #include <windows.ui.xaml.media.dxinterop.h>
 
 #pragma comment(lib, "d2d1.lib")
@@ -31,18 +34,18 @@ using Windows::UI::Xaml::Media::Imaging::VirtualSurfaceImageSource;
 
 namespace Unigram
 {
-	namespace Native 
+	namespace Native
 	{
-		ref class VideoImageSourceRenderer;
+
+		ref class AnimatedImageSourceRenderer;
 
 		class VirtualImageSourceRendererCallback WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IVirtualSurfaceUpdatesCallbackNative, IMFAsyncCallback>
 		{
 		public:
-			VirtualImageSourceRendererCallback(_In_ VideoImageSourceRenderer^ renderer);
+			VirtualImageSourceRendererCallback(_In_ AnimatedImageSourceRenderer^ renderer);
 			~VirtualImageSourceRendererCallback();
 
-			HRESULT StartTimer(int64 duration);
-			HRESULT ResumeTimer();
+			HRESULT StartTimer(LONGLONG duration);
 			HRESULT StopTimer();
 			STDMETHODIMP UpdatesNeeded();
 			STDMETHODIMP Invoke(_In_ IMFAsyncResult* pAsyncResult);
@@ -54,10 +57,10 @@ namespace Unigram
 			}
 
 		private:
-			int64 m_duration;
 			MFWORKITEM_KEY m_timerKey;
-			VideoImageSourceRenderer^ m_renderer;
+			AnimatedImageSourceRenderer^ m_renderer;
 			DispatchedHandler^ m_timerDispatchedHandler;
 		};
+
 	}
 }

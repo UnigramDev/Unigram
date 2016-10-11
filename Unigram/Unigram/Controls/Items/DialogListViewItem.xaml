@@ -21,7 +21,7 @@
         </Grid.RowDefinitions>
         <Rectangle x:Name="Highlight" Margin="-20,0,0,0" Width="5" Fill="{ThemeResource TelegramDialogUnreadBadgeBrush}" Grid.RowSpan="2"/>
         <Ellipse x:Name="Placeholder" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
-        <TextBlock Foreground="White" x:Name="InitialName" Text="{Binding FullName, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.RowSpan="2" Grid.Column="1"/>
+        <TextBlock Foreground="White" x:Name="InitialName" Text="{Binding With, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.RowSpan="2" Grid.Column="1"/>
         <Ellipse Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1">
             <Ellipse.Fill>
                 <ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
@@ -34,10 +34,10 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Grid Margin="0,0,4,0">
+            <Grid Margin="0,0,4,0" HorizontalAlignment="Left">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <FontIcon x:Name="fiType"
