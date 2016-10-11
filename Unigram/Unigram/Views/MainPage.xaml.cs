@@ -245,5 +245,10 @@ namespace Unigram.Views
         {
             ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self?._parent.Id ?? 0 });
         }
+
+        private void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigationService.Navigate(typeof(SettingsPage));
+        }
     }
 }

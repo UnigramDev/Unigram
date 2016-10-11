@@ -191,10 +191,10 @@
                 <!-- Commands hidden in the ellipse-menu -->
                 <CommandBar.SecondaryCommands>
                     <AppBarButton x:Name="cbtnMasterSettings"
-                                        x:Uid="CBTN-Settings"
-                                        Icon="Setting"
-                                        Label="Settings">
-                    </AppBarButton>
+                                  x:Uid="CBTN-Settings"
+                                  Icon="Setting"
+                                  Label="Settings"
+                                  Click="cbtnMasterSettings_Click" />
                     <AppBarButton x:Name="cbtnMasterAbout"
                                         x:Uid="CBTN-About"
                                         Label="About"
