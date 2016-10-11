@@ -465,10 +465,10 @@ namespace Unigram.ViewModels
             {
                 messageText = string.Empty;
 
-                var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "devsfrog" });
+                var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "TrashPack" });
                 if (set.IsSucceeded)
                 {
-                    document = set.Value.Documents.FirstOrDefault(x => x.Id == 325680287654608971) as TLDocument;
+                    document = set.Value.Documents.FirstOrDefault(x => x.Id == 169171005078503693) as TLDocument;
                 }
             }
 
@@ -690,6 +690,10 @@ namespace Unigram.ViewModels
                 }
 
                 item.IsFirst = !attach;
+            }
+            else
+            {
+                item.IsFirst = true;
             }
         }
 

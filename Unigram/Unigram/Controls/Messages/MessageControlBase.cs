@@ -88,7 +88,7 @@ namespace Unigram.Controls.Messages
                 if (message.ViaBot != null)
                 {
                     var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = paragraph.Inlines.Count > 0 ? " via @" : "via @" + message.ViaBot.Username });
+                    hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
 
                     paragraph.Inlines.Add(hyperlink);

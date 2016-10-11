@@ -32,10 +32,10 @@ namespace Unigram.Core.Unidecode
             {
                 return input;
             }
-            
+
 
             // Unidecode result often can be at least two times longer than input string.
-            var sb = new StringBuilder(tempStringBuilderCapacity ?? input.Length*2);
+            var sb = new StringBuilder(tempStringBuilderCapacity ?? input.Length * 2);
             foreach (char c in input)
             {
                 // Copypaste is bad, but sb.Append(c.Unidecode()); would be a bit slower.
