@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
-#if WINDOWS_PHONE
-using Microsoft.Phone.Shell;
-#endif
 #if WP8
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -16,6 +15,7 @@ using Windows.Storage.Streams;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Windows.Foundation;
 using Execute = Telegram.Api.Helpers.Execute;
 
 
@@ -123,6 +123,10 @@ namespace Telegram.Api.Services.FileManager
 
         public bool Canceled { get; set; }
 
+        internal TaskCompletionSource<UploadableItem> Callback { get; set; }
+
+        internal IProgress<double> Progress { get; set; }
+
         public UploadableItem(long fileId, TLObject owner, byte[] bytes)
         {
             FileId = fileId;
@@ -201,6 +205,12 @@ namespace Telegram.Api.Services.FileManager
                         try
                         {
                             _eventAggregator.Publish(new UploadingCanceledEventArgs(item));
+
+                            // TODO: verify
+                            if (item.Callback != null)
+                            {
+                                item.Callback.TrySetCanceled();
+                            }
                         }
                         catch (Exception e)
                         {
@@ -286,6 +296,12 @@ namespace Telegram.Api.Services.FileManager
                         try
                         {
                             Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
+
+                            // TODO: verify
+                            if (part.ParentItem.Callback != null)
+                            {
+                                part.ParentItem.Callback.TrySetResult(part.ParentItem);
+                            }
                         }
                         catch (Exception e)
                         {
@@ -297,6 +313,12 @@ namespace Telegram.Api.Services.FileManager
                         try
                         {
                             Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new UploadProgressChangedEventArgs(part.ParentItem, progress)));
+
+                            // TODO: verify
+                            if (part.ParentItem.Progress != null)
+                            {
+                                part.ParentItem.Progress.Report(progress);
+                            }
                         }
                         catch (Exception e)
                         {
@@ -333,6 +355,25 @@ namespace Telegram.Api.Services.FileManager
 
             manualResetEvent.WaitOne();
             return result;
+        }
+
+        public IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, TLObject owner, byte[] bytes)
+        {
+            return AsyncInfo.Run<UploadableItem, double>((token, progress) =>
+            {
+                var tsc = new TaskCompletionSource<UploadableItem>();
+                var item = GetUploadableItem(fileId, owner, bytes);
+                item.Callback = tsc;
+                item.Progress = progress;
+
+                lock (_itemsSyncRoot)
+                {
+                    _items.Add(item);
+                }
+
+                StartAwaitingWorkers();
+                return tsc.Task;
+            });
         }
 
         public void UploadFile(long fileId, TLObject owner, byte[] bytes)

@@ -93,7 +93,7 @@ namespace Unigram.Controls.Items
 
         private void UpdatePicture()
         {
-            switch (GetColorIndex(ViewModel.WithId))
+            switch (Utils.GetColorIndex(ViewModel.WithId))
             {
                 case 0:
                     Placeholder.Fill = Application.Current.Resources["RedBrush"] as SolidColorBrush;
@@ -123,36 +123,6 @@ namespace Unigram.Controls.Items
                     Placeholder.Fill = Application.Current.Resources["ListViewItemPlaceholderBackgroundThemeBrush"] as SolidColorBrush;
                     break;
             }
-        }
-
-        private int GetColorIndex(int id)
-        {
-            if (id < 0)
-            {
-                id += 256;
-            }
-
-            try
-            {
-                var str = string.Format("{0}{1}", id, MTProtoService.Current.CurrentUserId);
-                if (str.Length > 15)
-                {
-                    str = str.Substring(0, 15);
-                }
-
-                var input = CryptographicBuffer.ConvertStringToBinary(str, BinaryStringEncoding.Utf8);
-                var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
-                var hashed = hasher.HashData(input);
-                byte[] digest;
-                CryptographicBuffer.CopyToByteArray(hashed, out digest);
-
-                var boh = ((id & 0x300000000) == 0x300000000);
-
-                return digest[id % 0x0F] & ((ViewModel.With is TLPeerUser) ? 0x07 : 0x03);
-            }
-            catch { }
-
-            return id % 8;
         }
 
         private string UpdateBriefLabel(TLDialog dialog)

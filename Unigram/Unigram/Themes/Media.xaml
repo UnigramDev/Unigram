@@ -50,7 +50,9 @@
 
     <DataTemplate x:Key="MediaPhotoTemplate" x:DataType="models:TLMessageMediaPhoto">
         <Grid Background="Black" MinWidth="96" MinHeight="96">
-            <Image Source="{Binding Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="400" MaxHeight="400" Stretch="Uniform"/>
+            <Image Source="{Binding Converter={StaticResource DefaultPhotoConverter}}"
+                   common:LazyBitmapImage.Thumb="{Binding Photo}"
+                   Stretch="Uniform"/>
 
             <!--<controls:ProgressBarRing 
                     SmoothValue="{Binding UploadingProgress}"

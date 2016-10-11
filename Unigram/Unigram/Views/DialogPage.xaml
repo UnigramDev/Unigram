@@ -225,7 +225,7 @@
         </MenuFlyout>
 
         <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,8">
+            <Grid Margin="0,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -257,7 +257,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,8">
+            <Grid Margin="0,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -286,7 +286,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,8">
+            <Grid Margin="0,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -817,7 +817,7 @@
                                                 Tag="Pictures"
                                                 Text="Pictures"
                                                 MinWidth="160"
-                                                Click="fcbtnAttachPhoto_Click"/>
+                                                Command="{Binding SendPhotoCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
                                                 x:Name="fcbtnAttachVideo"
                                                 x:Uid="FCBTN-Video"

@@ -8,7 +8,6 @@ namespace Telegram.Api.TL
     public static class TLLong
     {
         private static readonly object _randomSyncRoot = new object();
-
         private static readonly Random _random = new Random();
 
         public static long Random()

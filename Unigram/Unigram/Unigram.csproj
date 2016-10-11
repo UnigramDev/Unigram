@@ -177,6 +177,7 @@
     <Compile Include="Converters\TLIntToDateTimeConverter.cs" />
     <Compile Include="Converters\VenueToStaticImageConverter.cs" />
     <Compile Include="Helpers\ColorHelper.cs" />
+    <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Helpers\PhraseListHelper.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\ShareTargetHelper.cs" />

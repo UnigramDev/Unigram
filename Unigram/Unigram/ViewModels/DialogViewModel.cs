@@ -26,6 +26,12 @@ using Windows.UI.Xaml;
 using Unigram.Converters;
 using Windows.UI.Xaml.Media;
 using System.Diagnostics;
+using Telegram.Api.Services.FileManager;
+using Windows.Storage.Pickers;
+using System.IO;
+using Windows.Storage;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Helpers;
 
 namespace Unigram.ViewModels
 {
@@ -53,11 +59,13 @@ namespace Unigram.ViewModels
 
 
         private readonly IJumpListService _jumpListService;
+        private readonly IUploadFileManager _uploadManager;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IJumpListService jumpListService)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadManager, IJumpListService jumpListService)
             : base(protoService, cacheService, aggregator)
         {
             _jumpListService = jumpListService;
+            _uploadManager = uploadManager;
         }
 
 
@@ -496,7 +504,6 @@ namespace Unigram.ViewModels
             }
 
             var previousMessage = InsertSendingMessage(message);
-
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
                 if (document != null)
@@ -519,6 +526,119 @@ namespace Unigram.ViewModels
                     });
                 }
             });
+        }
+
+        public RelayCommand SendPhotoCommand => new RelayCommand(SendPhotoExecute);
+        private async void SendPhotoExecute()
+        {
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.Add(".png");
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                var fileLocation = new TLFileLocation
+                {
+                    VolumeId = TLLong.Random(),
+                    LocalId = TLInt.Random(),
+                    Secret = TLLong.Random(),
+                    DCId = 0
+                };
+
+                var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+                var fileCache = await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+
+                var fileScale = await ImageHelper.ScaleJpegAsync(file, 1600, fileCache);
+
+                var props = await fileScale.Properties.GetImagePropertiesAsync();
+                var buffer = await FileIO.ReadBufferAsync(fileScale);
+                var bytes = buffer.ToArray();
+
+                var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+                await FileIO.WriteBufferAsync(fileScale, buffer);
+
+                var photoSize = new TLPhotoSize
+                {
+                    Type = string.Empty,
+                    W = (int)props.Width,
+                    H = (int)props.Height,
+                    Location = fileLocation,
+                    Size = (int)buffer.Length
+                };
+
+                var photo = new TLPhoto
+                {
+                    Id = 0,
+                    AccessHash = 0,
+                    Date = date,
+                    Sizes = new TLVector<TLPhotoSizeBase> { photoSize }
+                };
+
+                var media = new TLMessageMediaPhoto
+                {
+                    Photo = photo,
+                    Caption = string.Empty
+                };
+
+                var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+                if (Reply != null)
+                {
+                    message.HasReplyToMsgId = true;
+                    message.ReplyToMsgId = Reply.Id;
+                    message.Reply = Reply;
+                    Reply = null;
+                }
+
+                var previousMessage = InsertSendingMessage(message);
+                CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+                {
+                    var fileId = TLLong.Random();
+                    var upload = _uploadManager.UploadFileAsync(fileId, message, bytes);
+                    upload.Progress = (item, progress) =>
+                    {
+                        media.UploadingProgress = progress;
+                    };
+
+                    var uploadResult = await upload;
+
+                    TLDocument document = null;
+                    var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "TrashPack" });
+                    if (set.IsSucceeded)
+                    {
+                        document = set.Value.Documents.FirstOrDefault(x => x.Id == 169171005078503693) as TLDocument;
+                    }
+
+
+
+                    var inputMedia = new TLInputMediaUploadedPhoto
+                    {
+                        Caption = media.Caption,
+                        File = new TLInputFile
+                        {
+                            Id = uploadResult.FileId,
+                            Md5Checksum = string.Empty,
+                            Name = "file.jpg",
+                            Parts = uploadResult.Parts.Count
+                        },
+                        Stickers = new TLVector<TLInputDocumentBase>
+                        {
+                            new TLInputDocument
+                            {
+                                Id = document.Id,
+                                AccessHash = document.AccessHash
+                            }
+                        }
+                    };
+
+                    var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                });
+            }
         }
 
         private TLMessageBase InsertSendingMessage(TLMessage message, bool useReplyMarkup = false)
@@ -665,6 +785,16 @@ namespace Unigram.ViewModels
 
             UpdateAttach(previous, item);
             UpdateAttach(item, next);
+        }
+
+        protected override void RemoveItem(int index)
+        {
+            var next = index > 0 ? this[index - 1] : null;
+            var previous = index < Count - 1 ? this[index + 1] : null;
+
+            UpdateAttach(previous, next);
+
+            base.RemoveItem(index);
         }
 
         private void UpdateAttach(TLMessageBase item, TLMessageBase previous)

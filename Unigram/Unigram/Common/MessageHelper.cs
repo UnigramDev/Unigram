@@ -85,7 +85,7 @@ namespace Unigram.Common
                     ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
-                if (message17?.Media is TLMessageMediaEmpty || message17?.Media == null)
+                if (message17?.Media is TLMessageMediaEmpty || message17?.Media is ITLMediaCaption || message17?.Media == null)
                 {
                     var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
                     var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
@@ -101,6 +101,10 @@ namespace Unigram.Common
                         if (message.HasEditDate)
                         {
                             placeholder = "edited" + placeholder;
+                        }
+                        if (message.HasViews)
+                        {
+                            placeholder = "VIEWS" + (message.Views ?? 0) + placeholder;
                         }
 
                         //paragraph.Inlines.Add(new Run { Text = "\t" + new string('\u00a0', date.Length + (message.IsOut ? 12 : 8)) });

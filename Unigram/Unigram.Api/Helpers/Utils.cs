@@ -640,12 +640,19 @@ namespace Telegram.Api.Helpers
                 }
 
                 var input = CryptographicBuffer.ConvertStringToBinary(str, BinaryStringEncoding.Utf8);
+                //if (input.Length > 16)
+                //{
+                //    byte[] temp;
+                //    CryptographicBuffer.CopyToByteArray(input, out temp);
+                //    input = CryptographicBuffer.CreateFromByteArray(temp.Take(16).ToArray());
+                //}
+
                 var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
                 var hashed = hasher.HashData(input);
                 byte[] digest;
                 CryptographicBuffer.CopyToByteArray(hashed, out digest);
 
-                return digest[id % 0x0F] & (((id & 0x300000000) == 0x300000000) ? 0x07 : 0x03);
+                return digest[id % 0x0F] & 0x07;
             }
             catch { }
 
