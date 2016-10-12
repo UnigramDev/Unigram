@@ -5,11 +5,18 @@ using System.Linq;
 using System.Threading;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
-
 
 namespace Telegram.Api.Services.FileManager
 {
+    public interface IUploadAudioFileManager
+    {
+        void UploadFile(long fileId, TLObject owner, string fileName);
+        void UploadFile(long fileId, TLObject owner, string fileName, IList<UploadablePart> parts);
+        void CancelUploadFile(long fileId);
+    }
+
     public class UploadAudioFileManager : IUploadAudioFileManager
     {
         private readonly object _itemsSyncRoot = new object();

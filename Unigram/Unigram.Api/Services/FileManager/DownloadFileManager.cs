@@ -11,6 +11,17 @@ using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.FileManager
 {
+    public interface IDownloadFileManager
+    {
+        Task<DownloadableItem> DownloadFileAsync(TLFileLocation file, TLObject owner, int fileSize);
+
+        void DownloadFile(TLFileLocation file, TLObject owner, int fileSize);
+
+        void DownloadFile(TLFileLocation file, TLObject owner, int fileSize, System.Action<DownloadableItem> callback);
+
+        void CancelDownloadFile(TLObject owner);
+    }
+
     public class DownloadFileManager : IDownloadFileManager
     {
         private readonly object _randomRoot = new object();
@@ -180,7 +191,7 @@ namespace Telegram.Api.Services.FileManager
                 }
                 else
                 {
-                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new ProgressChangedEventArgs(part.ParentItem, progress)));
+                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new DownloadProgressChangedEventArgs(part.ParentItem, progress)));
                 }
             }
         }

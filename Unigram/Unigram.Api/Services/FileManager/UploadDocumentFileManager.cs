@@ -1,65 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
-#if WP8
-using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.Streams;
-#endif
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
-using Windows.Foundation;
-using Execute = Telegram.Api.Helpers.Execute;
-
 
 namespace Telegram.Api.Services.FileManager
 {
-    public interface IUploadFileManager
+    public interface IUploadDocumentFileManager
     {
-        IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, TLObject owner, byte[] bytes);
-
         void UploadFile(long fileId, TLObject owner, byte[] bytes);
 #if WP8
         void UploadFile(long fileId, TLObject owner, StorageFile file);
+        void UploadFile(long fileId, TLObject owner, StorageFile file, string key, string iv);
 #endif
         void CancelUploadFile(long fileId);
     }
 
-    public class UploadFileManager : IUploadFileManager
+    public class UploadDocumentFileManager : IUploadDocumentFileManager
     {
         private readonly object _itemsSyncRoot = new object();
 
         private readonly List<UploadableItem> _items = new List<UploadableItem>();
 
-        private readonly List<Worker> _workers = new List<Worker>(Constants.WorkersNumber); 
+        private readonly List<Worker> _workers = new List<Worker>(Constants.WorkersNumber);
 
         private readonly ITelegramEventAggregator _eventAggregator;
 
         private readonly IMTProtoService _mtProtoService;
 
-        public UploadFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
+        public UploadDocumentFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
         {
             _eventAggregator = eventAggregator;
             _mtProtoService = mtProtoService;
 
 
             var timer = Stopwatch.StartNew();
-            for (int i = 0; i < Constants.WorkersNumber; i++)
+            for (var i = 0; i < Constants.DocumentUploadersCount; i++)
             {
-                var worker = new Worker(OnUploading, "uploader"+i);
+                var worker = new Worker(OnUploading, "documentUploader" + i);
                 _workers.Add(worker);
             }
 
             TLUtils.WritePerformance("Start workers timer: " + timer.Elapsed);
-            
         }
 
         private void OnUploading(object state)
@@ -76,12 +64,6 @@ namespace Telegram.Api.Services.FileManager
                         try
                         {
                             _eventAggregator.Publish(new UploadingCanceledEventArgs(item));
-
-                            // TODO: verify
-                            if (item.Callback != null)
-                            {
-                                item.Callback.TrySetCanceled();
-                            }
                         }
                         catch (Exception e)
                         {
@@ -89,7 +71,6 @@ namespace Telegram.Api.Services.FileManager
                         }
                     }
                 }
-
 
                 foreach (var item in _items)
                 {
@@ -109,13 +90,35 @@ namespace Telegram.Api.Services.FileManager
                 if (bytes == null)
                 {
                     var file = part.ParentItem.File;
+                    Tuple<bool, byte[]> result = null;
                     if (file != null)
                     {
                         var task = FileUtils.FillBuffer(file, part);
                         task.Wait();
-                        
-                        bytes = task.Result.Item2;
+                        result = task.Result;
                     }
+
+                    if (result == null)
+                    {
+                        part.Status = PartStatus.Ready;
+                        return;
+                    }
+
+                    if (result.Item1 && result.Item2 == null)
+                    {
+                        part.Status = PartStatus.Ready;
+                        return;
+                    }
+
+                    if (!result.Item1)
+                    {
+                        part.ParentItem.FileNotFound = true;
+                        part.Status = PartStatus.Processed;
+                        FileUtils.NotifyProgress(_itemsSyncRoot, _items, part, _eventAggregator);
+                        return;
+                    }
+
+                    bytes = result.Item2;
 
                     if (bytes == null)
                     {
@@ -124,79 +127,32 @@ namespace Telegram.Api.Services.FileManager
                     }
                 }
 #endif
-
-                var result = PutFile(part.ParentItem.FileId, part.FilePart, part.ParentItem.Parts.Count, bytes);
-                while (!result)
+                if (part.ParentItem.IsSmallFile)
                 {
-                    if (part.ParentItem.Canceled)
+                    bool result = PutFile(part.ParentItem.FileId, part.FilePart, bytes);
+                    while (!result)
                     {
-                        return;
+                        if (part.ParentItem.Canceled)
+                        {
+                            return;
+                        }
+                        result = PutFile(part.ParentItem.FileId, part.FilePart, bytes);
                     }
-                    result = PutFile(part.ParentItem.FileId, part.FilePart, part.ParentItem.Parts.Count, bytes);
                 }
-
-                // indicate progress
-                // indicate complete
-                bool isComplete = false;
-                bool isCanceled;
-                var progress = 0.0;
-                lock (_itemsSyncRoot)
+                else
                 {
-                    part.Status = PartStatus.Processed;
-                    isCanceled = part.ParentItem.Canceled;
-                    if (!isCanceled)
+                    bool result = PutBigFile(part.ParentItem.FileId, part.FilePart, part.ParentItem.Parts.Count, bytes);
+                    while (!result)
                     {
-                        isComplete = part.ParentItem.Parts.All(x => x.Status == PartStatus.Processed);
-                        if (!isComplete)
+                        if (part.ParentItem.Canceled)
                         {
-                            double uploadedCount = part.ParentItem.Parts.Count(x => x.Status == PartStatus.Processed);
-                            double totalCount = part.ParentItem.Parts.Count;
-                            progress = uploadedCount / totalCount;
+                            return;
                         }
-                        else
-                        {
-                            _items.Remove(part.ParentItem);
-                        }
+                        result = PutBigFile(part.ParentItem.FileId, part.FilePart, part.ParentItem.Parts.Count, bytes);
                     }
                 }
 
-                if (!isCanceled)
-                {
-                    if (isComplete)
-                    {
-                        try
-                        {
-                            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
-
-                            // TODO: verify
-                            if (part.ParentItem.Callback != null)
-                            {
-                                part.ParentItem.Callback.TrySetResult(part.ParentItem);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            TLUtils.WriteLine(e.ToString(), LogSeverity.Error);
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new UploadProgressChangedEventArgs(part.ParentItem, progress)));
-
-                            // TODO: verify
-                            if (part.ParentItem.Progress != null)
-                            {
-                                part.ParentItem.Progress.Report(progress);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            TLUtils.WriteLine(e.ToString(), LogSeverity.Error);
-                        }
-                    }
-                }
+                FileUtils.NotifyProgress(_itemsSyncRoot, _items, part, _eventAggregator);
             }
             else
             {
@@ -206,7 +162,30 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private bool PutFile(long fileId, int filePart, int fileTotalPars, byte[] bytes)
+
+        private bool PutBigFile(long fileId, int filePart, int fileTotalPars, byte[] bytes)
+        {
+            var manualResetEvent = new ManualResetEvent(false);
+            var result = false;
+
+            _mtProtoService.SaveBigFilePartCallback(fileId, filePart, fileTotalPars, bytes,
+                savingResult =>
+                {
+                    result = true;
+                    manualResetEvent.Set();
+                },
+                error => Execute.BeginOnThreadPool(TimeSpan.FromSeconds(1.0), () =>
+                {
+                    Execute.ShowDebugMessage(string.Format("upload.saveBigFilePart part={0}, count={1} error\n", filePart, bytes.Length) + error);
+
+                    manualResetEvent.Set();
+                }));
+
+            manualResetEvent.WaitOne();
+            return result;
+        }
+
+        private bool PutFile(long fileId, int filePart, byte[] bytes)
         {
             var manualResetEvent = new ManualResetEvent(false);
             var result = false;
@@ -219,7 +198,7 @@ namespace Telegram.Api.Services.FileManager
                 },
                 error => Execute.BeginOnThreadPool(TimeSpan.FromSeconds(1.0), () =>
                 {
-                    Execute.ShowDebugMessage(string.Format("upload.saveFilePart part={0}, bytesCount={1} error\n", filePart, bytes.Length) + error);
+                    Execute.ShowDebugMessage(string.Format("upload.saveBigFilePart part={0}, count={1} error\n", filePart, bytes.Length) + error);
 
                     manualResetEvent.Set();
                 }));
@@ -228,29 +207,10 @@ namespace Telegram.Api.Services.FileManager
             return result;
         }
 
-        public IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, TLObject owner, byte[] bytes)
-        {
-            return AsyncInfo.Run<UploadableItem, double>((token, progress) =>
-            {
-                var tsc = new TaskCompletionSource<UploadableItem>();
-                var item = GetUploadableItem(fileId, owner, bytes);
-                item.Callback = tsc;
-                item.Progress = progress;
-
-                lock (_itemsSyncRoot)
-                {
-                    _items.Add(item);
-                }
-
-                StartAwaitingWorkers();
-                return tsc.Task;
-            });
-        }
-
         public void UploadFile(long fileId, TLObject owner, byte[] bytes)
         {
+            FileUtils.SwitchIdleDetectionMode(false);
             var item = GetUploadableItem(fileId, owner, bytes);
-
             lock (_itemsSyncRoot)
             {
                 _items.Add(item);
@@ -262,41 +222,23 @@ namespace Telegram.Api.Services.FileManager
 #if WP8
         public void UploadFile(TLLong fileId, TLObject owner, StorageFile file)
         {
-            var item = GetUploadableItem(fileId, owner, file);
+            UploadFile(fileId, owner, file, null, null);
+        }
 
+        public void UploadFile(TLLong fileId, TLObject owner, StorageFile file, TLString key, TLString iv)
+        {
+            FileUtils.SwitchIdleDetectionMode(false);
+            var item = FileUtils.GetUploadableItem(fileId, owner, file, key, iv);
+            //if (item)
+            //{
+            //    item.IsSmallFile = false;   // to void auto convert small video documents to videos on server side
+            //}
             lock (_itemsSyncRoot)
             {
                 _items.Add(item);
             }
 
             StartAwaitingWorkers();
-        }
-
-        private UploadableItem GetUploadableItem(TLLong fileId, TLObject owner, StorageFile file)
-        {
-            var item = new UploadableItem(fileId, owner, file);
-
-            var task = file.GetBasicPropertiesAsync().AsTask();
-            task.Wait();
-            var propertie = task.Result;
-            var size = propertie.Size;
-            item.Parts = GetItemParts(item, (int)size);
-            return item;
-        }
-
-        private static List<UploadablePart> GetItemParts(UploadableItem item, int size)
-        {
-            var chunkSize = FileUtils.GetChunkSize(size);
-            var partsCount = FileUtils.GetPartsCount(size, chunkSize);
-            var parts = new List<UploadablePart>(partsCount);
-
-            for (var i = 0; i < partsCount; i++)
-            {
-                var part = new UploadablePart(item, new TLInt(i), i * chunkSize, Math.Min(chunkSize, (long)size - i * chunkSize));
-                parts.Add(part);
-            }
-
-            return parts;
         }
 #endif
 
@@ -320,6 +262,8 @@ namespace Telegram.Api.Services.FileManager
                 parts.Add(part);
             }
 
+            item.IsSmallFile = size < Constants.SmallFileMaxSize;// size < chunkSize;
+
             return parts;
         }
 
@@ -338,7 +282,7 @@ namespace Telegram.Api.Services.FileManager
             lock (_itemsSyncRoot)
             {
                 var item = _items.FirstOrDefault(x => x.FileId == fileId);
-                
+
                 if (item != null)
                 {
                     item.Canceled = true;
