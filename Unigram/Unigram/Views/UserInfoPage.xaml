@@ -189,12 +189,14 @@
                         <Setter Target="profilePane.(Grid.Column)" Value="0"/>
                         <Setter Target="profilePane.(Grid.Row)" Value="0"/>
                         <Setter Target="InitialName.FontSize" Value="24" />
-                        <Setter Target="elpContentInfoChatIconPicture.MinHeight" Value="96"/>
-                        <Setter Target="elpContentInfoChatIconPicture.MinWidth" Value="96"/>
-                        <Setter Target="elpContentInfoChatIcon.MinHeight" Value="120"/>
-                        <Setter Target="elpContentInfoChatIcon.MinWidth" Value="120"/>
-                        <Setter Target="elpContentInfoChatIconColor.MinHeight" Value="96"/>
-                        <Setter Target="elpContentInfoChatIconColor.MinWidth" Value="96"/>
+                        <Setter Target="elpContentInfoChatIconPicture.Height" Value="96"/>
+                        <Setter Target="elpContentInfoChatIconPicture.Width" Value="96"/>
+                        <Setter Target="elpContentInfoChatIcon.Height" Value="96"/>
+                        <Setter Target="elpContentInfoChatIcon.Width" Value="96"/>
+                        <Setter Target="elpContentInfoChatIcon.MinHeight" Value="96"/>
+                        <Setter Target="elpContentInfoChatIcon.MinWidth" Value="96"/>
+                        <Setter Target="elpContentInfoChatIconColor.Height" Value="96"/>
+                        <Setter Target="elpContentInfoChatIconColor.Width" Value="96"/>
                         <Setter Target="profileControlPane.(Grid.RowSpan)" Value="1"/>
                         <Setter Target="profileControlPane.(Grid.Row)" Value="1"/>
                         <Setter Target="profileControlPane.(Grid.ColumnSpan)" Value="2"/>
@@ -218,35 +220,8 @@
                 </VisualState>
                 <VisualState x:Name="FilledState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="720"/>
+                        <AdaptiveTrigger MinWindowWidth="500"/>
                     </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="profilePane.(Grid.ColumnSpan)" Value="1"/>
-                        <Setter Target="profilePane.(Grid.RowSpan)" Value="2"/>
-                        <Setter Target="profilePane.(Grid.Column)" Value="0"/>
-                        <Setter Target="profilePane.(Grid.Row)" Value="0"/>
-                        <Setter Target="InitialName.FontSize" Value="96" />
-                        <Setter Target="elpContentInfoChatIconPicture.MinHeight" Value="200"/>
-                        <Setter Target="elpContentInfoChatIconPicture.MinWidth" Value="200"/>
-                        <Setter Target="elpContentInfoChatIcon.MinHeight" Value="200"/>
-                        <Setter Target="elpContentInfoChatIcon.MinWidth" Value="200"/>
-                        <Setter Target="elpContentInfoChatIconColor.MinHeight" Value="200"/>
-                        <Setter Target="elpContentInfoChatIconColor.MinWidth" Value="200"/>
-                        <Setter Target="profileControlPane.(Grid.RowSpan)" Value="2"/>
-                        <Setter Target="profileControlPane.(Grid.Row)" Value="0"/>
-                        <Setter Target="profileControlPane.(Grid.ColumnSpan)" Value="1"/>
-                        <Setter Target="profileControlPane.(Grid.Column)" Value="1"/>
-                        <Setter Target="profileControlPane.Margin" Value="0,42"/>
-                        <Setter Target="grdProfile.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
-                        <Setter Target="tblUserInfoChatName.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
-                        <Setter Target="tblUserInfoUserName.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
-                        <Setter Target="tblUserInfoChatStatus.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
-                        <Setter Target="tblUserInfoPhone.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
-                        <Setter Target="tblUserInfoChatName.TextAlignment" Value="Center"/>
-                        <Setter Target="tblUserInfoUserName.TextAlignment" Value="Center"/>
-                        <Setter Target="tblUserInfoChatStatus.TextAlignment" Value="Center"/>
-                        <Setter Target="tblUserInfoPhone.TextAlignment" Value="Center"/>
-                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
