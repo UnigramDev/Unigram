@@ -119,10 +119,7 @@
     <Compile Include="Services\FileManager\EventArgs\DownloadProgressChangedEventArgs.cs" />
     <Compile Include="Services\FileManager\UploadableItem.cs" />
     <Compile Include="Services\FileManager\UploadablePart.cs" />
-    <Compile Include="Services\FileManager\UploadAudioFileManager.cs" />
-    <Compile Include="Services\FileManager\UploadDocumentFileManager.cs" />
-    <Compile Include="Services\FileManager\UploadFileManager.cs" />
-    <Compile Include="Services\FileManager\UploadVideoFileManager.cs" />
+    <Compile Include="Services\FileManager\UploadManager.cs" />
     <Compile Include="Services\FileManager\DownloadVideoFileManager.cs" />
     <Compile Include="Services\FileManager\Worker.cs" />
     <Compile Include="Services\IMTProtoService.Async.cs" />

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public abstract partial class TLMessageMediaBase
+    public abstract partial class TLMessageMediaBase : INotifyPropertyChanged
     {
         private double _uploadingProgress;
         public double UploadingProgress
@@ -18,7 +20,7 @@ namespace Telegram.Api.TL
             set
             {
                 _uploadingProgress = value;
-                RaisePropertyChanged();
+                RaisePropertyChanged(() => UploadingProgress);
             }
         }
 
@@ -32,10 +34,16 @@ namespace Telegram.Api.TL
             set
             {
                 _downloadingProgress = value;
-                RaisePropertyChanged();
+                RaisePropertyChanged(() => DownloadingProgress);
             }
         }
 
         public double LastProgress { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public override void RaisePropertyChanged(string propertyName)
+        {
+            Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+        }
     }
 }

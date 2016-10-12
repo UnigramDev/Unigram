@@ -54,6 +54,8 @@
                    common:LazyBitmapImage.Thumb="{Binding Photo}"
                    Stretch="Uniform"/>
 
+            <ProgressBar Value="{Binding UploadingProgress}" Maximum="1"/>
+
             <!--<controls:ProgressBarRing 
                     SmoothValue="{Binding UploadingProgress}"
                     common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"

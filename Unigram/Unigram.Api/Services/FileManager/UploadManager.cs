@@ -1,8 +1,9 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -13,16 +14,22 @@ using Windows.Foundation;
 
 namespace Telegram.Api.Services.FileManager
 {
-    public interface IUploadAudioFileManager
+    public interface IUploadManager
     {
+        IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, TLObject owner, string fileName, bool forceBigFile);
         IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, TLObject owner, string fileName);
 
+        void UploadFile(long fileId, TLObject owner, string fileName, bool forceBigFile);
         void UploadFile(long fileId, TLObject owner, string fileName);
-        void UploadFile(long fileId, TLObject owner, string fileName, IList<UploadablePart> parts);
         void CancelUploadFile(long fileId);
     }
 
-    public class UploadAudioFileManager : IUploadAudioFileManager
+    public interface IUploadFileManager : IUploadManager { }
+    public interface IUploadAudioManager : IUploadManager { }
+    public interface IUploadDocumentManager : IUploadManager { }
+    public interface IUploadVideoManager : IUploadManager { }
+
+    public class UploadManager : IUploadFileManager, IUploadAudioManager, IUploadDocumentManager, IUploadVideoManager
     {
         private readonly object _itemsSyncRoot = new object();
         private readonly List<UploadableItem> _items = new List<UploadableItem>();
@@ -32,7 +39,7 @@ namespace Telegram.Api.Services.FileManager
         private readonly ITelegramEventAggregator _eventAggregator;
         private readonly IMTProtoService _mtProtoService;
 
-        public UploadAudioFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
+        public UploadManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
         {
             _eventAggregator = eventAggregator;
             _mtProtoService = mtProtoService;
@@ -93,18 +100,42 @@ namespace Telegram.Api.Services.FileManager
                 var bytes = FileUtils.ReadBytes(part.ParentItem.IsoFileName, part.Position, part.Count);
                 part.SetBuffer(bytes);
 
-                bool result = PutFile(part.ParentItem.FileId, part.FilePart, part.Bytes);
-                while (!result)
+                //bool result = PutFile(part.ParentItem.FileId, part.FilePart, part.Bytes);
+                //while (!result)
+                //{
+                //    if (part.ParentItem.Canceled)
+                //    {
+                //        return;
+                //    }
+                //    result = PutFile(part.ParentItem.FileId, part.FilePart, part.Bytes);
+                //}
+
+                if (part.ParentItem.IsSmallFile)
                 {
-                    if (part.ParentItem.Canceled)
+                    bool result = PutFile(part.ParentItem.FileId, part.FilePart, bytes);
+                    while (!result)
                     {
-                        return;
+                        if (part.ParentItem.Canceled)
+                        {
+                            return;
+                        }
+                        result = PutFile(part.ParentItem.FileId, part.FilePart, bytes);
                     }
-                    result = PutFile(part.ParentItem.FileId, part.FilePart, part.Bytes);
+                }
+                else
+                {
+                    bool result = PutBigFile(part.ParentItem.FileId, part.FilePart, part.ParentItem.Parts.Count, bytes);
+                    while (!result)
+                    {
+                        if (part.ParentItem.Canceled)
+                        {
+                            return;
+                        }
+                        result = PutBigFile(part.ParentItem.FileId, part.FilePart, part.ParentItem.Parts.Count, bytes);
+                    }
                 }
 
                 part.ClearBuffer();
-
 
                 // indicate progress
                 // indicate complete
@@ -135,8 +166,6 @@ namespace Telegram.Api.Services.FileManager
                 {
                     if (isComplete)
                     {
-                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
-
                         // TODO: verify
                         if (part.ParentItem.Callback != null)
                         {
@@ -145,8 +174,6 @@ namespace Telegram.Api.Services.FileManager
                     }
                     else
                     {
-                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new UploadProgressChangedEventArgs(part.ParentItem, progress)));
-
                         // TODO: verify
                         if (part.ParentItem.Progress != null)
                         {
@@ -162,6 +189,28 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
+        private bool PutBigFile(long fileId, int filePart, int fileTotalPars, byte[] bytes)
+        {
+            var manualResetEvent = new ManualResetEvent(false);
+            var result = false;
+
+            _mtProtoService.SaveBigFilePartCallback(fileId, filePart, fileTotalPars, bytes,
+                savingResult =>
+                {
+                    result = true;
+                    manualResetEvent.Set();
+                },
+                error => Execute.BeginOnThreadPool(TimeSpan.FromSeconds(1.0), () =>
+                {
+                    Execute.ShowDebugMessage(string.Format("upload.saveBigFilePart part={0}, count={1} error\n", filePart, bytes.Length) + error);
+
+                    manualResetEvent.Set();
+                }));
+
+            manualResetEvent.WaitOne();
+            return result;
+        }
+
         private bool PutFile(long fileId, int filePart, byte[] bytes)
         {
             var manualResetEvent = new ManualResetEvent(false);
@@ -173,10 +222,12 @@ namespace Telegram.Api.Services.FileManager
                     result = true;
                     manualResetEvent.Set();
                 },
-                error =>
+                error => Execute.BeginOnThreadPool(TimeSpan.FromSeconds(1.0), () =>
                 {
-                    Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(1000), () => manualResetEvent.Set());
-                });
+                    Execute.ShowDebugMessage(string.Format("upload.saveBigFilePart part={0}, count={1} error\n", filePart, bytes.Length) + error);
+
+                    manualResetEvent.Set();
+                }));
 
             manualResetEvent.WaitOne();
             return result;
@@ -184,16 +235,26 @@ namespace Telegram.Api.Services.FileManager
 
         public IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, TLObject owner, string fileName)
         {
+            return UploadFileAsync(fileId, owner, fileName, false);
+        }
+
+        public IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, TLObject owner, string fileName, bool forceBigFile)
+        {
             return AsyncInfo.Run<UploadableItem, double>((token, progress) =>
             {
                 var tsc = new TaskCompletionSource<UploadableItem>();
 
                 long fileLength = FileUtils.GetLocalFileLength(fileName);
-                if (fileLength <= 0) return Task.FromResult(new UploadableItem(0, null, null));
+                if (fileLength <= 0) return Task.FromResult<UploadableItem>(null);
 
                 var item = GetUploadableItem(fileId, owner, fileName, fileLength);
                 item.Callback = tsc;
                 item.Progress = progress;
+
+                if (forceBigFile)
+                {
+                    item.IsSmallFile = false;
+                }
 
                 var uploadedCount = item.Parts.Count(x => x.Status == PartStatus.Processed);
                 var count = item.Parts.Count;
@@ -225,6 +286,11 @@ namespace Telegram.Api.Services.FileManager
 
         public void UploadFile(long fileId, TLObject owner, string fileName)
         {
+            UploadFile(fileId, owner, fileName, false);
+        }
+
+        public void UploadFile(long fileId, TLObject owner, string fileName, bool forceBigFile)
+        {
             long fileLength = FileUtils.GetLocalFileLength(fileName);
             if (fileLength <= 0) return;
 
@@ -249,39 +315,6 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        public void UploadFile(long fileId, TLObject owner, string fileName, IList<UploadablePart> parts)
-        {
-            long fileLength = FileUtils.GetLocalFileLength(fileName);
-            if (fileLength <= 0) return;
-
-            var item = GetUploadableItem(fileId, owner, fileName, fileLength, parts);
-
-            var uploadedCount = item.Parts.Count(x => x.Status == PartStatus.Processed);
-            var count = item.Parts.Count;
-            var isComplete = uploadedCount == count;
-
-            //if (isComplete)
-            //{
-            //    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(item));
-            //}
-            //else
-            {
-                lock (_itemsSyncRoot)
-                {
-                    _items.Add(item);
-                }
-
-                StartAwaitingWorkers();
-            }
-        }
-
-        private UploadableItem GetUploadableItem(long fileId, TLObject owner, string isoFileName, long isoFileLength, IList<UploadablePart> parts)
-        {
-            var item = new UploadableItem(fileId, owner, isoFileName, isoFileLength);
-            item.Parts = GetItemParts(item, isoFileLength, parts);
-            return item;
-        }
-
         private UploadableItem GetUploadableItem(long fileId, TLObject owner, string isoFileName, long isoFileLength)
         {
             var item = new UploadableItem(fileId, owner, isoFileName, isoFileLength);
@@ -291,41 +324,17 @@ namespace Telegram.Api.Services.FileManager
 
         private List<UploadablePart> GetItemParts(UploadableItem item, long isoFileLength)
         {
-            const int partSize = 32 * 1024; // 32 Kb: êðàòíî 1 Kb è íàöåëî äåëèò 1024 Kb
+            const int partSize = 32 * 1024; // 32 Kb: ÃªÃ°Ã Ã²Ã­Ã® 1 Kb Ã¨ Ã­Ã Ã¶Ã¥Ã«Ã® Ã¤Ã¥Ã«Ã¨Ã² 1024 Kb
             var parts = new List<UploadablePart>();
             var partsCount = item.IsoFileLength / partSize + (item.IsoFileLength % partSize > 0 ? 1 : 0);
+
             for (var i = 0; i < partsCount; i++)
             {
                 var part = new UploadablePart(item, i, i * partSize, Math.Min(partSize, isoFileLength - i * partSize));
                 parts.Add(part);
             }
 
-            return parts;
-        }
-
-        private List<UploadablePart> GetItemParts(UploadableItem item, long isoFileLength, IList<UploadablePart> uploadedParts)
-        {
-            const int partSize = 32 * 1024;
-            foreach (var uploadedPart in uploadedParts)
-            {
-                uploadedPart.SetParentItem(item);
-            }
-            var parts = new List<UploadablePart>(uploadedParts);
-
-            var uploadedLength = uploadedParts.Sum(x => x.Count);
-
-            var uploadingLength = item.IsoFileLength - uploadedLength;
-            if (uploadingLength == 0)
-            {
-                return parts;
-            }
-            var partsCount = uploadingLength / partSize + 1;
-            for (var i = 0; i < partsCount; i++)
-            {
-                var partId = i + uploadedParts.Count;
-                var part = new UploadablePart(item, partId, uploadedLength + i * partSize, Math.Min(partSize, isoFileLength - (uploadedLength + i * partSize)));
-                parts.Add(part);
-            }
+            item.IsSmallFile = item.IsoFileLength < Constants.SmallFileMaxSize;// size < chunkSize;
 
             return parts;
         }

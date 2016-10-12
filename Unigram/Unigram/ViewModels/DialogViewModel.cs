@@ -554,21 +554,20 @@ namespace Unigram.ViewModels
 
                 var fileScale = await ImageHelper.ScaleJpegAsync(file, 1600, fileCache);
 
-                var props = await fileScale.Properties.GetImagePropertiesAsync();
+                var basicProps = await fileScale.GetBasicPropertiesAsync();
+                var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
                 var buffer = await FileIO.ReadBufferAsync(fileScale);
                 var bytes = buffer.ToArray();
 
                 var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
 
-                await FileIO.WriteBufferAsync(fileScale, buffer);
-
                 var photoSize = new TLPhotoSize
                 {
                     Type = string.Empty,
-                    W = (int)props.Width,
-                    H = (int)props.Height,
+                    W = (int)imageProps.Width,
+                    H = (int)imageProps.Height,
                     Location = fileLocation,
-                    Size = (int)buffer.Length
+                    Size = (int)basicProps.Size
                 };
 
                 var photo = new TLPhoto
@@ -599,13 +598,11 @@ namespace Unigram.ViewModels
                 CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
                 {
                     var fileId = TLLong.Random();
-                    var upload = _uploadManager.UploadFileAsync(fileId, message, bytes);
-                    upload.Progress = (item, progress) =>
+                    var upload = await _uploadManager.UploadFileAsync(fileId, message, Path.GetFileName(fileScale.Path)).AsTask(new Progress<double>((progress) =>
                     {
                         media.UploadingProgress = progress;
-                    };
-
-                    var uploadResult = await upload;
+                        Debug.WriteLine(progress);
+                    }));
 
                     TLDocument document = null;
                     var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "TrashPack" });
@@ -621,10 +618,10 @@ namespace Unigram.ViewModels
                         Caption = media.Caption,
                         File = new TLInputFile
                         {
-                            Id = uploadResult.FileId,
+                            Id = upload.FileId,
                             Md5Checksum = string.Empty,
                             Name = "file.jpg",
-                            Parts = uploadResult.Parts.Count
+                            Parts = upload.Parts.Count
                         },
                         Stickers = new TLVector<TLInputDocumentBase>
                         {

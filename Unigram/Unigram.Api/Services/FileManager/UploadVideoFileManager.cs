@@ -9,11 +9,17 @@ using Windows.Storage;
 #endif
 using Telegram.Api.Aggregator;
 using Telegram.Api.TL;
+using Telegram.Api.Services.FileManager.EventArgs;
+using Windows.Foundation;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 
 namespace Telegram.Api.Services.FileManager
 {
     public interface IUploadVideoFileManager
     {
+        IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, TLObject owner, string fileName);
+
         void UploadFile(long fileId, TLObject owner, string fileName);
         void UploadFile(long fileId, TLObject owner, string fileName, IList<UploadablePart> parts);
 
@@ -67,6 +73,12 @@ namespace Telegram.Api.Services.FileManager
                         try
                         {
                             _eventAggregator.Publish(new UploadingCanceledEventArgs(item));
+
+                            // TODO: verify
+                            if (item.Callback != null)
+                            {
+                                item.Callback.TrySetCanceled();
+                            }
                         }
                         catch (Exception e)
                         {
@@ -209,6 +221,47 @@ namespace Telegram.Api.Services.FileManager
 
             manualResetEvent.WaitOne();
             return result;
+        }
+
+        public IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, TLObject owner, string fileName)
+        {
+            return AsyncInfo.Run<UploadableItem, double>((token, progress) =>
+            {
+                var tsc = new TaskCompletionSource<UploadableItem>();
+
+                long fileLength = FileUtils.GetLocalFileLength(fileName);
+                if (fileLength <= 0) return Task.FromResult(new UploadableItem(0, null, null));
+
+                var item = GetUploadableItem(fileId, owner, fileName, fileLength);
+                item.Callback = tsc;
+                item.Progress = progress;
+
+                var uploadedCount = item.Parts.Count(x => x.Status == PartStatus.Processed);
+                var count = item.Parts.Count;
+                var isComplete = uploadedCount == count;
+
+                if (isComplete)
+                {
+                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(item));
+
+                    // TODO: verify
+                    if (item.Callback != null)
+                    {
+                        item.Callback.TrySetResult(item);
+                    }
+                }
+                else
+                {
+                    lock (_itemsSyncRoot)
+                    {
+                        _items.Add(item);
+                    }
+
+                    StartAwaitingWorkers();
+                }
+
+                return tsc.Task;
+            });
         }
 
         public void UploadFile(long fileId, TLObject owner, string fileName)

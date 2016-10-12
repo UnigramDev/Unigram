@@ -139,10 +139,10 @@ namespace Telegram.Api.Helpers
                     Execute.BeginOnThreadPool(() => eventAggregator.Publish(part.ParentItem));
 
                     // TODO: verify
-                    //if (part.ParentItem.Source != null)
-                    //{
-                    //    part.ParentItem.Source.TrySetResult(part.ParentItem);
-                    //}
+                    if (part.ParentItem.Callback != null)
+                    {
+                        part.ParentItem.Callback.TrySetResult(part.ParentItem);
+                    }
 
                     return;
                 }
@@ -155,6 +155,11 @@ namespace Telegram.Api.Helpers
                 {
                     eventAggregator.Publish(args);
                 });
+
+                if (part.ParentItem.Progress != null)
+                {
+                    part.ParentItem.Progress.Report(progress);
+                }
             }
         }
 

@@ -32,7 +32,7 @@ namespace Unigram
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : BootStrapper
+    sealed partial class App : Template10.Common.BootStrapper
     {
         public static ShareOperation ShareOperation { get; private set; }
         public static AppServiceConnection Connection { get; private set; }
@@ -100,7 +100,7 @@ namespace Unigram
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             var timer = Stopwatch.StartNew();
-            new Bootstrapper().Configure();
+            new BootStrapper().Configure();
             Debug.WriteLine($"INITIALIZE TIME: {timer.Elapsed}");
             return base.OnInitializeAsync(args);
         }

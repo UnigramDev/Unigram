@@ -155,7 +155,7 @@ namespace Unigram.ViewModels
             {
                 // TODO
                 var test = new UserPhotosViewModel(ProtoService, CacheService, Aggregator);
-                var dialog = BootStrapper.Current.ModalDialog;
+                var dialog = Template10.Common.BootStrapper.Current.ModalDialog;
                 dialog.ModalContent = new PhotosView { DataContext = test };
                 //dialog.ModalBackground = BootStrapper.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
                 dialog.DisableBackButtonWhenModal = false;

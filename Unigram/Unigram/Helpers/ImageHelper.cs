@@ -20,6 +20,9 @@ namespace Unigram.Helpers
         /// <returns></returns>
         public static async Task<StorageFile> ScaleJpegAsync(StorageFile sourceFile, int requestedMinSide, StorageFile resizedImageFile)
         {
+            //await sourceFile.CopyAndReplaceAsync(resizedImageFile);
+            //return resizedImageFile;
+
             using (var imageStream = await sourceFile.OpenReadAsync())
             {
                 var decoder = await BitmapDecoder.CreateAsync(imageStream);
@@ -57,11 +60,10 @@ namespace Unigram.Helpers
                         transform = new BitmapTransform();
                     }
 
-                    var pixelData = await decoder.GetPixelDataAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-                    var pixels = pixelData.DetachPixelData();
-
+                    var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
                     var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, resizedStream);
-                    encoder.SetPixelData(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, decoder.OrientedPixelWidth, decoder.OrientedPixelHeight, decoder.DpiX, decoder.DpiY, pixels);
+                    encoder.SetSoftwareBitmap(pixelData);
+                    //encoder.SetPixelData(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, decoder.OrientedPixelWidth, decoder.OrientedPixelHeight, decoder.DpiX, decoder.DpiY, pixels);
                     await encoder.FlushAsync();
                 }
             }
