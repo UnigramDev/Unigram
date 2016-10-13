@@ -190,12 +190,14 @@
                         <Setter Target="profilePane.(Grid.Column)" Value="0"/>
                         <Setter Target="profilePane.(Grid.Row)" Value="0"/>
                         <Setter Target="InitialName.FontSize" Value="24" />
-                        <Setter Target="elpContentInfoChatIconPicture.MinHeight" Value="96"/>
-                        <Setter Target="elpContentInfoChatIconPicture.MinWidth" Value="96"/>
-                        <Setter Target="elpContentInfoChatIcon.MinHeight" Value="120"/>
-                        <Setter Target="elpContentInfoChatIcon.MinWidth" Value="120"/>
-                        <Setter Target="elpContentInfoChatIconColor.MinHeight" Value="96"/>
-                        <Setter Target="elpContentInfoChatIconColor.MinWidth" Value="96"/>
+                        <Setter Target="elpContentInfoChatIconPicture.Height" Value="96"/>
+                        <Setter Target="elpContentInfoChatIconPicture.Width" Value="96"/>
+                        <Setter Target="elpContentInfoChatIcon.Height" Value="96"/>
+                        <Setter Target="elpContentInfoChatIcon.Width" Value="96"/>
+                        <Setter Target="elpContentInfoChatIcon.MinHeight" Value="96"/>
+                        <Setter Target="elpContentInfoChatIcon.MinWidth" Value="96"/>
+                        <Setter Target="elpContentInfoChatIconColor.Height" Value="96"/>
+                        <Setter Target="elpContentInfoChatIconColor.Width" Value="96"/>
                         <Setter Target="profileControlPane.(Grid.RowSpan)" Value="1"/>
                         <Setter Target="profileControlPane.(Grid.Row)" Value="1"/>
                         <Setter Target="profileControlPane.(Grid.ColumnSpan)" Value="2"/>
@@ -203,6 +205,7 @@
                         <Setter Target="profileControlPane.Margin" Value="0,12"/>
                         <Setter Target="grdProfile.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False"/>
                         <Setter Target="tblUserInfoChatName.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False"/>
+                        <Setter Target="tblUserInfoChatName.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True"/>
                         <Setter Target="tblUserInfoChatStatus.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False"/>
                         <Setter Target="tblUserInfoChatName.(RelativePanel.AlignTopWithPanel)" Value="True"/>
                         <Setter Target="tblUserInfoChatName.(RelativePanel.RightOf)" Value="grdProfile"/>
@@ -213,31 +216,8 @@
                 </VisualState>
                 <VisualState x:Name="FilledState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="720"/>
+                        <AdaptiveTrigger MinWindowWidth="500"/>
                     </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="profilePane.(Grid.ColumnSpan)" Value="1"/>
-                        <Setter Target="profilePane.(Grid.RowSpan)" Value="2"/>
-                        <Setter Target="profilePane.(Grid.Column)" Value="0"/>
-                        <Setter Target="profilePane.(Grid.Row)" Value="0"/>
-                        <Setter Target="InitialName.FontSize" Value="96" />
-                        <Setter Target="elpContentInfoChatIconPicture.MinHeight" Value="200"/>
-                        <Setter Target="elpContentInfoChatIconPicture.MinWidth" Value="200"/>
-                        <Setter Target="elpContentInfoChatIcon.MinHeight" Value="200"/>
-                        <Setter Target="elpContentInfoChatIcon.MinWidth" Value="200"/>
-                        <Setter Target="elpContentInfoChatIconColor.MinHeight" Value="200"/>
-                        <Setter Target="elpContentInfoChatIconColor.MinWidth" Value="200"/>
-                        <Setter Target="profileControlPane.(Grid.RowSpan)" Value="2"/>
-                        <Setter Target="profileControlPane.(Grid.Row)" Value="0"/>
-                        <Setter Target="profileControlPane.(Grid.ColumnSpan)" Value="1"/>
-                        <Setter Target="profileControlPane.(Grid.Column)" Value="1"/>
-                        <Setter Target="profileControlPane.Margin" Value="0,42"/>
-                        <Setter Target="grdProfile.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
-                        <Setter Target="tblUserInfoChatName.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
-                        <Setter Target="tblUserInfoChatStatus.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
-                        <Setter Target="tblUserInfoChatName.TextAlignment" Value="Center"/>
-                        <Setter Target="tblUserInfoChatStatus.TextAlignment" Value="Center"/>
-                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
@@ -267,8 +247,8 @@
                 </Ellipse>
                 <Button x:Name="elpContentInfoChatIcon"
                         HorizontalAlignment="Center"
-                        MinWidth="128"
-                        MinHeight="128"                                
+                        MinWidth="96"
+                        MinHeight="96"                                
                         Padding="0"
                         BorderThickness="0"
                         Background="Transparent"                                
@@ -291,7 +271,7 @@
             <TextBlock x:Name="tblUserInfoChatStatus" 
                         HorizontalAlignment="Center"
                         RelativePanel.Below="tblUserInfoChatName"
-                        RelativePanel.AlignHorizontalCenterWithPanel="True"                     
+                        RelativePanel.AlignHorizontalCenterWithPanel="True"    
                         Visibility="Visible"
                         Text="{x:Bind ViewModel.Status}"
                         Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
