@@ -24,11 +24,11 @@
     using System.IO;
     using Windows.Storage;
 
-    public class BootStrapper
+    public class ViewModelLocator
     {
         private UnigramContainer container;
 
-        public BootStrapper()
+        public ViewModelLocator()
         {
             container = UnigramContainer.Instance;
         }

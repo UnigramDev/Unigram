@@ -15,9 +15,9 @@ namespace Telegram.Api.Services.FileManager
 
         public long FileId { get; protected set; }
 
-        public string IsoFileName { get; protected set; }
+        public string FileName { get; protected set; }
 
-        public long IsoFileLength { get; protected set; }
+        public long FileLength { get; protected set; }
 
         public TLObject Owner { get; protected set; }
 
@@ -69,8 +69,8 @@ namespace Telegram.Api.Services.FileManager
         {
             FileId = fileId;
             Owner = owner;
-            IsoFileName = isoFileName;
-            IsoFileLength = isoFileLength;
+            FileName = isoFileName;
+            FileLength = isoFileLength;
         }
     }
 }

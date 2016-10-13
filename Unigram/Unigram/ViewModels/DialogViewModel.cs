@@ -528,6 +528,11 @@ namespace Unigram.ViewModels
             });
         }
 
+        public void CancelDocumentDownloading(object boh)
+        {
+            Debug.WriteLine(boh);
+        }
+
         public RelayCommand SendPhotoCommand => new RelayCommand(SendPhotoExecute);
         private async void SendPhotoExecute()
         {
@@ -552,7 +557,7 @@ namespace Unigram.ViewModels
                 var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
                 var fileCache = await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
 
-                var fileScale = await ImageHelper.ScaleJpegAsync(file, 1600, fileCache);
+                var fileScale = await ImageHelper.ScaleJpegAsync(file, fileCache, 1280, 0.77);
 
                 var basicProps = await fileScale.GetBasicPropertiesAsync();
                 var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
@@ -598,20 +603,18 @@ namespace Unigram.ViewModels
                 CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
                 {
                     var fileId = TLLong.Random();
-                    var upload = await _uploadManager.UploadFileAsync(fileId, message, Path.GetFileName(fileScale.Path)).AsTask(new Progress<double>((progress) =>
+                    var upload = await _uploadManager.UploadFileAsync(fileId, Path.GetFileName(fileScale.Path)).AsTask(new Progress<double>((progress) =>
                     {
                         media.UploadingProgress = progress;
                         Debug.WriteLine(progress);
                     }));
 
-                    TLDocument document = null;
-                    var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "TrashPack" });
-                    if (set.IsSucceeded)
-                    {
-                        document = set.Value.Documents.FirstOrDefault(x => x.Id == 169171005078503693) as TLDocument;
-                    }
-
-
+                    //TLDocument document = null;
+                    //var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "TrashPack" });
+                    //if (set.IsSucceeded)
+                    //{
+                    //    document = set.Value.Documents.FirstOrDefault(x => x.Id == 169171005078503693) as TLDocument;
+                    //}
 
                     var inputMedia = new TLInputMediaUploadedPhoto
                     {
@@ -623,15 +626,37 @@ namespace Unigram.ViewModels
                             Name = "file.jpg",
                             Parts = upload.Parts.Count
                         },
-                        Stickers = new TLVector<TLInputDocumentBase>
-                        {
-                            new TLInputDocument
-                            {
-                                Id = document.Id,
-                                AccessHash = document.AccessHash
-                            }
-                        }
+                        //Stickers = new TLVector<TLInputDocumentBase>
+                        //{
+                        //    new TLInputDocument
+                        //    {
+                        //        Id = document.Id,
+                        //        AccessHash = document.AccessHash
+                        //    }
+                        //}
                     };
+
+                    //var inputMedia = new TLInputMediaUploadedDocument
+                    //{
+                    //    File = new TLInputFile
+                    //    {
+                    //        Id = upload.FileId,
+                    //        Md5Checksum = string.Empty,
+                    //        Name = "test.mp4",
+                    //        Parts = upload.Parts.Count
+                    //    },
+                    //    MimeType = "video/mp4",
+                    //    Caption = string.Empty,
+                    //    Attributes = new TLVector<TLDocumentAttributeBase>
+                    //    {
+                    //        new TLDocumentAttributeVideo
+                    //        {
+                    //            W = (int)imageProps.Width,
+                    //            H = (int)imageProps.Height,
+                    //            Duration = (int)imageProps.Duration.TotalSeconds
+                    //        }
+                    //    }
+                    //};
 
                     var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
                 });

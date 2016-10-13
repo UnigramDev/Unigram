@@ -101,7 +101,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BootStrapper.cs" />
+    <Compile Include="Controls\ProgressBarRing.cs" />
+    <Compile Include="Controls\ProgressBarRingSlice.cs" />
+    <Compile Include="ViewModelLocator.cs" />
     <Compile Include="Collections\DialogCollection.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
     <Compile Include="Collections\SortedObservableCollection.cs" />
@@ -151,7 +153,6 @@
     <Compile Include="Controls\PhotosView.xaml.cs">
       <DependentUpon>PhotosView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PieSlice.cs" />
     <Compile Include="Controls\PivotRadioButton.cs" />
     <Compile Include="Controls\MessageReferenceControl.xaml.cs">
       <DependentUpon>MessageReferenceControl.xaml</DependentUpon>
@@ -265,6 +266,9 @@
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlaygroundPage.xaml.cs">
+      <DependentUpon>PlaygroundPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -499,6 +503,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlaygroundPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

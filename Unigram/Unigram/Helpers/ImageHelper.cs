@@ -15,14 +15,12 @@ namespace Unigram.Helpers
         /// Resizes and crops source file image so that resized image width/height are not larger than <param name="requestedMinSide"></param>
         /// </summary>
         /// <param name="sourceFile">Source StorageFile</param>
-        /// <param name="requestedMinSide">Width/Height of the output image</param>
         /// <param name="resizedImageFile">Target StorageFile</param>
+        /// <param name="requestedMinSide">Max width/height of the output image</param>
+        /// <param name="quality">JPEG compression quality (0.77 for pictures, 0.87 for thumbnails)</param>
         /// <returns></returns>
-        public static async Task<StorageFile> ScaleJpegAsync(StorageFile sourceFile, int requestedMinSide, StorageFile resizedImageFile)
+        public static async Task<StorageFile> ScaleJpegAsync(StorageFile sourceFile, StorageFile resizedImageFile, int requestedMinSide = 1280, double quality = 0.77)
         {
-            //await sourceFile.CopyAndReplaceAsync(resizedImageFile);
-            //return resizedImageFile;
-
             using (var imageStream = await sourceFile.OpenReadAsync())
             {
                 var decoder = await BitmapDecoder.CreateAsync(imageStream);
@@ -61,9 +59,13 @@ namespace Unigram.Helpers
                     }
 
                     var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+                    var propertySet = new BitmapPropertySet();
+                    var qualityValue = new BitmapTypedValue(quality, Windows.Foundation.PropertyType.Single);
+                    propertySet.Add("ImageQuality", qualityValue);
+
                     var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, resizedStream);
                     encoder.SetSoftwareBitmap(pixelData);
-                    //encoder.SetPixelData(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, decoder.OrientedPixelWidth, decoder.OrientedPixelHeight, decoder.DpiX, decoder.DpiY, pixels);
                     await encoder.FlushAsync();
                 }
             }

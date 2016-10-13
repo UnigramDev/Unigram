@@ -100,13 +100,16 @@ namespace Unigram
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             var timer = Stopwatch.StartNew();
-            new BootStrapper().Configure();
+            new ViewModelLocator().Configure();
             Debug.WriteLine($"INITIALIZE TIME: {timer.Elapsed}");
             return base.OnInitializeAsync(args);
         }
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
+            Caliburn.Micro.PlatformProvider.Current = new Caliburn.Micro.XamlPlatformProvider();
+            ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
+
             var timer = Stopwatch.StartNew();
 
             if (SettingsHelper.IsAuthorized)
