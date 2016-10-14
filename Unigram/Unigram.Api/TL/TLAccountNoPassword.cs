@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLAccountNoPassword : TLAccountPasswordBase 
 	{
-
 		public TLAccountNoPassword() { }
 		public TLAccountNoPassword(TLBinaryReader from, bool cache = false)
 		{

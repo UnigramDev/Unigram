@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputEncryptedFileBigUploaded : TLInputEncryptedFileBase 
 	{
-
 		public TLInputEncryptedFileBigUploaded() { }
 		public TLInputEncryptedFileBigUploaded(TLBinaryReader from, bool cache = false)
 		{

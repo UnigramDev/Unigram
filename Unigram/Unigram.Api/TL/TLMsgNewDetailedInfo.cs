@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMsgNewDetailedInfo : TLMsgDetailedInfoBase 
 	{
-
 		public TLMsgNewDetailedInfo() { }
 		public TLMsgNewDetailedInfo(TLBinaryReader from, bool cache = false)
 		{

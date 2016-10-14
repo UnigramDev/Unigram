@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputMediaGeoPoint : TLInputMediaBase 
 	{
-
 		public TLInputMediaGeoPoint() { }
 		public TLInputMediaGeoPoint(TLBinaryReader from, bool cache = false)
 		{

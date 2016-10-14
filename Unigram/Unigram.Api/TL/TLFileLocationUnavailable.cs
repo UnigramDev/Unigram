@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLFileLocationUnavailable : TLFileLocationBase 
 	{
-
 		public TLFileLocationUnavailable() { }
 		public TLFileLocationUnavailable(TLBinaryReader from, bool cache = false)
 		{

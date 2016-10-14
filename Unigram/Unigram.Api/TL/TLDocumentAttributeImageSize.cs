@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLDocumentAttributeImageSize : TLDocumentAttributeBase 
 	{
-
 		public TLDocumentAttributeImageSize() { }
 		public TLDocumentAttributeImageSize(TLBinaryReader from, bool cache = false)
 		{

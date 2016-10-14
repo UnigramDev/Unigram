@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLDocumentAttributeVideo : TLDocumentAttributeBase 
 	{
-
 		public TLDocumentAttributeVideo() { }
 		public TLDocumentAttributeVideo(TLBinaryReader from, bool cache = false)
 		{

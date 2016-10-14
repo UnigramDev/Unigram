@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateChatParticipantDelete : TLUpdateBase 
 	{
-
 		public TLUpdateChatParticipantDelete() { }
 		public TLUpdateChatParticipantDelete(TLBinaryReader from, bool cache = false)
 		{

@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessagesDialogs : TLMessagesDialogsBase 
 	{
-
 		public TLMessagesDialogs() { }
 		public TLMessagesDialogs(TLBinaryReader from, bool cache = false)
 		{

@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessageEntityHashtag : TLMessageEntityBase 
 	{
-
 		public TLMessageEntityHashtag() { }
 		public TLMessageEntityHashtag(TLBinaryReader from, bool cache = false)
 		{

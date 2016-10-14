@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessageEntityItalic : TLMessageEntityBase 
 	{
-
 		public TLMessageEntityItalic() { }
 		public TLMessageEntityItalic(TLBinaryReader from, bool cache = false)
 		{

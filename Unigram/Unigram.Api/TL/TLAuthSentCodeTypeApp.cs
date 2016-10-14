@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLAuthSentCodeTypeApp : TLAuthSentCodeTypeBase 
 	{
-
 		public TLAuthSentCodeTypeApp() { }
 		public TLAuthSentCodeTypeApp(TLBinaryReader from, bool cache = false)
 		{

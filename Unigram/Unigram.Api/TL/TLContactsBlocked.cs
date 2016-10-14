@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLContactsBlocked : TLContactsBlockedBase 
 	{
-
 		public TLContactsBlocked() { }
 		public TLContactsBlocked(TLBinaryReader from, bool cache = false)
 		{

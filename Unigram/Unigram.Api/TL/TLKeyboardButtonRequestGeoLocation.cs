@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLKeyboardButtonRequestGeoLocation : TLKeyboardButtonBase 
 	{
-
 		public TLKeyboardButtonRequestGeoLocation() { }
 		public TLKeyboardButtonRequestGeoLocation(TLBinaryReader from, bool cache = false)
 		{

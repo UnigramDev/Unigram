@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessagesMessagesSlice : TLMessagesMessagesBase 
 	{
-
 		public TLMessagesMessagesSlice() { }
 		public TLMessagesMessagesSlice(TLBinaryReader from, bool cache = false)
 		{

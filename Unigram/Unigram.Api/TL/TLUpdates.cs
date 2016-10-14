@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdates : TLUpdatesBase 
 	{
-
 		public TLUpdates() { }
 		public TLUpdates(TLBinaryReader from, bool cache = false)
 		{
