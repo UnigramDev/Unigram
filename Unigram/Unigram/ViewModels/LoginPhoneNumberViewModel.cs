@@ -2,7 +2,6 @@
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Unigram.Views;
-using GalaSoft.MvvmLight.Command;
 using Telegram.Api.Aggregator;
 using Unigram.Common;
 using Unigram.Core.Models;
