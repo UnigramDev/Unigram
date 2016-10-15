@@ -175,7 +175,7 @@ namespace Unigram.Views
 
         private void Attach_Click(object sender, RoutedEventArgs e)
         {
-            var flyout = FlyoutBase.GetAttachedFlyout((Button)sender) as MenuFlyout;
+            var flyout = FlyoutBase.GetAttachedFlyout(Attach) as MenuFlyout;
             if (flyout != null)
             {
                 //if (ActualWidth < 500)
@@ -184,9 +184,20 @@ namespace Unigram.Views
                 //}
                 //else
                 {
-                    flyout.ShowAt((Button)sender, new Point(4, -4));
+                    flyout.ShowAt(Attach, new Point(4, -4));
                 }
             }
+        }
+
+        private void AttachPickerFlyout_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var flyout = FlyoutBase.GetAttachedFlyout(Attach) as MenuFlyout;
+            if (flyout != null)
+            {
+                flyout.Hide();
+            }
+
+            ViewModel.SendPhotoCommand.Execute(e.ClickedItem);
         }
     }
 

@@ -107,6 +107,9 @@
     <StackPanel>
         <ListView x:Name="Library"
                   ItemsSource="{StaticResource PhotoLibrary}"
+                  ItemClick="Library_ItemClick"
+                  IsItemClickEnabled="True"
+                  SelectionMode="None"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.HorizontalScrollMode="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Disabled"

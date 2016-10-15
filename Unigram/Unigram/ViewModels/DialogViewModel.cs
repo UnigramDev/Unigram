@@ -17,7 +17,6 @@ using Telegram.Api.Services.Updates;
 using Telegram.Api.Transport;
 using Telegram.Api.Services.Connection;
 using System.Threading;
-using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Collections;
@@ -533,22 +532,36 @@ namespace Unigram.ViewModels
             });
         }
 
-        public RelayCommand SendPhotoCommand => new RelayCommand(SendPhotoExecute);
-        private async void SendPhotoExecute()
+        public RelayCommand<StoragePhoto> SendPhotoCommand => new RelayCommand<StoragePhoto>(SendPhotoExecute);
+        private async void SendPhotoExecute(StoragePhoto file)
         {
-            var picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.Add(".jpg");
-            picker.FileTypeFilter.Add(".jpeg");
-            picker.FileTypeFilter.Add(".png");
-            picker.FileTypeFilter.Add(".gif");
+            ObservableCollection<StoragePhoto> storages = null;
 
-            var files = await picker.PickMultipleFilesAsync();
-            if (files != null)
+            if (file == null)
+            {
+                var picker = new FileOpenPicker();
+                picker.ViewMode = PickerViewMode.Thumbnail;
+                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                picker.FileTypeFilter.Add(".jpg");
+                picker.FileTypeFilter.Add(".jpeg");
+                picker.FileTypeFilter.Add(".png");
+                picker.FileTypeFilter.Add(".gif");
+
+                var files = await picker.PickMultipleFilesAsync();
+                if (files != null)
+                {
+                    storages = new ObservableCollection<StoragePhoto>(files.Select(x => new StoragePhoto(x)));
+                }
+            }
+            else
+            {
+                storages = new ObservableCollection<StoragePhoto> { file };
+            }
+
+            if (storages != null)
             {
                 var dialogViewModel = new SendPhotosViewModel(ProtoService, CacheService, Aggregator);
-                dialogViewModel.Items = new ObservableCollection<StoragePhoto>(files.Select(x => new StoragePhoto(x)));
+                dialogViewModel.Items = storages;
                 dialogViewModel.SelectedItem = dialogViewModel.Items[0];
 
                 var dialog = new SendPhotosView { DataContext = dialogViewModel };

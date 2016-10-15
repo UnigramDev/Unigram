@@ -1,11 +1,8 @@
 ﻿{
   "dependencies": {
     "Autofac": "4.1.1",
-    "Caliburn.Micro": "3.0.1",
     "HockeySDK.UWP": "4.1.5",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
-    "MvvmLight": "5.3.0",
-    "MvvmLightLibs": "5.3.0",
     "Newtonsoft.Json": "9.0.1",
     "Template10": "1.1.11"
   },

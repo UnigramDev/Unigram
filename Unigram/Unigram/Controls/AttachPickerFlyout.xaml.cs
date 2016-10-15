@@ -49,5 +49,12 @@ namespace Unigram.Controls
             Library.MaxWidth = width < 500 ? width - 8 : 240;
             Library.MinWidth = Library.MaxWidth;
         }
+
+        private void Library_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            ItemClick?.Invoke(sender, e);
+        }
+
+        public event ItemClickEventHandler ItemClick;
     }
 }

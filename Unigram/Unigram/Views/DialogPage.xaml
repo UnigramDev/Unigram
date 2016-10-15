@@ -789,7 +789,7 @@
                                       Grid.Column="3"
                                       Grid.Row="1"/>
 
-                <controls:GlyphButton Click="Attach_Click" Glyph="&#xE16C;" Grid.Row="1">
+                <controls:GlyphButton x:Name="Attach" Click="Attach_Click" Glyph="&#xE16C;" Grid.Row="1">
                     <FlyoutBase.AttachedFlyout>
                         <MenuFlyout>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
@@ -817,7 +817,7 @@
                                         <Setter.Value>
                                             <ControlTemplate TargetType="MenuFlyoutPresenter">
                                                 <Grid Background="{TemplateBinding Background}">
-                                                    <controls:AttachPickerFlyout/>
+                                                    <controls:AttachPickerFlyout ItemClick="AttachPickerFlyout_ItemClick"/>
                                                     <Border x:Name="MenuFlyoutPresenterBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
                                                 </Grid>
                                             </ControlTemplate>
