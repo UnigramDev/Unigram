@@ -289,7 +289,6 @@ namespace Unigram.Controls
                 return;
             }
 
-            var pathGeometry = new PathGeometry();
             var center =
                 Center ??
                 new Point(
@@ -298,9 +297,9 @@ namespace Unigram.Controls
 
             if (EndAngle > 0 && EndAngle < 360)
             {
+                var pathGeometry = new PathGeometry();
                 var pathFigure = new PathFigure();
                 pathFigure.IsClosed = true;
-
 
                 // Starting Point
                 pathFigure.StartPoint =
@@ -340,6 +339,9 @@ namespace Unigram.Controls
                 pathFigure.Segments.Add(lineSegment);
                 pathFigure.Segments.Add(outerArcSegment);
                 pathGeometry.Figures.Add(pathFigure);
+
+                InvalidateArrange();
+                Data = pathGeometry;
             }
             else if (EndAngle == 360)
             {
@@ -364,9 +366,6 @@ namespace Unigram.Controls
 
                 return;
             }
-
-            InvalidateArrange();
-            Data = pathGeometry;
         }
     }
 }

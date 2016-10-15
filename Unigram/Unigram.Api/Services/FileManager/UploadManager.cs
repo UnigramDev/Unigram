@@ -167,7 +167,7 @@ namespace Telegram.Api.Services.FileManager
                         // TODO: verify
                         if (part.ParentItem.Callback != null)
                         {
-                            part.ParentItem.Progress.Report(progress);
+                            part.ParentItem.Progress.Report(1.0);
                             part.ParentItem.Callback.TrySetResult(part.ParentItem);
                         }
                         else

@@ -13,23 +13,25 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Unigram.Views
+namespace Unigram.Controls.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class PlaygroundPage : Page
+    public sealed partial class SendPhotosView : ContentDialogBase
     {
-        public PlaygroundPage()
+        public SendPhotosView()
         {
             this.InitializeComponent();
         }
 
-        private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        private void Accept_Click(object sender, RoutedEventArgs e)
         {
-            Cispo.Value = e.NewValue / 100;
+            Hide(ContentDialogBaseResult.OK);
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            Hide(ContentDialogBaseResult.Cancel);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +45,28 @@ namespace Telegram.Api.TL
         public override void RaisePropertyChanged(string propertyName)
         {
             Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+        }
+
+        public Progress<double> Download()
+        {
+            DownloadingProgress = 0.02;
+
+            return new Progress<double>((value) =>
+            {
+                DownloadingProgress = value;
+                Debug.WriteLine(value);
+            });
+        }
+
+        public Progress<double> Upload()
+        {
+            UploadingProgress = 0.02;
+
+            return new Progress<double>((value) =>
+            {
+                UploadingProgress = value;
+                Debug.WriteLine(value);
+            });
         }
     }
 }

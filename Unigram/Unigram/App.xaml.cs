@@ -26,6 +26,7 @@ using Unigram.Tasks;
 using Windows.UI.Notifications;
 using Windows.Storage;
 using Windows.UI.Popups;
+using Unigram.Views;
 
 namespace Unigram
 {
@@ -107,8 +108,11 @@ namespace Unigram
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            Caliburn.Micro.PlatformProvider.Current = new Caliburn.Micro.XamlPlatformProvider();
+            NavigationService.Navigate(typeof(PlaygroundPage));
+            return;
+
             ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
+            ModalDialog.ModalBackground = new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
 
             var timer = Stopwatch.StartNew();
 

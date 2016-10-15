@@ -10,8 +10,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
+using Unigram.Models;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -45,7 +47,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            ListGallery.ItemsSource = new PicturesCollection();
+            //ListGallery.ItemsSource = new PicturesCollection();
 
             DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
             Loaded += DialogPage_Loaded;
@@ -170,16 +172,26 @@ namespace Unigram.Views
         {
             grdPinnedMessage.Visibility = Visibility.Collapsed;
         }
+
+        private void Attach_Click(object sender, RoutedEventArgs e)
+        {
+            var flyout = FlyoutBase.GetAttachedFlyout((Button)sender) as MenuFlyout;
+            if (flyout != null)
+            {
+                //if (ActualWidth < 500)
+                //{
+                //    flyout.ShowAt((Button)sender, new Point(4, 44));
+                //}
+                //else
+                {
+                    flyout.ShowAt((Button)sender, new Point(4, -4));
+                }
+            }
+        }
     }
 
-    public class PicturesCollection : ObservableCollection<BitmapImage>, ISupportIncrementalLoading
+    public class PicturesCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading
     {
-        private bool hasMoreItems = true;
-        public bool HasMoreItems
-        {
-            get { return hasMoreItems; }
-        }
-
         public StorageFileQueryResult Query { get; private set; }
 
         public uint StartIndex { get; private set; }
@@ -188,7 +200,7 @@ namespace Unigram.Views
 
         public PicturesCollection()
         {
-            hasMoreItems = false;
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
 
             var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, new string[] { ".jpg", ".png", ".bmp", ".gif", ".mp4" });
             queryOptions.FolderDepth = FolderDepth.Deep;
@@ -209,44 +221,27 @@ namespace Unigram.Views
             });
         }
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public override async Task<IEnumerable<StoragePhoto>> LoadDataAsync()
         {
-            return Task.Run(async () =>
+            var items = new List<StoragePhoto>();
+            uint resultCount = 0;
+            var result = await Query.GetFilesAsync(StartIndex, 10);
+            StartIndex += (uint)result.Count;
+
+            if (result.Count == 0)
             {
-                uint resultCount = 0;
-                var result = await Query.GetFilesAsync(StartIndex, 10);
-                StartIndex += (uint)result.Count;
+            }
+            else
+            {
+                resultCount = (uint)result.Count();
 
-                if (result.Count == 0)
+                foreach (var file in result)
                 {
-                    hasMoreItems = false;
+                    items.Add(new StoragePhoto(file));
                 }
-                else
-                {
-                    resultCount = (uint)result.Count();
+            }
 
-                    await _dispatcher.RunAsync(
-                    CoreDispatcherPriority.Normal,
-                    async () =>
-                    {
-                        foreach (var file in result)
-                        {
-                            using (var thumbnail = await file.GetThumbnailAsync(ThumbnailMode.ListView, 240, ThumbnailOptions.UseCurrentScale))
-                            {
-                                if (thumbnail != null)
-                                {
-                                    var bitmapImage = new BitmapImage();
-                                    bitmapImage.SetSource(thumbnail);
-                                    Add(bitmapImage);
-                                }
-                            }
-                        }
-                    });
-                }
-
-                return new LoadMoreItemsResult() { Count = resultCount };
-
-            }).AsAsyncOperation();
+            return items;
         }
     }
 }

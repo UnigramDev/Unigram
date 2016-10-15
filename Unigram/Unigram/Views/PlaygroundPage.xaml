@@ -9,6 +9,8 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Light">
-        <controls:ProgressBarRing Value="0.3"/>
+        <controls:ProgressBarRing x:Name="Cispo"/>
+
+        <Slider ValueChanged="Slider_ValueChanged"/>
     </Grid>
 </Page>
