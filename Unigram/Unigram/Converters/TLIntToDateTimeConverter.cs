@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
+﻿using System;
 using System.Globalization;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
