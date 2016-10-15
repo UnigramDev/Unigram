@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessageEntityCode : TLMessageEntityBase 
 	{
-
 		public TLMessageEntityCode() { }
 		public TLMessageEntityCode(TLBinaryReader from, bool cache = false)
 		{

@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLEncryptedMessageService : TLEncryptedMessageBase 
 	{
-
 		public TLEncryptedMessageService() { }
 		public TLEncryptedMessageService(TLBinaryReader from, bool cache = false)
 		{

@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLChatParticipant : TLChatParticipantBase 
 	{
-
 		public TLChatParticipant() { }
 		public TLChatParticipant(TLBinaryReader from, bool cache = false)
 		{

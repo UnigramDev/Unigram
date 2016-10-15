@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessagesDHConfigNotModified : TLMessagesDHConfigBase 
 	{
-
 		public TLMessagesDHConfigNotModified() { }
 		public TLMessagesDHConfigNotModified(TLBinaryReader from, bool cache = false)
 		{

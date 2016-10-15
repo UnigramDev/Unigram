@@ -101,7 +101,18 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="Controls\AttachPickerFlyout.xaml.cs">
+      <DependentUpon>AttachPickerFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ContentDialogBase.cs" />
+    <Compile Include="Controls\ProgressBarRing.cs" />
+    <Compile Include="Controls\ProgressBarRingSlice.cs" />
+    <Compile Include="Controls\Views\SendPhotosView.xaml.cs">
+      <DependentUpon>SendPhotosView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\StoragePhoto.cs" />
+    <Compile Include="ViewModelLocator.cs" />
     <Compile Include="Collections\DialogCollection.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
     <Compile Include="Collections\SortedObservableCollection.cs" />
@@ -177,6 +188,7 @@
     <Compile Include="Converters\TLIntToDateTimeConverter.cs" />
     <Compile Include="Converters\VenueToStaticImageConverter.cs" />
     <Compile Include="Helpers\ColorHelper.cs" />
+    <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Helpers\PhraseListHelper.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\ShareTargetHelper.cs" />
@@ -207,6 +219,7 @@
     <Compile Include="ViewModels\LoginPhoneNumberViewModel.cs" />
     <Compile Include="ViewModels\LoginWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\SendPhotosViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\UserInfoViewModel.cs" />
     <Compile Include="ViewModels\UserPhotosViewModel.cs" />
@@ -263,6 +276,9 @@
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlaygroundPage.xaml.cs">
+      <DependentUpon>PlaygroundPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -361,6 +377,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Page Include="Controls\AttachPickerFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Items\DialogListViewItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -404,6 +424,10 @@
     <Page Include="Controls\TabHeaderStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Views\SendPhotosView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Accent.xaml">
       <SubType>Designer</SubType>
@@ -497,6 +521,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlaygroundPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

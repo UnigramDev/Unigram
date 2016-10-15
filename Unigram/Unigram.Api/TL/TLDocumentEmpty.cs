@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLDocumentEmpty : TLDocumentBase 
 	{
-
 		public TLDocumentEmpty() { }
 		public TLDocumentEmpty(TLBinaryReader from, bool cache = false)
 		{

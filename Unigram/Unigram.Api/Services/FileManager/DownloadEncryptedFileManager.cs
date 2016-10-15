@@ -11,6 +11,15 @@ using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.FileManager
 {
+    public interface IDownloadEncryptedFileManager
+    {
+        Task<DownloadableItem> DownloadFileAsync(TLEncryptedFile file, TLObject owner);
+
+        void DownloadFile(TLEncryptedFile file, TLObject owner, Action<DownloadableItem> callback = null);
+
+        void CancelDownloadFile(TLObject owner);
+    }
+
     public class DownloadEncryptedFileManager : IDownloadEncryptedFileManager
     {
         private readonly object _randomRoot = new object();
@@ -146,7 +155,7 @@ namespace Telegram.Api.Services.FileManager
                 }
                 else
                 {
-                    _eventAggregator.Publish(new ProgressChangedEventArgs(part.ParentItem, progress));
+                    _eventAggregator.Publish(new DownloadProgressChangedEventArgs(part.ParentItem, progress));
                 }
             }
         }

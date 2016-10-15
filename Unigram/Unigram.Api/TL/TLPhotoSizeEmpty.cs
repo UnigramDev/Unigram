@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLPhotoSizeEmpty : TLPhotoSizeBase 
 	{
-
 		public TLPhotoSizeEmpty() { }
 		public TLPhotoSizeEmpty(TLBinaryReader from, bool cache = false)
 		{

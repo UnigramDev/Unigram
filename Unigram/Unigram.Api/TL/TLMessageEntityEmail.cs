@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessageEntityEmail : TLMessageEntityBase 
 	{
-
 		public TLMessageEntityEmail() { }
 		public TLMessageEntityEmail(TLBinaryReader from, bool cache = false)
 		{

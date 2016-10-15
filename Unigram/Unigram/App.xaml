@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:template="using:Template10.Common"
     xmlns:themes="using:Unigram.Themes"
+    xmlns:views="using:Unigram.Views"
     xmlns:converters="using:Unigram.Converters"
     xmlns:local="using:Unigram">
     
@@ -19,7 +20,9 @@
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
-            
+
+            <views:PicturesCollection x:Key="PhotoLibrary"/>
+
             <!-- Temp -->
             <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

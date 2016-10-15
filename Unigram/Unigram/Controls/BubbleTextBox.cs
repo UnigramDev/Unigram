@@ -497,14 +497,17 @@ namespace Unigram.Controls
 
         private void HandleHyperlinkText()
         {
-            var mention = _entities.Peek() as TLInputMessageEntityMentionName;
-            if (mention != null)
+            if (_entities.Count > 0)
             {
-                mention.Offset = _length;
-                mention.Length = _groupText.Length;
-            }
+                var mention = _entities.Peek() as TLInputMessageEntityMentionName;
+                if (mention != null)
+                {
+                    mention.Offset = _length;
+                    mention.Length = _groupText.Length;
+                }
 
-            _length += _groupText.Length;
+                _length += _groupText.Length;
+            }
         }
 
         private void HandleBasicText()

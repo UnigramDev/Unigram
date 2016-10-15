@@ -17,7 +17,6 @@ using Telegram.Api.Services.Updates;
 using Telegram.Api.Transport;
 using Telegram.Api.Services.Connection;
 using System.Threading;
-using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Collections;
@@ -26,6 +25,15 @@ using Windows.UI.Xaml;
 using Unigram.Converters;
 using Windows.UI.Xaml.Media;
 using System.Diagnostics;
+using Telegram.Api.Services.FileManager;
+using Windows.Storage.Pickers;
+using System.IO;
+using Windows.Storage;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Helpers;
+using Unigram.Controls.Views;
+using Unigram.Models;
+using Unigram.Controls;
 
 namespace Unigram.ViewModels
 {
@@ -52,12 +60,18 @@ namespace Unigram.ViewModels
 
 
 
-        private readonly IJumpListService _jumpListService;
+        private readonly IUploadFileManager _uploadFileManager;
+        private readonly IUploadAudioManager _uploadAudioManager;
+        private readonly IUploadDocumentManager _uploadDocumentManager;
+        private readonly IUploadVideoManager _uploadVideoManager;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IJumpListService jumpListService)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager)
             : base(protoService, cacheService, aggregator)
         {
-            _jumpListService = jumpListService;
+            _uploadFileManager = uploadFileManager;
+            _uploadAudioManager = uploadAudioManager;
+            _uploadDocumentManager = uploadDocumentManager;
+            _uploadVideoManager = uploadVideoManager;
         }
 
 
@@ -243,8 +257,6 @@ namespace Unigram.ViewModels
                 LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
                 LastSeenVisible = Visibility.Visible;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
-
-                await _jumpListService.UpdateAsync(user);
             }
             else if (channel != null)
             {
@@ -496,7 +508,6 @@ namespace Unigram.ViewModels
             }
 
             var previousMessage = InsertSendingMessage(message);
-
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
                 if (document != null)
@@ -517,6 +528,204 @@ namespace Unigram.ViewModels
                     {
                         message.State = TLMessageState.Confirmed;
                     });
+                }
+            });
+        }
+
+        public RelayCommand<StoragePhoto> SendPhotoCommand => new RelayCommand<StoragePhoto>(SendPhotoExecute);
+        private async void SendPhotoExecute(StoragePhoto file)
+        {
+            ObservableCollection<StoragePhoto> storages = null;
+
+            if (file == null)
+            {
+                var picker = new FileOpenPicker();
+                picker.ViewMode = PickerViewMode.Thumbnail;
+                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                picker.FileTypeFilter.Add(".jpg");
+                picker.FileTypeFilter.Add(".jpeg");
+                picker.FileTypeFilter.Add(".png");
+                picker.FileTypeFilter.Add(".gif");
+
+                var files = await picker.PickMultipleFilesAsync();
+                if (files != null)
+                {
+                    storages = new ObservableCollection<StoragePhoto>(files.Select(x => new StoragePhoto(x)));
+                }
+            }
+            else
+            {
+                storages = new ObservableCollection<StoragePhoto> { file };
+            }
+
+            if (storages != null)
+            {
+                var dialogViewModel = new SendPhotosViewModel(ProtoService, CacheService, Aggregator);
+                dialogViewModel.Items = storages;
+                dialogViewModel.SelectedItem = dialogViewModel.Items[0];
+
+                var dialog = new SendPhotosView { DataContext = dialogViewModel };
+                var dialogResult = await dialog.ShowAsync();
+                if (dialogResult == ContentDialogBaseResult.OK)
+                {
+                    foreach (var storage in dialogViewModel.Items)
+                    {
+                        await SendPhotoAsync(storage.File, storage.Caption);
+                    }
+                }
+            }
+        }
+
+        private async Task SendPhotoAsync(StorageFile file, string caption)
+        {
+            var fileLocation = new TLFileLocation
+            {
+                VolumeId = TLLong.Random(),
+                LocalId = TLInt.Random(),
+                Secret = TLLong.Random(),
+                DCId = 0
+            };
+
+            var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+            var fileCache = await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+
+            var fileScale = await ImageHelper.ScaleJpegAsync(file, fileCache, 1280, 0.77);
+            if (fileScale == null && Path.GetExtension(file.Name).Equals(".gif"))
+            {
+                // TODO: animated gif!
+                await fileCache.DeleteAsync();
+                await SendGifAsync(file, caption);
+                return;
+            }
+
+            var basicProps = await fileScale.GetBasicPropertiesAsync();
+            var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
+
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var photoSize = new TLPhotoSize
+            {
+                Type = string.Empty,
+                W = (int)imageProps.Width,
+                H = (int)imageProps.Height,
+                Location = fileLocation,
+                Size = (int)basicProps.Size
+            };
+
+            var photo = new TLPhoto
+            {
+                Id = 0,
+                AccessHash = 0,
+                Date = date,
+                Sizes = new TLVector<TLPhotoSizeBase> { photoSize }
+            };
+
+            var media = new TLMessageMediaPhoto
+            {
+                Photo = photo,
+                Caption = caption
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var fileId = TLLong.Random();
+                var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
+                if (upload != null)
+                {
+                    var inputMedia = new TLInputMediaUploadedPhoto
+                    {
+                        Caption = media.Caption,
+                        File = new TLInputFile
+                        {
+                            Id = upload.FileId,
+                            Name = "file.jpg",
+                            Parts = upload.Parts.Count,
+                            Md5Checksum = string.Empty
+                        }
+                    };
+
+                    var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                }
+            });
+        }
+
+        private async Task SendGifAsync(StorageFile file, string caption)
+        {
+            var fileLocation = new TLFileLocation
+            {
+                VolumeId = TLLong.Random(),
+                LocalId = TLInt.Random(),
+                Secret = TLLong.Random(),
+                DCId = 0
+            };
+
+            var fileName = string.Format("{0}_{1}_{2}.gif", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+            var fileCache = await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+
+            await file.CopyAndReplaceAsync(fileCache);
+
+            var basicProps = await fileCache.GetBasicPropertiesAsync();
+            var imageProps = await fileCache.Properties.GetImagePropertiesAsync();
+
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var media = new TLMessageMediaDocument
+            {
+                // TODO: Document = ...
+                Caption = caption
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var fileId = TLLong.Random();
+                var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
+                if (upload != null)
+                {
+                    var inputMedia = new TLInputMediaUploadedDocument
+                    {
+                        File = new TLInputFile
+                        {
+                            Id = upload.FileId,
+                            Md5Checksum = string.Empty,
+                            Name = "test.gif",
+                            Parts = upload.Parts.Count
+                        },
+                        MimeType = "image/gif",
+                        Caption = media.Caption,
+                        Attributes = new TLVector<TLDocumentAttributeBase>
+                        {
+                            new TLDocumentAttributeAnimated(),
+                            new TLDocumentAttributeImageSize
+                            {
+                                W = (int)imageProps.Width,
+                                H = (int)imageProps.Height,
+                            }
+                        }
+                        };
+
+                    var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
                 }
             });
         }
@@ -665,6 +874,16 @@ namespace Unigram.ViewModels
 
             UpdateAttach(previous, item);
             UpdateAttach(item, next);
+        }
+
+        protected override void RemoveItem(int index)
+        {
+            var next = index > 0 ? this[index - 1] : null;
+            var previous = index < Count - 1 ? this[index + 1] : null;
+
+            UpdateAttach(previous, next);
+
+            base.RemoveItem(index);
         }
 
         private void UpdateAttach(TLMessageBase item, TLMessageBase previous)

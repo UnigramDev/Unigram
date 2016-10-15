@@ -26,7 +26,7 @@
         <Style TargetType="ScrollBar">
             <Setter Property="Background" Value="Transparent"/>
         </Style>
-        
+
         <Style x:Key="IconMenuFlyoutItem" TargetType="MenuFlyoutItem">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -225,7 +225,7 @@
         </MenuFlyout>
 
         <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,8">
+            <Grid Margin="0,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -257,7 +257,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,8">
+            <Grid Margin="0,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -286,7 +286,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,8">
+            <Grid Margin="0,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -417,7 +417,7 @@
                           Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                 <Button.Flyout>
                     <Flyout>
-                        <StackPanel Margin="-8">
+                        <StackPanel Margin="-12,-11,-12,-12">
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
                                             x:Name="cbtnReportSpam"
                                             x:Uid="FCBTN-ReportSpam"
@@ -789,63 +789,44 @@
                                       Grid.Column="3"
                                       Grid.Row="1"/>
 
-                <controls:GlyphButton Glyph="&#xE16C;" Grid.Row="1">
-                    <Button.Flyout>
-                        <Flyout ScrollViewer.VerticalScrollMode="Disabled"
-                                ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                            <StackPanel Name="SP" Margin="-8" Padding="0">
-                                <ListView x:Name="ListGallery" Margin="-4,-3,-4,0"
-                                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                          ScrollViewer.HorizontalScrollMode="Auto"
-                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                          ScrollViewer.VerticalScrollMode="Disabled">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <Image Source="{Binding}" Width="48" Height="48"/>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
-                                                x:Name="fcbtnAttachCamera"
-                                                x:Uid="FCBTN-Camera"
-                                                Tag="Camera"
-                                                MinWidth="160"
-                                                Text="Camera" />
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                                                x:Name="fcbtnAttachPhoto"
-                                                x:Uid="FCBTN-Photo"
-                                                Tag="Pictures"
-                                                Text="Pictures"
-                                                MinWidth="160"
-                                                Click="fcbtnAttachPhoto_Click"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
-                                                x:Name="fcbtnAttachVideo"
-                                                x:Uid="FCBTN-Video"
-                                                Text="Video" 
-                                                MinWidth="160"
-                                                Tag="Video"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                                                x:Name="fcbtnAttachLocation"
-                                                x:Uid="FCBTN-Location"
-                                                Text="Location" 
-                                                MinWidth="160"
-                                                Tag="Map"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                                                x:Name="fcbtnAttachContact"
-                                                x:Uid="FCBTN-Contact"
-                                                Text="Contact"
-                                                MinWidth="160"
-                                                Tag="ContactInfo"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                                                x:Name="fcbtnAttachFile"
-                                                x:Uid="FCBTN-File"
-                                                Text="File"
-                                                MinWidth="160"
-                                                Tag="OpenFile"/>
-
-                            </StackPanel>
-                        </Flyout>
-                    </Button.Flyout>
+                <controls:GlyphButton x:Name="Attach" Click="Attach_Click" Glyph="&#xE16C;" Grid.Row="1">
+                    <FlyoutBase.AttachedFlyout>
+                        <MenuFlyout>
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <!--<Style TargetType="FlyoutPresenter">
+                                    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+                                    <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
+                                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+                                    <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled"/>
+                                </Style>-->
+                                <Style TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="Background" Value="{ThemeResource MenuFlyoutPresenterBackground}" />
+                                    <Setter Property="BorderBrush" Value="{ThemeResource MenuFlyoutPresenterBorderBrush}" />
+                                    <Setter Property="BorderThickness" Value="{ThemeResource FlyoutBorderThemeThickness}" />
+                                    <Setter Property="Padding" Value="{ThemeResource MenuFlyoutPresenterThemePadding}" />
+                                    <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+                                    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+                                    <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto" />
+                                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+                                    <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False" />
+                                    <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="False" />
+                                    <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
+                                    <Setter Property="MaxWidth" Value="{ThemeResource FlyoutThemeMaxWidth}" />
+                                    <Setter Property="MinHeight" Value="{ThemeResource MenuFlyoutThemeMinHeight}" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="MenuFlyoutPresenter">
+                                                <Grid Background="{TemplateBinding Background}">
+                                                    <controls:AttachPickerFlyout ItemClick="AttachPickerFlyout_ItemClick"/>
+                                                    <Border x:Name="MenuFlyoutPresenterBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                        </MenuFlyout>
+                    </FlyoutBase.AttachedFlyout>
                 </controls:GlyphButton>
             </Grid>
         </RelativePanel>

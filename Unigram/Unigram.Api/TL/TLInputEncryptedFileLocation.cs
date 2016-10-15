@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputEncryptedFileLocation : TLInputFileLocationBase 
 	{
-
 		public TLInputEncryptedFileLocation() { }
 		public TLInputEncryptedFileLocation(TLBinaryReader from, bool cache = false)
 		{

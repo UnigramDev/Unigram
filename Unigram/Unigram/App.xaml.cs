@@ -26,13 +26,14 @@ using Unigram.Tasks;
 using Windows.UI.Notifications;
 using Windows.Storage;
 using Windows.UI.Popups;
+using Unigram.Views;
 
 namespace Unigram
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : BootStrapper
+    sealed partial class App : Template10.Common.BootStrapper
     {
         public static ShareOperation ShareOperation { get; private set; }
         public static AppServiceConnection Connection { get; private set; }
@@ -100,13 +101,16 @@ namespace Unigram
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             var timer = Stopwatch.StartNew();
-            new Bootstrapper().Configure();
+            new ViewModelLocator().Configure();
             Debug.WriteLine($"INITIALIZE TIME: {timer.Elapsed}");
             return base.OnInitializeAsync(args);
         }
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
+            ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
+            ModalDialog.ModalBackground = new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
+
             var timer = Stopwatch.StartNew();
 
             if (SettingsHelper.IsAuthorized)

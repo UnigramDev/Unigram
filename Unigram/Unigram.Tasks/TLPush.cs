@@ -162,26 +162,5 @@ namespace Unigram.Tasks
             }
             yield break;
         }
-
-        public IEnumerable<string> GetInputs()
-        {
-            if (msg_id != null)
-            {
-                yield return $"<input id='msg_id' type='text' defaultInput='{msg_id}' hint-visible='false' />";
-            }
-            if (from_id != null)
-            {
-                yield return $"<input id='from_id' type='text' defaultInput='{from_id}' hint-visible='false' />";
-            }
-            if (chat_id != null)
-            {
-                yield return $"<input id='chat_id' type='text' defaultInput='{chat_id}' hint-visible='false' />";
-            }
-            if (channel_id != null)
-            {
-                yield return $"<input id='channel_id' type='text' defaultInput='{channel_id}' hint-visible='false' />";
-            }
-            yield break;
-        }
     }
 }

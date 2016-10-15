@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLChatEmpty : TLChatBase 
 	{
-
 		public TLChatEmpty() { }
 		public TLChatEmpty(TLBinaryReader from, bool cache = false)
 		{

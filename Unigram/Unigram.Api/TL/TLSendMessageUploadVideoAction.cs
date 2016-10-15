@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLSendMessageUploadVideoAction : TLSendMessageActionBase 
 	{
-
 		public TLSendMessageUploadVideoAction() { }
 		public TLSendMessageUploadVideoAction(TLBinaryReader from, bool cache = false)
 		{

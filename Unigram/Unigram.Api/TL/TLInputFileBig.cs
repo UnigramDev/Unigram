@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputFileBig : TLInputFileBase 
 	{
-
 		public TLInputFileBig() { }
 		public TLInputFileBig(TLBinaryReader from, bool cache = false)
 		{

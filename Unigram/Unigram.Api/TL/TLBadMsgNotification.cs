@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLBadMsgNotification : TLBadMsgNotificationBase 
 	{
-
 		public TLBadMsgNotification() { }
 		public TLBadMsgNotification(TLBinaryReader from, bool cache = false)
 		{

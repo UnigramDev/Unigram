@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLChannelParticipant : TLChannelParticipantBase 
 	{
-
 		public TLChannelParticipant() { }
 		public TLChannelParticipant(TLBinaryReader from, bool cache = false)
 		{

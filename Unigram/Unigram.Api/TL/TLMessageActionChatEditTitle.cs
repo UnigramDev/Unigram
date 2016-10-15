@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessageActionChatEditTitle : TLMessageActionBase 
 	{
-
 		public TLMessageActionChatEditTitle() { }
 		public TLMessageActionChatEditTitle(TLBinaryReader from, bool cache = false)
 		{

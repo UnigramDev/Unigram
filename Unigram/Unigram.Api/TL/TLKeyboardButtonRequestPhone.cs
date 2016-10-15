@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLKeyboardButtonRequestPhone : TLKeyboardButtonBase 
 	{
-
 		public TLKeyboardButtonRequestPhone() { }
 		public TLKeyboardButtonRequestPhone(TLBinaryReader from, bool cache = false)
 		{

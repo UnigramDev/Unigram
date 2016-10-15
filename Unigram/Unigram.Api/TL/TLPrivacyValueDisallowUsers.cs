@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLPrivacyValueDisallowUsers : TLPrivacyRuleBase 
 	{
-
 		public TLPrivacyValueDisallowUsers() { }
 		public TLPrivacyValueDisallowUsers(TLBinaryReader from, bool cache = false)
 		{

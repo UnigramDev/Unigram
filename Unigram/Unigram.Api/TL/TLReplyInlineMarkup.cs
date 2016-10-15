@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLReplyInlineMarkup : TLReplyMarkupBase 
 	{
-
 		public TLReplyInlineMarkup() { }
 		public TLReplyInlineMarkup(TLBinaryReader from, bool cache = false)
 		{

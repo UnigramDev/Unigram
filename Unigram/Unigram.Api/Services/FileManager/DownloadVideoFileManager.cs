@@ -12,6 +12,15 @@ using Telegram.Api.TL;
 
 namespace Telegram.Api.Services.FileManager
 {
+    public interface IDownloadVideoFileManager
+    {
+        //Task<DownloadableItem> DownloadFileAsync(int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize);
+
+        void DownloadFileAsync(int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize, Action<double> callback);
+
+        void CancelDownloadFileAsync(TLObject owner);
+    }
+
     public class DownloadVideoFileManager : IDownloadVideoFileManager
     {
         private readonly object _randomRoot = new object();
@@ -134,7 +143,7 @@ namespace Telegram.Api.Services.FileManager
                 }
                 else
                 {
-                    _eventAggregator.Publish(new ProgressChangedEventArgs(part.ParentItem, progress));
+                    _eventAggregator.Publish(new DownloadProgressChangedEventArgs(part.ParentItem, progress));
                 }
             }
         }

@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateReadHistoryOutbox : TLUpdateBase, ITLMultiPts 
 	{
-
 		public TLUpdateReadHistoryOutbox() { }
 		public TLUpdateReadHistoryOutbox(TLBinaryReader from, bool cache = false)
 		{

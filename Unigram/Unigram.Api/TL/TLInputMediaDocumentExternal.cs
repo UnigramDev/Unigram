@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputMediaDocumentExternal : TLInputMediaBase, ITLMediaCaption 
 	{
-
 		public TLInputMediaDocumentExternal() { }
 		public TLInputMediaDocumentExternal(TLBinaryReader from, bool cache = false)
 		{

@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class UserPhotosViewModel : UnigramViewModelBase, IHandle<DownloadableItem>, IHandle
+    public class UserPhotosViewModel : UnigramViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
 
@@ -25,18 +25,8 @@ namespace Unigram.ViewModels
             Items = new ObservableCollection<TLPhotoBase>();
         }
 
-        public void Handle(DownloadableItem item)
-        {
-            //if (SelectedItem == item.Owner)
-            {
-                RaisePropertyChanged(() => SelectedItem);
-            }
-        }
-
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            Aggregator.Subscribe(this);
-
             var user = parameter as TLUser;
             if (user != null)
             {
@@ -70,7 +60,6 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
-            Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
         }
 

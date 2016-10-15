@@ -5,7 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLDestroySessionOk : TLDestroySessionResBase 
 	{
-
 		public TLDestroySessionOk() { }
 		public TLDestroySessionOk(TLBinaryReader from, bool cache = false)
 		{

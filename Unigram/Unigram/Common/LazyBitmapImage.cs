@@ -68,5 +68,37 @@ namespace Unigram.Common
 
         #endregion
 
+        #region Thumb
+
+        public static object GetThumb(DependencyObject obj)
+        {
+            return (object)obj.GetValue(ThumbProperty);
+        }
+
+        public static void SetThumb(DependencyObject obj, object value)
+        {
+            obj.SetValue(ThumbProperty, value);
+        }
+
+        public static readonly DependencyProperty ThumbProperty =
+            DependencyProperty.RegisterAttached("Thumb", typeof(object), typeof(LazyBitmapImage), new PropertyMetadata(null, OnThumbChanged));
+
+        private static void OnThumbChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as Image;
+            var photo = e.NewValue as TLPhoto;
+            if (photo != null)
+            {
+                var photoSize = photo.Sizes.OrderByDescending(x => Math.Abs(x.W * x.H)).FirstOrDefault();
+                if (photoSize != null)
+                {
+                    sender.MaxWidth = Math.Min(400, photoSize.W);
+                    sender.MaxHeight = Math.Min(400, photoSize.H);
+                }
+            }
+        }
+
+        #endregion
+
     }
 }

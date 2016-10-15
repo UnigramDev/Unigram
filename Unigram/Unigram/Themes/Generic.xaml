@@ -3,6 +3,67 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls">
 
+    <Style TargetType="local:ContentDialogBase">
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="MaxHeight" Value="Infinity" />
+        <Setter Property="MinHeight" Value="{ThemeResource ContentDialogMinHeight}" />
+        <Setter Property="MaxWidth" Value="Infinity" />
+        <Setter Property="MinWidth" Value="{ThemeResource ContentDialogMinWidth}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ContentDialogBase">
+                    <Border x:Name="Container" Background="{ThemeResource SystemControlBackgroundBaseMediumBrush}">
+                        <Border x:Name="BackgroundElement"
+                                    Background="{TemplateBinding Background}"
+                                    FlowDirection="{TemplateBinding FlowDirection}"
+                                    BorderThickness="1,0,1,1"
+                                    BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}"
+                                    MaxWidth="{ThemeResource ContentDialogMaxWidth}"
+                                    MaxHeight="{ThemeResource ContentDialogMaxHeight}"
+                                    MinWidth="{ThemeResource ContentDialogMinWidth}"
+                                    MinHeight="{ThemeResource ContentDialogMinHeight}"
+                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
+                            <ContentPresenter x:Name="Content"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        Content="{TemplateBinding Content}"
+                                        FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                        FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                        Margin="0"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        TextWrapping="Wrap" />
+                        </Border>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:ProgressBarRing">
+        <Setter Property="Minimum" Value="0"/>
+        <Setter Property="Maximum" Value="1"/>
+        <Setter Property="Width" Value="48"/>
+        <Setter Property="Height" Value="48"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ProgressBarRing">
+                    <Grid Background="#54000000" CornerRadius="24">
+                        <SymbolIcon Symbol="Cancel" Foreground="White"/>
+                        <local:ProgressBarRingSlice x:Name="Indicator" IsHitTestVisible="False" CacheMode="BitmapCache" Fill="White" InnerRadius="18" Radius="22" StartAngle="0" EndAngle="0">
+                            <Path.RenderTransform>
+                                <RotateTransform x:Name="Rotation" CenterX="22" CenterY="22" Angle="0"/>
+                            </Path.RenderTransform>
+                        </local:ProgressBarRingSlice>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <Style TargetType="local:UnigramLogo">
         <Setter Property="Template">
             <Setter.Value>

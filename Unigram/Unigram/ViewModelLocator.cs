@@ -24,11 +24,11 @@
     using System.IO;
     using Windows.Storage;
 
-    public class Bootstrapper
+    public class ViewModelLocator
     {
         private UnigramContainer container;
 
-        public Bootstrapper()
+        public ViewModelLocator()
         {
             container = UnigramContainer.Instance;
         }
@@ -49,8 +49,10 @@
             // Files
             container.ContainerBuilder.RegisterType<DownloadFileManager>().As<IDownloadFileManager>().SingleInstance();
             container.ContainerBuilder.RegisterType<DownloadDocumentFileManager>().As<IDownloadDocumentFileManager>().SingleInstance();
-            container.ContainerBuilder.RegisterType<UploadFileManager>().As<IUploadFileManager>().SingleInstance();
-            container.ContainerBuilder.RegisterType<UploadDocumentFileManager>().As<IUploadDocumentFileManager>().SingleInstance();
+            container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadFileManager>().SingleInstance();
+            container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadAudioManager>().SingleInstance();
+            container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadDocumentManager>().SingleInstance();
+            container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadVideoManager>().SingleInstance();
 
             container.ContainerBuilder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
             container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
