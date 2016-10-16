@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using System;
+using System.Diagnostics;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Windows.UI.Core;
@@ -18,11 +19,12 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
             DataContext = UnigramContainer.Instance.ResolverType<SettingsViewModel>();
             Loaded += OnLoaded;
+           
         }
-
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+
             OnStateChanged(null, null);
         }
 
@@ -51,12 +53,35 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Frame.BackStack.Clear();
+            if (Frame.CanGoBack)
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    AppViewBackButtonVisibility.Visible;
+            }
+            else
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    AppViewBackButtonVisibility.Collapsed;
+            }
+            Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested +=
+    BackRequested;
+
             if (MasterDetail.NavigationService == null)
             {
                 MasterDetail.Initialize("Settings");
             }
             ViewModel.NavigationService = MasterDetail.NavigationService;
+        }
+
+        private void BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            if (Frame == null)
+                return;
+            if (Frame.CanGoBack && e.Handled == false)
+            {
+                e.Handled = true;
+                Frame.GoBack();
+            }
         }
 
         private void ClearNavigation()
