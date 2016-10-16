@@ -69,6 +69,7 @@
             container.ContainerBuilder.RegisterType<UserInfoViewModel>();
             container.ContainerBuilder.RegisterType<ChatInfoViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
 
             container.Build();
 
