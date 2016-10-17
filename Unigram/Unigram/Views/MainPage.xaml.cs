@@ -248,7 +248,7 @@ namespace Unigram.Views
 
         private void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigationService.Navigate(typeof(SettingsPage));
+            Frame.Navigate(typeof(SettingsPage));
         }
     }
 }

@@ -218,6 +218,7 @@
     <Compile Include="ViewModels\LoginPhoneNumberViewModel.cs" />
     <Compile Include="ViewModels\LoginWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\UserInfoViewModel.cs" />
     <Compile Include="ViewModels\UserPhotosViewModel.cs" />
@@ -280,6 +281,15 @@
     </Compile>
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\ChatSettingsPage.xaml.cs">
+      <DependentUpon>ChatSettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\NotificationsSettingsPage.xaml.cs">
+      <DependentUpon>NotificationsSettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\PrivacySettingsPage.xaml.cs">
+      <DependentUpon>PrivacySettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ShareTargetPage.xaml.cs">
       <DependentUpon>ShareTargetPage.xaml</DependentUpon>
@@ -527,6 +537,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\ChatSettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\NotificationsSettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\PrivacySettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
