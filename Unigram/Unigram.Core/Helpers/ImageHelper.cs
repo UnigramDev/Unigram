@@ -10,7 +10,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Helpers
+namespace Unigram.Core.Helpers
 {
     public static class ImageHelper
     {

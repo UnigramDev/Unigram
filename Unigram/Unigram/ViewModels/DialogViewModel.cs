@@ -32,8 +32,9 @@ using Windows.Storage;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Helpers;
 using Unigram.Controls.Views;
-using Unigram.Models;
+using Unigram.Core.Models;
 using Unigram.Controls;
+using Unigram.Core.Helpers;
 
 namespace Unigram.ViewModels
 {
@@ -535,7 +536,7 @@ namespace Unigram.ViewModels
         public RelayCommand<StoragePhoto> SendPhotoCommand => new RelayCommand<StoragePhoto>(SendPhotoExecute);
         private async void SendPhotoExecute(StoragePhoto file)
         {
-            ObservableCollection<StoragePhoto> storages = null;
+            ObservableCollection<StorageMedia> storages = null;
 
             if (file == null)
             {
@@ -547,25 +548,21 @@ namespace Unigram.ViewModels
                 var files = await picker.PickMultipleFilesAsync();
                 if (files != null)
                 {
-                    storages = new ObservableCollection<StoragePhoto>(files.Select(x => new StoragePhoto(x)));
+                    storages = new ObservableCollection<StorageMedia>(files.Select(x => new StoragePhoto(x)));
                 }
             }
             else
             {
-                storages = new ObservableCollection<StoragePhoto> { file };
+                storages = new ObservableCollection<StorageMedia> { file };
             }
 
             if (storages != null)
             {
-                var dialogViewModel = new SendPhotosViewModel(ProtoService, CacheService, Aggregator);
-                dialogViewModel.Items = storages;
-                dialogViewModel.SelectedItem = dialogViewModel.Items[0];
-
-                var dialog = new SendPhotosView { DataContext = dialogViewModel };
+                var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0] };
                 var dialogResult = await dialog.ShowAsync();
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
-                    foreach (var storage in dialogViewModel.Items)
+                    foreach (var storage in dialog.Items)
                     {
                         await SendPhotoAsync(storage.File, storage.Caption);
                     }

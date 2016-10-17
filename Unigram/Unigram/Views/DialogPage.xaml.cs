@@ -14,7 +14,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
-using Unigram.Models;
+using Unigram.Core.Models;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;

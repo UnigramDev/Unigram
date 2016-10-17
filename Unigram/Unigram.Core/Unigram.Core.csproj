@@ -109,10 +109,13 @@
   <ItemGroup>
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Dependency\UnigramContainerBuilder.cs" />
+    <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Managers\BackgroundTaskManager.cs" />
     <Compile Include="Managers\ResourcesManager.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\FoursquareRootObject.cs" />
+    <Compile Include="Models\StorageMedia.cs" />
+    <Compile Include="Models\StoragePhoto.cs" />
     <Compile Include="Notifications\LiveTile.cs" />
     <Compile Include="Notifications\Toast.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

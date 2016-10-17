@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Common;
+using Unigram.Core.Models;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage.Pickers;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,11 +23,27 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SendPhotosView : ContentDialogBase
+    public sealed partial class SendPhotosView : ContentDialogBase, INotifyPropertyChanged
     {
+        public ObservableCollection<StorageMedia> Items { get; set; }
+
+        private StorageMedia _selectedItem;
+        public StorageMedia SelectedItem
+        {
+            get
+            {
+                return _selectedItem;
+            }
+            set
+            {
+                _selectedItem = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
+            }
+        }
+
         public SendPhotosView()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -74,5 +95,52 @@ namespace Unigram.Controls.Views
                 Flip.Focus(FocusState.Programmatic);
             }
         }
+
+        private async void More_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.AddRange(Constants.MediaTypes);
+
+            var files = await picker.PickMultipleFilesAsync();
+            if (files != null)
+            {
+                foreach (var file in files)
+                {
+                    if (Path.GetExtension(file.Name).Equals(".mp4"))
+                    {
+                        //Items.Add(new StorageVideo(file));
+                    }
+                    else
+                    {
+                        Items.Add(new StoragePhoto(file));
+                    }
+                }
+            }
+        }
+
+        private void Remove_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedItem != null)
+            {
+                var index = Items.IndexOf(SelectedItem);
+                var next = index > 0 ? Items[index - 1] : null;
+                var previous = index < Items.Count - 1 ? Items[index + 1] : null;
+
+                Items.Remove(SelectedItem);
+
+                if (next != null)
+                {
+                    SelectedItem = next;
+                }
+                else
+                {
+                    SelectedItem = previous;
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

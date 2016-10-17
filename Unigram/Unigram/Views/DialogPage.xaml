@@ -793,12 +793,6 @@
                     <FlyoutBase.AttachedFlyout>
                         <MenuFlyout>
                             <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <!--<Style TargetType="FlyoutPresenter">
-                                    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-                                    <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
-                                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-                                    <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled"/>
-                                </Style>-->
                                 <Style TargetType="MenuFlyoutPresenter">
                                     <Setter Property="Background" Value="{ThemeResource MenuFlyoutPresenterBackground}" />
                                     <Setter Property="BorderBrush" Value="{ThemeResource MenuFlyoutPresenterBorderBrush}" />
@@ -817,7 +811,7 @@
                                         <Setter.Value>
                                             <ControlTemplate TargetType="MenuFlyoutPresenter">
                                                 <Grid Background="{TemplateBinding Background}">
-                                                    <controls:AttachPickerFlyout ItemClick="AttachPickerFlyout_ItemClick"/>
+                                                    <controls:AttachPickerFlyout ItemClick="AttachPickerFlyout_ItemClick" Margin="0,0,0,8"/>
                                                     <Border x:Name="MenuFlyoutPresenterBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
                                                 </Grid>
                                             </ControlTemplate>

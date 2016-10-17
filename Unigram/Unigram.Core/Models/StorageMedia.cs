@@ -4,25 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
-using Unigram.Helpers;
+using Unigram.Core.Helpers;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Models
+namespace Unigram.Core.Models
 {
-    public class StoragePhoto : BindableBase
+    public class StorageMedia : BindableBase
     {
-        public StoragePhoto(StorageFile file)
+        public StorageMedia(StorageFile file)
         {
             File = file;
         }
 
         public StorageFile File { get; private set; }
 
-        private BitmapImage _thumbnail;
+        protected BitmapImage _thumbnail;
         public BitmapImage Thumbnail
         {
             get
@@ -34,19 +34,7 @@ namespace Unigram.Models
             }
         }
 
-        private ImageSource _preview;
-        public ImageSource Preview
-        {
-            get
-            {
-                if (_preview == null)
-                    LoadPreview();
-
-                return _preview;
-            }
-        }
-
-        private string _caption;
+        protected string _caption;
         public string Caption
         {
             get
@@ -74,17 +62,10 @@ namespace Unigram.Models
             RaisePropertyChanged(() => Thumbnail);
         }
 
-        private async void LoadPreview()
+        public virtual StorageMedia Clone()
         {
-            _preview = await ImageHelper.GetPreviewBitmapAsync(File);
-            RaisePropertyChanged(() => Preview);
-        }
-
-        public StoragePhoto Clone()
-        {
-            var item = new StoragePhoto(File);
+            var item = new StorageMedia(File);
             item._thumbnail = _thumbnail;
-            item._preview = _preview;
 
             return item;
         }
