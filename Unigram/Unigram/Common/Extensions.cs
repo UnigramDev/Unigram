@@ -16,5 +16,21 @@ namespace Unigram.Common
             }
             else return input;
         }
+
+        public static void AddRange<T>(this IList<T> list, IList<T> source)
+        {
+            foreach (var item in source)
+            {
+                list.Add(item);
+            }
+        }
+
+        public static void AddRange<T>(this IList<T> list, params T[] source)
+        {
+            foreach (var item in source)
+            {
+                list.Add(item);
+            }
+        }
     }
 }

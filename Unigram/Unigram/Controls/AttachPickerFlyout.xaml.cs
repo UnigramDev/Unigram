@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Models;
+using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Capture;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -44,17 +47,53 @@ namespace Unigram.Controls
             UpdateView(e.Size.Width);
         }
 
-        private void UpdateView(double width)
+        private async void UpdateView(double width)
         {
             Library.MaxWidth = width < 500 ? width - 8 : 240;
             Library.MinWidth = Library.MaxWidth;
+
+            var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+            if (devices.Count > 0)
+            {
+                Camera.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Camera.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void Library_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ItemClick?.Invoke(sender, e);
+            ItemClick?.Invoke(this, new MediaSelectedEventArgs((StoragePhoto)e.ClickedItem));
         }
 
-        public event ItemClickEventHandler ItemClick;
+        private async void Camera_Click(object sender, RoutedEventArgs e)
+        {
+            var capture = new CameraCaptureUI();
+            capture.PhotoSettings.AllowCropping = true;
+            capture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
+            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.MediumXga;
+            capture.VideoSettings.Format = CameraCaptureUIVideoFormat.Mp4;
+            capture.VideoSettings.MaxResolution = CameraCaptureUIMaxVideoResolution.StandardDefinition;
+
+            var result = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo /*OrVideo*/ );
+            if (result != null)
+            {
+                ItemClick?.Invoke(this, new MediaSelectedEventArgs(new StoragePhoto(result)));
+            }
+        }
+
+        public event EventHandler<MediaSelectedEventArgs> ItemClick;
+    }
+
+    public class MediaSelectedEventArgs
+    {
+        public StoragePhoto Item { get; private set; }
+
+        public MediaSelectedEventArgs(StoragePhoto item)
+        {
+            Item = item;
+        }
     }
 }

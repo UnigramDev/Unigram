@@ -88,7 +88,7 @@
                             </VisualStateManager.VisualStateGroups>
                             <StackPanel Orientation="Horizontal">
                                 <!--<FontIcon Margin="0,0,12,0" Glyph="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />-->
-                                <SymbolIcon Margin="12,0"  Symbol="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                <FontIcon Margin="12,0" Width="20" Height="20" Glyph="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBlock x:Name="TextBlock"
                                            Margin="8,0"
                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -106,7 +106,7 @@
     
     <StackPanel>
         <ListView x:Name="Library"
-                  ItemsSource="{StaticResource PhotoLibrary}"
+                  ItemsSource="{StaticResource MediaLibrary}"
                   ItemClick="Library_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
@@ -115,6 +115,7 @@
                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
                   ScrollViewer.VerticalScrollMode="Disabled"
                   MaxWidth="{ThemeResource MenuFlyoutMaxWidth}"
+                  Height="72"
                   Padding="12">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -129,6 +130,12 @@
                     <Setter Property="Padding" Value="0"/>
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.Header>
+                <Grid x:Name="Camera" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" RequestedTheme="Dark" Margin="0,0,12,0">
+                    <local:GlyphButton Click="Camera_Click" Glyph="&#xE114;"/>
+                    <Border BorderBrush="#26000000" BorderThickness="1"/>
+                </Grid>
+            </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
@@ -138,36 +145,26 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
-                        x:Uid="FCBTN-Camera"
-                        Tag="Camera"
-                        MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
-                        Text="Camera" />
         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                         x:Uid="FCBTN-Photo"
-                        Tag="Pictures"
-                        Text="Pictures"
+                        Tag="&#xEB9F;"
+                        Text="Photo or video"
                         MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
                         Command="{Binding SendPhotoCommand}"/>
-        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"  
-                        x:Uid="FCBTN-Video"
-                        Text="Video" 
-                        MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
-                        Tag="Video"/>
-        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                        x:Uid="FCBTN-Location"
-                        Text="Location" 
-                        MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
-                        Tag="Map"/>
-        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                        x:Uid="FCBTN-Contact"
-                        Text="Contact"
-                        MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
-                        Tag="ContactInfo"/>
         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                         x:Uid="FCBTN-File"
                         Text="File"
                         MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
-                        Tag="OpenFile"/>
+                        Tag="&#xE160;"/>
+        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                        x:Uid="FCBTN-Location"
+                        Text="Location" 
+                        MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
+                        Tag="&#xE1C4;"/>
+        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                        x:Uid="FCBTN-Contact"
+                        Text="Contact"
+                        MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
+                        Tag="&#xE136;"/>
     </StackPanel>
 </UserControl>

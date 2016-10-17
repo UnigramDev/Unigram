@@ -79,5 +79,14 @@ namespace Unigram.Models
             _preview = await ImageHelper.GetPreviewBitmapAsync(File);
             RaisePropertyChanged(() => Preview);
         }
+
+        public StoragePhoto Clone()
+        {
+            var item = new StoragePhoto(File);
+            item._thumbnail = _thumbnail;
+            item._preview = _preview;
+
+            return item;
+        }
     }
 }

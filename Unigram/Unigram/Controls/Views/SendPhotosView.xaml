@@ -12,7 +12,7 @@
     VerticalAlignment="Center"
     RequestedTheme="Dark">
 
-    <Grid Background="Black" MaxWidth="600" MaxHeight="500">
+    <Grid Background="Black">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState>
@@ -36,13 +36,14 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <FlipView ItemsSource="{Binding Items}"
+        <FlipView x:Name="Flip"
+                  ItemsSource="{Binding Items}"
                     SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                     Grid.RowSpan="4"
                     Grid.ColumnSpan="2">
@@ -57,7 +58,8 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <ListView ItemsSource="{Binding Items}"
+            <ListView x:Name="List"
+                      ItemsSource="{Binding Items}"
                         SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
                         ScrollViewer.HorizontalScrollMode="Auto"
@@ -95,7 +97,7 @@
         </Grid>
 
         <Border x:Name="Caption" Background="#AA000000" Grid.Row="2">
-            <TextBox Text="{Binding SelectedItem.Caption, Mode=TwoWay}" PlaceholderText="Add a caption..." Margin="12,8"/>
+            <TextBox x:Name="CaptionInput" KeyDown="TextBox_KeyDown" Text="{Binding SelectedItem.Caption, Mode=TwoWay}" InputScope="Chat" PlaceholderText="Add a caption..." Margin="12,8"/>
         </Border>
 
         <CommandBar x:Name="Commands" Background="#FF1F1F1F" Grid.Row="3">

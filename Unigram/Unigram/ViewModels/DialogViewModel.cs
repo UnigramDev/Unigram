@@ -542,10 +542,7 @@ namespace Unigram.ViewModels
                 var picker = new FileOpenPicker();
                 picker.ViewMode = PickerViewMode.Thumbnail;
                 picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                picker.FileTypeFilter.Add(".jpg");
-                picker.FileTypeFilter.Add(".jpeg");
-                picker.FileTypeFilter.Add(".png");
-                picker.FileTypeFilter.Add(".gif");
+                picker.FileTypeFilter.AddRange(Constants.MediaTypes);
 
                 var files = await picker.PickMultipleFilesAsync();
                 if (files != null)

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Models;
@@ -189,7 +190,7 @@ namespace Unigram.Views
             }
         }
 
-        private void AttachPickerFlyout_ItemClick(object sender, ItemClickEventArgs e)
+        private void AttachPickerFlyout_ItemClick(object sender, MediaSelectedEventArgs e)
         {
             var flyout = FlyoutBase.GetAttachedFlyout(Attach) as MenuFlyout;
             if (flyout != null)
@@ -197,11 +198,11 @@ namespace Unigram.Views
                 flyout.Hide();
             }
 
-            ViewModel.SendPhotoCommand.Execute(e.ClickedItem);
+            ViewModel.SendPhotoCommand.Execute(e.Item.Clone());
         }
     }
 
-    public class PicturesCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading
+    public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading
     {
         public StorageFileQueryResult Query { get; private set; }
 
@@ -209,11 +210,11 @@ namespace Unigram.Views
 
         private CoreDispatcher _dispatcher;
 
-        public PicturesCollection()
+        public MediaLibraryCollection()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
 
-            var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, new string[] { ".jpg", ".png", ".bmp", ".gif", ".mp4" });
+            var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
             queryOptions.FolderDepth = FolderDepth.Deep;
 
             Query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);

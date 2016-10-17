@@ -29,6 +29,8 @@
                                     VerticalAlignment="{TemplateBinding VerticalAlignment}"
                                     HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
                             <ContentPresenter x:Name="Content"
+                                              HorizontalContentAlignment="Stretch"
+                                              VerticalContentAlignment="Stretch"
                                         ContentTemplate="{TemplateBinding ContentTemplate}"
                                         Content="{TemplateBinding Content}"
                                         FontSize="{ThemeResource ControlContentThemeFontSize}"

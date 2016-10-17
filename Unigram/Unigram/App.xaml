@@ -21,7 +21,7 @@
 
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
 
-            <views:PicturesCollection x:Key="PhotoLibrary"/>
+            <views:MediaLibraryCollection x:Key="MediaLibrary"/>
 
             <!-- Temp -->
             <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />

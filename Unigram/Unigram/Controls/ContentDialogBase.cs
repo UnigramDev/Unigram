@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.System.Profile;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -25,13 +26,24 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(ContentDialogBase);
 
             Loaded += OnLoaded;
-            Window.Current.SizeChanged += Current_SizeChanged;
-
             FullSizeDesired = true;
 
             Opened += OnOpened;
             Closed += OnClosed;
-            
+        }
+
+        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
+        {
+            if (BackgroundElement != null && sender.VisibleBounds != Window.Current.Bounds)
+            {
+                Margin = new Thickness(sender.VisibleBounds.X, sender.VisibleBounds.Y, Window.Current.Bounds.Width - sender.VisibleBounds.Right, Window.Current.Bounds.Height - sender.VisibleBounds.Bottom);
+                UpdateViewBase();
+            }
+            else
+            {
+                Margin = new Thickness();
+                UpdateViewBase();
+            }
         }
 
         public new IAsyncOperation<ContentDialogBaseResult> ShowAsync()
@@ -60,6 +72,10 @@ namespace Unigram.Controls
         {
             BackButtonVisibility = SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility;
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
+            //Window.Current.SizeChanged += OnSizeChanged;
+
+            OnVisibleBoundsChanged(ApplicationView.GetForCurrentView(), null);
         }
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
@@ -67,6 +83,8 @@ namespace Unigram.Controls
             _callback.TrySetResult(_result);
 
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
+            //Window.Current.SizeChanged -= OnSizeChanged;
         }
 
         protected override void OnApplyTemplate()
@@ -74,7 +92,7 @@ namespace Unigram.Controls
             BackgroundElement = (Border)GetTemplateChild("BackgroundElement");
         }
 
-        private void Current_SizeChanged(object sender, WindowSizeChangedEventArgs e)
+        private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
             UpdateViewBase();
         }
@@ -86,36 +104,39 @@ namespace Unigram.Controls
 
         private void UpdateViewBase()
         {
-            MinWidth = Window.Current.Bounds.Width;
-            MinHeight = Window.Current.Bounds.Height;
+            var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
+            MinWidth = bounds.Width;
+            MinHeight = bounds.Height;
+            MaxWidth = bounds.Width;
+            MaxHeight = bounds.Height;
 
-            UpdateView();
+            UpdateView(bounds);
         }
 
-        protected virtual void UpdateView()
+        protected virtual void UpdateView(Rect bounds)
         {
-            if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (Window.Current.Bounds.Width < 500 || Window.Current.Bounds.Height < 500))
+            if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500))
             {
-                BackgroundElement.MinWidth = Window.Current.Bounds.Width;
-                BackgroundElement.MinHeight = Window.Current.Bounds.Height;
+                BackgroundElement.MinWidth = bounds.Width;
+                BackgroundElement.MinHeight = bounds.Height;
                 BackgroundElement.BorderThickness = new Thickness(0);
             }
             else
             {
-                BackgroundElement.MinWidth = Math.Min(/*(double)Resources["ContentDialogMinWidth"]*/ 600, Window.Current.Bounds.Width);
-                BackgroundElement.MinHeight = Math.Min(/*(double)Resources["ContentDialogMinHeight"]*/ 500, Window.Current.Bounds.Height);
-                BackgroundElement.MaxWidth = Math.Min(/*(double)Resources["ContentDialogMinWidth"]*/ 600, Window.Current.Bounds.Width);
-                BackgroundElement.MaxHeight = Math.Min(/*(double)Resources["ContentDialogMinHeight"]*/ 500, Window.Current.Bounds.Height);
+                BackgroundElement.MinWidth = Math.Min(/*(double)Resources["ContentDialogMinWidth"]*/ 600, bounds.Width);
+                BackgroundElement.MinHeight = Math.Min(/*(double)Resources["ContentDialogMinHeight"]*/ 500, bounds.Height);
+                BackgroundElement.MaxWidth = Math.Min(/*(double)Resources["ContentDialogMinWidth"]*/ 600, bounds.Width);
+                BackgroundElement.MaxHeight = Math.Min(/*(double)Resources["ContentDialogMinHeight"]*/ 500, bounds.Height);
 
-                if (BackgroundElement.MinWidth == Window.Current.Bounds.Width && BackgroundElement.MinHeight == Window.Current.Bounds.Height)
+                if (BackgroundElement.MinWidth == bounds.Width && BackgroundElement.MinHeight == bounds.Height)
                 {
                     BackgroundElement.BorderThickness = new Thickness(0);
                 }
-                else if (BackgroundElement.MinWidth == Window.Current.Bounds.Width && BackgroundElement.MinHeight != Window.Current.Bounds.Height)
+                else if (BackgroundElement.MinWidth == bounds.Width && BackgroundElement.MinHeight != bounds.Height)
                 {
                     BackgroundElement.BorderThickness = new Thickness(0, 0, 0, 1);
                 }
-                else if (BackgroundElement.MinWidth != Window.Current.Bounds.Width && BackgroundElement.MinHeight == Window.Current.Bounds.Height)
+                else if (BackgroundElement.MinWidth != bounds.Width && BackgroundElement.MinHeight == bounds.Height)
                 {
                     BackgroundElement.BorderThickness = new Thickness(1, 0, 1, 0);
                 }
