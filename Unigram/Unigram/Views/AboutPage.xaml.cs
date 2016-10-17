@@ -32,7 +32,7 @@
                 }
                 catch // If stuff goes to the shitter, go back to Home
                 {
-                    Frame.Navigate(typeof(HomePage), new DrillInNavigationTransitionInfo());
+
                 }
             }
 

@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
@@ -19,6 +21,7 @@ using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
@@ -26,17 +29,24 @@ namespace Unigram.Controls
 {
     public class BubbleTextBox : RichEditBox
     {
+        private ContentControl InlinePlaceholderTextContentPresenter;
+
         // TODO: TEMP!!!
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         private MenuFlyout _flyout;
         private MenuFlyoutPresenter _presenter;
 
+        private readonly IDisposable _textChangedSubscription;
+
         // True when the RichEdithBox MIGHT contains formatting (bold, italic, hyperlinks) 
         private bool _isDirty;
 
         public BubbleTextBox()
         {
+            DefaultStyleKey = typeof(BubbleTextBox);
+            ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
+
             _flyout = new MenuFlyout();
             _flyout.Items.Add(new MenuFlyoutItem { Text = "Bold" });
             _flyout.Items.Add(new MenuFlyoutItem { Text = "Italic" });
@@ -58,8 +68,25 @@ namespace Unigram.Controls
             Paste += OnPaste;
 #endif
             SelectionChanged += OnSelectionChanged;
+            TextChanged += OnTextChanged;
+
+            var textChangedEvents = Observable.FromEventPattern<RoutedEventHandler, RoutedEventArgs>(
+                keh => { TextChanged += keh; },
+                keh => { TextChanged -= keh; });
+
+            _textChangedSubscription = textChangedEvents
+                .Throttle(TimeSpan.FromMilliseconds(1000))
+                .Subscribe(e => Execute.BeginOnUIThread(() => UpdateInlineBot(true)));
+
 
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            InlinePlaceholderTextContentPresenter = (ContentControl)GetTemplateChild("InlinePlaceholderTextContentPresenter");
+
+            base.OnApplyTemplate();
         }
 
         private void Bold_Click(object sender, RoutedEventArgs e)
@@ -97,7 +124,7 @@ namespace Unigram.Controls
         {
             Document.Selection.CharacterFormat.Bold = FormatEffect.Off;
             Document.Selection.CharacterFormat.Italic = FormatEffect.Off;
-            Document.Selection.Link = "\"33303409\""; // Daniel user ID lol
+            Document.Selection.Link = $"\"{SettingsHelper.UserId}\"";
             Document.Selection.CharacterFormat.Underline = UnderlineType.Dash;
             Document.Selection.CharacterFormat.ForegroundColor = ((SolidColorBrush)Foreground).Color;
 
@@ -198,20 +225,57 @@ namespace Unigram.Controls
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
                 if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && !IsEmpty)
                 {
-                    args.Handled = true;
+                    AcceptsReturn = false;
                     await SendAsync();
+                }
+                else
+                {
+                    AcceptsReturn = true;
                 }
             }
         }
 
-        protected override void OnKeyUp(KeyRoutedEventArgs e)
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Space)
             {
                 FormatText();
+
+                string text;
+                Document.GetText(TextGetOptions.NoHidden, out text);
+
+                if (MessageHelper.IsValidUsername(text))
+                {
+                    ViewModel.ResolveInlineBot(text);
+                }
             }
 
-            base.OnKeyUp(e);
+            base.OnKeyDown(e);
+        }
+
+        private void OnTextChanged(object sender, RoutedEventArgs e)
+        {
+            AcceptsReturn = false;
+            UpdateText();
+            UpdateInlineBot(false);
+        }
+
+        private void UpdateInlineBot(bool fast)
+        {
+            var command = string.Empty;
+            var inline = SearchInlineBotResults(Text, out command);
+            if (inline && !fast)
+            {
+                ViewModel.GetInlineBotResults(command);
+            }
+        }
+
+        private void UpdateText()
+        {
+            string text;
+            Document.GetText(TextGetOptions.NoHidden, out text);
+
+            Text = text;
         }
 
         private void FormatText()
@@ -239,25 +303,6 @@ namespace Unigram.Controls
             }
 
             Document.Selection.SetRange(caretPosition, caretPosition);
-
-            //var result = Emoticon.Pattern.Replace(text, (match) =>
-            //{
-            //    var emoticon = match.Groups[1].Value;
-            //    var emoji = Emoticon.Replace(emoticon);
-            //    if (match.Index + match.Length < caretPosition)
-            //    {
-            //        caretPosition += emoji.Length - emoticon.Length;
-            //    }
-            //    if (match.Value.StartsWith(" "))
-            //    {
-            //        emoji = $" {emoji}";
-            //    }
-
-            //    return emoji;
-            //});
-
-            //Document.SetText(TextSetOptions.FormatRtf, result.TrimEnd("\\par\r\n}\r\n\0") + "}\r\n\0");
-            //Document.Selection.SetRange(caretPosition, caretPosition);
         }
 
         public async Task SendAsync()
@@ -271,6 +316,7 @@ namespace Unigram.Controls
             Document.GetText(TextGetOptions.FormatRtf, out text);
             Document.GetText(TextGetOptions.NoHidden, out planText);
 
+            //Document.SetText(TextSetOptions.FormatRtf, string.Empty);
             Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
 
             planText = planText.Trim();
@@ -310,6 +356,135 @@ namespace Unigram.Controls
                 return isEmpty;
             }
         }
+
+        #region Text
+
+
+
+        public string Text
+        {
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(BubbleTextBox), new PropertyMetadata(string.Empty));
+
+
+
+        #endregion
+
+        #region Inline bots
+
+        private bool SearchInlineBotResults(string text, out string searchText)
+        {
+            var flag = false;
+            searchText = string.Empty;
+
+            if (ViewModel.CurrentInlineBot != null)
+            {
+                var username = ViewModel.CurrentInlineBot.Username;
+                if (text != null && text.TrimStart().StartsWith("@" + username, StringComparison.OrdinalIgnoreCase))
+                {
+                    searchText = ReplaceFirst(text.TrimStart(), "@" + username, string.Empty);
+                    if (searchText.StartsWith(" "))
+                    {
+                        searchText = ReplaceFirst(searchText, " ", string.Empty);
+                        flag = true;
+                    }
+
+                    if (!flag)
+                    {
+                        if (string.Equals(text.TrimStart(), "@" + username, StringComparison.OrdinalIgnoreCase))
+                        {
+                            ViewModel.CurrentInlineBot = null;
+                            ViewModel.InlineBotResults = null;
+                            InlinePlaceholderText = string.Empty;
+                        }
+                        else
+                        {
+                            var user = ViewModel.CurrentInlineBot;
+                            if (user != null)
+                            {
+                                InlinePlaceholderText = ViewModel.CurrentInlineBot.BotInlinePlaceholder;
+                            }
+                        }
+                    }
+                    else if (string.IsNullOrEmpty(searchText))
+                    {
+                        var user = ViewModel.CurrentInlineBot;
+                        if (user != null)
+                        {
+                            InlinePlaceholderText = ViewModel.CurrentInlineBot.BotInlinePlaceholder;
+                        }
+                    }
+                    else
+                    {
+                        InlinePlaceholderText = string.Empty;
+                    }
+                }
+                else
+                {
+                    ViewModel.CurrentInlineBot = null;
+                    ViewModel.InlineBotResults = null;
+                    InlinePlaceholderText = string.Empty;
+                }
+            }
+
+            return flag;
+        }
+
+        public string ReplaceFirst(string text, string search, string replace)
+        {
+            var index = text.IndexOf(search, StringComparison.OrdinalIgnoreCase);
+            if (index < 0)
+            {
+                return text;
+            }
+
+            return text.Substring(0, index) + replace + text.Substring(index + search.Length);
+        }
+
+        private void UpdateInlinePlaceholder()
+        {
+            if (InlinePlaceholderTextContentPresenter != null)
+            {
+                var placeholder = Text;
+                if (!placeholder.EndsWith(" "))
+                {
+                    placeholder += " ";
+                }
+
+                var range = Document.GetRange(Text.Length, Text.Length);
+                int hit;
+                Rect rect;
+                range.GetRect(PointOptions.ClientCoordinates, out rect, out hit);
+
+                var translateTransform = new TranslateTransform();
+                translateTransform.X = rect.X;
+                InlinePlaceholderTextContentPresenter.RenderTransform = translateTransform;
+            }
+        }
+
+        #endregion
+
+        #region InlinePlaceholderText
+
+        public string InlinePlaceholderText
+        {
+            get { return (string)GetValue(InlinePlaceholderTextProperty); }
+            set { SetValue(InlinePlaceholderTextProperty, value); }
+        }
+
+        public static readonly DependencyProperty InlinePlaceholderTextProperty =
+            DependencyProperty.Register("InlinePlaceholderText", typeof(string), typeof(BubbleTextBox), new PropertyMetadata(null, OnInlinePlaceholderTextChanged));
+
+        private static void OnInlinePlaceholderTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((BubbleTextBox)d).UpdateInlinePlaceholder();
+        }
+
+        #endregion
     }
 
     public class RtfToTLParser : RtfSarParser

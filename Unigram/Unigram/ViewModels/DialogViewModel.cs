@@ -525,10 +525,14 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    await ProtoService.SendMessageAsync(message, () =>
+                    var response = await ProtoService.SendMessageAsync(message, () =>
                     {
                         message.State = TLMessageState.Confirmed;
                     });
+                    if (response.IsSucceeded)
+                    {
+                        message.RaisePropertyChanged(() => message.Media);
+                    }
                 }
             });
         }

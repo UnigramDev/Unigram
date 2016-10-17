@@ -1,6 +1,6 @@
-﻿using GalaSoft.MvvmLight.Command;
-using System;
+﻿using System;
 using System.Diagnostics;
+using Unigram.Common;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Windows.UI.Core;
@@ -32,23 +32,24 @@ namespace Unigram.Views
         {
             
         }
+
         RelayCommand NotifcationPageCommand => new RelayCommand(NotifcationPageNavigate);
         RelayCommand PrivacyPageCommand => new RelayCommand(PrivacyPageNavigate);
         RelayCommand ChatSettingsPageCommand => new RelayCommand(ChatSettingsPageNavigate);
 
         private void PrivacyPageNavigate()
         {
-            ViewModel.NavigationService.Navigate(typeof(Settings.PrivacySettingsPage));
+            MasterDetail.NavigationService.Navigate(typeof(Settings.PrivacySettingsPage));
         }
 
         private void ChatSettingsPageNavigate()
         {
-            ViewModel.NavigationService.Navigate(typeof(Settings.ChatSettingsPage));
+            MasterDetail.NavigationService.Navigate(typeof(Settings.ChatSettingsPage));
         }
 
         private void NotifcationPageNavigate()
         {
-            ViewModel.NavigationService.Navigate(typeof(Settings.NotificationsSettingsPage));
+            MasterDetail.NavigationService.Navigate(typeof(Settings.NotificationsSettingsPage));
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -63,13 +64,12 @@ namespace Unigram.Views
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
                     AppViewBackButtonVisibility.Collapsed;
             }
-            Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested +=
-    BackRequested;
 
             if (MasterDetail.NavigationService == null)
             {
                 MasterDetail.Initialize("Settings");
             }
+
             ViewModel.NavigationService = MasterDetail.NavigationService;
         }
 

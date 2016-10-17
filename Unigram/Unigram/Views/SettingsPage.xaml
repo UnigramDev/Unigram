@@ -8,6 +8,7 @@
       xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
       mc:Ignorable="d">
+    
     <Page.Transitions>
         <TransitionCollection>
             <NavigationThemeTransition>
@@ -15,6 +16,7 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
+    
     <Page.Resources>
         <Style x:Key="HyperButtonStyle" TargetType="controls:HyperButton">
             <Setter Property="Background" Value="Transparent"/>
@@ -182,119 +184,115 @@
         </Style>
     </Page.Resources>
 
-
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged">
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="48" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
         
-        <!-- Titlebar -->
-        <Grid Grid.Row="0"
-              Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
-              Height="{ThemeResource AppBarThemeCompactHeight}">
-            <TextBlock x:Uid="Settings-Titlebar-Title"
-                       Text="SETTINGS"
-                       Style="{StaticResource BaseTextBlockStyle}"
-                       RequestedTheme="Dark"
-                       VerticalAlignment="Center"
-                       Margin="12,0"/>
-        </Grid>
-        <Grid Grid.Row="1">
+            <!-- Titlebar -->
+            <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+                <TextBlock x:Uid="Settings-Titlebar-Title"
+                           Text="SETTINGS"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           VerticalAlignment="Center"
+                           Margin="12,0"/>
+            </Border>
+            <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="120"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
+                <Grid Grid.Row="0" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                <Grid x:Name="grdProfile"
-                      Grid.Column="0"
-                  RelativePanel.AlignHorizontalCenterWithPanel="True">
-                    <Ellipse x:Name="elpContentInfoChatIconColor" Width="96" Height="96" Fill="Purple" VerticalAlignment="Center"/>
-                    <!-- Placeholder fill  -->
-                    <TextBlock Margin="12,0" FontSize="24" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.Item, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <Ellipse x:Name="elpContentInfoChatIconPicture" Width="96" Height="96">
-                        <Ellipse.Fill>
-                            <ImageBrush ImageSource="{x:Bind ViewModel.Item.Photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
-                        </Ellipse.Fill>
-                    </Ellipse>
-                    <Button x:Name="elpContentInfoChatIcon"
-                        HorizontalAlignment="Center"
-                        MinWidth="96"
-                        MinHeight="96"                                
-                        Padding="0"
-                        BorderThickness="0"
-                        Background="Transparent"                                
-                        Command="{Binding PhotoCommand}"/>
+                    <Grid x:Name="grdProfile"
+                          Grid.Column="0"
+                          RelativePanel.AlignHorizontalCenterWithPanel="True">
+                        <Ellipse x:Name="elpContentInfoChatIconColor" Width="96" Height="96" Fill="Purple" VerticalAlignment="Center"/>
+                        <!-- Placeholder fill  -->
+                        <TextBlock Margin="12,0" FontSize="24" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.Item, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Ellipse x:Name="elpContentInfoChatIconPicture" Width="96" Height="96">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="{x:Bind ViewModel.Item.Photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Button x:Name="elpContentInfoChatIcon"
+                                HorizontalAlignment="Center"
+                                MinWidth="96"
+                                MinHeight="96"                                
+                                Padding="0"
+                                BorderThickness="0"
+                                Background="Transparent"                                
+                                Command="{Binding PhotoCommand}"/>
+                    </Grid>
+                    <StackPanel Grid.Column="1"
+                                VerticalAlignment="Center">
+                        <TextBlock x:Name="tblUserInfoChatName"
+                                   Visibility="Visible"
+                                   Text="{x:Bind ViewModel.Item.FullName, Mode=OneWay}"
+                                   Margin="0,4,0,0"
+                                   TextWrapping="WrapWholeWords"
+                                   Style="{ThemeResource SubtitleTextBlockStyle}"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock x:Name="tblUserInfoUserName" 
+                                   Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"
+                                   Margin="0,4"                              
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextTrimming="CharacterEllipsis">
+                            <Run Text="@"/><Run Text="{Binding Item.Username}"/>
+                        </TextBlock>
+                        <TextBlock x:Name="tblUserInfoPhone" 
+                                   Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"
+                                   Margin="0,4"
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextTrimming="CharacterEllipsis">
+                            <Run Text="+"/><Run Text="{Binding Item.Phone}"/>
+                        </TextBlock>
+                    </StackPanel>
                 </Grid>
-                <StackPanel Grid.Column="1"
-                            VerticalAlignment="Center">
-                    <TextBlock x:Name="tblUserInfoChatName"
-                       Visibility="Visible"
-                       Text="{x:Bind ViewModel.Item.FullName, Mode=OneWay}"
-                       Margin="0,4,0,0"
-                       TextWrapping="WrapWholeWords"
-                       Style="{ThemeResource SubtitleTextBlockStyle}"
-                       FontWeight="SemiBold"/>
-                    <TextBlock x:Name="tblUserInfoUserName" 
-                       Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"
-                       Margin="0,4"                              
-                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                       Style="{ThemeResource BodyTextBlockStyle}"
-                       TextTrimming="CharacterEllipsis">
-                <Run Text="@"/><Run Text="{Binding Item.Username}"/>
-                    </TextBlock>
-                    <TextBlock x:Name="tblUserInfoPhone" 
-                       Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"
-                       Margin="0,4"
-                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                       Style="{ThemeResource BodyTextBlockStyle}"
-                       TextTrimming="CharacterEllipsis">
-                <Run Text="+"/><Run Text="{Binding Item.Phone}"/>
-                    </TextBlock>
-                </StackPanel>
-            </Grid>
                 <Grid Grid.Row="1">
                     <ScrollViewer>
                         <StackPanel>
                             <local:TableStackPanel x:Name="SwitchGroup1" 
-                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                           Margin="0,24,0,0">
+                                                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                                   Margin="0,24,0,0">
                                 <controls:HyperCheckButton Content="Enabled" 
-                                                   Tag="Enable Location Services" 
-                                                   Margin="0,5"
-                                                   Style="{ThemeResource CheckButtonStyle}"/>
+                                                           Tag="Enable Location Services" 
+                                                           Margin="0,5"
+                                                           Style="{ThemeResource CheckButtonStyle}"/>
                                 <controls:HyperCheckButton Content="Enabled" 
-                                                   Tag="Sync with People Hub" 
-                                                   Margin="0,4" 
-                                                   Style="{ThemeResource CheckButtonStyle}"/>
+                                                           Tag="Sync with People Hub" 
+                                                           Margin="0,4" 
+                                                           Style="{ThemeResource CheckButtonStyle}"/>
                             </local:TableStackPanel>
                             <local:TableStackPanel x:Name="OptionsGroup1" 
-                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                           Margin="0,24,0,0">
+                                                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                                   Margin="0,24,0,0">
                                 <controls:HyperButton Content="Notifications and Sounds" 
-                                              Command="{x:Bind NotifcationPageCommand}"
+                                                      Command="{x:Bind NotifcationPageCommand}"
                                                       Margin="0,4" 
-                                              Style="{StaticResource HyperButtonStyle}"/>
+                                                      Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Privacy and Security" 
-                                              Command="{x:Bind PrivacyPageCommand}"
+                                                      Command="{x:Bind PrivacyPageCommand}"
                                                       Margin="0,4" 
-                                              Style="{StaticResource HyperButtonStyle}"/>
+                                                      Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Chat Settings" 
-                                              Command="{x:Bind ChatSettingsPageCommand}"
+                                                      Command="{x:Bind ChatSettingsPageCommand}"
                                                       Margin="0,4" 
-                                              Style="{StaticResource HyperButtonStyle}"/>
+                                                      Style="{StaticResource HyperButtonStyle}"/>
                             </local:TableStackPanel>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
+            </Grid>
         </Grid>
-       </Grid>
     </controls:MasterDetailView>
 </Page>

@@ -123,52 +123,6 @@ namespace Unigram.Views
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
         }
 
-        private async void fcbtnAttachPhoto_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                imgSingleImgThumbnail.Source = null;
-
-                // Create the picker
-                FileOpenPicker picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-
-                // Set the allowed filetypes
-                picker.FileTypeFilter.Add(".png");
-                picker.FileTypeFilter.Add(".jpg");
-                picker.FileTypeFilter.Add(".jpeg");
-
-                // Get the file
-                var file = await picker.PickSingleFileAsync();
-                if (file != null)
-                {
-                    var img = new BitmapImage();
-
-                    // If image is big on mobile all will explode!
-                    using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
-                    {
-                        await img.SetSourceAsync(stream);
-                    }
-
-                    imgSingleImgThumbnail.Source = img;
-                    imgSingleImgThumbnail.Visibility = Visibility.Visible;
-                    btnRemoveSingleImgThumbnail.Visibility = Visibility.Visible;
-                    btnVoiceMessage.Visibility = Visibility.Collapsed;
-                    btnSendMessage.Visibility = Visibility.Visible;
-                }
-            }
-            catch { }
-        }
-
-        private void btnRemoveSingleImgThumbnail_Click(object sender, RoutedEventArgs e)
-        {
-            imgSingleImgThumbnail.Visibility = Visibility.Collapsed;
-            btnRemoveSingleImgThumbnail.Visibility = Visibility.Collapsed;
-            imgSingleImgThumbnail.Source = null;
-            CheckMessageBoxEmpty();
-        }
-
         private void btnClosePinnedMessage_Click(object sender, RoutedEventArgs e)
         {
             grdPinnedMessage.Visibility = Visibility.Collapsed;
@@ -199,6 +153,11 @@ namespace Unigram.Views
             }
 
             ViewModel.SendPhotoCommand.Execute(e.Item.Clone());
+        }
+
+        private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.SendBotInlineResult((TLBotInlineResultBase)e.ClickedItem);
         }
     }
 

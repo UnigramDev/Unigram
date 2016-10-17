@@ -107,11 +107,16 @@
       <DependentUpon>AttachPickerFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ContentDialogBase.cs" />
+    <Compile Include="Controls\Inline\InlineBotResultsView.xaml.cs">
+      <DependentUpon>InlineBotResultsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\OrientableListView.cs" />
     <Compile Include="Controls\ProgressBarRing.cs" />
     <Compile Include="Controls\ProgressBarRingSlice.cs" />
     <Compile Include="Controls\Views\SendPhotosView.xaml.cs">
       <DependentUpon>SendPhotosView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Selectors\InlineBotResultTemplateSelector.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="Collections\DialogCollection.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
@@ -212,6 +217,7 @@
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
     <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Handle.cs" />
+    <Compile Include="ViewModels\DialogViewModel.Inline.cs" />
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
     <Compile Include="ViewModels\LoginPasswordViewModel.cs" />
     <Compile Include="ViewModels\LoginPhoneCodeViewModel.cs" />
@@ -251,9 +257,6 @@
     </Compile>
     <Compile Include="Views\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HomePage.xaml.cs">
-      <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HomeNewChatPage.xaml.cs">
       <DependentUpon>HomeNewChatPage.xaml</DependentUpon>
@@ -389,6 +392,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Inline\InlineBotResultsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Items\DialogListViewItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -499,10 +506,6 @@
     <Page Include="Views\GamePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\HomePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\HomeNewChatPage.xaml">
       <SubType>Designer</SubType>
