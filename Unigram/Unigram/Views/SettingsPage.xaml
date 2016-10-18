@@ -202,35 +202,32 @@
             </Border>
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="120"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Grid x:Name="grdProfile"
-                          Grid.Column="0"
-                          RelativePanel.AlignHorizontalCenterWithPanel="True">
-                        <Ellipse x:Name="elpContentInfoChatIconColor" Width="96" Height="96" Fill="Purple" VerticalAlignment="Center"/>
-                        <!-- Placeholder fill  -->
+                    <Grid Height="64" Width="64" CornerRadius="32" Margin="12" Grid.RowSpan="2">
                         <TextBlock Margin="12,0" FontSize="24" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.Self, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <Ellipse x:Name="elpContentInfoChatIconPicture" Width="96" Height="96">
+                        <Ellipse>
                             <Ellipse.Fill>
                                 <ImageBrush ImageSource="{x:Bind ViewModel.Self.Photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
                             </Ellipse.Fill>
                         </Ellipse>
-                        <Button x:Name="elpContentInfoChatIcon"
-                                HorizontalAlignment="Center"
-                                MinWidth="96"
-                                MinHeight="96"                                
-                                Padding="0"
-                                BorderThickness="0"
-                                Background="Transparent"                                
-                                Command="{Binding PhotoCommand}"/>
+                        <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="32"/>
+                        <controls:SimpleButton Command="{Binding PhotoCommand}" CornerRadius="32"/>
                     </Grid>
-                    <StackPanel Grid.Column="1"
+                    <TextBlock Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+                    <TextBlock Text="Online" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+
+                    <!--<StackPanel Grid.Column="1"
                                 VerticalAlignment="Center">
                         <TextBlock x:Name="tblUserInfoChatName"
                                    Visibility="Visible"
@@ -255,7 +252,7 @@
                                    TextTrimming="CharacterEllipsis">
                             <Run Text="+"/><Run Text="{Binding Self.Phone}"/>
                         </TextBlock>
-                    </StackPanel>
+                    </StackPanel>-->
                 </Grid>
                 <Grid Grid.Row="1">
                     <ScrollViewer>

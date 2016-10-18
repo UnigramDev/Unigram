@@ -113,6 +113,7 @@
     <Compile Include="Controls\OrientableListView.cs" />
     <Compile Include="Controls\ProgressBarRing.cs" />
     <Compile Include="Controls\ProgressBarRingSlice.cs" />
+    <Compile Include="Controls\SimpleButton.cs" />
     <Compile Include="Controls\Views\SendPhotosView.xaml.cs">
       <DependentUpon>SendPhotosView.xaml</DependentUpon>
     </Compile>
@@ -236,9 +237,6 @@
     </Compile>
     <Compile Include="Views\ChatInfoPage.xaml.cs">
       <DependentUpon>ChatInfoPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ChatPage.xaml.cs">
-      <DependentUpon>ChatPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DialogInfoAdminsPage.xaml.cs">
       <DependentUpon>DialogInfoAdminsPage.xaml</DependentUpon>
@@ -486,10 +484,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ChatInfoPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ChatPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

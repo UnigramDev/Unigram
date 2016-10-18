@@ -24,8 +24,10 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Search;
 using Windows.Storage.Streams;
 using Windows.System;
+using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Text;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -133,14 +135,17 @@ namespace Unigram.Views
             var flyout = FlyoutBase.GetAttachedFlyout(Attach) as MenuFlyout;
             if (flyout != null)
             {
-                //if (ActualWidth < 500)
-                //{
-                //    flyout.ShowAt((Button)sender, new Point(4, 44));
-                //}
-                //else
+                var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
+                if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500))
                 {
-                    flyout.ShowAt(Attach, new Point(4, -4));
+                    flyout.LightDismissOverlayMode = LightDismissOverlayMode.On;
                 }
+                else
+                {
+                    flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
+                }
+
+                flyout.ShowAt(Attach, new Point(8, -9));
             }
         }
 

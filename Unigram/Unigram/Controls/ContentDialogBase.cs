@@ -123,10 +123,10 @@ namespace Unigram.Controls
             }
             else
             {
-                BackgroundElement.MinWidth = Math.Min(/*(double)Resources["ContentDialogMinWidth"]*/ 600, bounds.Width);
-                BackgroundElement.MinHeight = Math.Min(/*(double)Resources["ContentDialogMinHeight"]*/ 500, bounds.Height);
-                BackgroundElement.MaxWidth = Math.Min(/*(double)Resources["ContentDialogMinWidth"]*/ 600, bounds.Width);
-                BackgroundElement.MaxHeight = Math.Min(/*(double)Resources["ContentDialogMinHeight"]*/ 500, bounds.Height);
+                BackgroundElement.MinWidth = Math.Min(640, bounds.Width);
+                BackgroundElement.MinHeight = Math.Min(500, bounds.Height);
+                BackgroundElement.MaxWidth = Math.Min(640, bounds.Width);
+                BackgroundElement.MaxHeight = Math.Min(500, bounds.Height);
 
                 if (BackgroundElement.MinWidth == bounds.Width && BackgroundElement.MinHeight == bounds.Height)
                 {

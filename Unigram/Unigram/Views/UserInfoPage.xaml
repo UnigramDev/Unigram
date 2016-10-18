@@ -249,15 +249,15 @@
                         <ImageBrush ImageSource="{x:Bind ViewModel.Item.Photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
                     </Ellipse.Fill>
                 </Ellipse>
-                <Button x:Name="elpContentInfoChatIcon"
+                <controls:SimpleButton x:Name="elpContentInfoChatIcon"
                         HorizontalAlignment="Center"
                         MinWidth="200"
                         MinHeight="200"                                
                         Padding="0"
                         BorderThickness="0"
                         Background="Transparent"                                
-                        Command="{Binding PhotoCommand}"/>
-
+                        Command="{Binding PhotoCommand}"
+                        CornerRadius="10000"/>
             </Grid>
             <TextBlock x:Name="tblUserInfoChatName"
                        Visibility="Visible"

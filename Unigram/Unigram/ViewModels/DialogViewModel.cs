@@ -560,7 +560,7 @@ namespace Unigram.ViewModels
                 storages = new ObservableCollection<StorageMedia> { file };
             }
 
-            if (storages != null)
+            if (storages != null && storages.Count > 0)
             {
                 var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0] };
                 var dialogResult = await dialog.ShowAsync();
