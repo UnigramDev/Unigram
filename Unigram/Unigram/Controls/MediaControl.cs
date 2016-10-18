@@ -18,7 +18,7 @@ namespace Unigram.Controls
             }
             set
             {
-                if (value is TLMessageMediaEmpty)
+                if (value is TLMessageMediaEmpty || !(value is TLMessageMediaBase))
                 {
                     Content = null;
                 }
@@ -26,6 +26,7 @@ namespace Unigram.Controls
                 {
                     Content = value;
                 }
+
                 ContentChanged?.Invoke(this, EventArgs.Empty);
             }
         }

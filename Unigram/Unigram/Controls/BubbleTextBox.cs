@@ -268,6 +268,12 @@ namespace Unigram.Controls
             {
                 ViewModel.GetInlineBotResults(command);
             }
+            else if (!inline)
+            {
+                ViewModel.CurrentInlineBot = null;
+                ViewModel.InlineBotResults = null;
+                InlinePlaceholderText = string.Empty;
+            }
         }
 
         private void UpdateText()

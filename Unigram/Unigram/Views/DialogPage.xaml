@@ -42,10 +42,10 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="MenuFlyoutItem">
                         <Grid x:Name="LayoutRoot"
+                              Padding="{TemplateBinding Padding}"
                               Background="{TemplateBinding Background}"
                               BorderBrush="{TemplateBinding BorderBrush}"
-                              BorderThickness="{TemplateBinding BorderThickness}"
-                              Padding="0,12">
+                              BorderThickness="{TemplateBinding BorderThickness}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal">
@@ -111,8 +111,7 @@
                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                            Foreground="{TemplateBinding Foreground}"
                                            Text="{TemplateBinding Text}"
-                                           TextTrimming="Clip"
-                                           Margin="0,8"/>
+                                           TextTrimming="Clip"/>
                             </StackPanel>
                         </Grid>
                     </ControlTemplate>
@@ -365,6 +364,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto"/>
+            <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Titlebar -->
@@ -434,11 +434,6 @@
                                         x:Uid="FCBTN-Pin"
                                         Tag="&#xE141;"
                                         Text="Pin to Start"/>
-                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
-                                        x:Name="cbtnBackgroundImage"
-                                        x:Uid="FCBTN-BackgroundImage"
-                                        Tag="&#xEB9F;"
-                                        Text="Change background image" />
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
@@ -729,12 +724,13 @@
                 Grid.ColumnSpan="2"
                 Grid.Row="1"/>
             <!-- Send-button -->
-            <Button x:Name="btnSendMessage"  
+            <!--<Button x:Name="btnSendMessage"  
                     Visibility="Collapsed"
                     IsEnabled="True"
                     Width="48"
                     MinHeight="48" 
-                    Background="{ThemeResource TelegramBackgroundAccentBrush}"                                      
+                    IsTabStop="False"
+                    Foreground="{ThemeResource TelegramBackgroundAccentBrush}"                                      
                     VerticalAlignment="Stretch"
                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
                     Click="btnSendMessage_Click"
@@ -746,7 +742,18 @@
                                 Text="&#xE122;"
                                 RequestedTheme="Dark"/>
                 </Button.Content>
-            </Button>
+            </Button>-->
+
+            <controls:GlyphButton x:Name="btnSendMessage"
+                                  Click="btnSendMessage_Click"
+                                  Glyph="&#xE725;" 
+                                  IsTabStop="False"
+                                  Visibility="Collapsed"
+                                  FontSize="24"
+                                  Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
+                                  Padding="4,2,0,0"
+                                  Grid.Column="3"
+                                  Grid.Row="1"/>
 
             <controls:GlyphButton x:Name="btnStickers" 
                                     Command="{Binding SendCommand}"
@@ -768,22 +775,18 @@
                             x:Uid="FCBTN-Photo"
                             Tag="&#xEB9F;"
                             Text="Photo or video"
-                            MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
                             Command="{Binding SendPhotoCommand}"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                             x:Uid="FCBTN-File"
                             Text="File"
-                            MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
                             Tag="&#xE160;"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                             x:Uid="FCBTN-Location"
                             Text="Location" 
-                            MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
                             Tag="&#xE1C4;"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                             x:Uid="FCBTN-Contact"
                             Text="Contact"
-                            MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
                             Tag="&#xE136;"/>
                         <MenuFlyout.MenuFlyoutPresenterStyle>
                             <Style TargetType="MenuFlyoutPresenter">

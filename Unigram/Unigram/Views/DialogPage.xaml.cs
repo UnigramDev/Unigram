@@ -50,19 +50,38 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            //ListGallery.ItemsSource = new PicturesCollection();
-
             DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
-            Loaded += DialogPage_Loaded;
             CheckMessageBoxEmpty();
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
-        private void DialogPage_Loaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            InputPane.GetForCurrentView().Showing += InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
+
             //_panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             //lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
 
             lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+        }
+
+        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
+        }
+
+        private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            KeyboardPlaceholder.Height = new GridLength(1, GridUnitType.Auto);
         }
 
         //private bool _isAlreadyLoading;
@@ -74,15 +93,7 @@ namespace Unigram.Views
             {
                 await ViewModel.LoadNextSliceAsync();
             }
-
-            //if (lvDialogs.ScrollingHost.VerticalOffset < 1)
-            //    UpdateTask();
         }
-
-        //public async Task UpdateTask()
-        //{
-        //    await ViewModel.LoadNextSliceAsync();
-        //}
 
         private void CheckMessageBoxEmpty()
         {

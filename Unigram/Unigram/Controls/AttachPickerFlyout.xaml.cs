@@ -49,7 +49,7 @@ namespace Unigram.Controls
 
         private async void UpdateView(double width)
         {
-            Library.MaxWidth = width < 500 ? width - 8 : 360;
+            Library.MaxWidth = width < 500 ? width - 16 : 360;
             Library.MinWidth = Library.MaxWidth;
 
             var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
