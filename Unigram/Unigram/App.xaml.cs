@@ -149,10 +149,6 @@ namespace Unigram
                     var activate = args as ToastNotificationActivatedEventArgs;
                     var launch = activate?.Argument ?? null;
 
-                    // Prepare stuff for Cortana
-                    var localVoiceCommands = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///VoiceCommands/VoiceCommands.xml"));
-                    await VoiceCommandDefinitionManager.InstallCommandDefinitionsFromStorageFileAsync(localVoiceCommands);
-
                     NavigationService.Navigate(typeof(Views.MainPage), launch);
 
                     timer.Stop();
@@ -169,6 +165,14 @@ namespace Unigram
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
 
             await Toast.RegisterBackgroundTasks();
+
+            try
+            {
+                // Prepare stuff for Cortana
+                var localVoiceCommands = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///VoiceCommands/VoiceCommands.xml"));
+                await VoiceCommandDefinitionManager.InstallCommandDefinitionsFromStorageFileAsync(localVoiceCommands);
+            }
+            catch { }
         }
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
