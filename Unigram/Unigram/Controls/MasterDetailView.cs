@@ -58,8 +58,6 @@ namespace Unigram.Controls
 
         private void UpdateVisualState()
         {
-            VisualStateManager.GoToState(this, ActualWidth >= 820 ? "FilledState" : "NarrowState", false);
-
             // If there are previous pages, see the state of the MD.
             // If it's narrow, show the back button in the titlebar,
             // else hide it.
@@ -101,6 +99,8 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
+
             MasterPresenter = (ContentPresenter)GetTemplateChild("MasterFrame");
             DetailPresenter = (Border)GetTemplateChild("DetailPresenter");
             AdaptiveStates = (VisualStateGroup)GetTemplateChild("AdaptiveStates");

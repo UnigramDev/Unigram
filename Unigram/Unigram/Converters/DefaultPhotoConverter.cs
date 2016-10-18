@@ -550,9 +550,9 @@ namespace Unigram.Converters
                 Execute.BeginOnThreadPool(async () =>
                 {
                     await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, (progess) => { });
-                    Execute.BeginOnUIThread(() =>
+                    Execute.BeginOnUIThread(async () =>
                     {
-                        renderer.SetSource(new Uri(Path.Combine("ms-appdata:///local", filename)));
+                        await renderer.SetSourceAsync(new Uri(Path.Combine("ms-appdata:///local", filename)));
                     });
                 });
 
@@ -583,10 +583,13 @@ namespace Unigram.Converters
                 //    }
                 //}
             }
-            else if (document.Size > 0 && document.Size < 262144)
+            else if (document.Size > 0 /*&& document.Size < 262144*/)
             {
                 var renderer = _videoFactory.CreateRenderer(320, 320);
-                renderer.SetSource(new Uri(Path.Combine("ms-appdata:///local", filename)));
+                Execute.BeginOnUIThread(async () =>
+                {
+                    await renderer.SetSourceAsync(new Uri(Path.Combine("ms-appdata:///local", filename)));
+                });
                 return renderer.ImageSource;
             }
 

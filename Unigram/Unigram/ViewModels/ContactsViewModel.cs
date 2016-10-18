@@ -81,21 +81,37 @@ namespace Unigram.ViewModels
 
         public async Task GetSelfAsync()
         {
-            var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
-            if (response.IsSucceeded)
+            var cached = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
+            if (cached != null)
             {
-                var user = response.Value.FirstOrDefault() as TLUser;
-                if (user != null)
-                {
-                    var status = LastSeenHelper.GetLastSeen(user);
-                    var listItem = new UsersPanelListItem(user as TLUser);
-                    listItem.fullName = user.FullName;
-                    listItem.lastSeen = status.Item1;
-                    listItem.lastSeenEpoch = status.Item2;
-                    listItem.Photo = listItem._parent.Photo;
-                    listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+                var status = LastSeenHelper.GetLastSeen(cached);
+                var listItem = new UsersPanelListItem(cached as TLUser);
+                listItem.fullName = cached.FullName;
+                listItem.lastSeen = status.Item1;
+                listItem.lastSeenEpoch = status.Item2;
+                listItem.Photo = listItem._parent.Photo;
+                listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
 
-                    Self = listItem;
+                Self = listItem;
+            }
+            else
+            {
+                var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
+                if (response.IsSucceeded)
+                {
+                    var user = response.Value.FirstOrDefault() as TLUser;
+                    if (user != null)
+                    {
+                        var status = LastSeenHelper.GetLastSeen(user);
+                        var listItem = new UsersPanelListItem(user as TLUser);
+                        listItem.fullName = user.FullName;
+                        listItem.lastSeen = status.Item1;
+                        listItem.lastSeenEpoch = status.Item2;
+                        listItem.Photo = listItem._parent.Photo;
+                        listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+
+                        Self = listItem;
+                    }
                 }
             }
         }

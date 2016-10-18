@@ -1,11 +1,12 @@
+// Copyright (c) 2016 Lorenzo Rossoni
+
 #include "pch.h"
-#include "Helpers\MediaFoundationHelper.h"
 #include "MediaFoundationExtensions.h"
 #include "AnimatedImageSourceRendererFactory.h"
 
+using namespace Unigram::Native;
 using Windows::UI::Xaml::Media::CompositionTarget;
 
-using namespace Unigram::Native;
 
 AnimatedImageSourceRendererFactory::AnimatedImageSourceRendererFactory()
 {
@@ -15,7 +16,7 @@ AnimatedImageSourceRendererFactory::AnimatedImageSourceRendererFactory()
 	m_eventTokens[1] = CompositionTarget::SurfaceContentsLost += ref new EventHandler<Object^>(this, &AnimatedImageSourceRendererFactory::OnSurfaceContentLost);
 
 	ComPtr<IMFActivate> activate;
-	ThrowIfFailed(MFCreateMediaExtensionActivate(L"AnimatedImageSourceRenderer.GIFByteStreamHandler", nullptr, IID_PPV_ARGS(&activate)));
+	ThrowIfFailed(MFCreateMediaExtensionActivate(L"Unigram.Native.GIFByteStreamHandler", nullptr, IID_PPV_ARGS(&activate)));
 	ThrowIfFailed(MFRegisterLocalByteStreamHandler(L".gif", L"image/gif", activate.Get()));
 
 	ThrowIfFailed(CreateDeviceResources());

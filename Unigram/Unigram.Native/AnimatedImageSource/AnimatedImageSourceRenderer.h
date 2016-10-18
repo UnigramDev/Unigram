@@ -1,11 +1,12 @@
-﻿#pragma once
+﻿// Copyright (c) 2016 Lorenzo Rossoni
+
+#pragma once
 #include <ppl.h>
 #include <ppltasks.h>
 #include <pplcancellation_token.h>
 #include <wrl\wrappers\corewrappers.h>
 #include "VirtualImageSourceRendererCallback.h"
-#include "BufferLock.h"
-#include "FramesCacheStore.h"
+#include "ReadFramesAsyncOperation.h"
 
 using namespace Platform;
 using namespace Windows::Storage;
@@ -19,7 +20,7 @@ using namespace Windows::UI::Xaml::Data;
 using Windows::Foundation::Metadata::WebHostHiddenAttribute;
 using Windows::Foundation::Metadata::DefaultOverloadAttribute;
 
-using namespace concurrency;
+using namespace Concurrency;
 
 namespace Unigram
 {
@@ -41,9 +42,9 @@ namespace Unigram
 			}
 
 			[DefaultOverload]
-			void SetSource(_In_ Windows::Foundation::Uri^ uri);
-			void SetSource(_In_ Windows::Storage::Streams::IRandomAccessStream^ stream);
-			void SetSource(_In_ Windows::Media::Core::IMediaSource^ mediaSource);
+			IAsyncAction^ SetSourceAsync(_In_ Windows::Foundation::Uri^ uri);
+			IAsyncAction^ SetSourceAsync(_In_ Windows::Storage::Streams::IRandomAccessStream^ stream);
+			IAsyncAction^ SetSourceAsync(_In_ Windows::Media::Core::IMediaSource^ mediaSource);
 
 		internal:
 			AnimatedImageSourceRenderer(int maximumWidth, int maximumHeight, _In_ AnimatedImageSourceRendererFactory^ owner);
@@ -52,22 +53,10 @@ namespace Unigram
 			HRESULT OnTimerTick();
 
 		private:
-			struct FrameBitmapsResult WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IUnknown>
-			{
-				FrameBitmapsResult(D2D1_SIZE_U frameSize) :
-					FrameSize(frameSize),
-					CacheStore(Make<FramesCacheStore>())
-				{
-				}
-
-				D2D1_SIZE_U FrameSize;
-				ComPtr<FramesCacheStore> CacheStore;
-			};
-
 			~AnimatedImageSourceRenderer();
 
-			void Reset();
-			void Initialize(ComPtr<IMFSourceReader>& sourceReader);
+			task<void> Reset();
+			task<void> Initialize(ComPtr<ReadFramesAsyncOperation>& asyncOperation);
 			void NotifyPropertyChanged(_In_ String^ propertyName);
 			void OnSurfaceContentLost(_In_ Object^ sender, _In_ Object^ args);
 			void OnEnteredBackground(_In_ Object^ sender, _In_ EnteredBackgroundEventArgs^ args);
@@ -75,11 +64,6 @@ namespace Unigram
 			HRESULT Draw(_In_ RECT const& drawingBounds);
 			HRESULT InitializeImageSource();
 			HRESULT Invalidate(bool resize);
-
-			static task<ComPtr<FrameBitmapsResult>> CreateFrameBitmapsAsync(D2D1_SIZE_U maximumSize, ComPtr<ID2D1DeviceContext>& d2dDeviceContext,
-				ComPtr<IMFSourceReader>& sourceReader, cancellation_token& ct);
-			static HRESULT InitializeSourceReader(_In_ IMFSourceReader* sourceReader, _Out_ D2D1_SIZE_U* frameSize);
-			static HRESULT ConvertVideoTypeToUncompressedType(_In_ IMFMediaType* pType, _In_ const GUID& subtype, _Out_ D2D1_SIZE_U* frameSize, _Out_ IMFMediaType** ppType);
 
 			ComPtr<ID2D1Bitmap> m_frameBitmap;
 			ComPtr<FramesCacheStore> m_framesCacheStore;

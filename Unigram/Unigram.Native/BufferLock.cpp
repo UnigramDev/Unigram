@@ -1,3 +1,5 @@
+// Copyright (c) 2016 Lorenzo Rossoni
+
 #include "pch.h"
 #include "Helpers\COMHelper.h"
 #include "BufferLock.h"

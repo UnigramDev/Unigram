@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:models="using:Unigram.Core.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -43,8 +44,8 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <FlipView x:Name="Flip"
-                  ItemsSource="{Binding Items}"
-                    SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                  ItemsSource="{x:Bind Items}"
+                    SelectedItem="{x:Bind SelectedItem, Mode=TwoWay}"
                     Grid.RowSpan="4"
                     Grid.ColumnSpan="2">
             <FlipView.ItemTemplate>
@@ -59,8 +60,8 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <ListView x:Name="List"
-                      ItemsSource="{Binding Items}"
-                        SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                      ItemsSource="{x:Bind Items}"
+                        SelectedItem="{x:Bind SelectedItem, Mode=TwoWay}"
                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
                         ScrollViewer.HorizontalScrollMode="Auto"
                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
@@ -80,16 +81,16 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="models:StoragePhoto">
                         <Grid Margin="2" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                            <Image Source="{Binding Thumbnail}" Width="48" Height="48"/>
+                            <Image Source="{x:Bind Thumbnail, Mode=OneWay}" Width="48" Height="48"/>
                             <Border BorderBrush="#26000000" BorderThickness="1"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.Footer>
                     <Grid Margin="2" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                        <controls:GlyphButton Command="{Binding MoreCommand}" Glyph="&#xE109;"/>
+                        <controls:GlyphButton Click="More_Click" Glyph="&#xE109;"/>
                         <Border BorderBrush="#26000000" BorderThickness="1"/>
                     </Grid>
                 </ListView.Footer>
@@ -97,12 +98,12 @@
         </Grid>
 
         <Border x:Name="Caption" Background="#AA000000" Grid.Row="2">
-            <TextBox x:Name="CaptionInput" KeyDown="TextBox_KeyDown" Text="{Binding SelectedItem.Caption, Mode=TwoWay}" InputScope="Chat" PlaceholderText="Add a caption..." Margin="12,8"/>
+            <TextBox x:Name="CaptionInput" KeyDown="TextBox_KeyDown" Text="{x:Bind SelectedItem.Caption, Mode=TwoWay}" InputScope="Chat" PlaceholderText="Add a caption..." Margin="12,8"/>
         </Border>
 
         <CommandBar x:Name="Commands" Background="#FF1F1F1F" Grid.Row="3">
             <CommandBar.Content>
-                <AppBarButton Command="{Binding RemoveCommand}" Icon="Delete"/>
+                <AppBarButton Click="Remove_Click" Icon="Delete"/>
             </CommandBar.Content>
             <AppBarButton Click="Accept_Click" Icon="Accept"/>
             <AppBarButton Click="Cancel_Click" Icon="Cancel"/>

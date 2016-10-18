@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-    public class GlyphButton : Button
+    public class GlyphButton : SimpleButton
     {
         public GlyphButton()
         {

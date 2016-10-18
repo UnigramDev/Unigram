@@ -1,9 +1,12 @@
+// Copyright (c) 2016 Lorenzo Rossoni
+
 #include "pch.h"
 #include "MediaFoundationExtensions.h"
 #include "AnimatedImageSourceRenderer.h"
 #include "VirtualImageSourceRendererCallback.h"
 
 using namespace Unigram::Native;
+
 
 VirtualImageSourceRendererCallback::VirtualImageSourceRendererCallback(AnimatedImageSourceRenderer^ renderer) :
 	m_renderer(renderer),

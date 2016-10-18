@@ -10,161 +10,47 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <x:Double x:Key="MenuFlyoutMaxWidth">240</x:Double>
-
-        <Style x:Key="IconMenuFlyoutItem" TargetType="MenuFlyoutItem">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="Padding" Value="{ThemeResource MenuFlyoutItemThemePadding}" />
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="UseSystemFocusVisuals" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="MenuFlyoutItem">
-                        <Grid x:Name="LayoutRoot"
-                              Background="{TemplateBinding Background}"
-                              BorderBrush="{TemplateBinding BorderBrush}"
-                              BorderThickness="{TemplateBinding BorderThickness}"
-                              Padding="0,12">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="TextBlock" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="TextBlock" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="TextBlock" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="CheckPlaceholderStates">
-                                    <VisualState x:Name="NoPlaceholder" />
-                                    <VisualState x:Name="CheckPlaceholder">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Margin">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="PaddingSizeStates">
-                                    <VisualState x:Name="DefaultPadding" />
-                                    <VisualState x:Name="NarrowPadding">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Padding">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MenuFlyoutItemThemePaddingNarrow}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <StackPanel Orientation="Horizontal">
-                                <!--<FontIcon Margin="0,0,12,0" Glyph="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />-->
-                                <FontIcon Margin="12,0" Width="20" Height="20" Glyph="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBlock x:Name="TextBlock"
-                                           Margin="8,0"
-                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                           Foreground="{TemplateBinding Foreground}"
-                                           Text="{TemplateBinding Text}"
-                                           TextTrimming="Clip" />
-                            </StackPanel>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <x:Double x:Key="MenuFlyoutMaxWidth">360</x:Double>
     </UserControl.Resources>
     
-    <StackPanel>
-        <ListView x:Name="Library"
-                  ItemsSource="{StaticResource MediaLibrary}"
-                  ItemClick="Library_ItemClick"
-                  IsItemClickEnabled="True"
-                  SelectionMode="None"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  ScrollViewer.HorizontalScrollMode="Auto"
-                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                  ScrollViewer.VerticalScrollMode="Disabled"
-                  MaxWidth="{ThemeResource MenuFlyoutMaxWidth}"
-                  Height="72"
-                  Padding="12">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="MinWidth" Value="0"/>
-                    <Setter Property="MinHeight" Value="0"/>
-                    <Setter Property="Margin" Value="0,0,12,0"/>
-                    <Setter Property="Padding" Value="0"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.Header>
-                <Grid x:Name="Camera" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" RequestedTheme="Dark" Margin="0,0,12,0">
-                    <local:GlyphButton Click="Camera_Click" Glyph="&#xE114;"/>
+    <ListView x:Name="Library"
+              ItemsSource="{StaticResource MediaLibrary}"
+              ItemClick="Library_ItemClick"
+              IsItemClickEnabled="True"
+              SelectionMode="None"
+              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+              ScrollViewer.HorizontalScrollMode="Auto"
+              ScrollViewer.VerticalScrollBarVisibility="Disabled"
+              ScrollViewer.VerticalScrollMode="Disabled"
+              MaxWidth="{ThemeResource MenuFlyoutMaxWidth}"
+              Height="72"
+              Padding="12">
+        <ListView.ItemsPanel>
+            <ItemsPanelTemplate>
+                <ItemsStackPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+        </ListView.ItemsPanel>
+        <ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem">
+                <Setter Property="MinWidth" Value="0"/>
+                <Setter Property="MinHeight" Value="0"/>
+                <Setter Property="Margin" Value="0,0,12,0"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+        </ListView.ItemContainerStyle>
+        <ListView.Header>
+            <Grid x:Name="Camera" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" RequestedTheme="Dark" Margin="0,0,12,0">
+                <local:GlyphButton Click="Camera_Click" Glyph="&#xE114;"/>
+                <Border BorderBrush="#26000000" BorderThickness="1"/>
+            </Grid>
+        </ListView.Header>
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                    <Image Source="{Binding Thumbnail}" Width="48" Height="48"/>
                     <Border BorderBrush="#26000000" BorderThickness="1"/>
                 </Grid>
-            </ListView.Header>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                        <Image Source="{Binding Thumbnail}" Width="48" Height="48"/>
-                        <Border BorderBrush="#26000000" BorderThickness="1"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                        x:Uid="FCBTN-Photo"
-                        Tag="&#xEB9F;"
-                        Text="Photo or video"
-                        MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
-                        Command="{Binding SendPhotoCommand}"/>
-        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                        x:Uid="FCBTN-File"
-                        Text="File"
-                        MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
-                        Tag="&#xE160;"/>
-        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                        x:Uid="FCBTN-Location"
-                        Text="Location" 
-                        MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
-                        Tag="&#xE1C4;"/>
-        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                        x:Uid="FCBTN-Contact"
-                        Text="Contact"
-                        MinWidth="{ThemeResource MenuFlyoutMaxWidth}"
-                        Tag="&#xE136;"/>
-    </StackPanel>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
 </UserControl>

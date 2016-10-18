@@ -14,7 +14,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
-using Unigram.Models;
+using Unigram.Core.Models;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -24,8 +24,10 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Search;
 using Windows.Storage.Streams;
 using Windows.System;
+using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Text;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -48,19 +50,38 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            //ListGallery.ItemsSource = new PicturesCollection();
-
             DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
-            Loaded += DialogPage_Loaded;
             CheckMessageBoxEmpty();
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
-        private void DialogPage_Loaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            InputPane.GetForCurrentView().Showing += InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
+
             //_panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             //lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
 
             lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+        }
+
+        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
+        }
+
+        private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            KeyboardPlaceholder.Height = new GridLength(1, GridUnitType.Auto);
         }
 
         //private bool _isAlreadyLoading;
@@ -72,15 +93,7 @@ namespace Unigram.Views
             {
                 await ViewModel.LoadNextSliceAsync();
             }
-
-            //if (lvDialogs.ScrollingHost.VerticalOffset < 1)
-            //    UpdateTask();
         }
-
-        //public async Task UpdateTask()
-        //{
-        //    await ViewModel.LoadNextSliceAsync();
-        //}
 
         private void CheckMessageBoxEmpty()
         {
@@ -123,52 +136,6 @@ namespace Unigram.Views
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
         }
 
-        private async void fcbtnAttachPhoto_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                imgSingleImgThumbnail.Source = null;
-
-                // Create the picker
-                FileOpenPicker picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-
-                // Set the allowed filetypes
-                picker.FileTypeFilter.Add(".png");
-                picker.FileTypeFilter.Add(".jpg");
-                picker.FileTypeFilter.Add(".jpeg");
-
-                // Get the file
-                var file = await picker.PickSingleFileAsync();
-                if (file != null)
-                {
-                    var img = new BitmapImage();
-
-                    // If image is big on mobile all will explode!
-                    using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
-                    {
-                        await img.SetSourceAsync(stream);
-                    }
-
-                    imgSingleImgThumbnail.Source = img;
-                    imgSingleImgThumbnail.Visibility = Visibility.Visible;
-                    btnRemoveSingleImgThumbnail.Visibility = Visibility.Visible;
-                    btnVoiceMessage.Visibility = Visibility.Collapsed;
-                    btnSendMessage.Visibility = Visibility.Visible;
-                }
-            }
-            catch { }
-        }
-
-        private void btnRemoveSingleImgThumbnail_Click(object sender, RoutedEventArgs e)
-        {
-            imgSingleImgThumbnail.Visibility = Visibility.Collapsed;
-            btnRemoveSingleImgThumbnail.Visibility = Visibility.Collapsed;
-            imgSingleImgThumbnail.Source = null;
-            CheckMessageBoxEmpty();
-        }
-
         private void btnClosePinnedMessage_Click(object sender, RoutedEventArgs e)
         {
             grdPinnedMessage.Visibility = Visibility.Collapsed;
@@ -179,14 +146,17 @@ namespace Unigram.Views
             var flyout = FlyoutBase.GetAttachedFlyout(Attach) as MenuFlyout;
             if (flyout != null)
             {
-                //if (ActualWidth < 500)
-                //{
-                //    flyout.ShowAt((Button)sender, new Point(4, 44));
-                //}
-                //else
+                var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
+                if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500))
                 {
-                    flyout.ShowAt(Attach, new Point(4, -4));
+                    flyout.LightDismissOverlayMode = LightDismissOverlayMode.On;
                 }
+                else
+                {
+                    flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
+                }
+
+                flyout.ShowAt(Attach, new Point(8, -9));
             }
         }
 
@@ -199,6 +169,11 @@ namespace Unigram.Views
             }
 
             ViewModel.SendPhotoCommand.Execute(e.Item.Clone());
+        }
+
+        private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.SendBotInlineResult((TLBotInlineResultBase)e.ClickedItem);
         }
     }
 
@@ -240,17 +215,11 @@ namespace Unigram.Views
             var result = await Query.GetFilesAsync(StartIndex, 10);
             StartIndex += (uint)result.Count;
 
-            if (result.Count == 0)
-            {
-            }
-            else
-            {
-                resultCount = (uint)result.Count();
+            resultCount = (uint)result.Count;
 
-                foreach (var file in result)
-                {
-                    items.Add(new StoragePhoto(file));
-                }
+            foreach (var file in result)
+            {
+                items.Add(new StoragePhoto(file));
             }
 
             return items;

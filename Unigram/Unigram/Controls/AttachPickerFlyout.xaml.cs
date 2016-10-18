@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Models;
+using Unigram.Core.Models;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -49,7 +49,7 @@ namespace Unigram.Controls
 
         private async void UpdateView(double width)
         {
-            Library.MaxWidth = width < 500 ? width - 8 : 240;
+            Library.MaxWidth = width < 500 ? width - 16 : 360;
             Library.MinWidth = Library.MaxWidth;
 
             var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
