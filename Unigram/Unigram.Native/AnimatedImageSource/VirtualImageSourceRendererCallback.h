@@ -1,3 +1,5 @@
+// Copyright (c) 2016 Lorenzo Rossoni
+
 #pragma once
 #include <dxgi.h> 
 #include <dxgi1_2.h> 

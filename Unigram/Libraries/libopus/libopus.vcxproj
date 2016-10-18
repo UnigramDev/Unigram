@@ -1,0 +1,515 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+<Choose>
+  <When Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+      <ItemGroup>
+    <ClCompile Include="celt\x86\celt_lpc_sse.c" />
+    <ClCompile Include="celt\x86\pitch_sse.c" />
+    <ClCompile Include="celt\x86\pitch_sse2.c" />
+    <ClCompile Include="celt\x86\pitch_sse4_1.c" />
+    <ClCompile Include="celt\x86\vq_sse2.c" />
+    <ClCompile Include="celt\x86\x86cpu.c" />
+    <ClCompile Include="celt\x86\x86_celt_map.c" />
+    <ClCompile Include="silk\fixed\x86\burg_modified_FIX_sse.c" />
+    <ClCompile Include="silk\fixed\x86\prefilter_FIX_sse.c" />
+    <ClCompile Include="silk\fixed\x86\vector_ops_FIX_sse.c" />
+    <ClCompile Include="silk\x86\NSQ_del_dec_sse.c" />
+    <ClCompile Include="silk\x86\NSQ_sse.c" />
+    <ClCompile Include="silk\x86\VAD_sse.c" />
+    <ClCompile Include="silk\x86\VQ_WMat_EC_sse.c" />
+    <ClCompile Include="silk\x86\x86_silk_map.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="celt\x86\celt_lpc_sse.h" />
+    <ClInclude Include="celt\x86\pitch_sse.h" />
+    <ClInclude Include="celt\x86\vq_sse.h" />
+    <ClInclude Include="celt\x86\x86cpu.h" />
+    <ClInclude Include="silk\x86\main_sse.h" />
+    <ClInclude Include="silk\x86\SigProc_FIX_sse.h" />
+  </ItemGroup>
+  </When>
+<When Condition="'$(Platform)'=='ARM'">
+  <ItemGroup>
+    <ClCompile Include="celt\arm\armcpu.c" />
+    <ClCompile Include="celt\arm\arm_celt_map.c" />
+    <ClCompile Include="celt\arm\celt_ne10_fft.c" />
+    <ClCompile Include="celt\arm\celt_ne10_mdct.c" />
+    <ClCompile Include="celt\arm\celt_neon_intr.c" />
+    <ClCompile Include="celt\dump_modes\dump_modes_arm_ne10.c" />
+    <ClCompile Include="silk\arm\arm_silk_map.c" />
+    <ClCompile Include="silk\arm\NSQ_neon.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="celt\arm\armcpu.h" />
+    <ClInclude Include="celt\arm\fft_arm.h" />
+    <ClInclude Include="celt\arm\fixed_arm64.h" />
+    <ClInclude Include="celt\arm\fixed_armv4.h" />
+    <ClInclude Include="celt\arm\fixed_armv5e.h" />
+    <ClInclude Include="celt\arm\kiss_fft_armv4.h" />
+    <ClInclude Include="celt\arm\kiss_fft_armv5e.h" />
+    <ClInclude Include="celt\arm\mdct_arm.h" />
+    <ClInclude Include="celt\arm\pitch_arm.h" />
+    <ClInclude Include="celt\static_modes_fixed_arm_ne10.h" />
+    <ClInclude Include="celt\static_modes_float_arm_ne10.h" />
+    <ClInclude Include="silk\arm\macros_arm64.h" />
+    <ClInclude Include="silk\arm\macros_armv4.h" />
+    <ClInclude Include="silk\arm\macros_armv5e.h" />
+    <ClInclude Include="silk\arm\NSQ_neon.h" />
+    <ClInclude Include="silk\arm\SigProc_FIX_armv4.h" />
+    <ClInclude Include="silk\arm\SigProc_FIX_armv5e.h" />
+  </ItemGroup>
+  </When>
+<When Condition="'$(Platform)'=='MIPS'">
+<ItemGroup>
+    <ClInclude Include="celt\mips\celt_mipsr1.h" />
+    <ClInclude Include="celt\mips\fixed_generic_mipsr1.h" />
+    <ClInclude Include="celt\mips\kiss_fft_mipsr1.h" />
+    <ClInclude Include="celt\mips\mdct_mipsr1.h" />
+    <ClInclude Include="celt\mips\pitch_mipsr1.h" />
+    <ClInclude Include="celt\mips\vq_mipsr1.h" />
+    <ClInclude Include="silk\fixed\mips\noise_shape_analysis_FIX_mipsr1.h" />
+    <ClInclude Include="silk\fixed\mips\prefilter_FIX_mipsr1.h" />
+    <ClInclude Include="silk\fixed\mips\warped_autocorrelation_FIX_mipsr1.h" />
+    <ClInclude Include="silk\mips\macros_mipsr1.h" />
+    <ClInclude Include="silk\mips\NSQ_del_dec_mipsr1.h" />
+    <ClInclude Include="silk\mips\sigproc_fix_mipsr1.h" />
+  </ItemGroup>
+  </When>
+</Choose>
+  <ItemGroup>
+    <ClCompile Include="analysis.c" />
+    <ClCompile Include="celt\bands.c" />
+    <ClCompile Include="celt\celt.c" />
+    <ClCompile Include="celt\celt_decoder.c" />
+    <ClCompile Include="celt\celt_encoder.c" />
+    <ClCompile Include="celt\celt_lpc.c" />
+    <ClCompile Include="celt\cwrs.c" />
+    <ClCompile Include="celt\dump_modes\dump_modes.c" />
+    <ClCompile Include="celt\entcode.c" />
+    <ClCompile Include="celt\entdec.c" />
+    <ClCompile Include="celt\entenc.c" />
+    <ClCompile Include="celt\kiss_fft.c" />
+    <ClCompile Include="celt\laplace.c" />
+    <ClCompile Include="celt\mathops.c" />
+    <ClCompile Include="celt\mdct.c" />
+    <ClCompile Include="celt\modes.c" />
+    <ClCompile Include="celt\opus_custom_demo.c" />
+    <ClCompile Include="celt\pitch.c" />
+    <ClCompile Include="celt\quant_bands.c" />
+    <ClCompile Include="celt\rate.c" />
+    <ClCompile Include="celt\vq.c" />
+    <ClCompile Include="mlp.c" />
+    <ClCompile Include="mlp_data.c" />
+    <ClCompile Include="mlp_train.c" />
+    <ClCompile Include="opus.c" />
+    <ClCompile Include="opus_compare.c" />
+    <ClCompile Include="opus_decoder.c" />
+    <ClCompile Include="opus_demo.c" />
+    <ClCompile Include="opus_encoder.c" />
+    <ClCompile Include="opus_multistream.c" />
+    <ClCompile Include="opus_multistream_decoder.c" />
+    <ClCompile Include="opus_multistream_encoder.c" />
+    <ClCompile Include="repacketizer.c" />
+    <ClCompile Include="repacketizer_demo.c" />
+    <ClCompile Include="silk\A2NLSF.c" />
+    <ClCompile Include="silk\ana_filt_bank_1.c" />
+    <ClCompile Include="silk\biquad_alt.c" />
+    <ClCompile Include="silk\bwexpander.c" />
+    <ClCompile Include="silk\bwexpander_32.c" />
+    <ClCompile Include="silk\check_control_input.c" />
+    <ClCompile Include="silk\CNG.c" />
+    <ClCompile Include="silk\code_signs.c" />
+    <ClCompile Include="silk\control_audio_bandwidth.c" />
+    <ClCompile Include="silk\control_codec.c" />
+    <ClCompile Include="silk\control_SNR.c" />
+    <ClCompile Include="silk\debug.c" />
+    <ClCompile Include="silk\decoder_set_fs.c" />
+    <ClCompile Include="silk\decode_core.c" />
+    <ClCompile Include="silk\decode_frame.c" />
+    <ClCompile Include="silk\decode_indices.c" />
+    <ClCompile Include="silk\decode_parameters.c" />
+    <ClCompile Include="silk\decode_pitch.c" />
+    <ClCompile Include="silk\decode_pulses.c" />
+    <ClCompile Include="silk\dec_API.c" />
+    <ClCompile Include="silk\encode_indices.c" />
+    <ClCompile Include="silk\encode_pulses.c" />
+    <ClCompile Include="silk\enc_API.c" />
+    <ClCompile Include="silk\fixed\apply_sine_window_FIX.c" />
+    <ClCompile Include="silk\fixed\autocorr_FIX.c" />
+    <ClCompile Include="silk\fixed\burg_modified_FIX.c" />
+    <ClCompile Include="silk\fixed\corrMatrix_FIX.c" />
+    <ClCompile Include="silk\fixed\encode_frame_FIX.c" />
+    <ClCompile Include="silk\fixed\find_LPC_FIX.c" />
+    <ClCompile Include="silk\fixed\find_LTP_FIX.c" />
+    <ClCompile Include="silk\fixed\find_pitch_lags_FIX.c" />
+    <ClCompile Include="silk\fixed\find_pred_coefs_FIX.c" />
+    <ClCompile Include="silk\fixed\k2a_FIX.c" />
+    <ClCompile Include="silk\fixed\k2a_Q16_FIX.c" />
+    <ClCompile Include="silk\fixed\LTP_analysis_filter_FIX.c" />
+    <ClCompile Include="silk\fixed\LTP_scale_ctrl_FIX.c" />
+    <ClCompile Include="silk\fixed\noise_shape_analysis_FIX.c" />
+    <ClCompile Include="silk\fixed\pitch_analysis_core_FIX.c" />
+    <ClCompile Include="silk\fixed\process_gains_FIX.c" />
+    <ClCompile Include="silk\fixed\regularize_correlations_FIX.c" />
+    <ClCompile Include="silk\fixed\residual_energy16_FIX.c" />
+    <ClCompile Include="silk\fixed\residual_energy_FIX.c" />
+    <ClCompile Include="silk\fixed\schur64_FIX.c" />
+    <ClCompile Include="silk\fixed\schur_FIX.c" />
+    <ClCompile Include="silk\fixed\vector_ops_FIX.c" />
+    <ClCompile Include="silk\fixed\warped_autocorrelation_FIX.c" />
+    <ClCompile Include="silk\float\apply_sine_window_FLP.c" />
+    <ClCompile Include="silk\float\autocorrelation_FLP.c" />
+    <ClCompile Include="silk\float\burg_modified_FLP.c" />
+    <ClCompile Include="silk\float\bwexpander_FLP.c" />
+    <ClCompile Include="silk\float\corrMatrix_FLP.c" />
+    <ClCompile Include="silk\float\encode_frame_FLP.c" />
+    <ClCompile Include="silk\float\energy_FLP.c" />
+    <ClCompile Include="silk\float\find_LPC_FLP.c" />
+    <ClCompile Include="silk\float\find_LTP_FLP.c" />
+    <ClCompile Include="silk\float\find_pitch_lags_FLP.c" />
+    <ClCompile Include="silk\float\find_pred_coefs_FLP.c" />
+    <ClCompile Include="silk\float\inner_product_FLP.c" />
+    <ClCompile Include="silk\float\k2a_FLP.c" />
+    <ClCompile Include="silk\float\LPC_analysis_filter_FLP.c" />
+    <ClCompile Include="silk\float\LPC_inv_pred_gain_FLP.c" />
+    <ClCompile Include="silk\float\LTP_analysis_filter_FLP.c" />
+    <ClCompile Include="silk\float\LTP_scale_ctrl_FLP.c" />
+    <ClCompile Include="silk\float\noise_shape_analysis_FLP.c" />
+    <ClCompile Include="silk\float\pitch_analysis_core_FLP.c" />
+    <ClCompile Include="silk\float\process_gains_FLP.c" />
+    <ClCompile Include="silk\float\regularize_correlations_FLP.c" />
+    <ClCompile Include="silk\float\residual_energy_FLP.c" />
+    <ClCompile Include="silk\float\scale_copy_vector_FLP.c" />
+    <ClCompile Include="silk\float\scale_vector_FLP.c" />
+    <ClCompile Include="silk\float\schur_FLP.c" />
+    <ClCompile Include="silk\float\sort_FLP.c" />
+    <ClCompile Include="silk\float\warped_autocorrelation_FLP.c" />
+    <ClCompile Include="silk\float\wrappers_FLP.c" />
+    <ClCompile Include="silk\gain_quant.c" />
+    <ClCompile Include="silk\HP_variable_cutoff.c" />
+    <ClCompile Include="silk\init_decoder.c" />
+    <ClCompile Include="silk\init_encoder.c" />
+    <ClCompile Include="silk\inner_prod_aligned.c" />
+    <ClCompile Include="silk\interpolate.c" />
+    <ClCompile Include="silk\lin2log.c" />
+    <ClCompile Include="silk\log2lin.c" />
+    <ClCompile Include="silk\LPC_analysis_filter.c" />
+    <ClCompile Include="silk\LPC_fit.c" />
+    <ClCompile Include="silk\LPC_inv_pred_gain.c" />
+    <ClCompile Include="silk\LP_variable_cutoff.c" />
+    <ClCompile Include="silk\NLSF2A.c" />
+    <ClCompile Include="silk\NLSF_decode.c" />
+    <ClCompile Include="silk\NLSF_del_dec_quant.c" />
+    <ClCompile Include="silk\NLSF_encode.c" />
+    <ClCompile Include="silk\NLSF_stabilize.c" />
+    <ClCompile Include="silk\NLSF_unpack.c" />
+    <ClCompile Include="silk\NLSF_VQ.c" />
+    <ClCompile Include="silk\NLSF_VQ_weights_laroia.c" />
+    <ClCompile Include="silk\NSQ.c" />
+    <ClCompile Include="silk\NSQ_del_dec.c" />
+    <ClCompile Include="silk\pitch_est_tables.c" />
+    <ClCompile Include="silk\PLC.c" />
+    <ClCompile Include="silk\process_NLSFs.c" />
+    <ClCompile Include="silk\quant_LTP_gains.c" />
+    <ClCompile Include="silk\resampler.c" />
+    <ClCompile Include="silk\resampler_down2.c" />
+    <ClCompile Include="silk\resampler_down2_3.c" />
+    <ClCompile Include="silk\resampler_private_AR2.c" />
+    <ClCompile Include="silk\resampler_private_down_FIR.c" />
+    <ClCompile Include="silk\resampler_private_IIR_FIR.c" />
+    <ClCompile Include="silk\resampler_private_up2_HQ.c" />
+    <ClCompile Include="silk\resampler_rom.c" />
+    <ClCompile Include="silk\shell_coder.c" />
+    <ClCompile Include="silk\sigm_Q15.c" />
+    <ClCompile Include="silk\sort.c" />
+    <ClCompile Include="silk\stereo_decode_pred.c" />
+    <ClCompile Include="silk\stereo_encode_pred.c" />
+    <ClCompile Include="silk\stereo_find_predictor.c" />
+    <ClCompile Include="silk\stereo_LR_to_MS.c" />
+    <ClCompile Include="silk\stereo_MS_to_LR.c" />
+    <ClCompile Include="silk\stereo_quant_pred.c" />
+    <ClCompile Include="silk\sum_sqr_shift.c" />
+    <ClCompile Include="silk\tables_gain.c" />
+    <ClCompile Include="silk\tables_LTP.c" />
+    <ClCompile Include="silk\tables_NLSF_CB_NB_MB.c" />
+    <ClCompile Include="silk\tables_NLSF_CB_WB.c" />
+    <ClCompile Include="silk\tables_other.c" />
+    <ClCompile Include="silk\tables_pitch_lag.c" />
+    <ClCompile Include="silk\tables_pulses_per_block.c" />
+    <ClCompile Include="silk\table_LSF_cos.c" />
+    <ClCompile Include="silk\VAD.c" />
+    <ClCompile Include="silk\VQ_WMat_EC.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="analysis.h" />
+    <ClInclude Include="celt\arch.h" />
+    <ClInclude Include="celt\bands.h" />
+    <ClInclude Include="celt\celt.h" />
+    <ClInclude Include="celt\celt_lpc.h" />
+    <ClInclude Include="celt\cpu_support.h" />
+    <ClInclude Include="celt\cwrs.h" />
+    <ClInclude Include="celt\dump_modes\dump_modes_arch.h" />
+    <ClInclude Include="celt\ecintrin.h" />
+    <ClInclude Include="celt\entcode.h" />
+    <ClInclude Include="celt\entdec.h" />
+    <ClInclude Include="celt\entenc.h" />
+    <ClInclude Include="celt\fixed_c5x.h" />
+    <ClInclude Include="celt\fixed_c6x.h" />
+    <ClInclude Include="celt\fixed_debug.h" />
+    <ClInclude Include="celt\fixed_generic.h" />
+    <ClInclude Include="celt\float_cast.h" />
+    <ClInclude Include="celt\kiss_fft.h" />
+    <ClInclude Include="celt\laplace.h" />
+    <ClInclude Include="celt\mathops.h" />
+    <ClInclude Include="celt\mdct.h" />
+    <ClInclude Include="celt\mfrngcod.h" />
+    <ClInclude Include="celt\modes.h" />
+    <ClInclude Include="celt\os_support.h" />
+    <ClInclude Include="celt\pitch.h" />
+    <ClInclude Include="celt\quant_bands.h" />
+    <ClInclude Include="celt\rate.h" />
+    <ClInclude Include="celt\stack_alloc.h" />
+    <ClInclude Include="celt\static_modes_fixed.h" />
+    <ClInclude Include="celt\static_modes_float.h" />
+    <ClInclude Include="celt\vq.h" />
+    <ClInclude Include="celt\_kiss_fft_guts.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="include\opus.h" />
+    <ClInclude Include="include\opus_custom.h" />
+    <ClInclude Include="include\opus_defines.h" />
+    <ClInclude Include="include\opus_multistream.h" />
+    <ClInclude Include="include\opus_types.h" />
+    <ClInclude Include="mlp.h" />
+    <ClInclude Include="mlp_train.h" />
+    <ClInclude Include="opus_private.h" />
+    <ClInclude Include="silk\API.h" />
+    <ClInclude Include="silk\control.h" />
+    <ClInclude Include="silk\debug.h" />
+    <ClInclude Include="silk\define.h" />
+    <ClInclude Include="silk\errors.h" />
+    <ClInclude Include="silk\fixed\main_FIX.h" />
+    <ClInclude Include="silk\fixed\structs_FIX.h" />
+    <ClInclude Include="silk\float\main_FLP.h" />
+    <ClInclude Include="silk\float\SigProc_FLP.h" />
+    <ClInclude Include="silk\float\structs_FLP.h" />
+    <ClInclude Include="silk\Inlines.h" />
+    <ClInclude Include="silk\MacroCount.h" />
+    <ClInclude Include="silk\MacroDebug.h" />
+    <ClInclude Include="silk\macros.h" />
+    <ClInclude Include="silk\main.h" />
+    <ClInclude Include="silk\NSQ.h" />
+    <ClInclude Include="silk\pitch_est_defines.h" />
+    <ClInclude Include="silk\PLC.h" />
+    <ClInclude Include="silk\resampler_private.h" />
+    <ClInclude Include="silk\resampler_rom.h" />
+    <ClInclude Include="silk\resampler_structs.h" />
+    <ClInclude Include="silk\SigProc_FIX.h" />
+    <ClInclude Include="silk\structs.h" />
+    <ClInclude Include="silk\tables.h" />
+    <ClInclude Include="silk\tuning_parameters.h" />
+    <ClInclude Include="silk\typedef.h" />
+    <ClInclude Include="tansig_table.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{904ac506-51a0-474e-9f55-ec3febbcccd9}</ProjectGuid>
+    <Keyword>StaticLibrary</Keyword>
+    <RootNamespace>libopus</RootNamespace>
+    <DefaultLanguage>it-IT</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.10586.0</WindowsTargetPlatformMinVersion>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)celt;$(ProjectDir)silk;$(ProjectDir)silk\float;$(ProjectDir)silk\fixed;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)celt;$(ProjectDir)silk;$(ProjectDir)silk\float;$(ProjectDir)silk\fixed;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)celt;$(ProjectDir)silk;$(ProjectDir)silk\float;$(ProjectDir)silk\fixed;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)celt;$(ProjectDir)silk;$(ProjectDir)silk\float;$(ProjectDir)silk\fixed;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)celt;$(ProjectDir)silk;$(ProjectDir)silk\float;$(ProjectDir)silk\fixed;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)celt;$(ProjectDir)silk;$(ProjectDir)silk\float;$(ProjectDir)silk\fixed;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

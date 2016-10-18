@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{0228a19f-7d36-441e-9cc2-80f9bf7f88fe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="internal.h" />
+    <ClInclude Include="winerrno.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\opusfile.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="http.c" />
+    <ClCompile Include="info.c" />
+    <ClCompile Include="internal.c" />
+    <ClCompile Include="opusfile.c" />
+    <ClCompile Include="stream.c" />
+    <ClCompile Include="wincerts.c" />
+  </ItemGroup>
+</Project>

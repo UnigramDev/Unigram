@@ -100,142 +100,150 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>Debug</MappedPlatform>
-    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>Release</MappedPlatform>
-    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>ARM\Debug</MappedPlatform>
-    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>ARM\Release</MappedPlatform>
-    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>x64\Debug</MappedPlatform>
-    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>$(SolutionDir)\Libraries\libwebp;$(IncludePath)</IncludePath>
     <MappedPlatform>x64\Release</MappedPlatform>
-    <LibraryPath>$(SolutionDir)$(MappedPlatform)\libwebp\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
-      <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\libwebp;$(SolutionDir)Libraries\libopus\include;$(SolutionDir)Libraries\libopusfile\include;$(SolutionDir)Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(MappedPlatform)\libwebp\;$(SolutionDir)$(MappedPlatform)\libopus\;$(SolutionDir)$(MappedPlatform)\libopusfile\;$(SolutionDir)$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
-      <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\libwebp;$(SolutionDir)Libraries\libopus\include;$(SolutionDir)Libraries\libopusfile\include;$(SolutionDir)Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(MappedPlatform)\libwebp\;$(SolutionDir)$(MappedPlatform)\libopus\;$(SolutionDir)$(MappedPlatform)\libopusfile\;$(SolutionDir)$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
-      <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\libwebp;$(SolutionDir)Libraries\libopus\include;$(SolutionDir)Libraries\libopusfile\include;$(SolutionDir)Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(MappedPlatform)\libwebp\;$(SolutionDir)$(MappedPlatform)\libopus\;$(SolutionDir)$(MappedPlatform)\libopusfile\;$(SolutionDir)$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
-      <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\libwebp;$(SolutionDir)Libraries\libopus\include;$(SolutionDir)Libraries\libopusfile\include;$(SolutionDir)Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(MappedPlatform)\libwebp\;$(SolutionDir)$(MappedPlatform)\libopus\;$(SolutionDir)$(MappedPlatform)\libopusfile\;$(SolutionDir)$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
-      <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\libwebp;$(SolutionDir)Libraries\libopus\include;$(SolutionDir)Libraries\libopusfile\include;$(SolutionDir)Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(MappedPlatform)\libwebp\;$(SolutionDir)$(MappedPlatform)\libopus\;$(SolutionDir)$(MappedPlatform)\libopusfile\;$(SolutionDir)$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
-      <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\libwebp;$(SolutionDir)Libraries\libopus\include;$(SolutionDir)Libraries\libopusfile\include;$(SolutionDir)Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(MappedPlatform)\libwebp\;$(SolutionDir)$(MappedPlatform)\libopus\;$(SolutionDir)$(MappedPlatform)\libopusfile\;$(SolutionDir)$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedImageSource\ReadFramesAsyncOperation.h" />
     <ClInclude Include="AnimatedImageSource\VirtualImageSourceRendererCallback.h" />
+    <ClInclude Include="AsyncCallbackState.h" />
     <ClInclude Include="BufferLock.h" />
-    <ClInclude Include="DemuxerWrapper.h" />
-    <ClInclude Include="GIFMediaSource\GIFByteStreamHandler.h" />
-    <ClInclude Include="GIFMediaSource\GIFMediaSource.h" />
+    <ClInclude Include="ByteStreamHandler.h" />
+    <ClInclude Include="FinalizeAsyncOperation.h" />
+    <ClInclude Include="MediaFoundationExtensions.h" />
+    <ClInclude Include="MediaSink.h" />
+    <ClInclude Include="MediaSource.h" />
+    <ClInclude Include="Opus\OpusCodec.h" />
+    <ClInclude Include="Opus\OpusByteStreamHandler.h" />
+    <ClInclude Include="Opus\OpusInputByteStream.h" />
+    <ClInclude Include="Opus\OpusMediaSink.h" />
+    <ClInclude Include="Opus\OpusMediaSource.h" />
+    <ClInclude Include="Opus\OpusMediaType.h" />
+    <ClInclude Include="Opus\OpusOutputByteStream.h" />
+    <ClInclude Include="WebP\DemuxerWrapper.h" />
+    <ClInclude Include="GIF\GIFByteStreamHandler.h" />
+    <ClInclude Include="GIF\GIFMediaSource.h" />
     <ClInclude Include="Helpers\COMHelper.h" />
     <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="Helpers\MathHelper.h" />
@@ -244,15 +252,26 @@
     <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRenderer.h" />
     <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.h" />
     <ClInclude Include="AnimatedImageSource\FramesCacheStore.h" />
-    <ClInclude Include="AnimatedImageSource\MediaFoundationExtensions.h" />
     <ClInclude Include="WebP\WebPFrame.h" />
     <ClInclude Include="WebP\WebPImage.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatedImageSource\ReadFramesAsyncOperation.cpp" />
     <ClCompile Include="AnimatedImageSource\VirtualImageSourceRendererCallback.cpp" />
     <ClCompile Include="BufferLock.cpp" />
-    <ClCompile Include="GIFMediaSource\GIFByteStreamHandler.cpp" />
-    <ClCompile Include="GIFMediaSource\GIFMediaSource.cpp" />
+    <ClCompile Include="ByteStreamHandler.cpp" />
+    <ClCompile Include="FinalizeAsyncOperation.cpp" />
+    <ClCompile Include="GIF\GIFByteStreamHandler.cpp" />
+    <ClCompile Include="GIF\GIFMediaSource.cpp" />
+    <ClCompile Include="MediaFoundationExtensions.cpp" />
+    <ClCompile Include="MediaSink.cpp" />
+    <ClCompile Include="MediaSource.cpp" />
+    <ClCompile Include="Opus\OpusCodec.cpp" />
+    <ClCompile Include="Opus\OpusByteStreamHandler.cpp" />
+    <ClCompile Include="Opus\OpusInputByteStream.cpp" />
+    <ClCompile Include="Opus\OpusMediaSink.cpp" />
+    <ClCompile Include="Opus\OpusMediaSource.cpp" />
+    <ClCompile Include="Opus\OpusOutputByteStream.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -264,11 +283,19 @@
     <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRenderer.cpp" />
     <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.cpp" />
     <ClCompile Include="AnimatedImageSource\FramesCacheStore.cpp" />
-    <ClCompile Include="AnimatedImageSource\MediaFoundationExtensions.cpp" />
     <ClCompile Include="WebP\WebPFrame.cpp" />
     <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Libraries\libogg\libogg.vcxproj">
+      <Project>{3520c5e6-f0c2-468f-8970-372414c233dc}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\libopusfile\libopusfile.vcxproj">
+      <Project>{6766a2c0-ab30-43cc-9ef3-7ddc13736a38}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\libopus\libopus.vcxproj">
+      <Project>{904ac506-51a0-474e-9f55-ec3febbcccd9}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\libwebp\libwebp.vcxproj">
       <Project>{7789c8b7-887c-46b6-bd76-952c590b1853}</Project>
     </ProjectReference>
