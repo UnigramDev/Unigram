@@ -99,6 +99,8 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
+
             MasterPresenter = (ContentPresenter)GetTemplateChild("MasterFrame");
             DetailPresenter = (Border)GetTemplateChild("DetailPresenter");
             AdaptiveStates = (VisualStateGroup)GetTemplateChild("AdaptiveStates");

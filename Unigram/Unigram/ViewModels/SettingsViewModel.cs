@@ -8,6 +8,8 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Common;
+using Unigram.Converters;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -22,21 +24,35 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var user = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
-            if (user != null)
-                Item = user;
+            var cached = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
+            if (cached != null)
+            {
+                Self = cached;
+            }
+            else
+            {
+                var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
+                if (response.IsSucceeded)
+                {
+                    var user = response.Value.FirstOrDefault() as TLUser;
+                    if (user != null)
+                    {
+                        Self = user;
+                    }
+                }
+            }
         }
 
-        private TLUser _item;
-        public TLUser Item
+        private TLUser _self;
+        public TLUser Self
         {
             get
             {
-                return _item;
+                return _self;
             }
             set
             {
-                Set(ref _item, value);
+                Set(ref _self, value);
             }
         }
     }

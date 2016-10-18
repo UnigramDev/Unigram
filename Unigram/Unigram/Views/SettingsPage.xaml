@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Unigram.Views"
       xmlns:controls="using:Unigram.Controls"
+      xmlns:settings="using:Unigram.Views.Settings"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
@@ -214,10 +215,10 @@
                           RelativePanel.AlignHorizontalCenterWithPanel="True">
                         <Ellipse x:Name="elpContentInfoChatIconColor" Width="96" Height="96" Fill="Purple" VerticalAlignment="Center"/>
                         <!-- Placeholder fill  -->
-                        <TextBlock Margin="12,0" FontSize="24" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.Item, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Margin="12,0" FontSize="24" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.Self, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <Ellipse x:Name="elpContentInfoChatIconPicture" Width="96" Height="96">
                             <Ellipse.Fill>
-                                <ImageBrush ImageSource="{x:Bind ViewModel.Item.Photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
+                                <ImageBrush ImageSource="{x:Bind ViewModel.Self.Photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
                             </Ellipse.Fill>
                         </Ellipse>
                         <Button x:Name="elpContentInfoChatIcon"
@@ -233,26 +234,26 @@
                                 VerticalAlignment="Center">
                         <TextBlock x:Name="tblUserInfoChatName"
                                    Visibility="Visible"
-                                   Text="{x:Bind ViewModel.Item.FullName, Mode=OneWay}"
+                                   Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}"
                                    Margin="0,4,0,0"
                                    TextWrapping="WrapWholeWords"
                                    Style="{ThemeResource SubtitleTextBlockStyle}"
                                    FontWeight="SemiBold"/>
                         <TextBlock x:Name="tblUserInfoUserName" 
-                                   Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"
+                                   Visibility="{Binding Self.Username, Converter={StaticResource NullToVisibilityConverter}}"
                                    Margin="0,4"                              
                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                    Style="{ThemeResource BodyTextBlockStyle}"
                                    TextTrimming="CharacterEllipsis">
-                            <Run Text="@"/><Run Text="{Binding Item.Username}"/>
+                            <Run Text="@"/><Run Text="{Binding Self.Username}"/>
                         </TextBlock>
                         <TextBlock x:Name="tblUserInfoPhone" 
-                                   Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"
+                                   Visibility="{Binding Self.Username, Converter={StaticResource NullToVisibilityConverter}}"
                                    Margin="0,4"
                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                    Style="{ThemeResource BodyTextBlockStyle}"
                                    TextTrimming="CharacterEllipsis">
-                            <Run Text="+"/><Run Text="{Binding Item.Phone}"/>
+                            <Run Text="+"/><Run Text="{Binding Self.Phone}"/>
                         </TextBlock>
                     </StackPanel>
                 </Grid>
@@ -265,28 +266,29 @@
                                                    Margin="0,24,0,0">
                                 <controls:HyperCheckButton Content="Enabled" 
                                                            Tag="Enable Location Services" 
-                                                           Margin="0,5"
                                                            Style="{ThemeResource CheckButtonStyle}"/>
                                 <controls:HyperCheckButton Content="Enabled" 
                                                            Tag="Sync with People Hub" 
-                                                           Margin="0,4" 
                                                            Style="{ThemeResource CheckButtonStyle}"/>
                             </local:TableStackPanel>
                             <local:TableStackPanel x:Name="OptionsGroup1" 
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
-                                <controls:HyperButton Content="Notifications and Sounds" 
+                                <controls:HyperButton Content="Notifications and sounds" 
                                                       Command="{x:Bind NotifcationPageCommand}"
-                                                      Margin="0,4" 
                                                       Style="{StaticResource HyperButtonStyle}"/>
-                                <controls:HyperButton Content="Privacy and Security" 
+                                <controls:HyperButton Content="Privacy and security" 
                                                       Command="{x:Bind PrivacyPageCommand}"
-                                                      Margin="0,4" 
                                                       Style="{StaticResource HyperButtonStyle}"/>
-                                <controls:HyperButton Content="Chat Settings" 
+                                <controls:HyperButton Content="Chat settings" 
                                                       Command="{x:Bind ChatSettingsPageCommand}"
-                                                      Margin="0,4" 
+                                                      Style="{StaticResource HyperButtonStyle}"/>
+                                <controls:HyperButton Content="Stickers" 
+                                                      Command="{x:Bind StickersPageCommand}"
+                                                      Style="{StaticResource HyperButtonStyle}"/>
+                                <controls:HyperButton Content="Chat wallpaper" 
+                                                      Command="{x:Bind WallpaperPageCommand}"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                             </local:TableStackPanel>
                         </StackPanel>

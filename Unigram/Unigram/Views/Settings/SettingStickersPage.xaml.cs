@@ -20,11 +20,19 @@ namespace Unigram.Views.Settings
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ChatSettingsPage : Page
+    public sealed partial class SettingStickersPage : Page
     {
-        public ChatSettingsPage()
+        public SettingStickersPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            while (Frame.BackStackDepth > 1)
+            {
+                Frame.BackStack.RemoveAt(1);
+            }
         }
     }
 }

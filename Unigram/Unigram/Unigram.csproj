@@ -285,14 +285,20 @@
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\ChatSettingsPage.xaml.cs">
-      <DependentUpon>ChatSettingsPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsChatPage.xaml.cs">
+      <DependentUpon>SettingsChatPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\NotificationsSettingsPage.xaml.cs">
-      <DependentUpon>NotificationsSettingsPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsNotificationsPage.xaml.cs">
+      <DependentUpon>SettingsNotificationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\PrivacySettingsPage.xaml.cs">
-      <DependentUpon>PrivacySettingsPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsPrivacyPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingStickersPage.xaml.cs">
+      <DependentUpon>SettingStickersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsWallpaperPage.xaml.cs">
+      <DependentUpon>SettingsWallpaperPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ShareTargetPage.xaml.cs">
       <DependentUpon>ShareTargetPage.xaml</DependentUpon>
@@ -543,17 +549,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\ChatSettingsPage.xaml">
+    <Page Include="Views\Settings\SettingsChatPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\NotificationsSettingsPage.xaml">
+    <Page Include="Views\Settings\SettingsNotificationsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\PrivacySettingsPage.xaml">
+    <Page Include="Views\Settings\SettingsPrivacyPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\SettingStickersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsWallpaperPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ShareTargetPage.xaml">
       <SubType>Designer</SubType>

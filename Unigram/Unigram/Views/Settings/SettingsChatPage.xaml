@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Unigram.Views.Settings.ChatSettingsPage"
+    x:Class="Unigram.Views.Settings.SettingsChatPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
@@ -12,15 +12,10 @@
             <RowDefinition Height="48" />
             <RowDefinition />
         </Grid.RowDefinitions>
-
-        <!-- Titlebar -->
-        <Grid Grid.Row="0"
-              Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}">
-            <TextBlock
-                       Text="CHAT SETTINGS"
+            <TextBlock Text="Chat settings"
                        Style="{StaticResource BaseTextBlockStyle}"
-                       RequestedTheme="Dark"
                        VerticalAlignment="Center"
                        Margin="12,0"/>
         </Grid>
