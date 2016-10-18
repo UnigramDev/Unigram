@@ -587,7 +587,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Unigram.Native\Unigram.Native.vcxproj">
       <Project>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</Project>
-      <Name>Unigram.WebP</Name>
+      <Name>Unigram.Native</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

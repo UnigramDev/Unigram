@@ -1,3 +1,5 @@
+// Copyright (c) 2016 Lorenzo Rossoni
+
 #pragma once
 #include "pch.h"
 #include "Helpers\COMHelper.h"
@@ -8,17 +10,24 @@ using namespace Unigram::Native;
 FramesCacheStore::FramesCacheStore() :
 	m_frameEntries(nullptr)
 {
-	ThrowIfFailed(CreateTemporaryFile(m_cacheFile.ReleaseAndGetAddressOf()));
 }
 
 FramesCacheStore::~FramesCacheStore()
 {
-	if (m_frameEntries != nullptr && !UnmapViewOfFile(m_frameEntries))
-		ThrowLastError();
+	if (m_frameEntries != nullptr)
+		UnmapViewOfFile(m_frameEntries);
+}
+
+HRESULT FramesCacheStore::RuntimeClassInitialize()
+{
+	return CreateTemporaryFile(m_cacheFile.ReleaseAndGetAddressOf());
 }
 
 HRESULT FramesCacheStore::Lock()
 {
+	if (m_mappedCacheFile.IsValid())
+		return E_NOT_VALID_STATE;
+
 	if (!SetEndOfFile(m_cacheFile.Get()))
 		return GetLastHRESULT();
 

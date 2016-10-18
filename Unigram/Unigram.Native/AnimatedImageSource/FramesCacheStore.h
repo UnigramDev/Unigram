@@ -1,3 +1,5 @@
+// Copyright (c) 2016 Lorenzo Rossoni
+
 #pragma once
 #include <wrl.h>
 #include <wrl\wrappers\corewrappers.h>
@@ -25,9 +27,10 @@ namespace Unigram
 
 			const DWORD GetFrameCount() const
 			{
-				return m_frameDefinitionOffsets.size();
+				return static_cast<DWORD>(m_frameDefinitionOffsets.size());
 			}
 
+			STDMETHODIMP RuntimeClassInitialize();
 			HRESULT Lock();
 			HRESULT WriteBitmapEntry(_In_ byte* buffer, DWORD bufferLength, DWORD rowPitch, LONGLONG delay);
 			HRESULT ReadBitmapEntry(DWORD index, _In_ ID2D1Bitmap* bitmap, _Out_ LONGLONG* delay);

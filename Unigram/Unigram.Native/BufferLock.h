@@ -1,3 +1,5 @@
+// Copyright (c) 2016 Lorenzo Rossoni
+
 #pragma once
 #include <mfobjects.h>
 #include <d2d1_1.h> 

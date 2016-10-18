@@ -10,8 +10,14 @@
     <Filter Include="AnimatedImageSource">
       <UniqueIdentifier>{2c18282a-db77-41b3-a6f0-5f3e734da98e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GIFImageSource">
+    <Filter Include="GIF">
       <UniqueIdentifier>{0ec7378e-5825-462d-b0c1-434e00766d95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Opus">
+      <UniqueIdentifier>{4a92e60d-48ac-43aa-994e-c533a78a1707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MediaFoundation">
+      <UniqueIdentifier>{f93f29dc-ace5-4a9b-b004-cce5dceae62c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -22,8 +28,6 @@
     <ClCompile Include="WebP\WebPImage.cpp">
       <Filter>WebP</Filter>
     </ClCompile>
-    <ClCompile Include="BufferLock.cpp" />
-    <ClCompile Include="AnimatedImageSource\MediaFoundationExtensions.cpp" />
     <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRenderer.cpp">
       <Filter>AnimatedImageSource</Filter>
     </ClCompile>
@@ -33,14 +37,53 @@
     <ClCompile Include="AnimatedImageSource\VirtualImageSourceRendererCallback.cpp">
       <Filter>AnimatedImageSource</Filter>
     </ClCompile>
-    <ClCompile Include="GIFMediaSource\GIFByteStreamHandler.cpp">
-      <Filter>GIFImageSource</Filter>
-    </ClCompile>
-    <ClCompile Include="GIFMediaSource\GIFMediaSource.cpp">
-      <Filter>GIFImageSource</Filter>
-    </ClCompile>
     <ClCompile Include="AnimatedImageSource\FramesCacheStore.cpp">
       <Filter>AnimatedImageSource</Filter>
+    </ClCompile>
+    <ClCompile Include="GIF\GIFByteStreamHandler.cpp">
+      <Filter>GIF</Filter>
+    </ClCompile>
+    <ClCompile Include="GIF\GIFMediaSource.cpp">
+      <Filter>GIF</Filter>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusByteStreamHandler.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusMediaSource.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusCodec.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusInputByteStream.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusMediaSink.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusOutputByteStream.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedImageSource\ReadFramesAsyncOperation.cpp">
+      <Filter>AnimatedImageSource</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferLock.cpp">
+      <Filter>MediaFoundation</Filter>
+    </ClCompile>
+    <ClCompile Include="ByteStreamHandler.cpp">
+      <Filter>MediaFoundation</Filter>
+    </ClCompile>
+    <ClCompile Include="FinalizeAsyncOperation.cpp">
+      <Filter>MediaFoundation</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaFoundationExtensions.cpp">
+      <Filter>MediaFoundation</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaSink.cpp">
+      <Filter>MediaFoundation</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaSource.cpp">
+      <Filter>MediaFoundation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -51,8 +94,6 @@
     <ClInclude Include="WebP\WebPImage.h">
       <Filter>WebP</Filter>
     </ClInclude>
-    <ClInclude Include="DemuxerWrapper.h" />
-    <ClInclude Include="BufferLock.h" />
     <ClInclude Include="Helpers\COMHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
@@ -65,7 +106,6 @@
     <ClInclude Include="Helpers\DebugHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatedImageSource\MediaFoundationExtensions.h" />
     <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRenderer.h">
       <Filter>AnimatedImageSource</Filter>
     </ClInclude>
@@ -75,14 +115,62 @@
     <ClInclude Include="AnimatedImageSource\VirtualImageSourceRendererCallback.h">
       <Filter>AnimatedImageSource</Filter>
     </ClInclude>
-    <ClInclude Include="GIFMediaSource\GIFByteStreamHandler.h">
-      <Filter>GIFImageSource</Filter>
-    </ClInclude>
-    <ClInclude Include="GIFMediaSource\GIFMediaSource.h">
-      <Filter>GIFImageSource</Filter>
-    </ClInclude>
     <ClInclude Include="AnimatedImageSource\FramesCacheStore.h">
       <Filter>AnimatedImageSource</Filter>
+    </ClInclude>
+    <ClInclude Include="WebP\DemuxerWrapper.h">
+      <Filter>WebP</Filter>
+    </ClInclude>
+    <ClInclude Include="GIF\GIFByteStreamHandler.h">
+      <Filter>GIF</Filter>
+    </ClInclude>
+    <ClInclude Include="GIF\GIFMediaSource.h">
+      <Filter>GIF</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusByteStreamHandler.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusMediaSource.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusCodec.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusInputByteStream.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusMediaSink.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusMediaType.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusOutputByteStream.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedImageSource\ReadFramesAsyncOperation.h">
+      <Filter>AnimatedImageSource</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaSource.h">
+      <Filter>MediaFoundation</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncCallbackState.h">
+      <Filter>MediaFoundation</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferLock.h">
+      <Filter>MediaFoundation</Filter>
+    </ClInclude>
+    <ClInclude Include="ByteStreamHandler.h">
+      <Filter>MediaFoundation</Filter>
+    </ClInclude>
+    <ClInclude Include="FinalizeAsyncOperation.h">
+      <Filter>MediaFoundation</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaFoundationExtensions.h">
+      <Filter>MediaFoundation</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaSink.h">
+      <Filter>MediaFoundation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
