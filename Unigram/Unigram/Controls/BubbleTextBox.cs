@@ -37,6 +37,8 @@ namespace Unigram.Controls
         private MenuFlyout _flyout;
         private MenuFlyoutPresenter _presenter;
 
+        private bool _updatingText;
+
         private readonly IDisposable _textChangedSubscription;
 
         // True when the RichEdithBox MIGHT contains formatting (bold, italic, hyperlinks) 
@@ -281,7 +283,9 @@ namespace Unigram.Controls
             string text;
             Document.GetText(TextGetOptions.NoHidden, out text);
 
+            _updatingText = true;
             Text = text;
+            _updatingText = false;
         }
 
         private void FormatText()
@@ -291,6 +295,8 @@ namespace Unigram.Controls
 
             var caretPosition = Document.Selection.StartPosition;
             var result = Emoticon.Pattern.Matches(text);
+
+            Document.BatchDisplayUpdates();
 
             foreach (Match match in result)
             {
@@ -308,6 +314,7 @@ namespace Unigram.Controls
                 Document.GetRange(match.Index, match.Index + match.Length).SetText(TextSetOptions.None, emoji);
             }
 
+            Document.ApplyDisplayUpdates();
             Document.Selection.SetRange(caretPosition, caretPosition);
         }
 
@@ -326,7 +333,7 @@ namespace Unigram.Controls
             Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
 
             planText = planText.Trim();
-            ViewModel.SendTextHolder = planText;
+            ViewModel.Text = planText;
 
             if (isDirty)
             {
@@ -362,23 +369,6 @@ namespace Unigram.Controls
                 return isEmpty;
             }
         }
-
-        #region Text
-
-
-
-        public string Text
-        {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
-        }
-
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(BubbleTextBox), new PropertyMetadata(string.Empty));
-
-
-
-        #endregion
 
         #region Inline bots
 
@@ -488,6 +478,42 @@ namespace Unigram.Controls
         private static void OnInlinePlaceholderTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((BubbleTextBox)d).UpdateInlinePlaceholder();
+        }
+
+        #endregion
+
+        #region Text
+
+        public string Text
+        {
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(BubbleTextBox), new PropertyMetadata(string.Empty, OnTextChanged));
+
+        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((BubbleTextBox)d).OnTextChanged((string)e.NewValue, (string)e.OldValue);
+        }
+
+        private void OnTextChanged(string newValue, string oldValue)
+        {
+            if (_updatingText)
+            {
+                _updatingText = false;
+                return;
+            }
+
+            if (string.IsNullOrEmpty(newValue))
+            {
+                Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
+            }
+            else
+            {
+                Document.SetText(TextSetOptions.None, newValue);
+            }
         }
 
         #endregion

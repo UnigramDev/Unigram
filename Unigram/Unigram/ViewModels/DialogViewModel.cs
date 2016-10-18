@@ -87,7 +87,19 @@ namespace Unigram.ViewModels
 
 
         public object photo;
-        public string SendTextHolder;
+
+        private string _text;
+        public string Text
+        {
+            get
+            {
+                return _text;
+            }
+            set
+            {
+                Set(ref _text, value);
+            }
+        }
 
         private TLInputPeerBase _peer;
         public TLInputPeerBase Peer
@@ -310,6 +322,7 @@ namespace Unigram.ViewModels
                 var draft = dialog.Draft as TLDraftMessage;
                 if (draft != null)
                 {
+                    Text = draft.Message;
                     ProcessDraftReply(draft);
                 }
             }
@@ -470,7 +483,7 @@ namespace Unigram.ViewModels
 
         public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool sticker)
         {
-            var messageText = SendTextHolder?.Replace('\r', '\n');
+            var messageText = Text?.Replace('\r', '\n');
 
             TLDocument document = null;
             TLMessageMediaBase media = null;

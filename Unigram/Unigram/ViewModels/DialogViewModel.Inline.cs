@@ -142,6 +142,8 @@ namespace Unigram.ViewModels
                 Reply = null;
             }
 
+            Text = string.Empty;
+
             //this.Text = string.Empty;
             var previousMessage = InsertSendingMessage(message, false);
             //this.IsEmptyDialog = (base.Items.get_Count() == 0 && this.LazyItems.get_Count() == 0);

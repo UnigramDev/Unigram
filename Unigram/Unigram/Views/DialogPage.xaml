@@ -709,6 +709,7 @@
             <controls:BubbleTextBox
                 x:Name="txtMessage" 
                 x:Uid="Chat-Input-Message"
+                Text="{Binding Text, Mode=TwoWay}"
                 AcceptsReturn="False"
                 PlaceholderText="Type your message..."
                 BorderThickness="0" 

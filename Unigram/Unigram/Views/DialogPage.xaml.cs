@@ -215,17 +215,11 @@ namespace Unigram.Views
             var result = await Query.GetFilesAsync(StartIndex, 10);
             StartIndex += (uint)result.Count;
 
-            if (result.Count == 0)
-            {
-            }
-            else
-            {
-                resultCount = (uint)result.Count();
+            resultCount = (uint)result.Count;
 
-                foreach (var file in result)
-                {
-                    items.Add(new StoragePhoto(file));
-                }
+            foreach (var file in result)
+            {
+                items.Add(new StoragePhoto(file));
             }
 
             return items;
