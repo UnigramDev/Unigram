@@ -4,7 +4,8 @@
     "HockeySDK.UWP": "4.1.5",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "Newtonsoft.Json": "9.0.1",
-    "Template10": "1.1.11"
+    "System.Reactive": "3.0.0",
+    "Template10": "1.1.12"
   },
   "frameworks": {
     "uap10.0": {}

@@ -28,6 +28,19 @@ namespace Unigram.Core.Services
             return Deserialize<object>(parameter);
         }
 
+        public bool TryDeserialize<T>(string parameter, out T result)
+        {
+            try
+            {
+                result = Deserialize<T>(parameter);
+                return true;
+            }
+            catch { }
+
+            result = default(T);
+            return false;
+        }
+
         public T Deserialize<T>(string parameter)
         {
             if (parameter == null)

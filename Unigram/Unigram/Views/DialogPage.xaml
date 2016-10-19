@@ -603,10 +603,10 @@
                     </selectors:MessageStyleSelector>
                 </ListView.ItemContainerStyleSelector>
                 <ListView.Header>
-                    <Border Height="6"/>
+                    <Border Height="10"/>
                 </ListView.Header>
                 <ListView.Footer>
-                    <Border Height="6"/>
+                    <Border Height="10"/>
                 </ListView.Footer>
                 <!--<ListView.GroupStyle>
                     <GroupStyle>
@@ -657,46 +657,34 @@
             </Grid.ColumnDefinitions>
             <Grid Visibility="{Binding ReplyInfo, Converter={StaticResource NullToVisibilityConverter}}" Grid.ColumnSpan="4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="44"/>
+                    <ColumnDefinition Width="48"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <!-- ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" Visibility="{Binding ReplyVisibility}" BorderBrush="#2fa9e2" Foreground="#0e7acd" Style="{StaticResource MediaControlStyle}" -->
 
-                <ContentControl Content="{Binding ReplyInfo}" 
+                <ContentControl Content="{Binding ReplyInfo}"
                                 ContentTemplateSelector="{StaticResource ReplyTemplateSelector}"
-                                Margin="-8,-1,0,-5" 
+                                VerticalContentAlignment="Center"
+                                Margin="-8,0,0,-4" 
                                 Grid.Column="1">
+                    <ContentControl.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.ThemeDictionaries>
+                                <ResourceDictionary x:Name="Dark">
+                                    <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#00FFFFFF"/>
+                                    <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                                    <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                                    <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                                </ResourceDictionary>
+                            </ResourceDictionary.ThemeDictionaries>
+                        </ResourceDictionary>
+                    </ContentControl.Resources>
                     <ContentControl.ContentTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition/>
                         </TransitionCollection>
                     </ContentControl.ContentTransitions>
-                    <ContentControl.Style>
-                        <Style TargetType="ContentControl">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ContentControl">
-                                        <Border>
-                                            <ContentPresenter x:Name="ContentPresenter"
-                                                                BorderBrush="{x:Null}"
-                                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                                Content="{TemplateBinding Content}"
-                                                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                Padding="{TemplateBinding Padding}"
-                                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                                AutomationProperties.AccessibilityView="Raw"
-                                                                Tag="{TemplateBinding Background}"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ContentControl.Style>
                 </ContentControl>
 
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -773,7 +761,7 @@
                 <FlyoutBase.AttachedFlyout>
                     <MenuFlyout Placement="Top">
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                            x:Uid="FCBTN-Photo"
+                            x:Uid="FCBTN-PhotoOrVideo"
                             Tag="&#xEB9F;"
                             Text="Photo or video"
                             Command="{Binding SendPhotoCommand}"/>

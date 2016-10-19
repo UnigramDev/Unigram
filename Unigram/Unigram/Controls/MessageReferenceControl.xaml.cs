@@ -81,6 +81,8 @@ namespace Unigram.Controls
                             return ReplyVenueTemplate(message);
                         case TLType.MessageMediaContact:
                             return ReplyContactTemplate(message);
+                        case TLType.MessageMediaGame:
+                            return ReplyGameTemplate(message);
                         case TLType.MessageMediaEmpty:
                             return ReplyUnsupportedTemplate(message);
                         case TLType.MessageMediaDocument:
@@ -199,6 +201,29 @@ namespace Unigram.Controls
             {
                 ServiceLabel.Text += ", ";
                 MessageLabel.Text = venueMedia.Title;
+            }
+
+            return true;
+        }
+
+        private bool ReplyGameTemplate(TLMessage message)
+        {
+            Visibility = Visibility.Visible;
+
+            FindName(nameof(ThumbRoot));
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Visible;
+
+            TitleLabel.Text = GetFromLabel(message);
+            ServiceLabel.Text = "🎮 Game";
+            MessageLabel.Text = string.Empty;
+
+            var gameMedia = message.Media as TLMessageMediaGame;
+            if (gameMedia != null && gameMedia.Game != null)
+            {
+                ServiceLabel.Text = $"🎮 {gameMedia.Game.Title}";
+
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(gameMedia.Game.Photo, null, null, null);
             }
 
             return true;
