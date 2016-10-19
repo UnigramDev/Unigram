@@ -85,27 +85,6 @@ namespace Unigram.ViewModels
 
         public TLObject With { get; set; }
 
-        private bool _isStickerPickerOpen;
-        public bool IsStickerPickerOpen
-        {
-            set
-            {
-                Set(ref _isStickerPickerOpen, value);
-            }
-            get
-            {
-                return _isStickerPickerOpen;
-            }
-        }
-
-        public GridLength StickerKeyboardHeight
-        {
-            get
-            {
-                return IsStickerPickerOpen ? new GridLength(200) : new GridLength(0);
-            }
-        }
-
 
         public object photo;
 
@@ -496,19 +475,10 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public RelayCommand<string> StartRecording => new RelayCommand<string>(RecordAudio);
-        private async void RecordAudio(string args)
-        {
-            // TODO
-            //Implement method for voice recording
-            return;
-        }
-
         public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
         private async void SendMessage(string args)
         {
-            IsStickerPickerOpen = !IsStickerPickerOpen;
-            //await SendMessageAsync(null, args != null);
+            await SendMessageAsync(null, args != null);
         }
 
         public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool sticker)
@@ -764,7 +734,7 @@ namespace Unigram.ViewModels
                                 H = (int)imageProps.Height,
                             }
                         }
-                    };
+                        };
 
                     var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
                 }
@@ -930,7 +900,7 @@ namespace Unigram.ViewModels
         private void UpdateAttach(TLMessageBase item, TLMessageBase previous)
         {
             if (item == null) return;
-            
+
             var isItemPost = false;
             if (item is TLMessage) isItemPost = ((TLMessage)item).IsPost;
 

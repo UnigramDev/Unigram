@@ -33,8 +33,6 @@ namespace Unigram.Selectors
 
         public DataTemplate ServiceMessageTemplate { get; set; }
 
-        public DataTemplate GameResultTemplate { get; set; }
-
         public DataTemplate UnreadMessagesTemplate { get; set; }
 
         public MessageTemplateSelector()
@@ -45,7 +43,6 @@ namespace Unigram.Selectors
             _templatesCache.Add(typeof(TLMessage), new Func<TLMessageBase, DataTemplate>(GenerateCommonMessageTemplate));
             //_templatesCache.Add(typeof(TLMessageForwarded), new Func<TLMessageBase, DataTemplate>(GenerateCommonMessageTemplate));
         }
-
 
         private DataTemplate GenerateServiceMessageTemplate(TLMessageBase message)
         {
