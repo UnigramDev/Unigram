@@ -36,8 +36,11 @@ namespace Unigram.Controls.Views
             }
             set
             {
-                _selectedItem = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
+                if (_selectedItem != value)
+                {
+                    _selectedItem = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
+                }
             }
         }
 
@@ -118,17 +121,19 @@ namespace Unigram.Controls.Views
                     }
                 }
             }
+
+            Remove.IsEnabled = Items.Count > 1;
         }
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedItem != null)
+            if (SelectedItem != null && Items.Count > 1)
             {
                 var index = Items.IndexOf(SelectedItem);
                 var next = index > 0 ? Items[index - 1] : null;
                 var previous = index < Items.Count - 1 ? Items[index + 1] : null;
 
-                Items.Remove(SelectedItem);
+                var item = Items[index];
 
                 if (next != null)
                 {
@@ -138,7 +143,11 @@ namespace Unigram.Controls.Views
                 {
                     SelectedItem = previous;
                 }
+
+                Items.Remove(item);
             }
+
+            Remove.IsEnabled = Items.Count > 1;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
