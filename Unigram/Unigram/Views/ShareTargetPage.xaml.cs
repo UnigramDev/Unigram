@@ -128,21 +128,22 @@ namespace Unigram.Views
         {
             prgSendStatus.Value = 0;
 
-            // Show Error dialog
-            var messageDialog = new MessageDialog("Share content with this chat?", "Share");
-            messageDialog.Commands.Add(new UICommand("Yes", (_) => { }, 0));
-            messageDialog.Commands.Add(new UICommand("No", (_) => { }, 1));
+            // Show dialog
+            ContentDialog openShareDialog = new ContentDialog()
+            {
+                Title = "Share",
+                Content = "Share with this chat?",
+                PrimaryButtonText = "Yes",
+                SecondaryButtonText = "No"
+            };
 
-            // Extra code to select the Close-option when an user presses on the Escape-button
-            messageDialog.DefaultCommandIndex = 0;
-            messageDialog.CancelCommandIndex = 1;
+            ContentDialogResult result = await openShareDialog.ShowAsync();
 
-            // Show Dialog
-            var dialogResult = await messageDialog.ShowAsync();
-            if (dialogResult != null && (int)dialogResult.Id == 0)
+            if (result == ContentDialogResult.Primary)
             {
                 // TODO: disable user interaction
 
+                // TODO: Rework entire sending mechanism
                 prgSendStatus.Value = 10;
 
                 var dialog = e.ClickedItem as TLDialog;
