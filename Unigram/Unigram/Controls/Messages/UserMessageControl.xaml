@@ -17,21 +17,6 @@
     <Border Height="10" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <Grid Margin="0,0,10,0" >
-        <Grid
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            Width="15" Height="15" Margin="0,0,0,4">
-            <Grid.Clip>
-                <RectangleGeometry Rect="0,0,30,15"/>
-            </Grid.Clip>
-            <Rectangle
-             RenderTransformOrigin="0.5,0.5"
-            Fill="{ThemeResource MessageBackgroundBrush}">
-                <Rectangle.RenderTransform>
-                    <CompositeTransform Rotation="45" TranslateX="7.5" TranslateY="7.5"/>
-                </Rectangle.RenderTransform>
-            </Rectangle>
-        </Grid>
         <Border x:Name="LayoutRoot"
             Margin="{ThemeResource MessageContentMargin}" 
             Padding="{ThemeResource MessageContentPadding}" 
@@ -92,5 +77,20 @@
                 </StackPanel>
             </Grid>
         </Border>
+        <Grid
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Width="15" Height="15" Margin="0,0,0,4">
+            <Grid.Clip>
+                <RectangleGeometry Rect="0,0,30,15"/>
+            </Grid.Clip>
+            <Rectangle
+             RenderTransformOrigin="0.5,0.5"
+            Fill="{ThemeResource MessageBackgroundBrush}">
+                <Rectangle.RenderTransform>
+                    <CompositeTransform Rotation="45" TranslateX="7.5" TranslateY="7.5"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+        </Grid>
     </Grid>
 </local:MessageControlBase>
