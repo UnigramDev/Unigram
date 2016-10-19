@@ -231,15 +231,21 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Border Visibility="{x:Bind ReplyVisibility}" Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,0" Margin="0,0,12,0">
-                    <controls:MessageReferenceControl Message="{x:Bind Reply, Mode=OneWay}">
-                        <controls:MessageReferenceControl.Resources>
+                <Border Visibility="{x:Bind ReplyVisibility}" 
+                        Height="{ThemeResource AppBarThemeCompactHeight}"
+                        Background="{ThemeResource MessageOverlayBackgroundBrush}" 
+                        VerticalAlignment="Bottom" 
+                        HorizontalAlignment="Right"
+                        Padding="8,0,0,0"
+                        Margin="0,0,12,0">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}">
+                        <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                        </controls:MessageReferenceControl.Resources>
-                    </controls:MessageReferenceControl>
+                        </controls:MessageReference.Resources>
+                    </controls:MessageReference>
                 </Border>
 
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
@@ -273,15 +279,22 @@
                     </Border>
                 </Grid>
 
-                <Border Visibility="{x:Bind ReplyVisibility}" Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
-                    <controls:MessageReferenceControl Message="{x:Bind Reply, Mode=OneWay}">
-                        <controls:MessageReferenceControl.Resources>
+                <Border Visibility="{x:Bind ReplyVisibility}" 
+                        Height="{ThemeResource AppBarThemeCompactHeight}"
+                        Background="{ThemeResource MessageOverlayBackgroundBrush}" 
+                        VerticalAlignment="Bottom" 
+                        HorizontalAlignment="Left" 
+                        Padding="8,0,0,0" 
+                        Margin="12,0,0,0" 
+                        Grid.Column="1">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}">
+                        <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                        </controls:MessageReferenceControl.Resources>
-                    </controls:MessageReferenceControl>
+                        </controls:MessageReference.Resources>
+                    </controls:MessageReference>
                 </Border>
             </Grid>
         </DataTemplate>
@@ -302,15 +315,22 @@
                     </Border>
                 </Grid>
 
-                <Border Visibility="{x:Bind ReplyVisibility}" Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
-                    <controls:MessageReferenceControl Message="{x:Bind Reply, Mode=OneWay}">
-                        <controls:MessageReferenceControl.Resources>
+                <Border Visibility="{x:Bind ReplyVisibility}" 
+                        Height="{ThemeResource AppBarThemeCompactHeight}"
+                        Background="{ThemeResource MessageOverlayBackgroundBrush}" 
+                        VerticalAlignment="Bottom" 
+                        HorizontalAlignment="Left" 
+                        Padding="8,0,0,0" 
+                        Margin="12,0,0,0" 
+                        Grid.Column="1">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}">
+                        <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                        </controls:MessageReferenceControl.Resources>
-                    </controls:MessageReferenceControl>
+                        </controls:MessageReference.Resources>
+                    </controls:MessageReference>
                 </Border>
             </Grid>
         </DataTemplate>
@@ -455,14 +475,14 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="btnPinnedMessage" Padding="12,0" Style="{StaticResource EmptyButtonStyle}">
-                <controls:MessageReferenceControl IsPinned="True" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0">
-                    <controls:MessageReferenceControl.Resources>
+                <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0">
+                    <controls:MessageReference.Resources>
                         <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                         <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                         <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                         <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                    </controls:MessageReferenceControl.Resources>
-                </controls:MessageReferenceControl>
+                    </controls:MessageReference.Resources>
+                </controls:MessageReference>
                 <!--<Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -663,12 +683,8 @@
                 </Grid.ColumnDefinitions>
                 <!-- ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" Visibility="{Binding ReplyVisibility}" BorderBrush="#2fa9e2" Foreground="#0e7acd" Style="{StaticResource MediaControlStyle}" -->
 
-                <ContentControl Content="{Binding ReplyInfo}"
-                                ContentTemplateSelector="{StaticResource ReplyTemplateSelector}"
-                                VerticalContentAlignment="Center"
-                                Margin="-8,0,0,-4" 
-                                Grid.Column="1">
-                    <ContentControl.Resources>
+                <controls:MessageReference Message="{Binding ReplyInfo}" VerticalAlignment="Center" Margin="-8,0,0,0" Grid.Column="1">
+                    <controls:MessageReference.Resources>
                         <ResourceDictionary>
                             <ResourceDictionary.ThemeDictionaries>
                                 <ResourceDictionary x:Name="Dark">
@@ -679,13 +695,8 @@
                                 </ResourceDictionary>
                             </ResourceDictionary.ThemeDictionaries>
                         </ResourceDictionary>
-                    </ContentControl.Resources>
-                    <ContentControl.ContentTransitions>
-                        <TransitionCollection>
-                            <EntranceThemeTransition/>
-                        </TransitionCollection>
-                    </ContentControl.ContentTransitions>
-                </ContentControl>
+                    </controls:MessageReference.Resources>
+                </controls:MessageReference>
 
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>

@@ -273,6 +273,26 @@ namespace Telegram.Api.TL
         }
         #endregion
 
+        #region Audio
+        public virtual bool IsAudio()
+        {
+            var documentMedia = Media as TLMessageMediaDocument;
+            return documentMedia != null && IsAudio(documentMedia.Document);
+        }
+
+        public static bool IsAudio(TLDocumentBase documentBase)
+        {
+            var document = documentBase as TLDocument;
+            return document != null && IsAudio(document, document.Size);
+        }
+
+        public static bool IsAudio(TLDocument document, int size)
+        {
+            var audioAttribute = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+            return audioAttribute != null && !audioAttribute.IsVoice;
+        }
+        #endregion
+
         #region Voice
         public virtual bool IsVoice()
         {

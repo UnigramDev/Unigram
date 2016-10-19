@@ -101,6 +101,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\LambdaComparer.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controls\AttachPickerFlyout.xaml.cs">
@@ -169,8 +170,8 @@
       <DependentUpon>PhotosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PivotRadioButton.cs" />
-    <Compile Include="Controls\MessageReferenceControl.xaml.cs">
-      <DependentUpon>MessageReferenceControl.xaml</DependentUpon>
+    <Compile Include="Controls\MessageReference.xaml.cs">
+      <DependentUpon>MessageReference.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SearchTextBox.cs" />
     <Compile Include="Controls\Items\SimpleDialogListViewItem.xaml.cs">
@@ -202,15 +203,11 @@
     <Compile Include="Selectors\MessageGroupTemplateSelector.cs" />
     <Compile Include="Selectors\MessageStyleSelector.cs" />
     <Compile Include="Selectors\MessageTemplateSelector.cs" />
-    <Compile Include="Selectors\ReplyTemplateSelector.cs" />
     <Compile Include="Themes\Media.xaml.cs">
       <DependentUpon>Media.xaml</DependentUpon>
     </Compile>
     <Compile Include="Themes\Messages.xaml.cs">
       <DependentUpon>Messages.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Themes\Replies.xaml.cs">
-      <DependentUpon>Replies.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ChatInfoViewModel.cs" />
     <Compile Include="ViewModels\ContactsViewModel.cs" />
@@ -436,7 +433,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\MessageReferenceControl.xaml">
+    <Page Include="Controls\MessageReference.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -468,10 +465,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Messages.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Replies.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -67,13 +67,20 @@ namespace Unigram.Controls
 
                     if (message.IsOut)
                     {
-                        bubble.Padding = new Thickness(56, 0, 12, 0);
+                        if (message.IsSticker())
+                        {
+                            bubble.Padding = new Thickness(12, 0, 12, 0);
+                        }
+                        else
+                        {
+                            bubble.Padding = new Thickness(56, 0, 12, 0);
+                        }
                     }
                     else
                     {
                         if (message.IsSticker())
                         {
-                            bubble.Padding = new Thickness(12, 0, 12, 0);
+                            bubble.Padding = new Thickness(56, 0, 12, 0);
                         }
                         else
                         {

@@ -46,7 +46,7 @@
                  ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
                  Grid.Row="1"/>-->
 
-            <controls:MessageReferenceControl 
+            <controls:MessageReference 
                 Message="{x:Bind ViewModel.Reply, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
                 Grid.Row="1"/>
