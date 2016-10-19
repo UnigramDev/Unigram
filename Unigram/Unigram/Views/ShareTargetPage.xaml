@@ -164,7 +164,8 @@
             <ProgressBar x:Name="prgSendStatus" VerticalAlignment="Bottom" Background="Transparent"/>
         </Grid>
         
-        <ListView ItemsSource="{x:Bind ViewModel.Dialogs}"
+        <ListView x:Name="lvDialogs"
+                  ItemsSource="{x:Bind ViewModel.Dialogs}"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ItemClick="lvMasterChats_ItemClick"
@@ -209,7 +210,7 @@
                                             PlaceholderText="Search..."
                                             Margin="12,8" 
                                             InputScope="Search"
-                                            />
+                                            TextChanged="txtSearch_TextChanged"/>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>

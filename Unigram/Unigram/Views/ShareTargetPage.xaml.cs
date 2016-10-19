@@ -190,5 +190,22 @@ namespace Unigram.Views
                 sth.CloseShareTarget();
             }
         }
+
+        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (txtSearch.Text != "")
+            {
+                if (lvDialogs.ItemsSource != ViewModel.SearchDialogs)
+                {
+                    lvDialogs.ItemsSource = ViewModel.SearchDialogs;
+                }
+                ViewModel.GetSearchDialogs(txtSearch.Text);
+            }
+            else
+            {
+                lvDialogs.ItemsSource = ViewModel.Dialogs;
+            }
+            txtSearch.Focus(FocusState.Programmatic);
+        }
     }
 }
