@@ -173,7 +173,7 @@
                 <StackPanel>
                     <Grid x:Name="ListHeader"
                           BorderThickness="0,0,0,1"
-                          BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                          BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
@@ -202,8 +202,14 @@
                                  Height="100"
                                  Grid.Column="1"/>
                     </Grid>
-                    
-                    <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                    <TextBlock Text="Share with..."
+                               Margin="12,8,12,4"
+                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                    <controls:SearchTextBox x:Name="txtSearch"
+                                            PlaceholderText="Search..."
+                                            Margin="12,8" 
+                                            InputScope="Search"
+                                            />
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>
