@@ -26,82 +26,82 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-<Choose>
-  <When Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+  <Choose>
+    <When Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
       <ItemGroup>
-    <ClCompile Include="celt\x86\celt_lpc_sse.c" />
-    <ClCompile Include="celt\x86\pitch_sse.c" />
-    <ClCompile Include="celt\x86\pitch_sse2.c" />
-    <ClCompile Include="celt\x86\pitch_sse4_1.c" />
-    <ClCompile Include="celt\x86\vq_sse2.c" />
-    <ClCompile Include="celt\x86\x86cpu.c" />
-    <ClCompile Include="celt\x86\x86_celt_map.c" />
-    <ClCompile Include="silk\fixed\x86\burg_modified_FIX_sse.c" />
-    <ClCompile Include="silk\fixed\x86\prefilter_FIX_sse.c" />
-    <ClCompile Include="silk\fixed\x86\vector_ops_FIX_sse.c" />
-    <ClCompile Include="silk\x86\NSQ_del_dec_sse.c" />
-    <ClCompile Include="silk\x86\NSQ_sse.c" />
-    <ClCompile Include="silk\x86\VAD_sse.c" />
-    <ClCompile Include="silk\x86\VQ_WMat_EC_sse.c" />
-    <ClCompile Include="silk\x86\x86_silk_map.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="celt\x86\celt_lpc_sse.h" />
-    <ClInclude Include="celt\x86\pitch_sse.h" />
-    <ClInclude Include="celt\x86\vq_sse.h" />
-    <ClInclude Include="celt\x86\x86cpu.h" />
-    <ClInclude Include="silk\x86\main_sse.h" />
-    <ClInclude Include="silk\x86\SigProc_FIX_sse.h" />
-  </ItemGroup>
-  </When>
-<When Condition="'$(Platform)'=='ARM'">
-  <ItemGroup>
-    <ClCompile Include="celt\arm\armcpu.c" />
-    <ClCompile Include="celt\arm\arm_celt_map.c" />
-    <ClCompile Include="celt\arm\celt_ne10_fft.c" />
-    <ClCompile Include="celt\arm\celt_ne10_mdct.c" />
-    <ClCompile Include="celt\arm\celt_neon_intr.c" />
-    <ClCompile Include="celt\dump_modes\dump_modes_arm_ne10.c" />
-    <ClCompile Include="silk\arm\arm_silk_map.c" />
-    <ClCompile Include="silk\arm\NSQ_neon.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="celt\arm\armcpu.h" />
-    <ClInclude Include="celt\arm\fft_arm.h" />
-    <ClInclude Include="celt\arm\fixed_arm64.h" />
-    <ClInclude Include="celt\arm\fixed_armv4.h" />
-    <ClInclude Include="celt\arm\fixed_armv5e.h" />
-    <ClInclude Include="celt\arm\kiss_fft_armv4.h" />
-    <ClInclude Include="celt\arm\kiss_fft_armv5e.h" />
-    <ClInclude Include="celt\arm\mdct_arm.h" />
-    <ClInclude Include="celt\arm\pitch_arm.h" />
-    <ClInclude Include="celt\static_modes_fixed_arm_ne10.h" />
-    <ClInclude Include="celt\static_modes_float_arm_ne10.h" />
-    <ClInclude Include="silk\arm\macros_arm64.h" />
-    <ClInclude Include="silk\arm\macros_armv4.h" />
-    <ClInclude Include="silk\arm\macros_armv5e.h" />
-    <ClInclude Include="silk\arm\NSQ_neon.h" />
-    <ClInclude Include="silk\arm\SigProc_FIX_armv4.h" />
-    <ClInclude Include="silk\arm\SigProc_FIX_armv5e.h" />
-  </ItemGroup>
-  </When>
-<When Condition="'$(Platform)'=='MIPS'">
-<ItemGroup>
-    <ClInclude Include="celt\mips\celt_mipsr1.h" />
-    <ClInclude Include="celt\mips\fixed_generic_mipsr1.h" />
-    <ClInclude Include="celt\mips\kiss_fft_mipsr1.h" />
-    <ClInclude Include="celt\mips\mdct_mipsr1.h" />
-    <ClInclude Include="celt\mips\pitch_mipsr1.h" />
-    <ClInclude Include="celt\mips\vq_mipsr1.h" />
-    <ClInclude Include="silk\fixed\mips\noise_shape_analysis_FIX_mipsr1.h" />
-    <ClInclude Include="silk\fixed\mips\prefilter_FIX_mipsr1.h" />
-    <ClInclude Include="silk\fixed\mips\warped_autocorrelation_FIX_mipsr1.h" />
-    <ClInclude Include="silk\mips\macros_mipsr1.h" />
-    <ClInclude Include="silk\mips\NSQ_del_dec_mipsr1.h" />
-    <ClInclude Include="silk\mips\sigproc_fix_mipsr1.h" />
-  </ItemGroup>
-  </When>
-</Choose>
+        <ClCompile Include="celt\x86\celt_lpc_sse.c" />
+        <ClCompile Include="celt\x86\pitch_sse.c" />
+        <ClCompile Include="celt\x86\pitch_sse2.c" />
+        <ClCompile Include="celt\x86\pitch_sse4_1.c" />
+        <ClCompile Include="celt\x86\vq_sse2.c" />
+        <ClCompile Include="celt\x86\x86cpu.c" />
+        <ClCompile Include="celt\x86\x86_celt_map.c" />
+        <ClCompile Include="silk\fixed\x86\burg_modified_FIX_sse.c" />
+        <ClCompile Include="silk\fixed\x86\prefilter_FIX_sse.c" />
+        <ClCompile Include="silk\fixed\x86\vector_ops_FIX_sse.c" />
+        <ClCompile Include="silk\x86\NSQ_del_dec_sse.c" />
+        <ClCompile Include="silk\x86\NSQ_sse.c" />
+        <ClCompile Include="silk\x86\VAD_sse.c" />
+        <ClCompile Include="silk\x86\VQ_WMat_EC_sse.c" />
+        <ClCompile Include="silk\x86\x86_silk_map.c" />
+      </ItemGroup>
+      <ItemGroup>
+        <ClInclude Include="celt\x86\celt_lpc_sse.h" />
+        <ClInclude Include="celt\x86\pitch_sse.h" />
+        <ClInclude Include="celt\x86\vq_sse.h" />
+        <ClInclude Include="celt\x86\x86cpu.h" />
+        <ClInclude Include="silk\x86\main_sse.h" />
+        <ClInclude Include="silk\x86\SigProc_FIX_sse.h" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)'=='ARM'">
+      <ItemGroup>
+        <ClCompile Include="celt\arm\armcpu.c" />
+        <ClCompile Include="celt\arm\arm_celt_map.c" />
+        <ClCompile Include="celt\arm\celt_ne10_fft.c" />
+        <ClCompile Include="celt\arm\celt_ne10_mdct.c" />
+        <ClCompile Include="celt\arm\celt_neon_intr.c" />
+        <ClCompile Include="celt\dump_modes\dump_modes_arm_ne10.c" />
+        <ClCompile Include="silk\arm\arm_silk_map.c" />
+        <ClCompile Include="silk\arm\NSQ_neon.c" />
+      </ItemGroup>
+      <ItemGroup>
+        <ClInclude Include="celt\arm\armcpu.h" />
+        <ClInclude Include="celt\arm\fft_arm.h" />
+        <ClInclude Include="celt\arm\fixed_arm64.h" />
+        <ClInclude Include="celt\arm\fixed_armv4.h" />
+        <ClInclude Include="celt\arm\fixed_armv5e.h" />
+        <ClInclude Include="celt\arm\kiss_fft_armv4.h" />
+        <ClInclude Include="celt\arm\kiss_fft_armv5e.h" />
+        <ClInclude Include="celt\arm\mdct_arm.h" />
+        <ClInclude Include="celt\arm\pitch_arm.h" />
+        <ClInclude Include="celt\static_modes_fixed_arm_ne10.h" />
+        <ClInclude Include="celt\static_modes_float_arm_ne10.h" />
+        <ClInclude Include="silk\arm\macros_arm64.h" />
+        <ClInclude Include="silk\arm\macros_armv4.h" />
+        <ClInclude Include="silk\arm\macros_armv5e.h" />
+        <ClInclude Include="silk\arm\NSQ_neon.h" />
+        <ClInclude Include="silk\arm\SigProc_FIX_armv4.h" />
+        <ClInclude Include="silk\arm\SigProc_FIX_armv5e.h" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)'=='MIPS'">
+      <ItemGroup>
+        <ClInclude Include="celt\mips\celt_mipsr1.h" />
+        <ClInclude Include="celt\mips\fixed_generic_mipsr1.h" />
+        <ClInclude Include="celt\mips\kiss_fft_mipsr1.h" />
+        <ClInclude Include="celt\mips\mdct_mipsr1.h" />
+        <ClInclude Include="celt\mips\pitch_mipsr1.h" />
+        <ClInclude Include="celt\mips\vq_mipsr1.h" />
+        <ClInclude Include="silk\fixed\mips\noise_shape_analysis_FIX_mipsr1.h" />
+        <ClInclude Include="silk\fixed\mips\prefilter_FIX_mipsr1.h" />
+        <ClInclude Include="silk\fixed\mips\warped_autocorrelation_FIX_mipsr1.h" />
+        <ClInclude Include="silk\mips\macros_mipsr1.h" />
+        <ClInclude Include="silk\mips\NSQ_del_dec_mipsr1.h" />
+        <ClInclude Include="silk\mips\sigproc_fix_mipsr1.h" />
+      </ItemGroup>
+    </When>
+  </Choose>
   <ItemGroup>
     <ClCompile Include="analysis.c" />
     <ClCompile Include="celt\bands.c" />
@@ -441,7 +441,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)celt;$(ProjectDir)silk;$(ProjectDir)silk\float;$(ProjectDir)silk\fixed;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -469,7 +469,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)celt;$(ProjectDir)silk;$(ProjectDir)silk\float;$(ProjectDir)silk\fixed;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -497,7 +497,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)celt;$(ProjectDir)silk;$(ProjectDir)silk\float;$(ProjectDir)silk\fixed;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
