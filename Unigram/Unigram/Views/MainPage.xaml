@@ -7,6 +7,7 @@
     xmlns:items="using:Unigram.Controls.Items"
     xmlns:models="using:Telegram.Api.TL"
     xmlns:vms="using:Unigram.ViewModels"
+    xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -21,6 +22,52 @@
         <Style TargetType="PivotItem">
             <Setter Property="Margin" Value="0" />
         </Style>
+
+        <Style TargetType="controls:MasterDetailView">
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:MasterDetailView">
+                        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="AdaptiveStates">
+                                    <VisualState x:Name="FilledState">
+                                        <VisualState.StateTriggers>
+                                            <AdaptiveTrigger MinWindowWidth="820"/>
+                                        </VisualState.StateTriggers>
+                                        <VisualState.Setters>
+                                            <Setter Target="MasterColumn.Width" Value="320" />
+                                            <Setter Target="DetailColumn.Width" Value="*" />
+                                            <Setter Target="DetailPresenter.(Grid.Column)" Value="1" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="NarrowState">
+                                        <VisualState.StateTriggers>
+                                            <AdaptiveTrigger MinWindowWidth="0"/>
+                                        </VisualState.StateTriggers>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="MasterColumn"/>
+                                <ColumnDefinition x:Name="DetailColumn" Width="0"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter x:Name="MasterFrame" 
+                                          Content="{TemplateBinding Content}" 
+                                          ContentTemplate="{TemplateBinding ContentTemplate}" 
+                                          ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          HorizontalContentAlignment="Stretch" 
+                                          VerticalContentAlignment="Stretch"/>
+                            <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}">
+                                <win2d:CanvasControl x:Name="BackgroundCanvas" CreateResources="BackgroundCanvas_CreateResources" Draw="BackgroundCanvas_Draw" />
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Page.Resources>
 
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged">

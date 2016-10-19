@@ -302,7 +302,7 @@
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
                                           HorizontalContentAlignment="Stretch" 
                                           VerticalContentAlignment="Stretch"/>
-                        <Border x:Name="DetailPresenter" Background="{TemplateBinding Background}"/>
+                        <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

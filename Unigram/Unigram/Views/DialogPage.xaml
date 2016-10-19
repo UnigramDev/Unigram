@@ -378,7 +378,7 @@
                                            UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -459,8 +459,6 @@
             </Button>
         </Grid>
         <!-- END OF Titlebar -->
-
-        <Image Source="ms-appx:///Assets/Images/DefaultBackground.jpg" Stretch="UniformToFill" Grid.Row="1" Grid.RowSpan="2"/>
 
         <Grid x:Name="grdPinnedMessage"
               Visibility="{x:Bind ViewModel.pinnedMessageVisible}"
@@ -661,7 +659,8 @@
         </Grid>
 
         <!-- Input pane -->
-        <Grid MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+              MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderThickness="0,1,0,0"
               BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
               Grid.Row="3">

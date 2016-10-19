@@ -319,8 +319,8 @@
     <Content Include="Assets\Icons\MessageStatus\ic_unsent_message_lightbg.png" />
     <Content Include="Assets\Icons\Toast\Send.png" />
     <Content Include="Assets\Icons\userPos32.png" />
-    <Content Include="Assets\Images\DefaultBackground.theme-dark.jpg" />
-    <Content Include="Assets\Images\DefaultBackground.theme-light.jpg" />
+    <Content Include="Assets\Images\DefaultBackground.theme-dark.png" />
+    <Content Include="Assets\Images\DefaultBackground.theme-light.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-100.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-125.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-150.png" />
