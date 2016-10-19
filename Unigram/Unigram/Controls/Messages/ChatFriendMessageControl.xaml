@@ -16,7 +16,32 @@
     <!-- TODO: not the right way -->
     <Border Height="10" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
-    <Border x:Name="LayoutRoot"
+    <Grid>
+        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left">
+            <Grid
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Width="15" Height="15" Margin="0,0,0,4">
+                <Grid.Clip>
+                    <RectangleGeometry Rect="-15,0,30,15"/>
+                </Grid.Clip>
+                <Rectangle
+             RenderTransformOrigin="0.5,0.5"
+            Fill="{ThemeResource MessageBackgroundBrush}">
+                    <Rectangle.RenderTransform>
+                        <CompositeTransform Rotation="45" TranslateX="-7.5" TranslateY="7.5"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+            </Grid>
+            <Rectangle
+                Height="2"
+                Fill="{ThemeResource MessageBorderBrush}" VerticalAlignment="Bottom" Width="13.5" RenderTransformOrigin="0.5,0.5" StrokeThickness="0" Opacity="0.8">
+                <Rectangle.RenderTransform>
+                    <CompositeTransform TranslateY="-2" TranslateX="-11"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+        </Grid>
+        <Border x:Name="LayoutRoot"
             Margin="{ThemeResource MessageContentMargin}" 
             Padding="{ThemeResource MessageContentPadding}" 
             Background="{ThemeResource MessageBackgroundBrush}" 
@@ -24,60 +49,61 @@
             BorderThickness="0,0,0,2" 
             HorizontalAlignment="Left" 
             MaxWidth="430"
-            Grid.Column="1">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <TextBlock x:Name="HeaderLabel" 
+            Grid.Column="1" CornerRadius="4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="HeaderLabel" 
                        Margin="0,0,0,2"
                        Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
                        Style="{ThemeResource BaseTextBlockStyle}"
                        Visibility="Collapsed"
                        Grid.Row="0"/>
 
-            <!--<ContentControl
+                <!--<ContentControl
                  Content="{x:Bind ViewModel.ReplyInfo, Mode=OneWay}" 
                  Visibility="{x:Bind ViewModel.ReplyVisibility}"
                  ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
                  Grid.Row="1"/>-->
 
-            <controls:MessageReferenceControl 
+                <controls:MessageReferenceControl 
                 Message="{x:Bind ViewModel.Reply, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
                 Grid.Row="1"/>
 
-            <RichTextBlock 
+                <RichTextBlock 
                 x:Name="MessageControl" 
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}" 
                 Style="{ThemeResource BodyRichTextBlockStyle}"
                 Grid.Row="2"/>
 
-            <controls:MediaControl
+                <controls:MediaControl
                 x:Name="MediaControl"
                 Media="{x:Bind ViewModel.Media, Mode=OneWay}"
                 ContentChanged="OnMediaChanged"
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                 Grid.Row="3"/>
 
-            <StackPanel  x:Name="StatusControl" 
+                <StackPanel  x:Name="StatusControl" 
                          Orientation="Horizontal"
                          VerticalAlignment="Bottom" 
                          HorizontalAlignment="Right" 
                          Padding="0,0,6,0" 
                          Margin="0,0,-6,0"
                          Grid.Row="4">
-                <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.HasViews}">
-                    <FontIcon Glyph="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}" FontSize="11" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="0,0,4,2" VerticalAlignment="Bottom"/>
-                    <TextBlock Text="{x:Bind ViewModel.Views}" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,12,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.HasViews}">
+                        <FontIcon Glyph="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}" FontSize="11" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="0,0,4,2" VerticalAlignment="Bottom"/>
+                        <TextBlock Text="{x:Bind ViewModel.Views}" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,12,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    </StackPanel>
+                    <TextBlock Visibility="{x:Bind (Visibility)ViewModel.HasEditDate, Mode=OneWay}" Text="edited" FontStyle="Italic" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,4,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    <TextBlock x:Name="StatusLabel" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
                 </StackPanel>
-                <TextBlock Visibility="{x:Bind (Visibility)ViewModel.HasEditDate, Mode=OneWay}" Text="edited" FontStyle="Italic" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,4,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
-                <TextBlock x:Name="StatusLabel" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
-            </StackPanel>
-        </Grid>
-    </Border>
+            </Grid>
+        </Border>
+    </Grid>
 </local:MessageControlBase>

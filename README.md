@@ -1,4 +1,4 @@
-# Unigram
+﻿# Unigram
 Unigram – An Universal take on Telegram. Made by the community, for the community
 
 Windows 10 (Mobile) introduced with the Universal Windows Platform a whole list of features to make your (chatting) life easier. However, the current official Telegram-app has no signs of releasing an UWP-version with these capabilities soon. That’s why we decided to build our own.
@@ -14,7 +14,7 @@ namespace Telegram.Api
     {
         static Constants()
         {
-            FirstServerIpAddress = "your_server_ip";
+            FirstServerIpAddress = "your_server_ip"; //DO NOT INCLUDE THE PORT
 
             ApiId = your_api_id;
             ApiHash = "your_api_hash";
