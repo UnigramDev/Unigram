@@ -212,11 +212,11 @@ namespace Unigram.Tasks
 
             }
 
+                        //<image placement='appLogoOverride' hint-crop='circle' src='ms-appx:///Assets/Logos/Placeholder/Placeholder-2.png' />
             var xml = $@"
                 <toast launch='{WebUtility.HtmlEncode(launch)}'>
                     <visual>
                       <binding template='ToastGeneric'>
-                        <image placement='appLogoOverride' hint-crop='circle' src='ms-appx:///Assets/Logos/Placeholder/Placeholder-2.png' />
                         <text>{WebUtility.HtmlEncode(caption) ?? string.Empty}</text>
                         <text>{WebUtility.HtmlEncode(message) ?? string.Empty}</text>
                         <text placement='attribution'>Unigram</text>
