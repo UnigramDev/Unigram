@@ -333,7 +333,9 @@ namespace Unigram.Controls
             Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
 
             planText = planText.Trim();
+            _updatingText = true;
             ViewModel.Text = planText;
+            _updatingText = false;
 
             if (isDirty)
             {
