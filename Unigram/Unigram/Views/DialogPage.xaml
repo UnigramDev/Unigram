@@ -330,6 +330,7 @@
 
         <DataTemplate x:Key="UnreadMessageTemplate">
             <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12" RenderTransformOrigin="0.5,0.5">
+
                 <!--<TextBlock Text="{Binding Converter={StaticResource ServiceMessageToTextConverter}}" Foreground="White" Style="{ThemeResource BodyTextBlockStyle}"/>-->
             </Border>
         </DataTemplate>
@@ -347,6 +348,12 @@
             <messages:ChatFriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
         </DataTemplate>
 
+        <DataTemplate x:Key="GameResultTemplate" x:DataType="models:TLMessage">
+            <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12" RenderTransformOrigin="0.5,0.5">
+                <TextBlock Text="Game Score"/>
+            </Border>
+        </DataTemplate>
+
         <selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
                                            UserMessageTemplate="{StaticResource UserMessageTemplate}"
                                            UserStickerTemplate="{StaticResource UserStickerTemplate}"
@@ -355,7 +362,8 @@
                                            ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
                                            ChatFriendStickerTemplate="{StaticResource ChatFriendStickerTemplate}"
                                            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
-                                           UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
+                                           UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"
+                                           GameResultTemplate="{StaticResource GameResultTemplate}"/>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -364,7 +372,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto"/>
-            <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
+            <RowDefinition x:Name="KeyboardPlaceholder" Height="{x:Bind ViewModel.StickerKeyboardHeight, Mode=OneWay}"/>
         </Grid.RowDefinitions>
 
         <!-- Titlebar -->
@@ -836,6 +844,9 @@
                     </MenuFlyout>
                 </FlyoutBase.AttachedFlyout>
             </controls:GlyphButton>
+        </Grid>
+        <Grid Grid.Row="4">
+            <controls:StickerPicker/>
         </Grid>
     </Grid>
 </Page>
