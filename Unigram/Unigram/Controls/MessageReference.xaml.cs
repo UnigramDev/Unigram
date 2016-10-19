@@ -625,15 +625,43 @@ namespace Unigram.Controls
 
         private bool SetDocumentTemplate(TLMessage message, string title)
         {
-            Visibility = Visibility.Visible;
+            var documentMedia = message.Media as TLMessageMediaDocument;
+            if (documentMedia != null)
+            {
+                var document = documentMedia.Document as TLDocument;
+                if (document != null)
+                {
+                    var photoSize = document.Thumb as TLPhotoSize;
+                    var photoCachedSize = document.Thumb as TLPhotoCachedSize;
+                    if (photoCachedSize != null || photoSize != null)
+                    {
+                        Visibility = Visibility.Visible;
 
-            if (ThumbRoot != null)
-                ThumbRoot.Visibility = Visibility.Collapsed;
+                        FindName(nameof(ThumbRoot));
+                        if (ThumbRoot != null)
+                            ThumbRoot.Visibility = Visibility.Visible;
 
-            TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = message.Message;
-            MessageLabel.Text = string.Empty;
+                        ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document);
+                    }
+                    else
+                    {
+                        Visibility = Visibility.Visible;
 
+                        if (ThumbRoot != null)
+                            ThumbRoot.Visibility = Visibility.Collapsed;
+                    }
+
+                    TitleLabel.Text = GetFromLabel(message, title);
+                    ServiceLabel.Text = document.FileName;
+                    MessageLabel.Text = string.Empty;
+
+                    if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
+                    {
+                        ServiceLabel.Text += ", ";
+                        MessageLabel.Text += documentMedia.Caption;
+                    }
+                }
+            }
             return true;
         }
 

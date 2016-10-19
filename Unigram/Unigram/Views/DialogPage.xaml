@@ -236,9 +236,10 @@
                         Background="{ThemeResource MessageOverlayBackgroundBrush}" 
                         VerticalAlignment="Bottom" 
                         HorizontalAlignment="Right"
-                        Padding="8,0,0,0"
+                        MaxWidth="180"
+                        Padding="8,0,8,0"
                         Margin="0,0,12,0">
-                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Margin="0,6">
                         <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
@@ -284,10 +285,11 @@
                         Background="{ThemeResource MessageOverlayBackgroundBrush}" 
                         VerticalAlignment="Bottom" 
                         HorizontalAlignment="Left" 
-                        Padding="8,0,0,0" 
+                        MaxWidth="180"
+                        Padding="8,0,8,0" 
                         Margin="12,0,0,0" 
                         Grid.Column="1">
-                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Margin="0,6">
                         <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
@@ -320,10 +322,11 @@
                         Background="{ThemeResource MessageOverlayBackgroundBrush}" 
                         VerticalAlignment="Bottom" 
                         HorizontalAlignment="Left" 
-                        Padding="8,0,0,0" 
+                        MaxWidth="180"
+                        Padding="8,0,8,0" 
                         Margin="12,0,0,0" 
                         Grid.Column="1">
-                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Margin="0,6">
                         <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
