@@ -51,8 +51,8 @@ namespace Unigram.Controls
             //    return base.MeasureOverride(availableSize);
             //}
 
-            var availableWidth = Math.Min(availableSize.Width, MaxWidth);
-            var availableHeight = Math.Min(availableSize.Height, MaxHeight);
+            var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, MaxWidth));
+            var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, MaxHeight));
 
             var width = 0.0;
             var height = 0.0;
