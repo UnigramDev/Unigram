@@ -513,6 +513,8 @@ namespace Unigram.ViewModels
             message.Entities = entities != null ? new TLVector<TLMessageEntityBase>(entities) : null;
             message.HasEntities = entities != null;
 
+            MessageHelper.PreprocessEntities(ref message);
+
             if (Reply != null)
             {
                 message.HasReplyToMsgId = true;
