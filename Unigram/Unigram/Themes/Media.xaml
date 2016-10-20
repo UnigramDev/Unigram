@@ -164,8 +164,8 @@
                 </StackPanel>
                 
                 <!-- TODO: video timing -->
-                <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{Binding Photo}" 
+                <controls:ImageView Source="{Binding Webpage.Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{Binding Webpage.Photo}" 
                                     MaxWidth="400" MaxHeight="400"
                                     HorizontalAlignment="Left"/>
             </StackPanel>
