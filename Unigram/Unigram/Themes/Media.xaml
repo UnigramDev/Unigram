@@ -164,7 +164,10 @@
                 </StackPanel>
                 
                 <!-- TODO: video timing -->
-                <Image Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" Stretch="Uniform" MaxWidth="400" MaxHeight="400" HorizontalAlignment="Left"/>
+                <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{Binding Photo}" 
+                                    MaxWidth="400" MaxHeight="400"
+                                    HorizontalAlignment="Left"/>
             </StackPanel>
         </Grid>
     </DataTemplate>
