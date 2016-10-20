@@ -250,9 +250,10 @@
                 </Border>
 
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+                    <controls:ImageView
+                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                        MaxWidth="180" MaxHeight="180" Margin="2"/>
 
                     <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <StackPanel Orientation="Horizontal">
@@ -271,9 +272,10 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+                    <controls:ImageView
+                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                        MaxWidth="180" MaxHeight="180" Margin="2"/>
 
                     <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
@@ -308,9 +310,10 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+                    <controls:ImageView
+                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                        MaxWidth="180" MaxHeight="180" Margin="2"/>
 
                     <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>

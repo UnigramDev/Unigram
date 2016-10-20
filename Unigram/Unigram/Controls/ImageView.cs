@@ -40,16 +40,21 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty ConstraintProperty =
-            DependencyProperty.Register("Constraint", typeof(object), typeof(ImageView), new PropertyMetadata(null));
+            DependencyProperty.Register("Constraint", typeof(object), typeof(ImageView), new PropertyMetadata(null, OnConstraintChanged));
+
+        private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ImageView)d).InvalidateMeasure();
+        }
 
         #endregion
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            //if (availableSize.Width > MaxWidth || availableSize.Height > MaxHeight)
-            //{
-            //    return base.MeasureOverride(availableSize);
-            //}
+            if (Constraint == null)
+            {
+                return base.MeasureOverride(availableSize);
+            }
 
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, MaxWidth));
             var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, MaxHeight));
@@ -66,9 +71,34 @@ namespace Unigram.Controls
                 {
                     width = photoSize.W;
                     height = photoSize.H;
+
+                    goto Calculate;
                 }
             }
 
+            var document = Constraint as TLDocument;
+            if (document != null)
+            {
+                var imageSize = document.Attributes.OfType<TLDocumentAttributeImageSize>().FirstOrDefault();
+                if (imageSize != null)
+                {
+                    width = imageSize.W;
+                    height = imageSize.H;
+
+                    goto Calculate;
+                }
+
+                var video = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+                if (video != null)
+                {
+                    width = video.W;
+                    height = video.H;
+
+                    goto Calculate;
+                }
+            }
+
+            Calculate:
             if (width > availableWidth || height > availableHeight)
             {
                 var ratioX = availableWidth / width;

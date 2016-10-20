@@ -68,8 +68,8 @@
     <DataTemplate x:Key="MediaVideoTemplate" x:DataType="models:TLMessageMediaPhoto">
         <Grid Background="Black" MinWidth="96" MinHeight="96">
             <controls:ImageView Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                Constraint="{Binding Photo}" 
-                                MaxWidth="400" MaxHeight="400"/>
+                                Constraint="{Binding Document}" 
+                                MaxWidth="320" MaxHeight="320"/>
 
             <Border Width="48" Height="48" Background="{ThemeResource MessageOverlayBackgroundBrush}">
                 <SymbolIcon Symbol="Play" Foreground="White"/>
@@ -84,8 +84,12 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaGifTemplate" x:DataType="models:TLMessageMediaDocument">
-        <Grid>
-            <Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="320" MaxHeight="320"/>
+        <Grid Background="Black" MinWidth="96" MinHeight="96">
+            <controls:ImageView Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{Binding Document}" 
+                                MaxWidth="320" MaxHeight="320"/>
+
+            <!--<Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="320" MaxHeight="320"/>-->
         </Grid>
     </DataTemplate>
 
