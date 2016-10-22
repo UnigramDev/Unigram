@@ -1,8 +1,13 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
+using Microsoft.Graphics.Canvas.UI;
+using Microsoft.Graphics.Canvas.UI.Xaml;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Template10.Services.SerializationService;
 using Unigram.Controls;
@@ -254,5 +259,28 @@ namespace Unigram.Views
         {
             Frame.Navigate(typeof(SettingsPage));
         }
+
+        #region Background
+
+        private CanvasBitmap _backgroundImage;
+        private CanvasImageBrush _backgroundBrush;
+
+        private void BackgroundCanvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
+        {
+            args.TrackAsyncAction(Task.Run(async () =>
+            {
+                _backgroundImage = await CanvasBitmap.LoadAsync(sender, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
+                _backgroundBrush = new CanvasImageBrush(sender, _backgroundImage);
+                _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
+            }).AsAsyncAction());
+
+        }
+
+        private void BackgroundCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+        {
+            args.DrawingSession.FillRectangle(new Rect(new Point(), sender.RenderSize), _backgroundBrush);
+        }
+
+        #endregion
     }
 }

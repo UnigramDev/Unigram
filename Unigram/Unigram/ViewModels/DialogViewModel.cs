@@ -491,10 +491,10 @@ namespace Unigram.ViewModels
             {
                 messageText = string.Empty;
 
-                var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "TrashPack" });
+                var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "cyanide_happiness_by_naeim" });
                 if (set.IsSucceeded)
                 {
-                    document = set.Value.Documents.FirstOrDefault(x => x.Id == 169171005078503693) as TLDocument;
+                    document = set.Value.Documents.FirstOrDefault(x => x.Id == 342543832497260385) as TLDocument;
                 }
             }
 
@@ -512,6 +512,8 @@ namespace Unigram.ViewModels
 
             message.Entities = entities != null ? new TLVector<TLMessageEntityBase>(entities) : null;
             message.HasEntities = entities != null;
+
+            MessageHelper.PreprocessEntities(ref message);
 
             if (Reply != null)
             {

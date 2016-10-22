@@ -3,6 +3,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls">
 
+    <Style TargetType="local:ImageView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ImageView">
+                    <Image Source="{TemplateBinding Source}" Stretch="Uniform"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <Style TargetType="local:BubbleTextBox">
         <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
         <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
@@ -302,7 +312,7 @@
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
                                           HorizontalContentAlignment="Stretch" 
                                           VerticalContentAlignment="Stretch"/>
-                        <Border x:Name="DetailPresenter" Background="{TemplateBinding Background}"/>
+                        <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

@@ -236,9 +236,10 @@
                         Background="{ThemeResource MessageOverlayBackgroundBrush}" 
                         VerticalAlignment="Bottom" 
                         HorizontalAlignment="Right"
-                        Padding="8,0,0,0"
+                        MaxWidth="180"
+                        Padding="8,0,8,0"
                         Margin="0,0,12,0">
-                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Margin="0,6">
                         <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
@@ -249,9 +250,10 @@
                 </Border>
 
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+                    <controls:ImageView
+                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                        MaxWidth="180" MaxHeight="180" Margin="2"/>
 
                     <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <StackPanel Orientation="Horizontal">
@@ -270,9 +272,10 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+                    <controls:ImageView
+                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                        MaxWidth="180" MaxHeight="180" Margin="2"/>
 
                     <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
@@ -284,10 +287,11 @@
                         Background="{ThemeResource MessageOverlayBackgroundBrush}" 
                         VerticalAlignment="Bottom" 
                         HorizontalAlignment="Left" 
-                        Padding="8,0,0,0" 
+                        MaxWidth="180"
+                        Padding="8,0,8,0" 
                         Margin="12,0,0,0" 
                         Grid.Column="1">
-                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Margin="0,6">
                         <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
@@ -306,9 +310,10 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+                    <controls:ImageView
+                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                        MaxWidth="180" MaxHeight="180" Margin="2"/>
 
                     <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
@@ -320,10 +325,11 @@
                         Background="{ThemeResource MessageOverlayBackgroundBrush}" 
                         VerticalAlignment="Bottom" 
                         HorizontalAlignment="Left" 
-                        Padding="8,0,0,0" 
+                        MaxWidth="180"
+                        Padding="8,0,8,0" 
                         Margin="12,0,0,0" 
                         Grid.Column="1">
-                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Margin="0,6">
                         <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
@@ -378,7 +384,7 @@
                                            UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -459,8 +465,6 @@
             </Button>
         </Grid>
         <!-- END OF Titlebar -->
-
-        <Image Source="ms-appx:///Assets/Images/DefaultBackground.jpg" Stretch="UniformToFill" Grid.Row="1" Grid.RowSpan="2"/>
 
         <Grid x:Name="grdPinnedMessage"
               Visibility="{x:Bind ViewModel.pinnedMessageVisible}"
@@ -661,7 +665,8 @@
         </Grid>
 
         <!-- Input pane -->
-        <Grid MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+              MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderThickness="0,1,0,0"
               BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
               Grid.Row="3">
