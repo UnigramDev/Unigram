@@ -153,6 +153,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid x:Name="Header"
+              Visibility="Visible"
               Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}">
             <TextBlock x:Name="tblPivotTitle"
@@ -161,6 +162,15 @@
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
                        Margin="12,0" />
+
+            <Button x:Name="btnCancel"
+                    Background="Transparent"
+                    Content="&#xE106;"
+                    FontFamily="Segoe MDL2 Assets"
+                    Height="48"
+                    Width="48"
+                    HorizontalAlignment="Right"
+                    Click="btnCancel_Click" />
             <ProgressBar x:Name="prgSendStatus" VerticalAlignment="Bottom" Background="Transparent"/>
         </Grid>
         

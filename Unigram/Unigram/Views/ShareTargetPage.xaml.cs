@@ -208,5 +208,10 @@ namespace Unigram.Views
             }
             txtSearch.Focus(FocusState.Programmatic);
         }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            sth.ShareOperation.ReportCompleted();
+        }
     }
 }
