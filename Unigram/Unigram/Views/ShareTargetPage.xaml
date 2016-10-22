@@ -154,7 +154,7 @@
         </Grid.RowDefinitions>
         <Grid x:Name="Header"
               Visibility="Visible"
-              Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+              Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}">
             <TextBlock x:Name="tblPivotTitle"
                        Text="SHARE"
@@ -210,17 +210,21 @@
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"
                                  Style="{StaticResource MessageTextBoxStyle}"
-                                 Height="100"
+                                 MinHeight="128"
+                                 MaxHeight="192"
                                  Grid.Column="1"/>
                     </Grid>
-                    <TextBlock Text="Share with..."
-                               Margin="12,8,12,4"
-                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
-                    <controls:SearchTextBox x:Name="txtSearch"
-                                            PlaceholderText="Search..."
-                                            Margin="12,8" 
-                                            InputScope="Search"
-                                            TextChanged="txtSearch_TextChanged"/>
+                    <StackPanel Orientation="Vertical"
+                                Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
+                        <TextBlock Text="Share with..."
+                                   Margin="12,8,12,4"
+                                   Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                        <controls:SearchTextBox x:Name="txtSearch"
+                                                PlaceholderText="Search..."
+                                                Margin="12,8,12,12" 
+                                                InputScope="Search"
+                                                TextChanged="txtSearch_TextChanged"/>
+                    </StackPanel>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>
