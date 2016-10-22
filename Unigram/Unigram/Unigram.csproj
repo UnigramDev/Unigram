@@ -213,6 +213,7 @@
     </Compile>
     <Compile Include="ViewModels\ChatInfoViewModel.cs" />
     <Compile Include="ViewModels\ContactsViewModel.cs" />
+    <Compile Include="ViewModels\DialogsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
     <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />

@@ -86,7 +86,7 @@
                         <controls:TabHeaderStyle Glyph="&#xE15F;"/>
                     </PivotItem.Header>
                     <ListView x:Name="lvMasterChats"
-                        ItemsSource="{x:Bind ViewModel.Dialogs}"
+                        ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
                         IsItemClickEnabled="True"
                         SelectionMode="None"
                         ItemClick="ListView_ItemClick"
