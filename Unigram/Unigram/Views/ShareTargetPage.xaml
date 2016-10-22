@@ -153,7 +153,8 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid x:Name="Header"
-              Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+              Visibility="Collapsed"
+              Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}">
             <TextBlock x:Name="tblPivotTitle"
                        Text="SHARE"
@@ -161,10 +162,20 @@
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
                        Margin="12,0" />
+
+            <Button x:Name="btnCancel"
+                    Background="Transparent"
+                    Content="&#xE106;"
+                    FontFamily="Segoe MDL2 Assets"
+                    Height="48"
+                    Width="48"
+                    HorizontalAlignment="Right"
+                    Click="btnCancel_Click" />
             <ProgressBar x:Name="prgSendStatus" VerticalAlignment="Bottom" Background="Transparent"/>
         </Grid>
         
-        <ListView ItemsSource="{x:Bind ViewModel.Dialogs}"
+        <ListView x:Name="lvDialogs"
+                  ItemsSource="{x:Bind ViewModel.Dialogs}"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ItemClick="lvMasterChats_ItemClick"
@@ -173,7 +184,7 @@
                 <StackPanel>
                     <Grid x:Name="ListHeader"
                           BorderThickness="0,0,0,1"
-                          BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                          BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
@@ -182,14 +193,14 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Grid x:Name="Thumbnails" Width="88" Padding="12,12,0,12" Visibility="Collapsed">
-                            <Border x:Name="Thumb3" Background="White" Margin="8,24,8,0" VerticalAlignment="Top" Height="60" Visibility="Collapsed">
+                        <Grid x:Name="Thumbnails" Width="114" Padding="12,12,0,12" Visibility="Collapsed">
+                            <Border x:Name="Thumb3" Background="White" Margin="8,24,8,0" VerticalAlignment="Top" Height="90" Visibility="Collapsed">
                                 <Border BorderBrush="#19000000" BorderThickness="1"/>
                             </Border>
-                            <Border x:Name="Thumb2" Background="White" Margin="4,12,4,0" VerticalAlignment="Top" Height="68" Visibility="Collapsed">
+                            <Border x:Name="Thumb2" Background="White" Margin="4,12,4,0" VerticalAlignment="Top" Height="98" Visibility="Collapsed">
                                 <Border BorderBrush="#19000000" BorderThickness="1"/>
                             </Border>
-                            <Grid x:Name="Thumb1" Background="White" VerticalAlignment="Top" Height="76" Visibility="Collapsed">
+                            <Grid x:Name="Thumb1" Background="White" VerticalAlignment="Top" Height="106" Visibility="Collapsed">
                                 <Border BorderBrush="#19000000" BorderThickness="1"/>
                             </Grid>
                         </Grid>
@@ -199,11 +210,21 @@
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"
                                  Style="{StaticResource MessageTextBoxStyle}"
-                                 Height="100"
+                                 MinHeight="128"
+                                 MaxHeight="192"
                                  Grid.Column="1"/>
                     </Grid>
-                    
-                    <controls:SearchTextBox PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                    <StackPanel Orientation="Vertical"
+                                Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
+                        <TextBlock Text="Share with..."
+                                   Margin="12,8,12,4"
+                                   Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                        <controls:SearchTextBox x:Name="txtSearch"
+                                                PlaceholderText="Search..."
+                                                Margin="12,8,12,12" 
+                                                InputScope="Search"
+                                                TextChanged="txtSearch_TextChanged"/>
+                    </StackPanel>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>
