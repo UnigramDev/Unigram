@@ -101,6 +101,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\Emoji.cs" />
     <Compile Include="Common\LambdaComparer.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Constants.cs" />

@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
+using Windows.Foundation;
 
 namespace Telegram.Api.Services.FileManager
 {
     public interface IDownloadAudioFileManager
     {
-        Task<DownloadableItem> DownloadFileAsync(int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize);
+        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(int dcId, TLInputDocumentFileLocation file, int fileSize);
 
-        void DownloadFile(int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize, Action<DownloadableItem> callback = null);
+        void DownloadFile(int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize);
 
         void CancelDownloadFile(TLObject owner);
     }
@@ -148,7 +151,8 @@ namespace Telegram.Api.Services.FileManager
                     part.ParentItem.IsoFileName = fileName;
                     if (part.ParentItem.Callback != null)
                     {
-                        Execute.BeginOnThreadPool(() => part.ParentItem.Callback(part.ParentItem));
+                        part.ParentItem.Progress.Report(1.0);
+                        part.ParentItem.Callback.TrySetResult(part.ParentItem);
                     }
                     else
                     {
@@ -157,6 +161,16 @@ namespace Telegram.Api.Services.FileManager
                 }
                 else
                 {
+                    if (part.ParentItem.Callback != null)
+                    {
+                        part.ParentItem.Progress.Report(progress);
+                    }
+                    else
+                    {
+                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new DownloadProgressChangedEventArgs(part.ParentItem, progress)));
+                    }
+
+                    // Evgeny:
                     //Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new ProgressChangedEventArgs(part.ParentItem, progress)));
                 }
             }
@@ -188,16 +202,64 @@ namespace Telegram.Api.Services.FileManager
             return result;
         }
 
-        public Task<DownloadableItem> DownloadFileAsync(int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize)
+        public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(int dcId, TLInputDocumentFileLocation fileLocation, int fileSize)
         {
-            var tsc = new TaskCompletionSource<DownloadableItem>();
-            DownloadFile(dcId, fileLocation, owner, fileSize, (item) => tsc.TrySetResult(item));
-            return tsc.Task;
+            return AsyncInfo.Run<DownloadableItem, double>((token, progress) =>
+            {
+                var tsc = new TaskCompletionSource<DownloadableItem>();
+
+                var downloadableItem = GetDownloadableItem(dcId, fileLocation, null, fileSize);
+                downloadableItem.Callback = tsc;
+                downloadableItem.Progress = progress;
+
+                var downloadedCount = downloadableItem.Parts.Count(x => x.Status == PartStatus.Processed);
+                var count = downloadableItem.Parts.Count;
+                var isComplete = downloadedCount == count;
+
+                if (isComplete)
+                {
+                    var id = downloadableItem.InputAudioLocation.Id;
+                    var accessHash = downloadableItem.InputAudioLocation.AccessHash;
+                    var fileName = string.Format("audio{0}_{1}.mp3", id, accessHash);
+                    var getPartName = new Func<DownloadablePart, string>(x => string.Format("audio{0}_{1}_{2}.dat", id, accessHash, x.Number));
+
+                    FileUtils.MergePartsToFile(getPartName, downloadableItem.Parts, fileName);
+
+                    downloadableItem.IsoFileName = fileName;
+                    downloadableItem.Progress.Report(1.0);
+                    downloadableItem.Callback.TrySetResult(downloadableItem);
+                }
+                else
+                {
+                    lock (_itemsSyncRoot)
+                    {
+                        bool addFile = true;
+                        foreach (var item in _items)
+                        {
+                            if (item.InputAudioLocation.AccessHash == fileLocation.AccessHash
+                                && item.InputAudioLocation.Id == fileLocation.Id)
+                            {
+                                addFile = false;
+                                break;
+                            }
+                        }
+
+                        if (addFile)
+                        {
+                            _items.Add(downloadableItem);
+                        }
+                    }
+
+                    StartAwaitingWorkers();
+                }
+
+                return tsc.Task;
+            });
         }
 
-        public void DownloadFile(int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize, Action<DownloadableItem> callback)
+        public void DownloadFile(int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize)
         {
-            var downloadableItem = GetDownloadableItem(dcId, fileLocation, owner, fileSize, callback);
+            var downloadableItem = GetDownloadableItem(dcId, fileLocation, owner, fileSize);
 
             var downloadedCount = downloadableItem.Parts.Count(x => x.Status == PartStatus.Processed);
             var count = downloadableItem.Parts.Count;
@@ -251,14 +313,13 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private DownloadableItem GetDownloadableItem(int dcId, TLInputDocumentFileLocation location, TLObject owner, int fileSize, Action<DownloadableItem> callback)
+        private DownloadableItem GetDownloadableItem(int dcId, TLInputDocumentFileLocation location, TLObject owner, int fileSize)
         {
             var item = new DownloadableItem
             {
                 Owner = owner,
                 DCId = dcId,
-                InputAudioLocation = location,
-                Callback = callback,
+                InputAudioLocation = location
             };
             item.Parts = GetItemParts(fileSize, item);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,16 +12,17 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
+using Windows.Foundation;
 
 namespace Telegram.Api.Services.FileManager
 {
     public interface IDownloadDocumentFileManager
     {
-        Task<DownloadableItem> DownloadFileAsync(string fileName, int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize, Action<double> startCallback);
+        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string fileName, int dcId, TLInputDocumentFileLocation file, int fileSize);
 
-        void DownloadFileAsync(string fileName, int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize, Action<double> startCallback, Action<DownloadableItem> callback = null);
+        void DownloadFile(string fileName, int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize);
 
-        void CancelDownloadFileAsync(TLObject owner);
+        void CancelDownloadFile(TLObject owner);
     }
 
     public class DownloadDocumentFileManager : IDownloadDocumentFileManager
@@ -161,17 +163,20 @@ namespace Telegram.Api.Services.FileManager
                     part.ParentItem.IsoFileName = fileName;
                     if (part.ParentItem.Callback != null)
                     {
-                        Execute.BeginOnThreadPool(() =>
-                        {
-                            part.ParentItem.Callback(part.ParentItem);
-                            if (part.ParentItem.Callbacks != null)
-                            {
-                                foreach (var callback in part.ParentItem.Callbacks)
-                                {
-                                    callback.SafeInvoke(part.ParentItem);
-                                }
-                            }
-                        });
+                        //Execute.BeginOnThreadPool(() =>
+                        //{
+                        //    part.ParentItem.Callback(part.ParentItem);
+                        //    if (part.ParentItem.Callbacks != null)
+                        //    {
+                        //        foreach (var callback in part.ParentItem.Callbacks)
+                        //        {
+                        //            callback.SafeInvoke(part.ParentItem);
+                        //        }
+                        //    }
+                        //});
+
+                        part.ParentItem.Progress.Report(1.0);
+                        part.ParentItem.Callback.TrySetResult(part.ParentItem);
                     }
                     else
                     {
@@ -180,7 +185,14 @@ namespace Telegram.Api.Services.FileManager
                 }
                 else
                 {
-                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new DownloadProgressChangedEventArgs(part.ParentItem, progress)));
+                    if (part.ParentItem.Callback != null)
+                    {
+                        part.ParentItem.Progress.Report(progress);
+                    }
+                    else
+                    {
+                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new DownloadProgressChangedEventArgs(part.ParentItem, progress)));
+                    }
                 }
             }
         }
@@ -227,18 +239,77 @@ namespace Telegram.Api.Services.FileManager
             return result;
         }
 
-        public Task<DownloadableItem> DownloadFileAsync(string originalFileName, int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize, Action<double> startCallback)
+        public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string originalFileName, int dcId, TLInputDocumentFileLocation fileLocation, int fileSize)
         {
-            var tsc = new TaskCompletionSource<DownloadableItem>();
-            DownloadFileAsync(originalFileName, dcId, fileLocation, owner, fileSize, startCallback, (item) => tsc.TrySetResult(item));
-            return tsc.Task;
+            return AsyncInfo.Run<DownloadableItem, double>((token, progress) =>
+            {
+                var tsc = new TaskCompletionSource<DownloadableItem>();
+
+                var downloadableItem = GetDownloadableItem(originalFileName, dcId, fileLocation, null, fileSize);
+                downloadableItem.Callback = tsc;
+                downloadableItem.Progress = progress;
+
+                var downloadedCount = downloadableItem.Parts.Count(x => x.Status == PartStatus.Processed);
+                var count = downloadableItem.Parts.Count;
+                var isComplete = downloadedCount == count;
+
+                if (isComplete)
+                {
+                    //var id = downloadableItem.InputDocumentLocation.Id;
+                    //var accessHash = downloadableItem.InputDocumentLocation.AccessHash;
+                    var fileExtension = Path.GetExtension(downloadableItem.FileName.ToString());
+                    var fileName = GetFileName(downloadableItem.InputDocumentLocation, fileExtension); //string.Format("document{0}_{1}{2}", id, accessHash, fileExtension);
+                    Func<DownloadablePart, string> getPartName = x => downloadableItem.InputDocumentLocation.GetPartFileName(x.Number); //string.Format("document{0}_{1}_{2}.dat", id, accessHash, x.Number);
+
+                    FileUtils.MergePartsToFile(getPartName, downloadableItem.Parts, fileName);
+
+                    downloadableItem.IsoFileName = fileName;
+                    downloadableItem.Progress.Report(1.0);
+                    downloadableItem.Callback.TrySetResult(downloadableItem);
+                }
+                else
+                {
+                    downloadableItem.Progress.Report(downloadedCount / (double)count);
+
+                    lock (_itemsSyncRoot)
+                    {
+                        bool addFile = true;
+                        foreach (var item in _items)
+                        {
+                            if (item.InputDocumentLocation.AccessHash == fileLocation.AccessHash
+                                && item.InputDocumentLocation.Id == fileLocation.Id)
+                            {
+
+                                //item.SuppressMerge = true;
+
+                                //item.
+                                //if (item.Owner == owner)
+                                //{
+                                //    Execute.ShowDebugMessage("Cancel document=" + fileLocation.Id);
+                                //    addFile = false;
+                                //    break;
+                                //}
+                            }
+                        }
+
+                        if (addFile)
+                        {
+                            _items.Add(downloadableItem);
+                        }
+                    }
+
+                    StartAwaitingWorkers();
+                }
+
+                return tsc.Task;
+            });
         }
 
-        public void DownloadFileAsync(string originalFileName, int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize, Action<double> startCallback, Action<DownloadableItem> callback = null)
+        public void DownloadFile(string originalFileName, int dcId, TLInputDocumentFileLocation fileLocation, TLObject owner, int fileSize)
         {
             Execute.BeginOnThreadPool(() =>
             {
-                var downloadableItem = GetDownloadableItem(originalFileName, dcId, fileLocation, owner, fileSize, callback);
+                var downloadableItem = GetDownloadableItem(originalFileName, dcId, fileLocation, owner, fileSize);
 
                 var downloadedCount = downloadableItem.Parts.Count(x => x.Status == PartStatus.Processed);
                 var count = downloadableItem.Parts.Count;
@@ -260,7 +331,7 @@ namespace Telegram.Api.Services.FileManager
                 else
                 {
                     var progress = downloadedCount / (double)count;
-                    startCallback.SafeInvoke(progress);
+                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new DownloadProgressChangedEventArgs(downloadableItem, progress)));
 
                     lock (_itemsSyncRoot)
                     {
@@ -273,16 +344,6 @@ namespace Telegram.Api.Services.FileManager
 
                                 //item.SuppressMerge = true;
 
-                                if (callback != null)
-                                {
-                                    if (item.Callbacks == null)
-                                    {
-                                        item.Callbacks = new List<Action<DownloadableItem>>();
-                                    }
-                                    item.Callbacks.Add(callback);
-                                    addFile = false;
-                                    break;
-                                }
                                 //item.
                                 if (item.Owner == owner)
                                 {
@@ -314,15 +375,14 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private DownloadableItem GetDownloadableItem(string fileName, int dcId, TLInputDocumentFileLocation location, TLObject owner, int fileSize, Action<DownloadableItem> callback)
+        private DownloadableItem GetDownloadableItem(string fileName, int dcId, TLInputDocumentFileLocation location, TLObject owner, int fileSize)
         {
             var item = new DownloadableItem
             {
                 DCId = dcId,
                 FileName = fileName,
                 Owner = owner,
-                InputDocumentLocation = location,
-                Callback = callback
+                InputDocumentLocation = location
             };
             item.Parts = GetItemParts(fileSize, item);
 
@@ -353,7 +413,7 @@ namespace Telegram.Api.Services.FileManager
             return parts;
         }
 
-        public void CancelDownloadFileAsync(TLObject owner)
+        public void CancelDownloadFile(TLObject owner)
         {
             Execute.BeginOnThreadPool(() =>
             {
