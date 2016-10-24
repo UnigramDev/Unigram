@@ -22,6 +22,12 @@
 
             <views:MediaLibraryCollection x:Key="MediaLibrary"/>
 
+            <x:Double x:Key="TelegramMediaMaxWidth">320</x:Double>
+            <x:Double x:Key="TelegramMediaMaxHeight">320</x:Double>
+
+            <x:Double x:Key="TelegramMediaMinWidth">96</x:Double>
+            <x:Double x:Key="TelegramMediaMinHeight">96</x:Double>
+            
             <!-- Temp -->
             <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

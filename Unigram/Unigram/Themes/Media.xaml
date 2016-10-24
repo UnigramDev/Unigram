@@ -50,10 +50,13 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaPhotoTemplate" x:DataType="models:TLMessageMediaPhoto">
-        <Grid Background="Black" MinWidth="96" MinHeight="96">
+        <Grid Background="Black" 
+              MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Photo}" 
-                                MaxWidth="400" MaxHeight="400"/>
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
             <controls:ProgressBarRing Value="{Binding UploadingProgress}"/>
 
@@ -66,10 +69,13 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaVideoTemplate" x:DataType="models:TLMessageMediaPhoto">
-        <Grid Background="Black" MinWidth="96" MinHeight="96">
+        <Grid Background="Black" 
+              MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Document}" 
-                                MaxWidth="320" MaxHeight="320"/>
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
             <Border Width="48" Height="48" Background="{ThemeResource MessageOverlayBackgroundBrush}">
                 <SymbolIcon Symbol="Play" Foreground="White"/>
@@ -84,10 +90,13 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaGifTemplate" x:DataType="models:TLMessageMediaDocument">
-        <Grid Background="Black" MinWidth="96" MinHeight="96">
+        <Grid Background="Black" 
+              MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Document}" 
-                                MaxWidth="320" MaxHeight="320"/>
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
             <!--<Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="320" MaxHeight="320"/>-->
         </Grid>
@@ -164,9 +173,15 @@
                 </StackPanel>
                 
                 <!-- TODO: video timing -->
+                <Grid Background="Black" 
+                      MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+                      MinHeight="{ThemeResource TelegramMediaMinHeight}">
+
+                </Grid>
                 <controls:ImageView Source="{Binding Webpage.Photo, Converter={StaticResource DefaultPhotoConverter}}"
                                     Constraint="{Binding Webpage.Photo}" 
-                                    MaxWidth="400" MaxHeight="400"
+                                    MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                    MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
                                     HorizontalAlignment="Left"/>
             </StackPanel>
         </Grid>

@@ -260,6 +260,43 @@ namespace Unigram.Controls
             AcceptsReturn = false;
             UpdateText();
             UpdateInlineBot(false);
+
+            //string result;
+            //if (SearchByStickers(this.Text, out result))
+            //{
+            //    this.GetStickerHints(result);
+            //}
+            //else
+            //{
+            //    this.ClearStickerHints();
+            //}
+
+            //if (SearchInlineBotResults(this.Text, out result))
+            //{
+            //    this.GetInlineBotResults(result);
+            //}
+            //else
+            //{
+            //    this.ClearInlineBotResults();
+            //}
+
+            //if (SearchByUsernames(this.Text, out result))
+            //{
+            //    this.GetUsernameHints(result);
+            //}
+            //else
+            //{
+            //    this.ClearUsernameHints();
+            //}
+
+            //if (SearchByCommands(this.Text, out result))
+            //{
+            //    this.GetCommandHints(result);
+            //}
+            //else
+            //{
+            //    this.ClearCommandHints();
+            //}
         }
 
         private void UpdateInlineBot(bool fast)
@@ -371,6 +408,56 @@ namespace Unigram.Controls
                 return isEmpty;
             }
         }
+
+        #region Username
+
+        private static bool SearchByUsernames(string text, out string searchText)
+        {
+            searchText = string.Empty;
+
+            var found = true;
+            var index = -1;
+            var i = text.Length - 1;
+
+            while (i >= 0)
+            {
+                if (text[i] == '@')
+                {
+                    if (i == 0 || text[i - 1] == ' ')
+                    {
+                        index = i;
+                        break;
+                    }
+
+                    found = false;
+                    break;
+                }
+                else
+                {
+                    if (!MessageHelper.IsValidUsernameSymbol(text[i]))
+                    {
+                        found = false;
+                        break;
+                    }
+
+                    i--;
+                }
+            }
+
+            if (found)
+            {
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                searchText = text.Substring(index).TrimStart('@');
+            }
+
+            return found;
+        }
+
+        #endregion
 
         #region Inline bots
 

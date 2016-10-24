@@ -41,7 +41,7 @@ namespace Unigram.Controls.Messages
             var message = DataContext as TLMessage;
             if (message != null)
             {
-                if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel) && (paragraph.Inlines.Count > 0 || !IsFullMedia(message.Media)))
+                if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId) });
