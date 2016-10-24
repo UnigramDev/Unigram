@@ -260,6 +260,43 @@ namespace Unigram.Controls
             AcceptsReturn = false;
             UpdateText();
             UpdateInlineBot(false);
+
+            //string result;
+            //if (SearchByStickers(this.Text, out result))
+            //{
+            //    this.GetStickerHints(result);
+            //}
+            //else
+            //{
+            //    this.ClearStickerHints();
+            //}
+
+            //if (SearchInlineBotResults(this.Text, out result))
+            //{
+            //    this.GetInlineBotResults(result);
+            //}
+            //else
+            //{
+            //    this.ClearInlineBotResults();
+            //}
+
+            //if (SearchByUsernames(this.Text, out result))
+            //{
+            //    this.GetUsernameHints(result);
+            //}
+            //else
+            //{
+            //    this.ClearUsernameHints();
+            //}
+
+            //if (SearchByCommands(this.Text, out result))
+            //{
+            //    this.GetCommandHints(result);
+            //}
+            //else
+            //{
+            //    this.ClearCommandHints();
+            //}
         }
 
         private void UpdateInlineBot(bool fast)
@@ -332,8 +369,10 @@ namespace Unigram.Controls
             //Document.SetText(TextSetOptions.FormatRtf, string.Empty);
             Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
 
+            _updatingText = true;
             planText = planText.Trim();
             ViewModel.Text = planText;
+            _updatingText = false;
 
             if (isDirty)
             {
@@ -369,6 +408,56 @@ namespace Unigram.Controls
                 return isEmpty;
             }
         }
+
+        #region Username
+
+        private static bool SearchByUsernames(string text, out string searchText)
+        {
+            searchText = string.Empty;
+
+            var found = true;
+            var index = -1;
+            var i = text.Length - 1;
+
+            while (i >= 0)
+            {
+                if (text[i] == '@')
+                {
+                    if (i == 0 || text[i - 1] == ' ')
+                    {
+                        index = i;
+                        break;
+                    }
+
+                    found = false;
+                    break;
+                }
+                else
+                {
+                    if (!MessageHelper.IsValidUsernameSymbol(text[i]))
+                    {
+                        found = false;
+                        break;
+                    }
+
+                    i--;
+                }
+            }
+
+            if (found)
+            {
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                searchText = text.Substring(index).TrimStart('@');
+            }
+
+            return found;
+        }
+
+        #endregion
 
         #region Inline bots
 
@@ -726,7 +815,7 @@ namespace Unigram.Controls
         {
             if (Entities == null)
             {
-                Entities = new List<TLMessageEntityBase>(_entities);
+                Entities = new List<TLMessageEntityBase>(_entities.Reverse());
             }
         }
     }

@@ -2,20 +2,22 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
+using Windows.Foundation;
 
 namespace Telegram.Api.Services.FileManager
 {
     public interface IDownloadEncryptedFileManager
     {
-        Task<DownloadableItem> DownloadFileAsync(TLEncryptedFile file, TLObject owner);
+        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLEncryptedFile file);
 
-        void DownloadFile(TLEncryptedFile file, TLObject owner, Action<DownloadableItem> callback = null);
+        void DownloadFile(TLEncryptedFile file, TLObject owner);
 
         void CancelDownloadFile(TLObject owner);
     }
@@ -146,16 +148,24 @@ namespace Telegram.Api.Services.FileManager
                     part.ParentItem.IsoFileName = fileName;
                     if (part.ParentItem.Callback != null)
                     {
-                        part.ParentItem.Callback(part.ParentItem);
+                        part.ParentItem.Progress.Report(1.0);
+                        part.ParentItem.Callback.TrySetResult(part.ParentItem);
                     }
                     else
                     {
-                        _eventAggregator.Publish(part.ParentItem);
+                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
                     }
                 }
                 else
                 {
-                    _eventAggregator.Publish(new DownloadProgressChangedEventArgs(part.ParentItem, progress));
+                    if (part.ParentItem.Callback != null)
+                    {
+                        part.ParentItem.Progress.Report(progress);
+                    }
+                    else
+                    {
+                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new DownloadProgressChangedEventArgs(part.ParentItem, progress)));
+                    }
                 }
             }
         }
@@ -186,17 +196,45 @@ namespace Telegram.Api.Services.FileManager
             return result;
         }
 
-        public Task<DownloadableItem> DownloadFileAsync(TLEncryptedFile file, TLObject owner)
+        public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLEncryptedFile file)
         {
-            var tsc = new TaskCompletionSource<DownloadableItem>();
-            DownloadFile(file, owner, (item) => tsc.TrySetResult(item));
-            return tsc.Task;
+            return AsyncInfo.Run<DownloadableItem, double>((token, progress) =>
+            {
+                var tsc = new TaskCompletionSource<DownloadableItem>();
+
+                var inputFile = new TLInputEncryptedFileLocation { Id = file.Id, AccessHash = file.AccessHash };
+                var downloadableItem = GetDownloadableItem(file.DCId, inputFile, null, file.Size);
+                downloadableItem.Callback = tsc;
+                downloadableItem.Progress = progress;
+
+                lock (_itemsSyncRoot)
+                {
+                    bool addFile = true;
+                    foreach (var item in _items)
+                    {
+                        if (item.InputEncryptedFileLocation.LocationEquals(inputFile))
+                        {
+                            addFile = false;
+                            break;
+                        }
+                    }
+
+                    if (addFile)
+                    {
+                        _items.Add(downloadableItem);
+                    }
+                }
+
+                StartAwaitingWorkers();
+
+                return tsc.Task;
+            });
         }
 
-        public void DownloadFile(TLEncryptedFile file, TLObject owner, Action<DownloadableItem> callback)
+        public void DownloadFile(TLEncryptedFile file, TLObject owner)
         {
             var inputFile = new TLInputEncryptedFileLocation { Id = file.Id, AccessHash = file.AccessHash };
-            var downloadableItem = GetDownloadableItem(file.DCId, inputFile, owner, file.Size, callback);
+            var downloadableItem = GetDownloadableItem(file.DCId, inputFile, owner, file.Size);
 
             lock (_itemsSyncRoot)
             {
@@ -229,14 +267,13 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private DownloadableItem GetDownloadableItem(int dcId, TLInputFileLocationBase location, TLObject owner, int fileSize, Action<DownloadableItem> callback)
+        private DownloadableItem GetDownloadableItem(int dcId, TLInputFileLocationBase location, TLObject owner, int fileSize)
         {
             var item = new DownloadableItem
             {
                 Owner = owner,
                 DCId = dcId,
                 InputEncryptedFileLocation = location,
-                Callback = callback
             };
             item.Parts = GetItemParts(fileSize, item);
 
@@ -250,7 +287,7 @@ namespace Telegram.Api.Services.FileManager
             var partsCount = size / chunkSize + (size % chunkSize > 0 ? 1 : 0);
             for (var i = 0; i < partsCount; i++)
             {
-                var part = new DownloadablePart(item, i * chunkSize, size == 0? 0 : chunkSize, i);
+                var part = new DownloadablePart(item, i * chunkSize, size == 0 ? 0 : chunkSize, i);
                 parts.Add(part);
             }
 

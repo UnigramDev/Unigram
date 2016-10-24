@@ -549,7 +549,7 @@ namespace Unigram.Converters
                 var manager = UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, (progess) => { });
+                    await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
                     Execute.BeginOnUIThread(async () =>
                     {
                         await renderer.SetSourceAsync(new Uri(Path.Combine("ms-appdata:///local", filename)));
@@ -683,7 +683,7 @@ namespace Unigram.Converters
                 //Execute.BeginOnThreadPool(() => manager.DownloadFile(location, owner, fileSize));
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(location, owner, fileSize);
+                    await manager.DownloadFileAsync(location, fileSize);
                     Execute.BeginOnUIThread(() =>
                     {
                         bitmap.SetUriSource(new Uri("ms-appdata:///local/" + fileName));
@@ -789,7 +789,7 @@ namespace Unigram.Converters
 
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(location, owner, fileSize);
+                    await manager.DownloadFileAsync(location, fileSize);
                     Execute.BeginOnUIThread(() =>
                     {
                         bitmap.SetUriSource(new Uri("ms-appdata:///local/" + fileName));
@@ -888,7 +888,7 @@ namespace Unigram.Converters
                 var manager = UnigramContainer.Instance.ResolverType<IDownloadFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(location, owner, photoSize.Size);
+                    await manager.DownloadFileAsync(location, photoSize.Size);
                     if (bitmap.IsSet == false)
                     {
                         var buffer = WebPImage.Encode(File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)));
@@ -928,7 +928,7 @@ namespace Unigram.Converters
                 var manager = UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, (progess) => { });
+                    await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
                     var buffer = WebPImage.Encode(File.ReadAllBytes(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename)));
                     Execute.BeginOnUIThread(() =>
                     {

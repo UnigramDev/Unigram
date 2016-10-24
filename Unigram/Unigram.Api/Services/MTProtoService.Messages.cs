@@ -579,8 +579,8 @@ namespace Telegram.Api.Services
                                     var set32 = messagesStickerSet.Set as TLStickerSet;
                                     if (set32 != null)
                                     {
-                                        set32.Installed = true;
-                                        set32.Archived = true;
+                                        //set32.Installed = true;
+                                        //set32.Archived = true;
                                     }
 
 

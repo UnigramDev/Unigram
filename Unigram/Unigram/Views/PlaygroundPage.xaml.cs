@@ -26,10 +26,5 @@ namespace Unigram.Views
         {
             this.InitializeComponent();
         }
-
-        private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
-        {
-            Cispo.Value = e.NewValue / 100;
-        }
     }
 }

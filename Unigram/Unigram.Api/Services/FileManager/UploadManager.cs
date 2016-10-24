@@ -164,7 +164,6 @@ namespace Telegram.Api.Services.FileManager
                 {
                     if (isComplete)
                     {
-                        // TODO: verify
                         if (part.ParentItem.Callback != null)
                         {
                             part.ParentItem.Progress.Report(1.0);
@@ -177,8 +176,7 @@ namespace Telegram.Api.Services.FileManager
                     }
                     else
                     {
-                        // TODO: verify
-                        if (part.ParentItem.Progress != null)
+                        if (part.ParentItem.Callback != null)
                         {
                             part.ParentItem.Progress.Report(progress);
                         }
@@ -269,9 +267,9 @@ namespace Telegram.Api.Services.FileManager
 
                 if (isComplete)
                 {
-                    // TODO: verify
                     if (item.Callback != null)
                     {
+                        item.Progress.Report(1.0);
                         item.Callback.TrySetResult(item);
                     }
                     else

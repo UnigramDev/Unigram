@@ -19,7 +19,7 @@ namespace Unigram.Controls
     {
         private Frame DetailFrame;
         private ContentPresenter MasterPresenter;
-        private Border DetailPresenter;
+        private Grid DetailPresenter;
         private VisualStateGroup AdaptiveStates;
         private bool IsMasterHidden;
         private const string NarrowState = "NarrowState";
@@ -102,7 +102,7 @@ namespace Unigram.Controls
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
 
             MasterPresenter = (ContentPresenter)GetTemplateChild("MasterFrame");
-            DetailPresenter = (Border)GetTemplateChild("DetailPresenter");
+            DetailPresenter = (Grid)GetTemplateChild("DetailPresenter");
             AdaptiveStates = (VisualStateGroup)GetTemplateChild("AdaptiveStates");
             AdaptiveStates.CurrentStateChanged += OnCurrentStateChanged;
 
@@ -115,7 +115,7 @@ namespace Unigram.Controls
                 }
 
                 DetailFrame.Navigated += OnNavigated;
-                DetailPresenter.Child = DetailFrame;
+                DetailPresenter.Children.Add(DetailFrame);
 
                 if (DetailFrame.CurrentSourcePageType == null)
                 {

@@ -328,7 +328,55 @@ namespace Unigram.ViewModels
             }
 
             Aggregator.Subscribe(this);
+
+            //await StickersRecent();
         }
+
+        private async Task StickersRecent()
+        {
+            var response = await ProtoService.GetRecentStickersAsync(false, 0);
+            if (response.IsSucceeded)
+            {
+                var recent = response.Value as TLMessagesRecentStickers;
+                if (recent != null)
+                {
+                    await StickersAll(recent);
+                }
+            }
+        }
+
+        private async Task StickersAll(TLMessagesRecentStickers recent)
+        {
+            var response = await ProtoService.GetAllStickersAsync(new byte[0]);
+            if (response.IsSucceeded)
+            {
+                var result = response.Value as TLMessagesAllStickers;
+                if (result != null)
+                {
+                    var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, Extensions.Buffered<TLDocument>(x.Count)));
+                    StickerSets = new List<KeyedList<TLStickerSet, TLDocument>>(stickerSets);
+                    StickerSets.Insert(0, new KeyedList<TLStickerSet, TLDocument>(new TLStickerSet { Title = "Frequently used", ShortName = "tlg/recentlyUsed" }, recent.Stickers.OfType<TLDocument>()));
+                    RaisePropertyChanged(() => StickerSets);
+
+                    await Task.Delay(1000);
+
+                    var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = StickerSets[1].Key.ShortName });
+                    if (set.IsSucceeded)
+                    {
+                        for (int i = 0; i < set.Value.Documents.Count; i++)
+                        {
+                            StickerSets[1][i] = set.Value.Documents[i] as TLDocument;
+                        }
+                    }
+
+                    Debug.WriteLine("Done");
+
+                    //var boh = result.Documents.OfType<TLDocument>().GroupBy(x => ((TLInputStickerSetID)x.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().Stickerset).Id).ToList();
+                }
+            }
+        }
+
+        public List<KeyedList<TLStickerSet, TLDocument>> StickerSets { get; set; }
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
@@ -491,10 +539,10 @@ namespace Unigram.ViewModels
             {
                 messageText = string.Empty;
 
-                var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "TrashPack" });
+                var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "cyanide_happiness_by_naeim" });
                 if (set.IsSucceeded)
                 {
-                    document = set.Value.Documents.FirstOrDefault(x => x.Id == 169171005078503693) as TLDocument;
+                    document = set.Value.Documents.FirstOrDefault(x => x.Id == 342543832497260385) as TLDocument;
                 }
             }
 
@@ -512,6 +560,8 @@ namespace Unigram.ViewModels
 
             message.Entities = entities != null ? new TLVector<TLMessageEntityBase>(entities) : null;
             message.HasEntities = entities != null;
+
+            MessageHelper.PreprocessEntities(ref message);
 
             if (Reply != null)
             {

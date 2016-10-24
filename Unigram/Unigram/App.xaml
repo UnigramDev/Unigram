@@ -15,7 +15,6 @@
                 <!--<ResourceDictionary Source="ms-appx:///Themes/Brand.xaml"/>-->
                 <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
                 <themes:Messages/>
-                <themes:Replies/>
                 <themes:Media/>
             </ResourceDictionary.MergedDictionaries>
 
@@ -23,6 +22,12 @@
 
             <views:MediaLibraryCollection x:Key="MediaLibrary"/>
 
+            <x:Double x:Key="TelegramMediaMaxWidth">320</x:Double>
+            <x:Double x:Key="TelegramMediaMaxHeight">320</x:Double>
+
+            <x:Double x:Key="TelegramMediaMinWidth">96</x:Double>
+            <x:Double x:Key="TelegramMediaMinHeight">96</x:Double>
+            
             <!-- Temp -->
             <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -35,15 +40,27 @@
             <converters:VenueToStaticImageConverter x:Key="VenueToStaticImageConverter"/>
             <converters:FileSizeConverter x:Key="FileSizeConverter"/>
 
-            <SolidColorBrush x:Key="BlueBrush" Color="#348cd4"/>
-            <SolidColorBrush x:Key="CyanBrush" Color="#2996ad"/>
-            <SolidColorBrush x:Key="GreenBrush" Color="#4fad2d"/>
-            <SolidColorBrush x:Key="OrangeBrush" Color="#ce671b"/>
-            <SolidColorBrush x:Key="PinkBrush" Color="#cd4073"/>
-            <SolidColorBrush x:Key="PurpleBrush" Color="#8544d6"/>
-            <SolidColorBrush x:Key="RedBrush" Color="#c03d33"/>
-            <SolidColorBrush x:Key="YellowBrush" Color="#d09306"/>
+            <SolidColorBrush x:Key="PlaceholderBlueBrush" Color="#348cd4"/>
+            <SolidColorBrush x:Key="PlaceholderCyanBrush" Color="#2996ad"/>
+            <SolidColorBrush x:Key="PlaceholderGreenBrush" Color="#4fad2d"/>
+            <SolidColorBrush x:Key="PlaceholderOrangeBrush" Color="#ce671b"/>
+            <SolidColorBrush x:Key="PlaceholderPinkBrush" Color="#cd4073"/>
+            <SolidColorBrush x:Key="PlaceholderPurpleBrush" Color="#8544d6"/>
+            <SolidColorBrush x:Key="PlaceholderRedBrush" Color="#c03d33"/>
+            <SolidColorBrush x:Key="PlaceholderYellowBrush" Color="#d09306"/>
 
+            <Style x:Key="ReplyBaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="TextWrapping" Value="NoWrap"/>
+                <Setter Property="MaxLines" Value="1"/>
+                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+            </Style>
+
+            <Style x:Key="ReplyBodyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="TextWrapping" Value="NoWrap"/>
+                <Setter Property="MaxLines" Value="1"/>
+                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 

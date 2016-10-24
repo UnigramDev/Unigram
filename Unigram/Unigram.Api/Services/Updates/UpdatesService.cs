@@ -3776,6 +3776,6 @@ namespace Telegram.Api.Services.Updates
 
     public class ChannelUpdateCompletedEventArgs
     {
-        public int? ChannelId { get; set; }
+        public int ChannelId { get; set; }
     }
 }

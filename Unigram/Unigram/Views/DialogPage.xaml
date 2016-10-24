@@ -28,6 +28,8 @@
             <Setter Property="Background" Value="Transparent"/>
         </Style>
 
+        <CollectionViewSource x:Key="Stickers" Source="{Binding StickerSets}" IsSourceGrouped="True"/>
+
         <x:Double x:Key="MenuFlyoutMaxWidth">360</x:Double>
 
         <Style x:Key="IconMenuFlyoutItem" TargetType="MenuFlyoutItem">
@@ -231,21 +233,29 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Border Visibility="{x:Bind ReplyVisibility}" Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,0" Margin="0,0,12,0">
-                    <controls:MessageReferenceControl Message="{x:Bind Reply, Mode=OneWay}">
-                        <controls:MessageReferenceControl.Resources>
+                <Border Visibility="{x:Bind ReplyVisibility}" 
+                        Height="{ThemeResource AppBarThemeCompactHeight}"
+                        Background="{ThemeResource MessageOverlayBackgroundBrush}" 
+                        VerticalAlignment="Bottom" 
+                        HorizontalAlignment="Right"
+                        MaxWidth="180"
+                        Padding="8,0,8,0"
+                        Margin="0,0,12,0">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Margin="0,6">
+                        <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                        </controls:MessageReferenceControl.Resources>
-                    </controls:MessageReferenceControl>
+                        </controls:MessageReference.Resources>
+                    </controls:MessageReference>
                 </Border>
 
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+                    <controls:ImageView
+                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                        MaxWidth="180" MaxHeight="180" Margin="2"/>
 
                     <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <StackPanel Orientation="Horizontal">
@@ -264,24 +274,33 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+                    <controls:ImageView
+                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                        MaxWidth="180" MaxHeight="180" Margin="2"/>
 
                     <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                     </Border>
                 </Grid>
 
-                <Border Visibility="{x:Bind ReplyVisibility}" Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
-                    <controls:MessageReferenceControl Message="{x:Bind Reply, Mode=OneWay}">
-                        <controls:MessageReferenceControl.Resources>
+                <Border Visibility="{x:Bind ReplyVisibility}" 
+                        Height="{ThemeResource AppBarThemeCompactHeight}"
+                        Background="{ThemeResource MessageOverlayBackgroundBrush}" 
+                        VerticalAlignment="Bottom" 
+                        HorizontalAlignment="Left" 
+                        MaxWidth="180"
+                        Padding="8,0,8,0" 
+                        Margin="12,0,0,0" 
+                        Grid.Column="1">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Margin="0,6">
+                        <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                        </controls:MessageReferenceControl.Resources>
-                    </controls:MessageReferenceControl>
+                        </controls:MessageReference.Resources>
+                    </controls:MessageReference>
                 </Border>
             </Grid>
         </DataTemplate>
@@ -293,24 +312,33 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
-                    <Image Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                           common:StickerBitmapSource.Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                           MaxWidth="180" MaxHeight="180" Margin="2"/>
+                    <controls:ImageView
+                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                        MaxWidth="180" MaxHeight="180" Margin="2"/>
 
                     <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                     </Border>
                 </Grid>
 
-                <Border Visibility="{x:Bind ReplyVisibility}" Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,0" Margin="12,0,0,0" Grid.Column="1">
-                    <controls:MessageReferenceControl Message="{x:Bind Reply, Mode=OneWay}">
-                        <controls:MessageReferenceControl.Resources>
+                <Border Visibility="{x:Bind ReplyVisibility}" 
+                        Height="{ThemeResource AppBarThemeCompactHeight}"
+                        Background="{ThemeResource MessageOverlayBackgroundBrush}" 
+                        VerticalAlignment="Bottom" 
+                        HorizontalAlignment="Left" 
+                        MaxWidth="180"
+                        Padding="8,0,8,0" 
+                        Margin="12,0,0,0" 
+                        Grid.Column="1">
+                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Margin="0,6">
+                        <controls:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                        </controls:MessageReferenceControl.Resources>
-                    </controls:MessageReferenceControl>
+                        </controls:MessageReference.Resources>
+                    </controls:MessageReference>
                 </Border>
             </Grid>
         </DataTemplate>
@@ -358,7 +386,7 @@
                                            UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -440,8 +468,6 @@
         </Grid>
         <!-- END OF Titlebar -->
 
-        <Image Source="ms-appx:///Assets/Images/DefaultBackground.jpg" Stretch="UniformToFill" Grid.Row="1" Grid.RowSpan="2"/>
-
         <Grid x:Name="grdPinnedMessage"
               Visibility="{x:Bind ViewModel.pinnedMessageVisible}"
               Background="{ThemeResource TelegramBackgroundAccentBrush}"
@@ -455,14 +481,14 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="btnPinnedMessage" Padding="12,0" Style="{StaticResource EmptyButtonStyle}">
-                <controls:MessageReferenceControl IsPinned="True" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0">
-                    <controls:MessageReferenceControl.Resources>
+                <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0">
+                    <controls:MessageReference.Resources>
                         <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                         <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                         <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                         <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                    </controls:MessageReferenceControl.Resources>
-                </controls:MessageReferenceControl>
+                    </controls:MessageReference.Resources>
+                </controls:MessageReference>
                 <!--<Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -603,10 +629,10 @@
                     </selectors:MessageStyleSelector>
                 </ListView.ItemContainerStyleSelector>
                 <ListView.Header>
-                    <Border Height="6"/>
+                    <Border Height="10"/>
                 </ListView.Header>
                 <ListView.Footer>
-                    <Border Height="6"/>
+                    <Border Height="10"/>
                 </ListView.Footer>
                 <!--<ListView.GroupStyle>
                     <GroupStyle>
@@ -638,10 +664,88 @@
 
         <Grid VerticalAlignment="Bottom" Grid.Row="2">
             <inline:InlineBotResultsView ItemClick="InlineBotResults_ItemClick"/>
+
+            <Grid x:Name="Jimmy"
+                  x:DeferLoadStrategy="Lazy"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
+                  HorizontalAlignment="Right"
+                  BorderThickness="1"
+                  Width="360"
+                  Margin="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <GridView ItemsSource="{Binding Source={StaticResource Stickers}}"
+                          Padding="12,0">
+                    <GridView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Key.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                            <GroupStyle.HeaderContainerStyle>
+                                <Style TargetType="GridViewHeaderItem">
+                                    <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
+                                    <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                    <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                    <Setter Property="Margin" Value="0,0,0,0"/>
+                                    <Setter Property="Padding" Value="0,8,0,9"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment" Value="Top" />
+                                    <Setter Property="MinHeight" Value="0"/>
+                                    <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GridViewHeaderItem">
+                                                <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                                    <ContentPresenter x:Name="ContentPresenter"
+                                                                          Margin="{TemplateBinding Padding}"
+                                                                          Content="{TemplateBinding Content}"
+                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.HeaderContainerStyle>
+                        </GroupStyle>
+                    </GridView.GroupStyle>
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid Orientation="Horizontal" ItemWidth="66.8" ItemHeight="66.8"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <Image Margin="2" Source="{Binding Converter={StaticResource DefaultPhotoConverter}}"/>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection/>
+                    </GridView.ItemContainerTransitions>
+                </GridView>
+            </Grid>
         </Grid>
 
         <!-- Input pane -->
-        <Grid MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+              MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderThickness="0,1,0,0"
               BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
               Grid.Row="3">
@@ -657,47 +761,26 @@
             </Grid.ColumnDefinitions>
             <Grid Visibility="{Binding ReplyInfo, Converter={StaticResource NullToVisibilityConverter}}" Grid.ColumnSpan="4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="44"/>
+                    <ColumnDefinition Width="48"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <!-- ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" Visibility="{Binding ReplyVisibility}" BorderBrush="#2fa9e2" Foreground="#0e7acd" Style="{StaticResource MediaControlStyle}" -->
 
-                <ContentControl Content="{Binding ReplyInfo}" 
-                                ContentTemplateSelector="{StaticResource ReplyTemplateSelector}"
-                                Margin="-8,-1,0,-5" 
-                                Grid.Column="1">
-                    <ContentControl.ContentTransitions>
-                        <TransitionCollection>
-                            <EntranceThemeTransition/>
-                        </TransitionCollection>
-                    </ContentControl.ContentTransitions>
-                    <ContentControl.Style>
-                        <Style TargetType="ContentControl">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ContentControl">
-                                        <Border>
-                                            <ContentPresenter x:Name="ContentPresenter"
-                                                                BorderBrush="{x:Null}"
-                                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                                Content="{TemplateBinding Content}"
-                                                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                Padding="{TemplateBinding Padding}"
-                                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                                AutomationProperties.AccessibilityView="Raw"
-                                                                Tag="{TemplateBinding Background}"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ContentControl.Style>
-                </ContentControl>
+                <controls:MessageReference Message="{Binding ReplyInfo}" VerticalAlignment="Center" Margin="-8,0,0,0" Grid.Column="1">
+                    <controls:MessageReference.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.ThemeDictionaries>
+                                <ResourceDictionary x:Name="Dark">
+                                    <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#00FFFFFF"/>
+                                    <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                                    <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                                    <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                                </ResourceDictionary>
+                            </ResourceDictionary.ThemeDictionaries>
+                        </ResourceDictionary>
+                    </controls:MessageReference.Resources>
+                </controls:MessageReference>
 
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
@@ -773,7 +856,7 @@
                 <FlyoutBase.AttachedFlyout>
                     <MenuFlyout Placement="Top">
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                            x:Uid="FCBTN-Photo"
+                            x:Uid="FCBTN-PhotoOrVideo"
                             Tag="&#xEB9F;"
                             Text="Photo or video"
                             Command="{Binding SendPhotoCommand}"/>

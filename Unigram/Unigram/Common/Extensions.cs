@@ -32,5 +32,16 @@ namespace Unigram.Common
                 list.Add(item);
             }
         }
+
+        public static List<T> Buffered<T>(int count)
+        {
+            var result = new List<T>(count);
+            for (int i = 0; i < count; i++)
+            {
+                result.Add(default(T));
+            }
+
+            return result;
+        }
     }
 }
