@@ -933,6 +933,9 @@ namespace Unigram.ViewModels
             var next = index > 0 ? this[index - 1] : null;
             var previous = index < Count - 1 ? this[index + 1] : null;
 
+            UpdateSeparatorOnInsert(item, previous, index);
+            UpdateSeparatorOnInsert(next, item, index - 1);
+
             UpdateAttach(previous, item);
             UpdateAttach(item, next);
         }
@@ -942,9 +945,52 @@ namespace Unigram.ViewModels
             var next = index > 0 ? this[index - 1] : null;
             var previous = index < Count - 1 ? this[index + 1] : null;
 
+            UpdateSeparatorOnRemove(next, previous, index);
             UpdateAttach(previous, next);
 
             base.RemoveItem(index);
+        }
+
+        private void UpdateSeparatorOnInsert(TLMessageBase item, TLMessageBase previous, int index)
+        {
+            if (item != null && previous != null)
+            {
+                var itemDate = Utils.UnixTimestampToDateTime(item.Date);
+                var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
+                if (previousDate.Date != itemDate.Date)
+                {
+                    var timestamp = (int)Utils.DateTimeToUnixTimestamp(previousDate.Date);
+                    var service = new TLMessageService
+                    {
+                        Date = timestamp,
+                        FromId = SettingsHelper.UserId,
+                        HasFromId = true,
+                        Action = new TLMessageActionDate
+                        {
+                            Date = timestamp
+                        }
+                    };
+
+                    base.InsertItem(index + 1, service);
+                }
+            }
+        }
+
+        private void UpdateSeparatorOnRemove(TLMessageBase next, TLMessageBase previous, int index)
+        {
+            if (next is TLMessageService && previous != null)
+            {
+                var action = ((TLMessageService)next).Action as TLMessageActionDate;
+                if (action != null)
+                {
+                    var itemDate = Utils.UnixTimestampToDateTime(action.Date);
+                    var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
+                    if (previousDate.Date != itemDate.Date)
+                    {
+                        base.RemoveItem(index - 1);
+                    }
+                }
+            }
         }
 
         private void UpdateAttach(TLMessageBase item, TLMessageBase previous)

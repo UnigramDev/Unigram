@@ -214,14 +214,13 @@
                 <!-- TODO: video timing -->
                 <Grid Background="Black" 
                       MinWidth="{ThemeResource TelegramMediaMinWidth}" 
-                      MinHeight="{ThemeResource TelegramMediaMinHeight}">
-
+                      MinHeight="{ThemeResource TelegramMediaMinHeight}"
+                      HorizontalAlignment="Left">
+                    <controls:ImageView Source="{Binding Webpage.Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                        Constraint="{Binding Webpage.Photo}" 
+                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                        MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
                 </Grid>
-                <controls:ImageView Source="{Binding Webpage.Photo, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{Binding Webpage.Photo}" 
-                                    MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
-                                    MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-                                    HorizontalAlignment="Left"/>
             </StackPanel>
         </Grid>
     </DataTemplate>
