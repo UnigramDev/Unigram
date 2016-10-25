@@ -52,9 +52,10 @@
                 Grid.Row="1"/>
 
             <RichTextBlock 
-                x:Name="MessageControl" 
+                x:Name="MessageControl"
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}" 
                 Style="{ThemeResource BodyRichTextBlockStyle}"
+                Foreground="{ThemeResource MessageForegroundBrush}"
                 Grid.Row="2"/>
 
             <controls:MediaControl

@@ -14,6 +14,7 @@ namespace Unigram.Selectors
         public DataTemplate AudioTemplate { get; set; }
         public DataTemplate ContactTemplate { get; set; }
         public DataTemplate DocumentTemplate { get; set; }
+        public DataTemplate DocumentThumbTemplate { get; set; }
         public DataTemplate EmptyTemplate { get; set; }
         public DataTemplate GeoPointTemplate { get; set; }
         public DataTemplate GifTemplate { get; set; }
@@ -73,6 +74,11 @@ namespace Unigram.Selectors
                 //{
                 //    return GifTemplate;
                 //}
+
+                if (!(document.Thumb is TLPhotoSizeEmpty))
+                {
+                    return DocumentThumbTemplate;
+                }
 
                 return DocumentTemplate;
             }
