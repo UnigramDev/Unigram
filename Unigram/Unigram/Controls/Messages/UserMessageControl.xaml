@@ -35,6 +35,7 @@
             <TextBlock x:Name="HeaderLabel" 
                        Margin="0,0,0,2"
                        Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
+                       RequestedTheme="{ThemeResource MessageTextBlockTheme}"
                        Style="{ThemeResource BaseTextBlockStyle}"
                        Visibility="Collapsed"
                        Grid.Row="0"/>
@@ -49,6 +50,7 @@
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}" 
                 Style="{ThemeResource BodyRichTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
+                RequestedTheme="{ThemeResource MessageTextBlockTheme}"
                 Grid.Row="2"/>
 
             <controls:MediaControl
