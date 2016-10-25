@@ -76,11 +76,13 @@ namespace Unigram.Views
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
+            args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
         {
+            args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(1, GridUnitType.Auto);
         }
 

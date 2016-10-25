@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
@@ -17,6 +18,7 @@ using Unigram.Core.Notifications;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Display;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -43,6 +45,8 @@ namespace Unigram.Views
         public MainPage()
         {
             InitializeComponent();
+
+            _logicalDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
@@ -262,6 +266,7 @@ namespace Unigram.Views
 
         #region Background
 
+        private float _logicalDpi;
         private CanvasBitmap _backgroundImage;
         private CanvasImageBrush _backgroundBrush;
 
@@ -272,6 +277,7 @@ namespace Unigram.Views
                 _backgroundImage = await CanvasBitmap.LoadAsync(sender, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
                 _backgroundBrush = new CanvasImageBrush(sender, _backgroundImage);
                 _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
+                _backgroundBrush.Transform = Matrix3x2.CreateScale(_logicalDpi / 96f);
             }).AsAsyncAction());
 
         }
