@@ -43,7 +43,11 @@ namespace Telegram.Api.TL
 
 		public Flag Flags { get; set; }
 		public Int64? AccessHash { get; set; }
+		public String Title { get; set; }
 		public String Username { get; set; }
+		public TLChatPhotoBase Photo { get; set; }
+		public Int32 Date { get; set; }
+		public Int32 Version { get; set; }
 		public String RestrictionReason { get; set; }
 
 		public TLChannel() { }

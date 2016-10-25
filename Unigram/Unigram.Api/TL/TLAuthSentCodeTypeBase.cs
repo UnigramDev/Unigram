@@ -5,6 +5,5 @@ namespace Telegram.Api.TL
 {
 	public abstract partial class TLAuthSentCodeTypeBase : TLObject
 	{
-		public Int32 Length { get; set; }
 	}
 }

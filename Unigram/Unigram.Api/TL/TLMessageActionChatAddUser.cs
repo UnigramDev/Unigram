@@ -5,6 +5,8 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessageActionChatAddUser : TLMessageActionBase 
 	{
+		public TLVector<Int32> Users { get; set; }
+
 		public TLMessageActionChatAddUser() { }
 		public TLMessageActionChatAddUser(TLBinaryReader from, bool cache = false)
 		{

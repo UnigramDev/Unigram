@@ -65,8 +65,8 @@ namespace Unigram.Controls
             var photo = Constraint as TLPhoto;
             if (photo != null)
             {
-                //var photoSize = photo.Sizes.Where(x => x is TLPhotoSize || x is TLPhotoCachedSize).FirstOrDefault();
-                var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
+                //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
+                var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
                 if (photoSize != null)
                 {
                     width = photoSize.W;

@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputEncryptedFile : TLInputEncryptedFileBase 
 	{
+		public Int64 Id { get; set; }
 		public Int64 AccessHash { get; set; }
 
 		public TLInputEncryptedFile() { }

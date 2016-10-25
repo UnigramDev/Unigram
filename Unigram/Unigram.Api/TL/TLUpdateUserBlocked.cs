@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateUserBlocked : TLUpdateBase 
 	{
+		public Int32 UserId { get; set; }
 		public Boolean Blocked { get; set; }
 
 		public TLUpdateUserBlocked() { }

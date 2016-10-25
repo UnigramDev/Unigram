@@ -5,7 +5,11 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateChatParticipantAdd : TLUpdateBase 
 	{
+		public Int32 ChatId { get; set; }
+		public Int32 UserId { get; set; }
 		public Int32 InviterId { get; set; }
+		public Int32 Date { get; set; }
+		public Int32 Version { get; set; }
 
 		public TLUpdateChatParticipantAdd() { }
 		public TLUpdateChatParticipantAdd(TLBinaryReader from, bool cache = false)

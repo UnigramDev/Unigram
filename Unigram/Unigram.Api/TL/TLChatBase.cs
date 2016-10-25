@@ -6,9 +6,5 @@ namespace Telegram.Api.TL
 	public abstract partial class TLChatBase : TLObject
 	{
 		public Int32 Id { get; set; }
-		public String Title { get; set; }
-		public TLChatPhotoBase Photo { get; set; }
-		public Int32 Date { get; set; }
-		public Int32 Version { get; set; }
 	}
 }

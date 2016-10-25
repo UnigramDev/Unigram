@@ -72,7 +72,8 @@ namespace Unigram.ViewModels
             {
                 var gameMedia = message.Media as TLMessageMediaGame;
 
-                var button = message.ReplyMarkup.Rows.SelectMany(x => x.Buttons).OfType<TLKeyboardButtonGame>().FirstOrDefault();
+                var inline = message.ReplyMarkup as TLReplyInlineMarkup;
+                var button = inline.Rows.SelectMany(x => x.Buttons).OfType<TLKeyboardButtonGame>().FirstOrDefault();
                 if (button != null)
                 {
                     var responseBot = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, 1);

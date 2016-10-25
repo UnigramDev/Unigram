@@ -18,7 +18,12 @@ namespace Telegram.Api.TL
 		public bool HasEntities { get { return Flags.HasFlag(Flag.Entities); } set { Flags = value ? (Flags | Flag.Entities) : (Flags & ~Flag.Entities); } }
 
 		public Flag Flags { get; set; }
+		public Int32 Id { get; set; }
+		public Int32 Pts { get; set; }
+		public Int32 PtsCount { get; set; }
+		public Int32 Date { get; set; }
 		public TLMessageMediaBase Media { get; set; }
+		public TLVector<TLMessageEntityBase> Entities { get; set; }
 
 		public TLUpdateShortSentMessage() { }
 		public TLUpdateShortSentMessage(TLBinaryReader from, bool cache = false)

@@ -5,6 +5,11 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateReadHistoryOutbox : TLUpdateBase, ITLMultiPts 
 	{
+		public TLPeerBase Peer { get; set; }
+		public Int32 MaxId { get; set; }
+		public Int32 Pts { get; set; }
+		public Int32 PtsCount { get; set; }
+
 		public TLUpdateReadHistoryOutbox() { }
 		public TLUpdateReadHistoryOutbox(TLBinaryReader from, bool cache = false)
 		{

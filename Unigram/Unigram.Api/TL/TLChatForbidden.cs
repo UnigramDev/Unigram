@@ -5,6 +5,8 @@ namespace Telegram.Api.TL
 {
 	public partial class TLChatForbidden : TLChatBase 
 	{
+		public String Title { get; set; }
+
 		public TLChatForbidden() { }
 		public TLChatForbidden(TLBinaryReader from, bool cache = false)
 		{

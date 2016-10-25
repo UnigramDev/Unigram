@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateContactLink : TLUpdateBase 
 	{
+		public Int32 UserId { get; set; }
 		public TLContactLinkBase MyLink { get; set; }
 		public TLContactLinkBase ForeignLink { get; set; }
 

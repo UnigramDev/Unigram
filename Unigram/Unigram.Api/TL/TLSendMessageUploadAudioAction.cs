@@ -5,6 +5,8 @@ namespace Telegram.Api.TL
 {
 	public partial class TLSendMessageUploadAudioAction : TLSendMessageActionBase 
 	{
+		public Int32 Progress { get; set; }
+
 		public TLSendMessageUploadAudioAction() { }
 		public TLSendMessageUploadAudioAction(TLBinaryReader from, bool cache = false)
 		{

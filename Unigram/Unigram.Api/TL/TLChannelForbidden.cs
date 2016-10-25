@@ -17,6 +17,7 @@ namespace Telegram.Api.TL
 
 		public Flag Flags { get; set; }
 		public Int64 AccessHash { get; set; }
+		public String Title { get; set; }
 
 		public TLChannelForbidden() { }
 		public TLChannelForbidden(TLBinaryReader from, bool cache = false)

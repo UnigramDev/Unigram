@@ -5,6 +5,10 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateEditChannelMessage : TLUpdateBase, ITLMultiPts 
 	{
+		public TLMessageBase Message { get; set; }
+		public Int32 Pts { get; set; }
+		public Int32 PtsCount { get; set; }
+
 		public TLUpdateEditChannelMessage() { }
 		public TLUpdateEditChannelMessage(TLBinaryReader from, bool cache = false)
 		{

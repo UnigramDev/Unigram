@@ -5,6 +5,8 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessageMediaGeo : TLMessageMediaBase 
 	{
+		public TLGeoPointBase Geo { get; set; }
+
 		public TLMessageMediaGeo() { }
 		public TLMessageMediaGeo(TLBinaryReader from, bool cache = false)
 		{

@@ -6,6 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLUpdateShort : TLUpdatesBase 
 	{
 		public TLUpdateBase Update { get; set; }
+		public Int32 Date { get; set; }
 
 		public TLUpdateShort() { }
 		public TLUpdateShort(TLBinaryReader from, bool cache = false)

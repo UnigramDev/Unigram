@@ -5,7 +5,9 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateEncryptedMessagesRead : TLUpdateBase 
 	{
+		public Int32 ChatId { get; set; }
 		public Int32 MaxDate { get; set; }
+		public Int32 Date { get; set; }
 
 		public TLUpdateEncryptedMessagesRead() { }
 		public TLUpdateEncryptedMessagesRead(TLBinaryReader from, bool cache = false)

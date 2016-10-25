@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputBotInlineResultPhoto : TLInputBotInlineResultBase 
 	{
+		public String Type { get; set; }
 		public TLInputPhotoBase Photo { get; set; }
 
 		public TLInputBotInlineResultPhoto() { }

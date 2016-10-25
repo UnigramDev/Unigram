@@ -18,6 +18,7 @@ namespace Telegram.Api.TL
 		public bool IsSelective { get { return Flags.HasFlag(Flag.Selective); } set { Flags = value ? (Flags | Flag.Selective) : (Flags & ~Flag.Selective); } }
 
 		public Flag Flags { get; set; }
+		public TLVector<TLKeyboardButtonRow> Rows { get; set; }
 
 		public TLReplyKeyboardMarkup() { }
 		public TLReplyKeyboardMarkup(TLBinaryReader from, bool cache = false)

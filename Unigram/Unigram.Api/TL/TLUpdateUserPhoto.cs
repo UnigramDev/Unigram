@@ -5,6 +5,8 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateUserPhoto : TLUpdateBase 
 	{
+		public Int32 UserId { get; set; }
+		public Int32 Date { get; set; }
 		public TLUserProfilePhotoBase Photo { get; set; }
 		public Boolean Previous { get; set; }
 

@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessageMediaVenue : TLMessageMediaBase 
 	{
+		public TLGeoPointBase Geo { get; set; }
 		public String Title { get; set; }
 		public String Address { get; set; }
 		public String Provider { get; set; }

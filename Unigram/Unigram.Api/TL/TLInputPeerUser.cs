@@ -6,6 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLInputPeerUser : TLInputPeerBase 
 	{
 		public Int32 UserId { get; set; }
+		public Int64 AccessHash { get; set; }
 
 		public TLInputPeerUser() { }
 		public TLInputPeerUser(TLBinaryReader from, bool cache = false)

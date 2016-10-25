@@ -5,6 +5,8 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateChannelMessageViews : TLUpdateBase 
 	{
+		public Int32 ChannelId { get; set; }
+		public Int32 Id { get; set; }
 		public Int32 Views { get; set; }
 
 		public TLUpdateChannelMessageViews() { }

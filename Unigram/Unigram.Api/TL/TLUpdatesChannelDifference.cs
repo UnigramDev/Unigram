@@ -18,6 +18,8 @@ namespace Telegram.Api.TL
 		public Flag Flags { get; set; }
 		public TLVector<TLMessageBase> NewMessages { get; set; }
 		public TLVector<TLUpdateBase> OtherUpdates { get; set; }
+		public TLVector<TLChatBase> Chats { get; set; }
+		public TLVector<TLUserBase> Users { get; set; }
 
 		public TLUpdatesChannelDifference() { }
 		public TLUpdatesChannelDifference(TLBinaryReader from, bool cache = false)

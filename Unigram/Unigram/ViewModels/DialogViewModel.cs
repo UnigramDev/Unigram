@@ -297,7 +297,7 @@ namespace Unigram.ViewModels
                 }
 
                 PlaceHolderColor = BindConvert.Current.Bubble(channelDetails.Value.Chats[0].Id);
-                photo = channelDetails.Value.Chats[0].Photo;
+                // TODO: photo = channelDetails.Value.Chats[0].Photo;
                 LastSeenVisible = Visibility.Collapsed;
             }
             else if (chat != null)
@@ -307,7 +307,7 @@ namespace Unigram.ViewModels
 
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
                 DialogTitle = chatDetails.Value.Chats[0].FullName;
-                photo = chatDetails.Value.Chats[0].Photo;
+                // TODO: photo = chatDetails.Value.Chats[0].Photo;
                 PlaceHolderColor = BindConvert.Current.Bubble(chatDetails.Value.Chats[0].Id);
                 LastSeenVisible = Visibility.Collapsed;
             }

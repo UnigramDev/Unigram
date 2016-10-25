@@ -6,6 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLMessageMediaPhoto : TLMessageMediaBase, ITLMediaCaption 
 	{
 		public TLPhotoBase Photo { get; set; }
+		public String Caption { get; set; }
 
 		public TLMessageMediaPhoto() { }
 		public TLMessageMediaPhoto(TLBinaryReader from, bool cache = false)

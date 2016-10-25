@@ -6,6 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLChannelParticipantKicked : TLChannelParticipantBase 
 	{
 		public Int32 KickedBy { get; set; }
+		public Int32 Date { get; set; }
 
 		public TLChannelParticipantKicked() { }
 		public TLChannelParticipantKicked(TLBinaryReader from, bool cache = false)

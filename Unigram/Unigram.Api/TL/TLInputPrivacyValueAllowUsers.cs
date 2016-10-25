@@ -5,6 +5,8 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputPrivacyValueAllowUsers : TLInputPrivacyRuleBase 
 	{
+		public TLVector<TLInputUserBase> Users { get; set; }
+
 		public TLInputPrivacyValueAllowUsers() { }
 		public TLInputPrivacyValueAllowUsers(TLBinaryReader from, bool cache = false)
 		{

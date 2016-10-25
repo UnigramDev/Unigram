@@ -14,6 +14,7 @@ namespace Telegram.Api.TL
 		public bool HasReplyMarkup { get { return Flags.HasFlag(Flag.ReplyMarkup); } set { Flags = value ? (Flags | Flag.ReplyMarkup) : (Flags & ~Flag.ReplyMarkup); } }
 
 		public Flag Flags { get; set; }
+		public TLGeoPointBase Geo { get; set; }
 
 		public TLBotInlineMessageMediaGeo() { }
 		public TLBotInlineMessageMediaGeo(TLBinaryReader from, bool cache = false)

@@ -5,6 +5,9 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateReadChannelOutbox : TLUpdateBase 
 	{
+		public Int32 ChannelId { get; set; }
+		public Int32 MaxId { get; set; }
+
 		public TLUpdateReadChannelOutbox() { }
 		public TLUpdateReadChannelOutbox(TLBinaryReader from, bool cache = false)
 		{

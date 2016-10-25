@@ -5,7 +5,5 @@ namespace Telegram.Api.TL
 {
 	public abstract partial class TLMessageMediaBase : TLObject
 	{
-		public String Caption { get; set; }
-		public TLGeoPointBase Geo { get; set; }
 	}
 }
