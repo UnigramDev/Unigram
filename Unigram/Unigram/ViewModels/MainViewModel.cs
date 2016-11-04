@@ -43,7 +43,6 @@ namespace Unigram.ViewModels
             SearchDialogs = new ObservableCollection<TLDialog>();
             Dialogs = new DialogsViewModel(ProtoService, cacheService, aggregator);
             Contacts = new ContactsViewModel(ProtoService, cacheService, aggregator);
-
             aggregator.Subscribe(Dialogs);
             aggregator.Subscribe(SearchDialogs);
         }
@@ -86,7 +85,6 @@ namespace Unigram.ViewModels
                     {
                       //  SearchDialogs.Add(dialog);
                         SearchResults.Add(new SearchResult(dialog, SearchResult.ResultType.Local));
-                        var xy = SearchResults;
                     }
                     
                 }
@@ -96,31 +94,43 @@ namespace Unigram.ViewModels
 
         public async void searchMessages (string query)
         {
-            if (query.Length > 4)
+            if (query.Length > 1)
             {
                 var result = await ProtoService.SearchGlobalAsync(query, 0, null, 0, 20);
                 var messages = result.Value.Messages;
                 foreach (var item in messages)
                 {
-                    foreach (var userItems in result.Value.Users)
+                    TLUser userX = new TLUser();
+                    bool isOut;
+                    var message = item as TLMessage;
+                    if(message!=null)
                     {
-                        if (userItems.Id == item.FromId && SettingsHelper.UserId != item.FromId.GetValueOrDefault())
+                        var peerUser = item.ToId as TLPeerUser;
+                        if (peerUser != null)
                         {
-                            SearchResults.Add(new SearchResult(null, SearchResult.ResultType.Message, userItems, null, item));                           
-                            break;
-                        }
-                    }
-                    foreach (var chatItems in result.Value.Chats)
-                    {
-                        TLUser userX = new TLUser();
-                        if(chatItems.Id==item.ToId.Id)
-                        {
-                            foreach (var userItems in result.Value.Users)
+                            isOut = message.IsOut;
+                            if (isOut == false)
+                                userX = message.From;
+                            else
                             {
-                                if (userItems.Id == item.FromId&&SettingsHelper.UserId!=item.FromId.GetValueOrDefault())
-                                    userX =(TLUser)userItems;
+                                userX = CacheService.GetUser(message.ToId.Id) as TLUser; 
+                                //userX =result.Value.Users.FirstOrDefault(s => s.Id == message.ToId.Id) as TLUser;
                             }
-                            SearchResults.Add(new SearchResult(null, SearchResult.ResultType.Message, userX, chatItems, item));
+                            SearchResults.Add(new SearchResult(null, SearchResult.ResultType.Message, userX, null, item, isOut));
+                            continue;
+                        }
+                        var peerChat = item.ToId as TLPeerChat;                        
+                        if(peerChat!=null)
+                        {
+                            isOut = message.IsOut;
+                            if (isOut == false)
+                                userX = CacheService.GetUser(message.From.Id) as TLUser; 
+                            else
+                                userX = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
+                            // userX = result.Value.Users.FirstOrDefault(s => s.Id == SettingsHelper.UserId) as TLUser; 
+                            //var chatItem = result.Value.Chats.FirstOrDefault(s => s.Id == item.ToId.Id);
+                            var chatItem = CacheService.GetChats().FirstOrDefault(s => s.Id == item.ToId.Id);
+                            SearchResults.Add(new SearchResult(null, SearchResult.ResultType.Message, userX, chatItem, item, isOut));
                         }
                     }
                 }
@@ -165,6 +175,7 @@ namespace Unigram.ViewModels
         public string Header { get; internal set; }
         public string SubHeader { get; internal set; }
         public object Photo { get; internal set; }
+        public ResultType Type { get; internal set; }
         public enum ResultType
         {
             Local,
@@ -172,11 +183,12 @@ namespace Unigram.ViewModels
             GlobalUsers,
             GlobalChats
         }
-        public SearchResult(TLDialog dialog, ResultType type, TLUserBase userBase = null, TLChatBase chatBase = null,TLMessageBase messageBase=null)
+        public SearchResult(TLDialog dialog, ResultType type, TLUserBase userBase = null, TLChatBase chatBase = null,TLMessageBase messageBase=null, bool isOut=false)
         {
+            Type = type;
             switch (type)
             {
-                case ResultType.Local:
+                case ResultType.Local:                    
                     Dialog = dialog;
                     Header = dialog.FullName;                        
                     //Photo =((TLUser)dialog.With).Photo;
