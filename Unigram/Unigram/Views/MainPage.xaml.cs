@@ -53,6 +53,24 @@ namespace Unigram.Views
             DataContext = UnigramContainer.Instance.ResolverType<MainViewModel>();
 
             Loaded += OnLoaded;
+
+            List<MyClass> myClasses = new List<MyClass>();
+            myClasses.Add(new MyClass { Name = "A", Complete = false });
+            myClasses.Add(new MyClass { Name = "B", Complete = true });
+            myClasses.Add(new MyClass { Name = "C", Complete = true });
+            myClasses.Add(new MyClass { Name = "D", Complete = false });
+            myClasses.Add(new MyClass { Name = "E", Complete = true });
+            myClasses.Add(new MyClass { Name = "F", Complete = false });
+            //Group the data
+            var groups = from c in myClasses
+                         group c by c.Complete;
+            //Set the grouped data to CollectionViewSource
+            this.searchViewSource.Source = groups;
+        }
+        public class MyClass
+        {
+            public string Name { get; set; }
+            public bool Complete { get; set; }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -221,17 +239,22 @@ namespace Unigram.Views
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
+           // lvMasterChats.Visibility = Visibility.Collapsed;
+            searchChats.Visibility = Visibility.Visible;
             if (txtSearch.Text != "")
             {
                 if (lvMasterChats.ItemsSource != ViewModel.SearchDialogs)
                 {
-                    lvMasterChats.ItemsSource = ViewModel.SearchDialogs;
+                    //lvMasterChats.ItemsSource = ViewModel.SearchDialogs;
+                    searchChats.ItemsSource = ViewModel.SearchResults;
                 }
                 ViewModel.GetSearchDialogs(txtSearch.Text);
             }
             else
             {
-                lvMasterChats.ItemsSource = ViewModel.Dialogs;
+              //  lvMasterChats.Visibility = Visibility.Visible;
+                searchChats.Visibility = Visibility.Collapsed;
+               // lvMasterChats.ItemsSource = ViewModel.Dialogs;
             }
         }
 

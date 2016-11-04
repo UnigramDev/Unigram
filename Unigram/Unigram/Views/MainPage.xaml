@@ -67,7 +67,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+        <CollectionViewSource x:Key="searchViewSource" x:Name="searchViewSource" IsSourceGrouped="True" />
     </Page.Resources>
 
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged">
@@ -81,11 +81,12 @@
             <Pivot x:Name="rpMasterTitlebar" 
                    Style="{StaticResource TabStylePivotStyle}"
                    Grid.RowSpan="2">
-                <PivotItem>
+                <PivotItem>                    
                     <PivotItem.Header>
                         <controls:TabHeaderStyle Glyph="&#xE15F;"/>
                     </PivotItem.Header>
-                    <ListView x:Name="lvMasterChats"
+                    <Grid>
+                        <ListView x:Name="lvMasterChats"
                         ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
                         IsItemClickEnabled="True"
                         SelectionMode="None"
@@ -112,6 +113,57 @@
                             <Border Height="6"/>
                         </ListView.Footer>
                     </ListView>
+                        <ListView x:Name="searchChats"
+                                  Margin="0,42,0,0" 
+                                  Visibility="Collapsed"
+                                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                  ItemsSource="{x:Bind Mode=TwoWay, Path=ViewModel.SearchResults}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="vms:SearchResult">
+                                    <Grid Margin="0,4">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="48"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Ellipse x:Name="SearchPlaceHolder" Height="48" Width="48" Grid.RowSpan="2" Grid.Column="0"/>
+                                        <TextBlock Foreground="White"
+                                                   Grid.RowSpan="2"                                                    
+                                                   Grid.Column="0"
+                                                   Text="{x:Bind Path=Header, Converter={StaticResource InitialNameStringConverter}}" 
+                                                   VerticalAlignment="Center"
+                                                   TextAlignment="Center"/>
+                                        <Ellipse Width="48"
+                                                 Height="48" 
+                                                 VerticalAlignment="Top"
+                                                 Grid.RowSpan="2" Grid.Column="0">
+                                            <Ellipse.Fill>
+                                                <ImageBrush ImageSource="{x:Bind Path=Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                        <TextBlock Text="{x:Bind Path=Header}" Margin="8,0" Grid.Column="1" Grid.Row="0"/>
+                                        <TextBlock Text="{x:Bind Path=SubHeader}" Margin="8,0" Grid.Column="1" Grid.Row="1"
+                                               Style="{StaticResource CaptionTextBlockStyle}" 
+                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               TextTrimming="CharacterEllipsis" 
+                                               TextWrapping="NoWrap" 
+                                               MaxLines="1"/>
+                                    </Grid>                                    
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.HeaderTemplate>
+                                        <DataTemplate>
+                                        </DataTemplate>
+                                    </GroupStyle.HeaderTemplate>
+                                </GroupStyle>
+                            </ListView.GroupStyle>
+                        </ListView>
+                    </Grid>
                 </PivotItem>
                 <PivotItem Loaded="PivotItem_Loaded">
                     <PivotItem.Header>
