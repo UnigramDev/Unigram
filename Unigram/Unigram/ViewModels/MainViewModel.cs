@@ -124,13 +124,29 @@ namespace Unigram.ViewModels
                         {
                             isOut = message.IsOut;
                             if (isOut == false)
-                                userX = CacheService.GetUser(message.From.Id) as TLUser; 
+                                userX = CacheService.GetUser(message.FromId) as TLUser; //FromId because most of the time From.Id is null.
                             else
                                 userX = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
                             // userX = result.Value.Users.FirstOrDefault(s => s.Id == SettingsHelper.UserId) as TLUser; 
                             //var chatItem = result.Value.Chats.FirstOrDefault(s => s.Id == item.ToId.Id);
                             var chatItem = CacheService.GetChats().FirstOrDefault(s => s.Id == item.ToId.Id);
                             SearchResults.Add(new SearchResult(null, SearchResult.ResultType.Message, userX, chatItem, item, isOut));
+                        }
+                        //CHANNEL RESULTS BELOW
+                        var peerChannel = item.ToId as TLPeerChannel;
+                        if (peerChannel != null)
+                        {
+                            isOut = message.IsOut;
+                            if (isOut == false)
+                            {
+                                userX = CacheService.GetUser(message.FromId) as TLUser;
+                                //if(userX==null)
+                                //userX = (await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUser { UserId = message.FromId.GetValueOrDefault() } })).Value[0] as TLUser;
+                            }
+                            else
+                                userX = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
+                            var channelItem = CacheService.GetChats().FirstOrDefault(s => s.Id == item.ToId.Id);
+                            SearchResults.Add(new SearchResult(null, SearchResult.ResultType.Message, userX, channelItem, item, isOut));
                         }
                     }
                 }
@@ -210,7 +226,7 @@ namespace Unigram.ViewModels
                         Header = chatBase.FullName;
                         //Photo=(BitmapImage)DefaultPhotoConverter.Convert()
                         Photo =chatBase.Photo;
-                        SubHeader = userBase.FullName + ": " + ((TLMessage)messageBase).Message;
+                        SubHeader = userBase==null?"null" : userBase.FullName + ": " + ((TLMessage)messageBase).Message;
                     }                
                     else
                     {
