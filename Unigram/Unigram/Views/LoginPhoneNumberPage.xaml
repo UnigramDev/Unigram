@@ -299,10 +299,9 @@
                                         Content="Next"
                                         Padding="24,4"
                                         MinWidth="160"
-                                        Margin="0,16,16,16"         
-                                        RelativePanel.AlignBottomWithPanel="True"
+                                        Margin="0,16,0,16"
                                         RelativePanel.AlignRightWithPanel="True"                                        
-                                        Click="btnMasterPhoneInputConfirm_Click"/>
+                                        Click="btnMasterPhoneInputConfirm_Click" RelativePanel.Below="txtMasterPhoneInputPhoneNumber"/>
                                 <ProgressBar x:Name="pbarLoadingBar" 
                                              Width="{Binding ElementName=rpMasterPhoneInput, Path=ActualWidth}"
                                              Margin="0,10,0,0"
