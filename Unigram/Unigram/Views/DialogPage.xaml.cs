@@ -186,6 +186,8 @@ namespace Unigram.Views
 
         private async void gridMain_Drop(object sender, DragEventArgs e)
         {
+            gridLoading.Visibility = Visibility.Visible;
+
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
                 var items = await e.DataView.GetStorageItemsAsync();
@@ -231,7 +233,20 @@ namespace Unigram.Views
                 // Send images
                 if (images.Count > 0)
                 {
+                    gridLoading.Visibility = Visibility.Collapsed;
                     ViewModel.SendPhotoDrop(images);
+                }
+                if (audio.Count > 0)
+                {
+                    gridLoading.Visibility = Visibility.Collapsed;
+                }
+                if (videos.Count > 0)
+                {
+                    gridLoading.Visibility = Visibility.Collapsed;
+                }
+                if (files.Count > 0)
+                {
+                    gridLoading.Visibility = Visibility.Collapsed;
                 }
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
@@ -246,6 +261,9 @@ namespace Unigram.Views
             //    {
             //        txtMessage.Text = (txtMessage.Text + " " + link.AbsolutePath);
             //    }
+            //
+            //    gridLoading.Visibility = Visibility.Collapsed;
+            //
             //}
             else if (e.DataView.Contains(StandardDataFormats.Text))
             {
@@ -259,6 +277,8 @@ namespace Unigram.Views
                 {
                     txtMessage.Text = (txtMessage.Text + " " + text);
                 }
+
+                gridLoading.Visibility = Visibility.Collapsed;
             }
 
 
