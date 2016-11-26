@@ -400,7 +400,11 @@
                                            UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
     </Page.Resources>
 
-    <Grid Background="Transparent">
+    <Grid x:Name="gridMain"
+          Background="Transparent"
+          AllowDrop="True"
+          DragOver="gridMain_DragOver"
+          Drop="gridMain_Drop">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

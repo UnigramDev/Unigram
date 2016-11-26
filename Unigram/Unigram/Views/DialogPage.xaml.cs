@@ -16,6 +16,7 @@ using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Core.Models;
 using Unigram.ViewModels;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -176,6 +177,45 @@ namespace Unigram.Views
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
         {
             ViewModel.SendBotInlineResult((TLBotInlineResultBase)e.ClickedItem);
+        }
+
+        private void gridMain_DragOver(object sender, DragEventArgs e)
+        {
+            e.AcceptedOperation = DataPackageOperation.Copy;
+        }
+
+        private async void gridMain_Drop(object sender, DragEventArgs e)
+        {
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                var items = await e.DataView.GetStorageItemsAsync();
+                ObservableCollection<StorageFile> images = new ObservableCollection<StorageFile>();
+                ObservableCollection<StorageFile> videos = new ObservableCollection<StorageFile>();
+                ObservableCollection<StorageFile> audio = new ObservableCollection<StorageFile>();
+                ObservableCollection<StorageFile> contacts = new ObservableCollection<StorageFile>();
+                ObservableCollection<StorageFile> files = new ObservableCollection<StorageFile>();
+
+                // Check for file types and sort these in the correct Collections
+                foreach (StorageFile file in items)
+                {
+                    // Which of the two is better practise? The second one seems more foolproof imho    - Rick
+
+                    //if (file.FileType == ".jpg" || file.ContentType == ".png")
+                    //{
+                    //    images.Add(file);
+                    //}
+
+                    if (file.ContentType == "image/jpeg" || file.ContentType == "image/png")
+                    {
+                        images.Add(file);
+                    }
+                }
+                // Send images
+                if (images.Count > 0)
+                {
+                    ViewModel.SendPhotoDrop(images);
+                }
+            }
         }
     }
 

@@ -637,6 +637,29 @@ namespace Unigram.ViewModels
             }
         }
 
+        public async void SendPhotoDrop(ObservableCollection<StorageFile> files)
+        {
+            ObservableCollection<StorageMedia> storages = null;
+
+            if (files != null)
+            {
+                storages = new ObservableCollection<StorageMedia>(files.Select(x => new StoragePhoto(x)));
+            }
+
+            if (storages != null && storages.Count > 0)
+            {
+                var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0] };
+                var dialogResult = await dialog.ShowAsync();
+                if (dialogResult == ContentDialogBaseResult.OK)
+                {
+                    foreach (var storage in dialog.Items)
+                    {
+                        await SendPhotoAsync(storage.File, storage.Caption);
+                    }
+                }
+            }
+        }
+
         private async Task SendPhotoAsync(StorageFile file, string caption)
         {
             var fileLocation = new TLFileLocation
