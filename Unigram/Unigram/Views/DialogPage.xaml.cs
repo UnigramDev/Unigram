@@ -190,10 +190,10 @@ namespace Unigram.Views
             {
                 var items = await e.DataView.GetStorageItemsAsync();
                 ObservableCollection<StorageFile> images = new ObservableCollection<StorageFile>();
-                ObservableCollection<StorageFile> videos = new ObservableCollection<StorageFile>();
                 ObservableCollection<StorageFile> audio = new ObservableCollection<StorageFile>();
-                ObservableCollection<StorageFile> contacts = new ObservableCollection<StorageFile>();
+                ObservableCollection<StorageFile> videos = new ObservableCollection<StorageFile>();
                 ObservableCollection<StorageFile> files = new ObservableCollection<StorageFile>();
+
 
                 // Check for file types and sort these in the correct Collections
                 foreach (StorageFile file in items)
@@ -205,10 +205,28 @@ namespace Unigram.Views
                     //    images.Add(file);
                     //}
 
+                    // Images first
                     if (file.ContentType == "image/jpeg" || file.ContentType == "image/png")
                     {
                         images.Add(file);
                     }
+                    // Audio second
+                    else if (file.ContentType == "audio/mpeg" || file.ContentType == "audio/x-wav")
+                    {
+                        audio.Add(file);
+                    }
+                    // Videos third
+                    else if (file.ContentType == "video/mpeg" || file.ContentType == "video/mp4")
+                    {
+                        videos.Add(file);
+                    }
+                    // files last
+                    else
+                    {
+                        files.Add(file);
+                    }
+
+
                 }
                 // Send images
                 if (images.Count > 0)
@@ -216,6 +234,36 @@ namespace Unigram.Views
                     ViewModel.SendPhotoDrop(images);
                 }
             }
+            //else if (e.DataView.Contains(StandardDataFormats.WebLink))
+            //{
+            //    // TODO: Invoke getting a preview of the weblink above the Textbox
+            //    var link = await e.DataView.GetWebLinkAsync();
+            //    if (txtMessage.Text == "")
+            //    {
+            //        txtMessage.Text = link.AbsolutePath;
+            //    }
+            //    else
+            //    {
+            //        txtMessage.Text = (txtMessage.Text + " " + link.AbsolutePath);
+            //    }
+            //}
+            else if (e.DataView.Contains(StandardDataFormats.Text))
+            {
+                var text = await e.DataView.GetTextAsync();
+
+                if (txtMessage.Text == "")
+                {
+                    txtMessage.Text = text;
+                }
+                else
+                {
+                    txtMessage.Text = (txtMessage.Text + " " + text);
+                }
+            }
+
+
+
+
         }
     }
 
