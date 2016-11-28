@@ -16,7 +16,11 @@ namespace Telegram.Api.TL
 		public bool HasMsgId { get { return Flags.HasFlag(Flag.MsgId); } set { Flags = value ? (Flags | Flag.MsgId) : (Flags & ~Flag.MsgId); } }
 
 		public Flag Flags { get; set; }
+		public Int32 UserId { get; set; }
+		public String Query { get; set; }
+		public TLGeoPointBase Geo { get; set; }
 		public String Id { get; set; }
+		public TLInputBotInlineMessageID MsgId { get; set; }
 
 		public TLUpdateBotInlineSend() { }
 		public TLUpdateBotInlineSend(TLBinaryReader from, bool cache = false)

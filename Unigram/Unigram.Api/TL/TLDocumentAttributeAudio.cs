@@ -20,6 +20,7 @@ namespace Telegram.Api.TL
 		public bool HasWaveform { get { return Flags.HasFlag(Flag.Waveform); } set { Flags = value ? (Flags | Flag.Waveform) : (Flags & ~Flag.Waveform); } }
 
 		public Flag Flags { get; set; }
+		public Int32 Duration { get; set; }
 		public String Title { get; set; }
 		public String Performer { get; set; }
 		public Byte[] Waveform { get; set; }

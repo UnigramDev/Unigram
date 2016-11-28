@@ -5,6 +5,8 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateEncryptedChatTyping : TLUpdateBase 
 	{
+		public Int32 ChatId { get; set; }
+
 		public TLUpdateEncryptedChatTyping() { }
 		public TLUpdateEncryptedChatTyping(TLBinaryReader from, bool cache = false)
 		{

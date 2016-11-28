@@ -5,6 +5,10 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateReadMessagesContents : TLUpdateBase, ITLMultiPts 
 	{
+		public TLVector<Int32> Messages { get; set; }
+		public Int32 Pts { get; set; }
+		public Int32 PtsCount { get; set; }
+
 		public TLUpdateReadMessagesContents() { }
 		public TLUpdateReadMessagesContents(TLBinaryReader from, bool cache = false)
 		{

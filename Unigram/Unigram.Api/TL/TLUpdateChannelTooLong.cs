@@ -14,6 +14,7 @@ namespace Telegram.Api.TL
 		public bool HasPts { get { return Flags.HasFlag(Flag.Pts); } set { Flags = value ? (Flags | Flag.Pts) : (Flags & ~Flag.Pts); } }
 
 		public Flag Flags { get; set; }
+		public Int32 ChannelId { get; set; }
 		public Int32? Pts { get; set; }
 
 		public TLUpdateChannelTooLong() { }

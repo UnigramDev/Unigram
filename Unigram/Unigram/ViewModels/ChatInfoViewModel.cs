@@ -39,7 +39,7 @@ namespace Unigram.ViewModels
                 x.AccessHash = channel.AccessHash;
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);
                 Status = ((TLChannelFull)channelDetails.Value.FullChat).About;
-                photo = channelDetails.Value.Chats[0].Photo;
+                // TODO: photo = channelDetails.Value.Chats[0].Photo;
             }
             if (chat != null)
             {

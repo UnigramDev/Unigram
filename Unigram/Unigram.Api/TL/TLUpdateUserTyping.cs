@@ -5,6 +5,9 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateUserTyping : TLUpdateBase 
 	{
+		public Int32 UserId { get; set; }
+		public TLSendMessageActionBase Action { get; set; }
+
 		public TLUpdateUserTyping() { }
 		public TLUpdateUserTyping(TLBinaryReader from, bool cache = false)
 		{

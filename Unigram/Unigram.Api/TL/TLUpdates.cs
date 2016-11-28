@@ -5,6 +5,12 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdates : TLUpdatesBase 
 	{
+		public TLVector<TLUpdateBase> Updates { get; set; }
+		public TLVector<TLUserBase> Users { get; set; }
+		public TLVector<TLChatBase> Chats { get; set; }
+		public Int32 Date { get; set; }
+		public Int32 Seq { get; set; }
+
 		public TLUpdates() { }
 		public TLUpdates(TLBinaryReader from, bool cache = false)
 		{

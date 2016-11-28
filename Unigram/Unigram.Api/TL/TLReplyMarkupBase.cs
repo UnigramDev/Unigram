@@ -5,6 +5,5 @@ namespace Telegram.Api.TL
 {
 	public abstract partial class TLReplyMarkupBase : TLObject
 	{
-		public TLVector<TLKeyboardButtonRow> Rows { get; set; }
 	}
 }

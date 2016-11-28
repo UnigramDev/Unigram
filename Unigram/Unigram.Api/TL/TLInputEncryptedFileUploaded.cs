@@ -5,7 +5,10 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputEncryptedFileUploaded : TLInputEncryptedFileBase 
 	{
+		public Int64 Id { get; set; }
+		public Int32 Parts { get; set; }
 		public String Md5Checksum { get; set; }
+		public Int32 KeyFingerprint { get; set; }
 
 		public TLInputEncryptedFileUploaded() { }
 		public TLInputEncryptedFileUploaded(TLBinaryReader from, bool cache = false)

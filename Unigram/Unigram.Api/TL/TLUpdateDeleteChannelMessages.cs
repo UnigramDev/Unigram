@@ -5,6 +5,11 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateDeleteChannelMessages : TLUpdateBase, ITLMultiPts 
 	{
+		public Int32 ChannelId { get; set; }
+		public TLVector<Int32> Messages { get; set; }
+		public Int32 Pts { get; set; }
+		public Int32 PtsCount { get; set; }
+
 		public TLUpdateDeleteChannelMessages() { }
 		public TLUpdateDeleteChannelMessages(TLBinaryReader from, bool cache = false)
 		{

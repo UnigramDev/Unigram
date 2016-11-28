@@ -5,6 +5,8 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputDocumentFileLocation : TLInputFileLocationBase 
 	{
+		public Int64 Id { get; set; }
+		public Int64 AccessHash { get; set; }
 		public Int32 Version { get; set; }
 
 		public TLInputDocumentFileLocation() { }

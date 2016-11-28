@@ -5,6 +5,10 @@ namespace Telegram.Api.TL
 {
 	public partial class TLEncryptedChatRequested : TLEncryptedChatBase 
 	{
+		public Int64 AccessHash { get; set; }
+		public Int32 Date { get; set; }
+		public Int32 AdminId { get; set; }
+		public Int32 ParticipantId { get; set; }
 		public Byte[] GA { get; set; }
 
 		public TLEncryptedChatRequested() { }

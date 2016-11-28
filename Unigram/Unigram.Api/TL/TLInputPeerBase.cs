@@ -5,6 +5,5 @@ namespace Telegram.Api.TL
 {
 	public abstract partial class TLInputPeerBase : TLObject
 	{
-		public Int64 AccessHash { get; set; }
 	}
 }

@@ -5,6 +5,9 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateChannelPinnedMessage : TLUpdateBase 
 	{
+		public Int32 ChannelId { get; set; }
+		public Int32 Id { get; set; }
+
 		public TLUpdateChannelPinnedMessage() { }
 		public TLUpdateChannelPinnedMessage(TLBinaryReader from, bool cache = false)
 		{

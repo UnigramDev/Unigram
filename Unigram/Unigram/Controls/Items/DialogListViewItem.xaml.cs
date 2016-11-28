@@ -232,9 +232,9 @@ namespace Unigram.Controls.Items
                         }
                         else if (message.Media is TLMessageMediaPhoto)
                         {
-                            if (!string.IsNullOrEmpty(message.Media.Caption))
+                            if (!string.IsNullOrEmpty(((TLMessageMediaPhoto)message.Media).Caption))
                             {
-                                return text + message.Media.Caption;
+                                return text + ((TLMessageMediaPhoto)message.Media).Caption;
                             }
 
                             //return text + Resources.Photo;

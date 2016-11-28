@@ -5,6 +5,5 @@ namespace Telegram.Api.TL
 {
 	public abstract partial class TLSendMessageActionBase : TLObject
 	{
-		public Int32 Progress { get; set; }
 	}
 }

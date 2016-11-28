@@ -5,6 +5,10 @@ namespace Telegram.Api.TL
 {
 	public partial class TLDocumentAttributeVideo : TLDocumentAttributeBase 
 	{
+		public Int32 Duration { get; set; }
+		public Int32 W { get; set; }
+		public Int32 H { get; set; }
+
 		public TLDocumentAttributeVideo() { }
 		public TLDocumentAttributeVideo(TLBinaryReader from, bool cache = false)
 		{

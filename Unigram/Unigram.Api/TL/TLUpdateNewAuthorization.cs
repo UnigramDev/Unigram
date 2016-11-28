@@ -6,6 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLUpdateNewAuthorization : TLUpdateBase 
 	{
 		public Int64 AuthKeyId { get; set; }
+		public Int32 Date { get; set; }
 		public String Device { get; set; }
 		public String Location { get; set; }
 

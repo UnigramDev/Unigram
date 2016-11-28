@@ -5,7 +5,10 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateChatParticipantAdmin : TLUpdateBase 
 	{
+		public Int32 ChatId { get; set; }
+		public Int32 UserId { get; set; }
 		public Boolean IsAdmin { get; set; }
+		public Int32 Version { get; set; }
 
 		public TLUpdateChatParticipantAdmin() { }
 		public TLUpdateChatParticipantAdmin(TLBinaryReader from, bool cache = false)

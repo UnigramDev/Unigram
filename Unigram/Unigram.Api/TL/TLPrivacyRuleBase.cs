@@ -5,6 +5,5 @@ namespace Telegram.Api.TL
 {
 	public abstract partial class TLPrivacyRuleBase : TLObject
 	{
-		public TLVector<Int32> Users { get; set; }
 	}
 }

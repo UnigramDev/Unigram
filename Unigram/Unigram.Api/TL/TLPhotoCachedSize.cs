@@ -5,6 +5,9 @@ namespace Telegram.Api.TL
 {
 	public partial class TLPhotoCachedSize : TLPhotoSizeBase 
 	{
+		public TLFileLocationBase Location { get; set; }
+		public Int32 W { get; set; }
+		public Int32 H { get; set; }
 		public Byte[] Bytes { get; set; }
 
 		public TLPhotoCachedSize() { }

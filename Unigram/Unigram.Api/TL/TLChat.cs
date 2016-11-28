@@ -26,7 +26,11 @@ namespace Telegram.Api.TL
 		public bool HasMigratedTo { get { return Flags.HasFlag(Flag.MigratedTo); } set { Flags = value ? (Flags | Flag.MigratedTo) : (Flags & ~Flag.MigratedTo); } }
 
 		public Flag Flags { get; set; }
+		public String Title { get; set; }
+		public TLChatPhotoBase Photo { get; set; }
 		public Int32 ParticipantsCount { get; set; }
+		public Int32 Date { get; set; }
+		public Int32 Version { get; set; }
 		public TLInputChannelBase MigratedTo { get; set; }
 
 		public TLChat() { }

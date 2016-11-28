@@ -14,6 +14,9 @@ namespace Telegram.Api.TL
 		public bool HasStickers { get { return Flags.HasFlag(Flag.Stickers); } set { Flags = value ? (Flags | Flag.Stickers) : (Flags & ~Flag.Stickers); } }
 
 		public Flag Flags { get; set; }
+		public TLInputFileBase File { get; set; }
+		public String Caption { get; set; }
+		public TLVector<TLInputDocumentBase> Stickers { get; set; }
 
 		public TLInputMediaUploadedPhoto() { }
 		public TLInputMediaUploadedPhoto(TLBinaryReader from, bool cache = false)

@@ -8,6 +8,5 @@ namespace Telegram.Api.TL
 		public TLVector<TLMessageBase> Messages { get; set; }
 		public TLVector<TLChatBase> Chats { get; set; }
 		public TLVector<TLUserBase> Users { get; set; }
-		public Int32 Count { get; set; }
 	}
 }

@@ -14,6 +14,10 @@ namespace Telegram.Api.TL
 		public bool HasGeo { get { return Flags.HasFlag(Flag.Geo); } set { Flags = value ? (Flags | Flag.Geo) : (Flags & ~Flag.Geo); } }
 
 		public Flag Flags { get; set; }
+		public Int64 QueryId { get; set; }
+		public Int32 UserId { get; set; }
+		public String Query { get; set; }
+		public TLGeoPointBase Geo { get; set; }
 		public String Offset { get; set; }
 
 		public TLUpdateBotInlineQuery() { }

@@ -16,6 +16,12 @@ namespace Telegram.Api.TL
 		public bool HasGameShortName { get { return Flags.HasFlag(Flag.GameShortName); } set { Flags = value ? (Flags | Flag.GameShortName) : (Flags & ~Flag.GameShortName); } }
 
 		public Flag Flags { get; set; }
+		public Int64 QueryId { get; set; }
+		public Int32 UserId { get; set; }
+		public TLInputBotInlineMessageID MsgId { get; set; }
+		public Int64 ChatInstance { get; set; }
+		public Byte[] Data { get; set; }
+		public String GameShortName { get; set; }
 
 		public TLUpdateInlineBotCallbackQuery() { }
 		public TLUpdateInlineBotCallbackQuery(TLBinaryReader from, bool cache = false)

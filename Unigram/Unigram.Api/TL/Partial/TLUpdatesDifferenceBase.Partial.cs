@@ -17,11 +17,6 @@ namespace Telegram.Api.TL
         {
             return new TLUpdatesDifferenceEmpty
             {
-                NewMessages = new TLVector<TLMessageBase>(NewMessages.Count),
-                NewEncryptedMessages = new TLVector<TLEncryptedMessageBase>(NewEncryptedMessages.Count),
-                OtherUpdates = new TLVector<TLUpdateBase>(OtherUpdates.Count),
-                Users = new TLVector<TLUserBase>(Users.Count),
-                Chats = new TLVector<TLChatBase>(Chats.Count),
                 Date = Date,
                 Seq = Seq
             };

@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateUserPhone : TLUpdateBase 
 	{
+		public Int32 UserId { get; set; }
 		public String Phone { get; set; }
 
 		public TLUpdateUserPhone() { }
