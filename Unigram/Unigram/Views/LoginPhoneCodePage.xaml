@@ -124,7 +124,8 @@
                                          PlaceholderText="Your code" 
                                          RelativePanel.AlignLeftWithPanel="True"
                                          RelativePanel.AlignRightWithPanel="True"
-                                         RelativePanel.AlignTopWithPanel="True" TextChanged="txtMasterCodeInputInput_TextChanged"/>
+                                         RelativePanel.AlignTopWithPanel="True" 
+                                                        TextChanged="txtMasterCodeInputInput_TextChanged"/>
                                 <ProgressBar x:Name="pbarLoading" 
                                              IsIndeterminate="True"
                                              Background="{ThemeResource FocusVisualBlackStrokeThemeBrush}"
@@ -140,18 +141,19 @@
                                         RequestedTheme="Dark"
                                         Content="Next"
                                         Padding="24,6"
-                                        Margin="0,16,16,0"
+                                        Margin="0,32,0,0"
                                         MinWidth="160"
                                         RelativePanel.AlignRightWithPanel="True"
-                                        RelativePanel.Above="btnMasterCodeInputNoCode" Click="btnMasterCodeInputConfirm_Click"/>
+                                        RelativePanel.Below="txtMasterCodeInputInput" 
+                                        Click="btnMasterCodeInputConfirm_Click"/>
                                 <!-- Button in case the user did not recieve a code -->
                                 <Button x:Name="btnMasterCodeInputNoCode"
                                         x:Uid="BTN-CodeNotRecieved"
                                         Content="I haven't received a code"
                                         Style="{StaticResource TextBlockButtonStyle}"
-                                        Margin="0,8,4,0"
+                                        Margin="0,8,-8,0"
                                         RelativePanel.AlignRightWithPanel="True"
-                                        RelativePanel.AlignBottomWithPanel="True"
+                                        RelativePanel.Below="btnMasterCodeInputConfirm"
                                         RelativePanel.AlignHorizontalCenterWithPanel="True"/>
                             </RelativePanel>
                         </RelativePanel>

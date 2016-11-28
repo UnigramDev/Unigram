@@ -16,6 +16,7 @@ using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Core.Models;
 using Unigram.ViewModels;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -176,6 +177,113 @@ namespace Unigram.Views
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
         {
             ViewModel.SendBotInlineResult((TLBotInlineResultBase)e.ClickedItem);
+        }
+
+        private void gridMain_DragOver(object sender, DragEventArgs e)
+        {
+            e.AcceptedOperation = DataPackageOperation.Copy;
+        }
+
+        private async void gridMain_Drop(object sender, DragEventArgs e)
+        {
+            gridLoading.Visibility = Visibility.Visible;
+
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                var items = await e.DataView.GetStorageItemsAsync();
+                ObservableCollection<StorageFile> images = new ObservableCollection<StorageFile>();
+                ObservableCollection<StorageFile> audio = new ObservableCollection<StorageFile>();
+                ObservableCollection<StorageFile> videos = new ObservableCollection<StorageFile>();
+                ObservableCollection<StorageFile> files = new ObservableCollection<StorageFile>();
+
+
+                // Check for file types and sort these in the correct Collections
+                foreach (StorageFile file in items)
+                {
+                    // Which of the two is better practise? The second one seems more foolproof imho    - Rick
+
+                    //if (file.FileType == ".jpg" || file.ContentType == ".png")
+                    //{
+                    //    images.Add(file);
+                    //}
+
+                    // Images first
+                    if (file.ContentType == "image/jpeg" || file.ContentType == "image/png")
+                    {
+                        images.Add(file);
+                    }
+                    // Audio second
+                    else if (file.ContentType == "audio/mpeg" || file.ContentType == "audio/x-wav")
+                    {
+                        audio.Add(file);
+                    }
+                    // Videos third
+                    else if (file.ContentType == "video/mpeg" || file.ContentType == "video/mp4")
+                    {
+                        videos.Add(file);
+                    }
+                    // files last
+                    else
+                    {
+                        files.Add(file);
+                    }
+
+
+                }
+                // Send images
+                if (images.Count > 0)
+                {
+                    gridLoading.Visibility = Visibility.Collapsed;
+                    ViewModel.SendPhotoDrop(images);
+                }
+                if (audio.Count > 0)
+                {
+                    gridLoading.Visibility = Visibility.Collapsed;
+                }
+                if (videos.Count > 0)
+                {
+                    gridLoading.Visibility = Visibility.Collapsed;
+                }
+                if (files.Count > 0)
+                {
+                    gridLoading.Visibility = Visibility.Collapsed;
+                }
+            }
+            //else if (e.DataView.Contains(StandardDataFormats.WebLink))
+            //{
+            //    // TODO: Invoke getting a preview of the weblink above the Textbox
+            //    var link = await e.DataView.GetWebLinkAsync();
+            //    if (txtMessage.Text == "")
+            //    {
+            //        txtMessage.Text = link.AbsolutePath;
+            //    }
+            //    else
+            //    {
+            //        txtMessage.Text = (txtMessage.Text + " " + link.AbsolutePath);
+            //    }
+            //
+            //    gridLoading.Visibility = Visibility.Collapsed;
+            //
+            //}
+            else if (e.DataView.Contains(StandardDataFormats.Text))
+            {
+                var text = await e.DataView.GetTextAsync();
+
+                if (txtMessage.Text == "")
+                {
+                    txtMessage.Text = text;
+                }
+                else
+                {
+                    txtMessage.Text = (txtMessage.Text + " " + text);
+                }
+
+                gridLoading.Visibility = Visibility.Collapsed;
+            }
+
+
+
+
         }
     }
 
