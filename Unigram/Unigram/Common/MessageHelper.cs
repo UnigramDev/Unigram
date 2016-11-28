@@ -643,7 +643,7 @@ namespace Unigram.Common
                 {
                     if (navigation.Contains("telegram.me"))
                     {
-                        // TODO: in-app navigation
+                        HandleTelegramUrl(navigation);
                     }
 
                     if (type == TLType.MessageEntityTextUrl)
@@ -752,6 +752,97 @@ namespace Unigram.Common
 
             //    await EmailManager.ShowComposeNewEmailAsync(email);
             //}
+        }
+
+        public static void HandleTelegramUrl(string url)
+        {
+            // TODO: in-app navigation
+            if (url.Contains("joinchat"))
+            {
+                var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
+                if (index != -1)
+                {
+                    string text = url.Substring(index).Replace("/", string.Empty);
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        //NavigateToInviteLink(text);
+                    }
+                }
+            }
+            else if (url.Contains("addstickers"))
+            {
+                var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
+                if (index != -1)
+                {
+                    string text = url.Substring(index).Replace("/", string.Empty);
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        //NavigateToStickerSet(text);
+                    }
+                }
+            }
+            else
+            {
+                var query = url.ParseQueryString();
+
+                PageKind pageKind;
+                var accessToken = GetAccessToken(query, out pageKind);
+                var post = GetPost(query);
+                var result = url.StartsWith("https://") ? url : ("https://" + url);
+
+                Uri uri;
+                if (Uri.TryCreate(result, UriKind.Absolute, out uri))
+                {
+                    if (uri.Segments.Length >= 2)
+                    {
+                        var username = uri.Segments[1].Replace("/", string.Empty);
+                        if (string.IsNullOrEmpty(post) && uri.Segments.Length >= 3)
+                        {
+                            post = uri.Segments[2].Replace("/", string.Empty);
+                        }
+                        if (!string.IsNullOrEmpty(username))
+                        {
+                            //NavigateToUsername(username, accessToken, post, pageKind);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static string GetAccessToken(Dictionary<string, string> uriParams, out PageKind pageKind)
+        {
+            pageKind = PageKind.Dialog;
+
+            var result = string.Empty;
+            if (uriParams.ContainsKey("start"))
+            {
+                result = uriParams["start"];
+            }
+            else if (uriParams.ContainsKey("startgroup"))
+            {
+                pageKind = PageKind.Search;
+                result = uriParams["startgroup"];
+            }
+
+            return result;
+        }
+
+        public static string GetPost(Dictionary<string, string> uriParams)
+        {
+            var result = string.Empty;
+            if (uriParams.ContainsKey("post"))
+            {
+                result = uriParams["post"];
+            }
+
+            return result;
+        }
+
+        public enum PageKind
+        {
+            Dialog,
+            Profile,
+            Search
         }
 
         public static bool IsValidCommand(string command)
