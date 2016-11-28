@@ -218,14 +218,14 @@ namespace Unigram.ViewModels
                     break;
                 case ResultType.GlobalChats:
                     Header = chatBase.FullName;
-                    Photo =chatBase.Photo;
+                    //Photo =chatBase.Photo;
                     break;
                 case ResultType.Message:
                     if (chatBase != null)
                     {
                         Header = chatBase.FullName;
                         //Photo=(BitmapImage)DefaultPhotoConverter.Convert()
-                        Photo =chatBase.Photo;
+                        //Photo =chatBase.Photo;
                         SubHeader = userBase==null?"null" : userBase.FullName + ": " + ((TLMessage)messageBase).Message;
                     }                
                     else

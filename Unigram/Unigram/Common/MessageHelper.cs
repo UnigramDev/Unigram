@@ -7,11 +7,13 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Api;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Common;
+using Unigram.Core.Dependency;
 using Unigram.Views;
 using Windows.ApplicationModel.Email;
 using Windows.System;
@@ -641,11 +643,6 @@ namespace Unigram.Common
                 var navigation = (string)data;
                 if (type == TLType.MessageEntityUrl || type == TLType.MessageEntityTextUrl)
                 {
-                    if (navigation.Contains("telegram.me"))
-                    {
-                        HandleTelegramUrl(navigation);
-                    }
-
                     if (type == TLType.MessageEntityTextUrl)
                     {
                         var dialog = new MessageDialog(navigation, "Open this link?");
@@ -661,12 +658,19 @@ namespace Unigram.Common
                         }
                     }
 
-                    if (!navigation.StartsWith("http"))
+                    if (navigation.Contains("telegram.me"))
                     {
-                        navigation = "http://" + navigation;
+                        HandleTelegramUrl(navigation);
                     }
+                    else
+                    {
+                        if (!navigation.StartsWith("http"))
+                        {
+                            navigation = "http://" + navigation;
+                        }
 
-                    await Launcher.LaunchUriAsync(new Uri(navigation));
+                        await Launcher.LaunchUriAsync(new Uri(navigation));
+                    }
                 }
                 else if (type == TLType.MessageEntityEmail)
                 {
@@ -765,7 +769,7 @@ namespace Unigram.Common
                     string text = url.Substring(index).Replace("/", string.Empty);
                     if (!string.IsNullOrEmpty(text))
                     {
-                        //NavigateToInviteLink(text);
+                        NavigateToInviteLink(text);
                     }
                 }
             }
@@ -806,6 +810,128 @@ namespace Unigram.Common
                         }
                     }
                 }
+            }
+        }
+
+        private static async void NavigateToInviteLink(string link)
+        {
+            var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
+            var response = await protoService.CheckChatInviteAsync(link);
+            if (response.IsSucceeded)
+            {
+                var inviteAlready = response.Value as TLChatInviteAlready;
+                if (inviteAlready != null)
+                {
+                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                    if (service != null)
+                    {
+                        if (inviteAlready.Chat is TLChat)
+                        {
+                            service.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = inviteAlready.Chat.Id });
+                        }
+                        else if (inviteAlready.Chat is TLChannel)
+                        {
+                            service.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = inviteAlready.Chat.Id });
+                        }
+                    }
+                }
+
+                var invite = response.Value as TLChatInvite;
+                if (invite != null)
+                {
+                    var content = "AppResources.JoinGroupConfirmation";
+                    if (invite.IsChannel && !invite.IsMegagroup)
+                    {
+                        content = "AppResources.JoinChannelConfirmation";
+                    }
+
+                    var dialog = new MessageDialog(content, invite.Title);
+                    dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
+                    dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
+                    dialog.DefaultCommandIndex = 0;
+                    dialog.CancelCommandIndex = 1;
+
+                    var result = await dialog.ShowAsync();
+                    if (result != null && (int)result?.Id == 0)
+                    {
+                        var import = await protoService.ImportChatInviteAsync(link);
+                        if (import.IsSucceeded)
+                        {
+                            var updates = import.Value as TLUpdates;
+                            if (updates != null)
+                            {
+                                var chatBase = updates.Chats.FirstOrDefault();
+                                if (chatBase != null)
+                                {
+                                    var channel = chatBase as TLChannel;
+                                    if (channel != null)
+                                    {
+                                        // TODO: sync history
+
+                                        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                                        if (service != null)
+                                        {
+                                            service.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                                        if (service != null)
+                                        {
+                                            service.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = chatBase.Id });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (!import.Error.CodeEquals(TLErrorCode.BAD_REQUEST))
+                            {
+                                Execute.ShowDebugMessage("messages.importChatInvite error " + import.Error);
+                                return;
+                            }
+                            if (import.Error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || import.Error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || import.Error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
+                            {
+                                //MessageBox.Show(AppResources.GroupNotExistsError, AppResources.Error, 0);
+                                return;
+                            }
+                            else if (import.Error.TypeEquals(TLErrorType.USERS_TOO_MUCH))
+                            {
+                                //MessageBox.Show(AppResources.UsersTooMuch, AppResources.Error, 0);
+                                return;
+                            }
+                            else if (import.Error.TypeEquals(TLErrorType.BOTS_TOO_MUCH))
+                            {
+                                //MessageBox.Show(AppResources.BotsTooMuch, AppResources.Error, 0);
+                                return;
+                            }
+                            else if (import.Error.TypeEquals(TLErrorType.USER_ALREADY_PARTICIPANT))
+                            {
+                                return;
+                            }
+
+                            Execute.ShowDebugMessage("messages.importChatInvite error " + import.Error);
+                        }
+                    }
+
+                }
+            }
+            else
+            {
+                if (!response.Error.CodeEquals(TLErrorCode.BAD_REQUEST))
+                {
+                    Execute.ShowDebugMessage("messages.checkChatInvite error " + response.Error);
+                    return;
+                }
+                if (response.Error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || response.Error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || response.Error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
+                {
+                    //MessageBox.Show(AppResources.GroupNotExistsError, AppResources.Error, 0);
+                    return;
+                }
+
+                Execute.ShowDebugMessage("messages.checkChatInvite error " + response.Error);
             }
         }
 
