@@ -21,6 +21,8 @@ namespace Telegram.Api.TL
 		public Int32 ReadOutboxMaxId { get; set; }
 		public Int32 UnreadCount { get; set; }
 		public TLVector<TLMessageBase> Messages { get; set; }
+		public TLVector<TLChatBase> Chats { get; set; }
+		public TLVector<TLUserBase> Users { get; set; }
 
 		public TLUpdatesChannelDifferenceTooLong() { }
 		public TLUpdatesChannelDifferenceTooLong(TLBinaryReader from, bool cache = false)

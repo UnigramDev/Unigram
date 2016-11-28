@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessageActionChannelMigrateFrom : TLMessageActionBase 
 	{
+		public String Title { get; set; }
 		public Int32 ChatId { get; set; }
 
 		public TLMessageActionChannelMigrateFrom() { }

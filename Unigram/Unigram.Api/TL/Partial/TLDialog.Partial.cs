@@ -338,7 +338,7 @@ namespace Telegram.Api.TL
                 var chat = With as TLChatBase;
                 if (chat != null)
                 {
-                    return chat.Title.Trim();
+                    return chat.FullName.Trim();
                 }
 
                 //var encryptedChat = With as TLEncryptedChatCommon;

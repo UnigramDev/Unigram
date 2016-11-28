@@ -345,12 +345,25 @@
 
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <StackPanel Margin="0,12">
-                <!--<Border Background="#7f89a0b4" HorizontalAlignment="Center" Padding="12,5,12,6">
-                     <RichTextBlock common:ServiceHelper.Message="{Binding}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
-                     </Border>
-                     
-                     <Border Visibility="{Binding Action.Photo, Converter={StaticResource ExistsToVisibilityConverter}}" Width="96" Height="96" Margin="0,8,0,0">
+            <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12,0,2">
+                <RichTextBlock common:ServiceHelper.Message="{Binding}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ServiceMessagePhotoTemplate">
+            <StackPanel Margin="0,12,0,2">
+                <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6">
+                    <RichTextBlock common:ServiceHelper.Message="{Binding}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
+                </Border>
+
+                <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,12,0,0">
+                    <Ellipse>
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                </Border>
+                <!--<Border Visibility="{Binding Action.Photo, Converter={StaticResource ExistsToVisibilityConverter}}" Width="96" Height="96" Margin="0,8,0,0">
                      <controls:ImageControl TelegramSource="{Binding Action.Photo}" Stretch="UniformToFill"/>
                      </Border>-->
             </StackPanel>
@@ -383,10 +396,15 @@
                                            ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
                                            ChatFriendStickerTemplate="{StaticResource ChatFriendStickerTemplate}"
                                            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
+                                           ServiceMessagePhotoTemplate="{StaticResource ServiceMessagePhotoTemplate}"
                                            UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
     </Page.Resources>
 
-    <Grid Background="Transparent">
+    <Grid x:Name="gridMain"
+          Background="Transparent"
+          AllowDrop="True"
+          DragOver="gridMain_DragOver"
+          Drop="gridMain_Drop">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -394,6 +412,36 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
+
+        <Grid x:Name="gridLoading"
+              Grid.RowSpan="5"
+              Canvas.ZIndex="10"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Visibility="Collapsed">
+            <Grid.ChildrenTransitions>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition/>
+                </TransitionCollection>
+            </Grid.ChildrenTransitions>
+            <Grid.Background>
+                <SolidColorBrush Color="Black" Opacity="0.7"/>
+            </Grid.Background>
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                <ProgressRing Height="48"
+                              Width="48"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Center"
+                              IsActive="True" />
+                <TextBlock Text="Getting your content..."
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Style="{ThemeResource CaptionTextBlockStyle}"
+                           Margin="0,12,0,0"/>
+            </StackPanel>
+
+        </Grid>
 
         <!-- Titlebar -->
         <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
@@ -495,7 +543,9 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
-                    --><!-- Icon --><!--
+                    -->
+                <!-- Icon -->
+                <!--
                     <Rectangle Fill="White" Width="2" Margin="12,0,0,0"/>
 
                     <StackPanel Margin="8,0,0,2" Grid.Column="1">

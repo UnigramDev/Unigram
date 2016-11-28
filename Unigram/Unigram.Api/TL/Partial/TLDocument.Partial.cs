@@ -27,7 +27,7 @@ namespace Telegram.Api.TL
         {
             return string.Format("document{0}_{1}{2}", new object[]
             {
-                base.Id,
+                Id,
                 AccessHash,
                 Path.GetExtension(FileName)
             });
@@ -38,7 +38,7 @@ namespace Telegram.Api.TL
             return new TLInputDocumentFileLocation
             {
                 AccessHash = AccessHash,
-                Id = base.Id
+                Id = Id
             };
         }
     }

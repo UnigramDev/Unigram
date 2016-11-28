@@ -8,6 +8,8 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Unigram.Converters;
+using Unigram.ViewModels;
+using Unigram.Views;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -22,6 +24,18 @@ namespace Unigram.Controls.Messages
         public TLMessage ViewModel => DataContext as TLMessage;
 
         public BindConvert Convert => BindConvert.Current;
+
+        private DialogViewModel _context;
+        public DialogViewModel Context
+        {
+            get
+            {
+                if (_context == null)
+                    _context = ((BubbleListViewItem)VisualTreeHelper.GetParent(VisualTreeHelper.GetParent(this))).Owner.DataContext as DialogViewModel;
+
+                return _context;
+            }
+        }
 
         //public MessageControlBase()
         //{
@@ -46,6 +60,7 @@ namespace Unigram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId) });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Click += (s, args) => From_Click(message);
 
                     paragraph.Inlines.Add(hyperlink);
                 }
@@ -81,6 +96,7 @@ namespace Unigram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = name });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Click += (s, args) => FwdFrom_Click(message);
 
                     paragraph.Inlines.Add(hyperlink);
                 }
@@ -90,6 +106,7 @@ namespace Unigram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Click += (s, args) => ViaBot_Click(message);
 
                     paragraph.Inlines.Add(hyperlink);
                 }
@@ -108,6 +125,39 @@ namespace Unigram.Controls.Messages
             {
                 paragraph.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void From_Click(TLMessage message)
+        {
+            if (message.From != null)
+            {
+                Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.From.Id });
+            }
+        }
+
+        private void FwdFrom_Click(TLMessage message)
+        {
+            if (message.FwdFromChannel != null)
+            {
+                if (message.FwdFrom.HasChannelPost)
+                {
+                    // TODO
+                    Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerChannel { ChannelId = message.FwdFromChannel.Id });
+                }
+                else
+                {
+                    Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerChannel { ChannelId = message.FwdFromChannel.Id });
+                }
+            }
+            else if (message.FwdFromUser != null)
+            {
+                Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.FwdFromUser.Id });
+            }
+        }
+
+        private void ViaBot_Click(TLMessage message)
+        {
+            Context.Text = $"@{message.ViaBot.Username} ";
         }
 
         /// <summary>

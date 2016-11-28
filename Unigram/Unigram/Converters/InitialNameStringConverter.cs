@@ -52,6 +52,22 @@ namespace Unigram.Converters
                 }
             }
 
+            if(chat==null&&user==null)
+            {
+                var str = value as string;
+                var words = str.Split(new char[] { ' ' });
+                if (words.Length > 1)
+                {
+                    word1 = words[0];
+                    word2 = words[words.Length-1];
+                }
+                else
+                {
+                    word1 = words[0];
+                    word2 = string.Empty;
+                }
+            }
+
             var si1 = StringInfo.GetTextElementEnumerator(word1);
             var si2 = StringInfo.GetTextElementEnumerator(word2);
 

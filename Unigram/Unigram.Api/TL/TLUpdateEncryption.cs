@@ -6,6 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLUpdateEncryption : TLUpdateBase 
 	{
 		public TLEncryptedChatBase Chat { get; set; }
+		public Int32 Date { get; set; }
 
 		public TLUpdateEncryption() { }
 		public TLUpdateEncryption(TLBinaryReader from, bool cache = false)

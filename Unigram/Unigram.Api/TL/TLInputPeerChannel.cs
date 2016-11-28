@@ -6,6 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLInputPeerChannel : TLInputPeerBase 
 	{
 		public Int32 ChannelId { get; set; }
+		public Int64 AccessHash { get; set; }
 
 		public TLInputPeerChannel() { }
 		public TLInputPeerChannel(TLBinaryReader from, bool cache = false)

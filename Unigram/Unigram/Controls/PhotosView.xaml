@@ -23,8 +23,8 @@
                   Grid.RowSpan="3">
             <FlipView.ItemTemplate>
                 <DataTemplate>
-                    <Image Source="{Binding Converter={StaticResource DefaultPhotoConverter}}"
-                           common:LazyBitmapImage.Source="{Binding}"/>
+                    <local:ImageView Source="{Binding Converter={StaticResource DefaultPhotoConverter}}"
+                                     Constraint="{Binding}"/>
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>

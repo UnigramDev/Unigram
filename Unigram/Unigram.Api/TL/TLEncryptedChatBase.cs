@@ -6,9 +6,5 @@ namespace Telegram.Api.TL
 	public abstract partial class TLEncryptedChatBase : TLObject
 	{
 		public Int32 Id { get; set; }
-		public Int64 AccessHash { get; set; }
-		public Int32 Date { get; set; }
-		public Int32 AdminId { get; set; }
-		public Int32 ParticipantId { get; set; }
 	}
 }

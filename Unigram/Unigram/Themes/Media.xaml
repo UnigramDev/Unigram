@@ -19,6 +19,7 @@
             </Grid.ColumnDefinitions>
             <Grid Width="48" Height="48" VerticalAlignment="Top">
                 <Rectangle Fill="{ThemeResource MessageMediaBackgroundBrush}"/>
+                <Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="96" MaxHeight="96"/>
                 <Border>
                     <Border>
                         <SymbolIcon Symbol="Download" Foreground="{ThemeResource MessageMediaForegroundBrush}"/>
@@ -43,8 +44,46 @@
                     Visibility="Collapsed"/>-->
             </Grid>
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-                <TextBlock Text="{Binding Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{Binding Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                <TextBlock Text="{Binding Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaDocumentThumbTemplate">
+        <Grid MinWidth="260">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Width="72" Height="72" Background="Black" VerticalAlignment="Top">
+                <Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" Width="72" Height="72" Stretch="UniformToFill"/>
+                <Border>
+                    <Border Width="48" Height="48" CornerRadius="24" Background="#54000000">
+                        <SymbolIcon Symbol="Download" Foreground="White"/>
+                    </Border>
+                </Border>
+                <!--<controls:ImageControl TelegramSource="{Binding Document}" Stretch="UniformToFill"/>-->
+
+                <!--<controls:ProgressBarRing 
+                    Background="Transparent"
+                    Foreground="{ThemeResource MessageMediaForegroundBrush}"
+                    SmoothValue="{Binding DownloadingProgress}" 
+                    common:Attached.Tapped="{Binding Dialog.MediaCancelDownloadingCommand, Source={StaticResource Locator}}"
+                    Maximum="1" 
+                    Visibility="Collapsed"/>
+
+                <controls:ProgressBarRing 
+                    Background="Transparent"
+                    Foreground="{ThemeResource MessageMediaForegroundBrush}"
+                    SmoothValue="{Binding UploadingProgress}"
+                    common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
+                    Maximum="1" 
+                    Visibility="Collapsed"/>-->
+            </Grid>
+            <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
+                <TextBlock Text="{Binding Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -175,14 +214,13 @@
                 <!-- TODO: video timing -->
                 <Grid Background="Black" 
                       MinWidth="{ThemeResource TelegramMediaMinWidth}" 
-                      MinHeight="{ThemeResource TelegramMediaMinHeight}">
-
+                      MinHeight="{ThemeResource TelegramMediaMinHeight}"
+                      HorizontalAlignment="Left">
+                    <controls:ImageView Source="{Binding Webpage.Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                        Constraint="{Binding Webpage.Photo}" 
+                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                        MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
                 </Grid>
-                <controls:ImageView Source="{Binding Webpage.Photo, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{Binding Webpage.Photo}" 
-                                    MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
-                                    MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-                                    HorizontalAlignment="Left"/>
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -194,6 +232,7 @@
         EmptyTemplate="{StaticResource MediaEmptyTemplate}"
         AudioTemplate="{StaticResource MediaAudioTemplate}"
         DocumentTemplate="{StaticResource MediaDocumentTemplate}"
+        DocumentThumbTemplate="{StaticResource MediaDocumentThumbTemplate}"
         GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
         GifTemplate="{StaticResource MediaGifTemplate}"
         PhotoTemplate="{StaticResource MediaPhotoTemplate}"

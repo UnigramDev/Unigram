@@ -32,6 +32,7 @@ namespace Unigram.Selectors
         public DataTemplate ChatFriendStickerTemplate { get; set; }
 
         public DataTemplate ServiceMessageTemplate { get; set; }
+        public DataTemplate ServiceMessagePhotoTemplate { get; set; }
 
         public DataTemplate UnreadMessagesTemplate { get; set; }
 
@@ -46,18 +47,24 @@ namespace Unigram.Selectors
 
         private DataTemplate GenerateServiceMessageTemplate(TLMessageBase message)
         {
-            var tLMessageService = message as TLMessageService;
-            if (tLMessageService == null)
+            var serviceMessage = message as TLMessageService;
+            if (serviceMessage == null)
             {
                 return EmptyMessageTemplate;
             }
+
             // TODO: actually this is a local TL, and at this time we don't support it.
             //if (!(tLMessageService.Action is TLMessageActionUnreadMessages))
             //{
             //    return ServiceMessageTemplate ?? EmptyMessageTemplate;
             //}
 
-            return UnreadMessagesTemplate ?? (ServiceMessageTemplate ?? EmptyMessageTemplate);
+            if (serviceMessage.Action is TLMessageActionChatEditPhoto)
+            {
+                return ServiceMessagePhotoTemplate;
+            }
+
+            return ServiceMessageTemplate ?? EmptyMessageTemplate;
         }
 
         private DataTemplate GenerateCommonMessageTemplate(TLMessageBase m)

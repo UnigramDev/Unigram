@@ -47,9 +47,53 @@ namespace Telegram.Api.TL
         {
             get
             {
-                return Title;
+                return null;
             }
         }
         #endregion
+    }
+
+    public partial class TLChat
+    {
+        public override string FullName
+        {
+            get
+            {
+                return Title;
+            }
+        }
+    }
+
+    public partial class TLChatForbidden
+    {
+        public override string FullName
+        {
+            get
+            {
+                return Title;
+            }
+        }
+    }
+
+    public partial class TLChannel
+    {
+        public override string FullName
+        {
+            get
+            {
+                return Title;
+            }
+        }
+    }
+
+    public partial class TLChannelForbidden
+    {
+        public override string FullName
+        {
+            get
+            {
+                return Title;
+            }
+        }
     }
 }

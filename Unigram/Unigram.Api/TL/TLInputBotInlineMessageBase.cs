@@ -6,6 +6,5 @@ namespace Telegram.Api.TL
 	public abstract partial class TLInputBotInlineMessageBase : TLObject
 	{
 		public TLReplyMarkupBase ReplyMarkup { get; set; }
-		public TLInputGeoPointBase GeoPoint { get; set; }
 	}
 }

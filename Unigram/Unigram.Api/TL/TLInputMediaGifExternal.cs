@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputMediaGifExternal : TLInputMediaBase 
 	{
+		public String Url { get; set; }
 		public String Q { get; set; }
 
 		public TLInputMediaGifExternal() { }

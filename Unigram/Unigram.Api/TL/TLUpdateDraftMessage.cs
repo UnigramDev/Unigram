@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateDraftMessage : TLUpdateBase 
 	{
+		public TLPeerBase Peer { get; set; }
 		public TLDraftMessageBase Draft { get; set; }
 
 		public TLUpdateDraftMessage() { }

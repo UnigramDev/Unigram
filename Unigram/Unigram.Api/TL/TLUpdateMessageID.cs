@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateMessageID : TLUpdateBase 
 	{
+		public Int32 Id { get; set; }
 		public Int64 RandomId { get; set; }
 
 		public TLUpdateMessageID() { }

@@ -22,6 +22,8 @@
             <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#7F89A0B4"/>
+
+            <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
         </ResourceDictionary>
 
         <!-- To -->
@@ -44,6 +46,8 @@
             <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#7F89A0B4"/>
+
+            <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
@@ -17,6 +19,7 @@ using Unigram.Core.Notifications;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Display;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -44,11 +47,15 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
+            _logicalDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+
             NavigationCacheMode = NavigationCacheMode.Required;
 
             DataContext = UnigramContainer.Instance.ResolverType<MainViewModel>();
 
             Loaded += OnLoaded;
+
+            searchInit();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -215,20 +222,19 @@ namespace Unigram.Views
             ChangeListState();
         }
 
-        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        private void searchInit()
         {
-            if (txtSearch.Text != "")
-            {
-                if (lvMasterChats.ItemsSource != ViewModel.SearchDialogs)
-                {
-                    lvMasterChats.ItemsSource = ViewModel.SearchDialogs;
-                }
-                ViewModel.GetSearchDialogs(txtSearch.Text);
-            }
-            else
-            {
-                lvMasterChats.ItemsSource = ViewModel.Dialogs;
-            }
+            var SearchTextChangedObservable = Observable.FromEventPattern<TextChangedEventArgs>(txtSearch, "TextChanged");
+            var throttled = SearchTextChangedObservable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x => {
+                if (((TextBox)x.Sender).Text == "")
+                    return;
+                    if (lvMasterChats.ItemsSource != ViewModel.SearchDialogs)
+                    {
+                        searchChats.ItemsSource = ViewModel.SearchResults;
+                    }
+                    ViewModel.GetSearchDialogs(((TextBox)x.Sender).Text);
+     
+            });
         }
 
         private async void PivotItem_Loaded(object sender, RoutedEventArgs e)
@@ -262,6 +268,7 @@ namespace Unigram.Views
 
         #region Background
 
+        private float _logicalDpi;
         private CanvasBitmap _backgroundImage;
         private CanvasImageBrush _backgroundBrush;
 
@@ -272,6 +279,7 @@ namespace Unigram.Views
                 _backgroundImage = await CanvasBitmap.LoadAsync(sender, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
                 _backgroundBrush = new CanvasImageBrush(sender, _backgroundImage);
                 _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
+                _backgroundBrush.Transform = Matrix3x2.CreateScale(_logicalDpi / 96f);
             }).AsAsyncAction());
 
         }
@@ -282,5 +290,19 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (txtSearch.Text != "")
+            {
+                searchChats.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                //  lvMasterChats.Visibility = Visibility.Visible;
+                searchChats.Visibility = Visibility.Collapsed;
+                // lvMasterChats.ItemsSource = ViewModel.Dialogs;
+            }
+        }
     }
 }

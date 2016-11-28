@@ -30,6 +30,9 @@ namespace Telegram.Api.TL
 		public bool HasDuration { get { return Flags.HasFlag(Flag.Duration); } set { Flags = value ? (Flags | Flag.Duration) : (Flags & ~Flag.Duration); } }
 
 		public Flag Flags { get; set; }
+		public String Type { get; set; }
+		public String Title { get; set; }
+		public String Description { get; set; }
 		public String Url { get; set; }
 		public String ThumbUrl { get; set; }
 		public String ContentUrl { get; set; }

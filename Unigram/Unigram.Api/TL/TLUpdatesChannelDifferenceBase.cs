@@ -8,7 +8,5 @@ namespace Telegram.Api.TL
 		public abstract bool IsFinal { get; set; }
 		public Int32 Pts { get; set; }
 		public Int32? Timeout { get; set; }
-		public TLVector<TLChatBase> Chats { get; set; }
-		public TLVector<TLUserBase> Users { get; set; }
 	}
 }

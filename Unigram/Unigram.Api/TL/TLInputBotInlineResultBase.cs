@@ -6,9 +6,6 @@ namespace Telegram.Api.TL
 	public abstract partial class TLInputBotInlineResultBase : TLObject
 	{
 		public String Id { get; set; }
-		public String Type { get; set; }
-		public String Title { get; set; }
-		public String Description { get; set; }
 		public TLInputBotInlineMessageBase SendMessage { get; set; }
 	}
 }

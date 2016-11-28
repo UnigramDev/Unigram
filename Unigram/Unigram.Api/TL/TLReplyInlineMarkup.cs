@@ -5,6 +5,8 @@ namespace Telegram.Api.TL
 {
 	public partial class TLReplyInlineMarkup : TLReplyMarkupBase 
 	{
+		public TLVector<TLKeyboardButtonRow> Rows { get; set; }
+
 		public TLReplyInlineMarkup() { }
 		public TLReplyInlineMarkup(TLBinaryReader from, bool cache = false)
 		{

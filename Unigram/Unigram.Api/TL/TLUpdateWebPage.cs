@@ -6,6 +6,8 @@ namespace Telegram.Api.TL
 	public partial class TLUpdateWebPage : TLUpdateBase, ITLMultiPts 
 	{
 		public TLWebPageBase Webpage { get; set; }
+		public Int32 Pts { get; set; }
+		public Int32 PtsCount { get; set; }
 
 		public TLUpdateWebPage() { }
 		public TLUpdateWebPage(TLBinaryReader from, bool cache = false)

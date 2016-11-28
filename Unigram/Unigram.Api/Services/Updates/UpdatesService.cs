@@ -1374,29 +1374,41 @@ namespace Telegram.Api.Services.Updates
             {
                 var outbox = update is TLUpdateReadHistoryOutbox;
 
-                ITLReadMaxId readMaxId = null;
-                if (updateReadHistory.Peer is TLPeerUser)
+                int maxId;
+                TLPeerBase peer;
+                if (updateReadHistory is TLUpdateReadHistoryInbox)
                 {
-                    readMaxId = _cacheService.GetUser(updateReadHistory.Peer.Id) as ITLReadMaxId;
+                    maxId = ((TLUpdateReadHistoryInbox)updateReadHistory).MaxId;
+                    peer = ((TLUpdateReadHistoryInbox)updateReadHistory).Peer;
                 }
-                else if (updateReadHistory.Peer is TLPeerChat)
+                else
                 {
-                    readMaxId = _cacheService.GetChat(updateReadHistory.Peer.Id) as ITLReadMaxId;
+                    maxId = ((TLUpdateReadHistoryOutbox)updateReadHistory).MaxId;
+                    peer = ((TLUpdateReadHistoryOutbox)updateReadHistory).Peer;
                 }
-                SetReadMaxId(readMaxId, updateReadHistory.MaxId, outbox);
 
-                var dialog = _cacheService.GetDialog(updateReadHistory.Peer);
+                ITLReadMaxId readMaxId = null;
+                if (peer is TLPeerUser)
+                {
+                    readMaxId = _cacheService.GetUser(peer.Id) as ITLReadMaxId;
+                }
+                else if (peer is TLPeerChat)
+                {
+                    readMaxId = _cacheService.GetChat(peer.Id) as ITLReadMaxId;
+                }
+                SetReadMaxId(readMaxId, maxId, outbox);
+
+                var dialog = _cacheService.GetDialog(peer);
                 if (dialog != null)
                 {
                     var dialog53 = dialog as TLDialog;
                     if (dialog53 != null)
                     {
-                        SetReadMaxId(dialog53, updateReadHistory.MaxId, outbox);
-                        SetReadMaxId(dialog53.With as ITLReadMaxId, updateReadHistory.MaxId, outbox);
+                        SetReadMaxId(dialog53, maxId, outbox);
+                        SetReadMaxId(dialog53.With as ITLReadMaxId, maxId, outbox);
                     }
 
                     var notifyMessages = new List<TLMessageCommonBase>();
-                    var maxId = updateReadHistory.MaxId;
                     for (int i = 0; i < dialog.Messages.Count; i++)
                     {
                         var message = dialog.Messages[i] as TLMessageCommonBase;
@@ -1437,7 +1449,7 @@ namespace Telegram.Api.Services.Updates
                     }
 
                     var unreadCount = 0;
-                    if (dialog.TopMessage != null && dialog.TopMessage > updateReadHistory.MaxId)
+                    if (dialog.TopMessage != null && dialog.TopMessage > maxId)
                     {
                         unreadCount = dialog.UnreadCount;
                     }
@@ -3393,14 +3405,27 @@ namespace Telegram.Api.Services.Updates
 
             foreach (var readHistory in readHistoryList)
             {
-                var peerChat = readHistory.Peer as TLPeerChat;
+                int maxId;
+                TLPeerBase peer;
+                if (readHistory is TLUpdateReadHistoryInbox)
+                {
+                    maxId = ((TLUpdateReadHistoryInbox)readHistory).MaxId;
+                    peer = ((TLUpdateReadHistoryInbox)readHistory).Peer;
+                }
+                else
+                {
+                    maxId = ((TLUpdateReadHistoryOutbox)readHistory).MaxId;
+                    peer = ((TLUpdateReadHistoryOutbox)readHistory).Peer;
+                }
+
+                var peerChat = peer as TLPeerChat;
                 if (peerChat != null)
                 {
                     for (var i = 0; i < shortChatMessageList.Count; i++)
                     {
                         if (shortChatMessageList[i].IsOut == outbox
                             && peerChat.Id == shortChatMessageList[i].ChatId
-                            && readHistory.MaxId >= shortChatMessageList[i].Id)
+                            && maxId >= shortChatMessageList[i].Id)
                         {
                             shortChatMessageList[i].IsUnread = false;
                             shortChatMessageList.RemoveAt(i--);
@@ -3414,7 +3439,7 @@ namespace Telegram.Api.Services.Updates
                         {
                             if (message.IsOut == outbox
                                 && peerChat.Id == message.ToId.Id
-                                && readHistory.MaxId >= message.Id)
+                                && maxId >= message.Id)
                             {
                                 message.SetUnreadSilent(false);
                                 newChatMessageList.RemoveAt(i--);
@@ -3424,14 +3449,14 @@ namespace Telegram.Api.Services.Updates
                     continue;
                 }
 
-                var peerUser = readHistory.Peer as TLPeerUser;
+                var peerUser = peer as TLPeerUser;
                 if (peerUser != null)
                 {
                     for (var i = 0; i < shortMessageList.Count; i++)
                     {
                         if (shortMessageList[i].IsOut == outbox
                             && peerUser.Id == shortMessageList[i].UserId
-                            && readHistory.MaxId >= shortMessageList[i].Id)
+                            && maxId >= shortMessageList[i].Id)
                         {
                             shortMessageList[i].IsUnread = false;
                             shortMessageList.RemoveAt(i--);
@@ -3445,7 +3470,7 @@ namespace Telegram.Api.Services.Updates
                         {
                             if (message.IsOut == outbox
                                 && peerUser.Id == message.FromId.Value
-                                && readHistory.MaxId >= message.Id)
+                                && maxId >= message.Id)
                             {
                                 message.SetUnreadSilent(false);
                                 newMessageList.RemoveAt(i--);

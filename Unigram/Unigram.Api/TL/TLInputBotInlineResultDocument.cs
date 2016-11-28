@@ -16,6 +16,9 @@ namespace Telegram.Api.TL
 		public bool HasDescription { get { return Flags.HasFlag(Flag.Description); } set { Flags = value ? (Flags | Flag.Description) : (Flags & ~Flag.Description); } }
 
 		public Flag Flags { get; set; }
+		public String Type { get; set; }
+		public String Title { get; set; }
+		public String Description { get; set; }
 		public TLInputDocumentBase Document { get; set; }
 
 		public TLInputBotInlineResultDocument() { }
