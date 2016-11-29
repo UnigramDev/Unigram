@@ -100,6 +100,7 @@ namespace Unigram
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
+            Execute.Initialize();
             var timer = Stopwatch.StartNew();
             new ViewModelLocator().Configure();
             Debug.WriteLine($"INITIALIZE TIME: {timer.Elapsed}");

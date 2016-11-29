@@ -13,6 +13,7 @@ using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
 using Telegram.Logs;
 using Template10.Utils;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -44,10 +45,9 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             Items = new ObservableCollection<TLDialog>();
-            LoadFirstSlice();
         }
 
-        private async void LoadFirstSlice()
+        public async void LoadFirstSlice()
         {
             var lastDate = 0;
             var lastMsgId = 0;
