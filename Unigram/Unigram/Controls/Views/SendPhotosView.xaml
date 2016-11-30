@@ -107,8 +107,8 @@
         </Grid>
 
         <CommandBar x:Name="Commands" Background="#FF1F1F1F" Grid.Row="3">
-            <AppBarButton Click="Accept_Click" Icon="Accept"/>
-            <AppBarButton Click="Cancel_Click" Icon="Cancel"/>
+            <AppBarButton Click="Accept_Click" Icon="Send" Content="Send" />
+            <AppBarButton Click="Cancel_Click" Icon="Cancel" Content="Cancel"/>
         </CommandBar>
     </Grid>
 </controls:ContentDialogBase>
