@@ -116,6 +116,7 @@
     <Compile Include="Controls\OrientableListView.cs" />
     <Compile Include="Controls\ProgressBarRing.cs" />
     <Compile Include="Controls\ProgressBarRingSlice.cs" />
+    <Compile Include="Controls\ReplyMarkupPanel.cs" />
     <Compile Include="Controls\SimpleButton.cs" />
     <Compile Include="Controls\Views\SendPhotosView.xaml.cs">
       <DependentUpon>SendPhotosView.xaml</DependentUpon>

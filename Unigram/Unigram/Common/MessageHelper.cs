@@ -643,33 +643,37 @@ namespace Unigram.Common
                 var navigation = (string)data;
                 if (type == TLType.MessageEntityUrl || type == TLType.MessageEntityTextUrl)
                 {
-                    if (type == TLType.MessageEntityTextUrl)
-                    {
-                        var dialog = new MessageDialog(navigation, "Open this link?");
-                        dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
-                        dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
-                        dialog.DefaultCommandIndex = 0;
-                        dialog.CancelCommandIndex = 1;
-
-                        var result = await dialog.ShowAsync();
-                        if (result == null || (int)result?.Id == 1)
-                        {
-                            return;
-                        }
-                    }
-
                     if (navigation.Contains("telegram.me"))
                     {
                         HandleTelegramUrl(navigation);
                     }
                     else
                     {
+                        if (type == TLType.MessageEntityTextUrl)
+                        {
+                            var dialog = new MessageDialog(navigation, "Open this link?");
+                            dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
+                            dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
+                            dialog.DefaultCommandIndex = 0;
+                            dialog.CancelCommandIndex = 1;
+
+                            var result = await dialog.ShowAsync();
+                            if (result == null || (int)result?.Id == 1)
+                            {
+                                return;
+                            }
+                        }
+
                         if (!navigation.StartsWith("http"))
                         {
                             navigation = "http://" + navigation;
                         }
 
-                        await Launcher.LaunchUriAsync(new Uri(navigation));
+                        Uri uri;
+                        if (Uri.TryCreate(navigation, UriKind.Absolute, out uri))
+                        {
+                            await Launcher.LaunchUriAsync(uri);
+                        }
                     }
                 }
                 else if (type == TLType.MessageEntityEmail)

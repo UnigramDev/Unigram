@@ -160,6 +160,11 @@ namespace Unigram.Controls.Messages
             Context.Text = $"@{message.ViaBot.Username} ";
         }
 
+        protected void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
+        {
+            Context.KeyboardButtonExecute(e.Button, ViewModel);
+        }
+
         /// <summary>
         /// x:Bind hack
         /// </summary>
