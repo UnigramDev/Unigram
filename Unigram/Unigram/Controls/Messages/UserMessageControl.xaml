@@ -11,7 +11,9 @@
     RequestedTheme="Dark"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    HorizontalAlignment="Right"
+    MaxWidth="430">
 
     <!-- TODO: not the right way -->
     <Border Height="10" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
@@ -21,9 +23,7 @@
             Padding="{ThemeResource MessageContentPadding}" 
             Background="{ThemeResource MessageBackgroundBrush}" 
             BorderBrush="{ThemeResource MessageBorderBrush}" 
-            BorderThickness="0,0,0,2" 
-            HorizontalAlignment="Right" 
-            MaxWidth="430">
+            BorderThickness="0,0,0,2">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -77,4 +77,7 @@
             </StackPanel>
         </Grid>
     </Border>
+
+    <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick"/>
+
 </local:MessageControlBase>

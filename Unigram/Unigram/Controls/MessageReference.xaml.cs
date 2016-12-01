@@ -376,6 +376,7 @@ namespace Unigram.Controls
 
             TitleLabel.Text = GetFromLabel(message, title);
             ServiceLabel.Text = "Photo";
+            MessageLabel.Text = string.Empty;
 
             var photoMedia = message.Media as TLMessageMediaPhoto;
             if (photoMedia != null)

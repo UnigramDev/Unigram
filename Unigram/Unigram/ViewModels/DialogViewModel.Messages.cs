@@ -64,31 +64,9 @@ namespace Unigram.ViewModels
         #region Copy
 
         public RelayCommand<TLMessage> MessageCopyCommand => new RelayCommand<TLMessage>(MessageCopyExecute);
-        private async void MessageCopyExecute(TLMessage message)
+        private void MessageCopyExecute(TLMessage message)
         {
             if (message == null) return;
-
-            if (message.Media is TLMessageMediaGame)
-            {
-                var gameMedia = message.Media as TLMessageMediaGame;
-
-                var inline = message.ReplyMarkup as TLReplyInlineMarkup;
-                var button = inline.Rows.SelectMany(x => x.Buttons).OfType<TLKeyboardButtonGame>().FirstOrDefault();
-                if (button != null)
-                {
-                    var responseBot = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, 1);
-                    if (responseBot.IsSucceeded && responseBot.Value.IsHasUrl && responseBot.Value.HasUrl)
-                    {
-                        var user = CacheService.GetUser(message.ViaBotId) as TLUser;
-                        if (user != null)
-                        {
-                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = responseBot.Value.Url, Username = user.Username, Title = gameMedia.Game.Title });
-                        }
-                    }
-                }
-
-                return;
-            }
 
             string text = null;
 
@@ -188,6 +166,101 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region KeyboardButton
 
+        //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand => new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);
+        public async void KeyboardButtonExecute(TLKeyboardButtonBase button, TLMessage message)
+        {
+            var switchInlineButton = button as TLKeyboardButtonSwitchInline;
+            if (switchInlineButton != null)
+            {
+
+            }
+
+            var urlButton = button as TLKeyboardButtonUrl;
+            if (urlButton != null)
+            {
+                if (urlButton.Url.Contains("telegram.me"))
+                {
+                    MessageHelper.HandleTelegramUrl(urlButton.Url);
+                }
+                else
+                {
+                    var navigation = urlButton.Url;
+                    var dialog = new MessageDialog(navigation, "Open this link?");
+                    dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
+                    dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
+                    dialog.DefaultCommandIndex = 0;
+                    dialog.CancelCommandIndex = 1;
+
+                    var result = await dialog.ShowAsync();
+                    if (result == null || (int)result?.Id == 1)
+                    {
+                        return;
+                    }
+
+                    if (!navigation.StartsWith("http"))
+                    {
+                        navigation = "http://" + navigation;
+                    }
+
+                    Uri uri;
+                    if (Uri.TryCreate(navigation, UriKind.Absolute, out uri))
+                    {
+                        await Launcher.LaunchUriAsync(uri);
+                    }
+                }
+            }
+
+            var callbackButton = button as TLKeyboardButtonCallback;
+            if (callbackButton != null)
+            {
+                var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, 0);
+                if (response.IsSucceeded && response.Value.HasMessage)
+                {
+                    if (response.Value.IsAlert)
+                    {
+                        await new MessageDialog(response.Value.Message).ShowAsync();
+                    }
+                    else
+                    {
+                        // TODO:
+                        await new MessageDialog(response.Value.Message).ShowAsync();
+                    }
+                }
+            }
+
+            var gameButton = button as TLKeyboardButtonGame;
+            if (gameButton != null)
+            {
+                var gameMedia = message.Media as TLMessageMediaGame;
+                if (gameMedia != null)
+                {
+                    var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, 1);
+                    if (response.IsSucceeded && response.Value.IsHasUrl && response.Value.HasUrl)
+                    {
+                        var user = CacheService.GetUser(message.ViaBotId) as TLUser;
+                        if (user != null)
+                        {
+                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Value.Url, Username = user.Username, Title = gameMedia.Game.Title });
+                        }
+                    }
+                }
+            }
+
+            var requestPhoneButton = button as TLKeyboardButtonRequestPhone;
+            if (requestPhoneButton != null)
+            {
+
+            }
+
+            var requestGeoButton = button as TLKeyboardButtonRequestGeoLocation;
+            if (requestGeoButton != null)
+            {
+
+            }
+        }
+
+        #endregion
     }
 }

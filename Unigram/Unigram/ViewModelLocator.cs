@@ -73,7 +73,7 @@
 
             container.Build();
 
-            Initialize();
+            Task.Run(() => Initialize());
         }
 
         private void InitializeLayer()
@@ -113,8 +113,6 @@
 
         private void Initialize()
         {
-            Execute.Initialize();
-
             var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
             var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
             var updatesService = UnigramContainer.Instance.ResolverType<IUpdatesService>();
