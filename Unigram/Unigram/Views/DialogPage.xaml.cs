@@ -79,6 +79,7 @@ namespace Unigram.Views
         {
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
+            ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -284,6 +285,11 @@ namespace Unigram.Views
 
 
 
+        }
+
+        private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
+        {
+            ViewModel.KeyboardButtonExecute(e.Button, null);
         }
     }
 

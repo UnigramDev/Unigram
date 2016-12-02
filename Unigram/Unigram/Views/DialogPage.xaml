@@ -410,7 +410,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto"/>
-            <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Grid x:Name="gridLoading"
@@ -802,6 +801,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -969,6 +969,16 @@
                     </MenuFlyout>
                 </FlyoutBase.AttachedFlyout>
             </controls:GlyphButton>
+
+            <ScrollViewer x:Name="ReplyMarkupViewer"
+                          VerticalScrollBarVisibility="Auto"
+                          VerticalScrollMode="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          HorizontalScrollMode="Disabled"
+                          Grid.ColumnSpan="4"
+                          Grid.Row="2">
+                <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick"/>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>

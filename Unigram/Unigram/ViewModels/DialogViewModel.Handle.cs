@@ -205,7 +205,7 @@ namespace Unigram.ViewModels
                         var user = CacheService.GetUser(message.FromId) as TLUser;
                         if (user != null && user.IsBot)
                         {
-                            //SetReplyMarkup(message, false);
+                            SetReplyMarkup(message);
                         }
                     }
 
