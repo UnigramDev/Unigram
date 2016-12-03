@@ -19,29 +19,29 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid x:Name="Header"
-                  Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
-                  Height="{ThemeResource AppBarThemeCompactHeight}"
-                  Canvas.ZIndex="2"
-                  Grid.Row="0">
+              Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+              Height="{ThemeResource AppBarThemeCompactHeight}"
+              Canvas.ZIndex="2"
+              Grid.Row="0">
             <TextBlock x:Name="tblPivotTitle"
-                           Text="UNIGRAM"
-                           Style="{ThemeResource BaseTextBlockStyle}"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Center"
-                           Margin="12,0" />
+                       Text="UNIGRAM"
+                       Style="{ThemeResource BaseTextBlockStyle}"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Margin="12,0" />
         </Grid>
         <RelativePanel x:Name="rpMain" Grid.Row="1">
             <!-- Master - Titlebar -->
             <!--<RelativePanel x:Name="rpMasterTitlebar"
-                           Style="{StaticResource StyleRPMasterTitleBar}">
-                <TextBlock x:Name="tblMasterTitle"
-                           x:Uid="Login-Titlebar-Title"
-                           Text="WELCOME TO UNIGRAM" 
-                           Style="{StaticResource BaseTextBlockStyle}"
-                           RequestedTheme="Dark"
-                           Padding="16,0"
-                           RelativePanel.AlignVerticalCenterWithPanel="True"/>
-            </RelativePanel>-->
+                 Style="{StaticResource StyleRPMasterTitleBar}">
+                 <TextBlock x:Name="tblMasterTitle"
+                 x:Uid="Login-Titlebar-Title"
+                 Text="WELCOME TO UNIGRAM" 
+                 Style="{StaticResource BaseTextBlockStyle}"
+                 RequestedTheme="Dark"
+                 Padding="16,0"
+                 RelativePanel.AlignVerticalCenterWithPanel="True"/>
+                 </RelativePanel>-->
 
             <!-- Master - Main content -->
             <RelativePanel x:Name="rpMasterContent"
@@ -65,9 +65,9 @@
                                     Width="96"
                                     x:Name="imgMasterWelcomeLogo">
                                 <Image 
-                                   Height="96"
-                                   Width="96"  
-                                   Source="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
+                                    Height="96"
+                                    Width="96"  
+                                    Source="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
                             </Canvas>
                             <TextBlock x:Name="tblMasterWelcomeIntroText"
                                        x:Uid="Login-Intro-Intro"
@@ -115,16 +115,16 @@
                                            RelativePanel.Below="tblMasterCodeIntro">
                                 <!-- Input for the user to fill in the recieved code -->
                                 <controls:UpdateTextBox x:Name="txtMasterCodeInputInput"
-                                         x:Uid="Login-Code-Code"
-                                         Text="{Binding PhoneCode, Mode=TwoWay}"
-                                         Margin="0,16,0,0"
-                                         InputScope="Digits"
-                                         IsTextPredictionEnabled="False"
-                                         Header="Enter your code:"
-                                         PlaceholderText="Your code" 
-                                         RelativePanel.AlignLeftWithPanel="True"
-                                         RelativePanel.AlignRightWithPanel="True"
-                                         RelativePanel.AlignTopWithPanel="True" 
+                                                        x:Uid="Login-Code-Code"
+                                                        Text="{Binding PhoneCode, Mode=TwoWay}"
+                                                        Margin="0,16,0,0"
+                                                        InputScope="Digits"
+                                                        IsTextPredictionEnabled="False"
+                                                        Header="Enter your code:"
+                                                        PlaceholderText="Your code" 
+                                                        RelativePanel.AlignLeftWithPanel="True"
+                                                        RelativePanel.AlignRightWithPanel="True"
+                                                        RelativePanel.AlignTopWithPanel="True" 
                                                         TextChanged="txtMasterCodeInputInput_TextChanged"/>
                                 <ProgressBar x:Name="pbarLoading" 
                                              IsIndeterminate="True"

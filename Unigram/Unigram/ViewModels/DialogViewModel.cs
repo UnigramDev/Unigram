@@ -149,11 +149,12 @@ namespace Unigram.ViewModels
             var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, maxId, 15);
             if (result.IsSucceeded)
             {
-                ProcessReplies(result.Value.Messages);
+                //ProcessReplies(result.Value.Messages);
 
-                foreach (var item in result.Value.Messages)
+                foreach (var item in result.Value.Messages.Reverse())
                 {
-                    Messages.Insert(0, item);
+                    //Messages.Insert(0, item);
+                    InsertMessage(item as TLMessageCommonBase);
                 }
             }
 
@@ -529,7 +530,7 @@ namespace Unigram.ViewModels
             await SendMessageAsync(null, args != null);
         }
 
-        public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool sticker)
+        public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool sticker, bool useReplyMarkup = false)
         {
             var messageText = Text?.Replace('\r', '\n');
 
@@ -571,7 +572,7 @@ namespace Unigram.ViewModels
                 Reply = null;
             }
 
-            var previousMessage = InsertSendingMessage(message);
+            var previousMessage = InsertSendingMessage(message, useReplyMarkup);
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
                 if (document != null)
@@ -819,24 +820,24 @@ namespace Unigram.ViewModels
             TLMessageBase result;
             if (Messages.Count > 0)
             {
-                //if (useReplyMarkup && _replyMarkupMessage != null)
-                //{
-                //    var chat = With as TLChatBase;
-                //    if (chat != null)
-                //    {
-                //        message.ReplyToMsgId = _replyMarkupMessage.Id;
-                //        message.Reply = _replyMarkupMessage;
-                //    }
+                if (useReplyMarkup && _replyMarkupMessage != null)
+                {
+                    var chat = With as TLChatBase;
+                    if (chat != null)
+                    {
+                        message.ReplyToMsgId = _replyMarkupMessage.Id;
+                        message.Reply = _replyMarkupMessage;
+                    }
 
-                //    Execute.BeginOnUIThread(() =>
-                //    {
-                //        if (Reply != null)
-                //        {
-                //            Reply = null;
-                //            SetReplyMarkup(null);
-                //        }
-                //    });
-                //}
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        if (Reply != null)
+                        {
+                            Reply = null;
+                            SetReplyMarkup(null);
+                        }
+                    });
+                }
 
                 var messagesContainer = Reply as TLMessagesContainter;
                 if (Reply != null)

@@ -168,13 +168,70 @@ namespace Unigram.ViewModels
 
         #region KeyboardButton
 
+        private TLMessage _replyMarkupMessage;
+        private TLReplyMarkupBase _replyMarkup;
+        public TLReplyMarkupBase ReplyMarkup
+        {
+            get
+            {
+                return _replyMarkup;
+            }
+            set
+            {
+                Set(ref _replyMarkup, value);
+            }
+        }
+
+        private void SetReplyMarkup(TLMessage message)
+        {
+            if (Reply != null && message != null)
+            {
+                return;
+            }
+
+            if (message != null && message.ReplyMarkup != null)
+            {
+                if (message.ReplyMarkup is TLReplyInlineMarkup)
+                {
+                    return;
+                }
+
+                //var keyboardMarkup = message.ReplyMarkup as TLReplyKeyboardMarkup;
+                //if (keyboardMarkup != null && keyboardMarkup.IsPersonal && !message.IsMention)
+                //{
+                //    return;
+                //}
+
+                var keyboardHide = message.ReplyMarkup as TLReplyKeyboardHide;
+                if (keyboardHide != null && _replyMarkupMessage != null && _replyMarkupMessage.FromId.Value != message.FromId.Value)
+                {
+                    return;
+                }
+
+                var keyboardForceReply = message.ReplyMarkup as TLReplyKeyboardForceReply;
+                if (keyboardForceReply != null /*&& !keyboardForceReply.HasResponse*/)
+                {
+                    _replyMarkupMessage = null;
+                    ReplyMarkup = null;
+                    Reply = message;
+                    return;
+                }
+
+            }
+
+            //this.SuppressOpenCommandsKeyboard = (message != null && message.ReplyMarkup != null && suppressOpenKeyboard);
+
+            _replyMarkupMessage = message;
+            ReplyMarkup = message?.ReplyMarkup;
+        }
+
         //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand => new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);
         public async void KeyboardButtonExecute(TLKeyboardButtonBase button, TLMessage message)
         {
             var switchInlineButton = button as TLKeyboardButtonSwitchInline;
             if (switchInlineButton != null)
             {
-
+                return;
             }
 
             var urlButton = button as TLKeyboardButtonUrl;
@@ -210,6 +267,8 @@ namespace Unigram.ViewModels
                         await Launcher.LaunchUriAsync(uri);
                     }
                 }
+
+                return;
             }
 
             var callbackButton = button as TLKeyboardButtonCallback;
@@ -228,6 +287,8 @@ namespace Unigram.ViewModels
                         await new MessageDialog(response.Value.Message).ShowAsync();
                     }
                 }
+
+                return;
             }
 
             var gameButton = button as TLKeyboardButtonGame;
@@ -246,18 +307,27 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
+
+                return;
             }
 
             var requestPhoneButton = button as TLKeyboardButtonRequestPhone;
             if (requestPhoneButton != null)
             {
-
+                return;
             }
 
             var requestGeoButton = button as TLKeyboardButtonRequestGeoLocation;
             if (requestGeoButton != null)
             {
+                return;
+            }
 
+            var keyboardButton = button as TLKeyboardButton;
+            if (keyboardButton != null)
+            {
+                _text = keyboardButton.Text;
+                await SendMessageAsync(null, false, true);
             }
         }
 
