@@ -106,7 +106,7 @@
                         <ListView.Header>
                             <controls:SearchTextBox x:Name="txtSearch" 
                                                     Margin="12,8" 
-                                                    PlaceholderText="Search messages or users"
+                                                    PlaceholderText="Search chats"
                                                     TextChanged="txtSearch_TextChanged"/>
                         </ListView.Header>
                         <ListView.Footer>
@@ -261,10 +261,12 @@
                 <CommandBar.PrimaryCommands>
                     <AppBarButton x:Name="cbtnMasterNewChat"
                                   x:Uid="CBTN-NewChat"
+                                  IsEnabled="False"
                                   Icon="Add"
                                   Label="New chat" />
                     <AppBarButton x:Name="cbtnMasterSelect"
                                   x:Uid="CBTN-Select"
+                                  IsEnabled="False"
                                   Icon="Bullets"
                                   Label="Select"
                                   Click="cbtnMasterSelect_Click" />
@@ -291,6 +293,7 @@
                 <CommandBar.SecondaryCommands>
                     <AppBarButton x:Name="cbtnMasterSettings"
                                   x:Uid="CBTN-Settings"
+                                  IsEnabled="False"
                                   Icon="Setting"
                                   Label="Settings"
                                   Click="cbtnMasterSettings_Click" />
