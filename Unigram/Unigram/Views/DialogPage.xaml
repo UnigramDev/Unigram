@@ -497,16 +497,19 @@
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
                                         x:Name="cbtnReportSpam"
                                         x:Uid="FCBTN-ReportSpam"
+                                        IsEnabled="False"
                                         Tag="&#xE1DE;"
                                         Text="Report spam" />
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                                         x:Name="cbtnSearch"
                                         x:Uid="FCBTN-Search"
+                                        IsEnabled="False"
                                         Tag="&#xE11A;"
                                         Text="Search" />
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
                                         x:Name="cbtnPinToStart"
                                         x:Uid="FCBTN-Pin"
+                                        IsEnabled="False"
                                         Tag="&#xE141;"
                                         Text="Pin to Start"/>
                     </MenuFlyout>
@@ -944,14 +947,17 @@
                             Command="{Binding SendPhotoCommand}"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                             x:Uid="FCBTN-File"
+                                        IsEnabled="False"
                             Text="File"
                             Tag="&#xE160;"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                             x:Uid="FCBTN-Location"
+                                        IsEnabled="False"
                             Text="Location" 
                             Tag="&#xE1C4;"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                             x:Uid="FCBTN-Contact"
+                                        IsEnabled="False"
                             Text="Contact"
                             Tag="&#xE136;"/>
                         <MenuFlyout.MenuFlyoutPresenterStyle>
