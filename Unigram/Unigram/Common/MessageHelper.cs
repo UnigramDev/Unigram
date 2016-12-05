@@ -62,7 +62,7 @@ namespace Unigram.Common
                     caption = !string.IsNullOrWhiteSpace(((ITLMediaCaption)message17.Media).Caption);
                 }
 
-                sender.Visibility = (message17.Media == null || message17.Media is TLMessageMediaEmpty || message17.Media is TLMessageMediaWebPage || caption ? Visibility.Visible : Visibility.Collapsed);
+                sender.Visibility = (message17.Media == null || message17.Media is TLMessageMediaEmpty || message17.Media is TLMessageMediaWebPage || message17.Media is TLMessageMediaGame || caption ? Visibility.Visible : Visibility.Collapsed);
             }
             var message = newValue as TLMessage;
             if (message != null && sender.Visibility == Visibility.Visible)

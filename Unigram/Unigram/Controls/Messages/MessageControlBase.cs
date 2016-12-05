@@ -48,6 +48,14 @@ namespace Unigram.Controls.Messages
         //    };
         //}
 
+        #region Binding
+        protected Visibility EditedVisibility(bool hasEditDate, bool hasViaBotId, TLReplyMarkupBase replyMarkup)
+        {
+            return hasEditDate && !hasViaBotId && replyMarkup?.TypeId != TLType.ReplyInlineMarkup ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        #endregion
+
         protected void OnMessageChanged(TextBlock paragraph)
         {
             paragraph.Inlines.Clear();
