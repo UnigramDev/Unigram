@@ -782,6 +782,12 @@ namespace Telegram.Api.TL
                 return chat.ChatId;
             }
 
+            var channel = inputPeer as TLInputPeerChannel;
+            if (channel != null)
+            {
+                return channel.ChannelId;
+            }
+
             // TODO: is this needed?
             //var contact = inputPeer as TLInputPeerContact;
             //if (contact != null)
