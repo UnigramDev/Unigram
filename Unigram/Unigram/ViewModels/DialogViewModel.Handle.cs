@@ -38,7 +38,8 @@ namespace Unigram.ViewModels
                     {
                         return;
                     }
-                    if (already != message)
+
+                    //if (already != message)
                     {
                         already.Edit(message);
                     }

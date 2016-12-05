@@ -354,21 +354,22 @@ namespace Unigram.ViewModels
                 var result = response.Value as TLMessagesAllStickers;
                 if (result != null)
                 {
-                    var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, Extensions.Buffered<TLDocument>(x.Count)));
+                    //var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, Extensions.Buffered<TLDocument>(x.Count)));
+                    var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, result.Documents.OfType<TLDocument>().Where(y => ((TLInputStickerSetID)y.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().Stickerset).Id == x.Id)));
                     StickerSets = new List<KeyedList<TLStickerSet, TLDocument>>(stickerSets);
                     StickerSets.Insert(0, new KeyedList<TLStickerSet, TLDocument>(new TLStickerSet { Title = "Frequently used", ShortName = "tlg/recentlyUsed" }, recent.Stickers.OfType<TLDocument>()));
                     RaisePropertyChanged(() => StickerSets);
 
-                    await Task.Delay(1000);
+                    //await Task.Delay(1000);
 
-                    var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = StickerSets[1].Key.ShortName });
-                    if (set.IsSucceeded)
-                    {
-                        for (int i = 0; i < set.Value.Documents.Count; i++)
-                        {
-                            StickerSets[1][i] = set.Value.Documents[i] as TLDocument;
-                        }
-                    }
+                    //var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = StickerSets[1].Key.ShortName });
+                    //if (set.IsSucceeded)
+                    //{
+                    //    for (int i = 0; i < set.Value.Documents.Count; i++)
+                    //    {
+                    //        StickerSets[1][i] = set.Value.Documents[i] as TLDocument;
+                    //    }
+                    //}
 
                     Debug.WriteLine("Done");
 
