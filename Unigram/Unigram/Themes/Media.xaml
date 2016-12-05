@@ -248,6 +248,11 @@
                                         Constraint="{Binding Media.Game.Document}" 
                                         MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+
+                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="4">
+                        <TextBlock Text="GAME" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                    </Border>
+
                 </Grid>
             </StackPanel>
         </Grid>
