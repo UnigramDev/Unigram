@@ -234,5 +234,85 @@ namespace Unigram.Controls.Messages
             return false;
         }
         #endregion
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            if (ViewModel?.Media == null || !IsFullMedia(ViewModel?.Media))
+            {
+                return base.MeasureOverride(availableSize);
+            }
+
+            object constraint = null;
+            if (ViewModel?.Media.TypeId == TLType.MessageMediaPhoto)
+            {
+                constraint = ((TLMessageMediaPhoto)ViewModel?.Media).Photo;
+            }
+            else if (ViewModel?.Media.TypeId == TLType.MessageMediaDocument)
+            {
+                constraint = ((TLMessageMediaDocument)ViewModel?.Media).Document;
+            }
+
+            if (constraint == null)
+            {
+                return base.MeasureOverride(availableSize);
+            }
+
+            var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320));
+            var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 320));
+
+            var width = 0.0;
+            var height = 0.0;
+
+            var photo = constraint as TLPhoto;
+            if (photo != null)
+            {
+                //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
+                var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
+                if (photoSize != null)
+                {
+                    width = photoSize.W;
+                    height = photoSize.H;
+
+                    goto Calculate;
+                }
+            }
+
+            var document = constraint as TLDocument;
+            if (document != null)
+            {
+                var imageSize = document.Attributes.OfType<TLDocumentAttributeImageSize>().FirstOrDefault();
+                if (imageSize != null)
+                {
+                    width = imageSize.W;
+                    height = imageSize.H;
+
+                    goto Calculate;
+                }
+
+                var video = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+                if (video != null)
+                {
+                    width = video.W;
+                    height = video.H;
+
+                    goto Calculate;
+                }
+            }
+
+            Calculate:
+            if (width > availableWidth || height > availableHeight)
+            {
+                var ratioX = availableWidth / width;
+                var ratioY = availableHeight / height;
+                var ratio = Math.Min(ratioX, ratioY);
+
+                return base.MeasureOverride(new Size(width * ratio, availableSize.Height));
+            }
+            else
+            {
+                return base.MeasureOverride(new Size(width, availableSize.Height));
+            }
+        }
+
     }
 }

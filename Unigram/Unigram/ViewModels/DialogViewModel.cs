@@ -915,7 +915,7 @@ namespace Unigram.ViewModels
                 Messages.Clear();
                 Messages.Add(message);
 
-                var history = CacheService.GetHistory(TLUtils.InputPeerToPeer(Peer, ProtoService.CurrentUserId), 15);
+                var history = CacheService.GetHistory(Peer.ToPeer(), 15);
                 result = history.FirstOrDefault();
 
                 for (int j = 0; j < history.Count; j++)

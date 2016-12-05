@@ -130,7 +130,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            CacheService.DeleteMessages(TLUtils.InputPeerToPeer(Peer, SettingsHelper.UserId), lastMessage, remoteMessages);
+            CacheService.DeleteMessages(Peer.ToPeer(), lastMessage, remoteMessages);
             CacheService.DeleteMessages(cachedMessages);
 
             Execute.BeginOnUIThread(() =>

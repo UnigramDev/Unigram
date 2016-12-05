@@ -238,7 +238,7 @@ namespace Unigram.ViewModels
                 //    {
                 //        return;
                 //    }
-                _currentDialog = (_currentDialog ?? CacheService.GetDialog(TLUtils.InputPeerToPeer(Peer, SettingsHelper.UserId)));
+                _currentDialog = (_currentDialog ?? CacheService.GetDialog(Peer.ToPeer()));
 
                 var dialog = _currentDialog;
                 if (dialog != null)
