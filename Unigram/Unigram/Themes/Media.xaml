@@ -19,7 +19,7 @@
             </Grid.ColumnDefinitions>
             <Grid Width="48" Height="48" VerticalAlignment="Top">
                 <Rectangle Fill="{ThemeResource MessageMediaBackgroundBrush}"/>
-                <Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="96" MaxHeight="96"/>
+                <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="96" MaxHeight="96"/>
                 <Border>
                     <Border>
                         <SymbolIcon Symbol="Download" Foreground="{ThemeResource MessageMediaForegroundBrush}"/>
@@ -44,8 +44,8 @@
                     Visibility="Collapsed"/>-->
             </Grid>
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-                <TextBlock Text="{Binding Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{Binding Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -57,7 +57,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid Width="72" Height="72" Background="Black" VerticalAlignment="Top">
-                <Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" Width="72" Height="72" Stretch="UniformToFill"/>
+                <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" Width="72" Height="72" Stretch="UniformToFill"/>
                 <Border>
                     <Border Width="48" Height="48" CornerRadius="24" Background="#54000000">
                         <SymbolIcon Symbol="Download" Foreground="White"/>
@@ -82,22 +82,22 @@
                     Visibility="Collapsed"/>-->
             </Grid>
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-                <TextBlock Text="{Binding Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{Binding Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
             </StackPanel>
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="MediaPhotoTemplate" x:DataType="models:TLMessageMediaPhoto">
+    <DataTemplate x:Key="MediaPhotoTemplate">
         <Grid Background="Black" 
               MinWidth="{ThemeResource TelegramMediaMinWidth}" 
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
-            <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
-                                Constraint="{Binding Photo}" 
+            <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{Binding Media.Photo}" 
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-            <controls:ProgressBarRing Value="{Binding UploadingProgress}"/>
+            <controls:ProgressBarRing Value="{Binding Media.UploadingProgress}"/>
 
             <!--<controls:ProgressBarRing 
                     SmoothValue="{Binding UploadingProgress}"
@@ -107,12 +107,12 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="MediaVideoTemplate" x:DataType="models:TLMessageMediaPhoto">
+    <DataTemplate x:Key="MediaVideoTemplate">
         <Grid Background="Black" 
               MinWidth="{ThemeResource TelegramMediaMinWidth}" 
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
-            <controls:ImageView Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                Constraint="{Binding Document}" 
+            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{Binding Media.Document}" 
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
@@ -128,12 +128,12 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="MediaGifTemplate" x:DataType="models:TLMessageMediaDocument">
+    <DataTemplate x:Key="MediaGifTemplate">
         <Grid Background="Black" 
               MinWidth="{ThemeResource TelegramMediaMinWidth}" 
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
-            <controls:ImageView Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                Constraint="{Binding Document}" 
+            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{Binding Media.Document}" 
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
@@ -141,15 +141,15 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="MediaAudioTemplate" x:DataType="models:TLMessageMediaDocument">
+    <DataTemplate x:Key="MediaAudioTemplate">
         <Grid>
             <local:VoiceMediaControl/>
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="MediaGeoPointTemplate" x:DataType="models:TLMessageMediaGeo">
+    <DataTemplate x:Key="MediaGeoPointTemplate">
         <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-            <Image Source="{Binding Geo, Converter={StaticResource VenueToStaticImageConverter}}" MaxWidth="320" MaxHeight="240"/>
+            <Image Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" MaxWidth="320" MaxHeight="240"/>
             <Border Width="20" Height="20" CornerRadius="10" Background="#54000000">
                 <Border CornerRadius="10" Margin="1" Background="White">
                     <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
@@ -158,7 +158,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="WebPageMediaTemplate" x:DataType="models:TLMessageMediaWebPage">
+    <DataTemplate x:Key="WebPageMediaTemplate">
         <Grid Margin="0,8,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -167,10 +167,10 @@
             <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>
 
             <StackPanel Margin="0,0,0,2" Grid.Column="1">
-                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -185,17 +185,17 @@
             <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>
 
             <StackPanel Margin="0,0,0,2" Grid.Column="1">
-                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
             </StackPanel>
 
-            <Image Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" MaxWidth="88" MaxHeight="88" Margin="12,0,0,0" VerticalAlignment="Top" Grid.Column="2"/>
+            <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" MaxWidth="88" MaxHeight="88" Margin="12,0,0,0" VerticalAlignment="Top" Grid.Column="2"/>
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="WebPagePhotoMediaTemplate" x:DataType="models:TLMessageMediaWebPage">
+    <DataTemplate x:Key="WebPagePhotoMediaTemplate">
         <Grid Margin="0,8,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -204,20 +204,48 @@
             <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>
 
             <StackPanel Grid.Column="1">
-                <StackPanel Margin="0,0,0,8" Visibility="{x:Bind Webpage.SummaryVisibility}">
-                    <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind ((models:TLWebPage)Webpage).Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{x:Bind Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                <StackPanel Margin="0,0,0,8" Visibility="{Binding Media.Webpage.SummaryVisibility}">
+                    <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
                 </StackPanel>
-                
+
                 <!-- TODO: video timing -->
                 <Grid Background="Black" 
                       MinWidth="{ThemeResource TelegramMediaMinWidth}" 
                       MinHeight="{ThemeResource TelegramMediaMinHeight}"
                       HorizontalAlignment="Left">
-                    <controls:ImageView Source="{Binding Webpage.Photo, Converter={StaticResource DefaultPhotoConverter}}"
-                                        Constraint="{Binding Webpage.Photo}" 
+                    <controls:ImageView Source="{Binding Media.Webpage.Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                        Constraint="{Binding Media.Webpage.Photo}" 
+                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                        MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GameMediaTemplate" x:DataType="models:TLMessage">
+        <Grid Margin="0,4,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>
+
+            <StackPanel Grid.Column="1">
+                <StackPanel Margin="0,0,0,8">
+                    <TextBlock Text="{Binding Media.Game.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <RichTextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Style="{ThemeResource BodyRichTextBlockStyle}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game"/>
+                </StackPanel>
+
+                <!-- TODO: video timing -->
+                <Grid Background="Black" 
+                      MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+                      MinHeight="{ThemeResource TelegramMediaMinHeight}"
+                      HorizontalAlignment="Left">
+                    <controls:ImageView Source="{Binding Media.Game.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                        Constraint="{Binding Media.Game.Document}" 
                                         MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
                 </Grid>
@@ -233,6 +261,7 @@
         AudioTemplate="{StaticResource MediaAudioTemplate}"
         DocumentTemplate="{StaticResource MediaDocumentTemplate}"
         DocumentThumbTemplate="{StaticResource MediaDocumentThumbTemplate}"
+        GameTemplate="{StaticResource GameMediaTemplate}"
         GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
         GifTemplate="{StaticResource MediaGifTemplate}"
         PhotoTemplate="{StaticResource MediaPhotoTemplate}"

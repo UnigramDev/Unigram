@@ -61,7 +61,7 @@
 
             <controls:MediaControl
                 x:Name="MediaControl"
-                Media="{x:Bind ViewModel.Media, Mode=OneWay}"
+                Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
                 ContentChanged="OnMediaChanged"
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                 Grid.Row="3"/>

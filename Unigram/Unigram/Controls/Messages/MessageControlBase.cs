@@ -54,6 +54,10 @@ namespace Unigram.Controls.Messages
             return hasEditDate && !hasViaBotId && replyMarkup?.TypeId != TLType.ReplyInlineMarkup ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        protected object ConvertMedia(TLMessageMediaBase media)
+        {
+            return ViewModel;
+        }
         #endregion
 
         protected void OnMessageChanged(TextBlock paragraph)

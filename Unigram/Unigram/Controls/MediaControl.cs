@@ -18,7 +18,8 @@ namespace Unigram.Controls
             }
             set
             {
-                if (value is TLMessageMediaEmpty || !(value is TLMessageMediaBase))
+                var message = value as TLMessage;
+                if (message?.Media is TLMessageMediaEmpty || !(message?.Media is TLMessageMediaBase))
                 {
                     Content = null;
                 }
