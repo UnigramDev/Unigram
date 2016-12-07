@@ -1,0 +1,424 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="About-App-Title.Text" xml:space="preserve">
+    <value>Unigram</value>
+    <comment>About - App info - App Name</comment>
+  </data>
+  <data name="About-App-Version.Text" xml:space="preserve">
+    <value>Versione</value>
+    <comment>About - App info - App version</comment>
+  </data>
+  <data name="About-Thanks-People.Text" xml:space="preserve">
+    <value>Molte persone speciali</value>
+    <comment>About - Thanks - People</comment>
+  </data>
+  <data name="About-Thanks-Title.Text" xml:space="preserve">
+    <value>Ringraziamenti speciali</value>
+    <comment>About - Thanks - Section Title</comment>
+  </data>
+  <data name="About-Titlebar-Title.Text" xml:space="preserve">
+    <value>INFO</value>
+    <comment>About - Titlebar - Page Title</comment>
+  </data>
+  <data name="About-Thanks-Intro.Text" xml:space="preserve">
+    <value>Non è stato possibile sviluppare questa app senza l'aiuto di queste persone meravigliose</value>
+    <comment>About - Thanks - Intro</comment>
+  </data>
+  <data name="CBTN-About.Label" xml:space="preserve">
+    <value>Info</value>
+    <comment>AppBarButton - Label - About</comment>
+  </data>
+  <data name="CBTN-Filter.Label" xml:space="preserve">
+    <value>Filtro</value>
+    <comment>AppBarButton - Label - Filter</comment>
+  </data>
+  <data name="CBTN-NewChat.Label" xml:space="preserve">
+    <value>Nuoca chat</value>
+    <comment>AppBarButton - Label - New Chat</comment>
+  </data>
+  <data name="CBTN-Search.Label" xml:space="preserve">
+    <value>Cerca</value>
+    <comment>AppBarButton - Label - Search</comment>
+  </data>
+  <data name="CBTN-Select.Label" xml:space="preserve">
+    <value>Seleziona</value>
+    <comment>AppBarButton - Label - Select chats</comment>
+  </data>
+  <data name="CBTN-Settings.Label" xml:space="preserve">
+    <value>Impostazioni</value>
+    <comment>AppBarButton - Label - Settings</comment>
+  </data>
+  <data name="Home-Titlebar-Title.Text" xml:space="preserve">
+    <value>UNIGRAM</value>
+    <comment>Home - Titlebar - Page Title</comment>
+  </data>
+  <data name="Login-Titlebar-Title.Text" xml:space="preserve">
+    <value>BENVENUTO SU UNIGRAM</value>
+    <comment>Login - Titlebar - Page Title</comment>
+  </data>
+  <data name="Settings-Settings-LocationPermission.Header" xml:space="preserve">
+    <value>Permetti a Unigram di usare il GPS</value>
+    <comment>Settings - Settings - ToggleSwitch - Permission for Location </comment>
+  </data>
+  <data name="Settings-Settings-SyncPeopleHub.Header" xml:space="preserve">
+    <value>Sincronizza i contatti</value>
+    <comment>Settings - Settings - ToggleSwitch - Sync with People Hub</comment>
+  </data>
+  <data name="Settings-Titlebar-Title.Text" xml:space="preserve">
+    <value>IMPOSTAZIONI</value>
+    <comment>Settings - Titlebar - Page Title</comment>
+  </data>
+  <data name="BTN-CodeNotRecieved.Content" xml:space="preserve">
+    <value>Non ho ricevuto il codice</value>
+    <comment>Button - Login</comment>
+  </data>
+  <data name="BTN-Next.Content" xml:space="preserve">
+    <value>Avanti</value>
+    <comment>Button - Next</comment>
+  </data>
+  <data name="Login-Code-Code.Header" xml:space="preserve">
+    <value>Scrivi il codice:</value>
+    <comment>Login - Code - Code Input - Header</comment>
+  </data>
+  <data name="Login-Code-Code.PlaceholderText" xml:space="preserve">
+    <value>Scrivi il codice qui...</value>
+    <comment>Login - Code - Code Input - Placeholder Text</comment>
+  </data>
+  <data name="Login-Code-Intro.Text" xml:space="preserve">
+    <value>Ti abbiamo mandato un SMS col codice</value>
+    <comment>Login - Code - Intro</comment>
+  </data>
+  <data name="Login-Code-Title.Text" xml:space="preserve">
+    <value>Il tuo codice</value>
+    <comment>Login - Code - Title</comment>
+  </data>
+  <data name="Login-Intro-Intro.Text" xml:space="preserve">
+    <value>Unigram è una UWP Telegram-app costruita dalla Comunità Windows, per la comunità Windows</value>
+    <comment>Login - App Intro - Intro Text</comment>
+  </data>
+  <data name="Login-PhoneNumber-Country.Header" xml:space="preserve">
+    <value>Stato:</value>
+    <comment>Login - Phone Number - Country - Header</comment>
+  </data>
+  <data name="Login-PhoneNumber-Country.PlaceholderText" xml:space="preserve">
+    <value>Seleziona il tuo Stato...</value>
+    <comment>Login - Phone Number - Country - Placeholder Text</comment>
+  </data>
+  <data name="Login-PhoneNumber-Intro.Text" xml:space="preserve">
+    <value>Per favore, seleziona il paese in cui vivi e scrivi il tuo numero di telefono</value>
+    <comment>Login - Phone Number - Intro</comment>
+  </data>
+  <data name="Login-PhoneNumber-PhoneNumber.Header" xml:space="preserve">
+    <value>Numero di telefono</value>
+    <comment>Login - Phone Number - Phone Number - Header</comment>
+  </data>
+  <data name="Login-PhoneNumber-PhoneNumber.PlaceholderText" xml:space="preserve">
+    <value>Qual è il tuo numero di telefono?</value>
+    <comment>Login - Phone Number - Phone Number - Placeholder Text</comment>
+  </data>
+  <data name="Login-PhoneNumber-Title.Text" xml:space="preserve">
+    <value>Il tuo numero di telefono</value>
+    <comment>Login - Phone Number - Title</comment>
+  </data>
+  <data name="Settings-Settings-ChatSettings-Title.Text" xml:space="preserve">
+    <value>Impostazioni chat</value>
+    <comment>Settings - Settings - Chat settings - Title</comment>
+  </data>
+  <data name="Settings-Settings-NotificationsSounds-Title.Text" xml:space="preserve">
+    <value>Notifiche e suoni</value>
+    <comment>Settings - Settings - Notifications &amp; Sounds - Title</comment>
+  </data>
+  <data name="Settings-Settings-PrivacySecurity-Title.Text" xml:space="preserve">
+    <value>Privacy e Sicurezza</value>
+    <comment>Settings - Settings - Privacy &amp; Security - Title</comment>
+  </data>
+  <data name="Notifications-Toast-Reply.Text" xml:space="preserve">
+    <value>Scrivi la tua risposta qui...</value>
+    <comment>Toast notification reply placeholder</comment>
+  </data>
+  <data name="CBTN-Edit.Label" xml:space="preserve">
+    <value>Modifica</value>
+    <comment>AppBarButton - Label-  Edit</comment>
+  </data>
+  <data name="CBTN-SendMessage.Label" xml:space="preserve">
+    <value>Invia messaggio</value>
+    <comment>AppBarButton - Label - Send message</comment>
+  </data>
+  <data name="ChatInfo-Info-PivotTitle.Header" xml:space="preserve">
+    <value>Info</value>
+    <comment>ChatInfo - Pivot Title - Info</comment>
+  </data>
+  <data name="ChatInfo-Media-PivotTitle.Header" xml:space="preserve">
+    <value>Media condivisi</value>
+    <comment>ChatInfo - Pivot Title - Share Media</comment>
+  </data>
+  <data name="ChatInfo-Members-PivotTitle.Header" xml:space="preserve">
+    <value>Membri</value>
+    <comment>ChatInfo - Pivot Title - Members</comment>
+  </data>
+  <data name="ChatInfo-Options-ClearHistory-Title.Text" xml:space="preserve">
+    <value>Cancella cronologia</value>
+    <comment>ChatInfo - Options - Clear History - Title</comment>
+  </data>
+  <data name="ChatInfo-Options-Groups-ConvertToSupergroup.Content" xml:space="preserve">
+    <value>Converti a supergrupo</value>
+    <comment>ChatInfo - Options - Groups - Convert to Supergroup</comment>
+  </data>
+  <data name="ChatInfo-Options-DeleteChat-Title.Text" xml:space="preserve">
+    <value>Cancella chat</value>
+    <comment>ChatInfo - Options - Delete chat</comment>
+  </data>
+  <data name="ChatInfo-Options-ExitChat-Title.Text" xml:space="preserve">
+    <value>Cancella ed esci dalla chat</value>
+    <comment>ChatInfo - Options - Delete and exit chat</comment>
+  </data>
+  <data name="ChatInfo-Options-Notifications.Header" xml:space="preserve">
+    <value>Mostra notifiche da questa chat</value>
+    <comment>ChatInfo - Options - ToggleSwith - Notifications</comment>
+  </data>
+  <data name="ChatInfo-Options-PhoneNumber-Title.Text" xml:space="preserve">
+    <value>Chiama</value>
+    <comment>ChatInfo - Options - Phone Number - Title</comment>
+  </data>
+  <data name="ChatInfo-Options-Search-Title.Text" xml:space="preserve">
+    <value>Cerca nei messaggi</value>
+    <comment>ChatInfo - Options - Search for Messages - Title</comment>
+  </data>
+  <data name="Settings-User-EditProfile.Content" xml:space="preserve">
+    <value>Tocca per modificare il profilo</value>
+    <comment>Settings - User - Edit Profile-button</comment>
+  </data>
+  <data name="CBTN-Attachment.Label" xml:space="preserve">
+    <value>Allegato</value>
+    <comment>AppBarButton - Label - Attachment</comment>
+  </data>
+  <data name="CBTN-Pin.Label" xml:space="preserve">
+    <value>Aggiungi a Start</value>
+    <comment>AppBarButton - Label - Pin to Start</comment>
+  </data>
+  <data name="CBTN-ReportSpam.Label" xml:space="preserve">
+    <value>Segnala spam</value>
+    <comment>AppBarButton - Label - Report spam</comment>
+  </data>
+  <data name="CBTN-Stickers.Label" xml:space="preserve">
+    <value>Stickers</value>
+    <comment>AppBarButton - Label - Stickers</comment>
+  </data>
+  <data name="Chat-Input-Message.PlaceholderText" xml:space="preserve">
+    <value>Scrivi il messaggio...</value>
+    <comment>Chat - Input - Message - Placeholder Text</comment>
+  </data>
+  <data name="FCBTN-Camera.Text" xml:space="preserve">
+    <value>Camera</value>
+    <comment>MenuFlyoutButton - Text - Camera</comment>
+  </data>
+  <data name="FCBTN-Contact.Text" xml:space="preserve">
+    <value>Contatto</value>
+    <comment>MenuFlyoutButton - Text - Contact</comment>
+  </data>
+  <data name="FCBTN-File.Text" xml:space="preserve">
+    <value>File</value>
+    <comment>MenuFlyoutButton - Text - File</comment>
+  </data>
+  <data name="FCBTN-Location.Text" xml:space="preserve">
+    <value>Luogo</value>
+    <comment>MenuFlyoutButton - Text - Location</comment>
+  </data>
+  <data name="FCBTN-Photo.Text" xml:space="preserve">
+    <value>Foto</value>
+    <comment>MenuFlyoutButton - Text - Photo</comment>
+  </data>
+  <data name="FCBTN-Video.Text" xml:space="preserve">
+    <value>Video</value>
+    <comment>MenuFlyoutButton - Text - Video</comment>
+  </data>
+  <data name="ChatInfo-Info-ViewMembers.Content" xml:space="preserve">
+    <value>Vedi membri</value>
+    <comment>ChatInfo - Info - Show group members</comment>
+  </data>
+  <data name="ChatInfo-Options-Groups-InviteLine-Title.Text" xml:space="preserve">
+    <value>Link invito</value>
+    <comment>ChatInfo - Options - Groups - Invite link - Title</comment>
+  </data>
+  <data name="ChatInfo-Options-Groups-InviteLink.Content" xml:space="preserve">
+    <value>Link invito</value>
+    <comment>ChatInfo - Options - Groups - Invite Link</comment>
+  </data>
+  <data name="ChatInfo-Options-Groups-ManageAdmins.Content" xml:space="preserve">
+    <value>Gestisci amministratori</value>
+    <comment>ChatInfo - Options - Groups - Manage administrators</comment>
+  </data>
+  <data name="ChatInfo-Options-Groups-RevokeLink.Content" xml:space="preserve">
+    <value>Revoca link invito</value>
+    <comment>ChatInfo - Options - Groups - Revoke invite link</comment>
+  </data>
+  <data name="ChatInfo-Options-Groups-Title.Text" xml:space="preserve">
+    <value>Gestione gruppo</value>
+    <comment>ChatInfo - Options - Groups - Title</comment>
+  </data>
+  <data name="ChatInfo-Options-NotificationsText.Text" xml:space="preserve">
+    <value>Notifiche</value>
+    <comment>ChatInfo - Options - ToggleSwith - Notifications - Text</comment>
+  </data>
+  <data name="ChatInfo-Options-SharedMedia-Title.Text" xml:space="preserve">
+    <value>Media condivisi</value>
+    <comment>ChatInfo - Options - Share Media - Title</comment>
+  </data>
+  <data name="CBTN-AddAdmin.Label" xml:space="preserve">
+    <value>Aggiungi amministratore</value>
+    <comment>AppBarButton - Add administrator</comment>
+  </data>
+  <data name="DialogPage-Info-Admin-AddMembers-AdminOnly.Content" xml:space="preserve">
+    <value>Solo amministratori</value>
+    <comment>DialogInfo - Admins - Add Members - Admins only</comment>
+  </data>
+  <data name="DialogPage-Info-Admin-AddMembers-All.Content" xml:space="preserve">
+    <value>Tutti i membri</value>
+    <comment>DialogInfo - Admins - Add Members - All members</comment>
+  </data>
+  <data name="DialogPage-Info-Admin-AddMembers.Header" xml:space="preserve">
+    <value>Chi può aggiungere nuovi membri?</value>
+    <comment>DialogInfo - Admins - Add Members - Header</comment>
+  </data>
+  <data name="DialogPage-Info-Admin-Description.Text" xml:space="preserve">
+    <value>You can add admins to help you manage you group. Tap and hold or right click to remove admins.</value>
+    <comment>DialogInfo - Admins - Description</comment>
+  </data>
+  <data name="DialogPage-Info-Admin-Titlebar-Title" xml:space="preserve">
+    <value>AMMINISTRATORI</value>
+    <comment>DialogInfo - Admins - Page Title</comment>
+  </data>
+  <data name="FBTN-Delete.Text" xml:space="preserve">
+    <value>Cancella</value>
+    <comment>MenuFlyoutButton - Delete</comment>
+  </data>
+  <data name="CBTN-Cancel.Label" xml:space="preserve">
+    <value>Annulla</value>
+    <comment>AppBarButton - Label - Cancel</comment>
+  </data>
+  <data name="CBTN-DeleteSelected.Label" xml:space="preserve">
+    <value>Elimina chat selezionate</value>
+    <comment>AppBarButton - Label - Delete selected chats</comment>
+  </data>
+  <data name="CBTN-MuteSelected.Label" xml:space="preserve">
+    <value>Silenzia chat selezionate</value>
+    <comment>AppBarButton - Label - Mute selected chats</comment>
+  </data>
+</root>
