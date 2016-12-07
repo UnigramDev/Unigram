@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 12/07/2016 17:15:44
+// 	Generated: 12/07/2016 18:26:19
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -163,13 +163,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} kicked {1}"
+        /// Localized resource similar to "{0} removed {1}"
         /// </summary>
         public static string MessageActionChatDeleteUser
         {
             get
             {
-                return "{0} kicked {1}";
+                return "{0} removed {1}";
             }
         }
         

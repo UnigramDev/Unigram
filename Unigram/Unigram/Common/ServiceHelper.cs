@@ -62,7 +62,7 @@ namespace Unigram.Common
                     return ReplaceLinks(won ? Resources.UserScoredPlural : Resources.UserScored, new[] { fromUserFullName, value.ToString() }, new[] { "tg-user://" + fromUserId, "tg-bold://" }, useActiveLinks);
                 }
 
-                return ReplaceLinks(string.Format(won ? Resources.UserScoredPlural : Resources.UserScored, Resources.UserNominativeSingular, value));
+                return ReplaceLinks(won ? Resources.UserScoredPlural : Resources.UserScored, new[] { Resources.UserNominativeSingular, value.ToString() }, new[] { "tg-bold://", "tg-bold://" }, useActiveLinks);
             });
             _actionsCache.Add(typeof(TLMessageActionChatCreate), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChatCreate, new[] { fromUserFullName, ((TLMessageActionChatCreate)action).Title }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
             _actionsCache.Add(typeof(TLMessageActionChatEditPhoto), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChatEditPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
@@ -87,7 +87,7 @@ namespace Unigram.Common
 
                 if (users.Count == 1 && users[0] == fromUserId)
                 {
-                    return ReplaceLinks(Resources.MessageActionChatAddSelf, new[] { names[0] }, new[] { "tg-user://" + users[0] });
+                    return ReplaceLinks(Resources.MessageActionChatAddSelf, new[] { names[0] }, new[] { "tg-user://" + users[0] }, useActiveLinks);
                 }
 
                 // TODO: replace last ", " with "and "
@@ -98,7 +98,7 @@ namespace Unigram.Common
                     codesReplace = string.Concat(string.Join(", ", codes.Take(codes.Count - 1)), " and ", codes.Last());
                 }
 
-                return ReplaceLinks(string.Format(Resources.MessageActionChatAddUser, "{0}", codesReplace), new[] { fromUserFullName }.Union(names).ToArray(), new[] { "tg-user://" + fromUserId }.Union(users.Select(x => "tg-user://" + x)).ToArray());
+                return ReplaceLinks(string.Format(Resources.MessageActionChatAddUser, "{0}", codesReplace), new[] { fromUserFullName }.Union(names).ToArray(), new[] { "tg-user://" + fromUserId }.Union(users.Select(x => "tg-user://" + x)).ToArray(), useActiveLinks);
             });
             _actionsCache.Add(typeof(TLMessageActionChatDeleteUser), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
             {
@@ -184,7 +184,7 @@ namespace Unigram.Common
             var serviceMessage = newValue as TLMessageService;
             if (serviceMessage != null)
             {
-                sender.Blocks.Add(Convert(serviceMessage, null));
+                sender.Blocks.Add(Convert(serviceMessage, true));
                 return;
             }
 
@@ -193,7 +193,22 @@ namespace Unigram.Common
             sender.Blocks.Add(paragraph);
         }
 
-        public static Paragraph Convert(TLMessageService serviceMessage, object parameter = null)
+        public static string Convert(TLMessageService serviceMessage)
+        {
+            var paragraph = Convert(serviceMessage, false);
+            if (paragraph.Inlines.Count > 0)
+            {
+                var run = paragraph.Inlines[0] as Run;
+                if (run != null)
+                {
+                    return run.Text;
+                }
+            }
+
+            return Resources.MessageActionEmpty;
+        }
+
+        public static Paragraph Convert(TLMessageService serviceMessage, bool useActiveLinks)
         {
             var fromId = serviceMessage.FromId;
             var user = InMemoryCacheService.Current.GetUser(fromId) as TLUser;
@@ -201,7 +216,7 @@ namespace Unigram.Common
             var action = serviceMessage.Action;
             if (action != null && _actionsCache.ContainsKey(action.GetType()))
             {
-                return _actionsCache[action.GetType()].Invoke(serviceMessage, action, fromId.Value, username, true);
+                return _actionsCache[action.GetType()].Invoke(serviceMessage, action, fromId.Value, username, useActiveLinks);
             }
 
             var paragraph = new Paragraph();
@@ -213,6 +228,13 @@ namespace Unigram.Common
         private static Paragraph ReplaceLinks(string text, string[] users = null, string[] identifiers = null, bool useActiveLinks = true)
         {
             var paragraph = new Paragraph();
+
+            if (!useActiveLinks)
+            {
+                paragraph.Inlines.Add(new Run { Text = string.Format(text, users) });
+                return paragraph;
+            }
+
             var regex = new Regex("({[0-9]?})");
             var matches = regex.Matches(text);
             if (matches.Count > 0)

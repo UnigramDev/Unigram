@@ -462,7 +462,7 @@
     <value>{0} removed group photo</value>
   </data>
   <data name="MessageActionChatDeleteUser" xml:space="preserve">
-    <value>{0} kicked {1}</value>
+    <value>{0} removed {1}</value>
   </data>
   <data name="MessageActionChatEditPhoto" xml:space="preserve">
     <value>{0} changed group photo</value>
