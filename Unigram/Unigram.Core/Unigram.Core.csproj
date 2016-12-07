@@ -126,6 +126,7 @@
     <Compile Include="Rtf\RtfTokenType.cs" />
     <Compile Include="Services\DialogsService.cs" />
     <Compile Include="Services\JumpListService.cs" />
+    <Compile Include="Services\KeyboardService.cs" />
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\IExtendedDeviceInfoService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />

@@ -39,8 +39,13 @@ namespace Unigram.Common
         public static void SetMessage(DependencyObject obj, TLMessageBase value)
         {
             // TODO: shitty hack!!!
-            obj.SetValue(MessageProperty, null);
+            var oldValue = obj.GetValue(MessageProperty);
             obj.SetValue(MessageProperty, value);
+
+            if (oldValue == value)
+            {
+                OnMessageChanged(obj as RichTextBlock, value);
+            }
         }
 
         public static readonly DependencyProperty MessageProperty =
@@ -51,22 +56,35 @@ namespace Unigram.Common
             var sender = d as RichTextBlock;
             var newValue = e.NewValue as TLMessageBase;
 
+            OnMessageChanged(sender, newValue);
+        }
+
+        private static void OnMessageChanged(RichTextBlock sender, TLMessageBase newValue)
+        {
             sender.IsTextSelectionEnabled = false;
 
-            var message17 = newValue as TLMessage;
-            if (message17 != null)
-            {
-                var caption = false;
-                if (message17.Media is ITLMediaCaption)
-                {
-                    caption = !string.IsNullOrWhiteSpace(((ITLMediaCaption)message17.Media).Caption);
-                }
-
-                sender.Visibility = (message17.Media == null || message17.Media is TLMessageMediaEmpty || message17.Media is TLMessageMediaWebPage || caption ? Visibility.Visible : Visibility.Collapsed);
-            }
             var message = newValue as TLMessage;
             if (message != null && sender.Visibility == Visibility.Visible)
             {
+                var caption = false;
+                if (message.Media is ITLMediaCaption)
+                {
+                    caption = !string.IsNullOrWhiteSpace(((ITLMediaCaption)message.Media).Caption);
+                }
+
+                var game = false;
+                if (message.Media is TLMessageMediaGame)
+                {
+                    game = sender.Tag != null;
+                }
+
+                sender.Visibility = (message.Media == null || message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage || game || caption ? Visibility.Visible : Visibility.Collapsed);
+                if (sender.Visibility == Visibility.Collapsed)
+                {
+                    sender.Blocks.Clear();
+                    return;
+                }
+
                 var foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x0f, 0x7d, 0xc7));
                 var paragraph = new Paragraph();
 
@@ -85,8 +103,17 @@ namespace Unigram.Common
                     {
                         paragraph.Inlines.Add(new Run { Text = message.Message });
                     }
-                    else
+                    else if (game)
                     {
+                        var gameMedia = message.Media as TLMessageMediaGame;
+                        if (gameMedia != null)
+                        {
+                            Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a TLMessageMediaGame");
+                            ReplaceAll(message, gameMedia.Game.Description, paragraph, sender.Foreground, true);
+                        }
+                    }
+                    else if (caption)
+                    { 
                         var captionMedia = message.Media as ITLMediaCaption;
                         if (captionMedia != null && !string.IsNullOrWhiteSpace(captionMedia.Caption))
                         {
@@ -105,7 +132,7 @@ namespace Unigram.Common
                     //ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
-                if (message17?.Media is TLMessageMediaEmpty || message17?.Media is ITLMediaCaption || message17?.Media == null)
+                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMediaCaption || message?.Media == null)
                 {
                     var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
                     var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);

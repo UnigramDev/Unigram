@@ -154,6 +154,7 @@ namespace Unigram.ViewModels
                 foreach (var item in result.Value.Messages)
                 {
                     Messages.Insert(0, item);
+                    //InsertMessage(item as TLMessageCommonBase);
                 }
             }
 
@@ -163,11 +164,11 @@ namespace Unigram.ViewModels
         public async void ProcessReplies(IList<TLMessageBase> messages)
         {
             var replyIds = new TLVector<int>();
-            var replyToMsgs = new List<TLMessage>();
+            var replyToMsgs = new List<TLMessageCommonBase>();
 
             for (int i = 0; i < messages.Count; i++)
             {
-                var message = messages[i] as TLMessage;
+                var message = messages[i] as TLMessageCommonBase;
                 if (message != null)
                 {
                     var replyId = message.ReplyToMsgId;
@@ -184,8 +185,13 @@ namespace Unigram.ViewModels
                         if (reply != null)
                         {
                             messages[i].Reply = reply;
-                            messages[i].RaisePropertyChanged(() => replyToMsgs[i].Reply);
-                            messages[i].RaisePropertyChanged(() => replyToMsgs[i].ReplyInfo);
+                            messages[i].RaisePropertyChanged(() => messages[i].Reply);
+                            messages[i].RaisePropertyChanged(() => messages[i].ReplyInfo);
+
+                            if (messages[i] is TLMessageService)
+                            {
+                                messages[i].RaisePropertyChanged(() => ((TLMessageService)messages[i]).Self);
+                            }
                         }
                         else
                         {
@@ -239,6 +245,11 @@ namespace Unigram.ViewModels
                                 replyToMsgs[k].Reply = result.Value.Messages[j];
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].Reply);
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].ReplyInfo);
+
+                                if (replyToMsgs[k] is TLMessageService)
+                                {
+                                    replyToMsgs[k].RaisePropertyChanged(() => ((TLMessageService)replyToMsgs[k]).Self);
+                                }
                             }
                         }
                     }
@@ -353,21 +364,22 @@ namespace Unigram.ViewModels
                 var result = response.Value as TLMessagesAllStickers;
                 if (result != null)
                 {
-                    var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, Extensions.Buffered<TLDocument>(x.Count)));
+                    //var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, Extensions.Buffered<TLDocument>(x.Count)));
+                    var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, result.Documents.OfType<TLDocument>().Where(y => ((TLInputStickerSetID)y.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().Stickerset).Id == x.Id)));
                     StickerSets = new List<KeyedList<TLStickerSet, TLDocument>>(stickerSets);
                     StickerSets.Insert(0, new KeyedList<TLStickerSet, TLDocument>(new TLStickerSet { Title = "Frequently used", ShortName = "tlg/recentlyUsed" }, recent.Stickers.OfType<TLDocument>()));
                     RaisePropertyChanged(() => StickerSets);
 
-                    await Task.Delay(1000);
+                    //await Task.Delay(1000);
 
-                    var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = StickerSets[1].Key.ShortName });
-                    if (set.IsSucceeded)
-                    {
-                        for (int i = 0; i < set.Value.Documents.Count; i++)
-                        {
-                            StickerSets[1][i] = set.Value.Documents[i] as TLDocument;
-                        }
-                    }
+                    //var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = StickerSets[1].Key.ShortName });
+                    //if (set.IsSucceeded)
+                    //{
+                    //    for (int i = 0; i < set.Value.Documents.Count; i++)
+                    //    {
+                    //        StickerSets[1][i] = set.Value.Documents[i] as TLDocument;
+                    //    }
+                    //}
 
                     Debug.WriteLine("Done");
 
@@ -529,7 +541,7 @@ namespace Unigram.ViewModels
             await SendMessageAsync(null, args != null);
         }
 
-        public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool sticker)
+        public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool sticker, bool useReplyMarkup = false)
         {
             var messageText = Text?.Replace('\r', '\n');
 
@@ -571,7 +583,7 @@ namespace Unigram.ViewModels
                 Reply = null;
             }
 
-            var previousMessage = InsertSendingMessage(message);
+            var previousMessage = InsertSendingMessage(message, useReplyMarkup);
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
                 if (document != null)
@@ -819,24 +831,24 @@ namespace Unigram.ViewModels
             TLMessageBase result;
             if (Messages.Count > 0)
             {
-                //if (useReplyMarkup && _replyMarkupMessage != null)
-                //{
-                //    var chat = With as TLChatBase;
-                //    if (chat != null)
-                //    {
-                //        message.ReplyToMsgId = _replyMarkupMessage.Id;
-                //        message.Reply = _replyMarkupMessage;
-                //    }
+                if (useReplyMarkup && _replyMarkupMessage != null)
+                {
+                    var chat = With as TLChatBase;
+                    if (chat != null)
+                    {
+                        message.ReplyToMsgId = _replyMarkupMessage.Id;
+                        message.Reply = _replyMarkupMessage;
+                    }
 
-                //    Execute.BeginOnUIThread(() =>
-                //    {
-                //        if (Reply != null)
-                //        {
-                //            Reply = null;
-                //            SetReplyMarkup(null);
-                //        }
-                //    });
-                //}
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        if (Reply != null)
+                        {
+                            Reply = null;
+                            SetReplyMarkup(null);
+                        }
+                    });
+                }
 
                 var messagesContainer = Reply as TLMessagesContainter;
                 if (Reply != null)
@@ -913,7 +925,7 @@ namespace Unigram.ViewModels
                 Messages.Clear();
                 Messages.Add(message);
 
-                var history = CacheService.GetHistory(TLUtils.InputPeerToPeer(Peer, ProtoService.CurrentUserId), 15);
+                var history = CacheService.GetHistory(Peer.ToPeer(), 15);
                 result = history.FirstOrDefault();
 
                 for (int j = 0; j < history.Count; j++)
@@ -956,11 +968,20 @@ namespace Unigram.ViewModels
             var next = index > 0 ? this[index - 1] : null;
             var previous = index < Count - 1 ? this[index + 1] : null;
 
+            //if (next is TLMessageEmpty)
+            //{
+            //    next = index > 1 ? this[index - 2] : null;
+            //}
+            //if (previous is TLMessageEmpty)
+            //{
+            //    previous = index < Count - 2 ? this[index + 2] : null;
+            //}
+
             UpdateSeparatorOnInsert(item, previous, index);
             UpdateSeparatorOnInsert(next, item, index - 1);
 
-            UpdateAttach(previous, item);
-            UpdateAttach(item, next);
+            UpdateAttach(previous, item, index + 1);
+            UpdateAttach(item, next, index);
         }
 
         protected override void RemoveItem(int index)
@@ -969,7 +990,7 @@ namespace Unigram.ViewModels
             var previous = index < Count - 1 ? this[index + 1] : null;
 
             UpdateSeparatorOnRemove(next, previous, index);
-            UpdateAttach(previous, next);
+            UpdateAttach(previous, next, index + 1);
 
             base.RemoveItem(index);
         }
@@ -1016,10 +1037,11 @@ namespace Unigram.ViewModels
             }
         }
 
-        private void UpdateAttach(TLMessageBase item, TLMessageBase previous)
+        private void UpdateAttach(TLMessageBase item, TLMessageBase previous, int index)
         {
             if (item == null) return;
 
+            var oldFirst = item.IsFirst;
             var isItemPost = false;
             if (item is TLMessage) isItemPost = ((TLMessage)item).IsPost;
 
@@ -1044,6 +1066,24 @@ namespace Unigram.ViewModels
             {
                 item.IsFirst = true;
             }
+
+            //if (item.IsFirst && item is TLMessage)
+            //{
+            //    var message = item as TLMessage;
+            //    if (message != null && !message.IsPost && !message.IsOut)
+            //    {
+            //        base.InsertItem(index, new TLMessageEmpty { Date = item.Date, FromId = item.FromId, Id = item.Id, ToId = item.ToId });
+            //    }
+            //}
+
+            //if (!item.IsFirst && oldFirst)
+            //{
+            //    var next = index > 0 ? this[index - 1] : null;
+            //    if (next is TLMessageEmpty)
+            //    {
+            //        Remove(item);
+            //    }
+            //}
         }
 
         //public ObservableCollection<MessageGroup> Groups { get; private set; } = new ObservableCollection<MessageGroup>();

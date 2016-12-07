@@ -20,6 +20,8 @@ namespace Telegram.Api.TL
 
         public TLExportedChatInviteBase ExportedInvite { get; set; }
 
+        public TLVector<TLBotInfo> BotInfo { get; set; }
+
         #endregion
 
         public virtual void Update(TLChatBase chat)

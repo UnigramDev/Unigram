@@ -63,6 +63,10 @@ namespace Unigram.Selectors
             {
                 return ServiceMessagePhotoTemplate;
             }
+            else if (serviceMessage.Action is TLMessageActionHistoryClear)
+            {
+                return EmptyMessageTemplate;
+            }
 
             return ServiceMessageTemplate ?? EmptyMessageTemplate;
         }
@@ -81,7 +85,7 @@ namespace Unigram.Selectors
                 {
                     return UserStickerTemplate ?? EmptyMessageTemplate;
                 }
-                if (message.ToId is TLPeerChat)
+                if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
                 {
                     return ChatFriendStickerTemplate ?? EmptyMessageTemplate;
                 }
@@ -104,7 +108,7 @@ namespace Unigram.Selectors
 
                     return UserMessageTemplate ?? EmptyMessageTemplate;
                 }
-                if (message.ToId is TLPeerChat || message.ToId is TLPeerChannel) // TODO: probably some addtional check needed for channels
+                if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
                 {
                     if (!(message?.Media is TLMessageMediaEmpty))
                     {

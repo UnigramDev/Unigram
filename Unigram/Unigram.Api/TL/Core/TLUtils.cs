@@ -759,6 +759,16 @@ namespace Telegram.Api.TL
                         {
                             yield return (T)message.Query;
                         }
+
+                        gzipData = message.Query as TLGzipPacked;
+                        if (gzipData != null)
+                        {
+                            result = gzipData.Query as T;
+                            if (result != null)
+                            {
+                                yield return result;
+                            }
+                        }
                     }
                 }
             }
@@ -770,6 +780,12 @@ namespace Telegram.Api.TL
             if (chat != null)
             {
                 return chat.ChatId;
+            }
+
+            var channel = inputPeer as TLInputPeerChannel;
+            if (channel != null)
+            {
+                return channel.ChannelId;
             }
 
             // TODO: is this needed?
@@ -969,6 +985,11 @@ namespace Telegram.Api.TL
         {
             try
             {
+                if (value.Length == 0)
+                {
+                    return null;
+                }
+
                 var intValue = Convert.ToInt32(value);
                 return intValue;
             }

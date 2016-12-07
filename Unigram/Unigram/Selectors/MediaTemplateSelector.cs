@@ -16,6 +16,7 @@ namespace Unigram.Selectors
         public DataTemplate DocumentTemplate { get; set; }
         public DataTemplate DocumentThumbTemplate { get; set; }
         public DataTemplate EmptyTemplate { get; set; }
+        public DataTemplate GameTemplate { get; set; }
         public DataTemplate GeoPointTemplate { get; set; }
         public DataTemplate GifTemplate { get; set; }
         public DataTemplate PhotoTemplate { get; set; }
@@ -30,6 +31,12 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
+            var message = item as TLMessage;
+            if (message != null)
+            {
+                item = message.Media;
+            }
+
             var emptyMedia = item as TLMessageMediaEmpty;
             if (emptyMedia != null)
             {
@@ -46,6 +53,12 @@ namespace Unigram.Selectors
             if (photoMedia != null)
             {
                 return PhotoTemplate;
+            }
+
+            var gameMedia = item as TLMessageMediaGame;
+            if (gameMedia != null)
+            {
+                return GameTemplate;
             }
 
             var documentMedia = item as TLMessageMediaDocument;

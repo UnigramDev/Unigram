@@ -175,17 +175,23 @@ namespace Unigram.Controls.Items
                 {
                     if (message.Media is TLMessageMediaDocument)
                     {
+                        var caption = string.Empty;
+                        if (!string.IsNullOrEmpty(((TLMessageMediaDocument)message.Media).Caption))
+                        {
+                            caption = ", " + ((TLMessageMediaDocument)message.Media).Caption.Replace("\r\n", "\n").Replace("\n", " ");
+                        }
+
                         if (message.IsVoice())
                         {
-                            return text + "Voice";
+                            return text + "Voice" + caption;
                         }
                         else if (message.IsVideo())
                         {
-                            return text + "Video";
+                            return text + "Video" + caption;
                         }
                         else if (message.IsGif())
                         {
-                            return text + "GIF";
+                            return text + "GIF" + caption;
                         }
                         else if (message.IsSticker())
                         {
@@ -196,27 +202,27 @@ namespace Unigram.Controls.Items
                                 if (attribute != null)
                                 {
                                     //return $"{text}{attribute.Alt} ({Resources.Sticker.ToLower()})";
-                                    return $"{text}{attribute.Alt} Sticker";
+                                    return $"{text}{attribute.Alt} Sticker" + caption;
                                 }
                             }
 
                             //return text + Resources.Sticker;
-                            return text + "Sticker";
+                            return text + "Sticker" + caption;
                         }
 
-                        var document = (message.Media as TLMessageMediaDocument).Document as TLDocument;
+                        var document = ((TLMessageMediaDocument)message.Media).Document as TLDocument;
                         if (document != null)
                         {
                             var attribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
                             if (attribute != null)
                             {
                                 //return $"{text}{attribute.Alt} ({Resources.Sticker.ToLower()})";
-                                return text + attribute.FileName;
+                                return text + attribute.FileName + caption;
                             }
                         }
 
                         //return text + Resources.Document;
-                        return text + "Document";
+                        return text + "Document" + caption;
                     }
                     else
                     {
@@ -234,7 +240,7 @@ namespace Unigram.Controls.Items
                         {
                             if (!string.IsNullOrEmpty(((TLMessageMediaPhoto)message.Media).Caption))
                             {
-                                return text + ((TLMessageMediaPhoto)message.Media).Caption;
+                                return text + "Photo, " + ((TLMessageMediaPhoto)message.Media).Caption.Replace("\r\n", "\n").Replace("\n", " ");
                             }
 
                             //return text + Resources.Photo;
@@ -260,7 +266,7 @@ namespace Unigram.Controls.Items
                 {
                     if (showContent)
                     {
-                        return text + message.Message;
+                        return text + message.Message.Replace("\r\n", "\n").Replace("\n", " ");
                     }
 
                     //return text + Resources.Message;

@@ -38,7 +38,8 @@ namespace Unigram.ViewModels
                     {
                         return;
                     }
-                    if (already != message)
+
+                    //if (already != message)
                     {
                         already.Edit(message);
                     }
@@ -205,7 +206,7 @@ namespace Unigram.ViewModels
                         var user = CacheService.GetUser(message.FromId) as TLUser;
                         if (user != null && user.IsBot)
                         {
-                            //SetReplyMarkup(message, false);
+                            SetReplyMarkup(message);
                         }
                     }
 
@@ -237,7 +238,7 @@ namespace Unigram.ViewModels
                 //    {
                 //        return;
                 //    }
-                _currentDialog = (_currentDialog ?? CacheService.GetDialog(TLUtils.InputPeerToPeer(Peer, SettingsHelper.UserId)));
+                _currentDialog = (_currentDialog ?? CacheService.GetDialog(Peer.ToPeer()));
 
                 var dialog = _currentDialog;
                 if (dialog != null)

@@ -56,13 +56,28 @@ namespace Unigram.Controls
         private void OnReplyMarkupChanged(TLReplyMarkupBase newValue, TLReplyMarkupBase oldValue)
         {
             TLVector<TLKeyboardButtonRow> rows = null;
-            if (newValue is TLReplyKeyboardMarkup)
+            if (newValue is TLReplyKeyboardMarkup && !IsInline)
             {
                 rows = ((TLReplyKeyboardMarkup)newValue).Rows;
+
+                //if (!double.IsNaN(Height) && ((TLReplyKeyboardMarkup)newValue).IsResize)
+                //{
+                //    Height = double.NaN;
+                //}
+                //else if (double.IsNaN(Height) && !((TLReplyKeyboardMarkup)newValue).IsResize && rows.Count > 0)
+                //{
+                //    Height = 320; // TODO: last known keyboard height
+                //}
             }
-            if (newValue is TLReplyInlineMarkup)
+
+            if (newValue is TLReplyInlineMarkup && IsInline)
             {
                 rows = ((TLReplyInlineMarkup)newValue).Rows;
+                
+                //if (!double.IsNaN(Height))
+                //{
+                //    Height = double.NaN;
+                //}
             }
 
             Children.Clear();
@@ -84,8 +99,12 @@ namespace Unigram.Controls
                         button.Margin = new Thickness(4);
                         button.HorizontalAlignment = HorizontalAlignment.Stretch;
                         button.VerticalAlignment = VerticalAlignment.Stretch;
-                        button.Style = App.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
                         button.Click += Button_Click;
+
+                        //if (IsInline)
+                        {
+                            button.Style = App.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
+                        }
 
                         if (row.Buttons[i] is TLKeyboardButtonUrl)
                         {

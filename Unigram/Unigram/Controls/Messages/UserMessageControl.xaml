@@ -47,7 +47,7 @@
 
             <RichTextBlock 
                 x:Name="MessageControl"
-                common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}" 
+                common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
                 Style="{ThemeResource BodyRichTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
                 RequestedTheme="{ThemeResource MessageTextBlockTheme}"
@@ -55,7 +55,7 @@
 
             <controls:MediaControl
                 x:Name="MediaControl"
-                Media="{x:Bind ViewModel.Media, Mode=OneWay}"
+                Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
                 ContentChanged="OnMediaChanged"
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                 Grid.Row="3"/>
@@ -71,8 +71,12 @@
                     <FontIcon Glyph="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}" FontSize="11" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="0,0,4,2" VerticalAlignment="Bottom"/>
                     <TextBlock Text="{x:Bind ViewModel.Views}" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,12,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 </StackPanel>
-                <TextBlock Visibility="{x:Bind (Visibility)ViewModel.HasEditDate, Mode=OneWay}" Text="edited" FontStyle="Italic" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,4,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
-                <TextBlock x:Name="StatusLabel" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
+                <TextBlock Visibility="{x:Bind EditedVisibility(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay}" Text="edited" FontStyle="Italic" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,4,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                <TextBlock x:Name="StatusLabel" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0">
+                    <ToolTipService.ToolTip>
+                        <ToolTip Opened="ToolTip_Opened"/>
+                    </ToolTipService.ToolTip>
+                </TextBlock>
                 <FontIcon x:Name="StatusGlyph" Visibility="{x:Bind (Visibility)ViewModel.IsOut}" Glyph="{x:Bind Convert.State(ViewModel.State), Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
             </StackPanel>
         </Grid>

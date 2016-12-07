@@ -297,7 +297,12 @@ namespace Unigram.Converters
                         return null;
                     }
 
-                    return DefaultPhotoConverter.ReturnOrEnqueueSticker(tLDocument3, null);
+                    if (parameter != null && string.Equals(parameter.ToString(), "thumbnail", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return ReturnOrEnqueueStickerThumbnail(tLDocument3, null);
+                    }
+
+                    return ReturnOrEnqueueSticker(tLDocument3, null);
                 }
                 else if (TLMessage.IsGif(tLDocument3))
                 {
@@ -408,6 +413,7 @@ namespace Unigram.Converters
                 WriteableBitmap writeableBitmap;
                 if (_cachedWebPImages.TryGetValue(cacheKey, out weakReference) && weakReference.TryGetTarget(out writeableBitmap))
                 {
+                    Debug.WriteLine("Cached sticker");
                     return writeableBitmap;
                 }
 
@@ -968,6 +974,104 @@ namespace Unigram.Converters
                 {
                     File.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename));
                 });
+            }
+
+            return null;
+
+            //if (document == null)
+            //{
+            //    return null;
+            //}
+            //string documentLocalFileName = document.GetFileName();
+            //using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
+            //{
+            //    if (!userStoreForApplication.FileExists(documentLocalFileName))
+            //    {
+            //        TLObject owner = document;
+            //        if (sticker != null)
+            //        {
+            //            owner = sticker;
+            //        }
+            //        UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>().DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, delegate (double progress)
+            //        {
+            //        }, null);
+
+            //        UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>()
+            //        TLPhotoCachedSize tLPhotoCachedSize = document.Thumb as TLPhotoCachedSize;
+            //        if (tLPhotoCachedSize != null)
+            //        {
+            //            string cacheKey = "cached" + document.GetFileName();
+            //            byte[] data = tLPhotoCachedSize.Bytes.Data;
+            //            ImageSource result;
+            //            if (data == null)
+            //            {
+            //                result = null;
+            //                return result;
+            //            }
+            //            result = DefaultPhotoConverter.DecodeWebPImage(cacheKey, data, delegate
+            //            {
+            //            });
+            //            return result;
+            //        }
+            //        else
+            //        {
+            //            var photoSize = document.Thumb as TLPhotoSize;
+            //            if (photoSize != null)
+            //            {
+            //                var fileLocation = photoSize.Location as TLFileLocation;
+            //                if (fileLocation != null)
+            //                {
+            //                    return DefaultPhotoConverter.ReturnOrEnqueueStickerPreview(fileLocation, sticker, photoSize.Size);
+            //                }
+            //            }
+            //        }
+            //    }
+            //    else if (document.DocumentSize > 0 && document.DocumentSize < 262144)
+            //    {
+            //        byte[] array;
+            //        using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(documentLocalFileName, 3))
+            //        {
+            //            array = new byte[isolatedStorageFileStream.get_Length()];
+            //            isolatedStorageFileStream.Read(array, 0, array.Length);
+            //        }
+            //        ImageSource result = DefaultPhotoConverter.DecodeWebPImage(documentLocalFileName, array, delegate
+            //        {
+            //            using (IsolatedStorageFile userStoreForApplication2 = IsolatedStorageFile.GetUserStoreForApplication())
+            //            {
+            //                userStoreForApplication2.DeleteFile(documentLocalFileName);
+            //            }
+            //        });
+            //        return result;
+            //    }
+            //}
+            //return null;
+        }
+        public static ImageSource ReturnOrEnqueueStickerThumbnail(TLDocument document, TLObject sticker)
+        {
+            var bitmap = new StickerBitmapSource();
+            var cachedSize = document.Thumb as TLPhotoCachedSize;
+            if (cachedSize != null)
+            {
+                var cacheKey = "cached" + document.GetFileName();
+                var data = cachedSize.Bytes;
+                if (data == null)
+                {
+                    return null;
+                }
+
+                return DecodeWebPImage(cacheKey, data, () => { });
+            }
+            else
+            {
+                var photoSize = document.Thumb as TLPhotoSize;
+                if (photoSize != null)
+                {
+                    var location = photoSize.Location as TLFileLocation;
+                    if (location != null)
+                    {
+                        return EnqueueStickerPreview(location, sticker, photoSize, bitmap);
+                    }
+                }
             }
 
             return null;

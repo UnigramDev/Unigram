@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
+using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.Foundation;
+using Windows.Globalization.DateTimeFormatting;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -48,6 +50,18 @@ namespace Unigram.Controls.Messages
         //    };
         //}
 
+        #region Binding
+        protected Visibility EditedVisibility(bool hasEditDate, bool hasViaBotId, TLReplyMarkupBase replyMarkup)
+        {
+            return hasEditDate && !hasViaBotId && replyMarkup?.TypeId != TLType.ReplyInlineMarkup ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        protected object ConvertMedia(TLMessageMediaBase media)
+        {
+            return ViewModel;
+        }
+        #endregion
+
         protected void OnMessageChanged(TextBlock paragraph)
         {
             paragraph.Inlines.Clear();
@@ -59,6 +73,15 @@ namespace Unigram.Controls.Messages
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId) });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Click += (s, args) => From_Click(message);
+
+                    paragraph.Inlines.Add(hyperlink);
+                }
+                else if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = InMemoryCacheService.Current.GetChat(message.ToId.Id).FullName, Foreground = Convert.Bubble(message.ToId.Id) });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
                     hyperlink.Click += (s, args) => From_Click(message);
 
@@ -133,6 +156,10 @@ namespace Unigram.Controls.Messages
             {
                 Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.From.Id });
             }
+            else if (message.IsPost)
+            {
+                Context.NavigationService.Navigate(typeof(ChatInfoPage), new TLPeerChannel { ChannelId = message.ToId.Id });
+            }
         }
 
         private void FwdFrom_Click(TLMessage message)
@@ -163,6 +190,24 @@ namespace Unigram.Controls.Messages
         protected void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
         {
             Context.KeyboardButtonExecute(e.Button, ViewModel);
+        }
+
+        protected void ToolTip_Opened(object sender, RoutedEventArgs e)
+        {
+            var tooltip = sender as ToolTip;
+            if (tooltip != null && ViewModel != null)
+            {
+                var date = Convert.DateTime(ViewModel.Date);
+                var text = $"{DateTimeFormatter.LongDate.Format(date)} {DateTimeFormatter.LongTime.Format(date)}";
+
+                if (ViewModel.HasEditDate)
+                {
+                    var edit = Convert.DateTime(ViewModel.EditDate.Value);
+                    text += $"\r\nEdited: {DateTimeFormatter.LongDate.Format(edit)} {DateTimeFormatter.LongTime.Format(edit)}";
+                }
+
+                tooltip.Content = text;
+            }
         }
 
         /// <summary>
@@ -234,5 +279,85 @@ namespace Unigram.Controls.Messages
             return false;
         }
         #endregion
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            if (ViewModel?.Media == null || !IsFullMedia(ViewModel?.Media))
+            {
+                return base.MeasureOverride(availableSize);
+            }
+
+            object constraint = null;
+            if (ViewModel?.Media.TypeId == TLType.MessageMediaPhoto)
+            {
+                constraint = ((TLMessageMediaPhoto)ViewModel?.Media).Photo;
+            }
+            else if (ViewModel?.Media.TypeId == TLType.MessageMediaDocument)
+            {
+                constraint = ((TLMessageMediaDocument)ViewModel?.Media).Document;
+            }
+
+            if (constraint == null)
+            {
+                return base.MeasureOverride(availableSize);
+            }
+
+            var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320));
+            var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 320));
+
+            var width = 0.0;
+            var height = 0.0;
+
+            var photo = constraint as TLPhoto;
+            if (photo != null)
+            {
+                //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
+                var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
+                if (photoSize != null)
+                {
+                    width = photoSize.W;
+                    height = photoSize.H;
+
+                    goto Calculate;
+                }
+            }
+
+            var document = constraint as TLDocument;
+            if (document != null)
+            {
+                var imageSize = document.Attributes.OfType<TLDocumentAttributeImageSize>().FirstOrDefault();
+                if (imageSize != null)
+                {
+                    width = imageSize.W;
+                    height = imageSize.H;
+
+                    goto Calculate;
+                }
+
+                var video = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+                if (video != null)
+                {
+                    width = video.W;
+                    height = video.H;
+
+                    goto Calculate;
+                }
+            }
+
+            Calculate:
+            if (width > availableWidth || height > availableHeight)
+            {
+                var ratioX = availableWidth / width;
+                var ratioY = availableHeight / height;
+                var ratio = Math.Min(ratioX, ratioY);
+
+                return base.MeasureOverride(new Size(width * ratio, availableSize.Height));
+            }
+            else
+            {
+                return base.MeasureOverride(new Size(width, availableSize.Height));
+            }
+        }
+
     }
 }
