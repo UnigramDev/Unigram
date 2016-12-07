@@ -1,28 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Controls.Media
 {
     public sealed partial class VoiceMediaControl : UserControl
     {
-        public TLMessageMediaDocument ViewModel => DataContext as TLMessageMediaDocument;
+        public TLMessage ViewModel => DataContext as TLMessage;
 
         public VoiceMediaControl()
         {
@@ -34,13 +26,18 @@ namespace Unigram.Controls.Media
                 {
                     Loading?.Invoke(s, null);
 
-                    var document = ViewModel.Document as TLDocument;
-                    if (document != null)
+                    var mediaDocument = ViewModel.Media as TLMessageMediaDocument;
+                    if (mediaDocument != null)
                     {
-                        var audioAttribute = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
-                        if (audioAttribute != null && audioAttribute.HasWaveform)
+                        var document = mediaDocument.Document as TLDocument;
+                        if (document != null)
                         {
-                            UpdateSlide(audioAttribute.Waveform);
+                            var audioAttribute = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+                            if (audioAttribute != null && audioAttribute.HasWaveform)
+                            {
+                                LengthLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
+                                UpdateSlide(audioAttribute.Waveform);
+                            }
                         }
                     }
                 }
@@ -48,6 +45,7 @@ namespace Unigram.Controls.Media
         }
 
         #region Drawing
+
         private byte[] _oldWaveform;
 
         private void UpdateSlide(byte[] waveform)
@@ -137,6 +135,7 @@ namespace Unigram.Controls.Media
                 line += width;
             }
         }
+
         #endregion
 
         /// <summary>
