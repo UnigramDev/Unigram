@@ -164,11 +164,11 @@ namespace Unigram.ViewModels
         public async void ProcessReplies(IList<TLMessageBase> messages)
         {
             var replyIds = new TLVector<int>();
-            var replyToMsgs = new List<TLMessage>();
+            var replyToMsgs = new List<TLMessageCommonBase>();
 
             for (int i = 0; i < messages.Count; i++)
             {
-                var message = messages[i] as TLMessage;
+                var message = messages[i] as TLMessageCommonBase;
                 if (message != null)
                 {
                     var replyId = message.ReplyToMsgId;
@@ -185,8 +185,13 @@ namespace Unigram.ViewModels
                         if (reply != null)
                         {
                             messages[i].Reply = reply;
-                            messages[i].RaisePropertyChanged(() => replyToMsgs[i].Reply);
-                            messages[i].RaisePropertyChanged(() => replyToMsgs[i].ReplyInfo);
+                            messages[i].RaisePropertyChanged(() => messages[i].Reply);
+                            messages[i].RaisePropertyChanged(() => messages[i].ReplyInfo);
+
+                            if (messages[i] is TLMessageService)
+                            {
+                                messages[i].RaisePropertyChanged(() => ((TLMessageService)messages[i]).Self);
+                            }
                         }
                         else
                         {
@@ -240,6 +245,11 @@ namespace Unigram.ViewModels
                                 replyToMsgs[k].Reply = result.Value.Messages[j];
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].Reply);
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].ReplyInfo);
+
+                                if (replyToMsgs[k] is TLMessageService)
+                                {
+                                    replyToMsgs[k].RaisePropertyChanged(() => ((TLMessageService)replyToMsgs[k]).Self);
+                                }
                             }
                         }
                     }

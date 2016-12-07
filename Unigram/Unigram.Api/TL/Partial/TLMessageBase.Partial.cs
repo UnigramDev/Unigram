@@ -175,6 +175,17 @@ namespace Telegram.Api.TL
         }
     }
 
+    public partial class TLMessageService
+    {
+        public TLMessageService Self
+        {
+            get
+            {
+                return this;
+            }
+        }
+    }
+
     public partial class TLMessage
     {
         #region Gif

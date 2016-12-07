@@ -361,14 +361,14 @@
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
             <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12,0,2">
-                <RichTextBlock common:ServiceHelper.Message="{Binding}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
+                <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,12,0,2">
                 <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6">
-                    <RichTextBlock common:ServiceHelper.Message="{Binding}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
+                    <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
                 </Border>
 
                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,12,0,0">

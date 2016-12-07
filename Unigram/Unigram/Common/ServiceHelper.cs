@@ -16,62 +16,135 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
+using Unigram.Strings;
 
 namespace Unigram.Common
 {
     public class ServiceHelper
     {
-        private static readonly Dictionary<Type, Func<TLMessageActionBase, int, string, Paragraph>> _actionsCache;
+        private static readonly Dictionary<Type, Func<TLMessageBase, TLMessageActionBase, int, string, bool, Paragraph>> _actionsCache;
 
         static ServiceHelper()
         {
-            _actionsCache = new Dictionary<Type, Func<TLMessageActionBase, int, string, Paragraph>>();
-            _actionsCache.Add(typeof(TLMessageActionDate), (TLMessageActionBase action, int fromUserId, string fromUserFullName) => ReplaceLinks(new DateTimeFormatter("day month").Format(Utils.UnixTimestampToDateTime(((TLMessageActionDate)action).Date))));
-            //_actionsCache.Add(typeof(TLMessageActionEmpty), (TLMessageActionBase action, int fromUserId, string fromUserFullName) => ReplaceLinks(Resources.MessageActionEmpty));
-            //_actionsCache.Add(typeof(TLMessageActionChatCreate), (TLMessageActionBase action, int fromUserId, string fromUserFullName) => ReplaceLinks(Resources.MessageActionChatCreate, new[] { fromUserFullName, ((TLMessageActionChatCreate)action).Title }, new[] { fromUserId }));
-            //_actionsCache.Add(typeof(TLMessageActionChatEditPhoto), (TLMessageActionBase action, int fromUserId, string fromUserFullName) => ReplaceLinks(Resources.MessageActionChatEditPhoto, new[] { fromUserFullName }, new[] { fromUserId }));
-            //_actionsCache.Add(typeof(TLMessageActionChatEditTitle), (TLMessageActionBase action, int fromUserId, string fromUserFullName) => ReplaceLinks(Resources.MessageActionChatEditTitle, new[] { fromUserFullName, ((TLMessageActionChatEditTitle)action).Title }, new[] { fromUserId }));
-            //_actionsCache.Add(typeof(TLMessageActionChatDeletePhoto), (TLMessageActionBase action, int fromUserId, string fromUserFullName) => ReplaceLinks(Resources.MessageActionChatDeletePhoto, new[] { fromUserFullName }, new[] { fromUserId }));
-            //_actionsCache.Add(typeof(TLMessageActionChatAddUser), (TLMessageActionBase action, int fromUserId, string fromUserFullName) =>
-            //{
-            //    var userId = ((TLMessageActionChatAddUser)action).UserId;
-            //    var user = InMemoryCacheService.Current.GetUser(userId) as TLUser;
-            //    var username = (user != null) ? user.FullName : Resources.User;
+            _actionsCache = new Dictionary<Type, Func<TLMessageBase, TLMessageActionBase, int, string, bool, Paragraph>>();
+            _actionsCache.Add(typeof(TLMessageActionDate), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(new DateTimeFormatter("day month").Format(Utils.UnixTimestampToDateTime(((TLMessageActionDate)action).Date))));
+            _actionsCache.Add(typeof(TLMessageActionEmpty), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionEmpty));
+            _actionsCache.Add(typeof(TLMessageActionGameScore), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            {
+                var value = ((TLMessageActionGameScore)action).Score;
+                var won = value == 0 || value > 0;
+                var serviceMessage = message as TLMessageService;
+                if (serviceMessage != null)
+                {
+                    var game = GetGame(serviceMessage);
+                    if (game != null)
+                    {
+                        var text = game.Title.ToString();
+                        //TLMessageCommon tLMessageCommon = serviceMessage.Reply as TLMessageCommonBase;
+                        //if (tLMessageCommon != null)
+                        //{
+                        //    text = ServiceMessageToTextConverter.GetGameFullNameString(text, serviceMessage.Index, serviceMessage.ToId, useActiveLinks);
+                        //}
 
-            //    return ReplaceLinks(Resources.MessageActionChatAddUser, new[] { fromUserFullName, username }, new[] { fromUserId, userId.Value });
-            //});
-            //_actionsCache.Add(typeof(TLMessageActionChatDeleteUser), (TLMessageActionBase action, int fromUserId, string fromUserFullName) =>
+                        if (fromUserId == SettingsHelper.UserId)
+                        {
+                            return ReplaceLinks(won ? Resources.YourScoredAtGamePlural : Resources.YourScoredAtGame, new[] { value.ToString(), text }, new[] { "tg-bold://", "tg-game://" }, useActiveLinks);
+                        }
+
+                        return ReplaceLinks(won ? Resources.UserScoredAtGamePlural : Resources.UserScoredAtGame, new[] { fromUserFullName, value.ToString(), text }, new[] { "tg-user://" + fromUserId, "tg-bold://", "tg-game://" }, useActiveLinks);
+                    }
+
+                    if (fromUserId == SettingsHelper.UserId)
+                    {
+                        return ReplaceLinks(string.Format(won ? Resources.YourScoredPlural : Resources.YourScored, value));
+                    }
+
+                    return ReplaceLinks(won ? Resources.UserScoredPlural : Resources.UserScored, new[] { fromUserFullName, value.ToString() }, new[] { "tg-user://" + fromUserId, "tg-bold://" }, useActiveLinks);
+                }
+
+                return ReplaceLinks(string.Format(won ? Resources.UserScoredPlural : Resources.UserScored, Resources.UserNominativeSingular, value));
+            });
+            _actionsCache.Add(typeof(TLMessageActionChatCreate), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChatCreate, new[] { fromUserFullName, ((TLMessageActionChatCreate)action).Title }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
+            _actionsCache.Add(typeof(TLMessageActionChatEditPhoto), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChatEditPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
+            _actionsCache.Add(typeof(TLMessageActionChatEditTitle), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChatEditTitle, new[] { fromUserFullName, ((TLMessageActionChatEditTitle)action).Title }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
+            _actionsCache.Add(typeof(TLMessageActionChatDeletePhoto), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChatDeletePhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
+            _actionsCache.Add(typeof(TLMessageActionChatAddUser), delegate (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks)
+            {
+                var users = ((TLMessageActionChatAddUser)action).Users;
+                var names = new List<string>();
+                var codes = new List<string>();
+
+                for (int i = 0; i < users.Count; i++)
+                {
+                    var item = users[i];
+                    var user = InMemoryCacheService.Current.GetUser(item);
+                    if (user != null)
+                    {
+                        names.Add(user.FullName);
+                        codes.Add($"{{{i + 1}}}");
+                    }
+                }
+
+                if (users.Count == 1 && users[0] == fromUserId)
+                {
+                    return ReplaceLinks(Resources.MessageActionChatAddSelf, new[] { names[0] }, new[] { "tg-user://" + users[0] });
+                }
+
+                // TODO: replace last ", " with "and "
+
+                var codesReplace = string.Empty;
+                if (codes.Count > 1)
+                {
+                    codesReplace = string.Concat(string.Join(", ", codes.Take(codes.Count - 1)), " and ", codes.Last());
+                }
+
+                return ReplaceLinks(string.Format(Resources.MessageActionChatAddUser, "{0}", codesReplace), new[] { fromUserFullName }.Union(names).ToArray(), new[] { "tg-user://" + fromUserId }.Union(users.Select(x => "tg-user://" + x)).ToArray());
+            });
+            _actionsCache.Add(typeof(TLMessageActionChatDeleteUser), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            {
+                var userId = ((TLMessageActionChatDeleteUser)action).UserId;
+                var user = InMemoryCacheService.Current.GetUser(userId);
+                var userFullName = user.FullName;
+                if (userId != fromUserId)
+                {
+                    return ReplaceLinks(Resources.MessageActionChatDeleteUser, new[] { fromUserFullName, userFullName }, new[] { "tg-user://" + fromUserId, "tg-user://" + userId }, useActiveLinks);
+                }
+
+                if (fromUserId == SettingsHelper.UserId)
+                {
+                    return ReplaceLinks(Resources.MessageActionLeftGroupSelf);
+                }
+
+                return ReplaceLinks(Resources.MessageActionUserLeftGroup, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+            });
+            //_actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => AppResources.UnreadMessages.ToLowerInvariant());
+            //_actionsCache.Add(typeof(TLMessageActionContactRegistered), delegate (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks)
             //{
-            //    var userId = ((TLMessageActionChatDeleteUser)action).UserId;
-            //    var user = InMemoryCacheService.Current.GetUser(userId) as TLUser;
-            //    var username = (user != null) ? user.FullName : Resources.User;
-            //    if (userId == fromUserId)
+            //    TLInt userId = ((TLMessageActionContactRegistered)action).UserId;
+            //    TLUserBase user = IoC.Get<ICacheService>(null).GetUser(userId);
+            //    string text = (user != null) ? user.FirstName.ToString() : AppResources.User;
+            //    if (string.IsNullOrEmpty(text) && user != null)
             //    {
-            //        return ReplaceLinks(Resources.MessageActionUserLeftGroup, new[] { fromUserFullName }, new[] { fromUserId });
+            //        text = user.FullName;
             //    }
-
-            //    return ReplaceLinks(Resources.MessageActionChatDeleteUser, new[] { fromUserFullName, username }, new[] { fromUserId, userId });
+            //    return string.Format(AppResources.ContactRegistered, text);
             //});
-            //_actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageActionBase action, int fromUserId, string fromUserFullName) => ReplaceLinks(Resources.UnreadMessages));
-            //_actionsCache.Add(typeof(TLMessageActionContactRegistered), (TLMessageActionBase action, int fromUserId, string fromUserFullName) =>
+            _actionsCache.Add(typeof(TLMessageActionChatJoinedByLink), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChatJoinedByLink, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
+            //_actionsCache.Add(typeof(TLMessageActionMessageGroup), delegate (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks)
             //{
-            //    var userId = ((TLMessageActionContactRegistered)action).UserId;
-            //    var user = InMemoryCacheService.Current.GetUser(userId) as TLUser;
-            //    var username = (user != null) ? user.FirstName.ToString() : Resources.User;
-            //    if (string.IsNullOrEmpty(username) && user != null)
-            //    {
-            //        username = user.FullName;
-            //    }
+            //    int value = ((TLMessageActionMessageGroup)action).Group.Count.Value;
+            //    return Language.Declension(value, AppResources.CommentNominativeSingular, AppResources.CommentNominativePlural, AppResources.CommentGenitiveSingular, AppResources.CommentGenitivePlural, null, null).ToLower(CultureInfo.get_CurrentUICulture());
+            //});
+            _actionsCache.Add(typeof(TLMessageActionChatMigrateTo), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            {
+                var channelId = ((TLMessageActionChatMigrateTo)action).ChannelId;
+                var channel = InMemoryCacheService.Current.GetChat(channelId) as TLChannel;
+                var fullName = channel != null ? channel.FullName : string.Empty;
 
-            //    return ReplaceLinks(Resources.ContactRegistered, new[] { username }, new[] { userId.Value });
-            //});
-            //_actionsCache.Add(typeof(TLMessageActionChatJoinedByLink), delegate (TLMessageActionBase action, int fromUserId, string fromUserFullName)
-            //{
-            //    var inviterId = ((TLMessageActionChatJoinedByLink)action).InviterId;
-            //    var user = InMemoryCacheService.Current.GetUser(inviterId) as TLUser;
-            //    var username = (user != null) ? user.FullName : Resources.User;
-            //    return ReplaceLinks(Resources.MessageActionChatJoinedByLink, new[] { username }, new[] { inviterId });
-            //});
+                return ReplaceLinks(Resources.MessageActionChatMigrateTo, new[] { fullName }, new[] { "tg-channel://" + channelId }, useActiveLinks);
+            });
+            _actionsCache.Add(typeof(TLMessageActionChannelMigrateFrom), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChannelMigrateFrom));
+            //_actionsCache.Add(typeof(TLMessageActionHistoryClear), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => string.Empty);
         }
 
         #region Message
@@ -82,7 +155,14 @@ namespace Unigram.Common
 
         public static void SetMessage(DependencyObject obj, TLMessageBase value)
         {
+            // TODO: shitty hack!!!
+            var oldValue = obj.GetValue(MessageProperty);
             obj.SetValue(MessageProperty, value);
+
+            if (oldValue == value)
+            {
+                OnMessageChanged(obj as RichTextBlock, value);
+            }
         }
 
         public static readonly DependencyProperty MessageProperty =
@@ -93,6 +173,11 @@ namespace Unigram.Common
             var sender = d as RichTextBlock;
             var newValue = e.NewValue as TLMessageBase;
 
+            OnMessageChanged(sender, newValue);
+        }
+
+        private static void OnMessageChanged(RichTextBlock sender, TLMessageBase newValue)
+        {
             sender.IsTextSelectionEnabled = false;
             sender.Blocks.Clear();
 
@@ -104,7 +189,7 @@ namespace Unigram.Common
             }
 
             var paragraph = new Paragraph();
-            //paragraph.Inlines.Add(new Run { Text = Resources.MessageActionEmpty });
+            paragraph.Inlines.Add(new Run { Text = Resources.MessageActionEmpty });
             sender.Blocks.Add(paragraph);
         }
 
@@ -112,20 +197,20 @@ namespace Unigram.Common
         {
             var fromId = serviceMessage.FromId;
             var user = InMemoryCacheService.Current.GetUser(fromId) as TLUser;
-            var username = (user != null) ? user.FullName : "Resources.User";
+            var username = (user != null) ? user.FullName : Resources.UserNominativeSingular;
             var action = serviceMessage.Action;
             if (action != null && _actionsCache.ContainsKey(action.GetType()))
             {
-                return _actionsCache[action.GetType()].Invoke(action, fromId.Value, username);
+                return _actionsCache[action.GetType()].Invoke(serviceMessage, action, fromId.Value, username, true);
             }
 
             var paragraph = new Paragraph();
-            //paragraph.Inlines.Add(new Run { Text = Resources.MessageActionEmpty });
+            paragraph.Inlines.Add(new Run { Text = Resources.MessageActionEmpty });
             return paragraph;
         }
         #endregion
 
-        private static Paragraph ReplaceLinks(string text, string[] users = null, int[] identifiers = null)
+        private static Paragraph ReplaceLinks(string text, string[] users = null, string[] identifiers = null, bool useActiveLinks = true)
         {
             var paragraph = new Paragraph();
             var regex = new Regex("({[0-9]?})");
@@ -146,13 +231,20 @@ namespace Unigram.Common
 
                     if (users?.Length > i && identifiers?.Length > i)
                     {
-                        var currentId = identifiers[i] + 0;
-                        var hyperlink = new Hyperlink();
-                        hyperlink.Click += (s, args) => Hyperlink_Navigate(currentId);
-                        hyperlink.UnderlineStyle = UnderlineStyle.None;
-                        hyperlink.Foreground = new SolidColorBrush(Colors.White);
-                        hyperlink.Inlines.Add(new Run { Text = users[i], FontWeight = FontWeights.SemiBold });
-                        paragraph.Inlines.Add(hyperlink);
+                        var currentId = identifiers[i];
+                        if (currentId.Equals("tg-bold://"))
+                        {
+                            paragraph.Inlines.Add(new Run { Text = users[i], FontWeight = FontWeights.SemiBold });
+                        }
+                        else
+                        {
+                            var hyperlink = new Hyperlink();
+                            hyperlink.Click += (s, args) => Hyperlink_Navigate(currentId);
+                            hyperlink.UnderlineStyle = UnderlineStyle.None;
+                            hyperlink.Foreground = new SolidColorBrush(Colors.White);
+                            hyperlink.Inlines.Add(new Run { Text = users[i], FontWeight = FontWeights.SemiBold });
+                            paragraph.Inlines.Add(hyperlink);
+                        }
                     }
                     else
                     {
@@ -173,13 +265,30 @@ namespace Unigram.Common
             return paragraph;
         }
 
-        private static void Hyperlink_Navigate(int userId)
+        private static void Hyperlink_Navigate(string userId)
         {
-            var navigationService = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-            if (navigationService != null)
+            if (userId.StartsWith("tg-user://"))
             {
-                navigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = userId });
+                var navigationService = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                if (navigationService != null)
+                {
+                    navigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = int.Parse(userId.Replace("tg-user://", string.Empty)) });
+                }
             }
+        }
+
+        public static TLGame GetGame(TLMessageService message)
+        {
+            var reply = message.Reply as TLMessage;
+            if (reply != null)
+            {
+                var gameMedia = reply.Media as TLMessageMediaGame;
+                if (gameMedia != null)
+                {
+                    return gameMedia.Game;
+                }
+            }
+            return null;
         }
     }
 }

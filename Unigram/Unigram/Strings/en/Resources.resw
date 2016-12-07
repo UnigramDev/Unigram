@@ -397,7 +397,7 @@
     <value>You can add admins to help you manage you group. Tap and hold or right click to remove admins.</value>
     <comment>DialogInfo - Admins - Description</comment>
   </data>
-  <data name="DialogPage-Info-Admin-Titlebar-Title" xml:space="preserve">
+  <data name="DialogPage-Info-Admin-Titlebar.Title" xml:space="preserve">
     <value>ADMINS</value>
     <comment>DialogInfo - Admins - Page Title</comment>
   </data>
@@ -424,5 +424,155 @@
   <data name="CBTN-Search.Text" xml:space="preserve">
     <value>Search</value>
     <comment>AppBarButton - Label - Search</comment>
+  </data>
+  <data name="MessageActionBroadcastCreate" xml:space="preserve">
+    <value>{0} created the broadcast "{1}"</value>
+  </data>
+  <data name="MessageActionChannelCreate" xml:space="preserve">
+    <value>Channel created</value>
+  </data>
+  <data name="MessageActionChannelDeletePhoto" xml:space="preserve">
+    <value>Channel photo removed</value>
+  </data>
+  <data name="MessageActionChannelEditPhoto" xml:space="preserve">
+    <value>Channel photo updated</value>
+  </data>
+  <data name="MessageActionChannelEditTitle" xml:space="preserve">
+    <value>Channel name changed to "{0}"</value>
+  </data>
+  <data name="MessageActionChannelMigrateFrom" xml:space="preserve">
+    <value>This group was upgraded to a supergroup.</value>
+  </data>
+  <data name="MessageActionChatActivate" xml:space="preserve">
+    <value>Chat was activated</value>
+  </data>
+  <data name="MessageActionChatAddSelf" xml:space="preserve">
+    <value>{0} returned to the group</value>
+  </data>
+  <data name="MessageActionChatAddUser" xml:space="preserve">
+    <value>{0} invited {1}</value>
+  </data>
+  <data name="MessageActionChatCreate" xml:space="preserve">
+    <value>{0} created the group "{1}"</value>
+  </data>
+  <data name="MessageActionChatDeactivate" xml:space="preserve">
+    <value>Chat was deactivated</value>
+  </data>
+  <data name="MessageActionChatDeletePhoto" xml:space="preserve">
+    <value>{0} removed group photo</value>
+  </data>
+  <data name="MessageActionChatDeleteUser" xml:space="preserve">
+    <value>{0} kicked {1}</value>
+  </data>
+  <data name="MessageActionChatEditPhoto" xml:space="preserve">
+    <value>{0} changed group photo</value>
+  </data>
+  <data name="MessageActionChatEditTitle" xml:space="preserve">
+    <value>{0} changed group name to "{1}"</value>
+  </data>
+  <data name="MessageActionChatJoin" xml:space="preserve">
+    <value>{0} joined the group</value>
+  </data>
+  <data name="MessageActionChatJoinedByLink" xml:space="preserve">
+    <value>{0} joined the group via invite link</value>
+  </data>
+  <data name="MessageActionChatJoinSelf" xml:space="preserve">
+    <value>You joined the group</value>
+  </data>
+  <data name="MessageActionChatMigrateTo" xml:space="preserve">
+    <value>Chat migrated to channel "{0}"</value>
+  </data>
+  <data name="MessageActionDisableMessageTTL" xml:space="preserve">
+    <value>{0} disabled the self-destruct timer</value>
+  </data>
+  <data name="MessageActionEmpty" xml:space="preserve">
+    <value>Empty service message</value>
+  </data>
+  <data name="MessageActionLeftGroupSelf" xml:space="preserve">
+    <value>You left the group</value>
+  </data>
+  <data name="MessageActionPinContact" xml:space="preserve">
+    <value>{0} pinned a contact</value>
+  </data>
+  <data name="MessageActionPinFile" xml:space="preserve">
+    <value>{0} pinned a file</value>
+  </data>
+  <data name="MessageActionPinGame" xml:space="preserve">
+    <value>{0} pinned a game</value>
+  </data>
+  <data name="MessageActionPinGif" xml:space="preserve">
+    <value>{0} pinned a GIF</value>
+  </data>
+  <data name="MessageActionPinMap" xml:space="preserve">
+    <value>{0} pinned a map</value>
+  </data>
+  <data name="MessageActionPinMessage" xml:space="preserve">
+    <value>{0} pinned a message</value>
+  </data>
+  <data name="MessageActionPinPhoto" xml:space="preserve">
+    <value>{0} pinned a photo</value>
+  </data>
+  <data name="MessageActionPinSticker" xml:space="preserve">
+    <value>{0} pinned a sticker</value>
+  </data>
+  <data name="MessageActionPinText" xml:space="preserve">
+    <value>{0} pinned "{1}"</value>
+  </data>
+  <data name="MessageActionPinTrack" xml:space="preserve">
+    <value>{0} pinned a track</value>
+  </data>
+  <data name="MessageActionPinVideo" xml:space="preserve">
+    <value>{0} pinned a video</value>
+  </data>
+  <data name="MessageActionPinVoiceMessage" xml:space="preserve">
+    <value>{0} pinned a voice message</value>
+  </data>
+  <data name="MessageActionScreenshotMessages" xml:space="preserve">
+    <value>{0} took a screenshot!</value>
+  </data>
+  <data name="MessageActionSetMessageTTL" xml:space="preserve">
+    <value>{0} set the self-destruct timer to {1}</value>
+  </data>
+  <data name="MessageActionUserLeftGroup" xml:space="preserve">
+    <value>{0} left the group</value>
+  </data>
+  <data name="MessageActionYouDisableMessageTTL" xml:space="preserve">
+    <value>You disabled the self-destruct timer</value>
+  </data>
+  <data name="MessageActionYouScreenshotMessages" xml:space="preserve">
+    <value>You took a screenshot!</value>
+  </data>
+  <data name="MessageActionYouSetMessageTTL" xml:space="preserve">
+    <value>You set the self-destruct timer to {0}</value>
+  </data>
+  <data name="UserScored" xml:space="preserve">
+    <value>{0} scored {1}</value>
+  </data>
+  <data name="UserScoredAtGame" xml:space="preserve">
+    <value>{0} scored {1} at {2}</value>
+  </data>
+  <data name="UserScoredAtGamePlural" xml:space="preserve">
+    <value>{0} scored {1} at {2}</value>
+  </data>
+  <data name="UserScoredPlural" xml:space="preserve">
+    <value>{0} scored {1}</value>
+  </data>
+  <data name="UserNominativePlural" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="UserNominativeSingular" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="YourScored" xml:space="preserve">
+    <value>You scored {0}</value>
+  </data>
+  <data name="YourScoredAtGame" xml:space="preserve">
+    <value>You scored {0} at {1}</value>
+  </data>
+  <data name="YourScoredAtGamePlural" xml:space="preserve">
+    <value>You scored {0} at {1}</value>
+  </data>
+  <data name="YourScoredPlural" xml:space="preserve">
+    <value>You scored {0}</value>
   </data>
 </root>

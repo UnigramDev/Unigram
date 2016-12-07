@@ -13,8 +13,7 @@ namespace Unigram.Selectors
     {
         private readonly Dictionary<Type, Func<TLMessageBase, DataTemplate>> _templatesCache;
 
-        //protected DataTemplate EmptyMessageTemplate = new DataTemplate();
-        public DataTemplate EmptyMessageTemplate { get; set; }
+        protected DataTemplate EmptyMessageTemplate = new DataTemplate();
 
         public DataTemplate UserMessageTemplate { get; set; }
         public DataTemplate FriendMessageTemplate { get; set; }
@@ -63,6 +62,10 @@ namespace Unigram.Selectors
             if (serviceMessage.Action is TLMessageActionChatEditPhoto)
             {
                 return ServiceMessagePhotoTemplate;
+            }
+            else if (serviceMessage.Action is TLMessageActionHistoryClear)
+            {
+                return EmptyMessageTemplate;
             }
 
             return ServiceMessageTemplate ?? EmptyMessageTemplate;
