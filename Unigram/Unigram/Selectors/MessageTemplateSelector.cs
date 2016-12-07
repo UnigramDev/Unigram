@@ -13,7 +13,8 @@ namespace Unigram.Selectors
     {
         private readonly Dictionary<Type, Func<TLMessageBase, DataTemplate>> _templatesCache;
 
-        protected DataTemplate EmptyMessageTemplate = new DataTemplate();
+        //protected DataTemplate EmptyMessageTemplate = new DataTemplate();
+        public DataTemplate EmptyMessageTemplate { get; set; }
 
         public DataTemplate UserMessageTemplate { get; set; }
         public DataTemplate FriendMessageTemplate { get; set; }
@@ -81,7 +82,7 @@ namespace Unigram.Selectors
                 {
                     return UserStickerTemplate ?? EmptyMessageTemplate;
                 }
-                if (message.ToId is TLPeerChat)
+                if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
                 {
                     return ChatFriendStickerTemplate ?? EmptyMessageTemplate;
                 }
@@ -104,7 +105,7 @@ namespace Unigram.Selectors
 
                     return UserMessageTemplate ?? EmptyMessageTemplate;
                 }
-                if (message.ToId is TLPeerChat || message.ToId is TLPeerChannel) // TODO: probably some addtional check needed for channels
+                if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
                 {
                     if (!(message?.Media is TLMessageMediaEmpty))
                     {

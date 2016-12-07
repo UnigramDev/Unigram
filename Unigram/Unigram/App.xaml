@@ -30,6 +30,7 @@
             
             <!-- Temp -->
             <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />
+            <converters:BubblePlaceholderConverter x:Key="BubblePlaceholderConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
             <converters:InitialNameStringConverter x:Key="InitialNameStringConverter" />

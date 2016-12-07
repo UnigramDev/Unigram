@@ -149,12 +149,12 @@ namespace Unigram.ViewModels
             var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, maxId, 15);
             if (result.IsSucceeded)
             {
-                //ProcessReplies(result.Value.Messages);
+                ProcessReplies(result.Value.Messages);
 
-                foreach (var item in result.Value.Messages.Reverse())
+                foreach (var item in result.Value.Messages)
                 {
-                    //Messages.Insert(0, item);
-                    InsertMessage(item as TLMessageCommonBase);
+                    Messages.Insert(0, item);
+                    //InsertMessage(item as TLMessageCommonBase);
                 }
             }
 
@@ -958,11 +958,20 @@ namespace Unigram.ViewModels
             var next = index > 0 ? this[index - 1] : null;
             var previous = index < Count - 1 ? this[index + 1] : null;
 
+            //if (next is TLMessageEmpty)
+            //{
+            //    next = index > 1 ? this[index - 2] : null;
+            //}
+            //if (previous is TLMessageEmpty)
+            //{
+            //    previous = index < Count - 2 ? this[index + 2] : null;
+            //}
+
             UpdateSeparatorOnInsert(item, previous, index);
             UpdateSeparatorOnInsert(next, item, index - 1);
 
-            UpdateAttach(previous, item);
-            UpdateAttach(item, next);
+            UpdateAttach(previous, item, index + 1);
+            UpdateAttach(item, next, index);
         }
 
         protected override void RemoveItem(int index)
@@ -971,7 +980,7 @@ namespace Unigram.ViewModels
             var previous = index < Count - 1 ? this[index + 1] : null;
 
             UpdateSeparatorOnRemove(next, previous, index);
-            UpdateAttach(previous, next);
+            UpdateAttach(previous, next, index + 1);
 
             base.RemoveItem(index);
         }
@@ -1018,10 +1027,11 @@ namespace Unigram.ViewModels
             }
         }
 
-        private void UpdateAttach(TLMessageBase item, TLMessageBase previous)
+        private void UpdateAttach(TLMessageBase item, TLMessageBase previous, int index)
         {
             if (item == null) return;
 
+            var oldFirst = item.IsFirst;
             var isItemPost = false;
             if (item is TLMessage) isItemPost = ((TLMessage)item).IsPost;
 
@@ -1046,6 +1056,24 @@ namespace Unigram.ViewModels
             {
                 item.IsFirst = true;
             }
+
+            //if (item.IsFirst && item is TLMessage)
+            //{
+            //    var message = item as TLMessage;
+            //    if (message != null && !message.IsPost && !message.IsOut)
+            //    {
+            //        base.InsertItem(index, new TLMessageEmpty { Date = item.Date, FromId = item.FromId, Id = item.Id, ToId = item.ToId });
+            //    }
+            //}
+
+            //if (!item.IsFirst && oldFirst)
+            //{
+            //    var next = index > 0 ? this[index - 1] : null;
+            //    if (next is TLMessageEmpty)
+            //    {
+            //        Remove(item);
+            //    }
+            //}
         }
 
         //public ObservableCollection<MessageGroup> Groups { get; private set; } = new ObservableCollection<MessageGroup>();

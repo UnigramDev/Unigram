@@ -225,6 +225,36 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="WebPageGifMediaTemplate">
+        <Grid Margin="0,8,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>
+
+            <StackPanel Grid.Column="1">
+                <StackPanel Margin="0,0,0,8" Visibility="{Binding Media.Webpage.SummaryVisibility}">
+                    <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                </StackPanel>
+
+                <!-- TODO: video timing -->
+                <Grid Background="Black" 
+                      MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+                      MinHeight="{ThemeResource TelegramMediaMinHeight}"
+                      HorizontalAlignment="Left">
+                    <controls:ImageView Source="{Binding Media.Webpage.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                        Constraint="{Binding Media.Webpage.Document}" 
+                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                        MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="GameMediaTemplate" x:DataType="models:TLMessage">
         <Grid Margin="0,4,0,6">
             <Grid.ColumnDefinitions>
@@ -272,6 +302,7 @@
         PhotoTemplate="{StaticResource MediaPhotoTemplate}"
         VideoTemplate="{StaticResource MediaVideoTemplate}"
         WebPageTemplate="{StaticResource WebPageMediaTemplate}"
+        WebPageGifTemplate="{StaticResource WebPageGifMediaTemplate}"
         WebPagePhotoTemplate="{StaticResource WebPagePhotoMediaTemplate}"
         WebPageSmallPhotoTemplate="{StaticResource WebPageSmallPhotoMediaTemplate}"/>
 

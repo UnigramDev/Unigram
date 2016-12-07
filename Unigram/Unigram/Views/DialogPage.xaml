@@ -306,40 +306,55 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
+            <Grid Margin="-56,0,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="56"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
-                    <controls:ImageView
-                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
-                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                        MaxWidth="180" MaxHeight="180" Margin="2"/>
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" Margin="12,12,0,0" Width="36" Height="36">
+                    <Ellipse Fill="{Binding FromId, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36"/>
+                    <Ellipse Width="36" Height="36">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{Binding From.Photo, Converter={StaticResource DefaultPhotoConverter}}" />
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
+                </Grid>
+                <Grid Margin="0,2" Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
+                        <controls:ImageView
+                            Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
+                            Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                            MaxWidth="180" MaxHeight="180" Margin="2"/>
 
-                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
-                        <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                        <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                            <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                        </Border>
+                    </Grid>
+
+                    <Border Visibility="{x:Bind ReplyVisibility}" 
+                            Height="{ThemeResource AppBarThemeCompactHeight}"
+                            Background="{ThemeResource MessageOverlayBackgroundBrush}" 
+                            VerticalAlignment="Bottom" 
+                            HorizontalAlignment="Left" 
+                            MaxWidth="180"
+                            Padding="8,0,8,0" 
+                            Margin="12,0,0,0" 
+                            Grid.Column="1">
+                        <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Margin="0,6">
+                            <controls:MessageReference.Resources>
+                                <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
+                                <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                                <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                                <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                            </controls:MessageReference.Resources>
+                        </controls:MessageReference>
                     </Border>
                 </Grid>
-
-                <Border Visibility="{x:Bind ReplyVisibility}" 
-                        Height="{ThemeResource AppBarThemeCompactHeight}"
-                        Background="{ThemeResource MessageOverlayBackgroundBrush}" 
-                        VerticalAlignment="Bottom" 
-                        HorizontalAlignment="Left" 
-                        MaxWidth="180"
-                        Padding="8,0,8,0" 
-                        Margin="12,0,0,0" 
-                        Grid.Column="1">
-                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Margin="0,6">
-                        <controls:MessageReference.Resources>
-                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                        </controls:MessageReference.Resources>
-                    </controls:MessageReference>
-                </Border>
             </Grid>
         </DataTemplate>
 
@@ -376,16 +391,31 @@
         </DataTemplate>
         <!-- EndRegion -->
 
-        <DataTemplate x:Key="UserMessageTemplate" x:DataType="models:TLMessage">
+        <DataTemplate x:Key="UserMessageTemplate">
             <messages:UserMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
         </DataTemplate>
 
-        <DataTemplate x:Key="FriendMessageTemplate" x:DataType="models:TLMessage">
+        <DataTemplate x:Key="FriendMessageTemplate">
             <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendMessageTemplate" x:DataType="models:TLMessage">
-            <messages:ChatFriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+            <Grid Margin="-56,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="56"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" Margin="12,12,0,0" Width="36" Height="36">
+                    <Ellipse Fill="{Binding FromId, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36"/>
+                    <Ellipse Width="36" Height="36">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{Binding From.Photo, Converter={StaticResource DefaultPhotoConverter}}" />
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
+                </Grid>
+                <messages:ChatFriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
+            </Grid>
         </DataTemplate>
 
         <selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
@@ -468,6 +498,7 @@
                                     <ImageBrush ImageSource="{x:Bind ViewModel.photo, Converter={StaticResource DefaultPhotoConverter}}" />
                                 </Ellipse.Fill>
                             </Ellipse>
+                            <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
                         </Grid>
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                             <TextBlock x:Name="tblDialogName"
