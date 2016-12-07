@@ -58,15 +58,20 @@ namespace Unigram.Converters
 
         public string Date(int value)
         {
+            var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
+            var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
+
+            return DateTime(value).ToString(string.Format("{0}", shortTimePattern), cultureInfo);
+        }
+
+        public DateTime DateTime(int value)
+        {
             var clientDelta = MTProtoService.Current.ClientTicksDelta;
             var utc0SecsLong = value * 4294967296 - clientDelta;
             var utc0SecsInt = utc0SecsLong / 4294967296.0;
             var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
 
-            var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
-            var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
-
-            return dateTime.ToString(string.Format("{0}", shortTimePattern), cultureInfo);
+            return dateTime;
         }
 
         public string State(TLMessageState value)

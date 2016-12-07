@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
+using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.Foundation;
+using Windows.Globalization.DateTimeFormatting;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -71,6 +73,15 @@ namespace Unigram.Controls.Messages
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId) });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Click += (s, args) => From_Click(message);
+
+                    paragraph.Inlines.Add(hyperlink);
+                }
+                else if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = InMemoryCacheService.Current.GetChat(message.ToId.Id).FullName, Foreground = Convert.Bubble(message.ToId.Id) });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
                     hyperlink.Click += (s, args) => From_Click(message);
 
@@ -145,6 +156,10 @@ namespace Unigram.Controls.Messages
             {
                 Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.From.Id });
             }
+            else if (message.IsPost)
+            {
+                Context.NavigationService.Navigate(typeof(ChatInfoPage), new TLPeerChannel { ChannelId = message.ToId.Id });
+            }
         }
 
         private void FwdFrom_Click(TLMessage message)
@@ -175,6 +190,24 @@ namespace Unigram.Controls.Messages
         protected void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
         {
             Context.KeyboardButtonExecute(e.Button, ViewModel);
+        }
+
+        protected void ToolTip_Opened(object sender, RoutedEventArgs e)
+        {
+            var tooltip = sender as ToolTip;
+            if (tooltip != null && ViewModel != null)
+            {
+                var date = Convert.DateTime(ViewModel.Date);
+                var text = $"{DateTimeFormatter.LongDate.Format(date)} {DateTimeFormatter.LongTime.Format(date)}";
+
+                if (ViewModel.HasEditDate)
+                {
+                    var edit = Convert.DateTime(ViewModel.EditDate.Value);
+                    text += $"\r\nEdited: {DateTimeFormatter.LongDate.Format(edit)} {DateTimeFormatter.LongTime.Format(edit)}";
+                }
+
+                tooltip.Content = text;
+            }
         }
 
         /// <summary>

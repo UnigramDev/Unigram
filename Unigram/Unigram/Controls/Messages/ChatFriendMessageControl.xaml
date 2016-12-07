@@ -78,7 +78,11 @@
                     <TextBlock Text="{x:Bind ViewModel.Views}" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,12,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 </StackPanel>
                 <TextBlock Visibility="{x:Bind EditedVisibility(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay}" Text="edited" FontStyle="Italic" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,4,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
-                <TextBlock x:Name="StatusLabel" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
+                <TextBlock x:Name="StatusLabel" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0">
+                    <ToolTipService.ToolTip>
+                        <ToolTip Opened="ToolTip_Opened"/>
+                    </ToolTipService.ToolTip>
+                </TextBlock>
             </StackPanel>
         </Grid>
     </Border>
