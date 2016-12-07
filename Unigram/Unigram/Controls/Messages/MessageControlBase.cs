@@ -33,7 +33,19 @@ namespace Unigram.Controls.Messages
             get
             {
                 if (_context == null)
-                    _context = ((BubbleListViewItem)VisualTreeHelper.GetParent(VisualTreeHelper.GetParent(this))).Owner.DataContext as DialogViewModel;
+                {
+                    var parent = VisualTreeHelper.GetParent(this);
+                    while (parent as BubbleListViewItem == null)
+                    {
+                        parent = VisualTreeHelper.GetParent(parent);
+                    }
+
+                    var item = parent as BubbleListViewItem;
+                    if (item != null)
+                    {
+                        _context = item.Owner.DataContext as DialogViewModel;
+                    }
+                }
 
                 return _context;
             }

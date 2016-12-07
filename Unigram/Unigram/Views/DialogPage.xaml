@@ -1046,7 +1046,7 @@
                           HorizontalScrollMode="Disabled"
                           Grid.ColumnSpan="4"
                           Grid.Row="2">
-                <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick"/>
+                <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0"/>
             </ScrollViewer>
         </Grid>
     </Grid>

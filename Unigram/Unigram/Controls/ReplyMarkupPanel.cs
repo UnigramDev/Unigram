@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Unigram.Core.Services;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -19,8 +21,10 @@ namespace Unigram.Controls
         public TLKeyboardButtonBase Button { get; private set; }
     }
 
-    public class ReplyMarkupPanel : StackPanel
+    public class ReplyMarkupPanel : Grid
     {
+        private double _keyboardHeight = 200;
+
         #region IsInline
 
         public bool IsInline
@@ -30,10 +34,14 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty IsInlineProperty =
-            DependencyProperty.Register("IsInline", typeof(bool), typeof(ReplyMarkupPanel), new PropertyMetadata(true));
+            DependencyProperty.Register("IsInline", typeof(bool), typeof(ReplyMarkupPanel), new PropertyMetadata(true, OnIsInlineChanged));
+
+        private static void OnIsInlineChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ReplyMarkupPanel)d).OnIsInlineChanged((bool)e.NewValue, (bool)e.OldValue);
+        }
 
         #endregion
-
 
         #region ReplyMarkup
 
@@ -53,21 +61,49 @@ namespace Unigram.Controls
 
         #endregion
 
+        private void OnIsInlineChanged(bool newValue, bool oldValue)
+        {
+            if (newValue)
+            {
+                InputPane.GetForCurrentView().Showing -= InputPane_Showing;
+            }
+            else
+            {
+                InputPane.GetForCurrentView().Showing += InputPane_Showing;
+            }
+        }
+
+        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            _keyboardHeight = args.OccludedRect.Height;
+        }
+
+        private void UpdateSize()
+        {
+            if (ReplyMarkup is TLReplyKeyboardMarkup && !IsInline)
+            {
+                var keyboard = ReplyMarkup as TLReplyKeyboardMarkup;
+                if (keyboard.IsResize && double.IsNaN(Height))
+                {
+                    Height = double.NaN;
+                    ((ScrollViewer)Parent).MaxHeight = _keyboardHeight;
+                }
+                else if (keyboard.IsResize == false && double.IsNaN(Height))
+                {
+                    Height = _keyboardHeight;
+                    ((ScrollViewer)Parent).MaxHeight = double.PositiveInfinity;
+                }
+            }
+        }
+
         private void OnReplyMarkupChanged(TLReplyMarkupBase newValue, TLReplyMarkupBase oldValue)
         {
+            bool resize = false;
             TLVector<TLKeyboardButtonRow> rows = null;
             if (newValue is TLReplyKeyboardMarkup && !IsInline)
             {
                 rows = ((TLReplyKeyboardMarkup)newValue).Rows;
-
-                //if (!double.IsNaN(Height) && ((TLReplyKeyboardMarkup)newValue).IsResize)
-                //{
-                //    Height = double.NaN;
-                //}
-                //else if (double.IsNaN(Height) && !((TLReplyKeyboardMarkup)newValue).IsResize && rows.Count > 0)
-                //{
-                //    Height = 320; // TODO: last known keyboard height
-                //}
+                resize = ((TLReplyKeyboardMarkup)newValue).IsResize;
             }
 
             if (newValue is TLReplyInlineMarkup && IsInline)
@@ -80,12 +116,15 @@ namespace Unigram.Controls
                 //}
             }
 
+            UpdateSize();
             Children.Clear();
 
             if (rows != null && ((IsInline && newValue is TLReplyInlineMarkup) || (!IsInline && newValue is TLReplyKeyboardMarkup)))
             {
-                foreach (var row in rows)
+                for (int j = 0; j < rows.Count; j++)
                 {
+                    var row = rows[j];
+
                     var panel = new Grid();
                     panel.HorizontalAlignment = HorizontalAlignment.Stretch;
                     panel.VerticalAlignment = VerticalAlignment.Stretch;
@@ -101,9 +140,13 @@ namespace Unigram.Controls
                         button.VerticalAlignment = VerticalAlignment.Stretch;
                         button.Click += Button_Click;
 
-                        //if (IsInline)
+                        if (IsInline)
                         {
                             button.Style = App.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
+                        }
+                        else
+                        {
+                            button.Style = App.Current.Resources["ReplyKeyboardMarkupButtonStyle"] as Style;
                         }
 
                         if (row.Buttons[i] is TLKeyboardButtonUrl)
@@ -121,6 +164,9 @@ namespace Unigram.Controls
                         panel.Children.Add(button);
                     }
 
+                    Grid.SetRow(panel, j);
+
+                    RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, resize ? GridUnitType.Auto : GridUnitType.Star) });
                     Children.Add(panel);
                 }
             }

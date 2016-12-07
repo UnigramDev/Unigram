@@ -36,7 +36,7 @@ namespace Unigram.Views
             if (args != null)
             {
                 tblDialogName.Text = args.Title;
-                tblDialogStatus.Text = args.Username;
+                tblDialogStatus.Text = "@" + args.Username;
 
                 View.Navigate(new Uri(args.Url));
             }
