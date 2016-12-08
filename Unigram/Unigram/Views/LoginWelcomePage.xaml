@@ -50,7 +50,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <Style x:Key="IndicatorListViewStyle" TargetType="ListView">
             <Setter Property="IsTabStop" Value="False"/>
             <Setter Property="TabNavigation" Value="Once"/>
@@ -93,6 +92,30 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="PageSizeStatesGroup">
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="500"  />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Logo_Bar.HorizontalAlignment" Value="Left" />
+                        <Setter Target="Logo_Icon.HorizontalAlignment" Value="Left" />
+                        <Setter Target="Logo_Text.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"  />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Logo_Bar.HorizontalAlignment" Value="Center" />
+                        <Setter Target="Logo_Icon.HorizontalAlignment" Value="Center" />
+                        <Setter Target="Logo_Text.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -101,25 +124,27 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <!-- Header -->
-        <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
-                Height="{ThemeResource AppBarThemeCompactHeight}"/>
 
-        <Border Background="White" Grid.Row="1">
+        <Border Grid.Row="1">
+            <Border.Background>
+                <ImageBrush Stretch="UniformToFill" ImageSource="ms-appx:///Assets/Images/welcome-img.jpg"/>
+            </Border.Background>
             <!-- Black panel needed for the SwapChainPanel -->
-            <Border Width="200" Height="200" Background="Black">
+            <Border Width="350" Height="250" Background="Transparent">
                 <!-- Logo placeholder -->
-                <Grid Background="White">
-                    <Ellipse Height="148" 
+                <Grid Background="Transparent" HorizontalAlignment="Center" x:Name="Logo_Container">
+                    <Ellipse x:Name="Logo_Bar" Height="148" 
                                  Width="148" 
-                                 Fill="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                 HorizontalAlignment="Center"/>
-                    <Ellipse Height="148"
+                                 Fill="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                    <Ellipse x:Name="Logo_Icon" Height="148"
                                  Width="148"
                                  Margin="0,12,0,0">
                         <Ellipse.Fill>
                             <ImageBrush ImageSource="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
                         </Ellipse.Fill>
                     </Ellipse>
+                    <TextBlock x:Name="Logo_Text" VerticalAlignment="Center" HorizontalAlignment="Right"
+                               Margin="170, 0, 0, 0" FontSize="40" Foreground="White">Unigram</TextBlock>
                 </Grid>
             </Border>
         </Border>
@@ -144,7 +169,7 @@
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>
-        
+
         <Button Content="Continue"
                 Command="{Binding ContinueCommand}"
                 HorizontalAlignment="Stretch" 

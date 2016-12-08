@@ -336,6 +336,7 @@
     <Content Include="Assets\Icons\userPos32.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-dark.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-light.png" />
+    <Content Include="Assets\Images\welcome-img.jpg" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-100.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-125.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-150.png" />
