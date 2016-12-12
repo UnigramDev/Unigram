@@ -178,7 +178,7 @@ namespace Telegram.Api.Services.FileManager
                         part.ParentItem.Location.LocalId, 
                         part.ParentItem.Location.Secret);
 
-                    FileUtils.WriteBytes(fileName, bytes);
+                    FileUtils.WriteTemporaryBites(fileName, bytes);
 
                     if (part.ParentItem.Callback != null)
                     {

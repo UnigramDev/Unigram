@@ -363,11 +363,11 @@ namespace Unigram.Controls.Messages
                 var ratioY = availableHeight / height;
                 var ratio = Math.Min(ratioX, ratioY);
 
-                return base.MeasureOverride(new Size(width * ratio, availableSize.Height));
+                return base.MeasureOverride(new Size(Math.Max(96, width * ratio), availableSize.Height));
             }
             else
             {
-                return base.MeasureOverride(new Size(width, availableSize.Height));
+                return base.MeasureOverride(new Size(Math.Max(96, width), availableSize.Height));
             }
         }
 

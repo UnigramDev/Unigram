@@ -22,6 +22,7 @@ using Windows.ApplicationModel.Contacts;
 using System.Collections.ObjectModel;
 using Unigram.Common;
 using System.Linq;
+using Unigram.Controls.Views;
 
 namespace Unigram.ViewModels
 {
@@ -143,25 +144,6 @@ namespace Unigram.ViewModels
                         //}
                     });
                 }
-            }
-        }
-
-        public RelayCommand PhotoCommand => new RelayCommand(PhotoExecute);
-        private async void PhotoExecute()
-        {
-            var user = Item as TLUser;
-            if (user.HasPhoto)
-            {
-                // TODO
-                var test = new UserPhotosViewModel(ProtoService, CacheService, Aggregator);
-                var dialog = Template10.Common.BootStrapper.Current.ModalDialog;
-                dialog.ModalContent = new PhotosView { DataContext = test };
-                //dialog.ModalBackground = BootStrapper.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
-                dialog.DisableBackButtonWhenModal = false;
-                dialog.CanBackButtonDismiss = true;
-                dialog.IsModal = true;
-
-                await test.OnNavigatedToAsync(Item, NavigationMode.New, new Dictionary<string, object>());
             }
         }
 

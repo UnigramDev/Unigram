@@ -189,14 +189,8 @@
                         <Setter Target="profilePane.(Grid.Column)" Value="0"/>
                         <Setter Target="profilePane.(Grid.Row)" Value="0"/>
                         <Setter Target="InitialName.FontSize" Value="24" />
-                        <Setter Target="elpContentInfoChatIconPicture.Height" Value="96"/>
-                        <Setter Target="elpContentInfoChatIconPicture.Width" Value="96"/>
-                        <Setter Target="elpContentInfoChatIcon.Height" Value="96"/>
-                        <Setter Target="elpContentInfoChatIcon.Width" Value="96"/>
-                        <Setter Target="elpContentInfoChatIcon.MinHeight" Value="96"/>
-                        <Setter Target="elpContentInfoChatIcon.MinWidth" Value="96"/>
-                        <Setter Target="elpContentInfoChatIconColor.Height" Value="96"/>
-                        <Setter Target="elpContentInfoChatIconColor.Width" Value="96"/>
+                        <Setter Target="grdProfile.Height" Value="96"/>
+                        <Setter Target="grdProfile.Width" Value="96"/>
                         <Setter Target="profileControlPane.(Grid.RowSpan)" Value="1"/>
                         <Setter Target="profileControlPane.(Grid.Row)" Value="1"/>
                         <Setter Target="profileControlPane.(Grid.ColumnSpan)" Value="2"/>
@@ -240,23 +234,22 @@
                        Grid.RowSpan="2">
             <!--User icon-->
             <Grid x:Name="grdProfile"
+                  Width="200"
+                  Height="200"
                   Margin="16,8"
                   RelativePanel.AlignHorizontalCenterWithPanel="True">
-                <Ellipse x:Name="elpContentInfoChatIconColor" Width="200" Height="200" Fill="Purple" VerticalAlignment="Center"/><!-- Placeholder fill  -->
-                <TextBlock Margin="12,0" FontSize="96" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.Item, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Ellipse x:Name="elpContentInfoChatIconPicture" Width="200" Height="200">
+                <Ellipse Fill="Purple"/><!-- Placeholder fill  -->
+                <TextBlock FontSize="96" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.Item, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Ellipse>
                     <Ellipse.Fill>
                         <ImageBrush ImageSource="{x:Bind ViewModel.Item.Photo, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" />
                     </Ellipse.Fill>
                 </Ellipse>
-                <controls:SimpleButton x:Name="elpContentInfoChatIcon"
-                        HorizontalAlignment="Center"
-                        MinWidth="200"
-                        MinHeight="200"                                
+                <controls:SimpleButton x:Name="elpContentInfoChatIcon"                       
                         Padding="0"
                         BorderThickness="0"
                         Background="Transparent"                                
-                        Command="{Binding PhotoCommand}"
+                        Click="Photo_Click"
                         CornerRadius="10000"/>
             </Grid>
             <TextBlock x:Name="tblUserInfoChatName"

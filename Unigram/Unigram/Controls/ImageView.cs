@@ -13,9 +13,28 @@ namespace Unigram.Controls
 {
     public class ImageView : Control
     {
+        private Image Holder;
+
         public ImageView()
         {
             DefaultStyleKey = typeof(ImageView);
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            Holder = (Image)GetTemplateChild("Holder");
+            Holder.ImageFailed += Holder_ImageFailed;
+            Holder.ImageOpened += Holder_ImageOpened;
+        }
+
+        private void Holder_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            ImageFailed?.Invoke(this, e);
+        }
+
+        private void Holder_ImageOpened(object sender, RoutedEventArgs e)
+        {
+            ImageOpened?.Invoke(this, e);
         }
 
         #region Source
@@ -112,5 +131,9 @@ namespace Unigram.Controls
                 return new Size(width, height);
             }
         }
+
+        public event ExceptionRoutedEventHandler ImageFailed;
+
+        public event RoutedEventHandler ImageOpened;
     }
 }

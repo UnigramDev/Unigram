@@ -102,10 +102,6 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel VerticalAlignment="Center">
-            <!-- a2bbc8d4 -->
-            <controls:GlyphButton Content=".   Ciao!   ." Glyph="" Style="{StaticResource ReplyInlineMarkupButtonStyle}" Width="Auto" Height="Auto"/>
-            <controls:GlyphButton Content=".   Ciao!   ." Background="#a2bbc8d4" Glyph="" Style="{StaticResource ReplyInlineMarkupButtonStyle}" Width="Auto" Height="Auto"/>
-        </StackPanel>
+        <!--<MediaElement Source="ms-appx:///Views/Vandamme.mp3" AudioCategory="Communications" AutoPlay="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AreTransportControlsEnabled="True"/>-->
     </Grid>
 </Page>

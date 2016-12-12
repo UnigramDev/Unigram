@@ -48,7 +48,7 @@ namespace Telegram.Api.Helpers
 
         public static void MergePartsToFile(Func<DownloadablePart, string> getPartName, IEnumerable<DownloadablePart> parts, string fileName)
         {
-            using (var part1 = File.Open(GetFileName(fileName), FileMode.OpenOrCreate, FileAccess.Write))
+            using (var part1 = File.Open(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName), FileMode.OpenOrCreate, FileAccess.Write))
             {
                 using (IEnumerator<DownloadablePart> enumerator = parts.GetEnumerator())
                 {
@@ -56,7 +56,7 @@ namespace Telegram.Api.Helpers
                     {
                         DownloadablePart current = enumerator.Current;
                         string text = getPartName.Invoke(current);
-                        using (var part2 = File.Open(GetFileName(text), FileMode.OpenOrCreate, FileAccess.Read))
+                        using (var part2 = File.Open(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, text), FileMode.OpenOrCreate, FileAccess.Read))
                         {
                             byte[] array = new byte[part2.Length];
                             part2.Read(array, 0, array.Length);
@@ -64,7 +64,7 @@ namespace Telegram.Api.Helpers
                             part1.Write(array, 0, array.Length);
                         }
 
-                        File.Delete(GetFileName(text));
+                        File.Delete(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, text));
                     }
                 }
             }
@@ -196,9 +196,9 @@ namespace Telegram.Api.Helpers
 
         public static int GetLocalFileLength(string fileName)
         {
-            if (File.Exists(GetFileName(fileName)))
+            if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName)))
             {
-                using (var file = File.Open(GetFileName(fileName), FileMode.Open, FileAccess.Read))
+                using (var file = File.Open(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName), FileMode.Open, FileAccess.Read))
                 {
                     return (int)file.Length;
                 }
@@ -243,18 +243,18 @@ namespace Telegram.Api.Helpers
         {
             if (part.Offset == 0)
             {
-                if (File.Exists(GetFileName(partName)))
+                if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, partName)))
                 {
-                    File.Delete(GetFileName(partName));
+                    File.Delete(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, partName));
                 }
             }
 
-            if (File.Exists(GetFileName(partName)))
+            if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, partName)))
             {
-                File.Delete(GetFileName(partName));
+                File.Delete(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, partName));
             }
 
-            using (var file = File.Open(GetFileName(partName), FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            using (var file = File.Open(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, partName), FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
                 byte[] data = part.File.Bytes;
                 part.File.Bytes = new byte[0];
@@ -318,6 +318,14 @@ namespace Telegram.Api.Helpers
             }
         }
 
+        public static void WriteTemporaryBites(string fileName, byte[] bytes)
+        {
+            using (var file = File.Open(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName), FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+            {
+                file.Write(bytes, 0, bytes.Length);
+            }
+        }
+
         public static byte[] ReadBytes(string fileName, long position, long length)
         {
             byte[] array = null;
@@ -330,24 +338,16 @@ namespace Telegram.Api.Helpers
             return array;
         }
 
-        private static async Task<byte[]> ReadBytesAsync(StorageFile file, long position, long length)
+        public static byte[] ReadTemporaryBytes(string fileName, long position, long length)
         {
-            byte[] result;
-            using (IRandomAccessStream randomAccessStream = await file.OpenAsync(0))
+            byte[] array = null;
+            using (var file = File.Open(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                using (IInputStream inputStreamAt = randomAccessStream.GetInputStreamAt((ulong)position))
-                {
-                    using (DataReader dataReader = new DataReader(inputStreamAt))
-                    {
-                        await dataReader.LoadAsync((uint)length);
-                        byte[] array = new byte[length];
-                        dataReader.ReadBytes(array);
-                        dataReader.DetachStream();
-                        result = array;
-                    }
-                }
+                file.Position = position;
+                array = new byte[length];
+                file.Read(array, 0, (int)length);
             }
-            return result;
+            return array;
         }
 
         //public static async Task<Tuple<bool, byte[]>> FillBuffer(IStorageFile file, UploadablePart part)

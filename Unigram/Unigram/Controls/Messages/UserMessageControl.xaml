@@ -69,7 +69,7 @@
                         Grid.Row="4">
                 <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.HasViews}">
                     <FontIcon Glyph="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}" FontSize="11" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="0,0,4,2" VerticalAlignment="Bottom"/>
-                    <TextBlock Text="{x:Bind ViewModel.Views}" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,12,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind Convert.Views(ViewModel, ViewModel.Views), Mode=OneWay}" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,12,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 </StackPanel>
                 <TextBlock Visibility="{x:Bind EditedVisibility(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay}" Text="edited" FontStyle="Italic" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,4,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 <TextBlock x:Name="StatusLabel" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0">

@@ -31,6 +31,7 @@ namespace Unigram.Common
     public class MessageHelper
     {
         #region Message
+
         public static TLMessageBase GetMessage(DependencyObject obj)
         {
             return (TLMessageBase)obj.GetValue(MessageProperty);
@@ -152,14 +153,15 @@ namespace Unigram.Common
                         if (message.HasViews)
                         {
                             placeholder = "VIEWS" + (message.Views ?? 0) + placeholder;
+
+                            if (message.HasFromId && message.From != null)
+                            {
+                                placeholder = (message.From.FullName ?? string.Empty) + placeholder;
+                            }
                         }
 
-                        //paragraph.Inlines.Add(new Run { Text = "\t" + new string('\u00a0', date.Length + (message.IsOut ? 12 : 8)) });
                         paragraph.Inlines.Add(new Run { Text = placeholder, Foreground = null });
                     }
-
-                    //paragraph.Inlines.Add(new Run { Text = message.Out.Value ? $"  {date}  " : $"  {date}", Foreground = null });
-                    //paragraph.Inlines.Add(new Run { Text = message.Out.Value ? "      " : "     " });
                 }
 
                 sender.Blocks.Clear();
@@ -170,6 +172,7 @@ namespace Unigram.Common
                 sender.Blocks.Clear();
             }
         }
+
         #endregion
 
         #region Text

@@ -43,8 +43,6 @@ namespace Unigram.ViewModels
             SearchDialogs = new ObservableCollection<TLDialog>();
             Dialogs = new DialogsViewModel(ProtoService, cacheService, aggregator);
             Contacts = new ContactsViewModel(ProtoService, cacheService, aggregator);
-            aggregator.Subscribe(Dialogs);
-            aggregator.Subscribe(SearchDialogs);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)

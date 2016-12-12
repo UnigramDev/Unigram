@@ -95,9 +95,10 @@
             <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Media.Photo}" 
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
-                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                Tapped="ImageView_Tapped"/>
 
-            <controls:ProgressBarRing Value="{Binding Media.UploadingProgress}"/>
+            <controls:ProgressBarRing Value="{Binding Media.Progress}"/>
 
             <!--<controls:ProgressBarRing 
                     SmoothValue="{Binding UploadingProgress}"

@@ -7,7 +7,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ImageView">
-                    <Image Source="{TemplateBinding Source}" Stretch="Uniform"/>
+                    <Image x:Name="Holder" Source="{TemplateBinding Source}" Stretch="Uniform"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

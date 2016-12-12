@@ -95,7 +95,7 @@ namespace Telegram.Api.Services.FileManager
 
             if (part != null)
             {
-                var bytes = FileUtils.ReadBytes(part.ParentItem.FileName, part.Position, part.Count);
+                var bytes = FileUtils.ReadTemporaryBytes(part.ParentItem.FileName, part.Position, part.Count);
                 part.SetBuffer(bytes);
 
                 //bool result = PutFile(part.ParentItem.FileId, part.FilePart, part.Bytes);
