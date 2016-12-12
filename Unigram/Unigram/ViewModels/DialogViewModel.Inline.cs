@@ -202,6 +202,7 @@ namespace Unigram.ViewModels
             message.InlineBotResultId = resultBase.Id;
             message.InlineBotResultQueryId = resultBase.QueryId;
             message.ViaBotId = botId;
+            message.HasViaBotId = true;
 
             var venueMedia = resultBase.SendMessage as TLBotInlineMessageMediaVenue;
             if (venueMedia != null)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -136,7 +137,7 @@ namespace Unigram.Controls.Messages
                     paragraph.Inlines.Add(hyperlink);
                 }
 
-                if (message.ViaBot != null)
+                if (message.HasViaBotId && message.ViaBot != null)
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });

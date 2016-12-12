@@ -58,6 +58,8 @@ namespace Unigram.Controls
         {
             return AsyncInfo.Run(async (token) =>
             {
+                Margin = new Thickness();
+
                 _result = ContentDialogBaseResult.None;
                 _callback = new TaskCompletionSource<ContentDialogBaseResult>();
 
@@ -103,6 +105,7 @@ namespace Unigram.Controls
 
         protected void Prepare()
         {
+            Margin = new Thickness(Window.Current.Bounds.Width, Window.Current.Bounds.Height, 0, 0);
             Closing?.Invoke(this, EventArgs.Empty);
         }
 

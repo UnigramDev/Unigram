@@ -191,7 +191,7 @@ namespace Telegram.Api.Services
                                             message.Media = newMessage.Media;
                                         }
 
-                                        if (mediaWebPage == null)
+                                        if (mediaWebPage == null && newMessage.HasMedia)
                                         {
                                             Execute.ShowDebugMessage(newMessage.Media.GetType().ToString());
                                         }

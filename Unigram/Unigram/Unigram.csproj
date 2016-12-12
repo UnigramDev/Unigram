@@ -95,6 +95,7 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\Fonts\Telegram.ttf" />
+    <Content Include="Views\Vandamme.mp3" />
     <Content Include="WindowsPhoneReservedAppInfo.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -166,9 +167,6 @@
     <Compile Include="Controls\MediaControl.cs" />
     <Compile Include="Controls\Media\VoiceMediaControl.xaml.cs">
       <DependentUpon>VoiceMediaControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Messages\ChatFriendMessageControl.xaml.cs">
-      <DependentUpon>ChatFriendMessageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\FriendMessageControl.xaml.cs">
       <DependentUpon>FriendMessageControl.xaml</DependentUpon>
@@ -430,10 +428,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Media\VoiceMediaControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Messages\ChatFriendMessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Calls;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Sensors;
 using Windows.Foundation;
@@ -47,15 +48,17 @@ namespace Unigram.Views
 
         private async void PlaygroundPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var song = String.Format("/Views/Vandamme.mp3");
-            var soundFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri(BaseUri, song));
-
             var devices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
             var yolo = devices.ToList();
 
+            var boh = yolo[1].Properties.ToList();
+
+            var song = String.Format("/Views/Vandamme.mp3");
+            var soundFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri(BaseUri, song));
+
             var settings = new AudioGraphSettings(AudioRenderCategory.Communications);
             settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
-            settings.PrimaryRenderDevice = devices[1];
+            //settings.PrimaryRenderDevice = devices[1];
 
             var resultg = await AudioGraph.CreateAsync(settings);
             if (resultg.Status == AudioGraphCreationStatus.Success)
@@ -73,7 +76,7 @@ namespace Unigram.Views
 
                     audioflow.Start();
 
-                    AudioRoutingManager.GetDefault().SetAudioEndpoint(AudioRoutingEndpoint.Earpiece);
+                    //AudioRoutingManager.GetDefault().SetAudioEndpoint(AudioRoutingEndpoint.Earpiece);
                 }
 
             }
@@ -102,8 +105,17 @@ namespace Unigram.Views
             }
         }
 
-        private void Sensor_ReadingChanged(ProximitySensor sender, ProximitySensorReadingChangedEventArgs args)
+        private async void Sensor_ReadingChanged(ProximitySensor sender, ProximitySensorReadingChangedEventArgs args)
         {
+            if (args.Reading.IsDetected)
+            {
+                var result = await VoipCallCoordinator.GetDefault().ReserveCallResourcesAsync("Unigram.Tasks.InteractiveTask");
+                var call = VoipCallCoordinator.GetDefault().RequestNewOutgoingCall("test", "test", "test", VoipPhoneCallMedia.Audio);
+
+                call.NotifyCallActive();
+
+                AudioRoutingManager.GetDefault().SetAudioEndpoint(AudioRoutingEndpoint.Earpiece);
+            }
             //if (args.Reading.IsDetected)
             //{
             //    AudioRoutingManager.GetDefault().SetAudioEndpoint(AudioRoutingEndpoint.Earpiece);

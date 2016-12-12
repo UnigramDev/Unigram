@@ -65,7 +65,7 @@ namespace Unigram.Common
             sender.IsTextSelectionEnabled = false;
 
             var message = newValue as TLMessage;
-            if (message != null && sender.Visibility == Visibility.Visible)
+            if (message != null /*&& sender.Visibility == Visibility.Visible*/)
             {
                 var caption = false;
                 if (message.Media is ITLMediaCaption)

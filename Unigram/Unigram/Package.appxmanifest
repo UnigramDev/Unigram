@@ -67,6 +67,7 @@
     <Capability Name="internetClientServer" />
     <uap:Capability Name="removableStorage" />
     <uap:Capability Name="picturesLibrary" />
+    <uap:Capability Name="voipCall" />
     <!--<rescap:Capability Name="runFullTrust" />-->
     <DeviceCapability Name="location" />
   </Capabilities>

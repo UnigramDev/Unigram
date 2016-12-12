@@ -109,6 +109,9 @@ namespace Unigram
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
+            //NavigationService.Navigate(typeof(PlaygroundPage));
+            //return;
+
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
 
             ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
