@@ -126,6 +126,7 @@
       <DependentUpon>SendPhotosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BubblePlaceholderConverter.cs" />
+    <Compile Include="Converters\FileExistsToGlyphConverter.cs" />
     <Compile Include="Selectors\InlineBotResultTemplateSelector.cs" />
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>

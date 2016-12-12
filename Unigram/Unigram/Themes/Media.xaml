@@ -18,12 +18,8 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid Width="48" Height="48" VerticalAlignment="Top">
-                <Rectangle Fill="{ThemeResource MessageMediaBackgroundBrush}"/>
-                <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="96" MaxHeight="96"/>
-                <Border>
-                    <Border>
-                        <SymbolIcon Symbol="Download" Foreground="{ThemeResource MessageMediaForegroundBrush}"/>
-                    </Border>
+                <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" Tapped="Border_Tapped">
+                    <SymbolIcon Symbol="{Binding Media, Converter={StaticResource FileExistsToGlyphConverter}}" Foreground="{ThemeResource MessageMediaForegroundBrush}"/>
                 </Border>
                 <!--<controls:ImageControl TelegramSource="{Binding Document}" Stretch="UniformToFill"/>-->
 
@@ -42,6 +38,7 @@
                     common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
                     Maximum="1" 
                     Visibility="Collapsed"/>-->
+                <controls:ProgressBarRing Background="{ThemeResource MessageMediaBackgroundBrush}" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Progress}"/>
             </Grid>
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
                 <TextBlock Text="{Binding Media.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
@@ -58,10 +55,9 @@
             </Grid.ColumnDefinitions>
             <Grid Width="72" Height="72" Background="Black" VerticalAlignment="Top">
                 <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" Width="72" Height="72" Stretch="UniformToFill"/>
-                <Border>
-                    <Border Width="48" Height="48" CornerRadius="24" Background="#54000000">
-                        <SymbolIcon Symbol="Download" Foreground="White"/>
-                    </Border>
+                
+                <Border Width="48" Height="48" CornerRadius="24" Background="#54000000" Tapped="Border_Tapped">
+                    <SymbolIcon Symbol="{Binding Media, Converter={StaticResource FileExistsToGlyphConverter}}" Foreground="White"/>
                 </Border>
                 <!--<controls:ImageControl TelegramSource="{Binding Document}" Stretch="UniformToFill"/>-->
 
@@ -80,6 +76,8 @@
                     common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
                     Maximum="1" 
                     Visibility="Collapsed"/>-->
+
+                <controls:ProgressBarRing Value="{Binding Media.Progress}"/>
             </Grid>
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
                 <TextBlock Text="{Binding Media.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>

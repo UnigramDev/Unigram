@@ -197,7 +197,7 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private static string GetFileName(TLInputDocumentFileLocation fileLocation, string fileExtension)
+        public static string GetFileName(TLInputDocumentFileLocation fileLocation, string fileExtension)
         {
             var fileLocation54 = fileLocation as TLInputDocumentFileLocation;
 

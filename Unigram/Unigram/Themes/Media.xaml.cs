@@ -18,6 +18,10 @@ using Telegram.Api.TL;
 using Unigram.ViewModels;
 using Unigram.Controls.Views;
 using Windows.UI.Xaml.Media.Animation;
+using Telegram.Api.Services.FileManager;
+using Windows.Storage;
+using Windows.System;
+using Unigram.Core.Dependency;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -54,6 +58,41 @@ namespace Unigram.Themes
                     };
 
                     await dialog.ShowAsync();
+                }
+            }
+        }
+
+        private async void Border_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var border = sender as Border;
+            var message = border.DataContext as TLMessage;
+            var bubble = border.Ancestors<MessageControlBase>().FirstOrDefault() as MessageControlBase;
+            if (bubble != null)
+            {
+                var documentMedia = message.Media as TLMessageMediaDocument;
+                if (documentMedia != null)
+                {
+                    var document = documentMedia.Document as TLDocument;
+                    if (document != null)
+                    {
+                        var fileName = document.GetFileName();
+
+                        if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName)))
+                        {
+                            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appdata:///temp/" + fileName));
+                            await Launcher.LaunchFileAsync(file);
+                        }
+                        else
+                        {
+                            var manager = UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>();
+                            var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
+                            if (download != null)
+                            {
+                                var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appdata:///temp/" + fileName));
+                                await Launcher.LaunchFileAsync(file);
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -195,6 +195,8 @@
     </Style>
 
     <Style TargetType="local:ProgressBarRing">
+        <Setter Property="Background" Value="#54000000"/>
+        <Setter Property="Foreground" Value="#FFFFFFFF"/>
         <Setter Property="Minimum" Value="0"/>
         <Setter Property="Maximum" Value="1"/>
         <Setter Property="Width" Value="48"/>
@@ -202,9 +204,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProgressBarRing">
-                    <Grid Background="#54000000" CornerRadius="24">
-                        <SymbolIcon Symbol="Cancel" Foreground="White"/>
-                        <local:ProgressBarRingSlice x:Name="Indicator" IsHitTestVisible="False" CacheMode="BitmapCache" Fill="White" InnerRadius="18" Radius="22" StartAngle="0" EndAngle="0">
+                    <Grid Background="{TemplateBinding Background}" CornerRadius="24">
+                        <SymbolIcon Symbol="Cancel" Foreground="{TemplateBinding Foreground}"/>
+                        <local:ProgressBarRingSlice x:Name="Indicator" IsHitTestVisible="False" CacheMode="BitmapCache" Fill="{TemplateBinding Foreground}" InnerRadius="19" Radius="22" StartAngle="0" EndAngle="0">
                             <Path.RenderTransform>
                                 <RotateTransform x:Name="Rotation" CenterX="22" CenterY="22" Angle="0"/>
                             </Path.RenderTransform>

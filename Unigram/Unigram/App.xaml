@@ -39,6 +39,7 @@
             <converters:StateToGlyphConverter x:Key="StateToGlyphConverter"/>
             <converters:ReplyInfoToGlyphConverter x:Key="ReplyInfoToGlyphConverter"/>
             <converters:VenueToStaticImageConverter x:Key="VenueToStaticImageConverter"/>
+            <converters:FileExistsToGlyphConverter x:Key="FileExistsToGlyphConverter"/>
             <converters:FileSizeConverter x:Key="FileSizeConverter"/>
 
             <SolidColorBrush x:Key="PlaceholderBlueBrush" Color="#348cd4"/>
