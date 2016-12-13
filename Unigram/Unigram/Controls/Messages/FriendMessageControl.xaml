@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    HorizontalAlignment="Left"
+    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
     MaxWidth="430">
 
     <!-- TODO: not the right way -->

@@ -81,6 +81,10 @@ namespace Unigram.Controls.Messages
                     {
                         top = 0;
                     }
+                    if (message.IsPost)
+                    {
+                        top = 4;
+                    }
 
                     // Captioned photo/video/gif
                     if (IsInlineMedia(message.Media))

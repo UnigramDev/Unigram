@@ -35,6 +35,7 @@ namespace Unigram.Controls.Messages
             DataContextChanged += (s, args) =>
             {
                 if (ViewModel != null) Bindings.Update();
+                if (ViewModel != null) RequestedTheme = ViewModel.IsOut ? ElementTheme.Dark : ElementTheme.Light;
                 //if (ViewModel != null) OnMessageChanged(HeaderLabel);
             };
         }
@@ -86,6 +87,10 @@ namespace Unigram.Controls.Messages
                     if (message.HasReplyToMsgId)
                     {
                         top = 0;
+                    }
+                    if (message.IsPost)
+                    {
+                        top = 4;
                     }
 
                     // Captioned photo/video/gif
@@ -140,8 +145,6 @@ namespace Unigram.Controls.Messages
                 StatusControl.Background = StatusDarkBackgroundBrush;
                 StatusLabel.Foreground = StatusDarkForegroundBrush;
                 StatusGlyph.Foreground = StatusDarkForegroundBrush;
-
-                //LayoutRoot.BorderThickness = new Thickness(0);
             }
         }
 
@@ -153,8 +156,6 @@ namespace Unigram.Controls.Messages
                 StatusControl.Background = null;
                 StatusLabel.Foreground = StatusLightLabelForegroundBrush;
                 StatusGlyph.Foreground = StatusLightGlyphForegroundBrush;
-
-                //LayoutRoot.BorderThickness = new Thickness(0, 0, 0, 2);
             }
         }
 

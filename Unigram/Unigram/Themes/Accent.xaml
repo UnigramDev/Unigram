@@ -26,6 +26,8 @@
             <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
             <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
 
+            <HorizontalAlignment x:Key="MessageHorizontalAlignment">Right</HorizontalAlignment>
+
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
         </ResourceDictionary>
 
@@ -53,6 +55,8 @@
             <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
             <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
 
+            <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
+            
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>

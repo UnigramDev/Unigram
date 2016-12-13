@@ -19,7 +19,7 @@ namespace Unigram.Core.Services
 
         public HardwareService()
         {
-            _microphoneWatcher = DeviceInformation.CreateWatcher(DeviceClass.AudioRender);
+            _microphoneWatcher = DeviceInformation.CreateWatcher(DeviceClass.AudioCapture);
             _microphoneWatcher.Added += OnMicrophoneAdded;
             _microphoneWatcher.Removed += OnMicrophoneRemoved;
             _microphoneWatcher.Start();
@@ -32,7 +32,7 @@ namespace Unigram.Core.Services
 
         private async void OnMicrophoneRemoved(DeviceWatcher sender, DeviceInformationUpdate args)
         {
-            var devices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
+            var devices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
             IsMicrophoneAvailable = devices.Count > 0;
         }
 

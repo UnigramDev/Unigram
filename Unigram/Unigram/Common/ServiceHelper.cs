@@ -208,15 +208,165 @@ namespace Unigram.Common
             return Resources.MessageActionEmpty;
         }
 
-        public static Paragraph Convert(TLMessageService serviceMessage, bool useActiveLinks)
+        public static Paragraph ConvertOld(TLMessageService serviceMessage, bool useActiveLinks)
         {
             var fromId = serviceMessage.FromId;
             var user = InMemoryCacheService.Current.GetUser(fromId) as TLUser;
-            var username = (user != null) ? user.FullName : Resources.UserNominativeSingular;
+            var username = user != null ? user.FullName : Resources.UserNominativeSingular;
             var action = serviceMessage.Action;
             if (action != null && _actionsCache.ContainsKey(action.GetType()))
             {
                 return _actionsCache[action.GetType()].Invoke(serviceMessage, action, fromId.Value, username, useActiveLinks);
+            }
+
+            var paragraph = new Paragraph();
+            paragraph.Inlines.Add(new Run { Text = Resources.MessageActionEmpty });
+            return paragraph;
+        }
+
+        public static Paragraph Convert(TLMessageService serviceMessage, bool useActiveLinks)
+        {
+            var fromId = serviceMessage.FromId;
+            var user = InMemoryCacheService.Current.GetUser(fromId);
+            var userFullName = user != null ? user.FullName : Resources.UserNominativeSingular;
+            var action = serviceMessage.Action;
+
+            if (serviceMessage.ToId is TLPeerChannel)
+            {
+                var channel = InMemoryCacheService.Current.GetChat(serviceMessage.ToId.Id) as TLChannel;
+                var flag = channel != null && channel.IsMegagroup;
+
+                var pinMessageAction = action as TLMessageActionPinMessage;
+                if (pinMessageAction != null)
+                {
+                    var replyToMsgId = serviceMessage.ReplyToMsgId;
+                    if (replyToMsgId != null && channel != null)
+                    {
+                        var repliedMessage = InMemoryCacheService.Current.GetMessage(replyToMsgId, channel.Id) as TLMessage;
+                        if (repliedMessage != null)
+                        {
+                            var gameMedia = repliedMessage.Media as TLMessageMediaGame;
+                            if (gameMedia != null)
+                            {
+                                return ReplaceLinks(Resources.MessageActionPinGame, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                            }
+
+                            var photoMedia = repliedMessage.Media as TLMessageMediaPhoto;
+                            if (photoMedia != null)
+                            {
+                                return ReplaceLinks(Resources.MessageActionPinPhoto, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                            }
+
+                            var documentMedia = repliedMessage.Media as TLMessageMediaDocument;
+                            if (documentMedia != null)
+                            {
+                                if (TLMessage.IsSticker(documentMedia.Document))
+                                {
+                                    return ReplaceLinks(Resources.MessageActionPinSticker, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                                }
+                                if (TLMessage.IsVoice(documentMedia.Document))
+                                {
+                                    return ReplaceLinks(Resources.MessageActionPinVoiceMessage, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                                }
+                                if (TLMessage.IsMusic(documentMedia.Document))
+                                {
+                                    return ReplaceLinks(Resources.MessageActionPinTrack, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                                }
+                                if (TLMessage.IsVideo(documentMedia.Document))
+                                {
+                                    return ReplaceLinks(Resources.MessageActionPinVideo, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                                }
+                                if (TLMessage.IsGif(documentMedia.Document))
+                                {
+                                    return ReplaceLinks(Resources.MessageActionPinGif, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                                }
+
+                                return ReplaceLinks(Resources.MessageActionPinFile, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                            }
+
+                            var contactMedia = repliedMessage.Media as TLMessageMediaContact;
+                            if (contactMedia != null)
+                            {
+                                return ReplaceLinks(Resources.MessageActionPinContact, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                            }
+
+                            var geoMedia = repliedMessage.Media as TLMessageMediaGeo;
+                            if (geoMedia != null)
+                            {
+                                return ReplaceLinks(Resources.MessageActionPinMap, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                            }
+
+                            var venueMedia = repliedMessage.Media as TLMessageMediaVenue;
+                            if (venueMedia != null)
+                            {
+                                return ReplaceLinks(Resources.MessageActionPinMap, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                            }
+
+                            if (repliedMessage.Message.Length > 0)
+                            {
+                                if (repliedMessage.Message.Length > 20)
+                                {
+                                    return ReplaceLinks(Resources.MessageActionPinText, new[] { userFullName, repliedMessage.Message.Substring(0, 20).Replace("\r\n", "\n").Replace("\n", " ") + "..." }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                                }
+
+                                return ReplaceLinks(Resources.MessageActionPinText, new[] { userFullName, repliedMessage.Message.Replace("\r\n", "\n").Replace("\n", " ") }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                            }
+
+                            return ReplaceLinks(Resources.MessageActionPinMessage, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                        }
+                    }
+
+                    return ReplaceLinks(Resources.MessageActionPinMessage, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                }
+
+                var channelCreateAction = action as TLMessageActionChannelCreate;
+                if (channelCreateAction != null)
+                {
+                    if (!flag)
+                    {
+                        return ReplaceLinks(Resources.MessageActionChannelCreate, new[] { userFullName, channelCreateAction.Title }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                    }
+
+                    return ReplaceLinks(Resources.MessageActionChatCreate, new[] { userFullName, channelCreateAction.Title }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                }
+
+                var editPhotoAction = action as TLMessageActionChatEditPhoto;
+                if (editPhotoAction != null)
+                {
+                    if (!flag)
+                    {
+                        return ReplaceLinks(Resources.MessageActionChannelEditPhoto);
+                    }
+
+                    return ReplaceLinks(Resources.MessageActionChatEditPhoto, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                }
+
+                var deletePhotoAction = action as TLMessageActionChatDeletePhoto;
+                if (deletePhotoAction != null)
+                {
+                    if (!flag)
+                    {
+                        return ReplaceLinks(Resources.MessageActionChannelDeletePhoto);
+                    }
+
+                    return ReplaceLinks(Resources.MessageActionChatDeletePhoto, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                }
+
+                var editTitleAction = action as TLMessageActionChatEditTitle;
+                if (editTitleAction != null)
+                {
+                    if (!flag)
+                    {
+                        return ReplaceLinks(string.Format(Resources.MessageActionChannelEditTitle, editTitleAction.Title));
+                    }
+
+                    return ReplaceLinks(Resources.MessageActionChatEditTitle, new[] { userFullName, editTitleAction.Title }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                }
+            }
+
+            if (action != null && _actionsCache.ContainsKey(action.GetType()))
+            {
+                return _actionsCache[action.GetType()].Invoke(serviceMessage, action, fromId.Value, userFullName, useActiveLinks);
             }
 
             var paragraph = new Paragraph();
@@ -228,6 +378,12 @@ namespace Unigram.Common
         private static Paragraph ReplaceLinks(string text, string[] users = null, string[] identifiers = null, bool useActiveLinks = true)
         {
             var paragraph = new Paragraph();
+
+            if (users == null)
+            {
+                paragraph.Inlines.Add(new Run { Text = text });
+                return paragraph;
+            }
 
             if (!useActiveLinks)
             {
