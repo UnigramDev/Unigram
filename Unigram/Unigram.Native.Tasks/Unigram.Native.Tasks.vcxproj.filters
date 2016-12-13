@@ -5,6 +5,27 @@
       <UniqueIdentifier>66615a89-b248-439d-8595-2549e4530586</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Strings">
+      <UniqueIdentifier>{879b9871-a129-4d1a-89b9-550cb8242fe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\de">
+      <UniqueIdentifier>{1f3c0a02-b597-4cb5-a4b9-7a87278cc871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\en">
+      <UniqueIdentifier>{09856740-a660-48ff-b6e2-73c3e51d176a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\es">
+      <UniqueIdentifier>{98881f73-770d-4672-9412-4d58e0a42218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\it">
+      <UniqueIdentifier>{11304061-fb8e-47ea-ad0c-66b59bd0cc30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\nl">
+      <UniqueIdentifier>{eaee6506-a5fa-4400-b253-9788638a2e29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\pt">
+      <UniqueIdentifier>{6f0d56ed-bb30-45d2-b762-64710c5749a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -13,5 +34,25 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="NotificationTask.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="..\unigram.tasks\strings\de\resources.resw">
+      <Filter>Strings\de</Filter>
+    </PRIResource>
+    <PRIResource Include="..\unigram.tasks\strings\en\resources.resw">
+      <Filter>Strings\en</Filter>
+    </PRIResource>
+    <PRIResource Include="..\unigram.tasks\strings\es\resources.resw">
+      <Filter>Strings\es</Filter>
+    </PRIResource>
+    <PRIResource Include="..\unigram.tasks\strings\it\resources.resw">
+      <Filter>Strings\it</Filter>
+    </PRIResource>
+    <PRIResource Include="..\unigram.tasks\strings\nl\resources.resw">
+      <Filter>Strings\nl</Filter>
+    </PRIResource>
+    <PRIResource Include="..\unigram.tasks\strings\pt\resources.resw">
+      <Filter>Strings\pt</Filter>
+    </PRIResource>
   </ItemGroup>
 </Project>

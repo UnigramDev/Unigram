@@ -121,7 +121,7 @@ namespace Unigram
 
             if (SettingsHelper.IsAuthorized)
             {
-                MTProtoService.Current.CurrentUserId = SettingsHelper.UserId;
+                //MTProtoService.Current.CurrentUserId = SettingsHelper.UserId;
 
                 var share = args as ShareTargetActivatedEventArgs;
                 var voice = args as VoiceCommandActivatedEventArgs;

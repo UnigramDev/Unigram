@@ -122,6 +122,10 @@ namespace Unigram.Tasks
         {
             get
             {
+                if (channel_id != null)
+                {
+                    return "c" + channel_id;
+                }
                 if (chat_id != null)
                 {
                     return "c" + chat_id;
