@@ -316,8 +316,10 @@ namespace Unigram.Controls.Messages
             }
 
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320));
+            var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 420));
 
             var width = 0.0;
+            var height = 0.0;
 
             var photo = constraint as TLPhoto;
             if (photo != null)
@@ -327,6 +329,7 @@ namespace Unigram.Controls.Messages
                 if (photoSize != null)
                 {
                     width = photoSize.W;
+                    height = photoSize.H;
 
                     goto Calculate;
                 }
@@ -339,6 +342,7 @@ namespace Unigram.Controls.Messages
                 if (imageSize != null)
                 {
                     width = imageSize.W;
+                    height = imageSize.H;
 
                     goto Calculate;
                 }
@@ -347,15 +351,19 @@ namespace Unigram.Controls.Messages
                 if (video != null)
                 {
                     width = video.W;
+                    height = video.H;
 
                     goto Calculate;
                 }
             }
 
             Calculate:
-            if (width > availableWidth)
+            if (width > availableWidth || height > availableHeight)
             {
-                var ratio = availableWidth / width;
+                var ratioX = availableWidth / width;
+                var ratioY = availableHeight / height;
+                var ratio = Math.Min(ratioX, ratioY);
+
                 return base.MeasureOverride(new Size(Math.Max(96, width * ratio), availableSize.Height));
             }
             else

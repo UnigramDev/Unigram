@@ -94,6 +94,8 @@
                                 Constraint="{Binding Media.Photo}" 
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
                                 Tapped="ImageView_Tapped"/>
 
             <controls:ProgressBarRing Value="{Binding Media.Progress}"/>
