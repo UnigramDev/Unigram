@@ -58,7 +58,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		auto caption = GetCaption(loc_args, loc_key);
 		auto message = GetMessage(loc_args, loc_key);
 		auto sound = data->GetNamedString("sound");
-		auto launch = GetLaunch(custom);
+		auto launch = GetLaunch(custom, loc_key);
 		auto tag = GetTag(custom);
 		auto group = GetGroup(custom);
 
@@ -120,31 +120,38 @@ String^ NotificationTask::GetMessage(JsonArray^ loc_args, String^ loc_key)
 	return ref new String(wtext.c_str());
 }
 
-String^ NotificationTask::GetLaunch(JsonObject^ custom)
+String^ NotificationTask::GetLaunch(JsonObject^ custom, String^ loc_key)
 {
 	std::wstring launch = L"";
 	if (custom->HasKey("msg_id"))
 	{
+		launch += L"msg_id=";
 		launch += custom->GetNamedString("msg_id")->Data();
 		launch += L"&amp;";
 	}
 	if (custom->HasKey("chat_id"))
 	{
+		launch += L"chat_id=";
 		launch += custom->GetNamedString("chat_id")->Data();
 		launch += L"&amp;";
 	}
 	if (custom->HasKey("channel_id"))
 	{
+		launch += L"channel_id=";
 		launch += custom->GetNamedString("channel_id")->Data();
 		launch += L"&amp;";
 	}
 	if (custom->HasKey("from_id"))
 	{
+		launch += L"from_id=";
 		launch += custom->GetNamedString("from_id")->Data();
 		launch += L"&amp;";
 	}
 
-	return ref new String(launch.substr(0, launch.length() - 5).c_str());
+	launch += L"Action=";
+	launch += loc_key->Data();
+
+	return ref new String(launch.c_str());
 }
 
 String^ NotificationTask::GetTag(JsonObject^ custom)
