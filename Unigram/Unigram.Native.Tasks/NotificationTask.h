@@ -23,6 +23,7 @@ namespace Unigram
 				static void UpdateToastAndTiles(String^ content);
 				static String^ GetCaption(JsonArray^ loc_args, String^ loc_key);
 				static String^ GetMessage(JsonArray^ loc_args, String^ loc_key);
+				static String^ GetLaunch(JsonObject^ custom);
 				static String^ GetTag(JsonObject^ custom);
 				static String^ GetGroup(JsonObject^ custom);
 

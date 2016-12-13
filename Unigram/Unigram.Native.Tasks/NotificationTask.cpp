@@ -58,10 +58,11 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		auto caption = GetCaption(loc_args, loc_key);
 		auto message = GetMessage(loc_args, loc_key);
 		auto sound = data->GetNamedString("sound");
-		auto launch = L"";
+		auto launch = GetLaunch(custom);
 		auto tag = GetTag(custom);
 		auto group = GetGroup(custom);
 
+		UpdateToast(caption, message, sound, launch, tag, group);
 		UpdateBadge(data->GetNamedNumber("badge"));
 
 		if (loc_key != L"DC_UPDATE") 
@@ -117,6 +118,33 @@ String^ NotificationTask::GetMessage(JsonArray^ loc_args, String^ loc_key)
 	}
 
 	return ref new String(wtext.c_str());
+}
+
+String^ NotificationTask::GetLaunch(JsonObject^ custom)
+{
+	std::wstring launch = L"";
+	if (custom->HasKey("msg_id"))
+	{
+		launch += custom->GetNamedString("msg_id")->Data();
+		launch += L"&amp;";
+	}
+	if (custom->HasKey("chat_id"))
+	{
+		launch += custom->GetNamedString("chat_id")->Data();
+		launch += L"&amp;";
+	}
+	if (custom->HasKey("channel_id"))
+	{
+		launch += custom->GetNamedString("channel_id")->Data();
+		launch += L"&amp;";
+	}
+	if (custom->HasKey("from_id"))
+	{
+		launch += custom->GetNamedString("from_id")->Data();
+		launch += L"&amp;";
+	}
+
+	return ref new String(launch.substr(0, launch.length() - 5).c_str());
 }
 
 String^ NotificationTask::GetTag(JsonObject^ custom)
@@ -190,8 +218,16 @@ void NotificationTask::UpdateTile(String^ caption, String^ message)
 void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group)
 {
 	std::wstring actions = L"";
+	if (group != nullptr)
+	{
+		actions = L"<actions><input id='QuickMessage' type='text' placeHolderContent='Type a message...' /><action activationType='background' arguments='";
+		actions += launch->Data();
+		actions += L"' hint-inputId='QuickMessage' content='Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
+	}
 
-	std::wstring xml = L"<toast><visual><binding template='ToastGeneric'><text><![CDATA[";
+	std::wstring xml = L"<toast launch='";
+	xml += launch->Data();
+	xml += L"'><visual><binding template='ToastGeneric'><text><![CDATA[";
 	xml += caption->Data();
 	xml += L"]]></text><text><![CDATA[";
 	xml += message->Data();
