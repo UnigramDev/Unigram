@@ -25,6 +25,11 @@ namespace Unigram.Converters
                     var fileName = document.GetFileName();
                     if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName)))
                     {
+                        if (TLMessage.IsVideo(document))
+                        {
+                            return Symbol.Play;
+                        }
+
                         return Symbol.Page2;
                     }
                 }

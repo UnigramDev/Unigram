@@ -115,8 +115,12 @@
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-            <Border Width="48" Height="48" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                <SymbolIcon Symbol="Play" Foreground="White"/>
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="6,2,6,4" Margin="4">
+                <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+            </Border>
+
+            <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                <SymbolIcon Symbol="{Binding Media, Converter={StaticResource FileExistsToGlyphConverter}}" Foreground="White"/>
             </Border>
 
             <!--<controls:ProgressBarRing 
@@ -268,7 +272,6 @@
                     <RichTextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Style="{ThemeResource BodyRichTextBlockStyle}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game"/>
                 </StackPanel>
 
-                <!-- TODO: video timing -->
                 <Grid Background="Black" 
                       MinWidth="{ThemeResource TelegramMediaMinWidth}" 
                       MinHeight="{ThemeResource TelegramMediaMinHeight}"
@@ -281,7 +284,6 @@
                     <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="4">
                         <TextBlock Text="GAME" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                     </Border>
-
                 </Grid>
             </StackPanel>
         </Grid>

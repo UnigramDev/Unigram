@@ -23,6 +23,26 @@ namespace Telegram.Api.TL
             }
         }
 
+        public string Duration
+        {
+            get
+            {
+                var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+                if (videoAttribute != null)
+                {
+                    return TimeSpan.FromSeconds(videoAttribute.Duration).ToString("mm\\:ss");
+                }
+
+                var audioAttribute = Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+                if (audioAttribute != null)
+                {
+                    return TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
+                }
+
+                return null;
+            }
+        }
+
         public string GetFileName()
         {
             return string.Format("document{0}_{1}{2}", new object[]

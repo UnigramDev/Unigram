@@ -229,10 +229,10 @@ namespace Unigram.Controls.Messages
         public new event TypedEventHandler<FrameworkElement, object> Loading;
 
         #region Static
-        protected static SolidColorBrush StatusDarkBackgroundBrush = (SolidColorBrush)App.Current.Resources["MessageOverlayBackgroundBrush"];
-        protected static SolidColorBrush StatusDarkForegroundBrush = new SolidColorBrush(Colors.White);
-        protected static SolidColorBrush StatusLightLabelForegroundBrush = (SolidColorBrush)App.Current.Resources["MessageSubtleLabelBrush"];
-        protected static SolidColorBrush StatusLightGlyphForegroundBrush = (SolidColorBrush)App.Current.Resources["MessageSubtleGlyphBrush"];
+        protected static SolidColorBrush StatusDarkBackgroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageOverlayBackgroundBrush"]; } }
+        protected static SolidColorBrush StatusDarkForegroundBrush { get { return new SolidColorBrush(Colors.White); } }
+        protected static SolidColorBrush StatusLightLabelForegroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageSubtleLabelBrush"]; } }
+        protected static SolidColorBrush StatusLightGlyphForegroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageSubtleGlyphBrush"]; } }
 
         protected static bool IsFullMedia(TLMessageMediaBase media)
         {

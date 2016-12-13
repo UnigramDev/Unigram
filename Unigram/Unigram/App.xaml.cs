@@ -102,7 +102,7 @@ namespace Unigram
         {
             Execute.Initialize();
             var timer = Stopwatch.StartNew();
-            new ViewModelLocator().Configure();
+            ((ViewModelLocator)Resources["Locator"]).Configure();
             Debug.WriteLine($"INITIALIZE TIME: {timer.Elapsed}");
             return base.OnInitializeAsync(args);
         }

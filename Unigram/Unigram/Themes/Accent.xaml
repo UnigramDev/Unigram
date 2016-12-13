@@ -21,8 +21,10 @@
             <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
             <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
 
-            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#7F89A0B4"/>
-            <SolidColorBrush x:Key="MessageOverlayBackgroundPressedBrush" Color="#A2BBC8D4"/>
+            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
+            
+            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
+            <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
 
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
         </ResourceDictionary>
@@ -46,8 +48,10 @@
             <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
             <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
 
-            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#7F89A0B4"/>
-            <SolidColorBrush x:Key="MessageOverlayBackgroundPressedBrush" Color="#A2BBC8D4"/>
+            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
+
+            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
+            <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
 
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
         </ResourceDictionary>
