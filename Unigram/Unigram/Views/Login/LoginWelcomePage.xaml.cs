@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Core.Dependency;
-using Unigram.ViewModels;
+using Unigram.ViewModels.Login;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Unigram.Views
+namespace Unigram.Views.Login
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

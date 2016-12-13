@@ -15,7 +15,7 @@ using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Login
 {
     public class LoginPasswordViewModel : UnigramViewModelBase
     {

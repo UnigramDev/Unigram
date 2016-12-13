@@ -11,10 +11,11 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Views;
+using Unigram.Views.Login;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Login
 {
     public class LoginPhoneCodeViewModel : UnigramViewModelBase
     {

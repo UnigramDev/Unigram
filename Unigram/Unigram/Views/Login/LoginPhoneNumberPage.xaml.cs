@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Core.Dependency;
-using Unigram.ViewModels;
+using Unigram.ViewModels.Login;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.ViewManagement;
@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 
-namespace Unigram.Views
+namespace Unigram.Views.Login
 {
     public sealed partial class LoginPhoneNumberPage : Page
     {

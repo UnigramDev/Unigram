@@ -231,10 +231,10 @@
     <Compile Include="ViewModels\DialogViewModel.Info.cs" />
     <Compile Include="ViewModels\DialogViewModel.Inline.cs" />
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
-    <Compile Include="ViewModels\LoginPasswordViewModel.cs" />
-    <Compile Include="ViewModels\LoginPhoneCodeViewModel.cs" />
-    <Compile Include="ViewModels\LoginPhoneNumberViewModel.cs" />
-    <Compile Include="ViewModels\LoginWelcomeViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginPasswordViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginPhoneCodeViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginPhoneNumberViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PhotosViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -274,16 +274,16 @@
     <Compile Include="Views\HomeSearchPage.xaml.cs">
       <DependentUpon>HomeSearchPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LoginPasswordPage.xaml.cs">
+    <Compile Include="Views\Login\LoginPasswordPage.xaml.cs">
       <DependentUpon>LoginPasswordPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LoginPhoneCodePage.xaml.cs">
+    <Compile Include="Views\Login\LoginPhoneCodePage.xaml.cs">
       <DependentUpon>LoginPhoneCodePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LoginPhoneNumberPage.xaml.cs">
+    <Compile Include="Views\Login\LoginPhoneNumberPage.xaml.cs">
       <DependentUpon>LoginPhoneNumberPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LoginWelcomePage.xaml.cs">
+    <Compile Include="Views\Login\LoginWelcomePage.xaml.cs">
       <DependentUpon>LoginWelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
@@ -523,19 +523,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\LoginPasswordPage.xaml">
+    <Page Include="Views\Login\LoginPasswordPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\LoginPhoneCodePage.xaml">
+    <Page Include="Views\Login\LoginPhoneCodePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\LoginPhoneNumberPage.xaml">
+    <Page Include="Views\Login\LoginPhoneNumberPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\LoginWelcomePage.xaml">
+    <Page Include="Views\Login\LoginWelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -611,7 +611,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="Views\Auth\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

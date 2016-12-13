@@ -163,7 +163,7 @@ namespace Unigram
             }
             else
             {
-                NavigationService.Navigate(typeof(Views.LoginWelcomePage));
+                NavigationService.Navigate(typeof(Views.Login.LoginWelcomePage));
             }
 
             ShowStatusBar();

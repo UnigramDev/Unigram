@@ -21,6 +21,7 @@ using Windows.Storage;
 using Unigram.Core.Dependency;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Login;
 
 namespace Unigram
 {
