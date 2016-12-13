@@ -231,7 +231,7 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	xml += caption->Data();
 	xml += L"]]></text><text><![CDATA[";
 	xml += message->Data();
-	xml += L"</text><text placement='attribution'>Unigram</text></binding></visual>";
+	xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
 	xml += actions;
 	xml += L"</toast>";
 
