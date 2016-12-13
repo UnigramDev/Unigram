@@ -33,8 +33,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		return;
 	}
 
-	auto loc_key = data->GetNamedString("loc_key");
-	if (loc_key == nullptr)
+	if (data->HasKey("loc_key") == false)
 	{
 		auto custom = data->GetNamedObject("custom");
 		auto group = GetGroup(custom);
@@ -52,6 +51,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 
 	if (!muted)
 	{
+		auto loc_key = data->GetNamedString("loc_key");
 		auto custom = data->GetNamedObject("custom");
 		auto loc_args = data->GetNamedArray("loc_args");
 
