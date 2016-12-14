@@ -142,7 +142,7 @@ namespace Unigram.Selectors
                 var webpage = webpageMedia.Webpage as TLWebPage;
                 if (webpage != null)
                 {
-                    if (TLMessage.IsGif(webpage.Document as TLDocument))
+                    if (TLMessage.IsGif(webpage.Document))
                     {
                         return WebPageGifTemplate;
                     }
