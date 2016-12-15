@@ -22,6 +22,7 @@ namespace Telegram.Api.TL
             {
                 _uploadingProgress = value;
                 RaisePropertyChanged(() => UploadingProgress);
+                RaisePropertyChanged(() => Progress);
             }
         }
 
@@ -36,6 +37,20 @@ namespace Telegram.Api.TL
             {
                 _downloadingProgress = value;
                 RaisePropertyChanged(() => DownloadingProgress);
+                RaisePropertyChanged(() => Progress);
+            }
+        }
+
+        public double Progress
+        {
+            get
+            {
+                if (_downloadingProgress > 0)
+                {
+                    return _downloadingProgress;
+                }
+
+                return _uploadingProgress;
             }
         }
 

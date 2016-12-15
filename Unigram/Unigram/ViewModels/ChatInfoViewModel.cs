@@ -10,6 +10,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Views;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -17,8 +18,8 @@ namespace Unigram.ViewModels
 {
     public class ChatInfoViewModel : UnigramViewModelBase
     {
-        public ObservableCollection<UsersPanelListItem> UsersList = new ObservableCollection<UsersPanelListItem>();
-        public ObservableCollection<UsersPanelListItem> TempList = new ObservableCollection<UsersPanelListItem>();
+        public ObservableCollection<TLUser> UsersList = new ObservableCollection<TLUser>();
+        public ObservableCollection<TLUser> TempList = new ObservableCollection<TLUser>();
         public object photo;
         public string Status { get; internal set; }
         public ChatInfoViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) : base(protoService, cacheService, aggregator)
@@ -76,12 +77,12 @@ namespace Unigram.ViewModels
                 foreach (var item in participants.Value.Users)
                 {
                     var User = item as TLUser;
-                    var TempX = new UsersPanelListItem(User);
-                    var Status = LastSeenHelper.GetLastSeen(User);
-                    TempX.fullName = User.FullName;
-                    TempX.lastSeen = Status.Item1;
-                    TempX.Photo = TempX._parent.Photo;
-                    TempList.Add(TempX);
+                    //var TempX = new UsersPanelListItem(User);
+                    //var Status = LastSeenHelper.GetLastSeen(User);
+                    //TempX.fullName = User.FullName;
+                    //TempX.lastSeen = Status.Item1;
+                    //TempX.Photo = TempX._parent.Photo;
+                    TempList.Add(User);
                 }
             }
 
@@ -92,18 +93,34 @@ namespace Unigram.ViewModels
                 foreach (var item in chatDetails.Value.Users)
                 {
                     var User = item as TLUser;
-                    var TempX = new UsersPanelListItem(User);
-                    var Status = LastSeenHelper.GetLastSeen(User);
-                    TempX.fullName = User.FullName;
-                    TempX.lastSeen = Status.Item1;
-                    TempX.Photo = TempX._parent.Photo;
-                    TempList.Add(TempX);
+                    //var TempX = new UsersPanelListItem(User);
+                    //var Status = LastSeenHelper.GetLastSeen(User);
+                    //TempX.fullName = User.FullName;
+                    //TempX.lastSeen = Status.Item1;
+                    //TempX.Photo = TempX._parent.Photo;
+                    TempList.Add(User);
                 }
             }
 
-            foreach (var item in TempList.OrderByDescending(person => person.lastSeen))
+            //foreach (var item in TempList.OrderByDescending(person => person.lastSeen))
+            //{
+            //    UsersList.Add(item);
+            //}
+        }
+
+        public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
+        private void MediaExecute()
+        {
+            var channel = Item as TLChannel;
+            if (channel != null)
             {
-                UsersList.Add(item);
+                NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value });
+            }
+
+            var chat = Item as TLChat;
+            if (chat != null)
+            {
+                NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerChat { ChatId = chat.Id });
             }
         }
     }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 
 namespace Unigram.Core.Services
 {
@@ -31,7 +32,7 @@ namespace Unigram.Core.Services
             get
             {
                 if (_lastKnownOccludedRect == null)
-                    _lastKnownOccludedRect = new Rect();
+                    _lastKnownOccludedRect = new Rect(0, 0, Window.Current.Bounds.Width, 320);
 
                 return _lastKnownOccludedRect;
             }

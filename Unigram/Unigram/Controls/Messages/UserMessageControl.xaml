@@ -12,8 +12,22 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    HorizontalAlignment="Right"
+    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
     MaxWidth="430">
+
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup>
+            <VisualState x:Name="FullMedia">
+                <VisualState.Setters>
+                    <Setter Target="StatusControl.Padding" Value="6,2,6,4"/>
+                    <Setter Target="StatusControl.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                    <Setter Target="StatusLabel.Foreground" Value="White"/>
+                    <Setter Target="StatusGlyph.Foreground" Value="White"/>
+                </VisualState.Setters>
+            </VisualState>
+            <VisualState x:Name="Default"/>
+        </VisualStateGroup>
+    </VisualStateManager.VisualStateGroups>
 
     <!-- TODO: not the right way -->
     <Border Height="10" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
@@ -56,6 +70,8 @@
             <controls:MediaControl
                 x:Name="MediaControl"
                 Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
                 ContentChanged="OnMediaChanged"
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                 Grid.Row="3"/>
@@ -69,7 +85,7 @@
                         Grid.Row="4">
                 <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.HasViews}">
                     <FontIcon Glyph="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}" FontSize="11" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="0,0,4,2" VerticalAlignment="Bottom"/>
-                    <TextBlock Text="{x:Bind ViewModel.Views}" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,12,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind Convert.Views(ViewModel, ViewModel.Views), Mode=OneWay}" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,12,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 </StackPanel>
                 <TextBlock Visibility="{x:Bind EditedVisibility(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay}" Text="edited" FontStyle="Italic" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,4,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 <TextBlock x:Name="StatusLabel" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0">

@@ -1,29 +1,30 @@
-﻿namespace Unigram
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Autofac;
-    using Core.Dependency;
-    using Core.Services;
-    using Telegram.Api.Aggregator;
-    using Telegram.Api.Helpers;
-    using Telegram.Api.Services;
-    using Telegram.Api.Services.Cache;
-    using Telegram.Api.Services.Connection;
-    using Telegram.Api.Services.DeviceInfo;
-    using Telegram.Api.Services.Updates;
-    using Telegram.Api.TL;
-    using Telegram.Api.Transport;
-    using ViewModels;
-    using Telegram.Api.Services.FileManager;
-    using Telegram.Api;
-    using System.IO;
-    using Windows.Storage;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Autofac;
+using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
+using Telegram.Api.Services;
+using Telegram.Api.Services.Cache;
+using Telegram.Api.Services.Connection;
+using Telegram.Api.Services.DeviceInfo;
+using Telegram.Api.Services.Updates;
+using Telegram.Api.TL;
+using Telegram.Api.Transport;
+using Telegram.Api.Services.FileManager;
+using Telegram.Api;
+using System.IO;
+using Windows.Storage;
+using Unigram.Core.Dependency;
+using Unigram.Core.Services;
+using Unigram.ViewModels;
+using Unigram.ViewModels.Login;
 
+namespace Unigram
+{
     public class ViewModelLocator
     {
         private UnigramContainer container;
@@ -32,6 +33,8 @@
         {
             container = UnigramContainer.Instance;
         }
+
+        public IHardwareService HardwareService => UnigramContainer.Instance.ResolverType<IHardwareService>();
 
         public void Configure()
         {
@@ -57,6 +60,7 @@
             container.ContainerBuilder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
             container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
             container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
 
             // ViewModels
             container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();

@@ -88,5 +88,56 @@ namespace Unigram.Converters
                     return "\uFFFD";
             }
         }
+
+        public string Views(TLMessage message, int? views)
+        {
+            var number = string.Empty;
+
+            if (message.HasViews)
+            {
+                number = ShortNumber(views ?? 0);
+
+                if (message.HasFromId && message.From != null)
+                {
+                    number += $"   {message.From.FullName},";
+                }
+            }
+
+            return number;
+        }
+
+        public string ShortNumber(int number)
+        {
+            var K = string.Empty;
+            var lastDec = 0;
+
+            while (number / 1000 > 0)
+            {
+                K += "K";
+                lastDec = (number % 1000) / 100;
+                number /= 1000;
+            }
+
+            if (lastDec != 0 && K.Length > 0)
+            {
+                if (K.Length == 2)
+                {
+                    return string.Format("{0}.{1}M", number, lastDec);
+                }
+                else
+                {
+                    return string.Format("{0}.{1}{2}", number, lastDec, K);
+                }
+            }
+
+            if (K.Length == 2)
+            {
+                return string.Format("{0}M", number);
+            }
+            else
+            {
+                return string.Format("{0}{1}", number, K);
+            }
+        }
     }
 }

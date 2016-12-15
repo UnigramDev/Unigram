@@ -81,6 +81,8 @@ namespace Unigram.ViewModels
                     Items.Add(item);
                 }
             }
+
+            Aggregator.Subscribe(this);
         }
 
         #region Handle

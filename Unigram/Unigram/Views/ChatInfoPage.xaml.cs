@@ -16,19 +16,21 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-
 namespace Unigram.Views
 {
-
     public sealed partial class ChatInfoPage : Page
     {
         public ChatInfoViewModel ViewModel => DataContext as ChatInfoViewModel;
+
         public ChatInfoPage()
         {
             this.InitializeComponent();
+
             DataContext = UnigramContainer.Instance.ResolverType<ChatInfoViewModel>();
+
             SizeChanged += OnSizeChanged;
         }
+
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             VisualStateManager.GoToState(this, e.NewSize.Width < 500 ? "NarrowState" : "FilledState", false);
@@ -36,7 +38,7 @@ namespace Unigram.Views
 
         private void UsersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.NavigationService.Navigate(typeof(UserInfoPage), ((UsersPanelListItem)UsersListView.SelectedItem)._parent);
+            ViewModel.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = ((TLUser)UsersListView.SelectedItem).Id });
         }
     }
 }

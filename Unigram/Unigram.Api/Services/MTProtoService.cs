@@ -173,6 +173,8 @@ namespace Telegram.Api.Services
         {
             var isBackground = deviceInfo != null && deviceInfo.IsBackground;
 
+            CurrentUserId = SettingsHelper.UserId;
+
             _deviceInfo = deviceInfo;
 
             _sendingTimer = new Timer(CheckSendingMessages, this, Timeout.Infinite, Timeout.Infinite);

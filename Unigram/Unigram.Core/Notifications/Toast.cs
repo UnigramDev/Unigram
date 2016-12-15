@@ -20,7 +20,7 @@ namespace Unigram.Core.Notifications
         {
             BackgroundExecutionManager.RemoveAccess();
 
-            await BackgroundTaskManager.RegisterAsync("NotificationTask", "Unigram.Tasks.NotificationTask", new PushNotificationTrigger());
+            await BackgroundTaskManager.RegisterAsync("NotificationTask", "Unigram.Native.Tasks.NotificationTask", new PushNotificationTrigger());
             await BackgroundTaskManager.RegisterAsync("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
         }
 

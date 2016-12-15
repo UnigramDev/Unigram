@@ -250,7 +250,7 @@ namespace Unigram.Controls
             var message = obj as TLMessage;
             if (message != null)
             {
-                if (!string.IsNullOrEmpty(message.Message) && (message.Media == null || message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage))
+                if (!string.IsNullOrEmpty(message.Message) && (message.Media == null || message.Media is TLMessageMediaEmpty))
                 {
                     return SetTextTemplate(message, Title);
                 }
@@ -272,6 +272,8 @@ namespace Unigram.Controls
                             return SetGameTemplate(message, Title);
                         case TLType.MessageMediaEmpty:
                             return SetUnsupportedTemplate(message, Title);
+                        case TLType.MessageMediaWebPage:
+                            return SetWebPageTemplate(message, Title);
                         case TLType.MessageMediaDocument:
                             if (message.IsSticker())
                             {
@@ -359,7 +361,7 @@ namespace Unigram.Controls
 
             TitleLabel.Text = GetFromLabel(message, title);
             ServiceLabel.Text = string.Empty;
-            MessageLabel.Text = message.Message.Replace('\n', ' ');
+            MessageLabel.Text = message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
 
             return true;
         }
@@ -384,7 +386,7 @@ namespace Unigram.Controls
                 if (!string.IsNullOrWhiteSpace(photoMedia.Caption))
                 {
                     ServiceLabel.Text += ", ";
-                    MessageLabel.Text += photoMedia.Caption.Replace('\n', ' ');
+                    MessageLabel.Text += photoMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
                 ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(photoMedia);
@@ -422,7 +424,7 @@ namespace Unigram.Controls
             if (venueMedia != null && !string.IsNullOrWhiteSpace(venueMedia.Title))
             {
                 ServiceLabel.Text += ", ";
-                MessageLabel.Text = venueMedia.Title.Replace('\n', ' ');
+                MessageLabel.Text = venueMedia.Title.Replace("\r\n", "\n").Replace('\n', ' ');
             }
 
             return true;
@@ -535,7 +537,36 @@ namespace Unigram.Controls
                 if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
                 {
                     ServiceLabel.Text += ", ";
-                    MessageLabel.Text += documentMedia.Caption.Replace('\n', ' ');
+                    MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
+                }
+            }
+
+            return true;
+        }
+
+        private bool SetWebPageTemplate(TLMessage message, string title)
+        {
+            var webPageMedia = message.Media as TLMessageMediaWebPage;
+            if (webPageMedia != null)
+            {
+                var webPage = webPageMedia.Webpage as TLWebPage;
+                if (webPage.Photo != null && webPage.Type != null)
+                {
+                    Visibility = Visibility.Visible;
+
+                    FindName(nameof(ThumbRoot));
+                    if (ThumbRoot != null)
+                        ThumbRoot.Visibility = Visibility.Visible;
+
+                    TitleLabel.Text = GetFromLabel(message, title);
+                    ServiceLabel.Text = string.Empty;
+                    MessageLabel.Text = message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
+
+                    ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(webPage.Photo);
+                }
+                else
+                {
+                    return SetTextTemplate(message, title);
                 }
             }
 
@@ -560,7 +591,7 @@ namespace Unigram.Controls
                 if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
                 {
                     ServiceLabel.Text += ", ";
-                    MessageLabel.Text += documentMedia.Caption.Replace('\n', ' ');
+                    MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
                 ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document);
@@ -586,7 +617,7 @@ namespace Unigram.Controls
                 if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
                 {
                     ServiceLabel.Text += ", ";
-                    MessageLabel.Text += documentMedia.Caption.Replace('\n', ' ');
+                    MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
             }
 
@@ -659,7 +690,7 @@ namespace Unigram.Controls
                     if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
                     {
                         ServiceLabel.Text += ", ";
-                        MessageLabel.Text += documentMedia.Caption.Replace('\n', ' ');
+                        MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                     }
                 }
             }

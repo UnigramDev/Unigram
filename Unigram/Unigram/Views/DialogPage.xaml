@@ -235,7 +235,7 @@
                 </Grid.ColumnDefinitions>
                 <Border Visibility="{x:Bind ReplyVisibility}" 
                         Height="{ThemeResource AppBarThemeCompactHeight}"
-                        Background="{ThemeResource MessageOverlayBackgroundBrush}" 
+                        Background="{ThemeResource MessageServiceBackgroundBrush}" 
                         VerticalAlignment="Bottom" 
                         HorizontalAlignment="Right"
                         MaxWidth="180"
@@ -257,7 +257,7 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         MaxWidth="180" MaxHeight="180" Margin="2"/>
 
-                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                             <FontIcon Glyph="{x:Bind State, Converter={StaticResource StateToGlyphConverter}, Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="White" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
@@ -279,14 +279,14 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         MaxWidth="180" MaxHeight="180" Margin="2"/>
 
-                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                     </Border>
                 </Grid>
 
                 <Border Visibility="{x:Bind ReplyVisibility}" 
                         Height="{ThemeResource AppBarThemeCompactHeight}"
-                        Background="{ThemeResource MessageOverlayBackgroundBrush}" 
+                        Background="{ThemeResource MessageServiceBackgroundBrush}" 
                         VerticalAlignment="Bottom" 
                         HorizontalAlignment="Left" 
                         MaxWidth="180"
@@ -331,14 +331,14 @@
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                             MaxWidth="180" MaxHeight="180" Margin="2"/>
 
-                        <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                        <Border Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                             <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                         </Border>
                     </Grid>
 
                     <Border Visibility="{x:Bind ReplyVisibility}" 
                             Height="{ThemeResource AppBarThemeCompactHeight}"
-                            Background="{ThemeResource MessageOverlayBackgroundBrush}" 
+                            Background="{ThemeResource MessageServiceBackgroundBrush}" 
                             VerticalAlignment="Bottom" 
                             HorizontalAlignment="Left" 
                             MaxWidth="180"
@@ -414,7 +414,7 @@
                     </Ellipse>
                     <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
                 </Grid>
-                <messages:ChatFriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
+                <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
             </Grid>
         </DataTemplate>
 
@@ -423,8 +423,8 @@
                                            UserStickerTemplate="{StaticResource UserStickerTemplate}"
                                            FriendMessageTemplate="{StaticResource FriendMessageTemplate}"
                                            FriendStickerTemplate="{StaticResource FriendStickerTemplate}"
-                                           ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
-                                           ChatFriendStickerTemplate="{StaticResource ChatFriendStickerTemplate}"
+                                           ChatFriendMessageTemplate="{StaticResource FriendMessageTemplate}"
+                                           ChatFriendStickerTemplate="{StaticResource FriendStickerTemplate}"
                                            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
                                            ServiceMessagePhotoTemplate="{StaticResource ServiceMessagePhotoTemplate}"
                                            UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
@@ -619,6 +619,43 @@
                 </ListView.ItemsPanel>
                 <ListView.ItemContainerStyleSelector>
                     <selectors:MessageStyleSelector>
+                        <selectors:MessageStyleSelector.ChatFriendMessageStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                                <Setter Property="TabNavigation" Value="Local"/>
+                                <Setter Property="IsHoldingEnabled" Value="True"/>
+                                <Setter Property="Padding" Value="12,0,12,0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+                                <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListViewItem">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="56"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12,12,0,0" Width="36" Height="36">
+                                                    <Ellipse Fill="{Binding FromId, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36"/>
+                                                    <Ellipse Width="36" Height="36">
+                                                        <Ellipse.Fill>
+                                                            <ImageBrush ImageSource="{Binding From.Photo, Converter={StaticResource DefaultPhotoConverter}}" />
+                                                        </Ellipse.Fill>
+                                                    </Ellipse>
+                                                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
+                                                </Grid>
+                                                <ContentPresenter Grid.Column="1"/>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </selectors:MessageStyleSelector.ChatFriendMessageStyle>
                         <selectors:MessageStyleSelector.MessageStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -943,6 +980,21 @@
                                 RequestedTheme="Dark"/>
                 </Button.Content>
             </Button>-->
+            <controls:GlyphButton x:Name="btnStickers" 
+                                    Command="{Binding SendCommand}"
+                                    CommandParameter="ciao"
+                                    Glyph="&#xE606;" 
+                                    FontFamily="{ThemeResource TelegramThemeFontFamily}" 
+                                    Grid.Column="2"
+                                    Grid.Row="1"/>
+
+            <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" Grid.Column="3" Grid.Row="1">
+                <controls:GlyphButton x:Name="btnVoiceMessage"
+                                        Click="btnVoiceMessage_Click"
+                                        Glyph="&#xE720;" 
+                                        Grid.Column="3"
+                                        Grid.Row="1"/>
+            </Border>
 
             <controls:GlyphButton x:Name="btnSendMessage"
                                   Click="btnSendMessage_Click"
@@ -954,19 +1006,6 @@
                                   Padding="4,2,0,0"
                                   Grid.Column="3"
                                   Grid.Row="1"/>
-
-            <controls:GlyphButton x:Name="btnStickers" 
-                                    Command="{Binding SendCommand}"
-                                    CommandParameter="ciao"
-                                    Glyph="&#xE606;" 
-                                    FontFamily="{ThemeResource TelegramThemeFontFamily}" 
-                                    Grid.Column="2"
-                                    Grid.Row="1"/>
-            <controls:GlyphButton x:Name="btnVoiceMessage"
-                                    Click="btnVoiceMessage_Click"
-                                    Glyph="&#xE720;" 
-                                    Grid.Column="3"
-                                    Grid.Row="1"/>
 
             <controls:GlyphButton x:Name="Attach" Click="Attach_Click" Glyph="&#xE16C;" Grid.Row="1">
                 <FlyoutBase.AttachedFlyout>
@@ -1046,7 +1085,7 @@
                           HorizontalScrollMode="Disabled"
                           Grid.ColumnSpan="4"
                           Grid.Row="2">
-                <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick"/>
+                <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0"/>
             </ScrollViewer>
         </Grid>
     </Grid>

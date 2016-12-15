@@ -9,6 +9,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -130,7 +131,7 @@ namespace Unigram.Controls.Items
             var topMessage = ViewModel?.TopMessageItem as TLMessageBase;
             if (topMessage != null)
             {
-                var message = topMessage as TLMessage;
+                var message = topMessage as TLMessageCommonBase;
                 if (message != null)
                 {
                     return GetBriefLabel(message, true);
@@ -157,7 +158,7 @@ namespace Unigram.Controls.Items
             var messageService = value as TLMessageService;
             if (messageService != null)
             {
-                // TODO: return ServiceMessageToTextConverter.Convert(messageService);
+                return ServiceHelper.Convert(messageService);
             }
 
             var message = value as TLMessage;
@@ -173,6 +174,10 @@ namespace Unigram.Controls.Items
 
                 if (message.Media != null)
                 {
+                    if (message.Media is TLMessageMediaGame)
+                    {
+                        return text + "\uD83C\uDFAE " + ((TLMessageMediaGame)message.Media).Game.Title;
+                    }
                     if (message.Media is TLMessageMediaDocument)
                     {
                         var caption = string.Empty;

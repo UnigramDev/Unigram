@@ -43,8 +43,6 @@ namespace Unigram.ViewModels
             SearchDialogs = new ObservableCollection<TLDialog>();
             Dialogs = new DialogsViewModel(ProtoService, cacheService, aggregator);
             Contacts = new ContactsViewModel(ProtoService, cacheService, aggregator);
-            aggregator.Subscribe(Dialogs);
-            aggregator.Subscribe(SearchDialogs);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -175,19 +173,6 @@ namespace Unigram.ViewModels
                 }
             }
          }
-    }
-
-    public class UsersPanelListItem : TLUser
-    {
-        public TLUser _parent;
-        public UsersPanelListItem(TLUser parent)
-        {
-            _parent = parent;
-        }
-        public string fullName { get; internal set; }
-        public string lastSeen { get; internal set; }
-        public DateTime lastSeenEpoch { get; internal set; }
-        public Brush PlaceHolderColor { get; internal set; }
     }
 
     public class SearchResult

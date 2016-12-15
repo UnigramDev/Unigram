@@ -102,13 +102,16 @@ namespace Unigram
         {
             Execute.Initialize();
             var timer = Stopwatch.StartNew();
-            new ViewModelLocator().Configure();
+            ((ViewModelLocator)Resources["Locator"]).Configure();
             Debug.WriteLine($"INITIALIZE TIME: {timer.Elapsed}");
             return base.OnInitializeAsync(args);
         }
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
+            //NavigationService.Navigate(typeof(PlaygroundPage));
+            //return;
+
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
 
             ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
@@ -118,7 +121,7 @@ namespace Unigram
 
             if (SettingsHelper.IsAuthorized)
             {
-                MTProtoService.Current.CurrentUserId = SettingsHelper.UserId;
+                //MTProtoService.Current.CurrentUserId = SettingsHelper.UserId;
 
                 var share = args as ShareTargetActivatedEventArgs;
                 var voice = args as VoiceCommandActivatedEventArgs;
@@ -160,7 +163,7 @@ namespace Unigram
             }
             else
             {
-                NavigationService.Navigate(typeof(Views.LoginWelcomePage));
+                NavigationService.Navigate(typeof(Views.Login.LoginWelcomePage));
             }
 
             ShowStatusBar();

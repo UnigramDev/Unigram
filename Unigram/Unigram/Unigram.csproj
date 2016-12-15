@@ -18,9 +18,9 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>Unigram_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>065F0B2E6BD36F1FD48AEA0B5546196B98A1546C</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -95,6 +95,10 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\Fonts\Telegram.ttf" />
+    <Content Include="Views\Vandamme.mp3" />
+    <Content Include="WindowsPhoneReservedAppInfo.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +112,7 @@
     <Compile Include="Controls\AttachPickerFlyout.xaml.cs">
       <DependentUpon>AttachPickerFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\BackButton.cs" />
     <Compile Include="Controls\ContentDialogBase.cs" />
     <Compile Include="Controls\ImageView.cs" />
     <Compile Include="Controls\Inline\InlineBotResultsView.xaml.cs">
@@ -122,6 +127,7 @@
       <DependentUpon>SendPhotosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BubblePlaceholderConverter.cs" />
+    <Compile Include="Converters\FileExistsToGlyphConverter.cs" />
     <Compile Include="Selectors\InlineBotResultTemplateSelector.cs" />
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>
@@ -164,9 +170,6 @@
     <Compile Include="Controls\Media\VoiceMediaControl.xaml.cs">
       <DependentUpon>VoiceMediaControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\ChatFriendMessageControl.xaml.cs">
-      <DependentUpon>ChatFriendMessageControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Messages\FriendMessageControl.xaml.cs">
       <DependentUpon>FriendMessageControl.xaml</DependentUpon>
     </Compile>
@@ -175,7 +178,7 @@
     </Compile>
     <Compile Include="Controls\MasterDetailView.cs" />
     <Compile Include="Controls\Messages\MessageControlBase.cs" />
-    <Compile Include="Controls\PhotosView.xaml.cs">
+    <Compile Include="Controls\Views\PhotosView.xaml.cs">
       <DependentUpon>PhotosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PivotRadioButton.cs" />
@@ -220,6 +223,7 @@
     </Compile>
     <Compile Include="ViewModels\ChatInfoViewModel.cs" />
     <Compile Include="ViewModels\ContactsViewModel.cs" />
+    <Compile Include="ViewModels\DialogPhotosViewModel.cs" />
     <Compile Include="ViewModels\DialogsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
@@ -228,11 +232,12 @@
     <Compile Include="ViewModels\DialogViewModel.Info.cs" />
     <Compile Include="ViewModels\DialogViewModel.Inline.cs" />
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
-    <Compile Include="ViewModels\LoginPasswordViewModel.cs" />
-    <Compile Include="ViewModels\LoginPhoneCodeViewModel.cs" />
-    <Compile Include="ViewModels\LoginPhoneNumberViewModel.cs" />
-    <Compile Include="ViewModels\LoginWelcomeViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginPasswordViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginPhoneCodeViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginPhoneNumberViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\PhotosViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\UserInfoViewModel.cs" />
@@ -270,16 +275,16 @@
     <Compile Include="Views\HomeSearchPage.xaml.cs">
       <DependentUpon>HomeSearchPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LoginPasswordPage.xaml.cs">
+    <Compile Include="Views\Login\LoginPasswordPage.xaml.cs">
       <DependentUpon>LoginPasswordPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LoginPhoneCodePage.xaml.cs">
+    <Compile Include="Views\Login\LoginPhoneCodePage.xaml.cs">
       <DependentUpon>LoginPhoneCodePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LoginPhoneNumberPage.xaml.cs">
+    <Compile Include="Views\Login\LoginPhoneNumberPage.xaml.cs">
       <DependentUpon>LoginPhoneNumberPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LoginWelcomePage.xaml.cs">
+    <Compile Include="Views\Login\LoginWelcomePage.xaml.cs">
       <DependentUpon>LoginWelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
@@ -428,10 +433,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Messages\ChatFriendMessageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\Messages\FriendMessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -440,7 +441,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PhotosView.xaml">
+    <Page Include="Controls\Views\PhotosView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -523,19 +524,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\LoginPasswordPage.xaml">
+    <Page Include="Views\Login\LoginPasswordPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\LoginPhoneCodePage.xaml">
+    <Page Include="Views\Login\LoginPhoneCodePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\LoginPhoneNumberPage.xaml">
+    <Page Include="Views\Login\LoginPhoneNumberPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\LoginWelcomePage.xaml">
+    <Page Include="Views\Login\LoginWelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -589,6 +590,10 @@
       <Project>{580d2885-8129-499e-9ffd-39ff1b586f18}</Project>
       <Name>Unigram.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Unigram.Native.Tasks\Unigram.Native.Tasks.vcxproj">
+      <Project>{ca0c2cc0-3d83-4556-a9a3-0923ece8c1d3}</Project>
+      <Name>Unigram.Native.Tasks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Unigram.Tasks\Unigram.Tasks.csproj">
       <Project>{cf4c1fc3-bc51-4297-a7e1-493fcffe940b}</Project>
       <Name>Unigram.Tasks</Name>
@@ -611,7 +616,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="Views\Auth\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

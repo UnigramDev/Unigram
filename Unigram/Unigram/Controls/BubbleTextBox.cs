@@ -77,9 +77,8 @@ namespace Unigram.Controls
                 keh => { TextChanged -= keh; });
 
             _textChangedSubscription = textChangedEvents
-                .Throttle(TimeSpan.FromMilliseconds(1000))
+                .Throttle(TimeSpan.FromMilliseconds(200))
                 .Subscribe(e => Execute.BeginOnUIThread(() => UpdateInlineBot(true)));
-
 
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
@@ -303,7 +302,7 @@ namespace Unigram.Controls
         {
             var command = string.Empty;
             var inline = SearchInlineBotResults(Text, out command);
-            if (inline && !fast)
+            if (inline && fast)
             {
                 ViewModel.GetInlineBotResults(command);
             }

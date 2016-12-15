@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Unigram.Views.LoginWelcomePage"
+    x:Class="Unigram.Views.Login.LoginWelcomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"

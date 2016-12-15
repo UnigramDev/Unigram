@@ -10,26 +10,34 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using LinqToVisualTree;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Controls.Primitives;
+using Template10.Common;
 
 namespace Unigram.Controls
 {
-    public class ContentDialogBase : ContentDialog
+    public class ContentDialogBase : ContentControl
     {
+        private Popup _popupHost;
+
         private TaskCompletionSource<ContentDialogBaseResult> _callback;
         private ContentDialogBaseResult _result;
 
         private Border BackgroundElement;
         private AppViewBackButtonVisibility BackButtonVisibility;
 
+        public event EventHandler Closing;
+
         public ContentDialogBase()
         {
             DefaultStyleKey = typeof(ContentDialogBase);
 
             Loaded += OnLoaded;
-            FullSizeDesired = true;
+            //FullSizeDesired = true;
 
-            Opened += OnOpened;
-            Closed += OnClosed;
+            //Opened += OnOpened;
+            //Closed += OnClosed;
         }
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
@@ -46,18 +54,62 @@ namespace Unigram.Controls
             }
         }
 
-        public new IAsyncOperation<ContentDialogBaseResult> ShowAsync()
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync()
         {
             return AsyncInfo.Run(async (token) =>
             {
+                Margin = new Thickness();
+
                 _result = ContentDialogBaseResult.None;
                 _callback = new TaskCompletionSource<ContentDialogBaseResult>();
-                await base.ShowAsync();
+
+                if (_popupHost == null)
+                {
+                    _popupHost = new Popup();
+                    _popupHost.Child = this;
+                    _popupHost.Opened += _popupHost_Opened;
+                    _popupHost.Closed += _popupHost_Closed;
+                }
+
+                _popupHost.IsOpen = true;
+
                 return await _callback.Task;
             });
         }
 
-        public new void Hide()
+        private void _popupHost_Opened(object sender, object e)
+        {
+            BackButtonVisibility = SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility;
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
+            //BootStrapper.BackRequested += BootStrapper_BackRequested;
+            //Window.Current.SizeChanged += OnSizeChanged;
+
+            OnVisibleBoundsChanged(ApplicationView.GetForCurrentView(), null);
+        }
+
+        private void _popupHost_Closed(object sender, object e)
+        {
+            _callback.TrySetResult(_result);
+
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
+            BootStrapper.BackRequested -= BootStrapper_BackRequested;
+        }
+
+        private void BootStrapper_BackRequested(object sender, HandledEventArgs e)
+        {
+            e.Handled = true;
+            Hide();
+        }
+
+        protected void Prepare()
+        {
+            Margin = new Thickness(Window.Current.Bounds.Width, Window.Current.Bounds.Height, 0, 0);
+            Closing?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Hide()
         {
             Hide(ContentDialogBaseResult.None);
         }
@@ -65,26 +117,7 @@ namespace Unigram.Controls
         public void Hide(ContentDialogBaseResult result)
         {
             _result = result;
-            base.Hide();
-        }
-
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
-        {
-            BackButtonVisibility = SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility;
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
-            //Window.Current.SizeChanged += OnSizeChanged;
-
-            OnVisibleBoundsChanged(ApplicationView.GetForCurrentView(), null);
-        }
-
-        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
-        {
-            _callback.TrySetResult(_result);
-
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
-            //Window.Current.SizeChanged -= OnSizeChanged;
+            _popupHost.IsOpen = false;
         }
 
         protected override void OnApplyTemplate()
@@ -115,7 +148,9 @@ namespace Unigram.Controls
 
         protected virtual void UpdateView(Rect bounds)
         {
-            if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500))
+            if (BackgroundElement == null) return;
+
+            if ((HorizontalAlignment == HorizontalAlignment.Stretch && VerticalAlignment == VerticalAlignment.Stretch) || (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500)))
             {
                 BackgroundElement.MinWidth = bounds.Width;
                 BackgroundElement.MinHeight = bounds.Height;
@@ -181,6 +216,19 @@ namespace Unigram.Controls
                 }
             }
         }
+
+        #region OverlayBrush
+
+        public Brush OverlayBrush
+        {
+            get { return (Brush)GetValue(OverlayBrushProperty); }
+            set { SetValue(OverlayBrushProperty, value); }
+        }
+
+        public static readonly DependencyProperty OverlayBrushProperty =
+            DependencyProperty.Register("OverlayBrush", typeof(Brush), typeof(ContentDialogBase), new PropertyMetadata(null));
+
+        #endregion
     }
 
     public enum ContentDialogBaseResult

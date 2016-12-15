@@ -252,14 +252,14 @@ namespace Unigram.Views
         {
             if (UsersListView.SelectedItem != null && _lastSelectedContact != UsersListView.SelectedItem && UsersListView.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                var user = UsersListView.SelectedItem as UsersPanelListItem;
-                ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user._parent.Id });
+                var user = UsersListView.SelectedItem as TLUser;
+                ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
             }
         }
 
         private void Self_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self?._parent.Id ?? 0 });
+            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self?.Id ?? 0 });
         }
 
         private void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)

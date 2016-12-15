@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -33,7 +34,19 @@ namespace Unigram.Controls.Messages
             get
             {
                 if (_context == null)
-                    _context = ((BubbleListViewItem)VisualTreeHelper.GetParent(VisualTreeHelper.GetParent(this))).Owner.DataContext as DialogViewModel;
+                {
+                    var parent = VisualTreeHelper.GetParent(this);
+                    while (parent as BubbleListViewItem == null)
+                    {
+                        parent = VisualTreeHelper.GetParent(parent);
+                    }
+
+                    var item = parent as BubbleListViewItem;
+                    if (item != null)
+                    {
+                        _context = item.Owner.DataContext as DialogViewModel;
+                    }
+                }
 
                 return _context;
             }
@@ -124,7 +137,7 @@ namespace Unigram.Controls.Messages
                     paragraph.Inlines.Add(hyperlink);
                 }
 
-                if (message.ViaBot != null)
+                if (message.HasViaBotId && message.ViaBot != null)
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
@@ -216,10 +229,10 @@ namespace Unigram.Controls.Messages
         public new event TypedEventHandler<FrameworkElement, object> Loading;
 
         #region Static
-        protected static SolidColorBrush StatusDarkBackgroundBrush = (SolidColorBrush)App.Current.Resources["MessageOverlayBackgroundBrush"];
-        protected static SolidColorBrush StatusDarkForegroundBrush = new SolidColorBrush(Colors.White);
-        protected static SolidColorBrush StatusLightLabelForegroundBrush = (SolidColorBrush)App.Current.Resources["MessageSubtleLabelBrush"];
-        protected static SolidColorBrush StatusLightGlyphForegroundBrush = (SolidColorBrush)App.Current.Resources["MessageSubtleGlyphBrush"];
+        protected static SolidColorBrush StatusDarkBackgroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageOverlayBackgroundBrush"]; } }
+        protected static SolidColorBrush StatusDarkForegroundBrush { get { return new SolidColorBrush(Colors.White); } }
+        protected static SolidColorBrush StatusLightLabelForegroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageSubtleLabelBrush"]; } }
+        protected static SolidColorBrush StatusLightGlyphForegroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageSubtleGlyphBrush"]; } }
 
         protected static bool IsFullMedia(TLMessageMediaBase media)
         {
@@ -303,7 +316,7 @@ namespace Unigram.Controls.Messages
             }
 
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320));
-            var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 320));
+            var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 420));
 
             var width = 0.0;
             var height = 0.0;
@@ -351,11 +364,11 @@ namespace Unigram.Controls.Messages
                 var ratioY = availableHeight / height;
                 var ratio = Math.Min(ratioX, ratioY);
 
-                return base.MeasureOverride(new Size(width * ratio, availableSize.Height));
+                return base.MeasureOverride(new Size(Math.Max(96, width * ratio), availableSize.Height));
             }
             else
             {
-                return base.MeasureOverride(new Size(width, availableSize.Height));
+                return base.MeasureOverride(new Size(Math.Max(96, width), availableSize.Height));
             }
         }
 
