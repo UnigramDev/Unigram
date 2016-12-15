@@ -216,6 +216,19 @@ namespace Unigram.Controls
                 }
             }
         }
+
+        #region OverlayBrush
+
+        public Brush OverlayBrush
+        {
+            get { return (Brush)GetValue(OverlayBrushProperty); }
+            set { SetValue(OverlayBrushProperty, value); }
+        }
+
+        public static readonly DependencyProperty OverlayBrushProperty =
+            DependencyProperty.Register("OverlayBrush", typeof(Brush), typeof(ContentDialogBase), new PropertyMetadata(null));
+
+        #endregion
     }
 
     public enum ContentDialogBaseResult

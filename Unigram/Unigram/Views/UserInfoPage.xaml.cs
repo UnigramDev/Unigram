@@ -60,19 +60,18 @@ namespace Unigram.Views
                     var test = new UserPhotosViewModel(user, ViewModel.ProtoService);
                     var dialog = new PhotosView { DataContext = test };
                     dialog.Background = null;
-                    dialog.Closing += Dialog_Closing;
+                    dialog.OverlayBrush = null;
+                    dialog.Closing += (s, args) =>
+                    {
+                        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                        if (animation != null)
+                        {
+                            animation.TryStart(grdProfile);
+                        }
+                    };
 
                     await dialog.ShowAsync();
                 }
-            }
-        }
-
-        private void Dialog_Closing(object sender, EventArgs e)
-        {
-            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-            if (animation != null)
-            {
-                animation.TryStart(grdProfile);
             }
         }
     }

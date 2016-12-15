@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Template10.Common;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
@@ -29,17 +32,33 @@ namespace Unigram.Controls.Views
 
         private FrameworkElement _firstImage;
 
+        private Visual _layerVisual;
+        private Visual _topBarVisual;
+        private Visual _botBarVisual;
+
         public PhotosView()
         {
             this.InitializeComponent();
 
             Loaded += OnLoaded;
+            Loading += OnLoading;
             Unloaded += OnUnloaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             BootStrapper.BackRequested += BootStrapper_BackRequested;
+        }
+
+        private void OnLoading(FrameworkElement sender, object args)
+        {
+            _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
+            _topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
+            _botBarVisual = ElementCompositionPreview.GetElementVisual(BotBar);
+
+            _layerVisual.Opacity = 0;
+            _topBarVisual.Offset = new Vector3(0, -48, 0);
+            _botBarVisual.Offset = new Vector3(0, 48, 0);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -54,8 +73,33 @@ namespace Unigram.Controls.Views
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _firstImage);
                 if (animation != null)
                 {
-                    LayoutRoot.Background = null;
                     Prepare();
+
+                    if (_layerVisual != null && _topBarVisual != null && _botBarVisual != null)
+                    {
+                        var batch = _layerVisual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+                        var easing = ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction;
+                        var duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
+
+                        var animOpacity = _layerVisual.Compositor.CreateScalarKeyFrameAnimation();
+                        animOpacity.InsertKeyFrame(0, 1, easing);
+                        animOpacity.InsertKeyFrame(1, 0, easing);
+                        animOpacity.Duration = duration;
+                        _layerVisual.StartAnimation("Opacity", animOpacity);
+
+                        var animTop = _layerVisual.Compositor.CreateVector3KeyFrameAnimation();
+                        animTop.InsertKeyFrame(1, new Vector3(0, -48, 0), easing);
+                        animTop.Duration = duration;
+                        _topBarVisual.StartAnimation("Offset", animTop);
+
+                        var animBot = _layerVisual.Compositor.CreateVector3KeyFrameAnimation();
+                        animBot.InsertKeyFrame(1, new Vector3(0, 48, 0), easing);
+                        animBot.Duration = duration;
+                        _botBarVisual.StartAnimation("Offset", animBot);
+
+                        batch.End();
+                    }
 
                     animation.Completed += (s, args) =>
                     {
@@ -81,11 +125,33 @@ namespace Unigram.Controls.Views
                 var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
                 if (animation != null)
                 {
-                    Flip.Opacity = 1;
-                    animation.Completed += (s1, args1) =>
+                    if (_layerVisual != null && _topBarVisual != null && _botBarVisual != null)
                     {
-                        LayoutRoot.Background = new SolidColorBrush(Windows.UI.Colors.Black);
-                    };
+                        var batch = _layerVisual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+                        var easing = ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction;
+                        var duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
+
+                        var animOpacity = _layerVisual.Compositor.CreateScalarKeyFrameAnimation();
+                        animOpacity.InsertKeyFrame(0, 0, easing);
+                        animOpacity.InsertKeyFrame(1, 1, easing);
+                        animOpacity.Duration = duration;
+                        _layerVisual.StartAnimation("Opacity", animOpacity);
+
+                        var animTop = _layerVisual.Compositor.CreateVector3KeyFrameAnimation();
+                        animTop.InsertKeyFrame(1, new Vector3(0, 0, 0), easing);
+                        animTop.Duration = duration;
+                        _topBarVisual.StartAnimation("Offset", animTop);
+
+                        var animBot = _layerVisual.Compositor.CreateVector3KeyFrameAnimation();
+                        animBot.InsertKeyFrame(1, new Vector3(0, 0, 0), easing);
+                        animBot.Duration = duration;
+                        _botBarVisual.StartAnimation("Offset", animBot);
+
+                        batch.End();
+                    }
+
+                    Flip.Opacity = 1;
                     animation.TryStart(image);
                 }
             }

@@ -176,7 +176,7 @@
                               Header="{x:Bind ViewModel.Contacts.Self, Mode=OneWay}"
                               SelectionChanged="UsersListView_SelectionChanged">
                         <ListView.HeaderTemplate>
-                            <DataTemplate x:DataType="vms:UsersPanelListItem">
+                            <DataTemplate x:DataType="models:TLUser">
                                 <Border Margin="0,0,0,8" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                                     <Button Click="Self_Click" Style="{StaticResource EmptyButtonStyle}">
                                         <Grid>
@@ -188,7 +188,7 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
-                                            <Grid Background="{x:Bind PlaceHolderColor}" Height="64" Width="64" CornerRadius="32" Margin="12" Grid.RowSpan="2">
+                                            <Grid Background="{Binding PlaceHolderColor}" Height="64" Width="64" CornerRadius="32" Margin="12" Grid.RowSpan="2">
                                                 <TextBlock Foreground="White" x:Name="InitialName" Text="{Binding Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
                                                 <Ellipse>
                                                     <Ellipse.Fill>
@@ -197,15 +197,15 @@
                                                 </Ellipse>
                                                 <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="32"/>
                                             </Grid>
-                                            <TextBlock Text="{x:Bind _parent.FullName}" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
-                                            <TextBlock Text="{x:Bind _parent.Phone}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+                                            <TextBlock Text="{x:Bind FullName}" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+                                            <TextBlock Text="{x:Bind Phone}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
                                         </Grid>
                                     </Button>
                                 </Border>
                             </DataTemplate>
                         </ListView.HeaderTemplate>
                         <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="vms:UsersPanelListItem">
+                            <DataTemplate x:DataType="models:TLUser">
                                 <Grid Margin="0,4,0,8">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
@@ -215,17 +215,17 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid Background="{x:Bind PlaceHolderColor}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
+                                    <Grid Background="{Binding PlaceHolderColor}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
                                         <TextBlock Foreground="White" Text="{Binding Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
                                         <Ellipse>
                                             <Ellipse.Fill>
-                                                <ImageBrush ImageSource="{x:Bind _parent.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                                                <ImageBrush ImageSource="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
                                             </Ellipse.Fill>
                                         </Ellipse>
                                         <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
                                     </Grid>
-                                    <TextBlock Text="{x:Bind fullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                                    <TextBlock Text="{x:Bind lastSeen}" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"
+                                    <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                    <TextBlock Text="{Binding lastSeen}" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"
                                                Style="{StaticResource CaptionTextBlockStyle}" 
                                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                                TextTrimming="CharacterEllipsis" 

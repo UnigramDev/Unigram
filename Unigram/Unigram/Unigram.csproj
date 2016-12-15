@@ -112,6 +112,7 @@
     <Compile Include="Controls\AttachPickerFlyout.xaml.cs">
       <DependentUpon>AttachPickerFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\BackButton.cs" />
     <Compile Include="Controls\ContentDialogBase.cs" />
     <Compile Include="Controls\ImageView.cs" />
     <Compile Include="Controls\Inline\InlineBotResultsView.xaml.cs">

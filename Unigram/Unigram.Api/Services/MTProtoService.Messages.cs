@@ -263,15 +263,11 @@ namespace Telegram.Api.Services
 
         public void ReorderStickerSetsCallback(bool masks, TLVector<long> order, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-#if LAYER_42
-            var obj = new TLMessagesReorderStickerSets { Flags = 0, Order = order };
+            var obj = new TLMessagesReorderStickerSets { Order = order };
             if (masks)
             {
-                obj.SetMasks();
+                obj.IsMasks = true;
             }
-#else
-            var obj = new TLMessagesReorderStickerSets { Order = order };
-#endif
 
             const string caption = "messages.reorderStickerSets";
             SendInformativeMessage(caption, obj, callback, faultCallback);

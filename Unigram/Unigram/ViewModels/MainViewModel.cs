@@ -175,19 +175,6 @@ namespace Unigram.ViewModels
          }
     }
 
-    public class UsersPanelListItem : TLUser
-    {
-        public TLUser _parent;
-        public UsersPanelListItem(TLUser parent)
-        {
-            _parent = parent;
-        }
-        public string fullName { get; internal set; }
-        public string lastSeen { get; internal set; }
-        public DateTime lastSeenEpoch { get; internal set; }
-        public Brush PlaceHolderColor { get; internal set; }
-    }
-
     public class SearchResult
     {
         public TLDialog Dialog;

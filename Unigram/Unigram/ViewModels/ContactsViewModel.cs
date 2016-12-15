@@ -20,7 +20,7 @@ namespace Unigram.ViewModels
         public ContactsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new SortedObservableCollection<UsersPanelListItem>(new UsersPanelListItemComparer());
+            Items = new SortedObservableCollection<TLUser>(new TLUserComparer());
         }
 
         public async Task getTLContacts()
@@ -34,15 +34,15 @@ namespace Unigram.ViewModels
                     continue;
                 }
 
-                var status = LastSeenHelper.GetLastSeen(user);
-                var listItem = new UsersPanelListItem(user as TLUser);
-                listItem.fullName = user.FullName;
-                listItem.lastSeen = status.Item1;
-                listItem.lastSeenEpoch = status.Item2;
-                listItem.Photo = listItem._parent.Photo;
-                listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+                //var status = LastSeenHelper.GetLastSeen(user);
+                //var listItem = new UsersPanelListItem(user as TLUser);
+                //listItem.fullName = user.FullName;
+                //listItem.lastSeen = status.Item1;
+                //listItem.lastSeenEpoch = status.Item2;
+                //listItem.Photo = listItem._parent.Photo;
+                //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
 
-                Items.Add(listItem);
+                Items.Add(user);
             }
 
             var input = string.Join(",", contacts.Select(x => x.Id).Union(new[] { SettingsHelper.UserId }).OrderBy(x => x));
@@ -63,15 +63,15 @@ namespace Unigram.ViewModels
                             continue;
                         }
 
-                        var status = LastSeenHelper.GetLastSeen(user);
-                        var listItem = new UsersPanelListItem(user as TLUser);
-                        listItem.fullName = user.FullName;
-                        listItem.lastSeen = status.Item1;
-                        listItem.lastSeenEpoch = status.Item2;
-                        listItem.Photo = listItem._parent.Photo;
-                        listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+                        //var status = LastSeenHelper.GetLastSeen(user);
+                        //var listItem = new UsersPanelListItem(user as TLUser);
+                        //listItem.fullName = user.FullName;
+                        //listItem.lastSeen = status.Item1;
+                        //listItem.lastSeenEpoch = status.Item2;
+                        //listItem.Photo = listItem._parent.Photo;
+                        //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
 
-                        Items.Add(listItem);
+                        Items.Add(user);
                     }
                 }
             }
@@ -84,15 +84,15 @@ namespace Unigram.ViewModels
             var cached = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
             if (cached != null)
             {
-                var status = LastSeenHelper.GetLastSeen(cached);
-                var listItem = new UsersPanelListItem(cached as TLUser);
-                listItem.fullName = cached.FullName;
-                listItem.lastSeen = status.Item1;
-                listItem.lastSeenEpoch = status.Item2;
-                listItem.Photo = listItem._parent.Photo;
-                listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+                //var status = LastSeenHelper.GetLastSeen(cached);
+                //var listItem = new UsersPanelListItem(cached as TLUser);
+                //listItem.fullName = cached.FullName;
+                //listItem.lastSeen = status.Item1;
+                //listItem.lastSeenEpoch = status.Item2;
+                //listItem.Photo = listItem._parent.Photo;
+                //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
 
-                Self = listItem;
+                Self = cached;
             }
             else
             {
@@ -102,15 +102,15 @@ namespace Unigram.ViewModels
                     var user = response.Value.FirstOrDefault() as TLUser;
                     if (user != null)
                     {
-                        var status = LastSeenHelper.GetLastSeen(user);
-                        var listItem = new UsersPanelListItem(user as TLUser);
-                        listItem.fullName = user.FullName;
-                        listItem.lastSeen = status.Item1;
-                        listItem.lastSeenEpoch = status.Item2;
-                        listItem.Photo = listItem._parent.Photo;
-                        listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+                        //var status = LastSeenHelper.GetLastSeen(user);
+                        //var listItem = new UsersPanelListItem(user as TLUser);
+                        //listItem.fullName = user.FullName;
+                        //listItem.lastSeen = status.Item1;
+                        //listItem.lastSeenEpoch = status.Item2;
+                        //listItem.Photo = listItem._parent.Photo;
+                        //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
 
-                        Self = listItem;
+                        Self = user;
                     }
                 }
             }
@@ -122,7 +122,7 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(() =>
             {
-                var first = Items.FirstOrDefault(x => x._parent.Id == message.UserId);
+                var first = Items.FirstOrDefault(x => x.Id == message.UserId);
                 if (first != null)
                 {
                     Items.Remove(first);
@@ -131,25 +131,25 @@ namespace Unigram.ViewModels
                 var user = CacheService.GetUser(message.UserId) as TLUser;
                 if (user != null && user.IsContact && user.IsSelf == false)
                 {
-                    var status = LastSeenHelper.GetLastSeen(user);
-                    var listItem = new UsersPanelListItem(user as TLUser);
-                    listItem.fullName = user.FullName;
-                    listItem.lastSeen = status.Item1;
-                    listItem.lastSeenEpoch = status.Item2;
-                    listItem.Photo = listItem._parent.Photo;
-                    listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+                    //var status = LastSeenHelper.GetLastSeen(user);
+                    //var listItem = new UsersPanelListItem(user as TLUser);
+                    //listItem.fullName = user.FullName;
+                    //listItem.lastSeen = status.Item1;
+                    //listItem.lastSeenEpoch = status.Item2;
+                    //listItem.Photo = listItem._parent.Photo;
+                    //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
 
-                    Items.Add(listItem);
+                    Items.Add(user);
                 }
             });
         }
 
         #endregion
 
-        public SortedObservableCollection<UsersPanelListItem> Items { get; private set; }
+        public SortedObservableCollection<TLUser> Items { get; private set; }
 
-        private UsersPanelListItem _self;
-        public UsersPanelListItem Self
+        private TLUser _self;
+        public TLUser Self
         {
             get
             {
@@ -162,22 +162,22 @@ namespace Unigram.ViewModels
         }
     }
 
-    public class UsersPanelListItemComparer : IComparer<UsersPanelListItem>
+    public class TLUserComparer : IComparer<TLUser>
     {
-        public int Compare(UsersPanelListItem x, UsersPanelListItem y)
+        public int Compare(TLUser x, TLUser y)
         {
-            var epoch = y.lastSeenEpoch.CompareTo(x.lastSeenEpoch);
-            if (epoch == 0)
+            var fullName = y.FullName.CompareTo(x.FullName);
+            if (fullName == 0)
             {
-                return y.fullName.CompareTo(x.fullName);
+                return y.Id.CompareTo(x.Id);
             }
 
-            return epoch;
+            return fullName;
 
-            //var epoch = y.lastSeenEpoch - x.lastSeenEpoch;
+            //var epoch = y.lastSeenEpoch.CompareTo(x.lastSeenEpoch);
             //if (epoch == 0)
             //{
-            //    return x.fullName.CompareTo(y.fullName);
+            //    return y.fullName.CompareTo(x.fullName);
             //}
 
             //return epoch;

@@ -335,8 +335,7 @@
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                            Margin="0,24,0,0">
-                        <controls:HyperButton Content="Shared media" 
-                                              IsEnabled="False"
+                        <controls:HyperButton Content="Shared media"
                                               Command="{Binding MediaCommand}"
                                               Style="{StaticResource HyperButtonStyle}" 
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
