@@ -54,6 +54,11 @@ namespace Telegram.Api.TL
         {
             get
             {
+                if (!string.IsNullOrEmpty(Title))
+                {
+                    return Visibility.Collapsed;
+                }
+
                 if (!string.IsNullOrEmpty(Author))
                 {
                     return Visibility.Visible;
