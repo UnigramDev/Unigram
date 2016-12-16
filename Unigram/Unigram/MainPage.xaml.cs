@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Helpers;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -25,6 +28,21 @@ namespace Unigram
         public MainPage()
         {
             this.InitializeComponent();
+        }
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    statusBar.BackgroundOpacity = 1;
+                    statusBar.BackgroundColor = ColorHelper.ConvertHexToColor("#FF1F70C2");
+                    statusBar.ForegroundColor = Windows.UI.Colors.White;
+                }
+            }
+            navigationFrame.Navigate(typeof(ChatList));
         }
     }
 }
