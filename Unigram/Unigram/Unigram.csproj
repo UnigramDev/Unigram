@@ -95,7 +95,6 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\Fonts\Telegram.ttf" />
-    <Content Include="Views\Vandamme.mp3" />
     <Content Include="WindowsPhoneReservedAppInfo.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
