@@ -175,7 +175,7 @@
                 <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
                 <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
                 <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -193,7 +193,7 @@
                 <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
                 <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
                 <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
             </StackPanel>
 
             <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" MaxWidth="88" MaxHeight="88" Margin="12,0,0,0" VerticalAlignment="Top" Grid.Column="2"/>
@@ -213,7 +213,7 @@
                     <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
                 </StackPanel>
 
                 <!-- TODO: video timing -->
@@ -243,7 +243,7 @@
                     <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
                 </StackPanel>
 
                 <!-- TODO: video timing -->

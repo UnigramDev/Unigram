@@ -338,6 +338,23 @@ namespace Unigram.ViewModels
                 }
             }
 
+            if (dialog != null && Messages.Count > 0)
+            {
+                var unread = dialog.UnreadCount;
+                if (Peer is TLInputPeerChannel)
+                {
+                    var asChannel = new TLChannel { Id = ((TLInputPeerChannel)Peer).ChannelId, AccessHash = ((TLInputPeerChannel)Peer).AccessHash };
+                    await ProtoService.ReadHistoryAsync(asChannel, dialog.TopMessage);
+                }
+                else
+                {
+                    await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+                }
+
+                dialog.UnreadCount = dialog.UnreadCount - unread;
+                dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            }
+
             Aggregator.Subscribe(this);
 
             //await StickersRecent();

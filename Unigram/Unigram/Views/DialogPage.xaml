@@ -423,8 +423,8 @@
                                            UserStickerTemplate="{StaticResource UserStickerTemplate}"
                                            FriendMessageTemplate="{StaticResource FriendMessageTemplate}"
                                            FriendStickerTemplate="{StaticResource FriendStickerTemplate}"
-                                           ChatFriendMessageTemplate="{StaticResource FriendMessageTemplate}"
-                                           ChatFriendStickerTemplate="{StaticResource FriendStickerTemplate}"
+                                           ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
+                                           ChatFriendStickerTemplate="{StaticResource ChatFriendStickerTemplate}"
                                            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
                                            ServiceMessagePhotoTemplate="{StaticResource ServiceMessagePhotoTemplate}"
                                            UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
