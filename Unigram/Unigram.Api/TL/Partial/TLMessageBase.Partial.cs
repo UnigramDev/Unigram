@@ -358,6 +358,14 @@ namespace Telegram.Api.TL
             }
         }
 
+        public Visibility StickerReplyVisibility
+        {
+            get
+            {
+                return ReplyVisibility == Visibility.Visible || HasViaBotId ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
         public override TLMessageState State
         {
             get

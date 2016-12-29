@@ -161,6 +161,57 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = false;
         }
 
+        public async Task LoadFirstSliceAsync()
+        {
+            if (_isLoadingNextSlice) return;
+            _isLoadingNextSlice = true;
+
+            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
+
+            var maxId = _currentDialog.ReadInboxMaxId;
+            var offset = Math.Max(0, _currentDialog.UnreadCount - 10);
+
+            var lastUnread = true;
+
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -offset, maxId, 20);
+            if (result.IsSucceeded)
+            {
+                ProcessReplies(result.Value.Messages);
+
+                foreach (var item in result.Value.Messages)
+                {
+                    if (lastUnread && !item.IsUnread)
+                    {
+                        var serviceMessage = new TLMessageService
+                        {
+                            FromId = SettingsHelper.UserId,
+                            ToId = Peer.ToPeer(),
+                            State = TLMessageState.Sending,
+                            IsOut = true,
+                            IsUnread = true,
+                            Date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now),
+                            Action = new TLMessageActionUnreadMessages(),
+                            RandomId = TLLong.Random()
+                        };
+
+                        Messages.Insert(0, serviceMessage);
+                    }
+
+                    lastUnread = item.IsUnread;
+
+                    Messages.Insert(0, item);
+                    //InsertMessage(item as TLMessageCommonBase);
+                }
+            }
+
+            _isLoadingNextSlice = false;
+        }
+
+        public class TLMessageActionUnreadMessages : TLMessageActionBase
+        {
+
+        }
+
         public async void ProcessReplies(IList<TLMessageBase> messages)
         {
             var replyIds = new TLVector<int>();
@@ -323,9 +374,9 @@ namespace Unigram.ViewModels
                 LastSeenVisible = Visibility.Collapsed;
             }
 
-            await LoadNextSliceAsync();
-
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
+
+            await LoadNextSliceAsync();
 
             var dialog = _currentDialog;
             if (dialog != null && dialog.HasDraft)
@@ -338,22 +389,24 @@ namespace Unigram.ViewModels
                 }
             }
 
-            if (dialog != null && Messages.Count > 0)
-            {
-                var unread = dialog.UnreadCount;
-                if (Peer is TLInputPeerChannel)
-                {
-                    var asChannel = new TLChannel { Id = ((TLInputPeerChannel)Peer).ChannelId, AccessHash = ((TLInputPeerChannel)Peer).AccessHash };
-                    await ProtoService.ReadHistoryAsync(asChannel, dialog.TopMessage);
-                }
-                else
-                {
-                    await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
-                }
+            //if (dialog != null && Messages.Count > 0)
+            //{
+            //    var unread = dialog.UnreadCount;
+            //    if (Peer is TLInputPeerChannel)
+            //    {
+            //        if (channel != null)
+            //        {
+            //            await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+            //    }
 
-                dialog.UnreadCount = dialog.UnreadCount - unread;
-                dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-            }
+            //    dialog.UnreadCount = dialog.UnreadCount - unread;
+            //    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            //}
 
             Aggregator.Subscribe(this);
 
