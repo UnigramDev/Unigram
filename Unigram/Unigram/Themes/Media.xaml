@@ -196,7 +196,7 @@
                 <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
             </StackPanel>
 
-            <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" MaxWidth="88" MaxHeight="88" Margin="12,0,0,0" VerticalAlignment="Top" Grid.Column="2"/>
+            <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" MaxWidth="88" MaxHeight="88" Margin="12,0,0,0" VerticalAlignment="Bottom" Grid.Column="2"/>
         </Grid>
     </DataTemplate>
 

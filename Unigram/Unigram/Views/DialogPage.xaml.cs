@@ -120,11 +120,6 @@ namespace Unigram.Views
             CheckMessageBoxEmpty();
         }
 
-        private void btnVoiceMessage_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private async void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
             await txtMessage.SendAsync();

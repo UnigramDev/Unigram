@@ -496,9 +496,10 @@ namespace Telegram.Api.TL
                 var newMediaDocument = newMedia as TLMessageMediaDocument;
                 if (oldMediaDocument != null && newMediaDocument != null)
                 {
-                    if (oldMediaDocument.Document.GetType() != newMediaDocument.Document.GetType())
+                    if (oldMediaDocument.Document == null || oldMediaDocument.Document.GetType() != newMediaDocument.Document.GetType())
                     {
                         Media = m.Media;
+                        RaisePropertyChanged("Media");
                     }
                     else
                     {
@@ -514,6 +515,7 @@ namespace Telegram.Api.TL
                             var file = Media.File;
 #endif
                             Media = m.Media;
+                            RaisePropertyChanged("Media");
                             //Media.IsoFileName = isoFileName;
 #if WP8
                             _media.File = file;
@@ -642,5 +644,33 @@ namespace Telegram.Api.TL
         public long InlineBotResultQueryId { get; set; }
 
         public string InlineBotResultId { get; set; }
+    }
+
+    public partial class TLMessageFwdHeader
+    {
+        private TLUserBase _user;
+        public TLUserBase User
+        {
+            get
+            {
+                if (_user == null && HasFromId)
+                    _user = InMemoryCacheService.Current.GetUser(FromId);
+
+                return _user;
+            }
+        }
+
+        private TLChatBase _channel;
+        public TLChatBase Channel
+        {
+            get
+            {
+                if (_channel == null && HasChannelId)
+                    _channel = InMemoryCacheService.Current.GetChat(ChannelId);
+
+                return _channel;
+            }
+        }
+
     }
 }

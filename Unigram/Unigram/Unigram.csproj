@@ -125,6 +125,7 @@
     <Compile Include="Controls\Views\SendPhotosView.xaml.cs">
       <DependentUpon>SendPhotosView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\VoiceButton.cs" />
     <Compile Include="Converters\BubblePlaceholderConverter.cs" />
     <Compile Include="Converters\FileExistsToGlyphConverter.cs" />
     <Compile Include="Selectors\InlineBotResultTemplateSelector.cs" />

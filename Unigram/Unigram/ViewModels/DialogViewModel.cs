@@ -866,7 +866,7 @@ namespace Unigram.ViewModels
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
                 var fileId = TLLong.Random();
-                var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
+                var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileName, false).AsTask(media.Upload());
                 if (upload != null)
                 {
                     var inputMedia = new TLInputMediaUploadedDocument
@@ -875,7 +875,7 @@ namespace Unigram.ViewModels
                         {
                             Id = upload.FileId,
                             Md5Checksum = string.Empty,
-                            Name = "test.gif",
+                            Name = fileName,
                             Parts = upload.Parts.Count
                         },
                         MimeType = "image/gif",
@@ -890,6 +890,100 @@ namespace Unigram.ViewModels
                             }
                         }
                         };
+
+                    var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                }
+            });
+        }
+
+        public async Task SendAudioAsync(StorageFile file, int duration, bool voice, string title, string performer, string caption)
+        {
+            var fileLocation = new TLFileLocation
+            {
+                VolumeId = TLLong.Random(),
+                LocalId = TLInt.Random(),
+                Secret = TLLong.Random(),
+                DCId = 0
+            };
+
+            var fileName = string.Format("{0}_{1}_{2}.ogg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+            var fileCache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+
+            await file.CopyAndReplaceAsync(fileCache);
+
+            var basicProps = await fileCache.GetBasicPropertiesAsync();
+            var imageProps = await fileCache.Properties.GetImagePropertiesAsync();
+
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var media = new TLMessageMediaDocument
+            {
+                Caption = caption,
+                Document = new TLDocument
+                {
+                    Id = TLLong.Random(),
+                    AccessHash = TLLong.Random(),
+                    Date = date,
+                    MimeType = "audio/ogg",
+                    Size = (int)basicProps.Size,
+                    Thumb = new TLPhotoSizeEmpty
+                    {
+                        Type = string.Empty
+                    },
+                    Version = 0,
+                    DCId = 0,
+                    Attributes = new TLVector<TLDocumentAttributeBase>
+                    {
+                        new TLDocumentAttributeAudio
+                        {
+                            IsVoice = voice,
+                            Duration = duration,
+                            Title = title,
+                            Performer = performer
+                        }
+                    }
+                }
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var fileId = TLLong.Random();
+                var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileName, false).AsTask(media.Upload());
+                if (upload != null)
+                {
+                    var inputMedia = new TLInputMediaUploadedDocument
+                    {
+                        File = new TLInputFile
+                        {
+                            Id = upload.FileId,
+                            Md5Checksum = string.Empty,
+                            Name = fileName,
+                            Parts = upload.Parts.Count
+                        },
+                        MimeType = "audio/ogg",
+                        Caption = media.Caption,
+                        Attributes = new TLVector<TLDocumentAttributeBase>
+                        {
+                            new TLDocumentAttributeAudio
+                            {
+                                IsVoice = voice,
+                                Duration = duration,
+                                Title = title,
+                                Performer = performer
+                            }
+                        }
+                    };
 
                     var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
                 }
