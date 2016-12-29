@@ -43,14 +43,23 @@
             <converters:FileExistsToGlyphConverter x:Key="FileExistsToGlyphConverter"/>
             <converters:FileSizeConverter x:Key="FileSizeConverter"/>
 
-            <SolidColorBrush x:Key="PlaceholderBlueBrush" Color="#348cd4"/>
+            <!--<SolidColorBrush x:Key="PlaceholderBlueBrush" Color="#348cd4"/>
             <SolidColorBrush x:Key="PlaceholderCyanBrush" Color="#2996ad"/>
             <SolidColorBrush x:Key="PlaceholderGreenBrush" Color="#4fad2d"/>
             <SolidColorBrush x:Key="PlaceholderOrangeBrush" Color="#ce671b"/>
             <SolidColorBrush x:Key="PlaceholderPinkBrush" Color="#cd4073"/>
             <SolidColorBrush x:Key="PlaceholderPurpleBrush" Color="#8544d6"/>
             <SolidColorBrush x:Key="PlaceholderRedBrush" Color="#c03d33"/>
-            <SolidColorBrush x:Key="PlaceholderYellowBrush" Color="#d09306"/>
+            <SolidColorBrush x:Key="PlaceholderYellowBrush" Color="#d09306"/>-->
+
+            <SolidColorBrush x:Key="PlaceholderBlueBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
+            <SolidColorBrush x:Key="PlaceholderCyanBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
+            <SolidColorBrush x:Key="PlaceholderGreenBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
+            <SolidColorBrush x:Key="PlaceholderOrangeBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
+            <SolidColorBrush x:Key="PlaceholderPinkBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
+            <SolidColorBrush x:Key="PlaceholderPurpleBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
+            <SolidColorBrush x:Key="PlaceholderRedBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
+            <SolidColorBrush x:Key="PlaceholderYellowBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
 
             <Style x:Key="ReplyBaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                 <Setter Property="TextWrapping" Value="NoWrap"/>
