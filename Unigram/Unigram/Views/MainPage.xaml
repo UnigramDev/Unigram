@@ -177,7 +177,7 @@
                               SelectionChanged="UsersListView_SelectionChanged">
                         <ListView.HeaderTemplate>
                             <DataTemplate x:DataType="models:TLUser">
-                                <Border Margin="0,0,0,8" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                                <Border Margin="0,0,0,8" Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
                                     <Button Click="Self_Click" Style="{StaticResource EmptyButtonStyle}">
                                         <Grid>
                                             <Grid.RowDefinitions>

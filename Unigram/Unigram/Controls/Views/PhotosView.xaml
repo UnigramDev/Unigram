@@ -26,7 +26,8 @@
                   ItemsSource="{Binding Items}"
                   SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                   Background="Transparent"
-                  Grid.RowSpan="3">
+                  Grid.RowSpan="3"
+                  Tapped="Flip_Tapped">
             <FlipView.ItemTemplate>
                 <DataTemplate>
                     <local:ImageView ImageOpened="ImageView_ImageOpened"
@@ -40,7 +41,7 @@
 
         <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}" Padding="12,0">
             <Grid.Background>
-                <SolidColorBrush Color="Red" Opacity="0.6"/>
+                <SolidColorBrush Color="Black" Opacity="0.5"/>
             </Grid.Background>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -61,7 +62,7 @@
         <Border Grid.Row="2">
             <CommandBar x:Name="BotBar">
                 <CommandBar.Background>
-                    <SolidColorBrush Color="Red" Opacity="0.6"/>
+                    <SolidColorBrush Color="Black" Opacity="0.5"/>
                 </CommandBar.Background>
 
             </CommandBar>

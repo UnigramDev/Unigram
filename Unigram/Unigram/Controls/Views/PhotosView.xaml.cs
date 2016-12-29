@@ -157,6 +157,20 @@ namespace Unigram.Controls.Views
             }
         }
 
+        private void Flip_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (TopBar.Visibility == Visibility.Visible)
+            {
+                TopBar.Visibility = Visibility.Collapsed;
+                BotBar.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                TopBar.Visibility = Visibility.Visible;
+                BotBar.Visibility = Visibility.Visible; 
+            }
+        }
+
         //protected override void UpdateView(Rect bounds)
         //{
 

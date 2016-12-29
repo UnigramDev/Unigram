@@ -228,7 +228,7 @@
         </MenuFlyout>
 
         <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
+            <Grid Margin="0,2" CornerRadius="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -239,6 +239,7 @@
                             HorizontalAlignment="Right"
                             MaxWidth="180"
                             Padding="8,0,8,6"
+                            CornerRadius="5"
                             Margin="0,0,6,0">
                     <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0">
                         <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
@@ -261,7 +262,7 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         MaxWidth="180" MaxHeight="180" Margin="2"/>
 
-                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                    <Border CornerRadius="5" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                             <FontIcon Glyph="{x:Bind State, Converter={StaticResource StateToGlyphConverter}, Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="White" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
@@ -283,7 +284,7 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         MaxWidth="180" MaxHeight="180" Margin="2"/>
 
-                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                    <Border CornerRadius="5" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                         <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                     </Border>
                 </Grid>
@@ -293,6 +294,7 @@
                             VerticalAlignment="Bottom" 
                             HorizontalAlignment="Left"
                             MaxWidth="180"
+                            CornerRadius="5"
                             Padding="8,0,8,6"
                             Margin="6,0,0,0"
                             Grid.Column="1">
@@ -339,7 +341,7 @@
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                             MaxWidth="180" MaxHeight="180" Margin="2"/>
 
-                        <Border Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
+                        <Border CornerRadius="5" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
                             <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                         </Border>
                     </Grid>
@@ -351,7 +353,8 @@
                                 MaxWidth="180"
                                 Padding="8,0,8,6"
                                 Margin="6,0,0,0"
-                                Grid.Column="1">
+                                Grid.Column="1"
+                                CornerRadius="5">
                         <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0">
                             <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
                                 <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
@@ -372,7 +375,7 @@
 
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12,0,2">
+            <Border Background="#7F89A0B4" CornerRadius="5" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12,0,2">
                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
@@ -397,7 +400,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="UnreadMessageTemplate">
-            <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12" RenderTransformOrigin="0.5,0.5">
+            <Border CornerRadius="5" Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12" RenderTransformOrigin="0.5,0.5">
                 <!--<TextBlock Text="{Binding Converter={StaticResource ServiceMessageToTextConverter}}" Foreground="White" Style="{ThemeResource BodyTextBlockStyle}"/>-->
             </Border>
         </DataTemplate>
@@ -908,9 +911,9 @@
         </Grid>
 
         <!-- Input pane -->
-        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" 
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-              BorderThickness="0,1,0,0"
+              BorderThickness="0"
               BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
               Grid.Row="3">
             <Grid.RowDefinitions>
@@ -947,7 +950,7 @@
                     </controls:MessageReference.Resources>
                 </controls:MessageReference>
 
-                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
                     <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
                 </Border>
 
@@ -971,7 +974,8 @@
                 MaxHeight="96"
                 TextChanging="txtMessage_TextChanging"
                 Grid.ColumnSpan="2"
-                Grid.Row="1"/>
+                Grid.Row="1"
+                Background="{x:Null}"/>
             <!-- Send-button -->
             <!--<Button x:Name="btnSendMessage"  
                  Visibility="Collapsed"
@@ -1043,9 +1047,9 @@
                                         Tag="&#xE136;"/>
                         <MenuFlyout.MenuFlyoutPresenterStyle>
                             <Style TargetType="MenuFlyoutPresenter">
-                                <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+                                <Setter Property="Background" Value="{ThemeResource TelegramBackgroundTitlebarBrush}" />
                                 <Setter Property="BorderBrush" Value="{ThemeResource TelegramBackgroundAccentBrush}" />
-                                <Setter Property="BorderThickness" Value="{ThemeResource FlyoutBorderThemeThickness}" />
+                                <Setter Property="BorderThickness" Value="0" />
                                 <Setter Property="Padding" Value="{ThemeResource MenuFlyoutPresenterThemePadding}" />
                                 <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
                                 <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />

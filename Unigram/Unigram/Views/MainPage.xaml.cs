@@ -275,19 +275,19 @@ namespace Unigram.Views
 
         private void BackgroundCanvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
-            args.TrackAsyncAction(Task.Run(async () =>
-            {
-                _backgroundImage = await CanvasBitmap.LoadAsync(sender, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
-                _backgroundBrush = new CanvasImageBrush(sender, _backgroundImage);
-                _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
-                _backgroundBrush.Transform = Matrix3x2.CreateScale(_logicalDpi / 96f);
-            }).AsAsyncAction());
+            //args.TrackAsyncAction(Task.Run(async () =>
+            //{
+            //    _backgroundImage = await CanvasBitmap.LoadAsync(sender, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
+            //    _backgroundBrush = new CanvasImageBrush(sender, _backgroundImage);
+            //    _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
+            //    _backgroundBrush.Transform = Matrix3x2.CreateScale(_logicalDpi / 96f);
+            //}).AsAsyncAction());
 
         }
 
         private void BackgroundCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            args.DrawingSession.FillRectangle(new Rect(new Point(), sender.RenderSize), _backgroundBrush);
+            //args.DrawingSession.FillRectangle(new Rect(new Point(), sender.RenderSize), _backgroundBrush);
         }
 
         #endregion
