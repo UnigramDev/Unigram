@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.TL;
+using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -19,6 +21,8 @@ namespace Unigram.Controls.Inline
 {
     public sealed partial class InlineBotResultsView : UserControl
     {
+        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+
         public InlineBotResultsView()
         {
             InitializeComponent();
