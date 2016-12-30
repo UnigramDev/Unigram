@@ -35,10 +35,10 @@
     <Border x:Name="LayoutRoot"
             Margin="{ThemeResource MessageContentMargin}" 
             Padding="{ThemeResource MessageContentPadding}" 
+            CornerRadius="{ThemeResource MessageCornerRadius}"
             Background="{ThemeResource MessageBackgroundBrush}" 
             BorderBrush="{ThemeResource MessageBorderBrush}" 
-            BorderThickness="0,0,0,0"
-            CornerRadius="4">
+            BorderThickness="0,0,0,2">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
