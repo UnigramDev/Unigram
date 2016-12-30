@@ -208,7 +208,6 @@ namespace Telegram.Api.Services.FileManager
                 error => Execute.BeginOnThreadPool(TimeSpan.FromSeconds(1.0), () =>
                 {
                     Execute.ShowDebugMessage(string.Format("upload.saveBigFilePart part={0}, count={1} error\n", filePart, bytes.Length) + error);
-
                     manualResetEvent.Set();
                 }));
 
@@ -230,7 +229,6 @@ namespace Telegram.Api.Services.FileManager
                 error => Execute.BeginOnThreadPool(TimeSpan.FromSeconds(1.0), () =>
                 {
                     Execute.ShowDebugMessage(string.Format("upload.saveBigFilePart part={0}, count={1} error\n", filePart, bytes.Length) + error);
-
                     manualResetEvent.Set();
                 }));
 

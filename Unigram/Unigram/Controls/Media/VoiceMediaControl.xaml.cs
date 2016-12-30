@@ -1,9 +1,16 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
+using Unigram.Core.Dependency;
+using Windows.ApplicationModel;
 using Windows.Foundation;
+using Windows.Media.Audio;
+using Windows.Media.Render;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -142,5 +149,58 @@ namespace Unigram.Controls.Media
         /// x:Bind hack
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
+
+        #region Play
+
+        private AudioGraph graph;
+        private AudioDeviceOutputNode deviceOutputNode;
+        private AudioFileInputNode fileInputNode;
+
+        private async void Grid_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            var documentMedia = ViewModel?.Media as TLMessageMediaDocument;
+            if (documentMedia != null)
+            {
+                var document = documentMedia.Document as TLDocument;
+                if (document != null)
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(document.GetFileName()) + ".ogg";
+                    if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName)) == false)
+                    {
+                        var manager = UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>();
+                        var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
+                    }
+
+                    var settings = new AudioGraphSettings(AudioRenderCategory.Media);
+                    settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
+
+                    var result = await AudioGraph.CreateAsync(settings);
+                    if (result.Status != AudioGraphCreationStatus.Success)
+                        return;
+
+                    graph = result.Graph;
+                    Debug.WriteLine("Graph successfully created!");
+
+                    var file = await ApplicationData.Current.TemporaryFolder.GetFileAsync(fileName);
+                    var fileProps = await file.Properties.GetMusicPropertiesAsync();
+
+                    var fileInputNodeResult = await graph.CreateFileInputNodeAsync(file);
+                    if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
+                        return;
+
+                    var deviceOutputNodeResult = await graph.CreateDeviceOutputNodeAsync();
+                    if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
+                        return;
+
+                    deviceOutputNode = deviceOutputNodeResult.DeviceOutputNode;
+                    fileInputNode = fileInputNodeResult.FileInputNode;
+                    fileInputNode.AddOutgoingConnection(deviceOutputNode);
+
+                    graph.Start();
+                }
+            }
+        }
+
+        #endregion
     }
 }

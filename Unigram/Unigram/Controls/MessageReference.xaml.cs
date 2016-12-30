@@ -307,10 +307,10 @@ namespace Unigram.Controls
                 var action = serviceMessage.Action;
                 if (action is TLMessageActionChatEditPhoto)
                 {
-                    return SetServicePhotoTemplate(message, Title);
+                    return SetServicePhotoTemplate(serviceMessage, Title);
                 }
 
-                return SetServiceTextTemplate(message, Title);
+                return SetServiceTextTemplate(serviceMessage, Title);
             }
             else
             {
@@ -697,13 +697,21 @@ namespace Unigram.Controls
             return true;
         }
 
-        private bool SetServiceTextTemplate(TLMessage message, string title)
+        private bool SetServiceTextTemplate(TLMessageService message, string title)
         {
-            Visibility = Visibility.Collapsed;
-            return false;
+            Visibility = Visibility.Visible;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = string.Empty;
+            MessageLabel.Text = ServiceHelper.Convert(message);
+
+            return true;
         }
 
-        private bool SetServicePhotoTemplate(TLMessage message, string title)
+        private bool SetServicePhotoTemplate(TLMessageService message, string title)
         {
             Visibility = Visibility.Collapsed;
             return false;
@@ -736,6 +744,17 @@ namespace Unigram.Controls
                 from += $" via @{message.ViaBot.Username}";
             }
 
+            return from;
+        }
+
+        private string GetFromLabel(TLMessageService message, string title)
+        {
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                return Title;
+            }
+
+            var from = message.From?.FullName ?? string.Empty;
             return from;
         }
     }
