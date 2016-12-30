@@ -27,6 +27,7 @@ using Windows.UI.Notifications;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Unigram.Views;
+using Windows.Media;
 
 namespace Unigram
 {
@@ -40,6 +41,8 @@ namespace Unigram
 
         private BackgroundTaskDeferral appServiceDeferral = null;
 
+        private MediaExtensionManager m_mediaExtensionManager;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -48,6 +51,9 @@ namespace Unigram
         public App()
         {
             InitializeComponent();
+
+            m_mediaExtensionManager = new MediaExtensionManager();
+            m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
 
             UnhandledException += async (s, args) =>
             {

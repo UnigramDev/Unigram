@@ -233,13 +233,21 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!-- TODO: not the right way -->
+                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst), Mode=OneWay}"/>
+
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}" 
                             Background="{ThemeResource MessageServiceBackgroundBrush}" 
                             VerticalAlignment="Bottom" 
                             HorizontalAlignment="Right"
                             MaxWidth="180"
                             Padding="8,0,8,6"
-                            Margin="0,0,6,0">
+                            Margin="0,0,6,0"
+                            Grid.Row="1">
                     <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0">
                         <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
                             <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
@@ -255,7 +263,7 @@
                     </controls:MessageReference>
                 </StackPanel>
 
-                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
+                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1" Grid.Row="1">
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
@@ -277,7 +285,14 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!-- TODO: not the right way -->
+                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst), Mode=OneWay}"/>
+
+                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Row="1">
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
@@ -295,7 +310,8 @@
                             MaxWidth="180"
                             Padding="8,0,8,6"
                             Margin="6,0,0,0"
-                            Grid.Column="1">
+                            Grid.Column="1"
+                            Grid.Row="1">
                     <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0">
                         <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
                             <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
@@ -333,7 +349,14 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Grid ContextFlyout="{StaticResource MessageMenuFlyout}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <!-- TODO: not the right way -->
+                    <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst), Mode=OneWay}"/>
+                    
+                    <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Row="1">
                         <controls:ImageView
                             Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
@@ -351,7 +374,8 @@
                                 MaxWidth="180"
                                 Padding="8,0,8,6"
                                 Margin="6,0,0,0"
-                                Grid.Column="1">
+                                Grid.Column="1"
+                                Grid.Row="1">
                         <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0">
                             <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
                                 <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
