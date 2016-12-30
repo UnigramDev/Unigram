@@ -116,6 +116,8 @@ HRESULT OpusStreamSink::ValidateMediaType(IMFMediaType* mediaType)
 
 	UINT32 samplesPerSecond;
 	ReturnIfFailed(result, mediaType->GetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, &samplesPerSecond));
+	if (samplesPerSecond != OPUS_SAMPLES_PER_SECOND)
+		return MF_E_INVALIDMEDIATYPE;
 
 	UINT32 blockAlignment;
 	ReturnIfFailed(result, mediaType->GetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, &blockAlignment));

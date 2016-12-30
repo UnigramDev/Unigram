@@ -28,7 +28,7 @@ HRESULT OpusByteStreamHandler::CreateMediaSource(IMFByteStream* byteStream, IPro
 
 HRESULT OpusByteStreamHandler::ValidateURL(LPCWSTR url)
 {
-	if (CheckExtension(url, L".opus"))
+	if (CheckExtension(url, L".opus") || CheckExtension(url, L".ogg"))
 		return S_OK;
 
 	return E_INVALIDARG;
