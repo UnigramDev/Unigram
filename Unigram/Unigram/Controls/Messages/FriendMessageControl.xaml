@@ -23,7 +23,8 @@
             Padding="{ThemeResource MessageContentPadding}" 
             Background="{ThemeResource MessageBackgroundBrush}" 
             BorderBrush="{ThemeResource MessageBorderBrush}" 
-            BorderThickness="0,0,0,2">
+            BorderThickness="0,0,0,0"
+            CornerRadius="4">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

@@ -17,6 +17,8 @@
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#6aad60"/>
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#d4f1c2"/>
 
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
+
             <!--<Thickness x:Key="MessageContentPadding">12,6</Thickness>-->
             <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
             <Thickness x:Key="MessageContentMargin">40,2,0,2</Thickness>
@@ -37,6 +39,8 @@
 
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#999999"/>
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#f2f2f2"/>
+
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
 
             <!--<Thickness x:Key="MessageContentPadding">12,6</Thickness>-->
             <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
