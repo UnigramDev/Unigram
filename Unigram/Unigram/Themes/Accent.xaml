@@ -68,6 +68,8 @@
             <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
+     
+    <CornerRadius x:Key="MessageCornerRadius">4</CornerRadius>
 
     <SolidColorBrush x:Key="TelegramDialogLabelStateBrush" Color="#64BC54"/>
     <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
