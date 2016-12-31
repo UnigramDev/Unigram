@@ -179,7 +179,13 @@
                     <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
                 </StackPanel>
                 
-                <Button Margin="0,6,0,0" Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Button Click="InstantView_Click" 
+                        Margin="0,6,0,0" 
+                        Background="Transparent"
+                        BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
+                        Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                        RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                        Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE945;"/>
                         <TextBlock Text="INSTANT VIEW" Margin="12,0,0,0"/>
@@ -213,7 +219,13 @@
                     <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" MaxWidth="88" MaxHeight="88" Margin="12,0,0,0" VerticalAlignment="Bottom" Grid.Column="1"/>
                 </Grid>
 
-                <Button Margin="0,8,0,0" Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Button Click="InstantView_Click" 
+                        Margin="0,6,0,0" 
+                        Background="Transparent"
+                        BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
+                        Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                        RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                        Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE945;"/>
                         <TextBlock Text="INSTANT VIEW" Margin="12,0,0,0"/>
@@ -250,7 +262,13 @@
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
                 </Grid>
 
-                <Button Margin="0,8,0,0" Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Button Click="InstantView_Click" 
+                        Margin="0,6,0,0" 
+                        Background="Transparent"
+                        BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
+                        Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                        RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                        Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE945;"/>
                         <TextBlock Text="INSTANT VIEW" Margin="12,0,0,0"/>
@@ -287,7 +305,13 @@
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
                 </Grid>
 
-                <Button Margin="0,8,0,0" Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Button Click="InstantView_Click" 
+                        Margin="0,6,0,0" 
+                        Background="Transparent"
+                        BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
+                        Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                        RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                        Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE945;"/>
                         <TextBlock Text="INSTANT VIEW" Margin="12,0,0,0"/>
