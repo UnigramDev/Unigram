@@ -38,7 +38,6 @@ namespace Telegram.Api.TL
 		public bool HasCachedPage { get { return Flags.HasFlag(Flag.CachedPage); } set { Flags = value ? (Flags | Flag.CachedPage) : (Flags & ~Flag.CachedPage); } }
 
 		public Flag Flags { get; set; }
-		public Int64 Id { get; set; }
 		public String Url { get; set; }
 		public String DisplayUrl { get; set; }
 		public Int32 Hash { get; set; }

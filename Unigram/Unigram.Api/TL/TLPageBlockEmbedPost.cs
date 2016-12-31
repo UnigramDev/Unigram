@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLPageBlockEmbedPost : TLPageBlockBase, ITLMediaCaption 
+	public partial class TLPageBlockEmbedPost : TLPageBlockBase 
 	{
 		public String Url { get; set; }
 		public Int64 WebpageId { get; set; }

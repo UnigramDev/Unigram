@@ -5,8 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLWebPageEmpty : TLWebPageBase 
 	{
-		public Int64 Id { get; set; }
-
 		public TLWebPageEmpty() { }
 		public TLWebPageEmpty(TLBinaryReader from, bool cache = false)
 		{

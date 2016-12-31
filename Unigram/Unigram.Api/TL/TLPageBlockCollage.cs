@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLPageBlockCollage : TLPageBlockBase, ITLMediaCaption 
+	public partial class TLPageBlockCollage : TLPageBlockBase 
 	{
 		public TLVector<TLPageBlockBase> Items { get; set; }
 		public TLRichTextBase Caption { get; set; }

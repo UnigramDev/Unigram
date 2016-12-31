@@ -23,6 +23,17 @@ namespace Telegram.Api.TL
         }
     }
 
+    public partial class TLUpdatesDifferenceTooLong
+    {
+        public override TLUpdatesDifferenceBase GetEmptyObject()
+        {
+            return new TLUpdatesDifferenceTooLong
+            {
+                Pts = Pts
+            };
+        }
+    }
+
     public partial class TLUpdatesDifference
     {
         public override TLUpdatesDifferenceBase GetEmptyObject()

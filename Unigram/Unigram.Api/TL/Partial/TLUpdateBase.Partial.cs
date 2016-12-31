@@ -190,13 +190,13 @@ namespace Telegram.Api.TL
     //    }
     //}
 
-    public partial class TLUpdateNewAuthorization
-    {
-        public override IList<int> GetPts()
-        {
-            return new List<int>();
-        }
-    }
+    //public partial class TLUpdateNewAuthorization
+    //{
+    //    public override IList<int> GetPts()
+    //    {
+    //        return new List<int>();
+    //    }
+    //}
 
     public partial class TLUpdateDCOptions
     {

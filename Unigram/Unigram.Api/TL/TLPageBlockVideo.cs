@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLPageBlockVideo : TLPageBlockBase, ITLMediaCaption 
+	public partial class TLPageBlockVideo : TLPageBlockBase 
 	{
 		[Flags]
 		public enum Flag : Int32
