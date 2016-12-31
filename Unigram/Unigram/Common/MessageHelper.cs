@@ -86,7 +86,8 @@ namespace Unigram.Common
                     return;
                 }
 
-                var foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x0f, 0x7d, 0xc7));
+                var foreground = Application.Current.Resources["MessageHyperlinkForegroundBrush"] as SolidColorBrush;
+
                 var paragraph = new Paragraph();
 
                 if (message.HasEntities && message.Entities != null)
