@@ -8,9 +8,11 @@ namespace Telegram.Api.TL
 		[Flags]
 		public enum Flag : Int32
 		{
+			PhonecallsEnabled = (1 << 1),
 			TmpSessions = (1 << 0),
 		}
 
+		public bool IsPhonecallsEnabled { get { return Flags.HasFlag(Flag.PhonecallsEnabled); } set { Flags = value ? (Flags | Flag.PhonecallsEnabled) : (Flags & ~Flag.PhonecallsEnabled); } }
 		public bool HasTmpSessions { get { return Flags.HasFlag(Flag.TmpSessions); } set { Flags = value ? (Flags | Flag.TmpSessions) : (Flags & ~Flag.TmpSessions); } }
 
 		public Flag Flags { get; set; }
@@ -36,6 +38,11 @@ namespace Telegram.Api.TL
 		public Int32 RatingEDecay { get; set; }
 		public Int32 StickersRecentLimit { get; set; }
 		public Int32? TmpSessions { get; set; }
+		public Int32 PinnedDialogsCountMax { get; set; }
+		public Int32 CallReceiveTimeoutMs { get; set; }
+		public Int32 CallRingTimeoutMs { get; set; }
+		public Int32 CallConnectTimeoutMs { get; set; }
+		public Int32 CallPacketTimeoutMs { get; set; }
 		public TLVector<TLDisabledFeature> DisabledFeatures { get; set; }
 
 		public TLConfig() { }
@@ -71,6 +78,11 @@ namespace Telegram.Api.TL
 			RatingEDecay = from.ReadInt32();
 			StickersRecentLimit = from.ReadInt32();
 			if (HasTmpSessions) TmpSessions = from.ReadInt32();
+			PinnedDialogsCountMax = from.ReadInt32();
+			CallReceiveTimeoutMs = from.ReadInt32();
+			CallRingTimeoutMs = from.ReadInt32();
+			CallConnectTimeoutMs = from.ReadInt32();
+			CallPacketTimeoutMs = from.ReadInt32();
 			DisabledFeatures = TLFactory.Read<TLVector<TLDisabledFeature>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
@@ -79,7 +91,7 @@ namespace Telegram.Api.TL
 		{
 			UpdateFlags();
 
-			to.Write(0x9A6B2E2A);
+			to.Write(0x3AF6FB5F);
 			to.Write((Int32)Flags);
 			to.Write(Date);
 			to.Write(Expires);
@@ -103,6 +115,11 @@ namespace Telegram.Api.TL
 			to.Write(RatingEDecay);
 			to.Write(StickersRecentLimit);
 			if (HasTmpSessions) to.Write(TmpSessions.Value);
+			to.Write(PinnedDialogsCountMax);
+			to.Write(CallReceiveTimeoutMs);
+			to.Write(CallRingTimeoutMs);
+			to.Write(CallConnectTimeoutMs);
+			to.Write(CallPacketTimeoutMs);
 			to.WriteObject(DisabledFeatures, cache);
 			if (cache) WriteToCache(to);
 		}

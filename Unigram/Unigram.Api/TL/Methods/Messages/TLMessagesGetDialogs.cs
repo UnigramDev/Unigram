@@ -8,6 +8,15 @@ namespace Telegram.Api.TL.Methods.Messages
 	/// </summary>
 	public partial class TLMessagesGetDialogs : TLObject
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			ExcludePinned = (1 << 0),
+		}
+
+		public bool IsExcludePinned { get { return Flags.HasFlag(Flag.ExcludePinned); } set { Flags = value ? (Flags | Flag.ExcludePinned) : (Flags & ~Flag.ExcludePinned); } }
+
+		public Flag Flags { get; set; }
 		public Int32 OffsetDate { get; set; }
 		public Int32 OffsetId { get; set; }
 		public TLInputPeerBase OffsetPeer { get; set; }
@@ -23,6 +32,7 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			Flags = (Flag)from.ReadInt32();
 			OffsetDate = from.ReadInt32();
 			OffsetId = from.ReadInt32();
 			OffsetPeer = TLFactory.Read<TLInputPeerBase>(from, cache);
@@ -32,7 +42,8 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0x6B47F94D);
+			to.Write(0x191BA9C5);
+			to.Write((Int32)Flags);
 			to.Write(OffsetDate);
 			to.Write(OffsetId);
 			to.WriteObject(OffsetPeer, cache);

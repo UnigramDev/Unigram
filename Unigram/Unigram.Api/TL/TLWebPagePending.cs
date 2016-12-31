@@ -5,6 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLWebPagePending : TLWebPageBase 
 	{
+		public Int64 Id { get; set; }
 		public Int32 Date { get; set; }
 
 		public TLWebPagePending() { }

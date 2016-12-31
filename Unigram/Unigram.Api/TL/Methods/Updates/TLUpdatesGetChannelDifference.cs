@@ -8,6 +8,15 @@ namespace Telegram.Api.TL.Methods.Updates
 	/// </summary>
 	public partial class TLUpdatesGetChannelDifference : TLObject
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			Force = (1 << 0),
+		}
+
+		public bool IsForce { get { return Flags.HasFlag(Flag.Force); } set { Flags = value ? (Flags | Flag.Force) : (Flags & ~Flag.Force); } }
+
+		public Flag Flags { get; set; }
 		public TLInputChannelBase Channel { get; set; }
 		public TLChannelMessagesFilterBase Filter { get; set; }
 		public Int32 Pts { get; set; }
@@ -23,6 +32,7 @@ namespace Telegram.Api.TL.Methods.Updates
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Channel = TLFactory.Read<TLInputChannelBase>(from, cache);
 			Filter = TLFactory.Read<TLChannelMessagesFilterBase>(from, cache);
 			Pts = from.ReadInt32();
@@ -32,7 +42,8 @@ namespace Telegram.Api.TL.Methods.Updates
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0xBB32D7C0);
+			to.Write(0x3173D78);
+			to.Write((Int32)Flags);
 			to.WriteObject(Channel, cache);
 			to.WriteObject(Filter, cache);
 			to.Write(Pts);

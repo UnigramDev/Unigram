@@ -3,10 +3,8 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLMessagesChats : TLObject 
+	public partial class TLMessagesChats : TLMessagesChatsBase 
 	{
-		public TLVector<TLChatBase> Chats { get; set; }
-
 		public TLMessagesChats() { }
 		public TLMessagesChats(TLBinaryReader from, bool cache = false)
 		{

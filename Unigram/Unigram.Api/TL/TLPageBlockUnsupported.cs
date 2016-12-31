@@ -3,15 +3,15 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLSendMessageGameStopAction : TLSendMessageActionBase 
+	public partial class TLPageBlockUnsupported : TLPageBlockBase 
 	{
-		public TLSendMessageGameStopAction() { }
-		public TLSendMessageGameStopAction(TLBinaryReader from, bool cache = false)
+		public TLPageBlockUnsupported() { }
+		public TLPageBlockUnsupported(TLBinaryReader from, bool cache = false)
 		{
 			Read(from, cache);
 		}
 
-		public override TLType TypeId { get { return TLType.SendMessageGameStopAction; } }
+		public override TLType TypeId { get { return TLType.PageBlockUnsupported; } }
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
@@ -20,7 +20,7 @@ namespace Telegram.Api.TL
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0x15C2C99A);
+			to.Write(0x13567E8A);
 			if (cache) WriteToCache(to);
 		}
 	}

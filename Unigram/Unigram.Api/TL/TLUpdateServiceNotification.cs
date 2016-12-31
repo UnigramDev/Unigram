@@ -5,10 +5,22 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateServiceNotification : TLUpdateBase 
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			Popup = (1 << 0),
+			InboxDate = (1 << 1),
+		}
+
+		public bool IsPopup { get { return Flags.HasFlag(Flag.Popup); } set { Flags = value ? (Flags | Flag.Popup) : (Flags & ~Flag.Popup); } }
+		public bool HasInboxDate { get { return Flags.HasFlag(Flag.InboxDate); } set { Flags = value ? (Flags | Flag.InboxDate) : (Flags & ~Flag.InboxDate); } }
+
+		public Flag Flags { get; set; }
+		public Int32? InboxDate { get; set; }
 		public String Type { get; set; }
 		public String Message { get; set; }
 		public TLMessageMediaBase Media { get; set; }
-		public Boolean Popup { get; set; }
+		public TLVector<TLMessageEntityBase> Entities { get; set; }
 
 		public TLUpdateServiceNotification() { }
 		public TLUpdateServiceNotification(TLBinaryReader from, bool cache = false)
@@ -20,21 +32,32 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			Flags = (Flag)from.ReadInt32();
+			if (HasInboxDate) InboxDate = from.ReadInt32();
 			Type = from.ReadString();
 			Message = from.ReadString();
 			Media = TLFactory.Read<TLMessageMediaBase>(from, cache);
-			Popup = from.ReadBoolean();
+			Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0x382DD3E4);
+			UpdateFlags();
+
+			to.Write(0xEBE46819);
+			to.Write((Int32)Flags);
+			if (HasInboxDate) to.Write(InboxDate.Value);
 			to.Write(Type);
 			to.Write(Message);
 			to.WriteObject(Media, cache);
-			to.Write(Popup);
+			to.WriteObject(Entities, cache);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasInboxDate = InboxDate != null;
 		}
 	}
 }

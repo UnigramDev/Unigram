@@ -22,6 +22,7 @@ namespace Telegram.Api.TL
 		public Flag Flags { get; set; }
 		public String Message { get; set; }
 		public String Url { get; set; }
+		public Int32 CacheTime { get; set; }
 
 		public TLMessagesBotCallbackAnswer() { }
 		public TLMessagesBotCallbackAnswer(TLBinaryReader from, bool cache = false)
@@ -36,6 +37,7 @@ namespace Telegram.Api.TL
 			Flags = (Flag)from.ReadInt32();
 			if (HasMessage) Message = from.ReadString();
 			if (HasUrl) Url = from.ReadString();
+			CacheTime = from.ReadInt32();
 			if (cache) ReadFromCache(from);
 		}
 
@@ -43,10 +45,11 @@ namespace Telegram.Api.TL
 		{
 			UpdateFlags();
 
-			to.Write(0xB10DF1FB);
+			to.Write(0x36585EA4);
 			to.Write((Int32)Flags);
 			if (HasMessage) to.Write(Message);
 			if (HasUrl) to.Write(Url);
+			to.Write(CacheTime);
 			if (cache) WriteToCache(to);
 		}
 

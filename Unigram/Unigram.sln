@@ -23,6 +23,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native", "Unigram.Native\Unigram.Native.vcxproj", "{1B521E77-46BD-4D60-89F6-D68E9BB9ABFF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{C385BB20-B82D-496E-A38D-835D017AC0EA}"
+	ProjectSection(SolutionItems) = preProject
+		..\scheme.tl = ..\scheme.tl
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libwebp", "Libraries\libwebp\libwebp.vcxproj", "{7789C8B7-887C-46B6-BD76-952C590B1853}"
 EndProject

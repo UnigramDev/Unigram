@@ -9,12 +9,14 @@ namespace Telegram.Api.TL
 		public enum Flag : Int32
 		{
 			Blocked = (1 << 0),
+			PhoneCallsAvailable = (1 << 4),
 			About = (1 << 1),
 			ProfilePhoto = (1 << 2),
 			BotInfo = (1 << 3),
 		}
 
 		public bool IsBlocked { get { return Flags.HasFlag(Flag.Blocked); } set { Flags = value ? (Flags | Flag.Blocked) : (Flags & ~Flag.Blocked); } }
+		public bool IsPhoneCallsAvailable { get { return Flags.HasFlag(Flag.PhoneCallsAvailable); } set { Flags = value ? (Flags | Flag.PhoneCallsAvailable) : (Flags & ~Flag.PhoneCallsAvailable); } }
 		public bool HasAbout { get { return Flags.HasFlag(Flag.About); } set { Flags = value ? (Flags | Flag.About) : (Flags & ~Flag.About); } }
 		public bool HasProfilePhoto { get { return Flags.HasFlag(Flag.ProfilePhoto); } set { Flags = value ? (Flags | Flag.ProfilePhoto) : (Flags & ~Flag.ProfilePhoto); } }
 		public bool HasBotInfo { get { return Flags.HasFlag(Flag.BotInfo); } set { Flags = value ? (Flags | Flag.BotInfo) : (Flags & ~Flag.BotInfo); } }
@@ -26,6 +28,7 @@ namespace Telegram.Api.TL
 		public TLPhotoBase ProfilePhoto { get; set; }
 		public TLPeerNotifySettingsBase NotifySettings { get; set; }
 		public TLBotInfo BotInfo { get; set; }
+		public Int32 CommonChatsCount { get; set; }
 
 		public TLUserFull() { }
 		public TLUserFull(TLBinaryReader from, bool cache = false)
@@ -44,6 +47,7 @@ namespace Telegram.Api.TL
 			if (HasProfilePhoto) ProfilePhoto = TLFactory.Read<TLPhotoBase>(from, cache);
 			NotifySettings = TLFactory.Read<TLPeerNotifySettingsBase>(from, cache);
 			if (HasBotInfo) BotInfo = TLFactory.Read<TLBotInfo>(from, cache);
+			CommonChatsCount = from.ReadInt32();
 			if (cache) ReadFromCache(from);
 		}
 
@@ -51,7 +55,7 @@ namespace Telegram.Api.TL
 		{
 			UpdateFlags();
 
-			to.Write(0x5932FC03);
+			to.Write(0xF220F3F);
 			to.Write((Int32)Flags);
 			to.WriteObject(User, cache);
 			if (HasAbout) to.Write(About);
@@ -59,6 +63,7 @@ namespace Telegram.Api.TL
 			if (HasProfilePhoto) to.WriteObject(ProfilePhoto, cache);
 			to.WriteObject(NotifySettings, cache);
 			if (HasBotInfo) to.WriteObject(BotInfo, cache);
+			to.Write(CommonChatsCount);
 			if (cache) WriteToCache(to);
 		}
 
