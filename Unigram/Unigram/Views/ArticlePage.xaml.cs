@@ -87,6 +87,7 @@ namespace Unigram.Views
         }
 
         private Stack<Panel> _containers = new Stack<Panel>();
+        private Stack<TLPageBlockBase> _parents = new Stack<TLPageBlockBase>();
 
         private void ProcessBlock(TLPageBase page, TLPageBlockBase block)
         {
@@ -275,35 +276,6 @@ namespace Unigram.Views
                 BorderThickness = new Thickness(2, 0, 0, 0),
                 Margin = new Thickness(12, 0, 0, 12)
             });
-
-            /*
-    <Grid Margin="0,4,0,8">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid Background="{Binding PlaceHolderColor}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
-            <TextBlock Foreground="White" Text="{Binding Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <Ellipse>
-                <Ellipse.Fill>
-                    <ImageBrush ImageSource="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                </Ellipse.Fill>
-            </Ellipse>
-            <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
-        </Grid>
-        <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-        <TextBlock Text="{Binding lastSeen}" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"
-                    Style="{StaticResource CaptionTextBlockStyle}" 
-                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                    TextTrimming="CharacterEllipsis" 
-                    TextWrapping="NoWrap" 
-                    MaxLines="1"/>
-    </Grid>
- * */
 
             var header = new Grid();
             header.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
@@ -535,7 +507,9 @@ namespace Unigram.Views
 
         private void ProcessCover(TLPageBase page, TLPageBlockCover block)
         {
+            _parents.Push(block);
             ProcessBlock(page, block.Cover);
+            _parents.Pop();
         }
 
         private void ProcessPhoto(TLPageBase page, TLPageBlockPhoto block)
@@ -562,6 +536,11 @@ namespace Unigram.Views
             else
             {
                 image.Margin = new Thickness(0, 0, 0, 12);
+            }
+
+            if (_parents.Count > 0 && _parents.Peek().TypeId == TLType.PageBlockCover)
+            {
+                image.Margin = new Thickness(0, -12, 0, 12);
             }
         }
 
