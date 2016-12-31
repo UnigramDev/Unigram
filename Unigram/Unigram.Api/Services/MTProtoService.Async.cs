@@ -338,15 +338,15 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
-        public Task<MTProtoResponse<TLServerDHInnerData>> GetDHConfigAsync(int version, int randomLength)
+        public Task<MTProtoResponse<TLMessagesDHConfig>> GetDHConfigAsync(int version, int randomLength)
         {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLServerDHInnerData>>();
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesDHConfig>>();
             GetDHConfigCallback(version, randomLength, (callback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLServerDHInnerData>(callback));
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesDHConfig>(callback));
             }, (faultCallback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLServerDHInnerData>(faultCallback));
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesDHConfig>(faultCallback));
             });
             return tsc.Task;
         }

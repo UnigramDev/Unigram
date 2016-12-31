@@ -37,7 +37,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLMessagesStickerSet>> GetStickerSetAsync(TLInputStickerSetBase stickerset);
         Task<MTProtoResponse<bool>> SaveGifAsync(TLInputDocumentBase id, bool unsave);
         Task<MTProtoResponse<TLHelpSupport>> GetSupportAsync();
-        Task<MTProtoResponse<TLServerDHInnerData>> GetDHConfigAsync(int version, int randomLength);
+        Task<MTProtoResponse<TLMessagesDHConfig>> GetDHConfigAsync(int version, int randomLength);
         Task<MTProtoResponse<bool>> ResetNotifySettingsAsync();
         Task<MTProtoResponse<bool>> UnblockAsync(TLInputUserBase id);
         Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, TLSendMessageActionBase action);

@@ -35,6 +35,7 @@ using Unigram.Controls.Views;
 using Unigram.Core.Models;
 using Unigram.Controls;
 using Unigram.Core.Helpers;
+using Org.BouncyCastle.Security;
 
 namespace Unigram.ViewModels
 {
@@ -324,7 +325,6 @@ namespace Unigram.ViewModels
                 With = user;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
 
-                //Happy Birthday Alexmitter xD
                 Messages.Clear();
                 photo = user.Photo;
                 DialogTitle = user.FullName;
@@ -332,6 +332,46 @@ namespace Unigram.ViewModels
                 LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
                 LastSeenVisible = Visibility.Visible;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
+
+                // test calls
+                //var config = await ProtoService.GetDHConfigAsync(0, 0);
+                //if (config.IsSucceeded)
+                //{
+                //    var dh = config.Value;
+                //    if (!TLUtils.CheckPrime(dh.P, dh.G))
+                //    {
+                //        return;
+                //    }
+
+                //    var array = new byte[256];
+                //    var secureRandom = new SecureRandom();
+                //    secureRandom.NextBytes(array);
+
+                //    var a = array;
+                //    var p = dh.P;
+                //    var g = dh.G;
+                //    var gb = MTProtoService.GetGB(array, dh.G, dh.P);
+                //    var ga = gb;
+
+                //    var request = new Telegram.Api.TL.Methods.Phone.TLPhoneRequestCall
+                //    {
+                //        UserId = new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 },
+                //        RandomId = TLInt.Random(),
+                //        GA = ga,
+                //        Protocol = new TLPhoneCallProtocol()
+                //    };
+
+                //    var proto = (MTProtoService)ProtoService;
+                //    proto.SendInformativeMessageInternal<TLPhonePhoneCall>("phone.requestCall", request,
+                //    result =>
+                //    {
+                //        Debugger.Break();
+                //    },
+                //    fault =>
+                //    {
+                //        Debugger.Break();
+                //    });
+                //}
             }
             else if (channel != null)
             {

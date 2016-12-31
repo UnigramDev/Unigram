@@ -106,7 +106,7 @@ namespace Telegram.Api.Services
         void UploadProfilePhotoCallback(TLInputFile file, Action<TLPhotosPhoto> callback, Action<TLRPCError> faultCallback = null);
         void UpdateProfilePhotoCallback(TLInputPhotoBase id, Action<TLPhotoBase> callback, Action<TLRPCError> faultCallback = null);
 
-        void GetDHConfigCallback(int version, int randomLength, Action<TLServerDHInnerData> callback, Action<TLRPCError> faultCallback = null);
+        void GetDHConfigCallback(int version, int randomLength, Action<TLMessagesDHConfig> callback, Action<TLRPCError> faultCallback = null);
         // TODO: Encrypted void RequestEncryptionAsync(TLInputUserBase userId, int randomId, byte[] g_a, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null);
         // TODO: Encrypted void AcceptEncryptionAsync(TLInputEncryptedChat peer, byte[] gb, long keyFingerprint, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null);
         // TODO: Encrypted void SendEncryptedAsync(TLInputEncryptedChat peer, long randomId, byte[] data, Action<TLMessagesSentEncryptedMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null);

@@ -1873,6 +1873,22 @@ namespace Telegram.Api.Services.Updates
             //    return true;
             //}
 
+            var updateDialogPinned = update as TLUpdateDialogPinned;
+            if (updateDialogPinned != null)
+            {
+                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateDialogPinned));
+
+                return true;
+            }
+
+            var updatePinnedDialogs = update as TLUpdatePinnedDialogs;
+            if (updatePinnedDialogs != null)
+            {
+                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updatePinnedDialogs));
+
+                return true;
+            }
+
             var updateContactLink = update as TLUpdateContactLink; // TODO: TLUpdateContactLinkBase;
             if (updateContactLink != null)
             {
