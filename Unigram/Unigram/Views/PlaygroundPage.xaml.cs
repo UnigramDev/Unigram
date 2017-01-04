@@ -61,7 +61,7 @@ namespace Unigram.Views
                 await recorder.StopAsync();
             }
 
-            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.opus", CreationCollisionOption.ReplaceExisting);
+            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
             recorder = new OpusRecorder(file);
             await recorder.StartAsync();
         }
@@ -72,7 +72,7 @@ namespace Unigram.Views
             {
                 await recorder.StopAsync();
 
-                var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.opus", CreationCollisionOption.OpenIfExists);
+                var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.OpenIfExists);
 
                 var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
                 var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
@@ -138,6 +138,31 @@ namespace Unigram.Views
                     var result = await protoService.SendMediaAsync(new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value }, inputMedia, message);
                 }
             }
+        }
+
+        private async void Media_Loaded(object sender, RoutedEventArgs e)
+        {
+            //var file = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
+
+            if (recorder?.IsRecording == true)
+            {
+                await recorder.StopAsync();
+                //Media.Source = new Uri("ms-appdata:///temp/recording.ogg");
+                //Media.Play();
+
+                var file2 = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
+                using (var stream = await file2.OpenReadAsync())
+                {
+                    Media.SetSource(stream, "audio/ogg");
+                }
+
+                return;
+            }
+
+            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
+            recorder = new OpusRecorder(file);
+            await recorder.StartAsync();
+
         }
     }
 
@@ -281,7 +306,7 @@ namespace Unigram.Views
             var wawEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
             wawEncodingProfile.Audio.BitsPerSample = 16;
             wawEncodingProfile.Audio.SampleRate = 48000;
-            wawEncodingProfile.Audio.ChannelCount = 3;
+            wawEncodingProfile.Audio.ChannelCount = 1;
             await m_mediaCapture.StartRecordToCustomSinkAsync(wawEncodingProfile, m_opusSink);
         }
 

@@ -102,11 +102,7 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <StackPanel Orientation="Horizontal">
-                <FontIcon Glyph="&#xE945;"/>
-                <TextBlock Text="INSTANT VIEW" Margin="12,0,0,0"/>
-            </StackPanel>
-        </Button>
+        <MediaElement x:Name="Media" AreTransportControlsEnabled="True"/>
+        <Button Click="Media_Loaded"/>
     </Grid>
 </Page>

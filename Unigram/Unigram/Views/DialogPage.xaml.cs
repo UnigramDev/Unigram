@@ -63,8 +63,8 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
-            //_panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
-            //lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
+            _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
+            lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
 
             lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
         }
