@@ -291,6 +291,7 @@
     <Compile Include="TL\Methods\Messages\TLMessagesReceivedQueue.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesReorderPinnedDialogs.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesReorderStickerSets.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesReportEncryptedSpam.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesReportSpam.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesRequestEncryption.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSaveDraft.cs" />
@@ -696,6 +697,7 @@
     <Compile Include="TL\TLInputMessagesFilterEmpty.cs" />
     <Compile Include="TL\TLInputMessagesFilterGif.cs" />
     <Compile Include="TL\TLInputMessagesFilterMusic.cs" />
+    <Compile Include="TL\TLInputMessagesFilterPhoneCalls.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotos.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotoVideo.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotoVideoDocuments.cs" />
@@ -773,6 +775,7 @@
     <Compile Include="TL\TLMessageActionEmpty.cs" />
     <Compile Include="TL\TLMessageActionGameScore.cs" />
     <Compile Include="TL\TLMessageActionHistoryClear.cs" />
+    <Compile Include="TL\TLMessageActionPhoneCall.cs" />
     <Compile Include="TL\TLMessageActionPinMessage.cs" />
     <Compile Include="TL\TLMessageBase.cs" />
     <Compile Include="TL\TLMessageCommonBase.cs" />

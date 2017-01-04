@@ -128,6 +128,7 @@ namespace Telegram.Api.TL
 				case TLType.MessagesSendEncryptedFile: return (T)(Object)new TLMessagesSendEncryptedFile(from, cache);
 				case TLType.MessagesSendEncryptedService: return (T)(Object)new TLMessagesSendEncryptedService(from, cache);
 				case TLType.MessagesReceivedQueue: return (T)(Object)new TLMessagesReceivedQueue(from, cache);
+				case TLType.MessagesReportEncryptedSpam: return (T)(Object)new TLMessagesReportEncryptedSpam(from, cache);
 				case TLType.MessagesReadMessageContents: return (T)(Object)new TLMessagesReadMessageContents(from, cache);
 				case TLType.MessagesGetAllStickers: return (T)(Object)new TLMessagesGetAllStickers(from, cache);
 				case TLType.MessagesGetWebPagePreview: return (T)(Object)new TLMessagesGetWebPagePreview(from, cache);
@@ -358,6 +359,7 @@ namespace Telegram.Api.TL
 				case TLType.MessageActionPinMessage: return (T)(Object)new TLMessageActionPinMessage(from, cache);
 				case TLType.MessageActionHistoryClear: return (T)(Object)new TLMessageActionHistoryClear(from, cache);
 				case TLType.MessageActionGameScore: return (T)(Object)new TLMessageActionGameScore(from, cache);
+				case TLType.MessageActionPhoneCall: return (T)(Object)new TLMessageActionPhoneCall(from, cache);
 				case TLType.Dialog: return (T)(Object)new TLDialog(from, cache);
 				case TLType.PhotoEmpty: return (T)(Object)new TLPhotoEmpty(from, cache);
 				case TLType.Photo: return (T)(Object)new TLPhoto(from, cache);
@@ -419,6 +421,7 @@ namespace Telegram.Api.TL
 				case TLType.InputMessagesFilterVoice: return (T)(Object)new TLInputMessagesFilterVoice(from, cache);
 				case TLType.InputMessagesFilterMusic: return (T)(Object)new TLInputMessagesFilterMusic(from, cache);
 				case TLType.InputMessagesFilterChatPhotos: return (T)(Object)new TLInputMessagesFilterChatPhotos(from, cache);
+				case TLType.InputMessagesFilterPhoneCalls: return (T)(Object)new TLInputMessagesFilterPhoneCalls(from, cache);
 				case TLType.UpdateNewMessage: return (T)(Object)new TLUpdateNewMessage(from, cache);
 				case TLType.UpdateMessageID: return (T)(Object)new TLUpdateMessageID(from, cache);
 				case TLType.UpdateDeleteMessages: return (T)(Object)new TLUpdateDeleteMessages(from, cache);
