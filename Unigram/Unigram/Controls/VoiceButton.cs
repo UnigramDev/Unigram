@@ -152,7 +152,7 @@ namespace Unigram.Controls
                 var wawEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
                 wawEncodingProfile.Audio.BitsPerSample = 16;
                 wawEncodingProfile.Audio.SampleRate = 48000;
-                wawEncodingProfile.Audio.ChannelCount = 3;
+                wawEncodingProfile.Audio.ChannelCount = 1;
                 await m_mediaCapture.StartRecordToCustomSinkAsync(wawEncodingProfile, m_opusSink);
             }
 

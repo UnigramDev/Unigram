@@ -71,6 +71,15 @@ namespace Unigram.ViewModels.Login
             {
                 if (result.Error.TypeEquals(TLErrorType.PHONE_NUMBER_UNOCCUPIED))
                 {
+                    //var signup = await ProtoService.SignUpAsync(phoneNumber, phoneCodeHash, PhoneCode, "Paolo", "Veneziani");
+                    //if (signup.IsSucceeded)
+                    //{
+                    //    ProtoService.SetInitState();
+                    //    ProtoService.CurrentUserId = signup.Value.User.Id;
+                    //    SettingsHelper.IsAuthorized = true;
+                    //    SettingsHelper.UserId = signup.Value.User.Id;
+                    //}
+
                     //this._callTimer.Stop();
                     //this.StateService.ClearNavigationStack = true;
                     //this.NavigationService.UriFor<SignUpViewModel>().Navigate();

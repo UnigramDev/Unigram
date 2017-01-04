@@ -8,6 +8,8 @@ using Unigram.Core.Models;
 using System;
 using Telegram.Api.Helpers;
 using Windows.UI.Popups;
+using Telegram.Api.TL;
+using Telegram.Api;
 
 namespace Unigram.ViewModels.Login
 {
