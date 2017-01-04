@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unigram.Native;
 using Unigram.ViewModels;
+using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
@@ -149,11 +150,13 @@ namespace Unigram.Controls
 
                 m_opusSink = await OpusCodec.CreateMediaSinkAsync(m_file);
 
-                var wawEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
-                wawEncodingProfile.Audio.BitsPerSample = 16;
-                wawEncodingProfile.Audio.SampleRate = 48000;
-                wawEncodingProfile.Audio.ChannelCount = 1;
-                await m_mediaCapture.StartRecordToCustomSinkAsync(wawEncodingProfile, m_opusSink);
+                var wavEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
+                wavEncodingProfile.Audio.BitsPerSample = 16;
+                wavEncodingProfile.Audio.SampleRate = 48000;
+                wavEncodingProfile.Audio.ChannelCount = 1;
+                //wavEncodingProfile.Audio.Properties[Guid.Parse("{37E48BF5-645E-4C5B-89DE-ADA9E29B696A}")] = 1;
+                //wavEncodingProfile.Container.Properties[Guid.Parse("{37E48BF5-645E-4C5B-89DE-ADA9E29B696A}")] = 1;
+                await m_mediaCapture.StartRecordToCustomSinkAsync(wavEncodingProfile, m_opusSink);
             }
 
             public async Task StopAsync()
