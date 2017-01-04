@@ -78,10 +78,10 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
-        public Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id)
+        public Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id, bool revoke)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedMessages>>();
-            DeleteMessagesCallback(id, (callback) =>
+            DeleteMessagesCallback(id, revoke, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedMessages>(callback));
             }, (faultCallback) =>
