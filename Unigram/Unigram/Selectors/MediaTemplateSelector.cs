@@ -79,18 +79,18 @@ namespace Unigram.Selectors
                     {
                         return GifTemplate;
                     }
-                }
 
-                // TODO: ???
-                //var externalDocument = documentMedia.Document as TLDocumentExternal;
-                //if (externalDocument != null && TLMessage.IsGif(externalDocument))
-                //{
-                //    return GifTemplate;
-                //}
+                    // TODO: ???
+                    //var externalDocument = documentMedia.Document as TLDocumentExternal;
+                    //if (externalDocument != null && TLMessage.IsGif(externalDocument))
+                    //{
+                    //    return GifTemplate;
+                    //}
 
-                if (!(document.Thumb is TLPhotoSizeEmpty))
-                {
-                    return DocumentThumbTemplate;
+                    if (!(document.Thumb is TLPhotoSizeEmpty))
+                    {
+                        return DocumentThumbTemplate;
+                    }
                 }
 
                 return DocumentTemplate;

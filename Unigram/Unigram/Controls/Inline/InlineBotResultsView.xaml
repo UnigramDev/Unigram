@@ -93,7 +93,8 @@
           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
           MinHeight="{ThemeResource AppBarThemeCompactHeight}"
           BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
-          BorderThickness="0,1,0,0">
+          BorderThickness="0,1,0,0"
+          Visibility="{Binding InlineBotResultsVisibility}">
           <!--Visibility="{Binding InlineBotResults.Results.Count, Converter={StaticResource BooleanToVisibilityConverter}}"-->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -115,7 +116,7 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Grid.Visibility>
+        <!--<Grid.Visibility>
             <Binding Path="InlineBotResults.Results.Count" Converter="{StaticResource BooleanToVisibilityConverter}">
                 <Binding.TargetNullValue>
                     <Visibility>Collapsed</Visibility>
@@ -124,7 +125,7 @@
                     <Visibility>Collapsed</Visibility>
                 </Binding.FallbackValue>
             </Binding>
-        </Grid.Visibility>
+        </Grid.Visibility>-->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>

@@ -16,6 +16,7 @@ using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Globalization.DateTimeFormatting;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
@@ -30,6 +31,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -43,99 +45,150 @@ namespace Unigram.Views
     {
         private ItemsStackPanel _panel;
 
-        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (ViewModel.Peer is TLInputPeerUser)
-            {
-                lvDialogs.ScrollingHost.ViewChanged -= OnViewChanged;
-                return;
-            }
+            //if (ViewModel.Peer is TLInputPeerUser)
+            //{
+            //    lvDialogs.ScrollingHost.ViewChanged -= OnViewChanged;
+            //    return;
+            //}
 
             var index0 = _panel.FirstVisibleIndex;
             var index1 = _panel.LastVisibleIndex;
 
+            var show = false;
+            var date = DateTime.Now;
+
             if (index0 > -1 && index1 > -1 /*&& (index0 != _lastIndex0 || index1 != _lastIndex1)*/)
             {
-                //Cache();
-                Cache(index0 + 1, index1);
-
-                var itemsPerGroup = 0;
-                var compositor = ElementCompositionPreview.GetElementVisual(lvDialogs);
-                var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(lvDialogs.ScrollingHost);
-
-                for (int i = index1; i >= index0; i--)
+                var container0 = lvDialogs.ContainerFromIndex(index0);
+                if (container0 != null)
                 {
-                    var container = lvDialogs.ContainerFromIndex(i) as ListViewItem;
-                    if (container != null)
+                    var item0 = lvDialogs.ItemFromContainer(container0);
+                    if (item0 != null)
                     {
-                        var item = container.Content as TLMessage;
-                        if (item != null && (item.IsFirst || i == index0) && (!item.IsOut || item.IsPost))
+                        var message0 = item0 as TLMessageCommonBase;
+                        var date0 = BindConvert.Current.DateTime(message0.Date);
+
+                        var service0 = message0 as TLMessageService;
+                        if (service0 != null)
                         {
-                            var text = "0";
-                            if (i == 0)
-                            {
-                                _wasFirst[i] = true;
-                                text = "Max(0, Reference.Y + Scrolling.Translation.Y)"; // Compression effect
-                                text = "0";
-                            }
-                            else if (i == index0 && itemsPerGroup > 0)
-                            {
-                                _wasFirst[i] = true;
-                                text = "0";
-                            }
-                            else if (i == index0)
-                            {
-                                _wasFirst[i] = true;
-                                text = "Min(0, Reference.Y + Scrolling.Translation.Y)";
-                            }
-                            else
-                            {
-                                text = "Reference.Y + Scrolling.Translation.Y";
-                            }
-
-                            var visual = ElementCompositionPreview.GetElementVisual(container);
-                            var offset = visual.Offset;
-                            if (offset.Y == 0)
-                            {
-                                var transform = container.TransformToVisual(lvDialogs);
-                                var point = transform.TransformPoint(new Point());
-                                offset = new Vector3(0, (float)point.Y, 0);
-                            }
-
-                            var expression = visual.Compositor.CreateExpressionAnimation(text);
-                            expression.SetVector3Parameter("Reference", offset); //visual.Offset);
-                            expression.SetReferenceParameter("Scrolling", props);
-
-                            if (_inUse.ContainsKey(i) && _wasFirst.ContainsKey(i) && i != index0)
-                            {
-                                _wasFirst.Remove(i);
-
-                                var border = _inUse[i] as Border;
-                                var ellipse = ElementCompositionPreview.GetElementVisual(border.Child);
-                                ellipse.StopAnimation("Offset.Y");
-                                ellipse.StartAnimation("Offset.Y", expression);
-                            }
-                            else if (!_inUse.ContainsKey(i))
-                            {
-                                var ellipse = Push(i, item.FromId ?? 0, item);
-                                ellipse.StopAnimation("Offset.Y");
-                                ellipse.StartAnimation("Offset.Y", expression);
-                            }
-
-                            itemsPerGroup = 0;
-                        }
-                        else if (item != null && item.IsOut)
-                        {
-
+                            show = !(service0.Action is TLMessageActionDate);
                         }
                         else
                         {
-                            itemsPerGroup++;
+                            show = true;
                         }
+
+                        date = date0.Date;
                     }
                 }
 
+                #region OLD
+
+                //////Cache();
+                ////Cache(index0 + 1, index1);
+
+                ////var itemsPerGroup = 0;
+                ////var compositor = ElementCompositionPreview.GetElementVisual(lvDialogs);
+                ////var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(lvDialogs.ScrollingHost);
+
+                ////for (int i = index1; i >= index0; i--)
+                ////{
+                ////    var container = lvDialogs.ContainerFromIndex(i) as ListViewItem;
+                ////    if (container != null)
+                ////    {
+                ////        var item = container.Content as TLMessage;
+                ////        if (item != null && (item.IsFirst || i == index0) && (!item.IsOut || item.IsPost))
+                ////        {
+                ////            var text = "0";
+                ////            if (i == 0)
+                ////            {
+                ////                _wasFirst[i] = true;
+                ////                text = "Max(0, Reference.Y + Scrolling.Translation.Y)"; // Compression effect
+                ////                text = "0";
+                ////            }
+                ////            else if (i == index0 && itemsPerGroup > 0)
+                ////            {
+                ////                _wasFirst[i] = true;
+                ////                text = "0";
+                ////            }
+                ////            else if (i == index0)
+                ////            {
+                ////                _wasFirst[i] = true;
+                ////                text = "Min(0, Reference.Y + Scrolling.Translation.Y)";
+                ////            }
+                ////            else
+                ////            {
+                ////                text = "Reference.Y + Scrolling.Translation.Y";
+                ////            }
+
+                ////            var visual = ElementCompositionPreview.GetElementVisual(container);
+                ////            var offset = visual.Offset;
+                ////            if (offset.Y == 0)
+                ////            {
+                ////                var transform = container.TransformToVisual(lvDialogs);
+                ////                var point = transform.TransformPoint(new Point());
+                ////                offset = new Vector3(0, (float)point.Y, 0);
+                ////            }
+
+                ////            var expression = visual.Compositor.CreateExpressionAnimation(text);
+                ////            expression.SetVector3Parameter("Reference", offset); //visual.Offset);
+                ////            expression.SetReferenceParameter("Scrolling", props);
+
+                ////            if (_inUse.ContainsKey(i) && _wasFirst.ContainsKey(i) && i != index0)
+                ////            {
+                ////                _wasFirst.Remove(i);
+
+                ////                var border = _inUse[i] as Border;
+                ////                var ellipse = ElementCompositionPreview.GetElementVisual(border.Child);
+                ////                ellipse.StopAnimation("Offset.Y");
+                ////                ellipse.StartAnimation("Offset.Y", expression);
+                ////            }
+                ////            else if (!_inUse.ContainsKey(i))
+                ////            {
+                ////                var ellipse = Push(i, item.FromId ?? 0, item);
+                ////                ellipse.StopAnimation("Offset.Y");
+                ////                ellipse.StartAnimation("Offset.Y", expression);
+                ////            }
+
+                ////            itemsPerGroup = 0;
+                ////        }
+                ////        else if (item != null && item.IsOut)
+                ////        {
+
+                ////        }
+                ////        else
+                ////        {
+                ////            itemsPerGroup++;
+                ////        }
+                ////    }
+                ////}
+
+
+                #endregion
+
                 //Update();
+            }
+
+            if (show)
+            {
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(new Run { Text = new DateTimeFormatter("day month").Format(date) });
+
+                DateHeader.Visibility = Visibility.Visible;
+                DateHeaderLabel.Blocks.Clear();
+                DateHeaderLabel.Blocks.Add(paragraph);
+            }
+            else
+            {
+                DateHeader.Visibility = Visibility.Collapsed;
+            }
+
+            if (e.IsIntermediate == false)
+            {
+                await Task.Delay(2000);
+                DateHeader.Visibility = Visibility.Collapsed;
             }
         }
 

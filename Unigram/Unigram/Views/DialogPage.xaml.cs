@@ -63,8 +63,8 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
-            //_panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
-            //lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
+            _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
+            lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
 
             lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
         }
@@ -118,11 +118,6 @@ namespace Unigram.Views
         private void txtMessage_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
             CheckMessageBoxEmpty();
-        }
-
-        private void btnVoiceMessage_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private async void btnSendMessage_Click(object sender, RoutedEventArgs e)

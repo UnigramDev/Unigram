@@ -12,9 +12,11 @@ namespace Telegram.Api.TL.Methods.Messages
 		public enum Flag : Int32
 		{
 			EditMessage = (1 << 0),
+			Force = (1 << 1),
 		}
 
 		public bool IsEditMessage { get { return Flags.HasFlag(Flag.EditMessage); } set { Flags = value ? (Flags | Flag.EditMessage) : (Flags & ~Flag.EditMessage); } }
+		public bool IsForce { get { return Flags.HasFlag(Flag.Force); } set { Flags = value ? (Flags | Flag.Force) : (Flags & ~Flag.Force); } }
 
 		public Flag Flags { get; set; }
 		public TLInputBotInlineMessageID Id { get; set; }

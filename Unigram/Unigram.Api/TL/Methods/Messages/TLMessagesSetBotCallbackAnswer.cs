@@ -24,6 +24,7 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int64 QueryId { get; set; }
 		public String Message { get; set; }
 		public String Url { get; set; }
+		public Int32 CacheTime { get; set; }
 
 		public TLMessagesSetBotCallbackAnswer() { }
 		public TLMessagesSetBotCallbackAnswer(TLBinaryReader from, bool cache = false)
@@ -39,6 +40,7 @@ namespace Telegram.Api.TL.Methods.Messages
 			QueryId = from.ReadInt64();
 			if (HasMessage) Message = from.ReadString();
 			if (HasUrl) Url = from.ReadString();
+			CacheTime = from.ReadInt32();
 			if (cache) ReadFromCache(from);
 		}
 
@@ -46,11 +48,12 @@ namespace Telegram.Api.TL.Methods.Messages
 		{
 			UpdateFlags();
 
-			to.Write(0xC927D44B);
+			to.Write(0xD58F130A);
 			to.Write((Int32)Flags);
 			to.Write(QueryId);
 			if (HasMessage) to.Write(Message);
 			if (HasUrl) to.Write(Url);
+			to.Write(CacheTime);
 			if (cache) WriteToCache(to);
 		}
 

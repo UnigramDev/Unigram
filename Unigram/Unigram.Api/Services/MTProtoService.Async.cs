@@ -78,10 +78,10 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
-        public Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id)
+        public Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id, bool revoke)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedMessages>>();
-            DeleteMessagesCallback(id, (callback) =>
+            DeleteMessagesCallback(id, revoke, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedMessages>(callback));
             }, (faultCallback) =>
@@ -338,15 +338,15 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
-        public Task<MTProtoResponse<TLServerDHInnerData>> GetDHConfigAsync(int version, int randomLength)
+        public Task<MTProtoResponse<TLMessagesDHConfig>> GetDHConfigAsync(int version, int randomLength)
         {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLServerDHInnerData>>();
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesDHConfig>>();
             GetDHConfigCallback(version, randomLength, (callback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLServerDHInnerData>(callback));
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesDHConfig>(callback));
             }, (faultCallback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLServerDHInnerData>(faultCallback));
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesDHConfig>(faultCallback));
             });
             return tsc.Task;
         }

@@ -8,6 +8,7 @@ using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Capture;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -80,6 +81,7 @@ namespace Unigram.Controls
             var result = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo /*OrVideo*/ );
             if (result != null)
             {
+                await result.CopyAsync(KnownFolders.CameraRoll, DateTime.Now.ToString("WIN_yyyyMMdd_HH_mm_ss") + ".jpg", NameCollisionOption.GenerateUniqueName);
                 ItemClick?.Invoke(this, new MediaSelectedEventArgs(new StoragePhoto(result)));
             }
         }

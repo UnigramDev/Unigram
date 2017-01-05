@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels
 {
@@ -35,6 +36,15 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _inlineBotResults, value);
+                RaisePropertyChanged(() => InlineBotResultsVisibility);
+            }
+        }
+
+        public Visibility InlineBotResultsVisibility
+        {
+            get
+            {
+                return _inlineBotResults != null && ((_inlineBotResults.HasSwitchPm && _inlineBotResults.SwitchPm != null) || (_inlineBotResults.Results != null && _inlineBotResults.Results.Count > 0)) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

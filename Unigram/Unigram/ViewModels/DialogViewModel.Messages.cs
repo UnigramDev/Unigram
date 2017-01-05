@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
 {
@@ -97,12 +99,52 @@ namespace Unigram.ViewModels
         {
             if (message == null) return;
 
-            var dialog = new MessageDialog("Do you want to delete this message?", "Delete");
-            dialog.Commands.Add(new UICommand("Si"));
-            dialog.Commands.Add(new UICommand("No"));
-            var result = await dialog.ShowAsync();
-            if (result != null && result.Label == "Si")
+            var check = default(CheckBox);
+            var content = new StackPanel();
+            content.Children.Add(new TextBlock
             {
+                Text = "Are you sure you want to delete 1 message?",
+                Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
+            });
+
+            var messageCommon = message as TLMessageCommonBase;
+            if (messageCommon != null && messageCommon.IsOut && Peer is TLInputPeerUser)
+            {
+                var date = BindConvert.Current.DateTime(messageCommon.Date);
+                var elapsed = DateTime.Now - date;
+
+                if (elapsed.TotalHours < 48)
+                {
+                    var user = With as TLUser;
+                    if (user != null)
+                    {
+                        check = new CheckBox
+                        {
+                            Content = string.Format("Delete for {0}", user.FullName),
+                            Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
+                        };
+
+                        content.Children.Add(check);
+                    }
+                }
+            }
+
+            //var dialog = new MessageDialog("Do you want to delete this message?", "Delete");
+            //dialog.Commands.Add(new UICommand("Si"));
+            //dialog.Commands.Add(new UICommand("No"));
+            //var result = await dialog.ShowAsync();
+            //if (result != null && result.Label == "Si")
+
+            var dialog = new ContentDialog();
+            dialog.Title = "Delete";
+            dialog.Content = content;
+            dialog.PrimaryButtonText = "Yes";
+            dialog.SecondaryButtonText = "No";
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                var revoke = check?.IsChecked == true;
+
                 var messages = new List<TLMessageBase>() { message };
                 if (message.Id == 0 && message.RandomId != 0L)
                 {
@@ -110,7 +152,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                DeleteMessages(null, null, messages, null, DeleteMessagesInternal);
+                DeleteMessages(null, null, messages, revoke, null, DeleteMessagesInternal);
             }
         }
 
@@ -147,7 +189,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        public async void DeleteMessages(TLMessageBase lastItem, IList<TLMessageBase> localMessages, IList<TLMessageBase> remoteMessages, Action<TLMessageBase, IList<TLMessageBase>> localCallback = null, Action<TLMessageBase, IList<TLMessageBase>> remoteCallback = null)
+        public async void DeleteMessages(TLMessageBase lastItem, IList<TLMessageBase> localMessages, IList<TLMessageBase> remoteMessages, bool revoke, Action<TLMessageBase, IList<TLMessageBase>> localCallback = null, Action<TLMessageBase, IList<TLMessageBase>> remoteCallback = null)
         {
             if (localMessages != null && localMessages.Count > 0)
             {
@@ -156,7 +198,7 @@ namespace Unigram.ViewModels
             if (remoteMessages != null && remoteMessages.Count > 0)
             {
                 var messages = new TLVector<int>(remoteMessages.Select(x => x.Id).ToList());
-                var response = await ProtoService.DeleteMessagesAsync(messages);
+                var response = await ProtoService.DeleteMessagesAsync(messages, revoke);
                 if (response.IsSucceeded)
                 {
                     remoteCallback?.Invoke(lastItem, remoteMessages);
@@ -237,7 +279,7 @@ namespace Unigram.ViewModels
             var urlButton = button as TLKeyboardButtonUrl;
             if (urlButton != null)
             {
-                if (urlButton.Url.Contains("telegram.me"))
+                if (urlButton.Url.Contains("telegram.me") || urlButton.Url.Contains("t.me"))
                 {
                     MessageHelper.HandleTelegramUrl(urlButton.Url);
                 }

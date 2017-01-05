@@ -8,7 +8,17 @@ namespace Telegram.Api.TL.Methods.Updates
 	/// </summary>
 	public partial class TLUpdatesGetDifference : TLObject
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			PtsTotalLimit = (1 << 0),
+		}
+
+		public bool HasPtsTotalLimit { get { return Flags.HasFlag(Flag.PtsTotalLimit); } set { Flags = value ? (Flags | Flag.PtsTotalLimit) : (Flags & ~Flag.PtsTotalLimit); } }
+
+		public Flag Flags { get; set; }
 		public Int32 Pts { get; set; }
+		public Int32? PtsTotalLimit { get; set; }
 		public Int32 Date { get; set; }
 		public Int32 Qts { get; set; }
 
@@ -22,7 +32,9 @@ namespace Telegram.Api.TL.Methods.Updates
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Pts = from.ReadInt32();
+			if (HasPtsTotalLimit) PtsTotalLimit = from.ReadInt32();
 			Date = from.ReadInt32();
 			Qts = from.ReadInt32();
 			if (cache) ReadFromCache(from);
@@ -30,11 +42,20 @@ namespace Telegram.Api.TL.Methods.Updates
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0xA041495);
+			UpdateFlags();
+
+			to.Write(0x25939651);
+			to.Write((Int32)Flags);
 			to.Write(Pts);
+			if (HasPtsTotalLimit) to.Write(PtsTotalLimit.Value);
 			to.Write(Date);
 			to.Write(Qts);
 			if (cache) WriteToCache(to);
+		}
+
+		private void UpdateFlags()
+		{
+			HasPtsTotalLimit = PtsTotalLimit != null;
 		}
 	}
 }

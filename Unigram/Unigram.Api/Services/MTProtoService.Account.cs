@@ -220,7 +220,7 @@ namespace Telegram.Api.Services
 
 	    public void UpdateUsernameCallback(string username, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null)
 	    {
-            var obj = new TLUpdateUserName { Username = username };
+            var obj = new TLAccountUpdateUsername { Username = username };
 
             SendInformativeMessage("account.updateUsername", obj, callback, faultCallback);
 	    }

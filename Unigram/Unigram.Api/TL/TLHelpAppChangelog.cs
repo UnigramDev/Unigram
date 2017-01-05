@@ -5,7 +5,9 @@ namespace Telegram.Api.TL
 {
 	public partial class TLHelpAppChangelog : TLHelpAppChangelogBase 
 	{
-		public String Text { get; set; }
+		public String Message { get; set; }
+		public TLMessageMediaBase Media { get; set; }
+		public TLVector<TLMessageEntityBase> Entities { get; set; }
 
 		public TLHelpAppChangelog() { }
 		public TLHelpAppChangelog(TLBinaryReader from, bool cache = false)
@@ -17,14 +19,18 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from, bool cache = false)
 		{
-			Text = from.ReadString();
+			Message = from.ReadString();
+			Media = TLFactory.Read<TLMessageMediaBase>(from, cache);
+			Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache);
 			if (cache) ReadFromCache(from);
 		}
 
 		public override void Write(TLBinaryWriter to, bool cache = false)
 		{
-			to.Write(0x4668E6BD);
-			to.Write(Text);
+			to.Write(0x2A137E7C);
+			to.Write(Message);
+			to.WriteObject(Media, cache);
+			to.WriteObject(Entities, cache);
 			if (cache) WriteToCache(to);
 		}
 	}

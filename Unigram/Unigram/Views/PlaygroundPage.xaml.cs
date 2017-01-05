@@ -4,12 +4,26 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Telegram.Api.Helpers;
+using Telegram.Api.Services;
+using Telegram.Api.Services.Cache;
+using Telegram.Api.Services.FileManager;
+using Telegram.Api.Services.Updates;
+using Telegram.Api.TL;
+using Unigram.Controls;
+using Unigram.Core.Dependency;
+using Unigram.Native;
+using Unigram.ViewModels;
 using Windows.ApplicationModel.Calls;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Sensors;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media;
 using Windows.Media.Audio;
+using Windows.Media.Capture;
+using Windows.Media.MediaProperties;
 using Windows.Media.Render;
 using Windows.Phone.Media.Devices;
 using Windows.Storage;
@@ -31,119 +45,319 @@ namespace Unigram.Views
     /// </summary>
     public sealed partial class PlaygroundPage : Page
     {
-        private ProximitySensor sensor;
-        private ProximitySensorDisplayOnOffController displayController;
-        private DeviceWatcher watcher;
+        private OpusRecorder recorder;
 
         public PlaygroundPage()
         {
             this.InitializeComponent();
 
-            watcher = DeviceInformation.CreateWatcher(ProximitySensor.GetDeviceSelector());
-            watcher.Added += OnProximitySensorAdded;
-            watcher.Start();
 
-            Loaded += PlaygroundPage_Loaded;
         }
 
-        private async void PlaygroundPage_Loaded(object sender, RoutedEventArgs e)
+        private async void Start_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            var devices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
-            var yolo = devices.ToList();
-
-            var boh = yolo[1].Properties.ToList();
-
-            var song = String.Format("/Views/Vandamme.mp3");
-            var soundFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri(BaseUri, song));
-
-            var settings = new AudioGraphSettings(AudioRenderCategory.Communications);
-            settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
-            //settings.PrimaryRenderDevice = devices[1];
-
-            var resultg = await AudioGraph.CreateAsync(settings);
-            if (resultg.Status == AudioGraphCreationStatus.Success)
+            if (recorder?.IsRecording == true)
             {
-                var audioflow = resultg.Graph;
+                await recorder.StopAsync();
+            }
 
-                var deviceOutputNodeResult = await audioflow.CreateDeviceOutputNodeAsync();
-                if (deviceOutputNodeResult.Status == AudioDeviceNodeCreationStatus.Success)
+            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
+            recorder = new OpusRecorder(file);
+            await recorder.StartAsync();
+        }
+
+        private async void Start_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            if (recorder.IsRecording)
+            {
+                await recorder.StopAsync();
+
+                var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.OpenIfExists);
+
+                var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
+                var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
+                var updatesService = UnigramContainer.Instance.ResolverType<IUpdatesService>();
+                var uploadManager = UnigramContainer.Instance.ResolverType<IUploadAudioManager>();
+
+                var contacts = await protoService.GetDialogsAsync(0, 0, new TLInputPeerEmpty(), 200);
+                //var user = contacts.Value.Users.OfType<TLUser>().FirstOrDefault(x => x.FullName.Equals("Andrea Cocci"));
+                var channel = contacts.Value.Chats.OfType<TLChannel>().FirstOrDefault(x => x.FullName.Equals("Unigram Insiders"));
+
+                var fileLocation = new TLFileLocation
                 {
-                    var deviceOuput = deviceOutputNodeResult.DeviceOutputNode;
+                    VolumeId = TLLong.Random(),
+                    LocalId = TLInt.Random(),
+                    Secret = TLLong.Random(),
+                    DCId = 0
+                };
 
-                    var fileInputResult = await audioflow.CreateFileInputNodeAsync(soundFile);
-                    var fileInput = fileInputResult.FileInputNode;
-                    fileInput.AddOutgoingConnection(deviceOuput);
+                var fileName = string.Format("{0}_{1}_{2}.ogg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+                var fileCache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
 
-                    audioflow.Start();
+                await file.CopyAndReplaceAsync(fileCache);
 
-                    //AudioRoutingManager.GetDefault().SetAudioEndpoint(AudioRoutingEndpoint.Earpiece);
-                }
+                var basicProps = await fileCache.GetBasicPropertiesAsync();
+                var imageProps = await fileCache.Properties.GetMusicPropertiesAsync();
 
-            }
-        }
+                var date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
 
-        /// <summary>
-        /// Invoked when the device watcher finds a proximity sensor
-        /// </summary>
-        /// <param name="sender">The device watcher</param>
-        /// <param name="device">Device information for the proximity sensor that was found</param>
-        private void OnProximitySensorAdded(DeviceWatcher sender, DeviceInformation device)
-        {
-            if (null == sensor)
-            {
-                ProximitySensor foundSensor = ProximitySensor.FromId(device.Id);
-                if (null != foundSensor)
+                var media = new TLMessageMediaDocument
                 {
-                    sensor = foundSensor;
-                    sensor.ReadingChanged += Sensor_ReadingChanged;
-                    displayController = sensor.CreateDisplayOnOffController();
-                }
-                else
+                    // TODO: Document = ...
+                    //Caption = "Yolo"
+                };
+
+                var message = TLUtils.GetMessage(SettingsHelper.UserId, new TLPeerChannel { ChannelId = channel.Id }, TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+                var fileId = TLLong.Random();
+                var upload = await uploadManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
+                if (upload != null)
                 {
-                    Debug.WriteLine("Could not get a proximity sensor from the device id");
+                    var inputMedia = new TLInputMediaUploadedDocument
+                    {
+                        File = new TLInputFile
+                        {
+                            Id = upload.FileId,
+                            Md5Checksum = string.Empty,
+                            Name = fileName,
+                            Parts = upload.Parts.Count
+                        },
+                        MimeType = "audio/ogg",
+                        Caption = media.Caption,
+                        Attributes = new TLVector<TLDocumentAttributeBase>
+                        {
+                            new TLDocumentAttributeAnimated(),
+                            new TLDocumentAttributeAudio
+                            {
+                                IsVoice = true,
+                                Duration = 50
+                            }
+                        }
+                    };
+
+                    var result = await protoService.SendMediaAsync(new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value }, inputMedia, message);
                 }
             }
         }
 
-        private async void Sensor_ReadingChanged(ProximitySensor sender, ProximitySensorReadingChangedEventArgs args)
+        private AudioGraph graph;
+        private AudioDeviceOutputNode deviceOutputNode;
+        private AudioFileInputNode fileInputNode;
+        private CreateAudioFileInputNodeResult fileInputNodeResult;
+        private CreateAudioDeviceOutputNodeResult deviceOutputNodeResult;
+        private StorageFile file;
+
+        private async void Media_Loaded(object sender, RoutedEventArgs e)
         {
-            if (args.Reading.IsDetected)
+
+
+
+
+
+            if (recorder?.IsRecording == true)
             {
-                var result = await VoipCallCoordinator.GetDefault().ReserveCallResourcesAsync("Unigram.Tasks.InteractiveTask");
-                var call = VoipCallCoordinator.GetDefault().RequestNewOutgoingCall("test", "test", "test", VoipPhoneCallMedia.Audio);
+                await recorder.StopAsync();
+                //Media.Source = new Uri("ms-appdata:///temp/recording.ogg");
+                //Media.Play();
 
-                call.NotifyCallActive();
+                file = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
 
-                AudioRoutingManager.GetDefault().SetAudioEndpoint(AudioRoutingEndpoint.Earpiece);
+                var settings = new AudioGraphSettings(AudioRenderCategory.Communications);
+                settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
+
+                var result = await AudioGraph.CreateAsync(settings);
+                if (result.Status != AudioGraphCreationStatus.Success)
+                    return;
+
+                graph = result.Graph;
+                Debug.WriteLine("Graph successfully created!");
+
+                fileInputNodeResult = await graph.CreateFileInputNodeAsync(file);
+                if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
+                    return;
+
+                deviceOutputNodeResult = await graph.CreateDeviceOutputNodeAsync();
+                if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
+                    return;
+
+                deviceOutputNode = deviceOutputNodeResult.DeviceOutputNode;
+                fileInputNode = fileInputNodeResult.FileInputNode;
+                fileInputNode.AddOutgoingConnection(deviceOutputNode);
+                 
+                graph.Start();
+
+                //var file2 = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
+                //Media.SetSource(await file2.OpenReadAsync(), "audio/ogg");
+                //Media.Play();
+
+                return;
             }
-            //if (args.Reading.IsDetected)
-            //{
-            //    AudioRoutingManager.GetDefault().SetAudioEndpoint(AudioRoutingEndpoint.Earpiece);
-            //}
-            //else
-            //{
-            //    Debug.WriteLine("Nope");
-            //    AudioRoutingManager.GetDefault().SetAudioEndpoint(AudioRoutingEndpoint.Default);
-            //}
+
+            file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
+            recorder = new OpusRecorder(file);
+            await recorder.StartAsync();
+
+        }
+    }
+
+    public class VoiceButton : GlyphButton
+    {
+        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+
+        private OpusRecorder _recorder;
+        private StorageFile _file;
+        private bool _cancelOnRelease;
+        private bool _isPressed;
+        private DateTime _start;
+
+        public VoiceButton()
+        {
+            DefaultStyleKey = typeof(VoiceButton);
         }
 
-        /// <summary>
-        /// Invoked immediately before the Page is unloaded and is no longer the current source of a parent Frame.
-        /// </summary>
-        /// <param name="e">
-        /// Event data that can be examined by overriding code. The event data is representative
-        /// of the navigation that will unload the current Page unless canceled. The
-        /// navigation can potentially be canceled by setting Cancel.
-        /// </param>
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            if (null != displayController)
+            base.OnPointerPressed(e);
+            Start();
+
+            CapturePointer(e.Pointer);
+        }
+
+        protected override void OnPointerReleased(PointerRoutedEventArgs e)
+        {
+            base.OnPointerReleased(e);
+            Stop();
+
+            ReleasePointerCapture(e.Pointer);
+        }
+
+        protected override void OnPointerEntered(PointerRoutedEventArgs e)
+        {
+            base.OnPointerEntered(e);
+
+            if (_isPressed)
             {
-                displayController.Dispose(); // closes the controller
-                displayController = null;
+                _cancelOnRelease = false;
+            }
+        }
+
+        protected override void OnPointerExited(PointerRoutedEventArgs e)
+        {
+            base.OnPointerExited(e);
+
+            if (_isPressed)
+            {
+                _cancelOnRelease = true;
+            }
+        }
+
+        private async void Start()
+        {
+            if (_recorder?.IsRecording == true)
+            {
+                await _recorder.StopAsync();
             }
 
-            base.OnNavigatingFrom(e);
+            _file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
+            _recorder = new OpusRecorder(_file);
+            await _recorder.StartAsync();
+
+            _isPressed = true;
+            _cancelOnRelease = false;
+            _start = DateTime.Now;
         }
+
+        private async void Stop()
+        {
+            if (_recorder?.IsRecording == true)
+            {
+                await _recorder.StopAsync();
+            }
+
+            if (_cancelOnRelease)
+            {
+                await _file.DeleteAsync();
+            }
+            else
+            {
+                await ViewModel.SendAudioAsync(_file, (int)(DateTime.Now - _start).TotalSeconds, true, null, null, null);
+            }
+        }
+    }
+
+    internal sealed class OpusRecorder
+    {
+        #region fields
+
+        private StorageFile m_file;
+        private IMediaExtension m_opusSink;
+        private MediaCapture m_mediaCapture;
+
+        #endregion
+
+        #region properties
+
+        public StorageFile File
+        {
+            get { return m_file; }
+        }
+
+        public bool IsRecording
+        {
+            get { return m_mediaCapture != null; }
+        }
+
+        #endregion
+
+        #region constructors
+
+        public OpusRecorder(StorageFile file)
+        {
+            m_file = file;
+        }
+
+        #endregion
+
+        #region methods
+
+        public async Task StartAsync()
+        {
+            if (m_mediaCapture != null)
+                throw new InvalidOperationException("Cannot start while recording");
+
+            m_mediaCapture = new MediaCapture();
+            await m_mediaCapture.InitializeAsync(new MediaCaptureInitializationSettings()
+            {
+                MediaCategory = MediaCategory.Speech,
+                AudioProcessing = AudioProcessing.Default,
+                MemoryPreference = MediaCaptureMemoryPreference.Auto,
+                SharingMode = MediaCaptureSharingMode.SharedReadOnly,
+                StreamingCaptureMode = StreamingCaptureMode.Audio,
+            });
+
+            m_opusSink = await OpusCodec.CreateMediaSinkAsync(m_file);
+
+            var wawEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
+            wawEncodingProfile.Audio.BitsPerSample = 16;
+            wawEncodingProfile.Audio.SampleRate = 48000;
+            wawEncodingProfile.Audio.ChannelCount = 1;
+            await m_mediaCapture.StartRecordToCustomSinkAsync(wawEncodingProfile, m_opusSink);
+        }
+
+        public async Task StopAsync()
+        {
+            if (m_mediaCapture == null)
+                throw new InvalidOperationException("Cannot stop while not recording");
+
+            await m_mediaCapture.StopRecordAsync();
+
+            m_mediaCapture.Dispose();
+            m_mediaCapture = null;
+
+            ((IDisposable)m_opusSink).Dispose();
+            m_opusSink = null;
+        }
+
+        #endregion
     }
 }

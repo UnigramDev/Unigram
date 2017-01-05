@@ -22,6 +22,7 @@ using Telegram.Api.Services.FileManager;
 using Windows.Storage;
 using Windows.System;
 using Unigram.Core.Dependency;
+using Unigram.Views;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -94,6 +95,20 @@ namespace Unigram.Themes
                             }
                         }
                     }
+                }
+            }
+        }
+
+        private void InstantView_Click(object sender, RoutedEventArgs e)
+        {
+            var image = sender as FrameworkElement;
+            var message = image.DataContext as TLMessage;
+            var bubble = image.Ancestors<MessageControlBase>().FirstOrDefault() as MessageControlBase;
+            if (bubble != null)
+            {
+                if (bubble.Context != null)
+                {
+                    bubble.Context.NavigationService.Navigate(typeof(ArticlePage), message.Media);
                 }
             }
         }

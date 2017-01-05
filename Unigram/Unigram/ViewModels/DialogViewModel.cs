@@ -35,6 +35,7 @@ using Unigram.Controls.Views;
 using Unigram.Core.Models;
 using Unigram.Controls;
 using Unigram.Core.Helpers;
+using Org.BouncyCastle.Security;
 
 namespace Unigram.ViewModels
 {
@@ -161,6 +162,57 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = false;
         }
 
+        public async Task LoadFirstSliceAsync()
+        {
+            if (_isLoadingNextSlice) return;
+            _isLoadingNextSlice = true;
+
+            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
+
+            var maxId = _currentDialog.ReadInboxMaxId;
+            var offset = Math.Max(0, _currentDialog.UnreadCount - 10);
+
+            var lastUnread = true;
+
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -offset, maxId, 20);
+            if (result.IsSucceeded)
+            {
+                ProcessReplies(result.Value.Messages);
+
+                foreach (var item in result.Value.Messages)
+                {
+                    if (lastUnread && !item.IsUnread)
+                    {
+                        var serviceMessage = new TLMessageService
+                        {
+                            FromId = SettingsHelper.UserId,
+                            ToId = Peer.ToPeer(),
+                            State = TLMessageState.Sending,
+                            IsOut = true,
+                            IsUnread = true,
+                            Date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now),
+                            Action = new TLMessageActionUnreadMessages(),
+                            RandomId = TLLong.Random()
+                        };
+
+                        Messages.Insert(0, serviceMessage);
+                    }
+
+                    lastUnread = item.IsUnread;
+
+                    Messages.Insert(0, item);
+                    //InsertMessage(item as TLMessageCommonBase);
+                }
+            }
+
+            _isLoadingNextSlice = false;
+        }
+
+        public class TLMessageActionUnreadMessages : TLMessageActionBase
+        {
+
+        }
+
         public async void ProcessReplies(IList<TLMessageBase> messages)
         {
             var replyIds = new TLVector<int>();
@@ -273,7 +325,6 @@ namespace Unigram.ViewModels
                 With = user;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
 
-                //Happy Birthday Alexmitter xD
                 Messages.Clear();
                 photo = user.Photo;
                 DialogTitle = user.FullName;
@@ -281,6 +332,46 @@ namespace Unigram.ViewModels
                 LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
                 LastSeenVisible = Visibility.Visible;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
+
+                // test calls
+                //var config = await ProtoService.GetDHConfigAsync(0, 0);
+                //if (config.IsSucceeded)
+                //{
+                //    var dh = config.Value;
+                //    if (!TLUtils.CheckPrime(dh.P, dh.G))
+                //    {
+                //        return;
+                //    }
+
+                //    var array = new byte[256];
+                //    var secureRandom = new SecureRandom();
+                //    secureRandom.NextBytes(array);
+
+                //    var a = array;
+                //    var p = dh.P;
+                //    var g = dh.G;
+                //    var gb = MTProtoService.GetGB(array, dh.G, dh.P);
+                //    var ga = gb;
+
+                //    var request = new Telegram.Api.TL.Methods.Phone.TLPhoneRequestCall
+                //    {
+                //        UserId = new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 },
+                //        RandomId = TLInt.Random(),
+                //        GA = ga,
+                //        Protocol = new TLPhoneCallProtocol()
+                //    };
+
+                //    var proto = (MTProtoService)ProtoService;
+                //    proto.SendInformativeMessageInternal<TLPhonePhoneCall>("phone.requestCall", request,
+                //    result =>
+                //    {
+                //        Debugger.Break();
+                //    },
+                //    fault =>
+                //    {
+                //        Debugger.Break();
+                //    });
+                //}
             }
             else if (channel != null)
             {
@@ -323,9 +414,9 @@ namespace Unigram.ViewModels
                 LastSeenVisible = Visibility.Collapsed;
             }
 
-            await LoadNextSliceAsync();
-
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
+
+            await LoadNextSliceAsync();
 
             var dialog = _currentDialog;
             if (dialog != null && dialog.HasDraft)
@@ -337,6 +428,25 @@ namespace Unigram.ViewModels
                     ProcessDraftReply(draft);
                 }
             }
+
+            //if (dialog != null && Messages.Count > 0)
+            //{
+            //    var unread = dialog.UnreadCount;
+            //    if (Peer is TLInputPeerChannel)
+            //    {
+            //        if (channel != null)
+            //        {
+            //            await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+            //    }
+
+            //    dialog.UnreadCount = dialog.UnreadCount - unread;
+            //    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            //}
 
             Aggregator.Subscribe(this);
 
@@ -796,7 +906,7 @@ namespace Unigram.ViewModels
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
                 var fileId = TLLong.Random();
-                var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
+                var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileName, false).AsTask(media.Upload());
                 if (upload != null)
                 {
                     var inputMedia = new TLInputMediaUploadedDocument
@@ -805,7 +915,7 @@ namespace Unigram.ViewModels
                         {
                             Id = upload.FileId,
                             Md5Checksum = string.Empty,
-                            Name = "test.gif",
+                            Name = fileName,
                             Parts = upload.Parts.Count
                         },
                         MimeType = "image/gif",
@@ -820,6 +930,100 @@ namespace Unigram.ViewModels
                             }
                         }
                         };
+
+                    var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                }
+            });
+        }
+
+        public async Task SendAudioAsync(StorageFile file, int duration, bool voice, string title, string performer, string caption)
+        {
+            var fileLocation = new TLFileLocation
+            {
+                VolumeId = TLLong.Random(),
+                LocalId = TLInt.Random(),
+                Secret = TLLong.Random(),
+                DCId = 0
+            };
+
+            var fileName = string.Format("{0}_{1}_{2}.ogg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+            var fileCache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+
+            await file.CopyAndReplaceAsync(fileCache);
+
+            var basicProps = await fileCache.GetBasicPropertiesAsync();
+            var imageProps = await fileCache.Properties.GetImagePropertiesAsync();
+
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var media = new TLMessageMediaDocument
+            {
+                Caption = caption,
+                Document = new TLDocument
+                {
+                    Id = TLLong.Random(),
+                    AccessHash = TLLong.Random(),
+                    Date = date,
+                    MimeType = "audio/ogg",
+                    Size = (int)basicProps.Size,
+                    Thumb = new TLPhotoSizeEmpty
+                    {
+                        Type = string.Empty
+                    },
+                    Version = 0,
+                    DCId = 0,
+                    Attributes = new TLVector<TLDocumentAttributeBase>
+                    {
+                        new TLDocumentAttributeAudio
+                        {
+                            IsVoice = voice,
+                            Duration = duration,
+                            Title = title,
+                            Performer = performer
+                        }
+                    }
+                }
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var fileId = TLLong.Random();
+                var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileName, false).AsTask(media.Upload());
+                if (upload != null)
+                {
+                    var inputMedia = new TLInputMediaUploadedDocument
+                    {
+                        File = new TLInputFile
+                        {
+                            Id = upload.FileId,
+                            Md5Checksum = string.Empty,
+                            Name = fileName,
+                            Parts = upload.Parts.Count
+                        },
+                        MimeType = "audio/ogg",
+                        Caption = media.Caption,
+                        Attributes = new TLVector<TLDocumentAttributeBase>
+                        {
+                            new TLDocumentAttributeAudio
+                            {
+                                IsVoice = voice,
+                                Duration = duration,
+                                Title = title,
+                                Performer = performer
+                            }
+                        }
+                    };
 
                     var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
                 }

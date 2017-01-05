@@ -27,15 +27,15 @@ namespace Unigram.Selectors
             var message = item as TLMessage;
             if (message != null)
             {
-                if (message.IsOut)
-                {
-                    return MessageStyle;
-                }
+                //if (message.IsOut)
+                //{
+                //    return MessageStyle;
+                //}
 
-                if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
-                {
-                    return ChatFriendMessageStyle;
-                }
+                //if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
+                //{
+                //    return ChatFriendMessageStyle;
+                //}
 
                 return MessageStyle;
             }

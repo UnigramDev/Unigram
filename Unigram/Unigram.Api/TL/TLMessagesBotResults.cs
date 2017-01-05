@@ -22,6 +22,7 @@ namespace Telegram.Api.TL
 		public String NextOffset { get; set; }
 		public TLInlineBotSwitchPM SwitchPm { get; set; }
 		public TLVector<TLBotInlineResultBase> Results { get; set; }
+		public Int32 CacheTime { get; set; }
 
 		public TLMessagesBotResults() { }
 		public TLMessagesBotResults(TLBinaryReader from, bool cache = false)
@@ -38,6 +39,7 @@ namespace Telegram.Api.TL
 			if (HasNextOffset) NextOffset = from.ReadString();
 			if (HasSwitchPm) SwitchPm = TLFactory.Read<TLInlineBotSwitchPM>(from, cache);
 			Results = TLFactory.Read<TLVector<TLBotInlineResultBase>>(from, cache);
+			CacheTime = from.ReadInt32();
 			if (cache) ReadFromCache(from);
 		}
 
@@ -45,12 +47,13 @@ namespace Telegram.Api.TL
 		{
 			UpdateFlags();
 
-			to.Write(0x256709A6);
+			to.Write(0xCCD3563D);
 			to.Write((Int32)Flags);
 			to.Write(QueryId);
 			if (HasNextOffset) to.Write(NextOffset);
 			if (HasSwitchPm) to.WriteObject(SwitchPm, cache);
 			to.WriteObject(Results, cache);
+			to.Write(CacheTime);
 			if (cache) WriteToCache(to);
 		}
 

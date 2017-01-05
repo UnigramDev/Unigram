@@ -1460,9 +1460,9 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void DeleteMessagesCallback(TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
+        public void DeleteMessagesCallback(TLVector<int> id, bool revoke, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesDeleteMessages { Id = id };
+            var obj = new TLMessagesDeleteMessages { Id = id, IsRevoke = revoke };
 
             const string caption = "messages.deleteMessages";
             SendInformativeMessage<TLMessagesAffectedMessages>(caption, obj,

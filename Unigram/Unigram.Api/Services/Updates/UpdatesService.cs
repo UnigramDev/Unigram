@@ -1859,15 +1859,32 @@ namespace Telegram.Api.Services.Updates
                 return true;
             }
 
-            var updateNewAuthorization = update as TLUpdateNewAuthorization;
-            if (updateNewAuthorization != null)
-            {
-                if (updateNewAuthorization.Date > 0 && (_date == null || _date.Value < updateNewAuthorization.Date))
-                {
-                    _date = updateNewAuthorization.Date;
-                }
+            // TODO: 31/12/2016 removed?
+            //var updateNewAuthorization = update as TLUpdateNewAuthorization;
+            //if (updateNewAuthorization != null)
+            //{
+            //    if (updateNewAuthorization.Date > 0 && (_date == null || _date.Value < updateNewAuthorization.Date))
+            //    {
+            //        _date = updateNewAuthorization.Date;
+            //    }
 
-                Helpers.Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateNewAuthorization));
+            //    Helpers.Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateNewAuthorization));
+
+            //    return true;
+            //}
+
+            var updateDialogPinned = update as TLUpdateDialogPinned;
+            if (updateDialogPinned != null)
+            {
+                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateDialogPinned));
+
+                return true;
+            }
+
+            var updatePinnedDialogs = update as TLUpdatePinnedDialogs;
+            if (updatePinnedDialogs != null)
+            {
+                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updatePinnedDialogs));
 
                 return true;
             }

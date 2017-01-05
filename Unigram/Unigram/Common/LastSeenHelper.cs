@@ -53,5 +53,21 @@ namespace Unigram.Common
            // Debugger.Break();
             return Tuple.Create("Last seen a long time ago", DateTime.Now.AddYears(-30));
         }
+        public static Tuple<string, DateTime> GetLastSeenTime(TLUser User)
+        {
+            if (!User.IsSelf&&User.HasStatus && User.Status != null && User.Status.TypeId == TLType.UserStatusOffline)
+            {
+                var status = User.Status as TLUserStatusOffline;
+                var seen = TLUtils.ToDateTime(status.WasOnline);
+                var now = DateTime.Now;
+                var time = ((now.Date == seen.Date) ? "today at " : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? "yesterday at " : new DateTimeFormatter("shortdate").Format(seen)+" ")) + new DateTimeFormatter("shorttime").Format(seen);
+                return Tuple.Create($"Last seen {time}", seen); ;
+            }
+            else
+            {
+                var result = GetLastSeen(User);
+                return result;
+            }
+        }
     }
 }

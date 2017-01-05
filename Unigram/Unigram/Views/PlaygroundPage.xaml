@@ -102,7 +102,7 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Border Background="#54000000"/>
-        <!--<MediaElement Source="ms-appx:///Views/Vandamme.mp3" AudioCategory="Communications" AutoPlay="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AreTransportControlsEnabled="True"/>-->
+        <MediaElement x:Name="Media" AreTransportControlsEnabled="True"/>
+        <Button Click="Media_Loaded" Content="Play"/>
     </Grid>
 </Page>

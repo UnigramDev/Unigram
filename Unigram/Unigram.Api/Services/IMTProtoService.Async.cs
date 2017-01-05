@@ -17,7 +17,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLMessagesAffectedMessages>> ReadMessageContentsAsync(TLVector<int> id);
         Task<MTProtoResponse<TLUpdatesBase>> JoinChannelAsync(TLChannel channel);
         Task<MTProtoResponse<TLMessagesBotCallbackAnswer>> GetBotCallbackAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, int gameId);
-        Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id);
+        Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id, bool revoke);
         Task<MTProtoResponse<TLHelpTermsOfService>> GetTermsOfServiceAsync(string langCode);
         Task<MTProtoResponse<TLChannelsChannelParticipant>> GetParticipantAsync(TLInputChannelBase inputChannel, TLInputUserBase userId);
         Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id);
@@ -37,7 +37,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLMessagesStickerSet>> GetStickerSetAsync(TLInputStickerSetBase stickerset);
         Task<MTProtoResponse<bool>> SaveGifAsync(TLInputDocumentBase id, bool unsave);
         Task<MTProtoResponse<TLHelpSupport>> GetSupportAsync();
-        Task<MTProtoResponse<TLServerDHInnerData>> GetDHConfigAsync(int version, int randomLength);
+        Task<MTProtoResponse<TLMessagesDHConfig>> GetDHConfigAsync(int version, int randomLength);
         Task<MTProtoResponse<bool>> ResetNotifySettingsAsync();
         Task<MTProtoResponse<bool>> UnblockAsync(TLInputUserBase id);
         Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, TLSendMessageActionBase action);

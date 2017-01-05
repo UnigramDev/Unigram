@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" IgnorableNamespaces="uap mp rescap desktop">
-  <Identity Name="38833FF26BA1D.Unigram" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="0.1.35.0" />
+  <Identity Name="38833FF26BA1D.Unigram" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="1.1.0.0" />
   <mp:PhoneIdentity PhoneProductId="976a4dac-6ffb-4863-8f67-6de5b1c5a67e" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Unigram</DisplayName>
@@ -61,6 +61,12 @@
         <ActivatableClass ActivatableClassId="Unigram.Native.GIFByteStreamHandler" ThreadingModel="both" />
       </InProcessServer>
     </Extension>
+    <Extension Category="windows.activatableClass.inProcessServer">
+      <InProcessServer>
+        <Path>Unigram.Native.dll</Path>
+        <ActivatableClass ActivatableClassId="Unigram.Native.OpusByteStreamHandler" ThreadingModel="both" />
+      </InProcessServer>
+    </Extension>
   </Extensions>
   <Capabilities>
     <Capability Name="internetClient" />
@@ -70,5 +76,6 @@
     <uap:Capability Name="voipCall" />
     <!--<rescap:Capability Name="runFullTrust" />-->
     <DeviceCapability Name="location" />
+    <DeviceCapability Name="microphone" />
   </Capabilities>
 </Package>

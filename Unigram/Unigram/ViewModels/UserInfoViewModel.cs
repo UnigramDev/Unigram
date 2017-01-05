@@ -93,7 +93,7 @@ namespace Unigram.ViewModels
                     RaisePropertyChanged(() => UnstopVisibility);
                 }
 
-                var Status = LastSeenHelper.GetLastSeen(user);
+                var Status = LastSeenHelper.GetLastSeenTime(user);
                 LastSeen = Status.Item1;
 
                 Aggregator.Subscribe(this);

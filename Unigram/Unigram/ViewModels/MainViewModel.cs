@@ -16,6 +16,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Core.Notifications;
 using Unigram.Core.Services;
+using Unigram.Views;
 using Windows.ApplicationModel.Background;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.Networking.PushNotifications;

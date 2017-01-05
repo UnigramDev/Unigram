@@ -30,6 +30,11 @@ namespace Unigram.Converters
                             return Symbol.Play;
                         }
 
+                        if (TLMessage.IsVoice(document))
+                        {
+                            return Symbol.Play;
+                        }
+
                         return Symbol.Page2;
                     }
                 }
