@@ -987,7 +987,6 @@
                 x:Uid="Chat-Input-Message"
                 Background="Transparent"
                 Text="{Binding Text, Mode=TwoWay}"
-                Reply="{Binding Reply}"
                 AcceptsReturn="False"
                 PlaceholderText="Type your message..."
                 BorderThickness="0" 

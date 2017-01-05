@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
@@ -262,6 +263,8 @@ namespace Unigram.ViewModels
                 EditMessage = _editedMessage,
                 EditUntil = editUntil
             };
+
+            Aggregator.Publish(new EditMessageEventArgs(_editedMessage));
 
             //if (this._editMessageTimer == null)
             //{

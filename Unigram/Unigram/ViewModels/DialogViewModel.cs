@@ -424,7 +424,7 @@ namespace Unigram.ViewModels
                 var draft = dialog.Draft as TLDraftMessage;
                 if (draft != null)
                 {
-                    Text = draft.Message;
+                    Aggregator.Publish(new TLUpdateDraftMessage { Draft = draft, Peer = Peer.ToPeer() });
                     ProcessDraftReply(draft);
                 }
             }
