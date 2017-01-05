@@ -936,9 +936,9 @@
         </Grid>
 
         <!-- Input pane -->
-        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" 
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-              BorderThickness="0,1,0,0"
+              BorderThickness="0,0,0,0"
               BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"
               Grid.Row="3">
             <Grid.RowDefinitions>
@@ -975,7 +975,7 @@
                     </controls:MessageReference.Resources>
                 </controls:MessageReference>
 
-                <Border Background="Transparent">
+                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
                 </Border>
 
@@ -987,6 +987,7 @@
                 x:Uid="Chat-Input-Message"
                 Background="Transparent"
                 Text="{Binding Text, Mode=TwoWay}"
+                Reply="{Binding Reply}"
                 AcceptsReturn="False"
                 PlaceholderText="Type your message..."
                 BorderThickness="0" 

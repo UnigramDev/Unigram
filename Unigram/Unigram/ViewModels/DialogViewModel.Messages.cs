@@ -271,9 +271,9 @@ namespace Unigram.ViewModels
             //}
             //this._editMessageTimer.Start();
             //this.IsEditingEnabled = true;
+            //this.Text = text.ToString();
 
-            this.Text = text.ToString();
-            this.CurrentInlineBot = null;
+            CurrentInlineBot = null;
 
             //this.ClearStickerHints();
             //this.ClearInlineBotResults();

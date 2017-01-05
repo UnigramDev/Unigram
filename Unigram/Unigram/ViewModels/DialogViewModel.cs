@@ -687,10 +687,31 @@ namespace Unigram.ViewModels
 
             if (Reply != null)
             {
-                message.HasReplyToMsgId = true;
-                message.ReplyToMsgId = Reply.Id;
-                message.Reply = Reply;
-                Reply = null;
+                var container = Reply as TLMessagesContainter;
+                if (container != null)
+                {
+                    if (container.EditMessage != null)
+                    {
+                        var edit = await ProtoService.EditMessageAsync(Peer, container.EditMessage.Id, message.Message, message.Entities, null, false);
+                        if (edit.IsSucceeded)
+                        {
+                        }
+                        else
+                        {
+
+                        }
+
+                        Reply = null;
+                        return;
+                    }
+                }
+                else
+                {
+                    message.HasReplyToMsgId = true;
+                    message.ReplyToMsgId = Reply.Id;
+                    message.Reply = Reply;
+                    Reply = null;
+                }
             }
 
             var previousMessage = InsertSendingMessage(message, useReplyMarkup);

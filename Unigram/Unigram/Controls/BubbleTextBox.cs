@@ -12,6 +12,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Rtf;
+using Unigram.Core.Rtf.Write;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -627,7 +628,110 @@ namespace Unigram.Controls
             var container = newValue as TLMessagesContainter;
             if (container != null && container.EditMessage != null)
             {
+                var document = new RtfDocument(PaperSize.A4, PaperOrientation.Portrait, Lcid.English);
+                var segoe = document.CreateFont("Segoe UI");
+                var consolas = document.CreateFont("Consolas");
+                document.SetDefaultFont("Segoe UI");
 
+                //var paragraph = document.AddParagraph();
+                //paragraph.DefaultCharFormat.Font = segoe;
+                var paragraph = document.AddParagraph();
+
+                var message = container.EditMessage;
+                if (message.HasEntities && message.Entities != null && message.Entities.Count > 0)
+                {
+                    var text = message.Message;
+                    var previous = 0;
+
+                    foreach (var entity in message.Entities)
+                    {
+                        if (entity.Offset > previous)
+                        {
+                            paragraph.Text.Append(text.Substring(previous, entity.Offset - previous));
+                        }
+
+                        var type = entity.TypeId;
+                        if (type == TLType.MessageEntityBold)
+                        {
+                            paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
+                            paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).FontStyle.addStyle(FontStyleFlag.Bold);
+                        }
+                        else if (type == TLType.MessageEntityItalic)
+                        {
+                            paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
+                            paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).FontStyle.addStyle(FontStyleFlag.Italic);
+                        }
+                        else if (type == TLType.MessageEntityCode)
+                        {
+                            paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
+                            paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).Font = consolas;
+                        }
+                        else if (type == TLType.MessageEntityPre)
+                        {
+                            // TODO any additional
+                            paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
+                            paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).Font = consolas;
+                        }
+                        else if (type == TLType.MessageEntityUrl ||
+                                 type == TLType.MessageEntityEmail ||
+                                 type == TLType.MessageEntityMention ||
+                                 type == TLType.MessageEntityHashtag ||
+                                 type == TLType.MessageEntityBotCommand)
+                        {
+                            object data = text.Substring(entity.Offset, entity.Length);
+
+                            //var hyper = new Hyperlink();
+                            //hyper.Click += (s, args) => Hyperlink_Navigate(type, data);
+                            //hyper.Inlines.Add(new Run { Text = (string)data });
+                            //hyper.Foreground = foreground;
+                            //paragraph.Inlines.Add(hyper);
+
+                            paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
+                            paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).LocalHyperlink = (string)data;
+
+                        }
+                        else if (type == TLType.MessageEntityTextUrl ||
+                                 type == TLType.MessageEntityMentionName ||
+                                 type == TLType.InputMessageEntityMentionName)
+                        {
+                            object data;
+                            if (type == TLType.MessageEntityTextUrl)
+                            {
+                                data = ((TLMessageEntityTextUrl)entity).Url;
+                            }
+                            else if (type == TLType.MessageEntityMentionName)
+                            {
+                                data = ((TLMessageEntityMentionName)entity).UserId;
+                            }
+                            else // if(type == TLType.InputMessageEntityMentionName)
+                            {
+                                data = ((TLInputMessageEntityMentionName)entity).UserId;
+                            }
+
+                            //var hyper = new Hyperlink();
+                            //hyper.Click += (s, args) => Hyperlink_Navigate(type, data);
+                            //hyper.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                            //hyper.Foreground = foreground;
+                            //paragraph.Inlines.Add(hyper);
+
+                            paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
+                            paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).LocalHyperlink = data.ToString();
+                        }
+
+                        previous = entity.Offset + entity.Length;
+                    }
+
+                    if (text.Length > previous)
+                    {
+                        paragraph.Text.Append(text.Substring(previous));
+                    }
+
+                    Document.SetText(TextSetOptions.FormatRtf, document.Render());
+                }
+                else
+                {
+                    Document.SetText(TextSetOptions.None, message.Message);
+                }
             }
         }
 
