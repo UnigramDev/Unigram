@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
 
 namespace Unigram.ViewModels
@@ -13,8 +14,33 @@ namespace Unigram.ViewModels
         IHandle<TLMessageCommonBase>,
         IHandle<TLUpdateEditChannelMessage>,
         IHandle<TLUpdateEditMessage>,
+        IHandle<MessagesRemovedEventArgs>,
         IHandle
     {
+        public void Handle(MessagesRemovedEventArgs args)
+        {
+            if (With == args.Dialog.With && args.Messages != null)
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    foreach (var message in args.Messages)
+                    {
+                        var removed = Messages.Remove(message);
+                        if (removed == false)
+                        {
+                            // Check if this is really needed
+
+                            var already = Messages.FirstOrDefault(x => x.Id == message.Id);
+                            if (already != null)
+                            {
+                                Messages.Remove(already);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
         public void Handle(TLUpdateEditChannelMessage update)
         {
             var channel = this.With as TLChannel;
