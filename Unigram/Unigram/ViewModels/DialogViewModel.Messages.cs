@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
@@ -199,7 +200,19 @@ namespace Unigram.ViewModels
             if (remoteMessages != null && remoteMessages.Count > 0)
             {
                 var messages = new TLVector<int>(remoteMessages.Select(x => x.Id).ToList());
-                var response = await ProtoService.DeleteMessagesAsync(messages, revoke);
+
+                Task<MTProtoResponse<TLMessagesAffectedMessages>> task;
+
+                if (Peer is TLInputPeerChannel)
+                {
+                    task = ProtoService.DeleteMessagesAsync(new TLInputChannel { ChannelId = ((TLInputPeerChannel)Peer).ChannelId, AccessHash = ((TLInputPeerChannel)Peer).AccessHash }, messages);
+                }
+                else
+                {
+                    task = ProtoService.DeleteMessagesAsync(messages, revoke);
+                }
+
+                var response = await task;
                 if (response.IsSucceeded)
                 {
                     remoteCallback?.Invoke(lastItem, remoteMessages);

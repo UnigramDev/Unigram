@@ -936,7 +936,7 @@
         </Grid>
 
         <!-- Input pane -->
-        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" 
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderThickness="0,0,0,0"
               BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"
@@ -975,7 +975,7 @@
                     </controls:MessageReference.Resources>
                 </controls:MessageReference>
 
-                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
                     <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
                 </Border>
 
