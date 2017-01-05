@@ -48,20 +48,21 @@ Milestones:
 (These are subject to change!)
 
 Completed:
-
+-	Design UI and build XAML-mockups
+-	Build code to communicate with Telegram-servers
+-	Implement Quick Notifications
+-	Make the mockups functional
+-	Build Live-Tiles
+-	Allow for muting chats
 
 Currently:
--	Design UI and build XAML-mockups
+-   Send medias
+-   Stickers panel
 
 Future:
--	Build code to communicate with Telegram-servers
--	Make the mockups functional
 -	Build background handlers
 -	Set user settings
 -	Allow for sharing pictures
--	Build Live-Tiles
--	Implement Quick Notifications
--	Allow for muting chats
 -	Future updates…
 
 =================================================================
