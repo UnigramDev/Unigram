@@ -674,7 +674,7 @@ namespace Unigram.Common
                 var navigation = (string)data;
                 if (type == TLType.MessageEntityUrl || type == TLType.MessageEntityTextUrl)
                 {
-                    if (navigation.Contains("telegram.me"))
+                    if (navigation.Contains("telegram.me") || navigation.Contains("t.me"))
                     {
                         HandleTelegramUrl(navigation);
                     }

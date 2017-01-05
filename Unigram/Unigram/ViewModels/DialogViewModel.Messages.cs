@@ -279,7 +279,7 @@ namespace Unigram.ViewModels
             var urlButton = button as TLKeyboardButtonUrl;
             if (urlButton != null)
             {
-                if (urlButton.Url.Contains("telegram.me"))
+                if (urlButton.Url.Contains("telegram.me") || urlButton.Url.Contains("t.me"))
                 {
                     MessageHelper.HandleTelegramUrl(urlButton.Url);
                 }
