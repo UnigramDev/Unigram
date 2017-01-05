@@ -208,10 +208,173 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Edit
+
+        public RelayCommand<TLMessage> MessageEditCommand => new RelayCommand<TLMessage>(MessageEditExecute);
+        private async void MessageEditExecute(TLMessage message)
+        {
+            var result = await ProtoService.GetMessageEditDataAsync(Peer, message.Id);
+            if (result.IsSucceeded)
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    var messageEditText = this.GetMessageEditText(result.Value, message);
+                    this.StartEditMessage(messageEditText, message);
+                });
+            }
+            else
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    //this.IsWorking = false;
+                    //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.MESSAGE_ID_INVALID))
+                    //{
+                    //    MessageBox.Show(AppResources.EditMessageError, AppResources.Error, 0);
+                    //    return;
+                    //}
+                    Telegram.Api.Helpers.Execute.ShowDebugMessage("messages.getMessageEditData error " + result.Error);
+                });
+            }
+        }
+
+        public void StartEditMessage(string text, TLMessage message)
+        {
+            if (text == null)
+            {
+                return;
+            }
+            if (message == null)
+            {
+                return;
+            }
+
+            _editedMessage = message;
+
+            var config = CacheService.GetConfig();
+            var editUntil = (config != null) ? (message.Date + config.EditTimeLimit + 300) : 0;
+            if (message.FromId != null && message.ToId is TLPeerUser && message.FromId.Value == message.ToId.Id)
+            {
+                editUntil = 0;
+            }
+
+            Reply = new TLMessagesContainter
+            {
+                EditMessage = _editedMessage,
+                EditUntil = editUntil
+            };
+
+            //if (this._editMessageTimer == null)
+            //{
+            //    this._editMessageTimer = new DispatcherTimer();
+            //    this._editMessageTimer.add_Tick(new EventHandler(this.OnEditMessageTimerTick));
+            //    this._editMessageTimer.set_Interval(System.TimeSpan.FromSeconds(1.0));
+            //}
+            //this._editMessageTimer.Start();
+            //this.IsEditingEnabled = true;
+
+            this.Text = text.ToString();
+            this.CurrentInlineBot = null;
+
+            //this.ClearStickerHints();
+            //this.ClearInlineBotResults();
+            //this.ClearUsernameHints();
+            //this.ClearHashtagHints();
+            //this.ClearCommandHints();
+        }
+
+        private string GetMessageEditText(TLMessagesMessageEditData editData, TLMessage message)
+        {
+            if (!editData.IsCaption)
+            {
+                var text = message.Message.ToString();
+                var stringBuilder = new StringBuilder();
+
+                if (message != null && message.Entities != null && message.Entities.Count > 0)
+                {
+                    //this.ClearMentions();
+
+                    if (message.Entities.FirstOrDefault(x => !(x is TLMessageEntityMentionName) && !(x is TLInputMessageEntityMentionName)) == null)
+                    {
+                        for (int i = 0; i < message.Entities.Count; i++)
+                        {
+                            int num = (i == 0) ? 0 : (message.Entities[i - 1].Offset + message.Entities[i - 1].Length);
+                            int num2 = (i == 0) ? message.Entities[i].Offset : (message.Entities[i].Offset - num);
+
+                            stringBuilder.Append(text.Substring(num, num2));
+
+                            var entityMentionName = message.Entities[i] as TLMessageEntityMentionName;
+                            if (entityMentionName != null)
+                            {
+                                var user = CacheService.GetUser(entityMentionName.UserId);
+                                if (user != null)
+                                {
+                                    //this.AddMention(user);
+                                    string text2 = text.Substring(message.Entities[i].Offset, message.Entities[i].Length);
+                                    stringBuilder.Append(string.Format("@({0})", text2));
+                                }
+                            }
+                            else
+                            {
+                                var entityInputMentionName = message.Entities[i] as TLInputMessageEntityMentionName;
+                                if (entityInputMentionName != null)
+                                {
+                                    var inputUser = entityInputMentionName.UserId as TLInputUser;
+                                    if (inputUser != null)
+                                    {
+                                        TLUserBase user2 = this.CacheService.GetUser(inputUser.UserId);
+                                        if (user2 != null)
+                                        {
+                                            //this.AddMention(user2);
+                                            string text3 = text.Substring(message.Entities[i].Offset, message.Entities[i].Length);
+                                            stringBuilder.Append(string.Format("@({0})", text3));
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    num = message.Entities[i].Offset;
+                                    num2 = message.Entities[i].Length;
+                                    stringBuilder.Append(text.Substring(num, num2));
+                                }
+                            }
+                        }
+
+                        var baseEntity = message.Entities[message.Entities.Count - 1];
+                        if (baseEntity != null)
+                        {
+                            stringBuilder.Append(text.Substring(baseEntity.Offset + baseEntity.Length));
+                        }
+                    }
+                    else
+                    {
+                        stringBuilder.Append(text);
+                    }
+                }
+                else
+                {
+                    stringBuilder.Append(text);
+                }
+
+                return stringBuilder.ToString();
+            }
+
+            var mediaCaption = message.Media as ITLMediaCaption;
+            if (mediaCaption != null)
+            {
+                return mediaCaption.Caption;
+            }
+
+            return null;
+        }
+
+        #endregion
+
         #region KeyboardButton
 
         private TLMessage _replyMarkupMessage;
         private TLReplyMarkupBase _replyMarkup;
+        private TLMessage _editedMessage;
+
         public TLReplyMarkupBase ReplyMarkup
         {
             get

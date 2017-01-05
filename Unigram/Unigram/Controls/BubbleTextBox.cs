@@ -605,6 +605,33 @@ namespace Unigram.Controls
         }
 
         #endregion
+
+        #region Reply
+
+        public TLMessageBase Reply
+        {
+            get { return (TLMessageBase)GetValue(ReplyProperty); }
+            set { SetValue(ReplyProperty, value); }
+        }
+
+        public static readonly DependencyProperty ReplyProperty =
+            DependencyProperty.Register("Reply", typeof(TLMessageBase), typeof(BubbleTextBox), new PropertyMetadata(null, OnReplyChanged));
+
+        private static void OnReplyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((BubbleTextBox)d).OnReplyChanged((TLMessageBase)e.NewValue, (TLMessageBase)e.OldValue);
+        }
+
+        private void OnReplyChanged(TLMessageBase newValue, TLMessageBase oldValue)
+        {
+            var container = newValue as TLMessagesContainter;
+            if (container != null && container.EditMessage != null)
+            {
+
+            }
+        }
+
+        #endregion
     }
 
     public class RtfToTLParser : RtfSarParser

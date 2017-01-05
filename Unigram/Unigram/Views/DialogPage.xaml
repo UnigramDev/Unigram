@@ -222,7 +222,7 @@
             </MenuFlyout.MenuFlyoutPresenterStyle>
             <MenuFlyoutItem Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
             <MenuFlyoutItem Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy"/>
-            <MenuFlyoutItem Text="Edit" Visibility="Collapsed"/>
+            <MenuFlyoutItem Command="{x:Bind ViewModel.MessageEditCommand}" CommandParameter="{Binding}" Text="Edit"/>
             <MenuFlyoutItem Text="Forward"/>
             <MenuFlyoutItem Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete"/>
         </MenuFlyout>
