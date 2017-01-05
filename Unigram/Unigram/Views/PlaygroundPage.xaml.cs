@@ -140,9 +140,19 @@ namespace Unigram.Views
             }
         }
 
+        private AudioGraph graph;
+        private AudioDeviceOutputNode deviceOutputNode;
+        private AudioFileInputNode fileInputNode;
+        private CreateAudioFileInputNodeResult fileInputNodeResult;
+        private CreateAudioDeviceOutputNodeResult deviceOutputNodeResult;
+        private StorageFile file;
+
         private async void Media_Loaded(object sender, RoutedEventArgs e)
         {
-            //var file = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
+
+
+
+
 
             if (recorder?.IsRecording == true)
             {
@@ -150,16 +160,40 @@ namespace Unigram.Views
                 //Media.Source = new Uri("ms-appdata:///temp/recording.ogg");
                 //Media.Play();
 
-                var file2 = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
-                using (var stream = await file2.OpenReadAsync())
-                {
-                    Media.SetSource(stream, "audio/ogg");
-                }
+                file = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
+
+                var settings = new AudioGraphSettings(AudioRenderCategory.Communications);
+                settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
+
+                var result = await AudioGraph.CreateAsync(settings);
+                if (result.Status != AudioGraphCreationStatus.Success)
+                    return;
+
+                graph = result.Graph;
+                Debug.WriteLine("Graph successfully created!");
+
+                fileInputNodeResult = await graph.CreateFileInputNodeAsync(file);
+                if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
+                    return;
+
+                deviceOutputNodeResult = await graph.CreateDeviceOutputNodeAsync();
+                if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
+                    return;
+
+                deviceOutputNode = deviceOutputNodeResult.DeviceOutputNode;
+                fileInputNode = fileInputNodeResult.FileInputNode;
+                fileInputNode.AddOutgoingConnection(deviceOutputNode);
+                 
+                graph.Start();
+
+                //var file2 = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
+                //Media.SetSource(await file2.OpenReadAsync(), "audio/ogg");
+                //Media.Play();
 
                 return;
             }
 
-            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
+            file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
             recorder = new OpusRecorder(file);
             await recorder.StartAsync();
 

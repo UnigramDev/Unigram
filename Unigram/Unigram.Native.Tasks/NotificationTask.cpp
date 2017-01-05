@@ -57,7 +57,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 
 		auto caption = GetCaption(loc_args, loc_key);
 		auto message = GetMessage(loc_args, loc_key);
-		auto sound = data->GetNamedString("sound");
+		auto sound = ref new String(L"Default"); // data->GetNamedString("sound");
 		auto launch = GetLaunch(custom, loc_key);
 		auto tag = GetTag(custom);
 		auto group = GetGroup(custom);

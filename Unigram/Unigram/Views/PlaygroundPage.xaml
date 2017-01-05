@@ -103,6 +103,6 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <MediaElement x:Name="Media" AreTransportControlsEnabled="True"/>
-        <Button Click="Media_Loaded"/>
+        <Button Click="Media_Loaded" Content="Play"/>
     </Grid>
 </Page>

@@ -171,7 +171,7 @@ namespace Unigram.Controls.Media
                         var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
                     }
 
-                    var settings = new AudioGraphSettings(AudioRenderCategory.Media);
+                    var settings = new AudioGraphSettings(AudioRenderCategory.Communications);
                     settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
 
                     var result = await AudioGraph.CreateAsync(settings);

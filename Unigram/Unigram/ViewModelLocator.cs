@@ -22,6 +22,7 @@ using Unigram.Core.Dependency;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Login;
+using Unigram.Views.Login;
 
 namespace Unigram
 {
@@ -138,6 +139,12 @@ namespace Unigram
             {
                 SettingsHelper.IsAuthorized = false;
                 Debugger.Break();
+
+                Execute.BeginOnUIThread(() =>
+                {
+                    App.Current.NavigationService.Navigate(typeof(LoginWelcomePage));
+                    App.Current.NavigationService.Frame.BackStack.Clear();
+                });
             };
         }
     }

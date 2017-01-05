@@ -62,20 +62,13 @@ namespace Unigram.Views
             if (index0 > -1 && index1 > -1 /*&& (index0 != _lastIndex0 || index1 != _lastIndex1)*/)
             {
                 var container0 = lvDialogs.ContainerFromIndex(index0);
-                var container1 = lvDialogs.ContainerFromIndex(index1);
-
-                if (container0 != null && container1 != null)
+                if (container0 != null)
                 {
                     var item0 = lvDialogs.ItemFromContainer(container0);
-                    var item1 = lvDialogs.ItemFromContainer(container1);
-
-                    if (item0 != null && item1 != null)
+                    if (item0 != null)
                     {
                         var message0 = item0 as TLMessageCommonBase;
-                        var message1 = item1 as TLMessageCommonBase;
-
                         var date0 = BindConvert.Current.DateTime(message0.Date);
-                        var date1 = BindConvert.Current.DateTime(message1.Date);
 
                         var service0 = message0 as TLMessageService;
                         if (service0 != null)

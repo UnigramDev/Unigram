@@ -2,7 +2,7 @@
   "dependencies": {
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "Newtonsoft.Json": "9.0.1",
-    "Portable.BouncyCastle": "1.8.1.2",
+    "Portable.BouncyCastle": "1.8.1.1",
     "System.Reactive": "3.1.1"
   },
   "frameworks": {
