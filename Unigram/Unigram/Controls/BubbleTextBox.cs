@@ -624,6 +624,31 @@ namespace Unigram.Controls
 
         #region Reply
 
+        public TLMessageBase Reply
+        {
+            get { return (TLMessageBase)GetValue(ReplyProperty); }
+            set { SetValue(ReplyProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Reply.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ReplyProperty =
+            DependencyProperty.Register("Reply", typeof(TLMessageBase), typeof(BubbleTextBox), new PropertyMetadata(null, OnReplyChanged));
+
+        private static void OnReplyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((BubbleTextBox)d).OnReplyChanged((TLMessageBase)e.NewValue, (TLMessageBase)e.OldValue);
+        }
+
+        private void OnReplyChanged(TLMessageBase newValue, TLMessageBase oldValue)
+        {
+            if (newValue != null)
+            {
+                Focus(FocusState.Keyboard);
+            }
+        }
+
+        #endregion
+
         private void OnMessageChanged(string text, TLVector<TLMessageEntityBase> entities)
         {
             if (entities != null && entities.Count > 0)
@@ -784,8 +809,6 @@ namespace Unigram.Controls
                 }
             });
         }
-
-        #endregion
     }
 
     public class EditMessageEventArgs : EventArgs

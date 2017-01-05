@@ -220,11 +220,12 @@
                     <Setter Property="RequestedTheme" Value="Light"/>
                 </Style>
             </MenuFlyout.MenuFlyoutPresenterStyle>
-            <MenuFlyoutItem Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
-            <MenuFlyoutItem Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy"/>
-            <MenuFlyoutItem Command="{x:Bind ViewModel.MessageEditCommand}" CommandParameter="{Binding}" Text="Edit"/>
-            <MenuFlyoutItem Text="Forward"/>
-            <MenuFlyoutItem Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete"/>
+            <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
+            <MenuFlyoutItem Loaded="MessagePin_Loaded" Text="Pin" IsEnabled="False"/>
+            <MenuFlyoutItem Loaded="MessageEdit_Loaded" Command="{x:Bind ViewModel.MessageEditCommand}" CommandParameter="{Binding}" Text="Edit"/>
+            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete"/>
+            <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward" IsEnabled="False"/>
+            <MenuFlyoutItem Loaded="MessageCopy_Loaded" Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy"/>
         </MenuFlyout>
 
         <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
@@ -936,7 +937,7 @@
         </Grid>
 
         <!-- Input pane -->
-        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" 
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderThickness="0,0,0,0"
               BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"
@@ -975,7 +976,7 @@
                     </controls:MessageReference.Resources>
                 </controls:MessageReference>
 
-                <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
+                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
                 </Border>
 
@@ -987,6 +988,7 @@
                 x:Uid="Chat-Input-Message"
                 Background="Transparent"
                 Text="{Binding Text, Mode=TwoWay}"
+                Reply="{Binding Reply}"
                 AcceptsReturn="False"
                 PlaceholderText="Type your message..."
                 BorderThickness="0" 
@@ -1127,6 +1129,8 @@
                           Grid.Row="2">
                 <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0"/>
             </ScrollViewer>
+
+            <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="4"/>
         </Grid>
     </Grid>
 </Page>
