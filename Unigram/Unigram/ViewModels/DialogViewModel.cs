@@ -1193,10 +1193,11 @@ namespace Unigram.ViewModels
             var next = index > 0 ? this[index - 1] : null;
             var previous = index < Count - 1 ? this[index + 1] : null;
 
-            UpdateSeparatorOnRemove(next, previous, index);
             UpdateAttach(previous, next, index + 1);
 
             base.RemoveItem(index);
+
+            UpdateSeparatorOnRemove(next, previous, index);
         }
 
         private void UpdateSeparatorOnInsert(TLMessageBase item, TLMessageBase previous, int index)
@@ -1237,6 +1238,14 @@ namespace Unigram.ViewModels
                     {
                         base.RemoveItem(index - 1);
                     }
+                }
+            }
+            else if (next is TLMessageService && previous == null)
+            {
+                var action = ((TLMessageService)next).Action as TLMessageActionDate;
+                if (action != null)
+                {
+                    base.RemoveItem(index - 1);
                 }
             }
         }
