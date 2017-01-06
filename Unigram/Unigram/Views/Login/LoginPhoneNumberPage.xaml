@@ -299,7 +299,6 @@
                                         x:Uid="BTN-Next"
                                         Command="{x:Bind ViewModel.SendCommand}"
                                         Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                        RequestedTheme="Dark"
                                         Content="Next"
                                         Padding="24,4"
                                         MinWidth="160"

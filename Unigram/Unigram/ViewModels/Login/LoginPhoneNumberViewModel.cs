@@ -152,6 +152,11 @@ namespace Unigram.ViewModels.Login
         public RelayCommand SendCommand => new RelayCommand(SendExecute);
         private async void SendExecute()
         {
+            if(PhoneCode == null || PhoneNumber == null)
+            {
+                await new MessageDialog("Please type phone number and phone code").ShowAsync();
+                return;
+            }
             var result = await ProtoService.SendCodeAsync(PhoneCode.TrimStart('+') + PhoneNumber, /* TODO: Verify */ null);
             if (result?.IsSucceeded == true)
             {
