@@ -207,14 +207,19 @@ namespace Telegram.Api.TL
 
         public int GetDateIndexWithDraft()
         {
+            if (IsPinned)
+            {
+                return int.MaxValue - PinnedIndex;
+            }
+
             var dateIndex = GetDateIndex();
             var draft = Draft as TLDraftMessage;
             if (draft != null)
             {
-                return Math.Max(draft.Date, dateIndex);
+                return Math.Max(draft.Date, dateIndex) + (IsPinned ? 0xFFFF00 : 0);
             }
 
-            return dateIndex;
+            return dateIndex + (IsPinned ? 0xFFFF00 : 0);
         }
 
         public bool IsChat
@@ -274,7 +279,7 @@ namespace Telegram.Api.TL
             Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
-
+        public int PinnedIndex { get; set; }
 
         private string _fullName;
         public string FullName

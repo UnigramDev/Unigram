@@ -89,11 +89,20 @@ namespace Unigram.ViewModels
                 }
             }
 
+            var config = CacheService.GetConfig();
+
             var response = await ProtoService.GetDialogsAsync(lastDate, lastMsgId, lastPeer, 200);
             if (response.IsSucceeded)
             {
+                var pinnedIndex = config.PinnedDialogsCountMax;
+
                 foreach (var item in response.Value.Dialogs)
                 {
+                    if (item.IsPinned)
+                    {
+                        item.PinnedIndex = pinnedIndex--;
+                    }
+
                     Items.Add(item);
                 }
             }
@@ -234,29 +243,30 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(delegate
             {
-                TLDialog dialog53 = null;
+                TLDialog dialog = null;
                 for (int i = 0; i < Items.Count; i++)
                 {
                     if (Items[i].Index == update.Peer.Id)
                     {
-                        dialog53 = (Items[i] as TLDialog);
-                        if (dialog53 != null)
+                        dialog = (Items[i] as TLDialog);
+                        if (dialog != null)
                         {
-                            dialog53.Draft = update.Draft;
-                            dialog53.RaisePropertyChanged(() => dialog53.Draft);
-                            dialog53.RaisePropertyChanged(() => dialog53.Self);
+                            dialog.Draft = update.Draft;
+                            dialog.RaisePropertyChanged(() => dialog.Draft);
+                            dialog.RaisePropertyChanged(() => dialog.Self);
                         }
                         Items.RemoveAt(i);
                         break;
                     }
                 }
-                if (dialog53 != null)
+
+                if (dialog != null)
                 {
                     for (int j = 0; j < Items.Count; j++)
                     {
-                        if (Items[j].GetDateIndexWithDraft() <= dialog53.GetDateIndexWithDraft())
+                        if (Items[j].GetDateIndexWithDraft() <= dialog.GetDateIndexWithDraft())
                         {
-                            Items.Insert(j, dialog53);
+                            Items.Insert(j, dialog);
                             return;
                         }
                     }
@@ -268,7 +278,42 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(() =>
             {
-                IsFirstPinned = Items.FirstOrDefault()?.IsPinned ?? false;
+                TLDialog dialog = null;
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    if (Items[i].Index == update.Peer.Id)
+                    {
+                        dialog = (Items[i] as TLDialog);
+                        if (dialog != null)
+                        {
+                            dialog.IsPinned = update.IsPinned;
+                            dialog.RaisePropertyChanged(() => dialog.IsPinned);
+                            dialog.RaisePropertyChanged(() => dialog.Self);
+                        }
+
+                        Items.RemoveAt(i);
+                        break;
+                    }
+                }
+
+                if (dialog == null)
+                {
+                    dialog = CacheService.GetDialog(update.Peer);
+                }
+
+                IsFirstPinned = update.IsPinned ? true : Items.Any(x => x.IsPinned);
+
+                if (dialog != null)
+                {
+                    for (int j = 0; j < Items.Count; j++)
+                    {
+                        if (Items[j].GetDateIndexWithDraft() <= dialog.GetDateIndexWithDraft())
+                        {
+                            Items.Insert(j, dialog);
+                            return;
+                        }
+                    }
+                }
             });
         }
 

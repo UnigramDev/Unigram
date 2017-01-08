@@ -79,7 +79,6 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.Row="1"/>
             <Pivot x:Name="rpMasterTitlebar" 
                    Style="{StaticResource TabStylePivotStyle}"
                    Grid.RowSpan="2">
@@ -220,7 +219,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid Background="{Binding PlaceHolderColor}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
+                                    <Grid Background="{Binding Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
                                         <TextBlock Foreground="White" Text="{Binding Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
                                         <Ellipse>
                                             <Ellipse.Fill>
@@ -242,6 +241,8 @@
                     </ListView>
                 </PivotItem>
             </Pivot>
+
+            <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.Row="1"/>
 
             <Grid Height="{ThemeResource AppBarThemeCompactHeight}">
                 <Grid.ColumnDefinitions>

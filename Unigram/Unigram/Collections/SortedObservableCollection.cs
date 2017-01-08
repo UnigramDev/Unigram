@@ -28,10 +28,10 @@ namespace Unigram.Collections
                 {
                     case 0:
                         throw new InvalidOperationException("Cannot insert duplicated items");
-                    case -1:
+                    case 1:
                         base.InsertItem(i, item);
                         return;
-                    case 1:
+                    case -1:
                         break;
                 }
             }

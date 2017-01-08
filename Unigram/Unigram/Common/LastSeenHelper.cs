@@ -53,6 +53,7 @@ namespace Unigram.Common
            // Debugger.Break();
             return Tuple.Create("Last seen a long time ago", DateTime.Now.AddYears(-30));
         }
+
         public static Tuple<string, DateTime> GetLastSeenTime(TLUser User)
         {
             if (!User.IsSelf&&User.HasStatus && User.Status != null && User.Status.TypeId == TLType.UserStatusOffline)
