@@ -8,8 +8,18 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
+
+    <local:HackUserControl.ContextFlyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Loaded="DialogPin_Loaded" Text="Pin to top"/>
+            <MenuFlyoutItem Loaded="DialogClear_Loaded" Text="Clear history"/>
+            <MenuFlyoutItem Loaded="DialogDelete_Loaded" Text="Delete conversation"/>
+            <MenuFlyoutItem Loaded="DialogDeleteAndStop_Loaded" Text="Delete and stop"/>
+            <MenuFlyoutItem Loaded="DialogDeleteAndExit_Loaded" Text="Delete and exit"/>
+        </MenuFlyout>
+    </local:HackUserControl.ContextFlyout>
     
-    <Grid Margin="0,6">
+    <Grid Margin="0,6" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>

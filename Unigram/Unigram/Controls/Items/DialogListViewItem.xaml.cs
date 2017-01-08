@@ -474,169 +474,112 @@ namespace Unigram.Controls.Items
             }
         }
 
-        #region Context menu
-        private static MenuFlyout _menuFlyout = new MenuFlyout();
-        private static MenuFlyoutItem _menuItemClearHistory;
-        private static MenuFlyoutItem _menuItemDeleteDialog;
-        private static MenuFlyoutItem _menuItemDeleteAndStop;
-        private static MenuFlyoutItem _menuItemDeleteAndExit;
-        private static MenuFlyoutItem _menuItemPinToStart;
-
-        protected override void OnRightTapped(RightTappedRoutedEventArgs e)
+        private void DialogPin_Loaded(object sender, RoutedEventArgs e)
         {
-            if (e.PointerDeviceType != PointerDeviceType.Touch)
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
             {
-                UpdateContextMenu();
-                _menuFlyout.ShowAt(this, e.GetPosition(this));
-                e.Handled = true;
-            }
-
-            base.OnRightTapped(e);
-        }
-
-        protected override void OnHolding(HoldingRoutedEventArgs e)
-        {
-            if (e.PointerDeviceType == PointerDeviceType.Touch && e.HoldingState == Windows.UI.Input.HoldingState.Started)
-            {
-                UpdateContextMenu();
-                _menuFlyout.ShowAt(this);
-                e.Handled = true;
-            }
-
-            base.OnHolding(e);
-        }
-
-        private void UpdateContextMenu()
-        {
-            FlyoutBase.SetAttachedFlyout(this, _menuFlyout);
-
-            var canClearHistory = CanClearHistory(ref _menuItemClearHistory);
-            var canDeleteDialog = CanDeleteDialog(ref _menuItemDeleteDialog);
-            var canDeleteAndStop = CanDeleteAndStop(ref _menuItemDeleteAndStop);
-            var canDeleteAndExit = CanDeleteAndExit(ref _menuItemDeleteAndExit);
-            var canPinToStart = CanPinToStart(ref _menuItemPinToStart);
-
-            AddMenuItem(canClearHistory, _menuFlyout, ref _menuItemClearHistory, "Clear History", null);
-            AddMenuItem(canDeleteDialog, _menuFlyout, ref _menuItemDeleteDialog, "Delete Dialog", null);
-            AddMenuItem(canDeleteAndStop, _menuFlyout, ref _menuItemDeleteAndStop, "Delete and Stop", null);
-            AddMenuItem(canDeleteAndExit, _menuFlyout, ref _menuItemDeleteAndExit, "Delete and Exit", null);
-            AddMenuItem(canPinToStart, _menuFlyout, ref _menuItemPinToStart, "Pin to Start", null);
-        }
-
-        private bool CanClearHistory(ref MenuFlyoutItem menuItem)
-        {
-            if (ViewModel != null)
-            {
-                var peerChannel = ViewModel.Peer as TLPeerChannel;
-                return peerChannel == null;
-            }
-
-            return false;
-        }
-
-        private bool CanDeleteDialog(ref MenuFlyoutItem menuItem)
-        {
-            if (ViewModel != null)
-            {
-                var peerChannel = ViewModel.Peer as TLPeerChannel;
-                if (peerChannel != null)
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
                 {
-                    var channel = ViewModel.With as TLChannel;
-                    if (channel != null)
+                    element.Text = dialog.IsPinned ? "Unpin from top" : "Pin to top";
+                }
+            }
+        }
+
+        private void DialogClear_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
+                {
+                    element.Visibility = dialog.Peer is TLPeerChannel ? Visibility.Collapsed : Visibility.Visible;
+                }
+            }
+        }
+
+        private void DialogDelete_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
+                {
+                    var channelPeer = dialog.Peer as TLPeerChannel;
+                    if (channelPeer != null)
                     {
-                        if (channel.IsCreator)
+                        var channel = dialog.With as TLChannel;
+                        if (channel != null)
                         {
-                            menuItem.Text = channel.IsMegagroup ? "AppResources.DeleteGroup" : "AppResources.DeleteChannel";
+                            if (channel.IsCreator)
+                            {
+                                element.Text = channel.IsMegagroup ? "Delete group" : "Delete channel";
+                            }
+                            else
+                            {
+                                element.Text = channel.IsMegagroup ? "Leave group" : "Leave channel";
+                            }
                         }
-                        else
-                        {
-                            menuItem.Text = channel.IsMegagroup ? "AppResources.LeaveGroup" : "AppResources.LeaveChannel";
-                        }
+
+                        element.Visibility = Visibility.Visible;
+                        return;
                     }
 
-                    return true;
-                }
+                    var userPeer = dialog.Peer as TLPeerUser;
+                    if (userPeer != null)
+                    {
+                        element.Text = "Delete conversation";
+                        element.Visibility = Visibility.Visible;
+                        return;
+                    }
 
-                var peerUser = ViewModel.Peer as TLPeerUser;
-                if (peerUser != null)
-                {
-                    return true;
-                }
-
-                var peerChat = ViewModel.Peer as TLPeerChat;
-                if (peerChat != null)
-                {
-                    return ViewModel.With is TLChatForbidden || ViewModel.With is TLChatEmpty;
+                    var chatPeer = dialog.Peer as TLPeerChat;
+                    if (chatPeer != null)
+                    {
+                        element.Text = "Delete conversation";
+                        element.Visibility = dialog.With is TLChatForbidden || dialog.With is TLChatEmpty ? Visibility.Visible : Visibility.Collapsed;
+                        return;
+                    }
                 }
             }
-
-            return false;
         }
 
-        private bool CanDeleteAndStop(ref MenuFlyoutItem menuItem)
+        private void DialogDeleteAndStop_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ViewModel != null)
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
             {
-                var user = ViewModel.With as TLUser;
-                return user != null && user.IsBot;
-
-                //menuItem.set_Visibility((user != null && user.IsBot && (user.Blocked == null || !user.Blocked)) ? 0 : 1);
-            }
-
-            return false;
-        }
-
-        private bool CanDeleteAndExit(ref MenuFlyoutItem menuItem)
-        {
-            if (ViewModel != null)
-            {
-                var peerChat = ViewModel.Peer as TLPeerChat;
-                if (peerChat != null)
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
                 {
-                    return true;
+                    var user = dialog.With as TLUser;
+                    if (user != null)
+                    {
+                        element.Visibility = user.IsBot && !user.Blocked ? Visibility.Visible : Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        element.Visibility = Visibility.Collapsed;
+                    }
                 }
-
-                //var peerEncryptedChat = tLDialogBase.Peer as TLPeerEncryptedChat;
-                //if (peerEncryptedChat != null)
-                //{
-                //    menuItem.Header = AppResources.DeleteChat.ToLowerInvariant();
-                //    menuItem.set_Visibility(0);
-                //    return;
-                //}
             }
-
-            return false;
         }
 
-        private bool CanPinToStart(ref MenuFlyoutItem menuItem)
+        private void DialogDeleteAndExit_Loaded(object sender, RoutedEventArgs e)
         {
-            // TODO:
-            return true;
-        }
-
-        private void AddMenuItem(bool enabled, MenuFlyout menu, ref MenuFlyoutItem menuItem, string header, RoutedEventHandler handler)
-        {
-            if (!enabled)
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
             {
-                if (menuItem != null)
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
                 {
-                    menuItem.Visibility = Visibility.Collapsed;
+                    element.Visibility = dialog.Peer is TLPeerChat ? Visibility.Visible : Visibility.Collapsed;
                 }
-
-                return;
             }
-
-            if (menuItem == null)
-            {
-                menuItem = new MenuFlyoutItem();
-                menuItem.Text = header;
-                menuItem.Click += handler;
-                menu.Items.Add(menuItem);
-            }
-
-            menuItem.Visibility = Visibility.Visible;
         }
-        #endregion
     }
 
     public class HackUserControl : UserControl

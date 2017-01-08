@@ -39,6 +39,8 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateEditMessage>, 
         IHandle<TLUpdateEditChannelMessage>, 
         IHandle<TLUpdateDraftMessage>, 
+        IHandle<TLUpdateDialogPinned>,
+        IHandle<TLUpdatePinnedDialogs>,
         IHandle<TLUpdateChannel>, 
         IHandle
     {
@@ -46,6 +48,19 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             Items = new ObservableCollection<TLDialog>();
+        }
+
+        private bool _isFirstPinned;
+        public bool IsFirstPinned
+        {
+            get
+            {
+                return _isFirstPinned;
+            }
+            set
+            {
+                Set(ref _isFirstPinned, value);
+            }
         }
 
         public async void LoadFirstSlice()
@@ -246,6 +261,22 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
+            });
+        }
+
+        public void Handle(TLUpdateDialogPinned update)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                IsFirstPinned = Items.FirstOrDefault()?.IsPinned ?? false;
+            });
+        }
+
+        public void Handle(TLUpdatePinnedDialogs update)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                IsFirstPinned = Items.FirstOrDefault()?.IsPinned ?? false;
             });
         }
 

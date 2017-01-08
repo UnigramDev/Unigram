@@ -59,7 +59,7 @@ namespace Unigram
             {
                 args.Handled = true;
                 await FileIO.WriteTextAsync(await KnownFolders.PicturesLibrary.CreateFileAsync("unigram_log.txt", CreationCollisionOption.GenerateUniqueName), args.Exception?.ToString() ?? "Error" + "\r\n" + args.Message);
-                await new MessageDialog(args.Exception?.ToString() ?? "Error", args.Message ?? "Error").ShowAsync();
+                await new MessageDialog(args.Message ?? "Error", args.Exception?.ToString() ?? "Error").ShowAsync();
             };
 
 #if RELEASE

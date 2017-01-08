@@ -55,12 +55,12 @@
                                 <ColumnDefinition x:Name="DetailColumn" Width="0"/>
                             </Grid.ColumnDefinitions>
                             <ContentPresenter x:Name="MasterFrame" 
-                                          Content="{TemplateBinding Content}" 
-                                          ContentTemplate="{TemplateBinding ContentTemplate}" 
-                                          ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          HorizontalContentAlignment="Stretch" 
-                                          VerticalContentAlignment="Stretch"/>
+                                              Content="{TemplateBinding Content}" 
+                                              ContentTemplate="{TemplateBinding ContentTemplate}" 
+                                              ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                              HorizontalContentAlignment="Stretch" 
+                                              VerticalContentAlignment="Stretch"/>
                             <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}">
                                 <win2d:CanvasControl x:Name="BackgroundCanvas" CreateResources="BackgroundCanvas_CreateResources" Draw="BackgroundCanvas_Draw" />
                             </Grid>
@@ -89,32 +89,37 @@
                     </PivotItem.Header>
                     <Grid>
                         <ListView x:Name="lvMasterChats"
-                        ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
-                        IsItemClickEnabled="True"
-                        SelectionMode="None"
-                        ItemClick="ListView_ItemClick"
-                        SelectionChanged="ListView_SelectionChanged"
-                        Grid.Row="1">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <items:DialogListViewItem />
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                        <ListView.Header>
-                            <controls:SearchTextBox x:Name="txtSearch" 
-                                                    Margin="12,8" 
-                                                    PlaceholderText="Search chats"
-                                                    TextChanged="txtSearch_TextChanged"/>
-                        </ListView.Header>
-                        <ListView.Footer>
-                            <Border Height="6"/>
-                        </ListView.Footer>
-                    </ListView>
+                                  ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
+                                  IsItemClickEnabled="True"
+                                  SelectionMode="None"
+                                  ItemClick="ListView_ItemClick"
+                                  SelectionChanged="ListView_SelectionChanged"
+                                  Grid.Row="1">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <items:DialogListViewItem />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.Header>
+                                <Grid>
+                                    <Border Visibility="{x:Bind (Visibility)ViewModel.Dialogs.IsFirstPinned, Mode=OneWay}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"/>
+                                    <Border Margin="12,8" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                                        <controls:SearchTextBox x:Name="txtSearch" 
+                                                                Margin="0"
+                                                                PlaceholderText="Search chats"
+                                                                TextChanged="txtSearch_TextChanged"/>
+                                    </Border>
+                                </Grid>
+                            </ListView.Header>
+                            <ListView.Footer>
+                                <Border Height="6"/>
+                            </ListView.Footer>
+                        </ListView>
                         <ListView x:Name="searchChats"
                                   Margin="0,42,0,0" 
                                   Visibility="Collapsed"
@@ -148,11 +153,11 @@
                                         </Ellipse>
                                         <TextBlock Text="{x:Bind Path=Header}" Margin="8,0" Grid.Column="1" Grid.Row="0"/>
                                         <TextBlock Text="{x:Bind Path=SubHeader}" Margin="8,0" Grid.Column="1" Grid.Row="1"
-                                               Style="{StaticResource CaptionTextBlockStyle}" 
-                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                               TextTrimming="CharacterEllipsis" 
-                                               TextWrapping="NoWrap" 
-                                               MaxLines="1"/>
+                                                   Style="{StaticResource CaptionTextBlockStyle}" 
+                                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                   TextTrimming="CharacterEllipsis" 
+                                                   TextWrapping="NoWrap" 
+                                                   MaxLines="1"/>
                                     </Grid>                                    
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -300,9 +305,9 @@
                                   Label="Settings"
                                   Click="cbtnMasterSettings_Click" />
                     <AppBarButton x:Name="cbtnMasterAbout"
-                                        x:Uid="CBTN-About"
-                                        Label="About"
-                                        Click="cbtnMasterAbout_Click">
+                                  x:Uid="CBTN-About"
+                                  Label="About"
+                                  Click="cbtnMasterAbout_Click">
                         <AppBarButton.Icon>
                             <FontIcon Glyph="&#xE946;" />
                         </AppBarButton.Icon>
