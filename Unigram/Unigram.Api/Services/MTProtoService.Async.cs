@@ -12,6 +12,18 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        public Task<MTProtoResponse<bool>> ToggleDialogPinAsync(TLInputPeerBase peer, bool pin)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
+            ToggleDialogPinCallback(peer, pin, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(faultCallback));
+            });
+            return tsc.Task;
+        }
 
         public Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber, bool? currentNumber, Action<int> attemptFailed = null)
         {

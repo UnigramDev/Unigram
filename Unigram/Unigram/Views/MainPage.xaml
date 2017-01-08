@@ -4,7 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
     xmlns:items="using:Unigram.Controls.Items"
+    xmlns:triggers="using:Unigram.Triggers"
     xmlns:models="using:Telegram.Api.TL"
     xmlns:vms="using:Unigram.ViewModels"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
@@ -94,11 +96,21 @@
                                   ItemClick="ListView_ItemClick"
                                   SelectionChanged="ListView_SelectionChanged"
                                   Grid.Row="1">
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
+                            <ListView.ItemContainerStyleSelector>
+                                <selectors:DialogStyleSelector>
+                                    <selectors:DialogStyleSelector.DialogStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        </Style>
+                                    </selectors:DialogStyleSelector.DialogStyle>
+                                    <selectors:DialogStyleSelector.PinnedStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                        </Style>
+                                    </selectors:DialogStyleSelector.PinnedStyle>
+                                </selectors:DialogStyleSelector>
+                            </ListView.ItemContainerStyleSelector>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <items:DialogListViewItem />

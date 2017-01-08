@@ -14,6 +14,7 @@ using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
 using Telegram.Logs;
 using Template10.Utils;
+using Unigram.Common;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -49,6 +50,8 @@ namespace Unigram.ViewModels
         {
             Items = new ObservableCollection<TLDialog>();
         }
+
+        public int GlobalPinnedIndex { get; set; }
 
         private bool _isFirstPinned;
         public bool IsFirstPinned
@@ -105,6 +108,9 @@ namespace Unigram.ViewModels
 
                     Items.Add(item);
                 }
+
+                IsFirstPinned = Items.Any(x => x.IsPinned);
+                GlobalPinnedIndex = pinnedIndex;
             }
 
             Aggregator.Subscribe(this);
@@ -305,6 +311,15 @@ namespace Unigram.ViewModels
 
                 if (dialog != null)
                 {
+                    if (dialog.IsPinned)
+                    {
+                        dialog.PinnedIndex = GlobalPinnedIndex--;
+                    }
+                    else
+                    {
+                        GlobalPinnedIndex++;
+                    }
+
                     for (int j = 0; j < Items.Count; j++)
                     {
                         if (Items[j].GetDateIndexWithDraft() <= dialog.GetDateIndexWithDraft())
@@ -638,5 +653,75 @@ namespace Unigram.ViewModels
         public bool IsLastSliceLoaded { get; set; }
 
         public ObservableCollection<TLDialog> Items { get; private set; }
+
+        #region Commands
+
+        public RelayCommand<TLDialog> DialogPinCommand => new RelayCommand<TLDialog>(DialogPinExecute);
+        private async void DialogPinExecute(TLDialog dialog)
+        {
+            TLInputPeerBase peer = null;
+
+            var user = dialog.With as TLUser;
+            if (user != null)
+            {
+                peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value };
+            }
+
+            var chat = dialog.With as TLChat;
+            if (chat != null)
+            {
+                peer = new TLInputPeerChat { ChatId = chat.Id };
+            }
+
+            var channel = dialog.With as TLChannel;
+            if (channel != null)
+            {
+                peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
+            }
+
+            var result = await ProtoService.ToggleDialogPinAsync(peer, !dialog.IsPinned);
+            if (result.IsSucceeded)
+            {
+                if (dialog.IsPinned)
+                {
+                    dialog.PinnedIndex = GlobalPinnedIndex--;
+                }
+
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    if (Items[i].Index == dialog.Index)
+                    {
+                        dialog = (Items[i] as TLDialog);
+                        Items.RemoveAt(i);
+                        break;
+                    }
+                }
+
+                if (dialog != null)
+                {
+                    IsFirstPinned = dialog.IsPinned ? true : Items.Any(x => x.IsPinned);
+
+                    if (dialog.IsPinned)
+                    {
+                        dialog.PinnedIndex = GlobalPinnedIndex--;
+                    }
+                    else
+                    {
+                        GlobalPinnedIndex++;
+                    }
+
+                    for (int j = 0; j < Items.Count; j++)
+                    {
+                        if (Items[j].GetDateIndexWithDraft() <= dialog.GetDateIndexWithDraft())
+                        {
+                            Items.Insert(j, dialog);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 }

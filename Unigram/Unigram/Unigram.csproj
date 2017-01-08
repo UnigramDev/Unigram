@@ -128,12 +128,14 @@
     <Compile Include="Controls\VoiceButton.cs" />
     <Compile Include="Converters\BubblePlaceholderConverter.cs" />
     <Compile Include="Converters\FileExistsToGlyphConverter.cs" />
+    <Compile Include="Selectors\DialogStyleSelector.cs" />
     <Compile Include="Selectors\InlineBotResultTemplateSelector.cs" />
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
+    <Compile Include="Triggers\BooleanTrigger.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="Collections\DialogCollection.cs" />
     <Compile Include="Collections\MediaCollection.cs" />

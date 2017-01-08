@@ -30,6 +30,8 @@
             <HorizontalAlignment x:Key="MessageHorizontalAlignment">Right</HorizontalAlignment>
 
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
+
+            <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
         </ResourceDictionary>
 
         <!-- To -->
@@ -60,6 +62,8 @@
             <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
 
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
+
+            <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -75,6 +79,4 @@
     <SolidColorBrush x:Key="TelegramDialogUnreadLabelBrush" Color="{StaticResource SystemAltHighColor}"/>
     <SolidColorBrush x:Key="TelegramDialogVerifiedForegroundBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="{StaticResource SystemAltHighColor}"/>
-
-    <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
 </ResourceDictionary>
