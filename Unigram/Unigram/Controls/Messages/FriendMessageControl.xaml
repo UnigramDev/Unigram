@@ -8,7 +8,6 @@
     xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    RequestedTheme="Light"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -41,12 +40,6 @@
                        Visibility="Collapsed"
                        Grid.Row="0"/>
 
-            <!--<ContentControl
-                 Content="{x:Bind ViewModel.ReplyInfo, Mode=OneWay}" 
-                 Visibility="{x:Bind ViewModel.ReplyVisibility}"
-                 ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" 
-                 Grid.Row="1"/>-->
-
             <controls:MessageReference 
                 Message="{x:Bind ViewModel.Reply, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
@@ -57,7 +50,6 @@
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}" 
                 Style="{ThemeResource BodyRichTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
-                RequestedTheme="{ThemeResource MessageTextBlockTheme}"
                 Grid.Row="2"/>
 
             <controls:MediaControl

@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Themes">
 
     <ResourceDictionary.ThemeDictionaries>
         <!-- From -->
@@ -18,7 +19,7 @@
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
-            
+
             <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
             <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
 
@@ -35,17 +36,16 @@
         <!-- To -->
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#ffffff"/>
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="#ced6dd"/>
-            <!--<SolidColorBrush x:Key="MessageBorderBrush" Color="#29748ea2"/>-->
-            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
-            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
 
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
-            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
 
-            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#999999"/>
-            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#f2f2f2"/>
+            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
 
@@ -57,24 +57,10 @@
             <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
             <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
 
-            <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
+            <HorizontalAlignment x:Key="MessageHorizontalAlignment">Right</HorizontalAlignment>
 
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
-    <CornerRadius x:Key="MessageCornerRadius">0</CornerRadius>
-    <SolidColorBrush x:Key="TelegramDialogLabelStateBrush" Color="#64BC54"/>
-    <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramForegroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramBackgroundMessageBubbleBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramBackgroundTitlebarBrush" Color="{ThemeResource SystemChromeMediumColor}"/>
-    <SolidColorBrush x:Key="TelegramDialogLabelFromBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>
-    <SolidColorBrush x:Key="TelegramDialogUnreadBadgeBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramDialogUnreadLabelBrush" Color="{StaticResource SystemAltHighColor}"/>
-    <SolidColorBrush x:Key="TelegramDialogVerifiedForegroundBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="{StaticResource SystemAltHighColor}"/>
-
-    <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
 </ResourceDictionary>

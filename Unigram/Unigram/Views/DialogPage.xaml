@@ -429,11 +429,27 @@
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:UserMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+            <messages:UserMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}">
+                <StackPanel.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.MergedDictionaries>
+                            <ResourceDictionary Source="ms-appx:///Themes/AccentFrom.xaml"/>
+                        </ResourceDictionary.MergedDictionaries>
+                    </ResourceDictionary>
+                </StackPanel.Resources>
+            </messages:UserMessageControl>
         </DataTemplate>
 
         <DataTemplate x:Key="FriendMessageTemplate">
-            <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+            <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}">
+                <StackPanel.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.MergedDictionaries>
+                            <ResourceDictionary Source="ms-appx:///Themes/AccentTo.xaml"/>
+                        </ResourceDictionary.MergedDictionaries>
+                    </ResourceDictionary>
+                </StackPanel.Resources>
+            </messages:FriendMessageControl>
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendMessageTemplate" x:DataType="models:TLMessage">
@@ -451,7 +467,15 @@
                     </Ellipse>
                     <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
                 </Grid>
-                <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
+                <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
+                    <StackPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="ms-appx:///Themes/AccentTo.xaml"/>
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </StackPanel.Resources>
+                </messages:FriendMessageControl>
             </Grid>
         </DataTemplate>
 
@@ -827,6 +851,7 @@
             <inline:InlineBotResultsView ItemClick="InlineBotResults_ItemClick"/>
 
             <Grid x:Name="Jimmy"
+                  x:DeferLoadStrategy="Lazy"
                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                   BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
                   HorizontalAlignment="Right"
