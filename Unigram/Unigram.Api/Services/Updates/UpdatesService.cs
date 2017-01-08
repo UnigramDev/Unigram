@@ -1876,7 +1876,15 @@ namespace Telegram.Api.Services.Updates
             var updateDialogPinned = update as TLUpdateDialogPinned;
             if (updateDialogPinned != null)
             {
-                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateDialogPinned));
+                var dialog = _cacheService.GetDialog(updateDialogPinned.Peer);
+                if (dialog != null)
+                {
+                    dialog.IsPinned = updateDialogPinned.IsPinned;
+                    dialog.RaisePropertyChanged(() => dialog.IsPinned);
+                    _cacheService.Commit();
+
+                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateDialogPinned));
+                }
 
                 return true;
             }

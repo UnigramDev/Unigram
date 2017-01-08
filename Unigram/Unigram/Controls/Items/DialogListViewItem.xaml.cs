@@ -29,7 +29,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Items
 {
-    public sealed partial class DialogListViewItem : UserControl
+    public sealed partial class DialogListViewItem : HackUserControl
     {
         public TLDialog ViewModel => DataContext as TLDialog;
         private TLDialog _oldViewModel;
@@ -37,6 +37,11 @@ namespace Unigram.Controls.Items
         public DialogListViewItem()
         {
             InitializeComponent();
+
+            DataContextChanged += (s, args) =>
+            {
+                if (ViewModel != null) Bindings.Update();
+            };
 
             DataContextChanged += OnDataContextChanged;
         }
@@ -90,6 +95,11 @@ namespace Unigram.Controls.Items
             {
                 UpdatePicture();
             }
+        }
+
+        private Visibility UpdateIsPinned(bool isPinned, int unreadCount)
+        {
+            return isPinned && unreadCount == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdatePicture()
@@ -627,5 +637,13 @@ namespace Unigram.Controls.Items
             menuItem.Visibility = Visibility.Visible;
         }
         #endregion
+    }
+
+    public class HackUserControl : UserControl
+    {
+        /// <summary>
+        /// x:Bind hack
+        /// </summary>
+        public new event TypedEventHandler<FrameworkElement, object> Loading;
     }
 }
