@@ -827,7 +827,6 @@
             <inline:InlineBotResultsView ItemClick="InlineBotResults_ItemClick"/>
 
             <Grid x:Name="Jimmy"
-                  x:DeferLoadStrategy="Lazy"
                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                   BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
                   HorizontalAlignment="Right"
@@ -932,6 +931,18 @@
                             <Image Margin="4" Source="{Binding [0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
+                    <ListView.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <controls:GlyphButton Glyph="&#xE608;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
+                            <controls:GlyphButton Glyph="&#xE82F;"/>
+                        </StackPanel>
+                    </ListView.Header>
+                    <ListView.Footer>
+                        <StackPanel Orientation="Horizontal">
+                            <controls:GlyphButton Glyph="&#xE82F;"/>
+                            <controls:GlyphButton Glyph="&#xE115;"/>
+                        </StackPanel>
+                    </ListView.Footer>
                 </ListView>
             </Grid>
         </Grid>
