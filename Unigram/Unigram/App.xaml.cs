@@ -113,10 +113,11 @@ namespace Unigram
             return base.OnInitializeAsync(args);
         }
 
-        public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
-        {
+        public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
+        {            
             //NavigationService.Navigate(typeof(PlaygroundPage));
             //return;
+
 
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
 
@@ -172,9 +173,15 @@ namespace Unigram
                 NavigationService.Navigate(typeof(Views.Login.LoginWelcomePage));
             }
 
-            ShowStatusBar();
-            ColourTitleBar();
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
+            Task.Run(() => OnStartSync());
+            return Task.CompletedTask;
+        }
+
+        private async void OnStartSync()
+        {
+            //ShowStatusBar();
+            //ColourTitleBar();
+            //ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
 
             await Toast.RegisterBackgroundTasks();
 

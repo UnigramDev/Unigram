@@ -216,10 +216,10 @@ namespace Telegram.Api.TL
             var draft = Draft as TLDraftMessage;
             if (draft != null)
             {
-                return Math.Max(draft.Date, dateIndex) + (IsPinned ? 0xFFFF00 : 0);
+                return Math.Max(draft.Date, dateIndex);
             }
 
-            return dateIndex + (IsPinned ? 0xFFFF00 : 0);
+            return dateIndex;
         }
 
         public bool IsChat
