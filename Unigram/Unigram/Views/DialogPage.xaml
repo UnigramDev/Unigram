@@ -1058,15 +1058,19 @@
                                       Grid.Row="1"/>
             </Border>
 
+            <!-- {Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}
+            &#xE725;
+            -->
+            
             <controls:GlyphButton x:Name="btnSendMessage"
                                   VerticalAlignment="Bottom"
                                   Click="btnSendMessage_Click"
-                                  Glyph="&#xE725;" 
+                                  Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}, ConverterParameter=send}" 
                                   IsTabStop="False"
-                                  Visibility="Collapsed"
+                                  Visibility="Visible"
                                   FontSize="24"
                                   Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
-                                  Padding="4,2,0,0"
+                                  Padding="4,0,0,0"
                                   Grid.Column="3"
                                   Grid.Row="1"/>
 
