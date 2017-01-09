@@ -10,6 +10,7 @@ using System.Numerics;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Template10.Services.SerializationService;
 using Unigram.Controls;
@@ -237,13 +238,16 @@ namespace Unigram.Views
             });
         }
 
-        private async void PivotItem_Loaded(object sender, RoutedEventArgs e)
+        private void PivotItem_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                ViewModel.Dialogs.LoadFirstSlice();
-                await ViewModel.Contacts.getTLContacts();
-                await ViewModel.Contacts.GetSelfAsync();
+                Execute.BeginOnUIThread(async () =>
+                {
+                    ViewModel.Dialogs.LoadFirstSlice();
+                    await ViewModel.Contacts.getTLContacts();
+                    await ViewModel.Contacts.GetSelfAsync();
+                });
             }
             catch { }
         }

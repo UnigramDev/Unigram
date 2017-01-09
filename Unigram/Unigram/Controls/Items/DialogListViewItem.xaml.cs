@@ -41,6 +41,7 @@ namespace Unigram.Controls.Items
             DataContextChanged += (s, args) =>
             {
                 if (ViewModel != null) Bindings.Update();
+                if (ViewModel == null) Bindings.StopTracking();
             };
 
             DataContextChanged += OnDataContextChanged;
