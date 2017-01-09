@@ -5,6 +5,7 @@ Windows 10 (Mobile) introduced with the Universal Windows Platform a whole list 
 
 Build instructions:
 -
+* Install [SQLite] Visual Studio extension.
 * Go to https://my.telegram.org/apps and register a new app.
 * Create a new file inside `Unigram/Unigram/Unigram.Api` called `Constants.Secret.cs`:
 ```csharp
@@ -92,3 +93,5 @@ UWP-specific:
 -	Share contracts
 -	Integrate with the People Hub
 -	And more…
+
+[SQLite]:https://marketplace.visualstudio.com/items?itemName=SQLiteDevelopmentTeam.SQLiteforUniversalWindowsPlatform
