@@ -764,6 +764,10 @@ namespace Unigram.Controls
                 {
                     flag = true;
                 }
+                else if (chatBase != null && message.ToId is TLPeerChannel && chatBase.Id == message.ToId.Id)
+                {
+                    flag = true;
+                }
 
                 if (flag)
                 {
