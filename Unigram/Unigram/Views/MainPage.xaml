@@ -21,6 +21,14 @@
     </Page.Transitions>
 
     <Page.Resources>
+        <MenuFlyout x:Key="DialogMenuFlyout">
+            <MenuFlyoutItem Loaded="DialogPin_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogPinCommand}" CommandParameter="{Binding}" Text="Pin to top"/>
+            <MenuFlyoutItem Loaded="DialogClear_Loaded" Text="Clear history"/>
+            <MenuFlyoutItem Loaded="DialogDelete_Loaded" Text="Delete conversation"/>
+            <MenuFlyoutItem Loaded="DialogDeleteAndStop_Loaded" Text="Delete and stop"/>
+            <MenuFlyoutItem Loaded="DialogDeleteAndExit_Loaded" Text="Delete and exit"/>
+        </MenuFlyout>
+
         <Style TargetType="PivotItem">
             <Setter Property="Margin" Value="0" />
         </Style>
@@ -113,7 +121,7 @@
                             </ListView.ItemContainerStyleSelector>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <items:DialogListViewItem />
+                                    <items:DialogListViewItem ContextFlyout="{StaticResource DialogMenuFlyout}"/>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                             <ListView.Header>

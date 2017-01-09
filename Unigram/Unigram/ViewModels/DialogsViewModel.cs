@@ -310,10 +310,11 @@ namespace Unigram.ViewModels
                     dialog = CacheService.GetDialog(update.Peer);
                 }
 
-                IsFirstPinned = update.IsPinned ? true : Items.Any(x => x.IsPinned);
-
                 if (dialog != null)
                 {
+                    IsFirstPinned = dialog.IsPinned ? true : Items.Any(x => x.IsPinned);
+                    PinnedDialogsIndex = 1;
+
                     if (dialog.IsPinned)
                     {
                         dialog.PinnedIndex = PinnedDialogsIndex++;
@@ -322,6 +323,14 @@ namespace Unigram.ViewModels
                     {
                         dialog.PinnedIndex = 0;
                         PinnedDialogsIndex--;
+                    }
+
+                    foreach (var cached in Items)
+                    {
+                        if (cached.IsPinned)
+                        {
+                            cached.PinnedIndex = PinnedDialogsIndex++;
+                        }
                     }
 
                     for (int j = 0; j < Items.Count; j++)
@@ -686,11 +695,6 @@ namespace Unigram.ViewModels
             var result = await ProtoService.ToggleDialogPinAsync(peer, !dialog.IsPinned);
             if (result.IsSucceeded)
             {
-                if (dialog.IsPinned)
-                {
-                    dialog.PinnedIndex = PinnedDialogsIndex++;
-                }
-
                 for (int i = 0; i < Items.Count; i++)
                 {
                     if (Items[i].Index == dialog.Index)
@@ -704,6 +708,7 @@ namespace Unigram.ViewModels
                 if (dialog != null)
                 {
                     IsFirstPinned = dialog.IsPinned ? true : Items.Any(x => x.IsPinned);
+                    PinnedDialogsIndex = 1;
 
                     if (dialog.IsPinned)
                     {
@@ -713,6 +718,14 @@ namespace Unigram.ViewModels
                     {
                         dialog.PinnedIndex = 0;
                         PinnedDialogsIndex--;
+                    }
+
+                    foreach (var cached in Items)
+                    {
+                        if (cached.IsPinned)
+                        {
+                            cached.PinnedIndex = PinnedDialogsIndex++;
+                        }
                     }
 
                     for (int j = 0; j < Items.Count; j++)
