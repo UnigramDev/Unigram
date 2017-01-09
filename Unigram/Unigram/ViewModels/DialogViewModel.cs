@@ -46,7 +46,6 @@ namespace Unigram.ViewModels
         public Brush PlaceHolderColor { get; internal set; }
         public string DialogTitle;
         public string LastSeen;
-        public Visibility pinnedMessageVisible = Visibility.Collapsed;
         public Visibility LastSeenVisible;
         public string debug;
 
@@ -387,17 +386,11 @@ namespace Unigram.ViewModels
                 var channelFull = (TLChannelFull)channelDetails.Value.FullChat;
                 if (channelFull.HasPinnedMsgId)
                 {
-                    pinnedMessageVisible = Visibility.Visible;
-
                     var y = await ProtoService.GetMessagesAsync(input, new TLVector<int>() { channelFull.PinnedMsgId ?? 0 });
                     if (y.IsSucceeded)
                     {
                         PinnedMessage = y.Value.Messages.FirstOrDefault();
                     }
-                }
-                else
-                {
-                    pinnedMessageVisible = Visibility.Collapsed;
                 }
 
                 PlaceHolderColor = BindConvert.Current.Bubble(channelDetails.Value.Chats[0].Id);
@@ -464,6 +457,42 @@ namespace Unigram.ViewModels
                 if (recent != null)
                 {
                     await StickersAll(recent);
+                }
+            }
+        }
+
+        private async void ShowPinnedMessage(TLChannel channel)
+        {
+            if (channel == null) return;
+            if (channel.PinnedMsgId == null) return;
+            if (PinnedMessage != null && PinnedMessage.Id == channel.PinnedMsgId.Value) return;
+            if (channel.HiddenPinnedMsgId != null && channel.HiddenPinnedMsgId.Value == channel.PinnedMsgId.Value) return;
+            if (channel.PinnedMsgId.Value <= 0)
+            {
+                if (PinnedMessage != null)
+                {
+                    PinnedMessage = null;
+                    return;
+                }
+            }
+            else
+            {
+                var messageBase = CacheService.GetMessage(channel.PinnedMsgId, channel.Id);
+                if (messageBase != null)
+                {
+                    PinnedMessage = messageBase;
+                    return;
+                }
+
+                var inputChannel = new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
+                var result = await ProtoService.GetMessagesAsync(inputChannel, new TLVector<int> { channel.PinnedMsgId.Value });
+                if (result.IsSucceeded)
+                {
+                    PinnedMessage = result.Value.Messages.FirstOrDefault(x => x.Id == channel.PinnedMsgId.Value);
+                }
+                else
+                {
+                    Telegram.Api.Helpers.Execute.ShowDebugMessage("channels.getMessages error " + result.Error);
                 }
             }
         }

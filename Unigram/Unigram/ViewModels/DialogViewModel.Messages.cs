@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
+using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
@@ -142,6 +143,7 @@ namespace Unigram.ViewModels
             dialog.Content = content;
             dialog.PrimaryButtonText = "Yes";
             dialog.SecondaryButtonText = "No";
+
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
@@ -381,6 +383,93 @@ namespace Unigram.ViewModels
             }
 
             return null;
+        }
+
+        #endregion
+
+        #region 
+
+        public RelayCommand<TLMessageBase> MessagePinCommand => new RelayCommand<TLMessageBase>(MessagePinExecute);
+        private async void MessagePinExecute(TLMessageBase message)
+        {
+            if (PinnedMessage?.Id == message.Id)
+            {
+                var content = new StackPanel();
+                content.Children.Add(new TextBlock
+                {
+                    Text = "Would you like to unpin this message?",
+                    Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
+                });
+
+                var dialog = new ContentDialog();
+                dialog.Title = "Unpin message";
+                dialog.Content = content;
+                dialog.PrimaryButtonText = "Yes";
+                dialog.SecondaryButtonText = "No";
+
+                var dialogResult = await dialog.ShowAsync();
+                if (dialogResult == ContentDialogResult.Primary)
+                {
+                    var channel = Peer as TLInputPeerChannel;
+                    var inputChannel = new TLInputChannel { ChannelId = channel.ChannelId, AccessHash = channel.AccessHash };
+
+                    var result = await ProtoService.UpdatePinnedMessageAsync(false, inputChannel, 0);
+                    if (result.IsSucceeded)
+                    {
+                        PinnedMessage = null;
+                    }
+                }
+            }
+            else
+            {
+                var check = default(CheckBox);
+                var content = new StackPanel();
+                content.Children.Add(new TextBlock
+                {
+                    Text = "Would you like to pin this message?",
+                    Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
+                });
+
+                check = new CheckBox
+                {
+                    Content = "Notify all members",
+                    Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0),
+                    IsChecked = true
+                };
+
+                content.Children.Add(check);
+
+                var dialog = new ContentDialog();
+                dialog.Title = "Pin message";
+                dialog.Content = content;
+                dialog.PrimaryButtonText = "Yes";
+                dialog.SecondaryButtonText = "No";
+
+                var dialogResult = await dialog.ShowAsync();
+                if (dialogResult == ContentDialogResult.Primary)
+                {
+                    var channel = Peer as TLInputPeerChannel;
+                    var inputChannel = new TLInputChannel { ChannelId = channel.ChannelId, AccessHash = channel.AccessHash };
+
+                    var silent = check?.IsChecked == false;
+                    var result = await ProtoService.UpdatePinnedMessageAsync(silent, inputChannel, message.Id);
+                    if (result.IsSucceeded)
+                    {
+                        var updates = result.Value as TLUpdates;
+                        if (updates != null)
+                        {
+                            var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
+                            if (newChannelMessageUpdate != null)
+                            {
+                                Handle(newChannelMessageUpdate.Message as TLMessageCommonBase);
+                                Aggregator.Publish(new TopMessageUpdatedEventArgs(_currentDialog, newChannelMessageUpdate.Message));
+                            }
+                        }
+
+                        PinnedMessage = message;
+                    }
+                }
+            }
         }
 
         #endregion

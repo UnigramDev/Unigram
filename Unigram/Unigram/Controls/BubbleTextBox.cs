@@ -639,10 +639,11 @@ namespace Unigram.Controls
             ((BubbleTextBox)d).OnReplyChanged((TLMessageBase)e.NewValue, (TLMessageBase)e.OldValue);
         }
 
-        private void OnReplyChanged(TLMessageBase newValue, TLMessageBase oldValue)
+        private async void OnReplyChanged(TLMessageBase newValue, TLMessageBase oldValue)
         {
             if (newValue != null)
             {
+                await Task.Delay(200);
                 Focus(FocusState.Keyboard);
             }
         }

@@ -55,6 +55,7 @@ namespace Unigram.Controls
         {
             if (item == null)
             {
+                Visibility = Visibility.Collapsed;
                 return false;
             }
 

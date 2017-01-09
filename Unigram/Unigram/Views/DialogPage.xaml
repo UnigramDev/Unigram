@@ -221,7 +221,7 @@
                 </Style>
             </MenuFlyout.MenuFlyoutPresenterStyle>
             <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
-            <MenuFlyoutItem Loaded="MessagePin_Loaded" Text="Pin" IsEnabled="False"/>
+            <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin"/>
             <MenuFlyoutItem Loaded="MessageEdit_Loaded" Command="{x:Bind ViewModel.MessageEditCommand}" CommandParameter="{Binding}" Text="Edit"/>
             <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete"/>
             <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward" IsEnabled="False"/>
@@ -611,7 +611,7 @@
         <!-- END OF Titlebar -->
 
         <Grid x:Name="grdPinnedMessage"
-              Visibility="{x:Bind ViewModel.pinnedMessageVisible}"
+              Visibility="{x:Bind ViewModel.PinnedMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
               Background="{ThemeResource TelegramBackgroundAccentBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}"
               RequestedTheme="Dark"

@@ -12,6 +12,7 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : 
         IHandle<TLMessageCommonBase>,
+        IHandle<TLUpdateChannelPinnedMessage>,
         IHandle<TLUpdateEditChannelMessage>,
         IHandle<TLUpdateEditMessage>,
         IHandle<MessagesRemovedEventArgs>,
@@ -129,6 +130,15 @@ namespace Unigram.ViewModels
                     message.RaisePropertyChanged(() => message.ReplyMarkup);
                     message.RaisePropertyChanged(() => message.Self);
                 });
+            }
+        }
+
+        public void Handle(TLUpdateChannelPinnedMessage update)
+        {
+            var channel = With as TLChannel;
+            if (channel != null && channel.Id == update.ChannelId)
+            {
+                ShowPinnedMessage(channel);
             }
         }
 
