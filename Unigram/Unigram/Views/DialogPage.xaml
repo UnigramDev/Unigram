@@ -607,50 +607,33 @@
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
+
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
         <!-- END OF Titlebar -->
 
         <Grid x:Name="grdPinnedMessage"
               Visibility="{x:Bind ViewModel.PinnedMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-              Background="{ThemeResource TelegramBackgroundAccentBrush}"
+              Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}"
-              RequestedTheme="Dark"
               Grid.Row="1">
-
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="48"/>
             </Grid.ColumnDefinitions>
 
             <Button x:Name="btnPinnedMessage" Padding="12,0" Style="{StaticResource EmptyButtonStyle}">
-                <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0">
-                    <controls:MessageReference.Resources>
-                        <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                        <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                        <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                        <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                    </controls:MessageReference.Resources>
-                </controls:MessageReference>
-                <!--<Grid VerticalAlignment="Center">
-                     <Grid.ColumnDefinitions>
-                     <ColumnDefinition Width="Auto"/>
-                     <ColumnDefinition />
-                     </Grid.ColumnDefinitions>
-                     
-                -->
-                <!-- Icon -->
-                <!--
-                     <Rectangle Fill="White" Width="2" Margin="12,0,0,0"/>
-                     
-                     <StackPanel Margin="8,0,0,2" Grid.Column="1">
-                     <TextBlock Text="Pinned message" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
-                     <TextBlock Text="{x:Bind ViewModel.pinnedMessage}" Style="{ThemeResource ReplyBodyTextBlockStyle}"/>
-                     </StackPanel>
-                     </Grid>-->
+                <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0"/>
+                <!--<controls:MessageReference.Resources>
+                    <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                </controls:MessageReference.Resources>-->
             </Button>
-
-            <!-- Close button -->
             <controls:GlyphButton Click="btnClosePinnedMessage_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="1"/>
+
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
         <Grid Grid.Row="2">
@@ -843,7 +826,7 @@
             </controls:BubbleListView>
 
             <Border x:Name="DateHeader" Visibility="Collapsed" Background="#7F89A0B4" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="12,5,12,6" Margin="0,12,0,2" Grid.ColumnSpan="2">
-                <RichTextBlock x:Name="DateHeaderLabel" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
+                <RichTextBlock x:Name="DateHeaderLabel" IsTextSelectionEnabled="False" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
             </Border>
         </Grid>
 
