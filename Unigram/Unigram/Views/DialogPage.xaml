@@ -623,7 +623,15 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="btnPinnedMessage" Padding="12,0" Style="{StaticResource EmptyButtonStyle}">
-                <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0"/>
+                <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0">
+                    <Grid.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="ms-appx:///Themes/AccentTo.xaml"/>
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </Grid.Resources>
+                </controls:MessageReference>
                 <!--<controls:MessageReference.Resources>
                     <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                     <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
@@ -981,18 +989,13 @@
                 <!-- ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" Visibility="{Binding ReplyVisibility}" BorderBrush="#2fa9e2" Foreground="#0e7acd" Style="{StaticResource MediaControlStyle}" -->
 
                 <controls:MessageReference Message="{Binding ReplyInfo}" VerticalAlignment="Center" Margin="-8,0,0,0" Grid.Column="1">
-                    <controls:MessageReference.Resources>
+                    <Grid.Resources>
                         <ResourceDictionary>
-                            <ResourceDictionary.ThemeDictionaries>
-                                <ResourceDictionary x:Name="Dark">
-                                    <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#00FFFFFF"/>
-                                    <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                                    <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                                    <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                                </ResourceDictionary>
-                            </ResourceDictionary.ThemeDictionaries>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="ms-appx:///Themes/AccentTo.xaml"/>
+                            </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
-                    </controls:MessageReference.Resources>
+                    </Grid.Resources>
                 </controls:MessageReference>
 
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
