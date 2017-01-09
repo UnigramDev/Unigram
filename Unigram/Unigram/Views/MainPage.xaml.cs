@@ -87,7 +87,7 @@ namespace Unigram.Views
                         if (user != null)
                         {
                             ClearNavigation();
-                            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
                         }
                     }
                     else if (data.ContainsKey("chat_id"))
@@ -96,7 +96,7 @@ namespace Unigram.Views
                         if (chat != null)
                         {
                             ClearNavigation();
-                            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = chat.Id });
+                            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = chat.Id });
                         }
                     }
                     else if (data.ContainsKey("channel_id"))
@@ -105,7 +105,7 @@ namespace Unigram.Views
                         if (chat != null)
                         {
                             ClearNavigation();
-                            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = chat.Id });
+                            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = chat.Id });
                         }
                     }
                 }
@@ -114,15 +114,15 @@ namespace Unigram.Views
 
         private void ClearNavigation()
         {
-            while (ViewModel.NavigationService.Frame.BackStackDepth > 1)
+            while (MasterDetail.NavigationService.Frame.BackStackDepth > 1)
             {
-                ViewModel.NavigationService.Frame.BackStack.RemoveAt(1);
+                MasterDetail.NavigationService.Frame.BackStack.RemoveAt(1);
             }
 
-            if (ViewModel.NavigationService.CanGoBack)
+            if (MasterDetail.NavigationService.CanGoBack)
             {
-                ViewModel.NavigationService.GoBack();
-                ViewModel.NavigationService.Frame.ForwardStack.Clear();
+                MasterDetail.NavigationService.GoBack();
+                MasterDetail.NavigationService.Frame.ForwardStack.Clear();
             }
         }
 
@@ -156,7 +156,7 @@ namespace Unigram.Views
                 _lastSelected = e.ClickedItem;
 
                 var dialog = e.ClickedItem as TLDialog;
-                ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
             }
         }
 
@@ -167,7 +167,7 @@ namespace Unigram.Views
                 _lastSelected = lvMasterChats.SelectedItem;
 
                 var dialog = lvMasterChats.SelectedItem as TLDialog;
-                ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
             }
         }
 
@@ -257,13 +257,13 @@ namespace Unigram.Views
             if (UsersListView.SelectedItem != null && _lastSelectedContact != UsersListView.SelectedItem && UsersListView.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 var user = UsersListView.SelectedItem as TLUser;
-                ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
             }
         }
 
         private void Self_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self?.Id ?? 0 });
+            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self?.Id ?? 0 });
         }
 
         private void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
@@ -286,7 +286,6 @@ namespace Unigram.Views
                 _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
                 _backgroundBrush.Transform = Matrix3x2.CreateScale(_logicalDpi / 96f);
             }).AsAsyncAction());
-
         }
 
         private void BackgroundCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
