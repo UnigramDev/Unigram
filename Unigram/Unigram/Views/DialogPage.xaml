@@ -999,7 +999,7 @@
                     <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
                 </Border>
 
-                <controls:GlyphButton Command="{Binding ClearReplyCommand}" IsTabStop="False" Glyph="&#xE106;" FontSize="16" Grid.Column="2"/>
+                <controls:GlyphButton Command="{Binding ClearReplyCommand}" AllowFocusOnInteraction="False" Glyph="&#xE106;" FontSize="16" Grid.Column="2"/>
             </Grid>
             <!-- Message input -->
             <controls:BubbleTextBox
@@ -1045,6 +1045,7 @@
             <controls:GlyphButton x:Name="btnStickers" 
                                   Command="{Binding SendCommand}"
                                   CommandParameter="ciao"
+                                  AllowFocusOnInteraction="False"
                                   Glyph="&#xE606;" 
                                   FontFamily="{ThemeResource TelegramThemeFontFamily}" 
                                   VerticalAlignment="Bottom"
@@ -1053,6 +1054,7 @@
 
             <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="3" Grid.Row="1">
                 <controls:VoiceButton x:Name="btnVoiceMessage"
+                                      AllowFocusOnInteraction="False"
                                       Glyph="&#xE720;" 
                                       Grid.Column="3"
                                       Grid.Row="1"/>
@@ -1066,7 +1068,7 @@
                                   VerticalAlignment="Bottom"
                                   Click="btnSendMessage_Click"
                                   Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}, ConverterParameter=send}" 
-                                  IsTabStop="False"
+                                  AllowFocusOnInteraction="False"
                                   Visibility="Visible"
                                   FontSize="24"
                                   Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
@@ -1074,7 +1076,7 @@
                                   Grid.Column="3"
                                   Grid.Row="1"/>
 
-            <controls:GlyphButton x:Name="Attach" Click="Attach_Click" Glyph="&#xE16C;" VerticalAlignment="Bottom" Grid.Row="1">
+            <controls:GlyphButton x:Name="Attach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
                 <FlyoutBase.AttachedFlyout>
                     <MenuFlyout Placement="Top">
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"

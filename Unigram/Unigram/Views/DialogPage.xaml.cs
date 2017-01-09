@@ -156,7 +156,7 @@ namespace Unigram.Views
                     flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
                 }
 
-                flyout.ShowAt(Attach, new Point(8, -9));
+                flyout.ShowAt(Attach, new Point(8, -8));
             }
         }
 
