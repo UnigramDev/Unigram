@@ -51,7 +51,9 @@ namespace Unigram.ViewModels
             Items = new ObservableCollection<TLDialog>();
         }
 
-        public int GlobalPinnedIndex { get; set; }
+        public int PinnedDialogsIndex { get; set; }
+
+        public int PinnedDialogsCountMax { get; set; }
 
         private bool _isFirstPinned;
         public bool IsFirstPinned
@@ -97,20 +99,21 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetDialogsAsync(lastDate, lastMsgId, lastPeer, 200);
             if (response.IsSucceeded)
             {
-                var pinnedIndex = config.PinnedDialogsCountMax;
+                var pinnedIndex = 0;
 
                 foreach (var item in response.Value.Dialogs)
                 {
                     if (item.IsPinned)
                     {
-                        item.PinnedIndex = pinnedIndex--;
+                        item.PinnedIndex = pinnedIndex++;
                     }
 
                     Items.Add(item);
                 }
 
                 IsFirstPinned = Items.Any(x => x.IsPinned);
-                GlobalPinnedIndex = pinnedIndex;
+                PinnedDialogsIndex = pinnedIndex;
+                PinnedDialogsCountMax = config.PinnedDialogsCountMax;
             }
 
             Aggregator.Subscribe(this);
@@ -313,11 +316,12 @@ namespace Unigram.ViewModels
                 {
                     if (dialog.IsPinned)
                     {
-                        dialog.PinnedIndex = GlobalPinnedIndex--;
+                        dialog.PinnedIndex = PinnedDialogsIndex++;
                     }
                     else
                     {
-                        GlobalPinnedIndex++;
+                        dialog.PinnedIndex = 0;
+                        PinnedDialogsIndex--;
                     }
 
                     for (int j = 0; j < Items.Count; j++)
@@ -684,7 +688,7 @@ namespace Unigram.ViewModels
             {
                 if (dialog.IsPinned)
                 {
-                    dialog.PinnedIndex = GlobalPinnedIndex--;
+                    dialog.PinnedIndex = PinnedDialogsIndex++;
                 }
 
                 for (int i = 0; i < Items.Count; i++)
@@ -703,11 +707,12 @@ namespace Unigram.ViewModels
 
                     if (dialog.IsPinned)
                     {
-                        dialog.PinnedIndex = GlobalPinnedIndex--;
+                        dialog.PinnedIndex = PinnedDialogsIndex++;
                     }
                     else
                     {
-                        GlobalPinnedIndex++;
+                        dialog.PinnedIndex = 0;
+                        PinnedDialogsIndex--;
                     }
 
                     for (int j = 0; j < Items.Count; j++)
