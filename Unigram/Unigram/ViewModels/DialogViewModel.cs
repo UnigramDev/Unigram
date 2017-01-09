@@ -46,7 +46,6 @@ namespace Unigram.ViewModels
         public Brush PlaceHolderColor { get; internal set; }
         public string DialogTitle;
         public string LastSeen;
-        public Visibility pinnedMessageVisible = Visibility.Collapsed;
         public Visibility LastSeenVisible;
         public string debug;
 
@@ -67,16 +66,18 @@ namespace Unigram.ViewModels
         private readonly IUploadDocumentManager _uploadDocumentManager;
         private readonly IUploadVideoManager _uploadVideoManager;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, FeaturedStickersViewModel featuredStickers)
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
             _uploadAudioManager = uploadAudioManager;
             _uploadDocumentManager = uploadDocumentManager;
             _uploadVideoManager = uploadVideoManager;
+
+            FeaturedStickers = featuredStickers;
         }
 
-
+        public FeaturedStickersViewModel FeaturedStickers { get; private set; }
 
 
 
@@ -385,17 +386,11 @@ namespace Unigram.ViewModels
                 var channelFull = (TLChannelFull)channelDetails.Value.FullChat;
                 if (channelFull.HasPinnedMsgId)
                 {
-                    pinnedMessageVisible = Visibility.Visible;
-
                     var y = await ProtoService.GetMessagesAsync(input, new TLVector<int>() { channelFull.PinnedMsgId ?? 0 });
                     if (y.IsSucceeded)
                     {
                         PinnedMessage = y.Value.Messages.FirstOrDefault();
                     }
-                }
-                else
-                {
-                    pinnedMessageVisible = Visibility.Collapsed;
                 }
 
                 PlaceHolderColor = BindConvert.Current.Bubble(channelDetails.Value.Chats[0].Id);
@@ -424,7 +419,7 @@ namespace Unigram.ViewModels
                 var draft = dialog.Draft as TLDraftMessage;
                 if (draft != null)
                 {
-                    Text = draft.Message;
+                    Aggregator.Publish(new TLUpdateDraftMessage { Draft = draft, Peer = Peer.ToPeer() });
                     ProcessDraftReply(draft);
                 }
             }
@@ -462,6 +457,42 @@ namespace Unigram.ViewModels
                 if (recent != null)
                 {
                     await StickersAll(recent);
+                }
+            }
+        }
+
+        private async void ShowPinnedMessage(TLChannel channel)
+        {
+            if (channel == null) return;
+            if (channel.PinnedMsgId == null) return;
+            if (PinnedMessage != null && PinnedMessage.Id == channel.PinnedMsgId.Value) return;
+            if (channel.HiddenPinnedMsgId != null && channel.HiddenPinnedMsgId.Value == channel.PinnedMsgId.Value) return;
+            if (channel.PinnedMsgId.Value <= 0)
+            {
+                if (PinnedMessage != null)
+                {
+                    PinnedMessage = null;
+                    return;
+                }
+            }
+            else
+            {
+                var messageBase = CacheService.GetMessage(channel.PinnedMsgId, channel.Id);
+                if (messageBase != null)
+                {
+                    PinnedMessage = messageBase;
+                    return;
+                }
+
+                var inputChannel = new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
+                var result = await ProtoService.GetMessagesAsync(inputChannel, new TLVector<int> { channel.PinnedMsgId.Value });
+                if (result.IsSucceeded)
+                {
+                    PinnedMessage = result.Value.Messages.FirstOrDefault(x => x.Id == channel.PinnedMsgId.Value);
+                }
+                else
+                {
+                    Telegram.Api.Helpers.Execute.ShowDebugMessage("channels.getMessages error " + result.Error);
                 }
             }
         }
@@ -687,10 +718,31 @@ namespace Unigram.ViewModels
 
             if (Reply != null)
             {
-                message.HasReplyToMsgId = true;
-                message.ReplyToMsgId = Reply.Id;
-                message.Reply = Reply;
-                Reply = null;
+                var container = Reply as TLMessagesContainter;
+                if (container != null)
+                {
+                    if (container.EditMessage != null)
+                    {
+                        var edit = await ProtoService.EditMessageAsync(Peer, container.EditMessage.Id, message.Message, message.Entities, null, false);
+                        if (edit.IsSucceeded)
+                        {
+                        }
+                        else
+                        {
+
+                        }
+
+                        Reply = null;
+                        return;
+                    }
+                }
+                else
+                {
+                    message.HasReplyToMsgId = true;
+                    message.ReplyToMsgId = Reply.Id;
+                    message.Reply = Reply;
+                    Reply = null;
+                }
             }
 
             var previousMessage = InsertSendingMessage(message, useReplyMarkup);

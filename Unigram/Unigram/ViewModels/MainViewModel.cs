@@ -48,10 +48,10 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            Task.Run(() =>
-            {
-                _pushService.RegisterAsync();
-            });
+            Task.Run(() => _pushService.RegisterAsync());
+            //Execute.BeginOnUIThread(() => Dialogs.LoadFirstSlice());
+            //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
+            //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
 
             return Task.CompletedTask;
         }

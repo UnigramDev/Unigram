@@ -166,21 +166,19 @@ namespace Unigram.ViewModels
     {
         public int Compare(TLUser x, TLUser y)
         {
-            var fullName = y.FullName.CompareTo(x.FullName);
-            if (fullName == 0)
+            var epoch = LastSeenHelper.GetLastSeen(y).Item2.CompareTo(LastSeenHelper.GetLastSeen(x).Item2);
+            if (epoch == 0)
             {
-                return y.Id.CompareTo(x.Id);
+                var fullName = x.FullName.CompareTo(y.FullName);
+                if (fullName == 0)
+                {
+                    return y.Id.CompareTo(x.Id);
+                }
+
+                return fullName;
             }
 
-            return fullName;
-
-            //var epoch = y.lastSeenEpoch.CompareTo(x.lastSeenEpoch);
-            //if (epoch == 0)
-            //{
-            //    return y.fullName.CompareTo(x.fullName);
-            //}
-
-            //return epoch;
+            return epoch;
         }
     }
 }

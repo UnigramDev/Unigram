@@ -10,6 +10,7 @@ using System.Numerics;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Template10.Services.SerializationService;
 using Unigram.Controls;
@@ -86,7 +87,7 @@ namespace Unigram.Views
                         if (user != null)
                         {
                             ClearNavigation();
-                            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
                         }
                     }
                     else if (data.ContainsKey("chat_id"))
@@ -95,7 +96,7 @@ namespace Unigram.Views
                         if (chat != null)
                         {
                             ClearNavigation();
-                            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = chat.Id });
+                            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = chat.Id });
                         }
                     }
                     else if (data.ContainsKey("channel_id"))
@@ -104,7 +105,7 @@ namespace Unigram.Views
                         if (chat != null)
                         {
                             ClearNavigation();
-                            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = chat.Id });
+                            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = chat.Id });
                         }
                     }
                 }
@@ -113,15 +114,15 @@ namespace Unigram.Views
 
         private void ClearNavigation()
         {
-            while (ViewModel.NavigationService.Frame.BackStackDepth > 1)
+            while (MasterDetail.NavigationService.Frame.BackStackDepth > 1)
             {
-                ViewModel.NavigationService.Frame.BackStack.RemoveAt(1);
+                MasterDetail.NavigationService.Frame.BackStack.RemoveAt(1);
             }
 
-            if (ViewModel.NavigationService.CanGoBack)
+            if (MasterDetail.NavigationService.CanGoBack)
             {
-                ViewModel.NavigationService.GoBack();
-                ViewModel.NavigationService.Frame.ForwardStack.Clear();
+                MasterDetail.NavigationService.GoBack();
+                MasterDetail.NavigationService.Frame.ForwardStack.Clear();
             }
         }
 
@@ -155,7 +156,7 @@ namespace Unigram.Views
                 _lastSelected = e.ClickedItem;
 
                 var dialog = e.ClickedItem as TLDialog;
-                ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
             }
         }
 
@@ -166,7 +167,7 @@ namespace Unigram.Views
                 _lastSelected = lvMasterChats.SelectedItem;
 
                 var dialog = lvMasterChats.SelectedItem as TLDialog;
-                ViewModel.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
             }
         }
 
@@ -237,13 +238,16 @@ namespace Unigram.Views
             });
         }
 
-        private async void PivotItem_Loaded(object sender, RoutedEventArgs e)
+        private void PivotItem_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                ViewModel.Dialogs.LoadFirstSlice();
-                await ViewModel.Contacts.getTLContacts();
-                await ViewModel.Contacts.GetSelfAsync();
+                Execute.BeginOnUIThread(async () =>
+                {
+                    ViewModel.Dialogs.LoadFirstSlice();
+                    await ViewModel.Contacts.getTLContacts();
+                    await ViewModel.Contacts.GetSelfAsync();
+                });
             }
             catch { }
         }
@@ -253,13 +257,13 @@ namespace Unigram.Views
             if (UsersListView.SelectedItem != null && _lastSelectedContact != UsersListView.SelectedItem && UsersListView.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 var user = UsersListView.SelectedItem as TLUser;
-                ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
             }
         }
 
         private void Self_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self?.Id ?? 0 });
+            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self?.Id ?? 0 });
         }
 
         private void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
@@ -280,9 +284,8 @@ namespace Unigram.Views
                 _backgroundImage = await CanvasBitmap.LoadAsync(sender, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
                 _backgroundBrush = new CanvasImageBrush(sender, _backgroundImage);
                 _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
-                _backgroundBrush.Transform = Matrix3x2.CreateScale(_logicalDpi / 96f);
+                //_backgroundBrush.Transform = Matrix3x2.CreateScale(_logicalDpi / 96f);
             }).AsAsyncAction());
-
         }
 
         private void BackgroundCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -305,5 +308,116 @@ namespace Unigram.Views
                 // lvMasterChats.ItemsSource = ViewModel.Dialogs;
             }
         }
+
+        #region Context menu
+
+        private void DialogPin_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
+                {
+                    element.Text = dialog.IsPinned ? "Unpin from top" : "Pin to top";
+                }
+            }
+        }
+
+        private void DialogClear_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
+                {
+                    element.Visibility = dialog.Peer is TLPeerChannel ? Visibility.Collapsed : Visibility.Visible;
+                }
+            }
+        }
+
+        private void DialogDelete_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
+                {
+                    var channelPeer = dialog.Peer as TLPeerChannel;
+                    if (channelPeer != null)
+                    {
+                        var channel = dialog.With as TLChannel;
+                        if (channel != null)
+                        {
+                            if (channel.IsCreator)
+                            {
+                                element.Text = channel.IsMegagroup ? "Delete group" : "Delete channel";
+                            }
+                            else
+                            {
+                                element.Text = channel.IsMegagroup ? "Leave group" : "Leave channel";
+                            }
+                        }
+
+                        element.Visibility = Visibility.Visible;
+                        return;
+                    }
+
+                    var userPeer = dialog.Peer as TLPeerUser;
+                    if (userPeer != null)
+                    {
+                        element.Text = "Delete conversation";
+                        element.Visibility = Visibility.Visible;
+                        return;
+                    }
+
+                    var chatPeer = dialog.Peer as TLPeerChat;
+                    if (chatPeer != null)
+                    {
+                        element.Text = "Delete conversation";
+                        element.Visibility = dialog.With is TLChatForbidden || dialog.With is TLChatEmpty ? Visibility.Visible : Visibility.Collapsed;
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void DialogDeleteAndStop_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
+                {
+                    var user = dialog.With as TLUser;
+                    if (user != null)
+                    {
+                        element.Visibility = user.IsBot && !user.Blocked ? Visibility.Visible : Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        element.Visibility = Visibility.Collapsed;
+                    }
+                }
+            }
+        }
+
+        private void DialogDeleteAndExit_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
+                {
+                    element.Visibility = dialog.Peer is TLPeerChat ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+        }
+
+        #endregion
     }
 }

@@ -94,10 +94,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <Content Include="Assets\Fonts\Telegram.ttf" />
     <Content Include="WindowsPhoneReservedAppInfo.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Fonts\Telegram.ttf" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -128,12 +128,14 @@
     <Compile Include="Controls\VoiceButton.cs" />
     <Compile Include="Converters\BubblePlaceholderConverter.cs" />
     <Compile Include="Converters\FileExistsToGlyphConverter.cs" />
+    <Compile Include="Selectors\DialogStyleSelector.cs" />
     <Compile Include="Selectors\InlineBotResultTemplateSelector.cs" />
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
+    <Compile Include="Triggers\BooleanTrigger.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="Collections\DialogCollection.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
@@ -232,6 +234,7 @@
     <Compile Include="ViewModels\DialogViewModel.Info.cs" />
     <Compile Include="ViewModels\DialogViewModel.Inline.cs" />
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
+    <Compile Include="ViewModels\FeaturedStickersViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginPasswordViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginPhoneCodeViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginPhoneNumberViewModel.cs" />
@@ -469,6 +472,16 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
+    <Page Include="Themes\AccentFrom.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Themes\AccentTo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
     <Page Include="Themes\Brand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -622,6 +635,7 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Controls\Stickers\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

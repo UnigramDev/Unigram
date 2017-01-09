@@ -10,14 +10,37 @@ using Telegram.Api.Helpers;
 using Windows.UI.Popups;
 using Telegram.Api.TL;
 using Telegram.Api;
+using Windows.UI.Xaml;
+using System.ComponentModel;
 
 namespace Unigram.ViewModels.Login
 {
+
     public class LoginPhoneNumberViewModel : UnigramViewModelBase
     {
+
+
+        public Visibility _pBarVisibility = Visibility.Collapsed;
+        public Visibility pBarVisibility
+        {
+            get { return _pBarVisibility; }
+            set
+            {
+                _pBarVisibility = value;
+                RaisePropertyChanged("pBarVisibility");
+            }
+        }
+
+        private void NotifyPropertyChanged(string info)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
         public LoginPhoneNumberViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+
             var alphabet = "abcdefghijklmnopqrstuvwxyz";
             var list = new List<KeyedList<string, Country>>(alphabet.Length);
             var dictionary = new Dictionary<string, KeyedList<string, Country>>();
@@ -36,7 +59,8 @@ namespace Unigram.ViewModels.Login
             }
 
             Countries = list;
-
+            
+            pBarVisibility = Visibility.Collapsed;
             // IDEA FELA
 
             //if(SelectedCountry == null)
@@ -152,6 +176,14 @@ namespace Unigram.ViewModels.Login
         public RelayCommand SendCommand => new RelayCommand(SendExecute);
         private async void SendExecute()
         {
+           
+            if(PhoneCode == null || PhoneNumber == null)
+            {
+                await new MessageDialog("Please type phone number and phone code").ShowAsync();
+                pBarVisibility = Visibility.Collapsed;
+                return;
+            }
+            pBarVisibility = Visibility.Visible;
             var result = await ProtoService.SendCodeAsync(PhoneCode.TrimStart('+') + PhoneNumber, /* TODO: Verify */ null);
             if (result?.IsSucceeded == true)
             {
@@ -167,6 +199,7 @@ namespace Unigram.ViewModels.Login
             }
             else if (result.Error != null)
             {
+                pBarVisibility = Visibility.Collapsed;
                 await new MessageDialog(result.Error.ErrorMessage, result.Error.ErrorCode.ToString()).ShowAsync();
             }
         }

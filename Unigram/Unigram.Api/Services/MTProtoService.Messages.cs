@@ -1931,6 +1931,27 @@ namespace Telegram.Api.Services
         //        faultCallback);
         //}
 
+        public void ToggleDialogPinCallback(TLInputPeerBase peer, bool pin, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesToggleDialogPin { Peer = peer, IsPinned = pin };
+
+            const string caption = "messages.toggleDialogPin";
+            SendInformativeMessage<bool>(caption, obj, 
+                result =>
+                {
+                    var dialog = _cacheService.GetDialog(peer.ToPeer());
+                    if (dialog != null)
+                    {
+                        dialog.IsPinned = pin;
+                        dialog.RaisePropertyChanged(() => dialog.IsPinned);
+                        _cacheService.Commit();
+                    }
+
+                    callback.SafeInvoke(result);
+                },
+                faultCallback);
+        }
+
         public void HideReportSpamCallback(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLMessagesHideReportSpam { Peer = peer };

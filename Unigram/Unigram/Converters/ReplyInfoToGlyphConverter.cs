@@ -15,38 +15,62 @@ namespace Unigram.Converters
         public const string GlobeGlyph = "\uE12B";
         public const string ForwardGlyph = "\uE111";
         public const string LoadingGlyph = "\uE1CD";
+        public const string SendGlyph = "\uE725";
+        public const string ConfirmGlyph = "\uE10B";
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value == null)
             {
+                if (parameter != null)
+                {
+                    return SendGlyph;
+                }
+
                 return null;
             }
 
-            var replyInfo = value as ReplyInfo;
-            if (replyInfo == null)
+            if (parameter != null)
             {
-                return ReplyGlyph;
+                var replyInfo = value as ReplyInfo;
+                if (replyInfo != null)
+                {
+                    var container = replyInfo.Reply as TLMessagesContainter;
+                    if (container != null)
+                    {
+                        return container.EditMessage != null ? ConfirmGlyph : SendGlyph;
+                    }
+                }
+
+                return SendGlyph;
             }
             else
             {
-                if (replyInfo.Reply == null)
-                {
-                    return LoadingGlyph;
-                }
-
-                var container = replyInfo.Reply as TLMessagesContainter;
-                if (container != null)
-                {
-                    return GetMessagesContainerTemplate(container);
-                }
-
-                if (replyInfo.ReplyToMsgId == null || replyInfo.ReplyToMsgId.Value == 0)
+                var replyInfo = value as ReplyInfo;
+                if (replyInfo == null)
                 {
                     return ReplyGlyph;
                 }
+                else
+                {
+                    if (replyInfo.Reply == null)
+                    {
+                        return LoadingGlyph;
+                    }
 
-                return ReplyGlyph;
+                    var container = replyInfo.Reply as TLMessagesContainter;
+                    if (container != null)
+                    {
+                        return GetMessagesContainerTemplate(container, parameter);
+                    }
+
+                    if (replyInfo.ReplyToMsgId == null || replyInfo.ReplyToMsgId.Value == 0)
+                    {
+                        return ReplyGlyph;
+                    }
+
+                    return ReplyGlyph;
+                }
             }
         }
 
@@ -55,7 +79,7 @@ namespace Unigram.Converters
             throw new NotImplementedException();
         }
 
-        private string GetMessagesContainerTemplate(TLMessagesContainter container)
+        private string GetMessagesContainerTemplate(TLMessagesContainter container, object parameter)
         {
             if (container.WebPageMedia != null)
             {

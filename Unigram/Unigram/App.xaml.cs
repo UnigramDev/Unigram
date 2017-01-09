@@ -59,7 +59,7 @@ namespace Unigram
             {
                 args.Handled = true;
                 await FileIO.WriteTextAsync(await KnownFolders.PicturesLibrary.CreateFileAsync("unigram_log.txt", CreationCollisionOption.GenerateUniqueName), args.Exception?.ToString() ?? "Error" + "\r\n" + args.Message);
-                await new MessageDialog(args.Exception?.ToString() ?? "Error", args.Message ?? "Error").ShowAsync();
+                await new MessageDialog(args.Message ?? "Error", args.Exception?.ToString() ?? "Error").ShowAsync();
             };
 
 #if RELEASE
@@ -113,10 +113,11 @@ namespace Unigram
             return base.OnInitializeAsync(args);
         }
 
-        public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
-        {
+        public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
+        {            
             //NavigationService.Navigate(typeof(PlaygroundPage));
             //return;
+
 
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
 
@@ -176,6 +177,12 @@ namespace Unigram
             ColourTitleBar();
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
 
+            Task.Run(() => OnStartSync());
+            return Task.CompletedTask;
+        }
+
+        private async void OnStartSync()
+        {
             await Toast.RegisterBackgroundTasks();
 
             try

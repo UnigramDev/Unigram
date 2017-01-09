@@ -118,6 +118,7 @@ namespace Unigram.Controls
 
             UpdateSize();
             Children.Clear();
+            RowDefinitions.Clear();
 
             if (rows != null && ((IsInline && newValue is TLReplyInlineMarkup) || (!IsInline && newValue is TLReplyKeyboardMarkup)))
             {

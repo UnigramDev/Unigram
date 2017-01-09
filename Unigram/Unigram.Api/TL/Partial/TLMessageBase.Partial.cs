@@ -395,6 +395,7 @@ namespace Telegram.Api.TL
                 EditDate = message.EditDate;
 
                 Message = message.Message;
+                HasEntities = message.HasEntities;
                 Entities = message.Entities;
                 ReplyMarkup = message.ReplyMarkup;
                 var webpageOld = Media as TLMessageMediaWebPage;

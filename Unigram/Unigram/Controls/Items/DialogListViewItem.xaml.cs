@@ -29,7 +29,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Items
 {
-    public sealed partial class DialogListViewItem : UserControl
+    public sealed partial class DialogListViewItem : HackUserControl
     {
         public TLDialog ViewModel => DataContext as TLDialog;
         private TLDialog _oldViewModel;
@@ -37,6 +37,12 @@ namespace Unigram.Controls.Items
         public DialogListViewItem()
         {
             InitializeComponent();
+
+            DataContextChanged += (s, args) =>
+            {
+                if (ViewModel != null) Bindings.Update();
+                if (ViewModel == null) Bindings.StopTracking();
+            };
 
             DataContextChanged += OnDataContextChanged;
         }
@@ -90,6 +96,11 @@ namespace Unigram.Controls.Items
             {
                 UpdatePicture();
             }
+        }
+
+        private Visibility UpdateIsPinned(bool isPinned, int unreadCount)
+        {
+            return isPinned && unreadCount == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdatePicture()
@@ -463,169 +474,13 @@ namespace Unigram.Controls.Items
                 }
             }
         }
+    }
 
-        #region Context menu
-        private static MenuFlyout _menuFlyout = new MenuFlyout();
-        private static MenuFlyoutItem _menuItemClearHistory;
-        private static MenuFlyoutItem _menuItemDeleteDialog;
-        private static MenuFlyoutItem _menuItemDeleteAndStop;
-        private static MenuFlyoutItem _menuItemDeleteAndExit;
-        private static MenuFlyoutItem _menuItemPinToStart;
-
-        protected override void OnRightTapped(RightTappedRoutedEventArgs e)
-        {
-            if (e.PointerDeviceType != PointerDeviceType.Touch)
-            {
-                UpdateContextMenu();
-                _menuFlyout.ShowAt(this, e.GetPosition(this));
-                e.Handled = true;
-            }
-
-            base.OnRightTapped(e);
-        }
-
-        protected override void OnHolding(HoldingRoutedEventArgs e)
-        {
-            if (e.PointerDeviceType == PointerDeviceType.Touch && e.HoldingState == Windows.UI.Input.HoldingState.Started)
-            {
-                UpdateContextMenu();
-                _menuFlyout.ShowAt(this);
-                e.Handled = true;
-            }
-
-            base.OnHolding(e);
-        }
-
-        private void UpdateContextMenu()
-        {
-            FlyoutBase.SetAttachedFlyout(this, _menuFlyout);
-
-            var canClearHistory = CanClearHistory(ref _menuItemClearHistory);
-            var canDeleteDialog = CanDeleteDialog(ref _menuItemDeleteDialog);
-            var canDeleteAndStop = CanDeleteAndStop(ref _menuItemDeleteAndStop);
-            var canDeleteAndExit = CanDeleteAndExit(ref _menuItemDeleteAndExit);
-            var canPinToStart = CanPinToStart(ref _menuItemPinToStart);
-
-            AddMenuItem(canClearHistory, _menuFlyout, ref _menuItemClearHistory, "Clear History", null);
-            AddMenuItem(canDeleteDialog, _menuFlyout, ref _menuItemDeleteDialog, "Delete Dialog", null);
-            AddMenuItem(canDeleteAndStop, _menuFlyout, ref _menuItemDeleteAndStop, "Delete and Stop", null);
-            AddMenuItem(canDeleteAndExit, _menuFlyout, ref _menuItemDeleteAndExit, "Delete and Exit", null);
-            AddMenuItem(canPinToStart, _menuFlyout, ref _menuItemPinToStart, "Pin to Start", null);
-        }
-
-        private bool CanClearHistory(ref MenuFlyoutItem menuItem)
-        {
-            if (ViewModel != null)
-            {
-                var peerChannel = ViewModel.Peer as TLPeerChannel;
-                return peerChannel == null;
-            }
-
-            return false;
-        }
-
-        private bool CanDeleteDialog(ref MenuFlyoutItem menuItem)
-        {
-            if (ViewModel != null)
-            {
-                var peerChannel = ViewModel.Peer as TLPeerChannel;
-                if (peerChannel != null)
-                {
-                    var channel = ViewModel.With as TLChannel;
-                    if (channel != null)
-                    {
-                        if (channel.IsCreator)
-                        {
-                            menuItem.Text = channel.IsMegagroup ? "AppResources.DeleteGroup" : "AppResources.DeleteChannel";
-                        }
-                        else
-                        {
-                            menuItem.Text = channel.IsMegagroup ? "AppResources.LeaveGroup" : "AppResources.LeaveChannel";
-                        }
-                    }
-
-                    return true;
-                }
-
-                var peerUser = ViewModel.Peer as TLPeerUser;
-                if (peerUser != null)
-                {
-                    return true;
-                }
-
-                var peerChat = ViewModel.Peer as TLPeerChat;
-                if (peerChat != null)
-                {
-                    return ViewModel.With is TLChatForbidden || ViewModel.With is TLChatEmpty;
-                }
-            }
-
-            return false;
-        }
-
-        private bool CanDeleteAndStop(ref MenuFlyoutItem menuItem)
-        {
-            if (ViewModel != null)
-            {
-                var user = ViewModel.With as TLUser;
-                return user != null && user.IsBot;
-
-                //menuItem.set_Visibility((user != null && user.IsBot && (user.Blocked == null || !user.Blocked)) ? 0 : 1);
-            }
-
-            return false;
-        }
-
-        private bool CanDeleteAndExit(ref MenuFlyoutItem menuItem)
-        {
-            if (ViewModel != null)
-            {
-                var peerChat = ViewModel.Peer as TLPeerChat;
-                if (peerChat != null)
-                {
-                    return true;
-                }
-
-                //var peerEncryptedChat = tLDialogBase.Peer as TLPeerEncryptedChat;
-                //if (peerEncryptedChat != null)
-                //{
-                //    menuItem.Header = AppResources.DeleteChat.ToLowerInvariant();
-                //    menuItem.set_Visibility(0);
-                //    return;
-                //}
-            }
-
-            return false;
-        }
-
-        private bool CanPinToStart(ref MenuFlyoutItem menuItem)
-        {
-            // TODO:
-            return true;
-        }
-
-        private void AddMenuItem(bool enabled, MenuFlyout menu, ref MenuFlyoutItem menuItem, string header, RoutedEventHandler handler)
-        {
-            if (!enabled)
-            {
-                if (menuItem != null)
-                {
-                    menuItem.Visibility = Visibility.Collapsed;
-                }
-
-                return;
-            }
-
-            if (menuItem == null)
-            {
-                menuItem = new MenuFlyoutItem();
-                menuItem.Text = header;
-                menuItem.Click += handler;
-                menu.Items.Add(menuItem);
-            }
-
-            menuItem.Visibility = Visibility.Visible;
-        }
-        #endregion
+    public class HackUserControl : UserControl
+    {
+        /// <summary>
+        /// x:Bind hack
+        /// </summary>
+        public new event TypedEventHandler<FrameworkElement, object> Loading;
     }
 }

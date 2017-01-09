@@ -29,7 +29,7 @@ namespace Unigram.Controls.Messages
             DataContextChanged += (s, args) =>
             {
                 if (ViewModel != null) Bindings.Update();
-                //if (ViewModel != null) OnMessageChanged(HeaderLabel);
+                if (ViewModel == null) Bindings.StopTracking();
             };
         }
 

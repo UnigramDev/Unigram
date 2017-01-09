@@ -14,6 +14,7 @@ using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
 using Telegram.Logs;
 using Template10.Utils;
+using Unigram.Common;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -39,6 +40,8 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateEditMessage>, 
         IHandle<TLUpdateEditChannelMessage>, 
         IHandle<TLUpdateDraftMessage>, 
+        IHandle<TLUpdateDialogPinned>,
+        IHandle<TLUpdatePinnedDialogs>,
         IHandle<TLUpdateChannel>, 
         IHandle
     {
@@ -46,6 +49,23 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             Items = new ObservableCollection<TLDialog>();
+        }
+
+        public int PinnedDialogsIndex { get; set; }
+
+        public int PinnedDialogsCountMax { get; set; }
+
+        private bool _isFirstPinned;
+        public bool IsFirstPinned
+        {
+            get
+            {
+                return _isFirstPinned;
+            }
+            set
+            {
+                Set(ref _isFirstPinned, value);
+            }
         }
 
         public async void LoadFirstSlice()
@@ -74,13 +94,26 @@ namespace Unigram.ViewModels
                 }
             }
 
+            var config = CacheService.GetConfig();
+
             var response = await ProtoService.GetDialogsAsync(lastDate, lastMsgId, lastPeer, 200);
             if (response.IsSucceeded)
             {
+                var pinnedIndex = 0;
+
                 foreach (var item in response.Value.Dialogs)
                 {
+                    if (item.IsPinned)
+                    {
+                        item.PinnedIndex = pinnedIndex++;
+                    }
+
                     Items.Add(item);
                 }
+
+                IsFirstPinned = Items.Any(x => x.IsPinned);
+                PinnedDialogsIndex = pinnedIndex;
+                PinnedDialogsCountMax = config.PinnedDialogsCountMax;
             }
 
             Aggregator.Subscribe(this);
@@ -219,33 +252,104 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(delegate
             {
-                TLDialog dialog53 = null;
+                TLDialog dialog = null;
                 for (int i = 0; i < Items.Count; i++)
                 {
                     if (Items[i].Index == update.Peer.Id)
                     {
-                        dialog53 = (Items[i] as TLDialog);
-                        if (dialog53 != null)
+                        dialog = (Items[i] as TLDialog);
+                        if (dialog != null)
                         {
-                            dialog53.Draft = update.Draft;
-                            dialog53.RaisePropertyChanged(() => dialog53.Draft);
-                            dialog53.RaisePropertyChanged(() => dialog53.Self);
+                            dialog.Draft = update.Draft;
+                            dialog.RaisePropertyChanged(() => dialog.Draft);
+                            dialog.RaisePropertyChanged(() => dialog.Self);
                         }
                         Items.RemoveAt(i);
                         break;
                     }
                 }
-                if (dialog53 != null)
+
+                if (dialog != null)
                 {
                     for (int j = 0; j < Items.Count; j++)
                     {
-                        if (Items[j].GetDateIndexWithDraft() <= dialog53.GetDateIndexWithDraft())
+                        if (Items[j].GetDateIndexWithDraft() <= dialog.GetDateIndexWithDraft())
                         {
-                            Items.Insert(j, dialog53);
+                            Items.Insert(j, dialog);
                             return;
                         }
                     }
                 }
+            });
+        }
+
+        public void Handle(TLUpdateDialogPinned update)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                TLDialog dialog = null;
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    if (Items[i].Index == update.Peer.Id)
+                    {
+                        dialog = (Items[i] as TLDialog);
+                        if (dialog != null)
+                        {
+                            dialog.IsPinned = update.IsPinned;
+                            dialog.RaisePropertyChanged(() => dialog.IsPinned);
+                            dialog.RaisePropertyChanged(() => dialog.Self);
+                        }
+
+                        Items.RemoveAt(i);
+                        break;
+                    }
+                }
+
+                if (dialog == null)
+                {
+                    dialog = CacheService.GetDialog(update.Peer);
+                }
+
+                if (dialog != null)
+                {
+                    IsFirstPinned = dialog.IsPinned ? true : Items.Any(x => x.IsPinned);
+                    PinnedDialogsIndex = 1;
+
+                    if (dialog.IsPinned)
+                    {
+                        dialog.PinnedIndex = PinnedDialogsIndex++;
+                    }
+                    else
+                    {
+                        dialog.PinnedIndex = 0;
+                        PinnedDialogsIndex--;
+                    }
+
+                    foreach (var cached in Items)
+                    {
+                        if (cached.IsPinned)
+                        {
+                            cached.PinnedIndex = PinnedDialogsIndex++;
+                        }
+                    }
+
+                    for (int j = 0; j < Items.Count; j++)
+                    {
+                        if (Items[j].GetDateIndexWithDraft() <= dialog.GetDateIndexWithDraft())
+                        {
+                            Items.Insert(j, dialog);
+                            return;
+                        }
+                    }
+                }
+            });
+        }
+
+        public void Handle(TLUpdatePinnedDialogs update)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                IsFirstPinned = Items.FirstOrDefault()?.IsPinned ?? false;
             });
         }
 
@@ -562,5 +666,80 @@ namespace Unigram.ViewModels
         public bool IsLastSliceLoaded { get; set; }
 
         public ObservableCollection<TLDialog> Items { get; private set; }
+
+        #region Commands
+
+        public RelayCommand<TLDialog> DialogPinCommand => new RelayCommand<TLDialog>(DialogPinExecute);
+        private async void DialogPinExecute(TLDialog dialog)
+        {
+            TLInputPeerBase peer = null;
+
+            var user = dialog.With as TLUser;
+            if (user != null)
+            {
+                peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value };
+            }
+
+            var chat = dialog.With as TLChat;
+            if (chat != null)
+            {
+                peer = new TLInputPeerChat { ChatId = chat.Id };
+            }
+
+            var channel = dialog.With as TLChannel;
+            if (channel != null)
+            {
+                peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
+            }
+
+            var result = await ProtoService.ToggleDialogPinAsync(peer, !dialog.IsPinned);
+            if (result.IsSucceeded)
+            {
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    if (Items[i].Index == dialog.Index)
+                    {
+                        dialog = (Items[i] as TLDialog);
+                        Items.RemoveAt(i);
+                        break;
+                    }
+                }
+
+                if (dialog != null)
+                {
+                    IsFirstPinned = dialog.IsPinned ? true : Items.Any(x => x.IsPinned);
+                    PinnedDialogsIndex = 1;
+
+                    if (dialog.IsPinned)
+                    {
+                        dialog.PinnedIndex = PinnedDialogsIndex++;
+                    }
+                    else
+                    {
+                        dialog.PinnedIndex = 0;
+                        PinnedDialogsIndex--;
+                    }
+
+                    foreach (var cached in Items)
+                    {
+                        if (cached.IsPinned)
+                        {
+                            cached.PinnedIndex = PinnedDialogsIndex++;
+                        }
+                    }
+
+                    for (int j = 0; j < Items.Count; j++)
+                    {
+                        if (Items[j].GetDateIndexWithDraft() <= dialog.GetDateIndexWithDraft())
+                        {
+                            Items.Insert(j, dialog);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 }

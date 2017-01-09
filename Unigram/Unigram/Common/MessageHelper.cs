@@ -378,6 +378,7 @@ namespace Unigram.Common
         {
             var text = message.Message;
             var previous = 0;
+
             foreach (var entity in message.Entities)
             {
                 if (entity.Offset > previous)

@@ -9,6 +9,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
@@ -155,7 +156,7 @@ namespace Unigram.Views
                     flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
                 }
 
-                flyout.ShowAt(Attach, new Point(8, -9));
+                flyout.ShowAt(Attach, new Point(8, -8));
             }
         }
 
@@ -286,6 +287,156 @@ namespace Unigram.Views
         {
             ViewModel.KeyboardButtonExecute(e.Button, null);
         }
+
+        #region Context menu
+
+        private void MessageReply_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var messageCommon = element.DataContext as TLMessageCommonBase;
+                if (messageCommon != null)
+                {
+                    //var channel = ViewModel.With as TLChannel;
+                    //if (channel != null && channel.MigratedFromChatId != null)
+                    //{
+                    //    if (messageCommon.ToId is TLPeerChat)
+                    //    {
+                    //        element.Visibility = messageCommon.ToId.Id == channel.MigratedFromChatId ? Visibility.Collapsed : Visibility.Visible;
+                    //    }
+                    //}
+                }
+            }
+        }
+
+        private void MessagePin_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var messageCommon = element.DataContext as TLMessageCommonBase;
+                if (messageCommon != null)
+                {
+                    var channel = ViewModel.With as TLChannel;
+                    if (channel != null && (channel.IsEditor || channel.IsCreator))
+                    {
+                        if (messageCommon.ToId is TLPeerChannel)
+                        {
+                            element.Visibility = Visibility.Visible;
+                            element.Text = ViewModel.PinnedMessage != null && ViewModel.PinnedMessage.Id == messageCommon.Id ? "Unpin" : "Pin";
+                            return;
+                        }
+                    }
+                }
+
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void MessageEdit_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var message = element.DataContext as TLMessage;
+                if (message != null)
+                {
+                    var channel = ViewModel.With as TLChannel;
+                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsCreator && channel.IsEditor)) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                    {
+                        if (message.IsSticker())
+                        {
+                            element.Visibility = Visibility.Collapsed;
+                            return;
+                        }
+
+                        var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
+                        var config = ViewModel.CacheService.GetConfig();
+                        if (config != null && message.Date + config.EditTimeLimit < date)
+                        {
+                            element.Visibility = Visibility.Collapsed;
+                            return;
+                        }
+
+                        element.Visibility = Visibility.Visible;
+                        return;
+                    }
+                }
+
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void MessageDelete_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                element.Visibility = Visibility.Visible;
+
+                var messageCommon = element.DataContext as TLMessageCommonBase;
+                if (messageCommon != null)
+                {
+                    var channel = ViewModel.With as TLChannel;
+                    if (channel != null)
+                    {
+                        if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
+                        {
+                            element.Visibility = Visibility.Collapsed;
+                        }
+
+                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.IsEditor)
+                        {
+                            element.Visibility = Visibility.Collapsed;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void MessageForward_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var messageCommon = element.DataContext as TLMessageCommonBase;
+                if (messageCommon != null)
+                {
+
+                }
+
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void MessageCopy_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var message = element.DataContext as TLMessage;
+                if (message != null)
+                {
+                    if (!string.IsNullOrEmpty(message.Message))
+                    {
+                        Visibility = Visibility.Visible;
+                        return;
+                    }
+
+                    var mediaCaption = message.Media as ITLMediaCaption;
+                    if (mediaCaption != null && !string.IsNullOrEmpty(mediaCaption.Caption))
+                    {
+                        element.Visibility = Visibility.Visible;
+                        return;
+                    }
+                }
+
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        #endregion
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading

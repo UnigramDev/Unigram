@@ -55,6 +55,7 @@ namespace Unigram.Controls
         {
             if (item == null)
             {
+                Visibility = Visibility.Collapsed;
                 return false;
             }
 
@@ -550,7 +551,7 @@ namespace Unigram.Controls
             if (webPageMedia != null)
             {
                 var webPage = webPageMedia.Webpage as TLWebPage;
-                if (webPage.Photo != null && webPage.Type != null)
+                if (webPage != null && webPage.Photo != null && webPage.Type != null)
                 {
                     Visibility = Visibility.Visible;
 

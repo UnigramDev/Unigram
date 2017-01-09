@@ -1,0 +1,63 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Themes">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#ffffff"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#1F2C36"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="#144D7B29"/>
+            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
+            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
+
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
+            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
+
+            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#999999"/>
+            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#f2f2f2"/>
+
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
+
+            <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
+            <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
+
+            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
+
+            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
+            <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
+
+            <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
+
+            <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#ffffff"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="#29748ea2"/>
+            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
+            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
+
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
+            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
+
+            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#999999"/>
+            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#f2f2f2"/>
+
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
+
+            <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
+            <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
+
+            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
+
+            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
+            <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
+
+            <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
+
+            <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

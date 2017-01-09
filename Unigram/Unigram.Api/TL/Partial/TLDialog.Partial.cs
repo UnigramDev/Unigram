@@ -207,6 +207,11 @@ namespace Telegram.Api.TL
 
         public int GetDateIndexWithDraft()
         {
+            if (IsPinned)
+            {
+                return int.MaxValue - PinnedIndex;
+            }
+
             var dateIndex = GetDateIndex();
             var draft = Draft as TLDraftMessage;
             if (draft != null)
@@ -274,7 +279,7 @@ namespace Telegram.Api.TL
             Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
-
+        public int PinnedIndex { get; set; }
 
         private string _fullName;
         public string FullName

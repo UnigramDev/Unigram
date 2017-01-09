@@ -40,6 +40,9 @@ namespace Unigram.Controls
         protected override void OnPointerReleased(PointerRoutedEventArgs e)
         {
             base.OnPointerReleased(e);
+
+            _isPressed = false;
+
             Stop();
 
             ReleasePointerCapture(e.Pointer);
