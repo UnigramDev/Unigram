@@ -284,7 +284,7 @@ namespace Unigram.Views
                 _backgroundImage = await CanvasBitmap.LoadAsync(sender, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
                 _backgroundBrush = new CanvasImageBrush(sender, _backgroundImage);
                 _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
-                _backgroundBrush.Transform = Matrix3x2.CreateScale(_logicalDpi / 96f);
+                //_backgroundBrush.Transform = Matrix3x2.CreateScale(_logicalDpi / 96f);
             }).AsAsyncAction());
         }
 

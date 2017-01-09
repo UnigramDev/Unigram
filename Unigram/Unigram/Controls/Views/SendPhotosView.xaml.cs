@@ -66,13 +66,7 @@ namespace Unigram.Controls.Views
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
-            var transform = TransformToVisual((FrameworkElement)Window.Current.Content);
-            var point = transform.TransformPoint(new Point());
-
-            var bottom = point.Y + ActualHeight;
-            var difference = ((FrameworkElement)Window.Current.Content).ActualHeight - bottom;
-
-            KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height - difference);
+            KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
