@@ -23,8 +23,8 @@
     <Page.Resources>
         <MenuFlyout x:Key="DialogMenuFlyout">
             <MenuFlyoutItem Loaded="DialogPin_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogPinCommand}" CommandParameter="{Binding}" Text="Pin to top"/>
-            <MenuFlyoutItem Loaded="DialogClear_Loaded" Text="Clear history"/>
-            <MenuFlyoutItem Loaded="DialogDelete_Loaded" Text="Delete conversation"/>
+            <MenuFlyoutItem Loaded="DialogClear_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogClearCommand}" CommandParameter="{Binding}" Text="Clear history"/>
+            <MenuFlyoutItem Loaded="DialogDelete_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete conversation"/>
             <MenuFlyoutItem Loaded="DialogDeleteAndStop_Loaded" Text="Delete and stop"/>
             <MenuFlyoutItem Loaded="DialogDeleteAndExit_Loaded" Text="Delete and exit"/>
         </MenuFlyout>
@@ -92,7 +92,7 @@
             <Pivot x:Name="rpMasterTitlebar" 
                    Style="{StaticResource TabStylePivotStyle}"
                    Grid.RowSpan="2">
-                <PivotItem>                    
+                <PivotItem>
                     <PivotItem.Header>
                         <controls:TabHeaderStyle Glyph="&#xE15F;"/>
                     </PivotItem.Header>
@@ -177,7 +177,7 @@
                                                    TextTrimming="CharacterEllipsis" 
                                                    TextWrapping="NoWrap" 
                                                    MaxLines="1"/>
-                                    </Grid>                                    
+                                    </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                             <ListView.GroupStyle>
