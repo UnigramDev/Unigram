@@ -31,7 +31,17 @@ namespace Unigram.Controls
             InitializeComponent();
         }
 
-        public string Title { get; set; }
+        public string Title
+        {
+            get
+            {
+                return TitleLabel.Text;
+            }
+            set
+            {
+                TitleLabel.Text = value;
+            }
+        }
 
         #region Message
 

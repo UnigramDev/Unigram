@@ -433,7 +433,7 @@
                 <StackPanel.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
-                            <ResourceDictionary Source="ms-appx:///Themes/AccentFrom.xaml"/>
+                            <ResourceDictionary Source="ms-appx:///Themes/AccentSent.xaml"/>
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </StackPanel.Resources>
@@ -441,15 +441,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FriendMessageTemplate">
-            <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}">
-                <StackPanel.Resources>
-                    <ResourceDictionary>
-                        <ResourceDictionary.MergedDictionaries>
-                            <ResourceDictionary Source="ms-appx:///Themes/AccentTo.xaml"/>
-                        </ResourceDictionary.MergedDictionaries>
-                    </ResourceDictionary>
-                </StackPanel.Resources>
-            </messages:FriendMessageControl>
+            <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendMessageTemplate" x:DataType="models:TLMessage">
@@ -467,15 +459,7 @@
                     </Ellipse>
                     <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
                 </Grid>
-                <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1">
-                    <StackPanel.Resources>
-                        <ResourceDictionary>
-                            <ResourceDictionary.MergedDictionaries>
-                                <ResourceDictionary Source="ms-appx:///Themes/AccentTo.xaml"/>
-                            </ResourceDictionary.MergedDictionaries>
-                        </ResourceDictionary>
-                    </StackPanel.Resources>
-                </messages:FriendMessageControl>
+                <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
             </Grid>
         </DataTemplate>
 
@@ -623,22 +607,9 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="btnPinnedMessage" Padding="12,0" Style="{StaticResource EmptyButtonStyle}">
-                <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0">
-                    <Grid.Resources>
-                        <ResourceDictionary>
-                            <ResourceDictionary.MergedDictionaries>
-                                <ResourceDictionary Source="ms-appx:///Themes/AccentTo.xaml"/>
-                            </ResourceDictionary.MergedDictionaries>
-                        </ResourceDictionary>
-                    </Grid.Resources>
-                </controls:MessageReference>
-                <!--<controls:MessageReference.Resources>
-                    <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                    <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                    <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                    <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                </controls:MessageReference.Resources>-->
+                <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0"/>
             </Button>
+            
             <controls:GlyphButton Click="btnClosePinnedMessage_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="1"/>
 
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
@@ -988,15 +959,7 @@
                 </Grid.ColumnDefinitions>
                 <!-- ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" Visibility="{Binding ReplyVisibility}" BorderBrush="#2fa9e2" Foreground="#0e7acd" Style="{StaticResource MediaControlStyle}" -->
 
-                <controls:MessageReference Message="{Binding ReplyInfo}" VerticalAlignment="Center" Margin="-8,0,0,0" Grid.Column="1">
-                    <Grid.Resources>
-                        <ResourceDictionary>
-                            <ResourceDictionary.MergedDictionaries>
-                                <ResourceDictionary Source="ms-appx:///Themes/AccentTo.xaml"/>
-                            </ResourceDictionary.MergedDictionaries>
-                        </ResourceDictionary>
-                    </Grid.Resources>
-                </controls:MessageReference>
+                <controls:MessageReference Message="{Binding ReplyInfo}" VerticalAlignment="Center" Margin="-8,0,0,0" Grid.Column="1"/>
 
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
