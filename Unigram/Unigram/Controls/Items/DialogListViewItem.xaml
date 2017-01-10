@@ -118,22 +118,24 @@
                     Grid.Column="2">
                 <FontIcon Glyph="&#xE840;" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
-            <Border x:Name="UnreadLabel"
+            <Grid x:Name="UnreadLabel"
                     MinWidth="20" 
                     Height="20" 
                     CornerRadius="10" 
-                    Background="{ThemeResource TelegramDialogUnreadBadgeBrush}" 
                     VerticalAlignment="Top" 
                     HorizontalAlignment="Right" 
-                    Margin="8,2,0,0" 
-                    Padding="4,2,4,0"
+                    Margin="8,2,0,0"
                     Visibility="Collapsed"
                     Grid.Column="2">
-                <TextBlock Text="{Binding UnreadCount}"
+                <Border Visibility="{x:Bind UpdateUnreadBadgeBrush(ViewModel.NotifySettings)}" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"/>
+                <Border Visibility="{x:Bind UpdateUnreadBadgeMutedBrush(ViewModel.NotifySettings)}" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"/>
+                <TextBlock x:Name="UnreadBadge"
+                           Text="{Binding UnreadCount}"
                            Style="{ThemeResource CaptionTextBlockStyle}" 
                            Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}" 
-                           TextAlignment="Center"/>
-            </Border>
+                           TextAlignment="Center"
+                           Margin="4,2,4,0"/>
+            </Grid>
         </Grid>
     </Grid>
 </local:HackUserControl>

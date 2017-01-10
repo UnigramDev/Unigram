@@ -8,7 +8,7 @@ using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLUser : INotifyPropertyChanged
+    public partial class TLUser : ITLInputPeer, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public override void RaisePropertyChanged(string propertyName)
@@ -180,6 +180,5 @@ namespace Telegram.Api.TL
             return new TLInputUser { UserId = Id };
             //return null;
         }
-
     }
 }

@@ -4,105 +4,83 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:messages="using:Unigram.Controls.Messages"
+    xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style x:Key="ReplyInlineMarkupButtonStyle" TargetType="controls:GlyphButton">
-            <Setter Property="Background" Value="{ThemeResource MessageServiceBackgroundBrush}" />
-            <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource ButtonBorderBrush}" />
-            <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}" />
-            <Setter Property="Padding" Value="12,4,12,4" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-            <Setter Property="UseSystemFocusVisuals" Value="True" />
-            <Setter Property="FocusVisualMargin" Value="-3" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:GlyphButton">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBackgroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBackgroundPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBackgroundDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              BorderBrush="{TemplateBinding BorderBrush}"
-                                              BorderThickness="{TemplateBinding BorderThickness}"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              Padding="{TemplateBinding Padding}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              AutomationProperties.AccessibilityView="Raw" />
+        <Color x:Key="SystemAccentColorLight3">#a6d8ff</Color>
+        <Color x:Key="SystemAccentColorLight2">#76b9ed</Color>
+        <Color x:Key="SystemAccentColorLight1">#429ce3</Color>
+        <Color x:Key="SystemAccentColor">#0078d7</Color>
+        <Color x:Key="SystemAccentColorDark1">#005a9e</Color>
+        <Color x:Key="SystemAccentColorDark2">#004275</Color>
+        <Color x:Key="SystemAccentColorDark3">#002642</Color>
 
-                            <TextBlock Margin="4"
-                                       FontSize="12"
-                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                       HorizontalAlignment="Right"
-                                       VerticalAlignment="Top"
-                                       AutomationProperties.AccessibilityView="Raw"
-                                       Text="{TemplateBinding Glyph}"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource SystemAccentColorDark2}"/>
+        <SolidColorBrush x:Key="MessageBorderBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+        <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColor}"/>
+        <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+
+        <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+        <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+
+        <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+        <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+
+        <HorizontalAlignment x:Key="MessageHorizontalAlignment">Right</HorizontalAlignment>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <MediaElement x:Name="Media" AreTransportControlsEnabled="True"/>
-        <Button Click="Media_Loaded" Content="Play"/>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
+        <Border x:Name="LayoutRoot"
+                Margin="{ThemeResource MessageContentMargin}" 
+                Padding="{ThemeResource MessageContentPadding}" 
+                CornerRadius="{ThemeResource MessageCornerRadius}"
+                Background="{ThemeResource MessageBackgroundBrush}" 
+                BorderBrush="{ThemeResource MessageBorderBrush}" 
+                BorderThickness="0,0,0,2"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <controls:MessageReference Title="Fela Ameghino" Grid.Row="1">
+                    <controls:MessageReference.Message>
+                        <tl:TLMessage Message="Ciao!!!"/>
+                    </controls:MessageReference.Message>
+                </controls:MessageReference>
+
+                <TextBlock 
+                    x:Name="MessageControl"
+                    Text="Test message yoyoy yoyoy yoyoyoyo"
+                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Foreground="{ThemeResource MessageForegroundBrush}"
+                    Grid.Row="2"/>
+
+                <StackPanel x:Name="StatusControl"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Bottom" 
+                            HorizontalAlignment="Right"
+                            Padding="0,0,6,0" 
+                            Margin="0,0,-6,0"
+                            Grid.Row="4">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}" FontSize="11" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="0,0,4,2" VerticalAlignment="Bottom"/>
+                        <TextBlock Text="1K" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,12,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    </StackPanel>
+                    <TextBlock Text="edited" FontStyle="Italic" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,4,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    <TextBlock x:Name="StatusLabel" Text="14:59" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0"/>
+                    <FontIcon x:Name="StatusGlyph" Glyph="&#xE601;" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
+                </StackPanel>
+            </Grid>
+        </Border>
     </Grid>
 </Page>

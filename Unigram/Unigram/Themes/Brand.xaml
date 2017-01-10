@@ -56,6 +56,7 @@
     <SolidColorBrush x:Key="TelegramDialogLabelFromBrush" Color="#4981AF"/>
     <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>
     <SolidColorBrush x:Key="TelegramDialogUnreadBadgeBrush" Color="#009CE6"/>
+    <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#BBBBBB"/>
     <SolidColorBrush x:Key="TelegramDialogUnreadLabelBrush" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="TelegramDialogVerifiedForegroundBrush" Color="#33A8E6"/>
     <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="#FFFFFF"/>

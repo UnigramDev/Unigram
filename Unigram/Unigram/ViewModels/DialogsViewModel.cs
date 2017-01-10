@@ -49,6 +49,7 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             Items = new ObservableCollection<TLDialog>();
+            Search = new ObservableCollection<KeyedList<string, TLObject>>();
         }
 
         public int PinnedDialogsIndex { get; set; }
@@ -666,6 +667,81 @@ namespace Unigram.ViewModels
         public bool IsLastSliceLoaded { get; set; }
 
         public ObservableCollection<TLDialog> Items { get; private set; }
+
+        public ObservableCollection<KeyedList<string, TLObject>> Search { get; private set; }
+
+        public async Task SearchAsync(string query)
+        {
+            // TODO: dialogs search
+
+            var global = await SearchGlobalAsync(query);
+            var messages = await SearchMessagesAsync(query);
+
+            Search.Clear();
+            if (global != null) Search.Add(global);
+            if (messages != null) Search.Add(messages);
+        }
+
+        private async Task<KeyedList<string, TLObject>> SearchGlobalAsync(string query)
+        {
+            var result = await ProtoService.SearchAsync(query, 100);
+            if (result.IsSucceeded)
+            {
+                var parent = new KeyedList<string, TLObject>("Global search results");
+
+                foreach (var peer in result.Value.Results)
+                {
+                    var item = result.Value.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Value.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                    if (item != null)
+                    {
+                        parent.Add(item);
+                    }
+                }
+
+                return parent;
+            }
+
+            return null;
+        }
+
+        private async Task<KeyedList<string, TLObject>> SearchMessagesAsync(string query)
+        {
+            var result = await ProtoService.SearchGlobalAsync(query, 0, new TLInputPeerEmpty(), 0, 20);
+            if (result.IsSucceeded)
+            {
+                KeyedList<string, TLObject> parent;
+
+                var slice = result.Value as TLMessagesMessagesSlice;
+                if (slice != null)
+                {
+                    parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", slice.Count));
+                }
+                else
+                {
+                    parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", result.Value.Messages.Count));
+                }
+
+                foreach (var message in result.Value.Messages.OfType<TLMessageCommonBase>())
+                {
+                    var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
+                    var with = result.Value.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Value.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                    var item = new TLDialog
+                    {
+                        TopMessage = message.Id,
+                        TopMessageRandomId = message.RandomId,
+                        TopMessageItem = message,
+                        With = with,
+                        Peer = peer
+                    };
+
+                    parent.Add(item);
+                }
+
+                return parent;
+            }
+
+            return null;
+        }
 
         #region Commands
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             Items = new SortedObservableCollection<TLUser>(new TLUserComparer());
+            Search = new ObservableCollection<KeyedList<string, TLObject>>();
         }
 
         public async Task getTLContacts()
@@ -116,6 +118,23 @@ namespace Unigram.ViewModels
             }
         }
 
+        public async Task SearchAsync(string query)
+        {
+            Search.Clear();
+
+            var contacts = CacheService.GetContacts().Where(x => CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.FullName, query, CompareOptions.IgnoreCase) >= 0).ToList();
+            if (contacts.Count > 0)
+            {
+                Search.Add(new KeyedList<string, TLObject>("Contacts", contacts));
+            }
+
+            var result = await ProtoService.SearchAsync(query, 100);
+            if (result.IsSucceeded)
+            {
+                Search.Add(new KeyedList<string, TLObject>("Global search", result.Value.Users));
+            }
+        }
+
         #region Handle
 
         public void Handle(TLUpdateUserStatus message)
@@ -147,6 +166,8 @@ namespace Unigram.ViewModels
         #endregion
 
         public SortedObservableCollection<TLUser> Items { get; private set; }
+
+        public ObservableCollection<KeyedList<string, TLObject>> Search { get; private set; }
 
         private TLUser _self;
         public TLUser Self

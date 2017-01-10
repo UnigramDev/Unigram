@@ -8,7 +8,7 @@ using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLChannel : ITLReadMaxId, INotifyPropertyChanged
+    public partial class TLChannel : ITLReadMaxId, ITLInputPeer, INotifyPropertyChanged
     {
         public Int32 AdminsCount { get; set; }
 
@@ -66,6 +66,11 @@ namespace Telegram.Api.TL
         public override void RaisePropertyChanged(string propertyName)
         {
             Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+        }
+
+        public TLInputPeerBase ToInputPeer()
+        {
+            return new TLInputPeerChannel { ChannelId = Id, AccessHash = AccessHash.Value };
         }
     }
 }

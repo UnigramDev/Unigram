@@ -114,10 +114,9 @@ namespace Unigram
         }
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
-        {            
+        {
             //NavigationService.Navigate(typeof(PlaygroundPage));
-            //return;
-
+            //return Task.CompletedTask;
 
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
 
