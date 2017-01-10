@@ -8,8 +8,10 @@
     xmlns:items="using:Unigram.Controls.Items"
     xmlns:triggers="using:Unigram.Triggers"
     xmlns:models="using:Telegram.Api.TL"
+    xmlns:behaviors="using:Unigram.Behaviors"
     xmlns:vms="using:Unigram.ViewModels"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -21,6 +23,8 @@
     </Page.Transitions>
 
     <Page.Resources>
+        <CollectionViewSource x:Key="SearchResults" Source="{Binding Dialogs.Search}" IsSourceGrouped="True"/>
+
         <MenuFlyout x:Key="DialogMenuFlyout">
             <MenuFlyoutItem Loaded="DialogPin_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogPinCommand}" CommandParameter="{Binding}" Text="Pin to top"/>
             <MenuFlyoutItem Loaded="DialogClear_Loaded" Text="Clear history"/>
@@ -97,7 +101,7 @@
                         <controls:TabHeaderStyle Glyph="&#xE15F;"/>
                     </PivotItem.Header>
                     <Grid>
-                        <ListView x:Name="lvMasterChats"
+                        <ListView x:Name="DialogsListView"
                                   ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
                                   IsItemClickEnabled="True"
                                   SelectionMode="None"
@@ -128,7 +132,7 @@
                                 <Grid>
                                     <Border Visibility="{x:Bind (Visibility)ViewModel.Dialogs.IsFirstPinned, Mode=OneWay}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"/>
                                     <Border Margin="12,8" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                                        <controls:SearchTextBox x:Name="txtSearch" 
+                                        <controls:SearchTextBox x:Name="SearchDialogs" 
                                                                 Margin="0"
                                                                 PlaceholderText="Search chats"
                                                                 TextChanged="txtSearch_TextChanged"/>
@@ -139,53 +143,136 @@
                                 <Border Height="6"/>
                             </ListView.Footer>
                         </ListView>
-                        <ListView x:Name="searchChats"
-                                  Margin="0,42,0,0" 
+                        <ListView x:Name="DialogsSearchListView"
+                                  Margin="0,48,0,0" 
                                   Visibility="Collapsed"
                                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                  ItemsSource="{x:Bind Mode=TwoWay, Path=ViewModel.SearchResults}">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="vms:SearchResult">
-                                    <Grid Margin="0,4">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="48"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <Ellipse x:Name="SearchPlaceHolder" Height="48" Width="48" Grid.RowSpan="2" Grid.Column="0"/>
-                                        <TextBlock Foreground="White"
-                                                   Grid.RowSpan="2"                                                    
-                                                   Grid.Column="0"
-                                                   Text="{x:Bind Path=Header, Converter={StaticResource InitialNameStringConverter}}" 
-                                                   VerticalAlignment="Center"
-                                                   TextAlignment="Center"/>
-                                        <Ellipse Width="48"
-                                                 Height="48" 
-                                                 VerticalAlignment="Top"
-                                                 Grid.RowSpan="2" Grid.Column="0">
-                                            <Ellipse.Fill>
-                                                <ImageBrush ImageSource="{x:Bind Path=Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                                            </Ellipse.Fill>
-                                        </Ellipse>
-                                        <TextBlock Text="{x:Bind Path=Header}" Margin="8,0" Grid.Column="1" Grid.Row="0"/>
-                                        <TextBlock Text="{x:Bind Path=SubHeader}" Margin="8,0" Grid.Column="1" Grid.Row="1"
-                                                   Style="{StaticResource CaptionTextBlockStyle}" 
-                                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                                   TextTrimming="CharacterEllipsis" 
-                                                   TextWrapping="NoWrap" 
-                                                   MaxLines="1"/>
-                                    </Grid>                                    
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
+                                  ItemsSource="{Binding Source={StaticResource SearchResults}}">
+                            <ListView.ItemTemplateSelector>
+                                <selectors:SearchTemplateSelector>
+                                    <selectors:SearchTemplateSelector.UserTemplate>
+                                        <DataTemplate x:DataType="models:TLUser">
+                                            <Grid Margin="0,4,0,8">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
+                                                    <TextBlock Foreground="White" Text="{x:Bind Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
+                                                    <Ellipse>
+                                                        <Ellipse.Fill>
+                                                            <ImageBrush ImageSource="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                                                        </Ellipse.Fill>
+                                                    </Ellipse>
+                                                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
+                                                </Grid>
+                                                <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                                <TextBlock Text="{x:Bind Username}"
+                                                           VerticalAlignment="Top" 
+                                                           Style="{StaticResource CaptionTextBlockStyle}" 
+                                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                           TextTrimming="CharacterEllipsis" 
+                                                           TextWrapping="NoWrap" 
+                                                           Grid.Column="1"
+                                                           Grid.Row="1"
+                                                           MaxLines="1">
+                                                    <i:Interaction.Behaviors>
+                                                        <behaviors:UsernameHighlightBehavior SearchString="{Binding ElementName=SearchDialogs, Path=Text}" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
+                                                    </i:Interaction.Behaviors>
+                                                </TextBlock>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </selectors:SearchTemplateSelector.UserTemplate>
+                                    <selectors:SearchTemplateSelector.ChannelTemplate>
+                                        <DataTemplate x:DataType="models:TLChannel">
+                                            <Grid Margin="0,4,0,8">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
+                                                    <TextBlock Foreground="White" Text="{x:Bind Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
+                                                    <Ellipse>
+                                                        <Ellipse.Fill>
+                                                            <ImageBrush ImageSource="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                                                        </Ellipse.Fill>
+                                                    </Ellipse>
+                                                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
+                                                </Grid>
+                                                <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                                <TextBlock Text="{x:Bind Username}"
+                                                           VerticalAlignment="Top" 
+                                                           Style="{StaticResource CaptionTextBlockStyle}" 
+                                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                           TextTrimming="CharacterEllipsis" 
+                                                           TextWrapping="NoWrap" 
+                                                           Grid.Column="1"
+                                                           Grid.Row="1"
+                                                           MaxLines="1">
+                                                    <i:Interaction.Behaviors>
+                                                        <behaviors:UsernameHighlightBehavior SearchString="fra" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
+                                                    </i:Interaction.Behaviors>
+                                                </TextBlock>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </selectors:SearchTemplateSelector.ChannelTemplate>
+                                    <selectors:SearchTemplateSelector.MessageTemplate>
+                                        <DataTemplate>
+                                            <items:DialogListViewItem/>
+                                        </DataTemplate>
+                                    </selectors:SearchTemplateSelector.MessageTemplate>
+                                </selectors:SearchTemplateSelector>
+                            </ListView.ItemTemplateSelector>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
                             <ListView.GroupStyle>
                                 <GroupStyle>
                                     <GroupStyle.HeaderTemplate>
                                         <DataTemplate>
+                                            <TextBlock Text="{Binding Key}" Style="{StaticResource BaseTextBlockStyle}"/>
                                         </DataTemplate>
                                     </GroupStyle.HeaderTemplate>
+                                    <GroupStyle.HeaderContainerStyle>
+                                        <Style TargetType="ListViewHeaderItem">
+                                            <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                            <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                            <Setter Property="Margin" Value="0,0,0,0"/>
+                                            <Setter Property="Padding" Value="12,8,12,9"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="VerticalContentAlignment" Value="Top" />
+                                            <Setter Property="MinHeight" Value="0"/>
+                                            <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListViewHeaderItem">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="{TemplateBinding BorderThickness}">
+                                                            <ContentPresenter x:Name="ContentPresenter"
+                                                                              Margin="{TemplateBinding Padding}"
+                                                                              Content="{TemplateBinding Content}"
+                                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.HeaderContainerStyle>
                                 </GroupStyle>
                             </ListView.GroupStyle>
                         </ListView>
@@ -239,8 +326,8 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid Background="{Binding Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
-                                        <TextBlock Foreground="White" Text="{Binding Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
+                                    <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
+                                        <TextBlock Foreground="White" Text="{x:Bind Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
                                         <Ellipse>
                                             <Ellipse.Fill>
                                                 <ImageBrush ImageSource="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
