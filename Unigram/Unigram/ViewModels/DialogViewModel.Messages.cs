@@ -102,13 +102,11 @@ namespace Unigram.ViewModels
         {
             if (message == null) return;
 
-            var check = default(CheckBox);
-            var content = new StackPanel();
-            content.Children.Add(new TextBlock
-            {
-                Text = "Are you sure you want to delete 1 message?",
-                Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
-            });
+            var dialog = new UnigramMessageDialog();
+            dialog.Title = "Delete";
+            dialog.Message = "Are you sure you want to delete 1 message?";
+            dialog.PrimaryButtonText = "Yes";
+            dialog.SecondaryButtonText = "No";
 
             var messageCommon = message as TLMessageCommonBase;
             if (messageCommon != null && messageCommon.IsOut && Peer is TLInputPeerUser)
@@ -121,33 +119,15 @@ namespace Unigram.ViewModels
                     var user = With as TLUser;
                     if (user != null)
                     {
-                        check = new CheckBox
-                        {
-                            Content = string.Format("Delete for {0}", user.FullName),
-                            Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
-                        };
-
-                        content.Children.Add(check);
+                        dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
                     }
                 }
             }
 
-            //var dialog = new MessageDialog("Do you want to delete this message?", "Delete");
-            //dialog.Commands.Add(new UICommand("Si"));
-            //dialog.Commands.Add(new UICommand("No"));
-            //var result = await dialog.ShowAsync();
-            //if (result != null && result.Label == "Si")
-
-            var dialog = new ContentDialog();
-            dialog.Title = "Delete";
-            dialog.Content = content;
-            dialog.PrimaryButtonText = "Yes";
-            dialog.SecondaryButtonText = "No";
-
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                var revoke = check?.IsChecked == true;
+                var revoke = dialog.IsChecked == true;
 
                 var messages = new List<TLMessageBase>() { message };
                 if (message.Id == 0 && message.RandomId != 0L)
@@ -387,23 +367,16 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        #region 
+        #region Pin
 
         public RelayCommand<TLMessageBase> MessagePinCommand => new RelayCommand<TLMessageBase>(MessagePinExecute);
         private async void MessagePinExecute(TLMessageBase message)
         {
             if (PinnedMessage?.Id == message.Id)
             {
-                var content = new StackPanel();
-                content.Children.Add(new TextBlock
-                {
-                    Text = "Would you like to unpin this message?",
-                    Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
-                });
-
-                var dialog = new ContentDialog();
+                var dialog = new UnigramMessageDialog();
                 dialog.Title = "Unpin message";
-                dialog.Content = content;
+                dialog.Message = "Would you like to unpin this message?";
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
@@ -422,26 +395,11 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var check = default(CheckBox);
-                var content = new StackPanel();
-                content.Children.Add(new TextBlock
-                {
-                    Text = "Would you like to pin this message?",
-                    Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
-                });
-
-                check = new CheckBox
-                {
-                    Content = "Notify all members",
-                    Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0),
-                    IsChecked = true
-                };
-
-                content.Children.Add(check);
-
-                var dialog = new ContentDialog();
+                var dialog = new UnigramMessageDialog();
                 dialog.Title = "Pin message";
-                dialog.Content = content;
+                dialog.Message = "Would you like to pin this message?";
+                dialog.CheckBoxLabel = "Notify all members";
+                dialog.IsChecked = true;
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
@@ -451,7 +409,7 @@ namespace Unigram.ViewModels
                     var channel = Peer as TLInputPeerChannel;
                     var inputChannel = new TLInputChannel { ChannelId = channel.ChannelId, AccessHash = channel.AccessHash };
 
-                    var silent = check?.IsChecked == false;
+                    var silent = dialog.IsChecked == false;
                     var result = await ProtoService.UpdatePinnedMessageAsync(silent, inputChannel, message.Id);
                     if (result.IsSucceeded)
                     {

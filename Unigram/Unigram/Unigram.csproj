@@ -122,6 +122,9 @@
     <Compile Include="Controls\ProgressBarRingSlice.cs" />
     <Compile Include="Controls\ReplyMarkupPanel.cs" />
     <Compile Include="Controls\SimpleButton.cs" />
+    <Compile Include="Controls\UnigramMessageDialog.xaml.cs">
+      <DependentUpon>UnigramMessageDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\SendPhotosView.xaml.cs">
       <DependentUpon>SendPhotosView.xaml</DependentUpon>
     </Compile>
@@ -444,6 +447,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\UserMessageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\UnigramMessageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
