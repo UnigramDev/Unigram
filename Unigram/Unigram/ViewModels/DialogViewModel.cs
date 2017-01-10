@@ -424,24 +424,24 @@ namespace Unigram.ViewModels
                 }
             }
 
-            //if (dialog != null && Messages.Count > 0)
-            //{
-            //    var unread = dialog.UnreadCount;
-            //    if (Peer is TLInputPeerChannel)
-            //    {
-            //        if (channel != null)
-            //        {
-            //            await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
-            //    }
+            if (dialog != null && Messages.Count > 0)
+            {
+                var unread = dialog.UnreadCount;
+                if (Peer is TLInputPeerChannel)
+                {
+                    if (channel != null)
+                    {
+                        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+                    }
+                }
+                else
+                {
+                    await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+                }
 
-            //    dialog.UnreadCount = dialog.UnreadCount - unread;
-            //    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-            //}
+                dialog.UnreadCount = dialog.UnreadCount - unread;
+                dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            }
 
             Aggregator.Subscribe(this);
 
@@ -692,10 +692,10 @@ namespace Unigram.ViewModels
             {
                 messageText = string.Empty;
 
-                var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "cyanide_happiness_by_naeim" });
+                var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "unigramstickers" });
                 if (set.IsSucceeded)
                 {
-                    document = set.Value.Documents.FirstOrDefault(x => x.Id == 342543832497260385) as TLDocument;
+                    document = set.Value.Documents.FirstOrDefault(x => x.Id == 200980520715159710) as TLDocument;
                 }
             }
 
