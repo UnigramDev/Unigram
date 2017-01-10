@@ -458,9 +458,31 @@ namespace Unigram.Controls.Items
 
         private void UpdateUnreadCount()
         {
-            ((TextBlock)UnreadLabel.Child).Text = ViewModel?.UnreadCount.ToString() ?? string.Empty;
+            UnreadBadge.Text = ViewModel?.UnreadCount.ToString() ?? string.Empty;
             UnreadLabel.Visibility = ViewModel?.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
             Highlight.Visibility = ViewModel?.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private Visibility UpdateUnreadBadgeBrush(TLPeerNotifySettingsBase settingsBase)
+        {
+            var settings = settingsBase as TLPeerNotifySettings;
+            if (settings != null)
+            {
+                return settings.MuteUntil == 0 && !settings.IsSilent ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return Visibility.Visible;
+        }
+
+        private Visibility UpdateUnreadBadgeMutedBrush(TLPeerNotifySettingsBase settingsBase)
+        {
+            var settings = settingsBase as TLPeerNotifySettings;
+            if (settings != null)
+            {
+                return settings.MuteUntil == 0 && !settings.IsSilent ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            return Visibility.Collapsed;
         }
 
         private void UpdateChannelType()
