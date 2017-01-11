@@ -15,6 +15,8 @@ using Telegram.Api.TL;
 using Telegram.Logs;
 using Template10.Utils;
 using Unigram.Common;
+using Unigram.Controls;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -819,35 +821,72 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
         private async void DialogDeleteExecute(TLDialog dialog)
         {
+            string message = "Are you sure you want to delete the group?";
+            int which = 0;
             TLInputPeerBase peer = null;
 
             var user = dialog.With as TLUser;
             if (user != null)
             {
                 peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value };
-            }
-
-            var chat = dialog.With as TLChat;
-            if (chat != null)
-            {
-                peer = new TLInputPeerChat { ChatId = chat.Id };
+                which = 1;
+                message = "Are you sure you want to delete the conversation?";
             }
 
             var channel = dialog.With as TLChannel;
             if (channel != null)
             {
                 peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
+                if (channel.IsBroadcast) message = "Are you sure you want to delete the channel?";
+                which = (channel.IsCreator) ? 2 : 3;
             }
 
-            var result = await ProtoService.DeleteHistoryAsync(false, peer, 0);
-
-            for (int i = 0; i < Items.Count; i++)
+            var chat = dialog.With as TLChat;
+            if (chat != null)
             {
-                if (Items[i].Index == dialog.Index)
+                peer = new TLInputPeerChat { ChatId = chat.Id };
+                which = 4;
+            }
+
+            var question = new UnigramMessageDialog();
+            question.Title = "Delete";
+            question.Message = message;
+            question.PrimaryButtonText = "Yes";
+            question.SecondaryButtonText = "No";
+
+            var result = await question.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                await ProtoService.DeleteChannelAsync(channel);
+                switch (which)
                 {
-                    dialog = (Items[i] as TLDialog);
-                    Items.RemoveAt(i);
-                    break;
+                    case 1:
+                        await ProtoService.DeleteHistoryAsync(false, peer, 0);
+                        break;
+                    case 2:
+                        await ProtoService.DeleteChannelAsync(channel);
+                        CacheService.DeleteDialog(dialog);
+                        break;
+                    case 3:
+                        await ProtoService.LeaveChannelAsync(channel);
+                        CacheService.DeleteDialog(dialog);
+                        break;
+                    case 4:
+                        // TODO: Make normal chats deletable
+                        break;
+                    default:
+                        Debug.WriteLine("Dialog is nothing");
+                        break;
+                }
+
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    if (Items[i].Index == dialog.Index)
+                    {
+                        dialog = (Items[i] as TLDialog);
+                        Items.RemoveAt(i);
+                        break;
+                    }
                 }
             }
         }
