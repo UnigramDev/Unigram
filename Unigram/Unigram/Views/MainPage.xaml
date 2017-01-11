@@ -410,7 +410,6 @@
                 <CommandBar.SecondaryCommands>
                     <AppBarButton x:Name="cbtnMasterSettings"
                                   x:Uid="CBTN-Settings"
-                                  IsEnabled="False"
                                   Icon="Setting"
                                   Label="Settings"
                                   Click="cbtnMasterSettings_Click" />

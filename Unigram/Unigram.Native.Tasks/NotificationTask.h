@@ -26,6 +26,7 @@ namespace Unigram
 				static String^ GetLaunch(JsonObject^ custom, String^ loc_key);
 				static String^ GetTag(JsonObject^ custom);
 				static String^ GetGroup(JsonObject^ custom);
+				static String^ GetPicture(JsonObject^ custom);
 
 				static void UpdateBadge(int badgeNumber);
 				static void UpdateTile(String^ caption, String^ message);

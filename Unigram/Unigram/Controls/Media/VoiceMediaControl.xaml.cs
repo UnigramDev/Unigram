@@ -167,7 +167,7 @@ namespace Unigram.Controls.Media
                     var fileName = Path.GetFileNameWithoutExtension(document.GetFileName()) + ".ogg";
                     if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName)) == false)
                     {
-                        var manager = UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>();
+                        var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                         var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
                     }
 

@@ -21,7 +21,7 @@ namespace Unigram.Views
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            DataContext = UnigramContainer.Instance.ResolverType<SettingsViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<SettingsViewModel>();
 
             Loaded += OnLoaded;
         }

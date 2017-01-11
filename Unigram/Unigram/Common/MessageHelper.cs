@@ -851,7 +851,7 @@ namespace Unigram.Common
 
         private static async void NavigateToInviteLink(string link)
         {
-            var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
+            var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>();
             var response = await protoService.CheckChatInviteAsync(link);
             if (response.IsSucceeded)
             {

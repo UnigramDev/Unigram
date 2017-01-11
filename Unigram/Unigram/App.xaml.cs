@@ -195,10 +195,10 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
+            var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
             cacheService.TryCommit();
 
-            var updatesService = UnigramContainer.Instance.ResolverType<IUpdatesService>();
+            var updatesService = UnigramContainer.Instance.ResolveType<IUpdatesService>();
             updatesService.SaveState();
             updatesService.CancelUpdating();
 

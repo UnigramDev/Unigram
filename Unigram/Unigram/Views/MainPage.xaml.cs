@@ -18,6 +18,7 @@ using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Core.Notifications;
 using Unigram.ViewModels;
+using Unigram.Views.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
@@ -52,7 +53,7 @@ namespace Unigram.Views
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            DataContext = UnigramContainer.Instance.ResolverType<MainViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<MainViewModel>();
 
             Loaded += OnLoaded;
 
@@ -267,7 +268,7 @@ namespace Unigram.Views
 
         private void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsPage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsUsernamePage));
         }
 
         #region Background

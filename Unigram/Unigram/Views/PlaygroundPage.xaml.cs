@@ -74,10 +74,10 @@ namespace Unigram.Views
 
                 var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.OpenIfExists);
 
-                var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
-                var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
-                var updatesService = UnigramContainer.Instance.ResolverType<IUpdatesService>();
-                var uploadManager = UnigramContainer.Instance.ResolverType<IUploadAudioManager>();
+                var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
+                var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>();
+                var updatesService = UnigramContainer.Instance.ResolveType<IUpdatesService>();
+                var uploadManager = UnigramContainer.Instance.ResolveType<IUploadAudioManager>();
 
                 var contacts = await protoService.GetDialogsAsync(0, 0, new TLInputPeerEmpty(), 200);
                 //var user = contacts.Value.Users.OfType<TLUser>().FirstOrDefault(x => x.FullName.Equals("Andrea Cocci"));

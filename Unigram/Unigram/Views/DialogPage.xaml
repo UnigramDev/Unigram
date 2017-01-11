@@ -487,36 +487,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid x:Name="gridLoading"
-              Grid.RowSpan="5"
-              Canvas.ZIndex="10"
-              HorizontalAlignment="Stretch"
-              VerticalAlignment="Stretch"
-              Visibility="Collapsed">
-            <Grid.ChildrenTransitions>
-                <TransitionCollection>
-                    <AddDeleteThemeTransition/>
-                </TransitionCollection>
-            </Grid.ChildrenTransitions>
-            <Grid.Background>
-                <SolidColorBrush Color="Black" Opacity="0.7"/>
-            </Grid.Background>
-            <StackPanel HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                <ProgressRing Height="48"
-                              Width="48"
-                              VerticalAlignment="Center"
-                              HorizontalAlignment="Center"
-                              IsActive="True" />
-                <TextBlock Text="Getting your content..."
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Style="{ThemeResource CaptionTextBlockStyle}"
-                           Margin="0,12,0,0"/>
-            </StackPanel>
-
-        </Grid>
-
         <!-- Titlebar -->
         <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}">

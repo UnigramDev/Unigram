@@ -24,12 +24,19 @@ namespace Unigram.Controls
             this.InitializeComponent();
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        public UnigramMessageDialog(string message)
+            : this(message, null)
         {
+
         }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        public UnigramMessageDialog(string message, string title)
         {
+            InitializeComponent();
+
+            Message = message;
+            Title = title;
+            PrimaryButtonText = "OK";
         }
 
         public string Message

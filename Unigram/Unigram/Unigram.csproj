@@ -247,6 +247,7 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PhotosViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsUsernameViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\UserInfoViewModel.cs" />
     <Compile Include="ViewModels\UserPhotosViewModel.cs" />
@@ -318,6 +319,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingStickersPage.xaml.cs">
       <DependentUpon>SettingStickersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
+      <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsWallpaperPage.xaml.cs">
       <DependentUpon>SettingsWallpaperPage.xaml</DependentUpon>
@@ -589,6 +593,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingStickersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsUsernamePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

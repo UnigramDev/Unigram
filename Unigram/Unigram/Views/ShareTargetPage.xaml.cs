@@ -32,9 +32,9 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            DataContext = UnigramContainer.Instance.ResolverType<MainViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<MainViewModel>();
 
-            var aggregator = UnigramContainer.Instance.ResolverType<ITelegramEventAggregator>();
+            var aggregator = UnigramContainer.Instance.ResolveType<ITelegramEventAggregator>();
             aggregator.Subscribe(this);
 
             Loaded += OnLoaded;
@@ -73,7 +73,7 @@ namespace Unigram.Views
                 var link = await operation.Data.GetWebLinkAsync();
                 txtMessage.Text += Environment.NewLine + Environment.NewLine + link;
 
-                var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
+                var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>();
                 var preview = await protoService.GetWebPagePreviewAsync(link.AbsoluteUri);
                 if (preview.IsSucceeded)
                 {
@@ -149,8 +149,8 @@ namespace Unigram.Views
                 var dialog = e.ClickedItem as TLDialog;
 
                 var manualResetEvent = new ManualResetEvent(false);
-                var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
-                var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>() as MTProtoService;
+                var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
+                var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>() as MTProtoService;
                 prgSendStatus.Value = 20;
 
                 protoService.Initialized += (s, args) =>

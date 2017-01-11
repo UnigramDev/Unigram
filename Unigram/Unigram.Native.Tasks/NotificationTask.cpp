@@ -177,6 +177,20 @@ String^ NotificationTask::GetGroup(JsonObject^ custom)
 	return nullptr;
 }
 
+String^ NotificationTask::GetPicture(JsonObject^ custom)
+{
+	if (custom->HasKey("mtpeer"))
+	{
+		auto mtpeer = custom->GetNamedObject("mtpeer");
+		if (mtpeer->HasKey("ph"))
+		{
+
+		}
+	}
+
+	return nullptr;
+}
+
 void NotificationTask::UpdateBadge(int badgeNumber)
 {
 	auto updater = BadgeUpdateManager::CreateBadgeUpdaterForApplication();

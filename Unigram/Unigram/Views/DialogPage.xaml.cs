@@ -52,7 +52,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<DialogViewModel>();
             CheckMessageBoxEmpty();
 
             Loaded += OnLoaded;
@@ -183,7 +183,7 @@ namespace Unigram.Views
 
         private async void gridMain_Drop(object sender, DragEventArgs e)
         {
-            gridLoading.Visibility = Visibility.Visible;
+            //gridLoading.Visibility = Visibility.Visible;
 
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
@@ -230,21 +230,21 @@ namespace Unigram.Views
                 // Send images
                 if (images.Count > 0)
                 {
-                    gridLoading.Visibility = Visibility.Collapsed;
+                    //gridLoading.Visibility = Visibility.Collapsed;
                     ViewModel.SendPhotoDrop(images);
                 }
-                if (audio.Count > 0)
-                {
-                    gridLoading.Visibility = Visibility.Collapsed;
-                }
-                if (videos.Count > 0)
-                {
-                    gridLoading.Visibility = Visibility.Collapsed;
-                }
-                if (files.Count > 0)
-                {
-                    gridLoading.Visibility = Visibility.Collapsed;
-                }
+                //if (audio.Count > 0)
+                //{
+                //    gridLoading.Visibility = Visibility.Collapsed;
+                //}
+                //if (videos.Count > 0)
+                //{
+                //    gridLoading.Visibility = Visibility.Collapsed;
+                //}
+                //if (files.Count > 0)
+                //{
+                //    gridLoading.Visibility = Visibility.Collapsed;
+                //}
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
             //{
@@ -275,7 +275,7 @@ namespace Unigram.Views
                     txtMessage.Text = (txtMessage.Text + " " + text);
                 }
 
-                gridLoading.Visibility = Visibility.Collapsed;
+                //gridLoading.Visibility = Visibility.Collapsed;
             }
 
 
