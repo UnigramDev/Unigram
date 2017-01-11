@@ -16,6 +16,7 @@ using Telegram.Api.TL;
 using Telegram.Logs;
 using Template10.Utils;
 using Unigram.Common;
+using Unigram.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -779,6 +780,16 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogPinCommand => new RelayCommand<TLDialog>(DialogPinExecute);
         private async void DialogPinExecute(TLDialog dialog)
         {
+            if (PinnedDialogsIndex == PinnedDialogsCountMax)
+            {
+                var question = new UnigramMessageDialog();
+                question.Title = "Warning";
+                question.Message = string.Format("Sorry, you can pin no more than {0} chats to the top.", PinnedDialogsCountMax);
+                question.PrimaryButtonText = "OK";
+                await question.ShowAsync();
+                return;
+            }
+
             TLInputPeerBase peer = null;
 
             var user = dialog.With as TLUser;
