@@ -62,7 +62,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		auto tag = GetTag(custom);
 		auto group = GetGroup(custom);
 
-		UpdateToast(caption, message, sound, launch, tag, group);
+		UpdateToast(caption, message, sound, launch, tag, group, loc_key);
 		UpdateBadge(data->GetNamedNumber("badge"));
 
 		if (loc_key != L"DC_UPDATE") 
@@ -222,10 +222,11 @@ void NotificationTask::UpdateTile(String^ caption, String^ message)
 	updater->Update(notification);
 }
 
-void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group)
+void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ loc_key)
 {
+	std::wstring key = loc_key->Data();
 	std::wstring actions = L"";
-	if (group != nullptr)
+	if (group != nullptr && key.find(L"CHANNEL"))
 	{
 		actions = L"<actions><input id='QuickMessage' type='text' placeHolderContent='Type a message...' /><action activationType='background' arguments='";
 		actions += launch->Data();

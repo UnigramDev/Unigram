@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
@@ -50,6 +51,7 @@ namespace Unigram.ViewModels
         {
             Items = new ObservableCollection<TLDialog>();
             Search = new ObservableCollection<KeyedList<string, TLObject>>();
+            SearchTokens = new Dictionary<string, CancellationTokenSource>();
         }
 
         public int PinnedDialogsIndex { get; set; }
@@ -670,6 +672,21 @@ namespace Unigram.ViewModels
 
         public ObservableCollection<KeyedList<string, TLObject>> Search { get; private set; }
 
+        public Dictionary<string, CancellationTokenSource> SearchTokens { get; private set; }
+
+        private string _searchQuery;
+        public string SearchQuery
+        {
+            get
+            {
+                return _searchQuery;
+            }
+            set
+            {
+                Set(ref _searchQuery, value);
+            }
+        }
+
         public async Task SearchAsync(string query)
         {
             // TODO: dialogs search
@@ -680,10 +697,17 @@ namespace Unigram.ViewModels
             Search.Clear();
             if (global != null) Search.Add(global);
             if (messages != null) Search.Add(messages);
+
+            SearchQuery = query;
         }
 
         private async Task<KeyedList<string, TLObject>> SearchGlobalAsync(string query)
         {
+            if (query.Length < 5)
+            {
+                return null;
+            }
+
             var result = await ProtoService.SearchAsync(query, 100);
             if (result.IsSucceeded)
             {
@@ -718,7 +742,14 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", result.Value.Messages.Count));
+                    if (result.Value.Messages.Count > 0)
+                    {
+                        parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", result.Value.Messages.Count));
+                    }
+                    else
+                    {
+                        parent = new KeyedList<string, TLObject>("No messages found");
+                    }
                 }
 
                 foreach (var message in result.Value.Messages.OfType<TLMessageCommonBase>())

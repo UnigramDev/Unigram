@@ -181,7 +181,7 @@
                                                            Grid.Row="1"
                                                            MaxLines="1">
                                                     <i:Interaction.Behaviors>
-                                                        <behaviors:UsernameHighlightBehavior SearchString="{Binding ElementName=SearchDialogs, Path=Text}" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
+                                                        <behaviors:UsernameHighlightBehavior SearchString="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
                                                     </i:Interaction.Behaviors>
                                                 </TextBlock>
                                             </Grid>
@@ -218,7 +218,7 @@
                                                            Grid.Row="1"
                                                            MaxLines="1">
                                                     <i:Interaction.Behaviors>
-                                                        <behaviors:UsernameHighlightBehavior SearchString="fra" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
+                                                        <behaviors:UsernameHighlightBehavior SearchString="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
                                                     </i:Interaction.Behaviors>
                                                 </TextBlock>
                                             </Grid>
