@@ -430,7 +430,7 @@ namespace Unigram.Common
                     }
                 }
 
-                if (lastIndex < text.Length - 1)
+                if (lastIndex < text.Length)
                 {
                     paragraph.Inlines.Add(new Run { Text = text.Substring(lastIndex, text.Length - lastIndex) });
                 }

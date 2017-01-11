@@ -112,7 +112,15 @@ namespace Unigram.ViewModels
                         item.PinnedIndex = pinnedIndex++;
                     }
 
-                    Items.Add(item);
+                    var chat = item.With as TLChat;
+                    if (chat != null && chat.HasMigratedTo)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        Items.Add(item);
+                    }
                 }
 
                 IsFirstPinned = Items.Any(x => x.IsPinned);

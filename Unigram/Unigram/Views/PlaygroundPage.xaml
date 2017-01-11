@@ -35,6 +35,8 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
+        <Image Source="ms-appx:///Assets/Images/DefaultBackground.png" Stretch="UniformToFill" Margin="-12"/>
+        
         <Border x:Name="LayoutRoot"
                 Margin="{ThemeResource MessageContentMargin}" 
                 Padding="{ThemeResource MessageContentPadding}" 
