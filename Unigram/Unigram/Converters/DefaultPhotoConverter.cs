@@ -445,10 +445,10 @@ namespace Unigram.Converters
         {
             var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
 
-            if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName)))
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var bitmap = new BitmapImage();
-                bitmap.SetUriSource(new Uri("ms-appdata:///temp/" + fileName));
+                bitmap.SetUriSource(FileUtils.GetTempFileUri(fileName));
                 return bitmap;
             }
 
@@ -543,7 +543,7 @@ namespace Unigram.Converters
 
             var filename = document.GetFileName();
 
-            if (!File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, filename)))
+            if (!File.Exists(FileUtils.GetTempFileName(filename)))
             {
                 TLObject owner = document;
                 if (sticker != null)
@@ -560,7 +560,7 @@ namespace Unigram.Converters
                     await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
                     Execute.BeginOnUIThread(async () =>
                     {
-                        await renderer.SetSourceAsync(new Uri(Path.Combine("ms-appdata:///temp", filename)));
+                        await renderer.SetSourceAsync(FileUtils.GetTempFileUri(filename));
                     });
                 });
 
@@ -596,7 +596,7 @@ namespace Unigram.Converters
                 var renderer = _videoFactory.CreateRenderer(320, 320);
                 Execute.BeginOnUIThread(async () =>
                 {
-                    await renderer.SetSourceAsync(new Uri(Path.Combine("ms-appdata:///temp", filename)));
+                    await renderer.SetSourceAsync(FileUtils.GetTempFileUri(filename));
                 });
                 return renderer.ImageSource;
             }
@@ -676,10 +676,10 @@ namespace Unigram.Converters
         {
             string fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
 
-            if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName)))
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var bitmap = new BitmapImage();
-                bitmap.SetUriSource(new Uri("ms-appdata:///temp/" + fileName));
+                bitmap.SetUriSource(FileUtils.GetTempFileUri(fileName));
                 return bitmap;
             }
 
@@ -694,7 +694,7 @@ namespace Unigram.Converters
                     await manager.DownloadFileAsync(location, fileSize).AsTask(mediaPhoto?.Download());
                     Execute.BeginOnUIThread(() =>
                     {
-                        bitmap.SetUriSource(new Uri("ms-appdata:///temp/" + fileName));
+                        bitmap.SetUriSource(FileUtils.GetTempFileUri(fileName));
                     });
                 });
 
@@ -780,10 +780,10 @@ namespace Unigram.Converters
                 return weakReference.Target as BitmapSource;
             }
 
-            if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName)))
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var bitmap = new BitmapImage();
-                bitmap.SetUriSource(new Uri("ms-appdata:///temp/" + fileName));
+                bitmap.SetUriSource(FileUtils.GetTempFileUri(fileName));
                 _cachedSources[fileName] = new WeakReference(bitmap);
 
                 return bitmap;
@@ -800,7 +800,7 @@ namespace Unigram.Converters
                     await manager.DownloadFileAsync(location, fileSize);
                     Execute.BeginOnUIThread(() =>
                     {
-                        bitmap.SetUriSource(new Uri("ms-appdata:///temp/" + fileName));
+                        bitmap.SetUriSource(FileUtils.GetTempFileUri(fileName));
                     });
                 });
 
@@ -879,13 +879,13 @@ namespace Unigram.Converters
         {
             string filename = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
 
-            if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, filename)) && bitmap.IsSet == false)
+            if (File.Exists(FileUtils.GetTempFileName(filename)) && bitmap.IsSet == false)
             {
-                byte[] array = File.ReadAllBytes(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, filename));
+                byte[] array = File.ReadAllBytes(FileUtils.GetTempFileName(filename));
 
                 return DecodeWebPImage(filename, array, () =>
                 {
-                    File.Delete(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, filename));
+                    File.Delete(FileUtils.GetTempFileName(filename));
                 });
             }
 
@@ -899,7 +899,7 @@ namespace Unigram.Converters
                     await manager.DownloadFileAsync(location, photoSize.Size);
                     if (bitmap.IsSet == false)
                     {
-                        var buffer = WebPImage.Encode(File.ReadAllBytes(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, filename)));
+                        var buffer = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(filename)));
                         Execute.BeginOnUIThread(() =>
                         {
                             bitmap.SetStream(buffer);
@@ -922,7 +922,7 @@ namespace Unigram.Converters
 
             var filename = document.GetFileName();
 
-            if (!File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, filename)))
+            if (!File.Exists(FileUtils.GetTempFileName(filename)))
             {
                 TLObject owner = document;
                 if (sticker != null)
@@ -937,7 +937,7 @@ namespace Unigram.Converters
                 Execute.BeginOnThreadPool(async () =>
                 {
                     await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
-                    var buffer = WebPImage.Encode(File.ReadAllBytes(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, filename)));
+                    var buffer = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(filename)));
                     Execute.BeginOnUIThread(() =>
                     {
                         bitmap.SetStream(buffer);
@@ -971,10 +971,10 @@ namespace Unigram.Converters
             }
             else if (document.Size > 0 && document.Size < 262144)
             {
-                var array = File.ReadAllBytes(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, filename));
+                var array = File.ReadAllBytes(FileUtils.GetTempFileName(filename));
                 return DecodeWebPImage(filename, array, delegate
                 {
-                    File.Delete(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, filename));
+                    File.Delete(FileUtils.GetTempFileName(filename));
                 });
             }
 

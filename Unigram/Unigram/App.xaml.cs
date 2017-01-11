@@ -28,6 +28,7 @@ using Windows.Storage;
 using Windows.UI.Popups;
 using Unigram.Views;
 using Windows.Media;
+using System.IO;
 
 namespace Unigram
 {
@@ -54,6 +55,8 @@ namespace Unigram
 
             m_mediaExtensionManager = new MediaExtensionManager();
             m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
+
+            FileUtils.CreateTemporaryFolder();
 
             UnhandledException += async (s, args) =>
             {
