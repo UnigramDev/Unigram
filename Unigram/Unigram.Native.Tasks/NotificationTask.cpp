@@ -194,36 +194,36 @@ String^ NotificationTask::GetPicture(JsonObject^ custom)
 			auto local_id = ph->GetNamedString("local_id");
 			auto secret = ph->GetNamedString("secret");
 
-			auto temp = ApplicationData::Current->LocalFolder->Path;
+			std::wstringstream almost;
+			almost << L"ms-appdata:///local/temp/"
+					<< volume_id->Data()
+					<< L"_"
+					<< local_id->Data()
+					<< L"_"
+					<< secret->Data()
+					<< L".jpg";
 
-			std::wstringstream wss;
-			wss << temp->Data()
-				<< L"\\temp\\"
-				<< volume_id->Data()
-				<< L"_"
-				<< local_id->Data()
-				<< L"_"
-				<< secret->Data()
-				<< L".jpg";
+			return ref new String(almost.str().c_str());
 
-			WIN32_FIND_DATA FindFileData;
-			HANDLE handle = FindFirstFile(wss.str().c_str(), &FindFileData);
-			int found = handle != INVALID_HANDLE_VALUE;
-			if (found)
-			{
-				FindClose(handle);
+			//auto temp = ApplicationData::Current->LocalFolder->Path;
 
-				std::wstringstream almost;
-				almost << L"ms-appdata:///local/temp/"
-					   << volume_id->Data()
-					   << L"_"
-					   << local_id->Data()
-					   << L"_"
-					   << secret->Data()
-					   << L".jpg";
+			//std::wstringstream wss;
+			//wss << temp->Data()
+			//	<< L"\\temp\\"
+			//	<< volume_id->Data()
+			//	<< L"_"
+			//	<< local_id->Data()
+			//	<< L"_"
+			//	<< secret->Data()
+			//	<< L".jpg";
 
-				return ref new String(almost.str().c_str());
-			}
+			//WIN32_FIND_DATA FindFileData;
+			//HANDLE handle = FindFirstFile(wss.str().c_str(), &FindFileData);
+			//int found = handle != INVALID_HANDLE_VALUE;
+			//if (found)
+			//{
+			//	FindClose(handle);
+			//}
 		}
 	}
 

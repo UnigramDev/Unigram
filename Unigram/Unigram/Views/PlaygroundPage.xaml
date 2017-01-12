@@ -6,6 +6,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:tl="using:Telegram.Api.TL"
+    xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -70,7 +71,7 @@
         </Style>
 
         <Storyboard x:Name="Storyboard1" RepeatBehavior="Forever">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Arc1">
+            <!--<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Arc1">
                 <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
@@ -82,34 +83,32 @@
             <DoubleAnimation Duration="0:0:0.5" To="1" EnableDependentAnimation="True" Storyboard.TargetProperty="(ProgressBarRingSlice.Value)" Storyboard.TargetName="Arc1"/>
             <DoubleAnimation Duration="0:0:0.5" To="1" EnableDependentAnimation="True" Storyboard.TargetProperty="(ProgressBarRingSlice.Value)" Storyboard.TargetName="Arc2"/>
             <DoubleAnimation Duration="0:0:0.5" To="1" EnableDependentAnimation="True" Storyboard.TargetProperty="(ProgressBarRingSlice.Value)" Storyboard.TargetName="Arc3"/>
-            <DoubleAnimation Duration="0:0:0.5" To="1" EnableDependentAnimation="True" Storyboard.TargetProperty="(ProgressBarRingSlice.Value)" Storyboard.TargetName="Arc4"/>
+            <DoubleAnimation Duration="0:0:0.5" To="1" EnableDependentAnimation="True" Storyboard.TargetProperty="(ProgressBarRingSlice.Value)" Storyboard.TargetName="Arc4"/>-->
         </Storyboard>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
 
-        <StackPanel VerticalAlignment="Center">
+        <!--<StackPanel VerticalAlignment="Center">
             <ProgressRing IsActive="True" Style="{StaticResource UploadProgressRingStyle}" Margin="20"/>
 
             <Viewbox Width="50" Height="50">
                 
                 <Grid HorizontalAlignment="Center" Height="10" Width="20">
-                    <!--<Path Stroke="Black" StrokeThickness="1" Data="M 0,0 A 10,10 45 1 0 480,-240" Margin="-5,-5,0,0" Width="10" Height="10" />
-                    <Path Stroke="Black" StrokeThickness="1" Data="M 0,0 A 18,18 45 1 0 480,-240" Margin="-9,-9,0,0" Width="18" Height="18" />
-                    <Path Stroke="Black" StrokeThickness="1" Data="M 0,0 A 26,26 45 1 0 480,-240" Margin="-13,-13,0,0" Width="26" Height="26" />
-                    <Path Stroke="Black" StrokeThickness="1" Data="M 0,0 A 34,34 45 1 0 480,-240" Margin="-17,-17,0,0" Width="34" Height="34" />-->
-                    <!--<local:ProgressBarRingSlice StartAngle="75" EndAngle="105" InnerRadius="3" Radius="5" Stroke="Black" StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Margin="-5,0,0,0" Width="10" Height="10" />
-                    <local:ProgressBarRingSlice StartAngle="75" EndAngle="105" InnerRadius="7" Radius="9" Stroke="Black" StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Margin="-9,0,0,0" Width="18" Height="18" />
-                    <local:ProgressBarRingSlice StartAngle="75" EndAngle="105" InnerRadius="11" Radius="13" Stroke="Black" StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Margin="-13,0,0,0" Width="26" Height="26" />
-                    <local:ProgressBarRingSlice StartAngle="75" EndAngle="105" InnerRadius="15" Radius="17" Stroke="Black" StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Margin="-17,0,0,0" Width="34" Height="34" />-->
-
                     <local:ProgressBarRingSlice x:Name="Arc1" StartAngle="75" EndAngle="105" Radius="0" Stroke="Black" StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Width="34" Height="34"/>
                     <local:ProgressBarRingSlice x:Name="Arc2" StartAngle="75" EndAngle="105" Radius="4" Stroke="Black" StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Width="34" Height="34"/>
                     <local:ProgressBarRingSlice x:Name="Arc3" StartAngle="75" EndAngle="105" Radius="8" Stroke="Black" StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Width="34" Height="34"/>
                     <local:ProgressBarRingSlice x:Name="Arc4" StartAngle="75" EndAngle="105" Radius="12" Stroke="Black" StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Width="34" Height="34"/>
                 </Grid>
             </Viewbox>
-        </StackPanel>
+        </StackPanel>-->
 
+
+        <Viewbox Width="50" Height="50">
+            <win2d:CanvasControl x:Name="BackgroundCanvas" Draw="BackgroundCanvas_Draw" Width="50" Height="50"/>
+        </Viewbox>
+
+
+        <Slider x:Name="Slide" ValueChanged="Slide_ValueChanged" VerticalAlignment="Bottom"/>
     </Grid>
 </Page>

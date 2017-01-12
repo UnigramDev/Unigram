@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
@@ -27,6 +29,7 @@ using Windows.Media.MediaProperties;
 using Windows.Media.Render;
 using Windows.Phone.Media.Devices;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -203,6 +206,47 @@ namespace Unigram.Views
             recorder = new OpusRecorder(file);
             await recorder.StartAsync();
 
+        }
+
+        private void BackgroundCanvas_Draw(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
+        {
+            var startAngle = DegreesToRadians(-15);
+            var sweepAngle = DegreesToRadians(30);
+
+            var progress = (float)Slide.Value / 100f;
+            var size = 1 + 4 * progress;
+
+            for (int i = 0; i < 4; i++)
+            {
+                using (var builder = new CanvasPathBuilder(sender))
+                {
+
+                    var centerPoint = new Vector2((1 + 4 * progress), 6);
+                    var startPoint = centerPoint + Vector2.Transform(Vector2.UnitX, Matrix3x2.CreateRotation(startAngle)) * size;
+
+                    builder.BeginFigure(startPoint);
+                    builder.AddArc(centerPoint, size, size, startAngle, sweepAngle);
+                    builder.EndFigure(CanvasFigureLoop.Open);
+
+                    using (var geometry = CanvasGeometry.CreatePath(builder))
+                    {
+                        var alpha = (i == 0) ? progress : (i == 4 - 1) ? (1.0f - progress) : 1.0f;
+                        args.DrawingSession.DrawGeometry(geometry, Color.FromArgb((byte)(alpha * 255), 0xFF, 0x00, 0x0), 2, new CanvasStrokeStyle { StartCap = CanvasCapStyle.Round, EndCap = CanvasCapStyle.Round });
+                    }
+
+                    size += 4;
+                }
+            }
+        }
+
+        public float DegreesToRadians(float angle)
+        {
+            return (float)((Math.PI / 180) * angle);
+        }
+
+        private void Slide_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            BackgroundCanvas.Invalidate();
         }
     }
 

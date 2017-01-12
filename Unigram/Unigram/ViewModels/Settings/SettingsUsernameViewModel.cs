@@ -157,7 +157,11 @@ namespace Unigram.ViewModels.Settings
 
             if (!IsValid)
             {
-                if (_username.Length < 5)
+                if (string.IsNullOrEmpty(username))
+                {
+                    ErrorMessage = null;
+                }
+                else if (_username.Length < 5)
                 {
                     ErrorMessage = "A username must have at least 5 characters";
                 }
@@ -177,6 +181,11 @@ namespace Unigram.ViewModels.Settings
 
         public bool IsValidUsername(string username)
         {
+            if (string.IsNullOrEmpty(username))
+            {
+                return false;
+            }
+
             if (username.Length < 5)
             {
                 return false;
@@ -255,6 +264,10 @@ namespace Unigram.ViewModels.Settings
                         //{
                         //    MessageBox.Show(AppResources.UsernameOccupied, AppResources.Error, 0);
                         //});
+                    }
+                    else if (result.Error.TypeEquals(TLErrorType.USERNAME_NOT_MODIFIED))
+                    {
+                        NavigationService.GoBack();
                     }
                     else
                     {
