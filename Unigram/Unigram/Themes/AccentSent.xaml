@@ -6,13 +6,13 @@
     <ResourceDictionary.ThemeDictionaries>
         <!-- From -->
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
-            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#3B4245"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="#00000000"/>
+            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
 
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
@@ -35,9 +35,9 @@
 
         <!-- To -->
         <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="Honeydew"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="#00000000"/>
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
 
