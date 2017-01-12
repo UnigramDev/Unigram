@@ -197,5 +197,78 @@ namespace Unigram.ViewModels.Settings
 
             return true;
         }
+
+        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        private async void SendExecute()
+        {
+            var result = await ProtoService.UpdateUsernameAsync(Username);
+            if (result.IsSucceeded)
+            {
+                CacheService.SyncUser(result.Value, (callback) =>
+                {
+                    //Aggregator.Publish(new UserNameChangedEventArgs(result));
+                });
+
+                NavigationService.GoBack();
+            }
+            else
+            {
+                if (result.Error.CodeEquals(TLErrorCode.FLOOD))
+                {
+                    //this.HasError = true;
+                    //this.Error = AppResources.FloodWaitString;
+                    //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                    //{
+                    //    MessageBox.Show(AppResources.FloodWaitString, AppResources.Error, 0);
+                    //});
+                }
+                else if (result.Error.CodeEquals(TLErrorCode.INTERNAL))
+                {
+                    //StringBuilder messageBuilder = new StringBuilder();
+                    //messageBuilder.AppendLine(AppResources.ServerErrorMessage);
+                    //messageBuilder.AppendLine();
+                    //messageBuilder.AppendLine("Method: account.updateUsername");
+                    //messageBuilder.AppendLine("Result: " + error);
+                    //this.HasError = true;
+                    //this.Error = AppResources.ServerError;
+                    //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                    //{
+                    //    MessageBox.Show(messageBuilder.ToString(), AppResources.ServerError, 0);
+                    //});
+                }
+                else if (result.Error.CodeEquals(TLErrorCode.BAD_REQUEST))
+                {
+                    if (result.Error.TypeEquals(TLErrorType.USERNAME_INVALID))
+                    {
+                        //this.HasError = true;
+                        //this.Error = AppResources.UsernameInvalid;
+                        //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                        //{
+                        //    MessageBox.Show(AppResources.UsernameInvalid, AppResources.Error, 0);
+                        //});
+                    }
+                    else if (result.Error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
+                    {
+                        //this.HasError = true;
+                        //this.Error = AppResources.UsernameOccupied;
+                        //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                        //{
+                        //    MessageBox.Show(AppResources.UsernameOccupied, AppResources.Error, 0);
+                        //});
+                    }
+                    else
+                    {
+                        //this.HasError = true;
+                        //this.Error = error.ToString();
+                    }
+                }
+                else
+                {
+                    //this.HasError = true;
+                    //this.Error = string.Empty;
+                    //Telegram.Api.Helpers.Execute.ShowDebugMessage("account.updateUsername error " + error);
+                }
+            }
+        }
     }
 }
