@@ -854,22 +854,32 @@ namespace Unigram.ViewModels
             question.PrimaryButtonText = "Yes";
             question.SecondaryButtonText = "No";
 
+            var failNotification = new UnigramMessageDialog();
+            failNotification.Title = "Error";
+            failNotification.Message = "Chat could not be deleted!";
+            failNotification.PrimaryButtonText = "Okay";
+            failNotification.SecondaryButtonText = "";
+            failNotification.IsSecondaryButtonEnabled = false;
+
             var result = await question.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                await ProtoService.DeleteChannelAsync(channel);
                 switch (which)
                 {
                     case 1:
-                        await ProtoService.DeleteHistoryAsync(false, peer, 0);
+                        var delResultUser = await ProtoService.DeleteHistoryAsync(false, peer, 0);
+                        if (delResultUser.IsSucceeded) { CacheService.DeleteDialog(dialog); }
+                        else { await failNotification.ShowAsync(); return; }
                         break;
                     case 2:
-                        await ProtoService.DeleteChannelAsync(channel);
-                        CacheService.DeleteDialog(dialog);
+                        var delResultChannel = await ProtoService.DeleteChannelAsync(channel);
+                        if (delResultChannel.IsSucceeded) { CacheService.DeleteDialog(dialog); }
+                        else { await failNotification.ShowAsync(); return; }
                         break;
                     case 3:
-                        await ProtoService.LeaveChannelAsync(channel);
-                        CacheService.DeleteDialog(dialog);
+                        var leaveResultChat = await ProtoService.LeaveChannelAsync(channel);
+                        if (leaveResultChat.IsSucceeded) { CacheService.DeleteDialog(dialog); }
+                        else { await failNotification.ShowAsync(); return; }
                         break;
                     case 4:
                         // TODO: Make normal chats deletable
@@ -915,6 +925,16 @@ namespace Unigram.ViewModels
             }
 
             var result = await ProtoService.DeleteHistoryAsync(true, peer, 0);
+            if (!result.IsSucceeded)
+            {
+                var failNotification = new UnigramMessageDialog();
+                failNotification.Title = "Error";
+                failNotification.Message = "Clearing the chat failed!";
+                failNotification.PrimaryButtonText = "Okay";
+                failNotification.SecondaryButtonText = "";
+                failNotification.IsSecondaryButtonEnabled = false;
+                await failNotification.ShowAsync();
+            }
         }
 
         #endregion
