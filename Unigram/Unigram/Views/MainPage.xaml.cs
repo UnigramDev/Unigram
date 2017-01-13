@@ -268,7 +268,7 @@ namespace Unigram.Views
 
         private void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsUsernamePage));
+            Frame.Navigate(typeof(SettingsPage));
         }
 
         #region Background

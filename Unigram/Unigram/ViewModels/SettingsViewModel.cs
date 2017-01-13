@@ -16,7 +16,8 @@ namespace Unigram.ViewModels
 {
    public class SettingsViewModel : UnigramViewModelBase
     {
-        public SettingsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) : base(protoService, cacheService, aggregator)
+        public SettingsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+            : base(protoService, cacheService, aggregator)
         {
 
         }

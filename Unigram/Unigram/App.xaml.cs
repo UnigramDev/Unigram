@@ -61,7 +61,6 @@ namespace Unigram
             UnhandledException += async (s, args) =>
             {
                 args.Handled = true;
-                await FileIO.WriteTextAsync(await KnownFolders.PicturesLibrary.CreateFileAsync("unigram_log.txt", CreationCollisionOption.GenerateUniqueName), args.Exception?.ToString() ?? "Error" + "\r\n" + args.Message);
                 await new MessageDialog(args.Message ?? "Error", args.Exception?.ToString() ?? "Error").ShowAsync();
             };
 
