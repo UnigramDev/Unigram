@@ -245,7 +245,7 @@ namespace Unigram.Views
                 Execute.BeginOnUIThread(async () =>
                 {
                     ViewModel.Dialogs.LoadFirstSlice();
-                    await ViewModel.Contacts.getTLContacts();
+                    //await ViewModel.Contacts.getTLContacts(); 
                     await ViewModel.Contacts.GetSelfAsync();
                 });
             }
