@@ -71,7 +71,7 @@
         </Style>
 
         <Storyboard x:Name="Storyboard1" RepeatBehavior="Forever">
-            <!--<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Arc1">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Arc1">
                 <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
@@ -83,13 +83,13 @@
             <DoubleAnimation Duration="0:0:0.5" To="1" EnableDependentAnimation="True" Storyboard.TargetProperty="(ProgressBarRingSlice.Value)" Storyboard.TargetName="Arc1"/>
             <DoubleAnimation Duration="0:0:0.5" To="1" EnableDependentAnimation="True" Storyboard.TargetProperty="(ProgressBarRingSlice.Value)" Storyboard.TargetName="Arc2"/>
             <DoubleAnimation Duration="0:0:0.5" To="1" EnableDependentAnimation="True" Storyboard.TargetProperty="(ProgressBarRingSlice.Value)" Storyboard.TargetName="Arc3"/>
-            <DoubleAnimation Duration="0:0:0.5" To="1" EnableDependentAnimation="True" Storyboard.TargetProperty="(ProgressBarRingSlice.Value)" Storyboard.TargetName="Arc4"/>-->
+            <DoubleAnimation Duration="0:0:0.5" To="1" EnableDependentAnimation="True" Storyboard.TargetProperty="(ProgressBarRingSlice.Value)" Storyboard.TargetName="Arc4"/>
         </Storyboard>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
 
-        <!--<StackPanel VerticalAlignment="Center">
+        <StackPanel VerticalAlignment="Center">
             <ProgressRing IsActive="True" Style="{StaticResource UploadProgressRingStyle}" Margin="20"/>
 
             <Viewbox Width="50" Height="50">
@@ -101,14 +101,14 @@
                     <local:ProgressBarRingSlice x:Name="Arc4" StartAngle="75" EndAngle="105" Radius="12" Stroke="Black" StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Width="34" Height="34"/>
                 </Grid>
             </Viewbox>
-        </StackPanel>-->
+        </StackPanel>
 
 
-        <Viewbox Width="50" Height="50">
+        <!--<Viewbox Width="50" Height="50">
             <win2d:CanvasControl x:Name="BackgroundCanvas" Draw="BackgroundCanvas_Draw" Width="50" Height="50"/>
         </Viewbox>
 
 
-        <Slider x:Name="Slide" ValueChanged="Slide_ValueChanged" VerticalAlignment="Bottom"/>
+        <Slider x:Name="Slide" ValueChanged="Slide_ValueChanged" VerticalAlignment="Bottom"/>-->
     </Grid>
 </Page>

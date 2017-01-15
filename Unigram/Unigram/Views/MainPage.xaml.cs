@@ -240,13 +240,14 @@ namespace Unigram.Views
 
         private void PivotItem_Loaded(object sender, RoutedEventArgs e)
         {
+            var dialogs = ViewModel.Dialogs;
             try
             {
-                Execute.BeginOnUIThread(async () =>
+                Execute.BeginOnThreadPool(() =>
                 {
-                    ViewModel.Dialogs.LoadFirstSlice();
-                    await ViewModel.Contacts.getTLContacts();
-                    await ViewModel.Contacts.GetSelfAsync();
+                    dialogs.LoadFirstSlice();
+                    //await ViewModel.Contacts.getTLContacts();
+                    //await ViewModel.Contacts.GetSelfAsync();
                 });
             }
             catch { }
