@@ -13,8 +13,8 @@
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
 
-            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#999999"/>
-            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#f2f2f2"/>
+            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#ffffff"/>
+            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#007ee5"/>
 
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
 
@@ -42,8 +42,8 @@
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
 
-            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#999999"/>
-            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#f2f2f2"/>
+            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#ffffff"/>
+            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#007ee5"/>
 
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
 
