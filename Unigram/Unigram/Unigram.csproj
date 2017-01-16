@@ -110,6 +110,7 @@
       <DependentUpon>AttachPickerFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\BackButton.cs" />
+    <Compile Include="Controls\BackDrop.cs" />
     <Compile Include="Controls\ContentDialogBase.cs" />
     <Compile Include="Controls\ImageView.cs" />
     <Compile Include="Controls\Inline\InlineBotResultsView.xaml.cs">
@@ -408,6 +409,7 @@
     <Content Include="Assets\Mockups\README.txt" />
     <Content Include="Assets\Mockups\UserIcons\user_batman.png" />
     <None Include="Package.StoreAssociation.xml" />
+    <Content Include="Assets\Noise.jpg" />
     <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
