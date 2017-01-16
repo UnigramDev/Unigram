@@ -28,7 +28,7 @@
 
             <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
 
-            <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
+            <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
 
             <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
         </ResourceDictionary>

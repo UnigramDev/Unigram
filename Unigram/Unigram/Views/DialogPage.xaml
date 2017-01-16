@@ -260,6 +260,7 @@
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                            <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
                         </controls:MessageReference.Resources>
                     </controls:MessageReference>
                 </StackPanel>
@@ -324,6 +325,7 @@
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                            <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
                         </controls:MessageReference.Resources>
                     </controls:MessageReference>
                 </StackPanel>
@@ -388,6 +390,7 @@
                                 <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                                 <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                                 <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                                <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
                             </controls:MessageReference.Resources>
                         </controls:MessageReference>
                     </StackPanel>

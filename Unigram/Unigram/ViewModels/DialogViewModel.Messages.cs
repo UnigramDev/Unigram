@@ -542,7 +542,7 @@ namespace Unigram.ViewModels
             var callbackButton = button as TLKeyboardButtonCallback;
             if (callbackButton != null)
             {
-                var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, 0);
+                var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, false);
                 if (response.IsSucceeded && response.Value.HasMessage)
                 {
                     if (response.Value.IsAlert)
@@ -565,7 +565,7 @@ namespace Unigram.ViewModels
                 var gameMedia = message.Media as TLMessageMediaGame;
                 if (gameMedia != null)
                 {
-                    var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, 1);
+                    var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, true);
                     if (response.IsSucceeded && response.Value.IsHasUrl && response.Value.HasUrl)
                     {
                         var user = CacheService.GetUser(message.ViaBotId) as TLUser;
