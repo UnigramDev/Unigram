@@ -39,6 +39,7 @@ namespace Unigram.Common
                 };
             }
 
+            _currentDialog = dialog;
             return await dialog.ShowAsync();
         }
 

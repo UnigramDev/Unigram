@@ -119,7 +119,6 @@ namespace Unigram.Controls.Messages
                         StatusToFullMedia();
                     }
 
-
                     MediaControl.Margin = new Thickness(left, top, right, bottom);
                     Grid.SetRow(StatusControl, caption ? 4 : 3);
                     Grid.SetRow(MessageControl, caption ? 4 : 2);

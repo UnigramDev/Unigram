@@ -31,6 +31,8 @@ namespace Unigram.Controls.Views
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            args.Cancel = true;
+            ViewModel.SendCommand.Execute(null);
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

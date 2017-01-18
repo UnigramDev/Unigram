@@ -90,6 +90,7 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.UpdateProfileAsync(_firstName, _lastName, null);
             if (response.IsSucceeded)
             {
+                response.Value.RaisePropertyChanged(() => response.Value.FullName);
                 NavigationService.PopModal();
             }
         }
