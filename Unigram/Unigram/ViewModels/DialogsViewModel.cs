@@ -393,6 +393,30 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(() =>
             {
+                if (update.HasOrder)
+                {
+                    var pinned = new List<TLDialog>(update.Order.Count);
+
+                    for (int i = 0; i < update.Order.Count; i++)
+                    {
+                        var dialog = Items.FirstOrDefault(x => x.Index == update.Order[i].Id);
+                        if (dialog != null)
+                        {
+                            dialog.PinnedIndex = i;
+                            dialog.IsPinned = true;
+
+                            var index = Items.IndexOf(dialog);
+                            if (index != i)
+                            {
+                                Items.Remove(dialog);
+                                Items.Insert(i, dialog);
+                            }
+                        }
+
+                        PinnedDialogsIndex = i;
+                    }
+                }
+
                 IsFirstPinned = Items.FirstOrDefault()?.IsPinned ?? false;
             });
         }
