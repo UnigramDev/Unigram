@@ -87,7 +87,23 @@ namespace Unigram.Controls.Messages
                     }
 
                     // Captioned photo/video/gif
-                    if (IsInlineMedia(message.Media))
+                    //if (IsInlineMedia(message.Media))
+                    //{
+                    //    StatusToDefault();
+                    //    bottom = 4;
+                    //}
+                    //else
+                    //{
+                    //    StatusToFullMedia();
+                    //}
+
+                    var caption = false;
+                    if (message.Media is ITLMediaCaption)
+                    {
+                        caption = !string.IsNullOrWhiteSpace(((ITLMediaCaption)message.Media).Caption);
+                    }
+
+                    if (caption)
                     {
                         StatusToDefault();
                         bottom = 4;
@@ -95,12 +111,6 @@ namespace Unigram.Controls.Messages
                     else
                     {
                         StatusToFullMedia();
-                    }
-
-                    var caption = false;
-                    if (message.Media is ITLMediaCaption)
-                    {
-                        caption = !string.IsNullOrWhiteSpace(((ITLMediaCaption)message.Media).Caption);
                     }
 
                     MediaControl.Margin = new Thickness(left, top, right, bottom);
