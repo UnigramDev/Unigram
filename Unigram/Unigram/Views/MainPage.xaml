@@ -372,6 +372,8 @@
                 <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
             </Grid>
 
+            <Border x:Name="Theme" IsHitTestVisible="False" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="0" Height="0"/>
+
             <!-- Master - Command Bar -->
             <CommandBar x:Name="cmbarMaster" Grid.Row="2">
                 <!-- Commands visible on commandbar-->

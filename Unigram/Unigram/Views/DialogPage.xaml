@@ -226,6 +226,7 @@
             <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete"/>
             <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward" IsEnabled="False"/>
             <MenuFlyoutItem Loaded="MessageCopy_Loaded" Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy"/>
+            <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
         </MenuFlyout>
 
         <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
@@ -260,6 +261,7 @@
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                            <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
                         </controls:MessageReference.Resources>
                     </controls:MessageReference>
                 </StackPanel>
@@ -324,6 +326,7 @@
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                            <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
                         </controls:MessageReference.Resources>
                     </controls:MessageReference>
                 </StackPanel>
@@ -388,6 +391,7 @@
                                 <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                                 <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                                 <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
+                                <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
                             </controls:MessageReference.Resources>
                         </controls:MessageReference>
                     </StackPanel>
@@ -473,6 +477,120 @@
                                            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
                                            ServiceMessagePhotoTemplate="{StaticResource ServiceMessagePhotoTemplate}"
                                            UnreadMessagesTemplate="{StaticResource UnreadMessageTemplate}"/>
+
+        <Style x:Key="UploadProgressRingStyle" TargetType="ProgressRing">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Height" Value="10" />
+            <Setter Property="Width" Value="20" />
+            <Setter Property="MinHeight" Value="10"/>
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressRing">
+                        <Grid x:Name="Ring"
+                          Background="{TemplateBinding Background}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          Padding="{TemplateBinding Padding}"
+                          Visibility="Collapsed"
+                          RenderTransformOrigin="0.5,0.5"
+                          FlowDirection="LeftToRight">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="ActiveStates">
+                                    <VisualState x:Name="Inactive" />
+                                    <VisualState x:Name="Active">
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="Ring" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimation Duration="0:0:0.5" To="5" Storyboard.TargetProperty="(TranslateTransform.X)" Storyboard.TargetName="Translate" d:IsOptimized="True"/>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Arrow1">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Arrow3">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid.RenderTransform>
+                                <TranslateTransform x:Name="Translate"/>
+                            </Grid.RenderTransform>
+                            <Path x:Name="Arrow1" Data="M 0,-4 4,0 0,4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" HorizontalAlignment="Left" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" Margin="0,5,0,0"/>
+                            <Path x:Name="Arrow2" Data="M 0,-4 4,0 0,4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" HorizontalAlignment="Left" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" Margin="5,5,0,0"/>
+                            <Path x:Name="Arrow3" Data="M 0,-4 4,0 0,4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" HorizontalAlignment="Left" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" Margin="10,5,0,0"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TypingProgressRingStyle" TargetType="ProgressRing">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="MinWidth" Value="0"/>
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressRing">
+                        <StackPanel x:Name="Ring"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    Padding="{TemplateBinding Padding}"
+                                    FlowDirection="LeftToRight"
+                                    Orientation="Horizontal">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="ActiveStates">
+                                    <VisualState x:Name="Inactive" />
+                                    <VisualState x:Name="Active">
+                                        <Storyboard Duration="0:0:1.00" RepeatBehavior="Forever">
+                                            <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="Ring" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Dot1">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.25" Value="1"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Dot2">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.50" Value="1"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Dot3">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.75" Value="1"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <TextBlock x:Name="Dot1" Text="." Opacity="0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            <TextBlock x:Name="Dot2" Text="." Opacity="0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            <TextBlock x:Name="Dot3" Text="." Opacity="0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Page.Resources>
 
     <Grid x:Name="gridMain"
@@ -519,11 +637,20 @@
                             <TextBlock x:Name="tblDialogName"
                                        Text="{x:Bind Path=ViewModel.DialogTitle}"
                                        Style="{StaticResource BaseTextBlockStyle}"/>
-                            <TextBlock x:Name="tblDialogStatus"
-                                       Visibility="{x:Bind ViewModel.LastSeenVisible}"
-                                       Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Text="{x:Bind ViewModel.LastSeen}" />
+                            <Grid>
+                                <TextBlock x:Name="tblDialogStatus"
+                                           Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           Text="{x:Bind ViewModel.LastSeen}" />
+                                <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}">
+                                    <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
+                                    <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
+                                               Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                               Style="{StaticResource CaptionTextBlockStyle}"/>
+                                    <ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
+                                </StackPanel>
+                            </Grid>
                         </StackPanel>
                     </Grid>
                 </Button.Content>
@@ -978,39 +1105,48 @@
                  RequestedTheme="Dark"/>
                  </Button.Content>
                  </Button>-->
-            <controls:GlyphButton x:Name="btnStickers" 
-                                  Command="{Binding SendCommand}"
-                                  CommandParameter="ciao"
-                                  AllowFocusOnInteraction="False"
-                                  Glyph="&#xE606;" 
-                                  FontFamily="{ThemeResource TelegramThemeFontFamily}" 
-                                  VerticalAlignment="Bottom"
-                                  Grid.Column="2"
-                                  Grid.Row="1"/>
 
-            <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="3" Grid.Row="1">
-                <controls:VoiceButton x:Name="btnVoiceMessage"
+            <Grid Visibility="{Binding ReplyInfo, Converter={StaticResource EditToVisibilityConverter}, ConverterParameter=invert}" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:GlyphButton x:Name="btnStickers" 
+                                      Command="{Binding SendCommand}"
+                                      CommandParameter="ciao"
                                       AllowFocusOnInteraction="False"
-                                      Glyph="&#xE720;" 
+                                      Glyph="&#xE606;" 
+                                      FontFamily="{ThemeResource TelegramThemeFontFamily}" 
+                                      VerticalAlignment="Bottom"/>
+
+                <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="1">
+                    <controls:VoiceButton x:Name="btnVoiceMessage"
+                                          AllowFocusOnInteraction="False"
+                                          Glyph="&#xE720;"/>
+                </Border>
+
+                <controls:GlyphButton x:Name="btnSendMessage"
+                                      VerticalAlignment="Bottom"
+                                      Click="btnSendMessage_Click"
+                                      Glyph="&#xE725;" 
+                                      AllowFocusOnInteraction="False"
+                                      FontSize="24"
+                                      Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
+                                      Padding="4,0,0,0"
+                                      Grid.Column="1"/>
+            </Grid>
+
+            <controls:GlyphButton x:Name="btnEditMessage"
+                                      VerticalAlignment="Bottom"
+                                      Click="btnSendMessage_Click"
+                                      Glyph="&#xE10B;" 
+                                      AllowFocusOnInteraction="False"
+                                      Visibility="{Binding ReplyInfo, Converter={StaticResource EditToVisibilityConverter}}"
+                                      FontSize="24"
+                                      Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
+                                      Padding="4,0,0,0"
                                       Grid.Column="3"
                                       Grid.Row="1"/>
-            </Border>
-
-            <!-- {Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}
-            &#xE725;
-            -->
-            
-            <controls:GlyphButton x:Name="btnSendMessage"
-                                  VerticalAlignment="Bottom"
-                                  Click="btnSendMessage_Click"
-                                  Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}, ConverterParameter=send}" 
-                                  AllowFocusOnInteraction="False"
-                                  Visibility="Visible"
-                                  FontSize="24"
-                                  Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
-                                  Padding="4,0,0,0"
-                                  Grid.Column="3"
-                                  Grid.Row="1"/>
 
             <controls:GlyphButton x:Name="Attach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
                 <FlyoutBase.AttachedFlyout>

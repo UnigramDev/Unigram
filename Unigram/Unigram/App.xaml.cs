@@ -29,6 +29,8 @@ using Windows.UI.Popups;
 using Unigram.Views;
 using Windows.Media;
 using System.IO;
+using Template10.Services.NavigationService;
+using Unigram.Common;
 
 namespace Unigram
 {
@@ -61,7 +63,6 @@ namespace Unigram
             UnhandledException += async (s, args) =>
             {
                 args.Handled = true;
-                await FileIO.WriteTextAsync(await KnownFolders.PicturesLibrary.CreateFileAsync("unigram_log.txt", CreationCollisionOption.GenerateUniqueName), args.Exception?.ToString() ?? "Error" + "\r\n" + args.Message);
                 await new MessageDialog(args.Message ?? "Error", args.Exception?.ToString() ?? "Error").ShowAsync();
             };
 

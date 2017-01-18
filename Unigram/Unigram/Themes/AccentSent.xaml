@@ -4,7 +4,6 @@
     xmlns:local="using:Unigram.Themes">
 
     <ResourceDictionary.ThemeDictionaries>
-        <!-- From -->
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
             <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#3B4245"/>
@@ -30,10 +29,8 @@
 
             <HorizontalAlignment x:Key="MessageHorizontalAlignment">Right</HorizontalAlignment>
 
-            <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
+            <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
         </ResourceDictionary>
-
-        <!-- To -->
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000"/>
             <SolidColorBrush x:Key="MessageBackgroundBrush" Color="Honeydew"/>

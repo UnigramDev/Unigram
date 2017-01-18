@@ -227,7 +227,7 @@ namespace Unigram.Common
         public static Paragraph Convert(TLMessageService serviceMessage, bool useActiveLinks)
         {
             var fromId = serviceMessage.FromId;
-            var user = InMemoryCacheService.Current.GetUser(fromId);
+            var user = InMemoryCacheService.Current.GetUser(fromId ?? 0);
             var userFullName = user != null ? user.FullName : Resources.UserNominativeSingular;
             var action = serviceMessage.Action;
 
@@ -324,7 +324,7 @@ namespace Unigram.Common
                 {
                     if (!flag)
                     {
-                        return ReplaceLinks(Resources.MessageActionChannelCreate, new[] { userFullName, channelCreateAction.Title }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                        return ReplaceLinks(Resources.MessageActionChannelCreate);
                     }
 
                     return ReplaceLinks(Resources.MessageActionChatCreate, new[] { userFullName, channelCreateAction.Title }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);

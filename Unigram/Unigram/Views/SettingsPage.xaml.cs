@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Unigram.Views.Settings;
@@ -34,7 +36,14 @@ namespace Unigram.Views
 
         private void OnStateChanged(object p1, object p2)
         {
-            
+            if (MasterDetail.CurrentState == MasterDetailState.Narrow)
+            {
+                Separator.BorderThickness = new Thickness(0);
+            }
+            else
+            {
+                Separator.BorderThickness = new Thickness(0, 0, 1, 0);
+            }
         }
 
         RelayCommand NotifcationPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage)));
@@ -62,6 +71,16 @@ namespace Unigram.Views
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
+        }
+
+        private void Username_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsUsernamePage));
+        }
+
+        private async void EditName_Click(object sender, RoutedEventArgs e)
+        {
+            await MasterDetail.NavigationService.NavigateModalAsync(typeof(EditYourNameView));
         }
     }
 }

@@ -93,7 +93,7 @@ HRESULT OpusOutputByteStream::Initialize(IMFMediaType* mediaType)
 	m_header.channel_count = channelCount;
 	m_header.input_sample_rate = samplesPerSecond;
 	m_header.stream_count = 1;
-	m_header.pre_skip = (int)(lookahead * (48000.0 / samplesPerSecond));
+	m_header.pre_skip = static_cast<int>(lookahead * (static_cast<double>(OPUS_SAMPLES_PER_SECOND) / samplesPerSecond));
 	m_oggPacket.packetno = 2;
 
 	m_inputBuffer.reserve(FRAME_SIZE * sizeof(WORD) * channelCount);
@@ -188,7 +188,7 @@ HRESULT OpusOutputByteStream::WriteOpusFrame(byte const* buffer, DWORD bufferLen
 		if (encodedBytes < 0)
 			return OpusResultToHRESULT(encodedBytes);
 
-		m_encoderGranulePosition += FRAME_SIZE * 48000 / m_header.input_sample_rate;
+		m_encoderGranulePosition += FRAME_SIZE * OPUS_SAMPLES_PER_SECOND / m_header.input_sample_rate;
 		m_sizeSegments = (encodedBytes + 255) / 255;
 	}
 	else
@@ -215,13 +215,13 @@ HRESULT OpusOutputByteStream::WriteOpusFrame(byte const* buffer, DWORD bufferLen
 	m_oggPacket.granulepos = m_encoderGranulePosition;
 
 	if (m_oggPacket.e_o_s)
-		m_oggPacket.granulepos = ((m_totalSamples * 48000 + m_header.input_sample_rate - 1) / m_header.input_sample_rate) + m_header.pre_skip;
+		m_oggPacket.granulepos = ((m_totalSamples * OPUS_SAMPLES_PER_SECOND + m_header.input_sample_rate - 1) / m_header.input_sample_rate) + m_header.pre_skip;
 
 	m_oggPacket.packetno += 1;
 	ogg_stream_packetin(&m_oggStreamState, &m_oggPacket);
 	m_lastSegments += m_sizeSegments;
 
-	while ((m_oggPacket.e_o_s || (m_encoderGranulePosition + (FRAME_SIZE * 48000 / m_header.input_sample_rate) - m_lastGranulePosition > 0) ||
+	while ((m_oggPacket.e_o_s || (m_encoderGranulePosition + (FRAME_SIZE * OPUS_SAMPLES_PER_SECOND / m_header.input_sample_rate) - m_lastGranulePosition > 0) ||
 		(m_lastSegments >= 255)) ? ogg_stream_flush_fill(&m_oggStreamState, &m_oggPage, 255 * 255) :
 		ogg_stream_pageout_fill(&m_oggStreamState, &m_oggPage, 255 * 255))
 	{

@@ -406,7 +406,7 @@ namespace Unigram.Views
 
                 }
 
-                element.Visibility = Visibility.Collapsed;
+                element.Visibility = Visibility.Visible;
             }
         }
 
@@ -429,6 +429,29 @@ namespace Unigram.Views
                     {
                         element.Visibility = Visibility.Visible;
                         return;
+                    }
+                }
+
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void MessageCopyLink_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var messageCommon = element.DataContext as TLMessageCommonBase;
+                if (messageCommon != null)
+                {
+                    var channel = ViewModel.With as TLChannel;
+                    if (channel != null)
+                    {
+                        if (channel.IsBroadcast && channel.HasUsername)
+                        {
+                            element.Visibility = Visibility.Visible;
+                            return;
+                        }
                     }
                 }
 

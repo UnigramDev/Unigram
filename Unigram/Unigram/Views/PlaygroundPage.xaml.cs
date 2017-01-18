@@ -63,180 +63,35 @@ namespace Unigram.Views
             Storyboard1.Begin();
         }
 
-        private async void Start_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            if (recorder?.IsRecording == true)
-            {
-                await recorder.StopAsync();
-            }
-
-            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
-            recorder = new OpusRecorder(file);
-            await recorder.StartAsync();
-        }
-
-        private async void Start_PointerReleased(object sender, PointerRoutedEventArgs e)
-        {
-            if (recorder.IsRecording)
-            {
-                await recorder.StopAsync();
-
-                var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.OpenIfExists);
-
-                var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
-                var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>();
-                var updatesService = UnigramContainer.Instance.ResolveType<IUpdatesService>();
-                var uploadManager = UnigramContainer.Instance.ResolveType<IUploadAudioManager>();
-
-                var contacts = await protoService.GetDialogsAsync(0, 0, new TLInputPeerEmpty(), 200);
-                //var user = contacts.Value.Users.OfType<TLUser>().FirstOrDefault(x => x.FullName.Equals("Andrea Cocci"));
-                var channel = contacts.Value.Chats.OfType<TLChannel>().FirstOrDefault(x => x.FullName.Equals("Unigram Insiders"));
-
-                var fileLocation = new TLFileLocation
-                {
-                    VolumeId = TLLong.Random(),
-                    LocalId = TLInt.Random(),
-                    Secret = TLLong.Random(),
-                    DCId = 0
-                };
-
-                var fileName = string.Format("{0}_{1}_{2}.ogg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-                var fileCache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-
-                await file.CopyAndReplaceAsync(fileCache);
-
-                var basicProps = await fileCache.GetBasicPropertiesAsync();
-                var imageProps = await fileCache.Properties.GetMusicPropertiesAsync();
-
-                var date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
-
-                var media = new TLMessageMediaDocument
-                {
-                    // TODO: Document = ...
-                    //Caption = "Yolo"
-                };
-
-                var message = TLUtils.GetMessage(SettingsHelper.UserId, new TLPeerChannel { ChannelId = channel.Id }, TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
-
-                var fileId = TLLong.Random();
-                var upload = await uploadManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
-                if (upload != null)
-                {
-                    var inputMedia = new TLInputMediaUploadedDocument
-                    {
-                        File = new TLInputFile
-                        {
-                            Id = upload.FileId,
-                            Md5Checksum = string.Empty,
-                            Name = fileName,
-                            Parts = upload.Parts.Count
-                        },
-                        MimeType = "audio/ogg",
-                        Caption = media.Caption,
-                        Attributes = new TLVector<TLDocumentAttributeBase>
-                        {
-                            new TLDocumentAttributeAnimated(),
-                            new TLDocumentAttributeAudio
-                            {
-                                IsVoice = true,
-                                Duration = 50
-                            }
-                        }
-                    };
-
-                    var result = await protoService.SendMediaAsync(new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value }, inputMedia, message);
-                }
-            }
-        }
-
-        private AudioGraph graph;
-        private AudioDeviceOutputNode deviceOutputNode;
-        private AudioFileInputNode fileInputNode;
-        private CreateAudioFileInputNodeResult fileInputNodeResult;
-        private CreateAudioDeviceOutputNodeResult deviceOutputNodeResult;
-        private StorageFile file;
-
-        private async void Media_Loaded(object sender, RoutedEventArgs e)
-        {
-
-
-
-
-
-            if (recorder?.IsRecording == true)
-            {
-                await recorder.StopAsync();
-                //Media.Source = new Uri("ms-appdata:///temp/recording.ogg");
-                //Media.Play();
-
-                file = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
-
-                var settings = new AudioGraphSettings(AudioRenderCategory.Communications);
-                settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
-
-                var result = await AudioGraph.CreateAsync(settings);
-                if (result.Status != AudioGraphCreationStatus.Success)
-                    return;
-
-                graph = result.Graph;
-                Debug.WriteLine("Graph successfully created!");
-
-                fileInputNodeResult = await graph.CreateFileInputNodeAsync(file);
-                if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
-                    return;
-
-                deviceOutputNodeResult = await graph.CreateDeviceOutputNodeAsync();
-                if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
-                    return;
-
-                deviceOutputNode = deviceOutputNodeResult.DeviceOutputNode;
-                fileInputNode = fileInputNodeResult.FileInputNode;
-                fileInputNode.AddOutgoingConnection(deviceOutputNode);
-                 
-                graph.Start();
-
-                //var file2 = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
-                //Media.SetSource(await file2.OpenReadAsync(), "audio/ogg");
-                //Media.Play();
-
-                return;
-            }
-
-            file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
-            recorder = new OpusRecorder(file);
-            await recorder.StartAsync();
-
-        }
-
         private void BackgroundCanvas_Draw(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
         {
-            var startAngle = DegreesToRadians(-15);
-            var sweepAngle = DegreesToRadians(30);
+            //var startAngle = DegreesToRadians(-15);
+            //var sweepAngle = DegreesToRadians(30);
 
-            var progress = (float)Slide.Value / 100f;
-            var size = 1 + 4 * progress;
+            //var progress = (float)Slide.Value / 100f;
+            //var size = 1 + 4 * progress;
 
-            for (int i = 0; i < 4; i++)
-            {
-                using (var builder = new CanvasPathBuilder(sender))
-                {
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    using (var builder = new CanvasPathBuilder(sender))
+            //    {
 
-                    var centerPoint = new Vector2((1 + 4 * progress), 6);
-                    var startPoint = centerPoint + Vector2.Transform(Vector2.UnitX, Matrix3x2.CreateRotation(startAngle)) * size;
+            //        var centerPoint = new Vector2((1 + 4 * progress), 6);
+            //        var startPoint = centerPoint + Vector2.Transform(Vector2.UnitX, Matrix3x2.CreateRotation(startAngle)) * size;
 
-                    builder.BeginFigure(startPoint);
-                    builder.AddArc(centerPoint, size, size, startAngle, sweepAngle);
-                    builder.EndFigure(CanvasFigureLoop.Open);
+            //        builder.BeginFigure(startPoint);
+            //        builder.AddArc(centerPoint, size, size, startAngle, sweepAngle);
+            //        builder.EndFigure(CanvasFigureLoop.Open);
 
-                    using (var geometry = CanvasGeometry.CreatePath(builder))
-                    {
-                        var alpha = (i == 0) ? progress : (i == 4 - 1) ? (1.0f - progress) : 1.0f;
-                        args.DrawingSession.DrawGeometry(geometry, Color.FromArgb((byte)(alpha * 255), 0xFF, 0x00, 0x0), 2, new CanvasStrokeStyle { StartCap = CanvasCapStyle.Round, EndCap = CanvasCapStyle.Round });
-                    }
+            //        using (var geometry = CanvasGeometry.CreatePath(builder))
+            //        {
+            //            var alpha = (i == 0) ? progress : (i == 4 - 1) ? (1.0f - progress) : 1.0f;
+            //            args.DrawingSession.DrawGeometry(geometry, Color.FromArgb((byte)(alpha * 255), 0xFF, 0x00, 0x0), 2, new CanvasStrokeStyle { StartCap = CanvasCapStyle.Round, EndCap = CanvasCapStyle.Round });
+            //        }
 
-                    size += 4;
-                }
-            }
+            //        size += 4;
+            //    }
+            //}
         }
 
         public float DegreesToRadians(float angle)
@@ -246,7 +101,7 @@ namespace Unigram.Views
 
         private void Slide_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            BackgroundCanvas.Invalidate();
+            //BackgroundCanvas.Invalidate();
         }
     }
 
@@ -561,8 +416,9 @@ namespace Unigram.Views
             var outerRadius = size - StrokeThickness / 2;
 
             //_transform.X = -size;
-            Margin = new Thickness(-size, 0, 0, 0);
-            Width = Height = size * 2;
+            //Width = Height = size * 2;
+            //Margin = new Thickness(-size, 5 - size, 0, 5 - size);
+            //Margin = new Thickness(-size, 0, 0, 0);
 
             if (_isUpdating ||
                 ActualWidth == 0 ||
@@ -577,6 +433,8 @@ namespace Unigram.Views
                 new Point(
                     outerRadius + StrokeThickness / 2,
                     outerRadius + StrokeThickness / 2);
+
+            //center = new Point(Width / 2, Height / 2);
 
             if (EndAngle > 0 && EndAngle < 360)
             {
@@ -603,7 +461,6 @@ namespace Unigram.Views
                 pathFigure.Segments.Add(innerArcSegment);
                 pathGeometry.Figures.Add(pathFigure);
 
-                InvalidateMeasure();
                 InvalidateArrange();
                 Data = pathGeometry;
             }

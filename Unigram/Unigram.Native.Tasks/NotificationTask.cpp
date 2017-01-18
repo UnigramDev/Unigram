@@ -152,6 +152,16 @@ String^ NotificationTask::GetLaunch(JsonObject^ custom, String^ loc_key)
 		launch += custom->GetNamedString("from_id")->Data();
 		launch += L"&amp;";
 	}
+	if (custom->HasKey("mtpeer"))
+	{
+		auto mtpeer = custom->GetNamedObject("mtpeer");
+		if (mtpeer->HasKey("ah"))
+		{
+			launch += L"access_hash=";
+			launch += mtpeer->GetNamedString("ah")->Data();
+			launch += L"&amp;";
+		}
+	}
 
 	launch += L"Action=";
 	launch += loc_key->Data();

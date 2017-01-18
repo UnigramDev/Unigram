@@ -103,7 +103,7 @@ namespace Unigram.Controls
                         }
                         else
                         {
-                            if (message.IsOut)
+                            if (message.IsOut && !message.IsPost)
                             {
                                 bubble.Padding = new Thickness(56, 0, 12, 0);
                             }

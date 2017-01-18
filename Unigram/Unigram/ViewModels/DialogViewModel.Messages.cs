@@ -95,33 +95,60 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        #region Delete
+        #region CopyLink
 
-        public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
-        private async void MessageDeleteExecute(TLMessageBase message)
+        public RelayCommand<TLMessage> MessageCopyLinkCommand => new RelayCommand<TLMessage>(MessageCopyLinkExecute);
+        private void MessageCopyLinkExecute(TLMessage message)
         {
             if (message == null) return;
 
+            var channel = With as TLChannel;
+            if (channel != null)
+            {
+                var dataPackage = new DataPackage();
+                dataPackage.SetWebLink(new Uri($"https://t.me/{channel.Username}/{message.Id}"));
+                Clipboard.SetContent(dataPackage);
+            }
+        }
+
+        #endregion
+
+        #region Delete
+
+        public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
+        private async void MessageDeleteExecute(TLMessageBase messageBase)
+        {
+            if (messageBase == null) return;
+
             var dialog = new UnigramMessageDialog();
             dialog.Title = "Delete";
-            dialog.Message = "Are you sure you want to delete 1 message?";
+            dialog.Message = "Are you sure you want to delete this message?";
             dialog.PrimaryButtonText = "Yes";
             dialog.SecondaryButtonText = "No";
 
-            var messageCommon = message as TLMessageCommonBase;
-            if (messageCommon != null && messageCommon.IsOut && Peer is TLInputPeerUser)
+            var message = messageBase as TLMessage;
+            if (message != null && message.IsOut && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
             {
-                var date = BindConvert.Current.DateTime(messageCommon.Date);
-                var elapsed = DateTime.Now - date;
-
-                if (elapsed.TotalHours < 48)
+                var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+                var config = CacheService.GetConfig();
+                if (config != null && message.Date + config.EditTimeLimit > date)
                 {
                     var user = With as TLUser;
                     if (user != null)
                     {
                         dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
                     }
+
+                    var chat = With as TLChat;
+                    if (chat != null)
+                    {
+                        dialog.CheckBoxLabel = "Delete for everyone";
+                    }
                 }
+            }
+            else if (Peer is TLInputPeerChat)
+            {
+                dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
             }
 
             var result = await dialog.ShowAsync();
@@ -129,8 +156,8 @@ namespace Unigram.ViewModels
             {
                 var revoke = dialog.IsChecked == true;
 
-                var messages = new List<TLMessageBase>() { message };
-                if (message.Id == 0 && message.RandomId != 0L)
+                var messages = new List<TLMessageBase>() { messageBase };
+                if (messageBase.Id == 0 && messageBase.RandomId != 0L)
                 {
                     DeleteMessagesInternal(null, messages);
                     return;
@@ -542,7 +569,7 @@ namespace Unigram.ViewModels
             var callbackButton = button as TLKeyboardButtonCallback;
             if (callbackButton != null)
             {
-                var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, 0);
+                var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, false);
                 if (response.IsSucceeded && response.Value.HasMessage)
                 {
                     if (response.Value.IsAlert)
@@ -565,7 +592,7 @@ namespace Unigram.ViewModels
                 var gameMedia = message.Media as TLMessageMediaGame;
                 if (gameMedia != null)
                 {
-                    var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, 1);
+                    var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, true);
                     if (response.IsSucceeded && response.Value.IsHasUrl && response.Value.HasUrl)
                     {
                         var user = CacheService.GetUser(message.ViaBotId) as TLUser;

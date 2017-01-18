@@ -98,34 +98,66 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var config = CacheService.GetConfig();
+            //ProtoService.GetDialogsCallback(lastDate, lastMsgId, lastPeer, 200, (result) =>
+            //{
+            //    var pinnedIndex = 0;
+
+            //    Execute.BeginOnUIThread(() =>
+            //    {
+            //        foreach (var item in result.Dialogs)
+            //        {
+            //            if (item.IsPinned)
+            //            {
+            //                item.PinnedIndex = pinnedIndex++;
+            //            }
+
+            //            var chat = item.With as TLChat;
+            //            if (chat != null && chat.HasMigratedTo)
+            //            {
+            //                continue;
+            //            }
+            //            else
+            //            {
+            //                Items.Add(item);
+            //            }
+            //        }
+
+            //        IsFirstPinned = Items.Any(x => x.IsPinned);
+            //        PinnedDialogsIndex = pinnedIndex;
+            //        PinnedDialogsCountMax = config.PinnedDialogsCountMax;
+            //    });
+            //});
 
             var response = await ProtoService.GetDialogsAsync(lastDate, lastMsgId, lastPeer, 200);
             if (response.IsSucceeded)
             {
+                var config = CacheService.GetConfig();
                 var pinnedIndex = 0;
 
-                foreach (var item in response.Value.Dialogs)
+                Execute.BeginOnUIThread(() =>
                 {
-                    if (item.IsPinned)
+                    foreach (var item in response.Value.Dialogs)
                     {
-                        item.PinnedIndex = pinnedIndex++;
+                        if (item.IsPinned)
+                        {
+                            item.PinnedIndex = pinnedIndex++;
+                        }
+
+                        var chat = item.With as TLChat;
+                        if (chat != null && chat.HasMigratedTo)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            Items.Add(item);
+                        }
                     }
 
-                    var chat = item.With as TLChat;
-                    if (chat != null && chat.HasMigratedTo)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        Items.Add(item);
-                    }
-                }
-
-                IsFirstPinned = Items.Any(x => x.IsPinned);
-                PinnedDialogsIndex = pinnedIndex;
-                PinnedDialogsCountMax = config.PinnedDialogsCountMax;
+                    IsFirstPinned = Items.Any(x => x.IsPinned);
+                    PinnedDialogsIndex = pinnedIndex;
+                    PinnedDialogsCountMax = config.PinnedDialogsCountMax;
+                });
             }
 
             Aggregator.Subscribe(this);
@@ -720,18 +752,21 @@ namespace Unigram.ViewModels
             var result = await ProtoService.SearchAsync(query, 100);
             if (result.IsSucceeded)
             {
-                var parent = new KeyedList<string, TLObject>("Global search results");
-
-                foreach (var peer in result.Value.Results)
+                if (result.Value.Results.Count > 0)
                 {
-                    var item = result.Value.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Value.Chats.FirstOrDefault(x => x.Id == peer.Id);
-                    if (item != null)
-                    {
-                        parent.Add(item);
-                    }
-                }
+                    var parent = new KeyedList<string, TLObject>("Global search results");
 
-                return parent;
+                    foreach (var peer in result.Value.Results)
+                    {
+                        var item = result.Value.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Value.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                        if (item != null)
+                        {
+                            parent.Add(item);
+                        }
+                    }
+
+                    return parent;
+                }
             }
 
             return null;

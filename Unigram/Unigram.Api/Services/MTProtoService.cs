@@ -109,16 +109,14 @@ namespace Telegram.Api.Services
 
         protected virtual void RaiseInitialized()
         {
-            var handler = Initialized;
-            if (handler != null) handler(this, EventArgs.Empty);
+            Initialized?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler InitializationFailed;
 
         protected virtual void RaiseInitializationFailed()
         {
-            var handler = InitializationFailed;
-            if (handler != null) handler(this, EventArgs.Empty);
+            InitializationFailed?.Invoke(this, EventArgs.Empty);
         }
 
         private readonly object _fileTransportRoot = new object();
@@ -194,13 +192,14 @@ namespace Telegram.Api.Services
                 .Throttle(TimeSpan.FromSeconds(Constants.UpdateStatusInterval))
                 .Subscribe(e => UpdateStatusCallback(e.EventArgs.Offline, result => { }));
 
-            _updatesService = updatesService;
-            _updatesService.DCOptionsUpdated += OnDCOptionsUpdated;
-
             _cacheService = cacheService;
+
+            _updatesService = updatesService;
 
             if (_updatesService != null)
             {
+                _updatesService.DCOptionsUpdated += OnDCOptionsUpdated;
+
                 _updatesService.GetDifferenceAsync = GetDifferenceCallback;
                 _updatesService.GetStateAsync = GetStateCallback;
                 _updatesService.GetCurrentUserId = GetCurrentUserId;

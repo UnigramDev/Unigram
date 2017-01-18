@@ -77,10 +77,10 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
-        public Task<MTProtoResponse<TLMessagesBotCallbackAnswer>> GetBotCallbackAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, int gameId)
+        public Task<MTProtoResponse<TLMessagesBotCallbackAnswer>> GetBotCallbackAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, bool game)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesBotCallbackAnswer>>();
-            GetBotCallbackAnswerCallback(peer, messageId, data, gameId, (callback) =>
+            GetBotCallbackAnswerCallback(peer, messageId, data, game, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesBotCallbackAnswer>(callback));
             }, (faultCallback) =>

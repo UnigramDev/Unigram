@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
@@ -18,6 +19,7 @@ using Unigram.Core.Rtf.Write;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
@@ -68,10 +70,9 @@ namespace Unigram.Controls
             ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
 #endif
 
-#if !DEBUG
-            // We need the ability to paste RTF content for debug pourposes
             Paste += OnPaste;
-#endif
+            Clipboard.ContentChanged += Clipboard_ContentChanged;
+
             SelectionChanged += OnSelectionChanged;
             TextChanged += OnTextChanged;
 
@@ -189,6 +190,39 @@ namespace Unigram.Controls
                 });
 
                 Document.Selection.SetText(TextSetOptions.None, result);
+            }
+            else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-td-field-tags"))
+            {
+                // This is Telegram Desktop mentions format
+            }
+            else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
+            {
+                // This is our field format
+            }
+        }
+
+        private void Clipboard_ContentChanged(object sender, object e)
+        {
+            if (FocusState != FocusState.Unfocused)
+            {
+                bool isDirty = _isDirty;
+
+                if (isDirty)
+                {
+                    string text;
+                    string planText;
+                    Document.GetText(TextGetOptions.FormatRtf, out text);
+                    Document.GetText(TextGetOptions.NoHidden, out planText);
+
+                    var parser = new RtfToTLParser();
+                    var reader = new RtfReader(parser);
+                    reader.LoadRtfText(text);
+                    reader.Parse();
+
+                    MessageHelper.CopyToClipboard(planText, parser.Entities);
+                }
+
+                Clipboard.ContentChanged -= Clipboard_ContentChanged;
             }
         }
 
