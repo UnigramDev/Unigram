@@ -109,7 +109,7 @@ namespace Unigram.ViewModels
             dialog.SecondaryButtonText = "No";
 
             var messageCommon = message as TLMessageCommonBase;
-            if (messageCommon != null && messageCommon.IsOut && Peer is TLInputPeerUser)
+            if (messageCommon != null && messageCommon.IsOut && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
             {
                 var date = BindConvert.Current.DateTime(messageCommon.Date);
                 var elapsed = DateTime.Now - date;
@@ -120,6 +120,12 @@ namespace Unigram.ViewModels
                     if (user != null)
                     {
                         dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
+                    }
+
+                    var chat = With as TLChat;
+                    if (chat != null)
+                    {
+                        dialog.CheckBoxLabel = "Delete for everyone";
                     }
                 }
             }
