@@ -114,7 +114,7 @@ namespace Unigram.ViewModels
                 var date = BindConvert.Current.DateTime(message.Date);
                 var elapsed = DateTime.Now - date;
 
-                if (elapsed.TotalHours < 48)
+                if (elapsed.TotalHours <= 48)
                 {
                     var user = With as TLUser;
                     if (user != null)
