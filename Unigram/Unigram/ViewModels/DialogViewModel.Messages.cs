@@ -98,20 +98,20 @@ namespace Unigram.ViewModels
         #region Delete
 
         public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
-        private async void MessageDeleteExecute(TLMessageBase message)
+        private async void MessageDeleteExecute(TLMessageBase messageBase)
         {
-            if (message == null) return;
+            if (messageBase == null) return;
 
             var dialog = new UnigramMessageDialog();
             dialog.Title = "Delete";
-            dialog.Message = "Are you sure you want to delete 1 message?";
+            dialog.Message = "Are you sure you want to delete this message?";
             dialog.PrimaryButtonText = "Yes";
             dialog.SecondaryButtonText = "No";
 
-            var messageCommon = message as TLMessageCommonBase;
-            if (messageCommon != null && messageCommon.IsOut && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
+            var message = messageBase as TLMessage;
+            if (message != null && message.IsOut && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
             {
-                var date = BindConvert.Current.DateTime(messageCommon.Date);
+                var date = BindConvert.Current.DateTime(message.Date);
                 var elapsed = DateTime.Now - date;
 
                 if (elapsed.TotalHours < 48)
@@ -129,14 +129,18 @@ namespace Unigram.ViewModels
                     }
                 }
             }
+            else if (Peer is TLInputPeerChat)
+            {
+                dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
+            }
 
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
                 var revoke = dialog.IsChecked == true;
 
-                var messages = new List<TLMessageBase>() { message };
-                if (message.Id == 0 && message.RandomId != 0L)
+                var messages = new List<TLMessageBase>() { messageBase };
+                if (messageBase.Id == 0 && messageBase.RandomId != 0L)
                 {
                     DeleteMessagesInternal(null, messages);
                     return;
