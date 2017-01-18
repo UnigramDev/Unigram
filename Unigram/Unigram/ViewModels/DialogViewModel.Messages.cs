@@ -111,10 +111,9 @@ namespace Unigram.ViewModels
             var message = messageBase as TLMessage;
             if (message != null && message.IsOut && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
             {
-                var date = BindConvert.Current.DateTime(message.Date);
-                var elapsed = DateTime.Now - date;
-
-                if (elapsed.TotalHours <= 48)
+                var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+                var config = CacheService.GetConfig();
+                if (config != null && message.Date + config.EditTimeLimit > date)
                 {
                     var user = With as TLUser;
                     if (user != null)

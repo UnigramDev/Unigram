@@ -981,39 +981,48 @@
                  RequestedTheme="Dark"/>
                  </Button.Content>
                  </Button>-->
-            <controls:GlyphButton x:Name="btnStickers" 
-                                  Command="{Binding SendCommand}"
-                                  CommandParameter="ciao"
-                                  AllowFocusOnInteraction="False"
-                                  Glyph="&#xE606;" 
-                                  FontFamily="{ThemeResource TelegramThemeFontFamily}" 
-                                  VerticalAlignment="Bottom"
-                                  Grid.Column="2"
-                                  Grid.Row="1"/>
 
-            <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="3" Grid.Row="1">
-                <controls:VoiceButton x:Name="btnVoiceMessage"
+            <Grid Visibility="{Binding ReplyInfo, Converter={StaticResource EditToVisibilityConverter}, ConverterParameter=invert}" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:GlyphButton x:Name="btnStickers" 
+                                      Command="{Binding SendCommand}"
+                                      CommandParameter="ciao"
                                       AllowFocusOnInteraction="False"
-                                      Glyph="&#xE720;" 
+                                      Glyph="&#xE606;" 
+                                      FontFamily="{ThemeResource TelegramThemeFontFamily}" 
+                                      VerticalAlignment="Bottom"/>
+
+                <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="1">
+                    <controls:VoiceButton x:Name="btnVoiceMessage"
+                                          AllowFocusOnInteraction="False"
+                                          Glyph="&#xE720;"/>
+                </Border>
+
+                <controls:GlyphButton x:Name="btnSendMessage"
+                                      VerticalAlignment="Bottom"
+                                      Click="btnSendMessage_Click"
+                                      Glyph="&#xE725;" 
+                                      AllowFocusOnInteraction="False"
+                                      FontSize="24"
+                                      Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
+                                      Padding="4,0,0,0"
+                                      Grid.Column="1"/>
+            </Grid>
+
+            <controls:GlyphButton x:Name="btnEditMessage"
+                                      VerticalAlignment="Bottom"
+                                      Click="btnSendMessage_Click"
+                                      Glyph="&#xE10B;" 
+                                      AllowFocusOnInteraction="False"
+                                      Visibility="{Binding ReplyInfo, Converter={StaticResource EditToVisibilityConverter}}"
+                                      FontSize="24"
+                                      Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
+                                      Padding="4,0,0,0"
                                       Grid.Column="3"
                                       Grid.Row="1"/>
-            </Border>
-
-            <!-- {Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}
-            &#xE725;
-            -->
-            
-            <controls:GlyphButton x:Name="btnSendMessage"
-                                  VerticalAlignment="Bottom"
-                                  Click="btnSendMessage_Click"
-                                  Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}, ConverterParameter=send}" 
-                                  AllowFocusOnInteraction="False"
-                                  Visibility="Visible"
-                                  FontSize="24"
-                                  Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
-                                  Padding="4,0,0,0"
-                                  Grid.Column="3"
-                                  Grid.Row="1"/>
 
             <controls:GlyphButton x:Name="Attach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
                 <FlyoutBase.AttachedFlyout>
