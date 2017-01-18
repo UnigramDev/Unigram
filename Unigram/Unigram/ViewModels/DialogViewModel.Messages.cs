@@ -95,6 +95,24 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region CopyLink
+
+        public RelayCommand<TLMessage> MessageCopyLinkCommand => new RelayCommand<TLMessage>(MessageCopyLinkExecute);
+        private void MessageCopyLinkExecute(TLMessage message)
+        {
+            if (message == null) return;
+
+            var channel = With as TLChannel;
+            if (channel != null)
+            {
+                var dataPackage = new DataPackage();
+                dataPackage.SetWebLink(new Uri($"https://t.me/{channel.Username}/{message.Id}"));
+                Clipboard.SetContent(dataPackage);
+            }
+        }
+
+        #endregion
+
         #region Delete
 
         public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
