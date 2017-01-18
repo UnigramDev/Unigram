@@ -9,17 +9,15 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
-using Unigram.Converters;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Settings
 {
-   public class SettingsViewModel : UnigramViewModelBase
+    public class SettingsEditNameViewModel : UnigramViewModelBase
     {
-        public SettingsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public SettingsEditNameViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -28,6 +26,8 @@ namespace Unigram.ViewModels
             if (cached != null)
             {
                 Self = cached;
+                FirstName = Self.FirstName;
+                LastName = Self.LastName;
             }
             else
             {
@@ -38,6 +38,8 @@ namespace Unigram.ViewModels
                     if (user != null)
                     {
                         Self = user;
+                        FirstName = Self.FirstName;
+                        LastName = Self.LastName;
                     }
                 }
             }
@@ -53,6 +55,42 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _self, value);
+            }
+        }
+
+        private string _firstName;
+        public string FirstName
+        {
+            get
+            {
+                return _firstName;
+            }
+            set
+            {
+                Set(ref _firstName, value);
+            }
+        }
+
+        private string _lastName;
+        public string LastName
+        {
+            get
+            {
+                return _lastName;
+            }
+            set
+            {
+                Set(ref _lastName, value);
+            }
+        }
+
+        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        private async void SendExecute()
+        {
+            var response = await ProtoService.UpdateProfileAsync(_firstName, _lastName, null);
+            if (response.IsSucceeded)
+            {
+                NavigationService.PopModal();
             }
         }
     }

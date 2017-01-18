@@ -29,6 +29,8 @@ using Windows.UI.Popups;
 using Unigram.Views;
 using Windows.Media;
 using System.IO;
+using Template10.Services.NavigationService;
+using Unigram.Common;
 
 namespace Unigram
 {

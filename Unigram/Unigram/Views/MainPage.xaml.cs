@@ -57,7 +57,20 @@ namespace Unigram.Views
 
             Loaded += OnLoaded;
 
+            Theme.RegisterPropertyChangedCallback(Border.BackgroundProperty, OnThemeChanged);
+
             searchInit();
+        }
+
+        private async void OnThemeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (_canvas != null)
+            {
+                _backgroundImage = await CanvasBitmap.LoadAsync(_canvas, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
+                _backgroundBrush = new CanvasImageBrush(_canvas, _backgroundImage);
+                _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
+                _canvas.Invalidate();
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -278,14 +291,17 @@ namespace Unigram.Views
         private CanvasBitmap _backgroundImage;
         private CanvasImageBrush _backgroundBrush;
 
+        private CanvasControl _canvas;
+
         private void BackgroundCanvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
+            _canvas = sender;
+
             args.TrackAsyncAction(Task.Run(async () =>
             {
                 _backgroundImage = await CanvasBitmap.LoadAsync(sender, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
                 _backgroundBrush = new CanvasImageBrush(sender, _backgroundImage);
                 _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
-                //_backgroundBrush.Transform = Matrix3x2.CreateScale(_logicalDpi / 96f);
             }).AsAsyncAction());
         }
 

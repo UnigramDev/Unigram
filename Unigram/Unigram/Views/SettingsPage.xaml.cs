@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Unigram.Views.Settings;
@@ -75,6 +76,11 @@ namespace Unigram.Views
         private void Username_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsUsernamePage));
+        }
+
+        private async void EditName_Click(object sender, RoutedEventArgs e)
+        {
+            await MasterDetail.NavigationService.NavigateModalAsync(typeof(EditYourNameView));
         }
     }
 }
