@@ -96,12 +96,15 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <None Include="project.json" />
+    <Compile Include="Common\Language.cs" />
+    <Compile Include="ViewModels\DialogViewModel.Typing.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Behaviors\HighlightBehavior.cs" />
+    <Compile Include="Common\Dialogs\InputTypingManager.cs" />
     <Compile Include="Common\Emoji.cs" />
     <Compile Include="Common\LambdaComparer.cs" />
     <Compile Include="Common\RelayCommand.cs" />
