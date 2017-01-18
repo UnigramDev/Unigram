@@ -140,10 +140,11 @@ namespace Unigram.Controls.Messages
         {
             if (StatusControl.Padding.Left != 6)
             {
-                StatusControl.Padding = new Thickness(6, 2, 6, 4);
-                StatusControl.Background = StatusDarkBackgroundBrush;
-                StatusLabel.Foreground = StatusDarkForegroundBrush;
-                StatusGlyph.Foreground = StatusDarkForegroundBrush;
+                //StatusControl.Padding = new Thickness(6, 2, 6, 4);
+                //StatusControl.Background = StatusDarkBackgroundBrush;
+                //StatusLabel.Foreground = StatusDarkForegroundBrush;
+                //StatusGlyph.Foreground = StatusDarkForegroundBrush;
+                VisualStateManager.GoToState(LayoutRoot, "FullMedia", false);
             }
         }
 
@@ -151,10 +152,11 @@ namespace Unigram.Controls.Messages
         {
             if (StatusControl.Padding.Left != 0)
             {
-                StatusControl.Padding = new Thickness(0, 0, 6, 0);
-                StatusControl.Background = null;
-                StatusLabel.Foreground = StatusLightLabelForegroundBrush;
-                StatusGlyph.Foreground = StatusLightGlyphForegroundBrush;
+                //StatusControl.Padding = new Thickness(0, 0, 6, 0);
+                //StatusControl.Background = null;
+                //StatusLabel.Foreground = StatusLightLabelForegroundBrush;
+                //StatusGlyph.Foreground = StatusLightGlyphForegroundBrush;
+                VisualStateManager.GoToState(LayoutRoot, "Default", false);
             }
         }
 
