@@ -571,7 +571,8 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <Style TargetType="PivotHeaderItem">
+    
+    <Style x:Key="Ciao" TargetType="PivotHeaderItem">
         <Setter Property="FontSize" Value="{ThemeResource PivotHeaderItemFontSize}" />
         <Setter Property="FontFamily" Value="{ThemeResource PivotHeaderItemFontFamily}" />
         <Setter Property="FontWeight" Value="{ThemeResource PivotHeaderItemThemeFontWeight}" />
