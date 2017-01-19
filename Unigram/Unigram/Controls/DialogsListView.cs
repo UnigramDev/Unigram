@@ -21,6 +21,7 @@ namespace Unigram.Controls
         public DialogsListView()
         {
             DragItemsStarting += OnDragItemsStarting;
+            DragItemsCompleted += OnDragItemsCompleted;
             DragEnter += OnDragEnter;
             DragOver += OnDragOver;
             Drop += OnDrop;
@@ -33,16 +34,6 @@ namespace Unigram.Controls
 
         private async void OnDrop(object sender, DragEventArgs e)
         {
-            for (int i = 0; i < 5; i++)
-            {
-                var item = ContainerFromIndex(i) as ListViewItem;
-                if (item != null)
-                {
-                    ElementCompositionPreview.GetElementVisual(item).Opacity = 1;
-                    ElementCompositionPreview.GetElementVisual((ListViewItemPresenter)VisualTreeHelper.GetChild(item, 0)).Offset = new System.Numerics.Vector3();
-                }
-            }
-
             var position = e.GetPosition(this);
             var container = ContainerFromIndex(_currentIndex) as ListViewItem;
             var index = Math.Max(0, Math.Min(ViewModel.Dialogs.Items.Count(x => x.IsPinned) - 1, (int)Math.Round((position.Y - 48 - (container.ActualHeight / 2)) / container.ActualHeight)));
@@ -57,6 +48,19 @@ namespace Unigram.Controls
                     source.Insert(index, item);
 
                     await ViewModel.Dialogs.UpdatePinnedItemsAsync();
+                }
+            }
+        }
+
+        private void OnDragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                var item = ContainerFromIndex(i) as ListViewItem;
+                if (item != null)
+                {
+                    ElementCompositionPreview.GetElementVisual(item).Opacity = 1;
+                    ElementCompositionPreview.GetElementVisual((ListViewItemPresenter)VisualTreeHelper.GetChild(item, 0)).Offset = new System.Numerics.Vector3();
                 }
             }
         }
