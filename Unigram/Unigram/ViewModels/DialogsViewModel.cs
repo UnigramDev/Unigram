@@ -163,6 +163,17 @@ namespace Unigram.ViewModels
             Aggregator.Subscribe(this);
         }
 
+        public async Task UpdatePinnedItemsAsync()
+        {
+            var pinned = Items.Where(x => x.IsPinned).Select(x => x.ToInputPeer());
+
+            var response = await ProtoService.ReorderPinnedDialogsAsync(new TLVector<TLInputPeerBase>(pinned), true);
+            if (response.IsSucceeded)
+            {
+
+            }
+        }
+
         #region Handle
         public void Handle(TopMessageUpdatedEventArgs eventArgs)
         {

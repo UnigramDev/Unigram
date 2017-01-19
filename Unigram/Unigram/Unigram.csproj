@@ -97,6 +97,7 @@
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <None Include="project.json" />
     <Compile Include="Common\Language.cs" />
+    <Compile Include="Controls\DialogsListView.cs" />
     <Compile Include="ViewModels\DialogViewModel.Typing.cs" />
   </ItemGroup>
   <ItemGroup>

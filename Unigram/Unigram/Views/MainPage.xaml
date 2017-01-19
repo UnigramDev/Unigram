@@ -101,13 +101,15 @@
                         <controls:TabHeaderStyle Glyph="&#xE15F;"/>
                     </PivotItem.Header>
                     <Grid>
-                        <ListView x:Name="DialogsListView"
-                                  ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
-                                  IsItemClickEnabled="True"
-                                  SelectionMode="None"
-                                  ItemClick="ListView_ItemClick"
-                                  SelectionChanged="ListView_SelectionChanged"
-                                  Grid.Row="1">
+                        <controls:DialogsListView x:Name="DialogsListView"
+                                                  ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
+                                                  IsItemClickEnabled="True"
+                                                  SelectionMode="None"
+                                                  ItemClick="ListView_ItemClick"
+                                                  SelectionChanged="ListView_SelectionChanged"
+                                                  AllowDrop="True"
+                                                  CanDragItems="True"
+                                                  Grid.Row="1">
                             <ListView.ItemContainerStyleSelector>
                                 <selectors:DialogStyleSelector>
                                     <selectors:DialogStyleSelector.DialogStyle>
@@ -142,7 +144,7 @@
                             <ListView.Footer>
                                 <Border Height="6"/>
                             </ListView.Footer>
-                        </ListView>
+                        </controls:DialogsListView>
                         <ListView x:Name="DialogsSearchListView"
                                   Margin="0,48,0,0" 
                                   Visibility="Collapsed"
