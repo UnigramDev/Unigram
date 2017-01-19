@@ -904,36 +904,47 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogClearCommand => new RelayCommand<TLDialog>(DialogClearExecute);
         private async void DialogClearExecute(TLDialog dialog)
         {
-            TLInputPeerBase peer = null;
+            var question = new UnigramMessageDialog();
+            question.Title = "Delete";
+            question.Message = "Do you really want to clear the chat?";
+            question.PrimaryButtonText = "Yes";
+            question.SecondaryButtonText = "No";
 
-            var user = dialog.With as TLUser;
-            if (user != null)
-            {
-                peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value };
-            }
+            var clear = await question.ShowAsync();
 
-            var chat = dialog.With as TLChat;
-            if (chat != null)
+            if (clear == ContentDialogResult.Primary)
             {
-                peer = new TLInputPeerChat { ChatId = chat.Id };
-            }
+                TLInputPeerBase peer = null;
 
-            var channel = dialog.With as TLChannel;
-            if (channel != null)
-            {
-                peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
-            }
+                var user = dialog.With as TLUser;
+                if (user != null)
+                {
+                    peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value };
+                }
 
-            var result = await ProtoService.DeleteHistoryAsync(true, peer, 0);
-            if (!result.IsSucceeded)
-            {
-                var failNotification = new UnigramMessageDialog();
-                failNotification.Title = "Error";
-                failNotification.Message = "Clearing the chat failed!";
-                failNotification.PrimaryButtonText = "Okay";
-                failNotification.SecondaryButtonText = "";
-                failNotification.IsSecondaryButtonEnabled = false;
-                await failNotification.ShowAsync();
+                var chat = dialog.With as TLChat;
+                if (chat != null)
+                {
+                    peer = new TLInputPeerChat { ChatId = chat.Id };
+                }
+
+                var channel = dialog.With as TLChannel;
+                if (channel != null)
+                {
+                    peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
+                }
+
+                var result = await ProtoService.DeleteHistoryAsync(true, peer, 0);
+                if (!result.IsSucceeded)
+                {
+                    var failNotification = new UnigramMessageDialog();
+                    failNotification.Title = "Error";
+                    failNotification.Message = "Clearing the chat failed!";
+                    failNotification.PrimaryButtonText = "Okay";
+                    failNotification.SecondaryButtonText = "";
+                    failNotification.IsSecondaryButtonEnabled = false;
+                    await failNotification.ShowAsync();
+                }
             }
         }
 
