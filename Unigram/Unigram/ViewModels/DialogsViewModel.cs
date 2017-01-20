@@ -859,7 +859,7 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogPinCommand => new RelayCommand<TLDialog>(DialogPinExecute);
         private async void DialogPinExecute(TLDialog dialog)
         {
-            if (PinnedDialogsIndex == PinnedDialogsCountMax && !dialog.IsPinned)
+            if (Items.Where(x => x.IsPinned).Count() == PinnedDialogsCountMax && !dialog.IsPinned)
             {
                 var question = new UnigramMessageDialog();
                 question.Title = "Warning";
