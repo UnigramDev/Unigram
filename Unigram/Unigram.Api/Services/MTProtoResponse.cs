@@ -61,6 +61,13 @@ namespace Telegram.Api.Services
         {
             get
             {
+                // mtproto doesn't supports void return type, so boolean is used instead.
+                // sometimes it can be false, but the request is succeeded anyway.
+                if (Result is bool)
+                {
+                    return Error == null;
+                }
+
                 return Error == null && !Result.Equals(default(T));
             }
         }
