@@ -121,7 +121,7 @@ namespace Unigram.Controls
 
             e.DragUIOverride.IsCaptionVisible = false;
             e.DragUIOverride.IsGlyphVisible = false;
-            e.DragUIOverride.IsContentVisible = false;
+            //e.DragUIOverride.IsContentVisible = false;
             e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move;
         }
 
