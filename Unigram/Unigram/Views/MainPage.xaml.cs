@@ -261,8 +261,8 @@ namespace Unigram.Views
                     dialogs.LoadFirstSlice();
                 });
 
-                ViewModel.Contacts.getTLContacts();
-                ViewModel.Contacts.GetSelfAsync();
+                //ViewModel.Contacts.getTLContacts();
+                //ViewModel.Contacts.GetSelfAsync();
             }
             catch { }
         }
