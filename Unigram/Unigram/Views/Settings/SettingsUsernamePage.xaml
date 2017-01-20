@@ -1,0 +1,70 @@
+﻿<Page
+    x:Class="Unigram.Views.Settings.SettingsUsernamePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Username" Margin="12,0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}"/>
+            <controls:GlyphButton Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;" Grid.Column="1"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+        </Grid>
+
+        <Grid Padding="12" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <controls:UpdateTextBox x:Name="Username" Text="{Binding Username, Mode=TwoWay}" PlaceholderText="Your username" Margin="0,0,0,8"/>
+
+            <TextBlock Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}" Foreground="Green" Grid.Row="1">
+                <Run Text="{x:Bind ViewModel.Username, Mode=OneWay}"/>
+                <Run Text="is available."/>
+            </TextBlock>
+            <TextBlock Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Text="Checking username..." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Grid.Row="1"/>
+            <TextBlock Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}" Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" Foreground="Red" Grid.Row="1"/>
+
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="0,12" Grid.Row="2">
+                <Run Text="You can choose a username on"/>
+                <Run Text="Telegram" FontWeight="SemiBold"/><Run Text="."/>
+                <Run Text="If you do, other people will be able to find you by this username and contact you without knowing your phone number."/>
+            </TextBlock>
+
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Grid.Row="3">
+                <Run Text="You can use"/>
+                <Run Text="a-z" FontWeight="SemiBold"/><Run Text=","/>
+                <Run Text="0-9" FontWeight="SemiBold"/>
+                <Run Text="and underscores."/>
+                <LineBreak/>
+                <Run Text="Minimum length is"/>
+                <Run Text="5" FontWeight="SemiBold"/>
+                <Run Text="characters."/>
+            </TextBlock>
+
+            <TextBlock Visibility="{x:Bind ViewModel.Username, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}" Margin="0,12" Grid.Row="4">
+                <Run Text="This link opens a chat with you on Telegram:"/>
+                <LineBreak/>
+                <Hyperlink Click="Copy_Click">
+                    <Run Text="https://t.me/"/><Run Text="{x:Bind ViewModel.Username, Mode=OneWay}"/>
+                </Hyperlink>
+            </TextBlock>
+        </Grid>
+    </Grid>
+</Page>

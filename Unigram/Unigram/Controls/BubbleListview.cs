@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,6 +8,9 @@ using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -103,7 +107,7 @@ namespace Unigram.Controls
                         }
                         else
                         {
-                            if (message.IsOut)
+                            if (message.IsOut && !message.IsPost)
                             {
                                 bubble.Padding = new Thickness(56, 0, 12, 0);
                             }

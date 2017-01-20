@@ -23,6 +23,7 @@ using Unigram.Core.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Login;
 using Unigram.Views.Login;
+using Unigram.ViewModels.Settings;
 
 namespace Unigram
 {
@@ -35,7 +36,7 @@ namespace Unigram
             container = UnigramContainer.Instance;
         }
 
-        public IHardwareService HardwareService => UnigramContainer.Instance.ResolverType<IHardwareService>();
+        public IHardwareService HardwareService => UnigramContainer.Instance.ResolveType<IHardwareService>();
 
         public void Configure()
         {
@@ -76,6 +77,8 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<FeaturedStickersViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsUsernameViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsEditNameViewModel>().SingleInstance();
 
             container.Build();
 
@@ -119,9 +122,9 @@ namespace Unigram
 
         private void Initialize()
         {
-            var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
-            var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
-            var updatesService = UnigramContainer.Instance.ResolverType<IUpdatesService>();
+            var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
+            var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>();
+            var updatesService = UnigramContainer.Instance.ResolveType<IUpdatesService>();
             cacheService.Init();
             updatesService.GetCurrentUserId = () => protoService.CurrentUserId;
             updatesService.GetStateAsync = protoService.GetStateCallback;

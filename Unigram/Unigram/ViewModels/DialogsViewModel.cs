@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
@@ -52,6 +53,7 @@ namespace Unigram.ViewModels
         {
             Items = new ObservableCollection<TLDialog>();
             Search = new ObservableCollection<KeyedList<string, TLObject>>();
+            SearchTokens = new Dictionary<string, CancellationTokenSource>();
         }
 
         public int PinnedDialogsIndex { get; set; }
@@ -97,29 +99,80 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var config = CacheService.GetConfig();
+            //ProtoService.GetDialogsCallback(lastDate, lastMsgId, lastPeer, 200, (result) =>
+            //{
+            //    var pinnedIndex = 0;
+
+            //    Execute.BeginOnUIThread(() =>
+            //    {
+            //        foreach (var item in result.Dialogs)
+            //        {
+            //            if (item.IsPinned)
+            //            {
+            //                item.PinnedIndex = pinnedIndex++;
+            //            }
+
+            //            var chat = item.With as TLChat;
+            //            if (chat != null && chat.HasMigratedTo)
+            //            {
+            //                continue;
+            //            }
+            //            else
+            //            {
+            //                Items.Add(item);
+            //            }
+            //        }
+
+            //        IsFirstPinned = Items.Any(x => x.IsPinned);
+            //        PinnedDialogsIndex = pinnedIndex;
+            //        PinnedDialogsCountMax = config.PinnedDialogsCountMax;
+            //    });
+            //});
 
             var response = await ProtoService.GetDialogsAsync(lastDate, lastMsgId, lastPeer, 200);
             if (response.IsSucceeded)
             {
+                var config = CacheService.GetConfig();
                 var pinnedIndex = 0;
 
-                foreach (var item in response.Value.Dialogs)
+                Execute.BeginOnUIThread(() =>
                 {
-                    if (item.IsPinned)
+                    foreach (var item in response.Value.Dialogs)
                     {
-                        item.PinnedIndex = pinnedIndex++;
+                        if (item.IsPinned)
+                        {
+                            item.PinnedIndex = pinnedIndex++;
+                        }
+
+                        var chat = item.With as TLChat;
+                        if (chat != null && chat.HasMigratedTo)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            Items.Add(item);
+                        }
                     }
 
-                    Items.Add(item);
-                }
-
-                IsFirstPinned = Items.Any(x => x.IsPinned);
-                PinnedDialogsIndex = pinnedIndex;
-                PinnedDialogsCountMax = config.PinnedDialogsCountMax;
+                    IsFirstPinned = Items.Any(x => x.IsPinned);
+                    PinnedDialogsIndex = pinnedIndex;
+                    PinnedDialogsCountMax = config.PinnedDialogsCountMax;
+                });
             }
 
             Aggregator.Subscribe(this);
+        }
+
+        public async Task UpdatePinnedItemsAsync()
+        {
+            var pinned = Items.Where(x => x.IsPinned).Select(x => x.ToInputPeer());
+
+            var response = await ProtoService.ReorderPinnedDialogsAsync(new TLVector<TLInputPeerBase>(pinned), true);
+            if (response.IsSucceeded)
+            {
+
+            }
         }
 
         #region Handle
@@ -352,6 +405,30 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(() =>
             {
+                if (update.HasOrder)
+                {
+                    var pinned = new List<TLDialog>(update.Order.Count);
+
+                    for (int i = 0; i < update.Order.Count; i++)
+                    {
+                        var dialog = Items.FirstOrDefault(x => x.Index == update.Order[i].Id);
+                        if (dialog != null)
+                        {
+                            dialog.PinnedIndex = i;
+                            dialog.IsPinned = true;
+
+                            var index = Items.IndexOf(dialog);
+                            if (index != i)
+                            {
+                                Items.Remove(dialog);
+                                Items.Insert(i, dialog);
+                            }
+                        }
+
+                        PinnedDialogsIndex = i;
+                    }
+                }
+
                 IsFirstPinned = Items.FirstOrDefault()?.IsPinned ?? false;
             });
         }
@@ -672,6 +749,21 @@ namespace Unigram.ViewModels
 
         public ObservableCollection<KeyedList<string, TLObject>> Search { get; private set; }
 
+        public Dictionary<string, CancellationTokenSource> SearchTokens { get; private set; }
+
+        private string _searchQuery;
+        public string SearchQuery
+        {
+            get
+            {
+                return _searchQuery;
+            }
+            set
+            {
+                Set(ref _searchQuery, value);
+            }
+        }
+
         public async Task SearchAsync(string query)
         {
             // TODO: dialogs search
@@ -682,25 +774,35 @@ namespace Unigram.ViewModels
             Search.Clear();
             if (global != null) Search.Add(global);
             if (messages != null) Search.Add(messages);
+
+            SearchQuery = query;
         }
 
         private async Task<KeyedList<string, TLObject>> SearchGlobalAsync(string query)
         {
+            if (query.Length < 5)
+            {
+                return null;
+            }
+
             var result = await ProtoService.SearchAsync(query, 100);
             if (result.IsSucceeded)
             {
-                var parent = new KeyedList<string, TLObject>("Global search results");
-
-                foreach (var peer in result.Value.Results)
+                if (result.Value.Results.Count > 0)
                 {
-                    var item = result.Value.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Value.Chats.FirstOrDefault(x => x.Id == peer.Id);
-                    if (item != null)
-                    {
-                        parent.Add(item);
-                    }
-                }
+                    var parent = new KeyedList<string, TLObject>("Global search results");
 
-                return parent;
+                    foreach (var peer in result.Value.Results)
+                    {
+                        var item = result.Value.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Value.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                        if (item != null)
+                        {
+                            parent.Add(item);
+                        }
+                    }
+
+                    return parent;
+                }
             }
 
             return null;
@@ -720,7 +822,14 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", result.Value.Messages.Count));
+                    if (result.Value.Messages.Count > 0)
+                    {
+                        parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", result.Value.Messages.Count));
+                    }
+                    else
+                    {
+                        parent = new KeyedList<string, TLObject>("No messages found");
+                    }
                 }
 
                 foreach (var message in result.Value.Messages.OfType<TLMessageCommonBase>())
@@ -750,6 +859,16 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogPinCommand => new RelayCommand<TLDialog>(DialogPinExecute);
         private async void DialogPinExecute(TLDialog dialog)
         {
+            if (PinnedDialogsIndex == PinnedDialogsCountMax)
+            {
+                var question = new UnigramMessageDialog();
+                question.Title = "Warning";
+                question.Message = string.Format("Sorry, you can pin no more than {0} chats to the top.", PinnedDialogsCountMax);
+                question.PrimaryButtonText = "OK";
+                await question.ShowAsync();
+                return;
+            }
+
             TLInputPeerBase peer = null;
 
             var user = dialog.With as TLUser;

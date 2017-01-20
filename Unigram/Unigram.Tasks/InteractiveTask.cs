@@ -12,6 +12,7 @@ using Telegram.Api.Services.Connection;
 using Telegram.Api.Services.DeviceInfo;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Methods.Messages;
 using Telegram.Api.Transport;
 using Unigram.Core.Notifications;
 using Windows.ApplicationModel.Background;
@@ -44,50 +45,59 @@ namespace Unigram.Tasks
                         var text = data["QuickMessage"];
 
                         var replyToMsgId = 0;
-                        var toId = default(TLPeerBase);
+                        var inputPeer = default(TLInputPeerBase);
                         if (data.ContainsKey("from_id"))
                         {
-                            toId = new TLPeerUser { Id = int.Parse(data["from_id"]) };
-                        }
-                        else if (data.ContainsKey("chat_id"))
-                        {
-                            toId = new TLPeerChat { Id = int.Parse(data["chat_id"]) };
-                            replyToMsgId = -1;
+                            inputPeer = new TLInputPeerUser { UserId = int.Parse(data["from_id"]), AccessHash = long.Parse(data["access_hash"]) };
                         }
                         else if (data.ContainsKey("channel_id"))
                         {
-                            toId = new TLPeerChannel { Id = int.Parse(data["channel_id"]) };
-                            replyToMsgId = -1;
+                            inputPeer = new TLInputPeerChannel { ChannelId = int.Parse(data["channel_id"]), AccessHash = long.Parse(data["access_hash"]) };
+                            replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) : 0;
+                        }
+                        else if (data.ContainsKey("chat_id"))
+                        {
+                            inputPeer = new TLInputPeerChat { ChatId = int.Parse(data["chat_id"]) };
+                            replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) : 0;
                         }
 
-                        if (data.ContainsKey("msg_id") && replyToMsgId == -1)
-                        {
-                            replyToMsgId = int.Parse(data["msg_id"]);
-                        }
-                        else
-                        {
-                            replyToMsgId = 0;
-                        }
+                        var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = replyToMsgId, Message = text, IsBackground = true, RandomId = TLLong.Random() };
 
-                        var date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
-                        var message = TLUtils.GetMessage(SettingsHelper.UserId, toId, TLMessageState.Sending, true, true, date, text, new TLMessageMediaEmpty(), TLLong.Random(), replyToMsgId);
-                        var history = cacheService.GetHistory(toId, 1);
-
-                        cacheService.SyncSendingMessage(message, null, async (m) =>
+                        protoService.SendInformativeMessageInternal<TLUpdatesBase>("messages.sendMessage", obj, result =>
                         {
-                            await protoService.SendMessageAsync(message, () => 
-                            {
-                                // TODO: fast callback
-                            });
+                            manualResetEvent.Set();
+                        },
+                        faultCallback: fault =>
+                        {
+                            // TODO: alert user?
+                            manualResetEvent.Set();
+                        },
+                        fastCallback: () =>
+                        {
                             manualResetEvent.Set();
                         });
+
+                        //var date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
+                        //var message = TLUtils.GetMessage(SettingsHelper.UserId, inputPeer, TLMessageState.Sending, true, true, date, text, new TLMessageMediaEmpty(), TLLong.Random(), replyToMsgId);
+                        //var history = cacheService.GetHistory(inputPeer, 1);
+
+                        //cacheService.SyncSendingMessage(message, null, async (m) =>
+                        //{
+                        //    await protoService.SendMessageAsync(message, () => 
+                        //    {
+                        //        // TODO: fast callback
+                        //    });
+                        //    manualResetEvent.Set();
+                        //});
                     };
                     protoService.InitializationFailed += (s, args) =>
                     {
                         manualResetEvent.Set();
                     };
-                    cacheService.Init();
+
+                    //cacheService.Init();
                     protoService.Initialize();
+
                     manualResetEvent.WaitOne(15000);
                 }
             }

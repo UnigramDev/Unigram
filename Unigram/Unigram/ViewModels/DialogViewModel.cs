@@ -845,7 +845,7 @@ namespace Unigram.ViewModels
             };
 
             var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-            var fileCache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+            var fileCache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\" + fileName, CreationCollisionOption.ReplaceExisting);
 
             var fileScale = await ImageHelper.ScaleJpegAsync(file, fileCache, 1280, 0.77);
             if (fileScale == null && Path.GetExtension(file.Name).Equals(".gif"))
@@ -929,7 +929,7 @@ namespace Unigram.ViewModels
             };
 
             var fileName = string.Format("{0}_{1}_{2}.gif", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-            var fileCache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+            var fileCache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\" + fileName, CreationCollisionOption.ReplaceExisting);
 
             await file.CopyAndReplaceAsync(fileCache);
 
@@ -999,7 +999,7 @@ namespace Unigram.ViewModels
             };
 
             var fileName = string.Format("{0}_{1}_{2}.ogg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-            var fileCache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+            var fileCache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\" + fileName, CreationCollisionOption.ReplaceExisting);
 
             await file.CopyAndReplaceAsync(fileCache);
 

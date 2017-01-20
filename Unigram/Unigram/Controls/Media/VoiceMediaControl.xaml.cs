@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Core.Dependency;
@@ -165,9 +166,9 @@ namespace Unigram.Controls.Media
                 if (document != null)
                 {
                     var fileName = Path.GetFileNameWithoutExtension(document.GetFileName()) + ".ogg";
-                    if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName)) == false)
+                    if (File.Exists(FileUtils.GetTempFileName(fileName)) == false)
                     {
-                        var manager = UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>();
+                        var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                         var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
                     }
 
@@ -181,7 +182,7 @@ namespace Unigram.Controls.Media
                     graph = result.Graph;
                     Debug.WriteLine("Graph successfully created!");
 
-                    var file = await ApplicationData.Current.TemporaryFolder.GetFileAsync(fileName);
+                    var file = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
                     var fileProps = await file.Properties.GetMusicPropertiesAsync();
 
                     var fileInputNodeResult = await graph.CreateFileInputNodeAsync(file);

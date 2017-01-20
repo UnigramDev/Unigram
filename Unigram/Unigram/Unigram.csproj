@@ -94,25 +94,28 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <Content Include="WindowsPhoneReservedAppInfo.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <None Include="project.json" />
+    <Compile Include="Common\Language.cs" />
+    <Compile Include="Controls\DialogsListView.cs" />
+    <Compile Include="ViewModels\DialogViewModel.Typing.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Behaviors\HighlightBehavior.cs" />
+    <Compile Include="Common\Dialogs\InputTypingManager.cs" />
     <Compile Include="Common\Emoji.cs" />
     <Compile Include="Common\LambdaComparer.cs" />
     <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="Common\UnigramNavigationService.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controls\AttachPickerFlyout.xaml.cs">
       <DependentUpon>AttachPickerFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\BackButton.cs" />
+    <Compile Include="Controls\BackDrop.cs" />
     <Compile Include="Controls\ContentDialogBase.cs" />
     <Compile Include="Controls\ImageView.cs" />
     <Compile Include="Controls\Inline\InlineBotResultsView.xaml.cs">
@@ -126,11 +129,15 @@
     <Compile Include="Controls\UnigramMessageDialog.xaml.cs">
       <DependentUpon>UnigramMessageDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\EditYourNameView.xaml.cs">
+      <DependentUpon>EditYourNameView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\SendPhotosView.xaml.cs">
       <DependentUpon>SendPhotosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\VoiceButton.cs" />
     <Compile Include="Converters\BubblePlaceholderConverter.cs" />
+    <Compile Include="Converters\EditToVisibilityConverter.cs" />
     <Compile Include="Converters\FileExistsToGlyphConverter.cs" />
     <Compile Include="Selectors\DialogStyleSelector.cs" />
     <Compile Include="Selectors\InlineBotResultTemplateSelector.cs" />
@@ -247,6 +254,8 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PhotosViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsEditNameViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsUsernameViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\UserInfoViewModel.cs" />
     <Compile Include="ViewModels\UserPhotosViewModel.cs" />
@@ -318,6 +327,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingStickersPage.xaml.cs">
       <DependentUpon>SettingStickersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
+      <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsWallpaperPage.xaml.cs">
       <DependentUpon>SettingsWallpaperPage.xaml</DependentUpon>
@@ -407,6 +419,7 @@
     <Content Include="Assets\Mockups\README.txt" />
     <Content Include="Assets\Mockups\UserIcons\user_batman.png" />
     <None Include="Package.StoreAssociation.xml" />
+    <Content Include="Assets\Noise.jpg" />
     <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
@@ -453,6 +466,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\UnigramMessageDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\EditYourNameView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -589,6 +606,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingStickersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsUsernamePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

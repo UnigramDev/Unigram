@@ -20,7 +20,16 @@ namespace Unigram.Core.Notifications
         {
             BackgroundExecutionManager.RemoveAccess();
 
-            await BackgroundTaskManager.RegisterAsync("NotificationTask", "Unigram.Native.Tasks.NotificationTask", new PushNotificationTrigger());
+            foreach (var t in BackgroundTaskRegistration.AllTasks)
+            {
+                if (t.Value.Name == "NotificationTask")
+                {
+                    t.Value.Unregister(false);
+                }
+            }
+
+            // TODO: remove the "new" when releasing to the store
+            await BackgroundTaskManager.RegisterAsync("NewNotificationTask", "Unigram.Native.Tasks.NotificationTask", new PushNotificationTrigger());
             await BackgroundTaskManager.RegisterAsync("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
         }
 

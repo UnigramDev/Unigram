@@ -24,6 +24,7 @@ namespace Unigram.Selectors
         public DataTemplate VenueTemplate { get; set; }
         public DataTemplate VideoTemplate { get; set; }
         public DataTemplate WebPageGifTemplate { get; set; }
+        public DataTemplate WebPageDocumentTemplate { get; set; }
         public DataTemplate WebPagePendingTemplate { get; set; }
         public DataTemplate WebPagePhotoTemplate { get; set; }
         public DataTemplate WebPageSmallPhotoTemplate { get; set; }
@@ -145,6 +146,10 @@ namespace Unigram.Selectors
                     if (TLMessage.IsGif(webpage.Document))
                     {
                         return WebPageGifTemplate;
+                    }
+                    else if (webpage.Document != null && webpage.Type.Equals("document", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return WebPageDocumentTemplate;
                     }
 
                     if (webpage.Photo != null && webpage.Type != null)

@@ -21,8 +21,8 @@ namespace Unigram.Core.Managers
             {
                 if (t.Value.Name == name)
                 {
-                    t.Value.Unregister(false);
-                    //return false;
+                    //t.Value.Unregister(false);
+                    return false;
                 }
             }
 

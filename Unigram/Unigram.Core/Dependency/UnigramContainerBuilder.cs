@@ -44,7 +44,7 @@
             }
         }
 
-        public TService ResolverType<TService>()
+        public TService ResolveType<TService>()
         {
             TService result = default(TService);
             if (container != null)

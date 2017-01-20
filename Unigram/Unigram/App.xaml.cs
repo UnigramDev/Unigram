@@ -28,6 +28,9 @@ using Windows.Storage;
 using Windows.UI.Popups;
 using Unigram.Views;
 using Windows.Media;
+using System.IO;
+using Template10.Services.NavigationService;
+using Unigram.Common;
 
 namespace Unigram
 {
@@ -55,10 +58,11 @@ namespace Unigram
             m_mediaExtensionManager = new MediaExtensionManager();
             m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
 
+            FileUtils.CreateTemporaryFolder();
+
             UnhandledException += async (s, args) =>
             {
                 args.Handled = true;
-                await FileIO.WriteTextAsync(await KnownFolders.PicturesLibrary.CreateFileAsync("unigram_log.txt", CreationCollisionOption.GenerateUniqueName), args.Exception?.ToString() ?? "Error" + "\r\n" + args.Message);
                 await new MessageDialog(args.Message ?? "Error", args.Exception?.ToString() ?? "Error").ShowAsync();
             };
 
@@ -195,10 +199,10 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
+            var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
             cacheService.TryCommit();
 
-            var updatesService = UnigramContainer.Instance.ResolverType<IUpdatesService>();
+            var updatesService = UnigramContainer.Instance.ResolveType<IUpdatesService>();
             updatesService.SaveState();
             updatesService.CancelUpdating();
 

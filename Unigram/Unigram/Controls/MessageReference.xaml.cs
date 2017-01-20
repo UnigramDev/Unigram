@@ -197,7 +197,7 @@ namespace Unigram.Controls
                 {
                     if (!string.IsNullOrEmpty(editMessage.Message) && (editMessage.Media == null || editMessage.Media is TLMessageMediaEmpty || editMessage.Media is TLMessageMediaWebPage))
                     {
-                        return SetTextTemplate(editMessage, Title);
+                        return SetTextTemplate(editMessage, "Edit message");
                     }
 
                     var media = editMessage.Media;
@@ -746,7 +746,7 @@ namespace Unigram.Controls
         {
             if (!string.IsNullOrWhiteSpace(title))
             {
-                return Title;
+                return title;
             }
 
             var from = message.From?.FullName ?? string.Empty;

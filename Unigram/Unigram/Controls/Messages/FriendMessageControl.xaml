@@ -17,14 +17,29 @@
     <!-- TODO: not the right way -->
     <Border Height="10" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
-    <Border x:Name="LayoutRoot"
-            Margin="{ThemeResource MessageContentMargin}" 
-            Padding="{ThemeResource MessageContentPadding}" 
-            CornerRadius="{ThemeResource MessageCornerRadius}"
-            Background="{ThemeResource MessageBackgroundBrush}" 
-            BorderBrush="{ThemeResource MessageBorderBrush}" 
-            BorderThickness="0,0,0,2">
-        <Grid>
+    <UserControl x:Name="LayoutRoot">
+        <Grid Margin="{ThemeResource MessageContentMargin}" 
+              Padding="{ThemeResource MessageContentPadding}" 
+              CornerRadius="{ThemeResource MessageCornerRadius}"
+              Background="{ThemeResource MessageBackgroundBrush}" 
+              BorderBrush="{ThemeResource MessageBorderBrush}" 
+              BorderThickness="0,0,0,2">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState x:Name="FullMedia">
+                        <VisualState.Setters>
+                            <Setter Target="StatusControl.Padding" Value="6,2,6,4"/>
+                            <Setter Target="StatusControl.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                            <Setter Target="StatusLabel.Foreground" Value="White"/>
+                            <!--<Setter Target="StatusGlyph.Foreground" Value="White"/>-->
+                            <Setter Target="ViewsGlyph.Foreground" Value="White"/>
+                            <Setter Target="ViewsLabel.Foreground" Value="White"/>
+                            <Setter Target="EditLabel.Foreground" Value="White"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Default"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -69,10 +84,10 @@
                         Margin="0,0,-6,0"
                         Grid.Row="4">
                 <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.HasViews}">
-                    <FontIcon Glyph="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}" FontSize="11" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="0,0,4,2" VerticalAlignment="Bottom"/>
-                    <TextBlock Text="{x:Bind Convert.Views(ViewModel, ViewModel.Views), Mode=OneWay}" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,12,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    <FontIcon x:Name="ViewsGlyph" Glyph="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}" FontSize="11" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="0,0,4,2" VerticalAlignment="Bottom"/>
+                    <TextBlock x:Name="ViewsLabel" Text="{x:Bind Convert.Views(ViewModel, ViewModel.Views), Mode=OneWay}" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,12,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 </StackPanel>
-                <TextBlock Visibility="{x:Bind EditedVisibility(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay}" Text="edited" FontStyle="Italic" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,4,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                <TextBlock x:Name="EditLabel" Visibility="{x:Bind EditedVisibility(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay}" Text="edited" FontStyle="Italic" Foreground="{ThemeResource MessageSubtleLabelBrush}" Margin="0,2,4,0" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 <TextBlock x:Name="StatusLabel" Text="{x:Bind Convert.Date(ViewModel.Date)}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource MessageSubtleLabelBrush}" TextAlignment="Right" Margin="0,2,0,0">
                     <ToolTipService.ToolTip>
                         <ToolTip Opened="ToolTip_Opened"/>
@@ -80,7 +95,7 @@
                 </TextBlock>
             </StackPanel>
         </Grid>
-    </Border>
+    </UserControl>
 
     <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick"/>
 

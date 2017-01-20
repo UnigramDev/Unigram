@@ -86,7 +86,7 @@ namespace Unigram.Themes
                         }
                         else
                         {
-                            var manager = UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>();
+                            var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                             var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
                             if (download != null)
                             {

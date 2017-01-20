@@ -14,7 +14,17 @@ namespace Unigram.Converters
         {
             if (parameter != null)
             {
+                if (value is string)
+                {
+                    return string.IsNullOrWhiteSpace((string)value) ? Visibility.Visible : Visibility.Collapsed;
+                }
+
                 return value != null ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            if (value is string)
+            {
+                return string.IsNullOrWhiteSpace((string)value) ? Visibility.Collapsed : Visibility.Visible;
             }
 
             return value == null ? Visibility.Collapsed : Visibility.Visible;

@@ -575,4 +575,67 @@
   <data name="YourScoredPlural" xml:space="preserve">
     <value>You scored {0}</value>
   </data>
+  <data name="AreTyping" xml:space="preserve">
+    <value>{0} are typing</value>
+  </data>
+  <data name="IsPlayingGame" xml:space="preserve">
+    <value>{0} is playing a game</value>
+  </data>
+  <data name="IsRecordingAudio" xml:space="preserve">
+    <value>{0} is recording a voice message</value>
+  </data>
+  <data name="IsRecordingVideo" xml:space="preserve">
+    <value>{0} is recording a video</value>
+  </data>
+  <data name="IsSendingAudio" xml:space="preserve">
+    <value>{0} is sending a audio</value>
+  </data>
+  <data name="IsSendingFile" xml:space="preserve">
+    <value>{0} is sending a file</value>
+  </data>
+  <data name="IsSendingPhoto" xml:space="preserve">
+    <value>{0} is sending a photo</value>
+  </data>
+  <data name="IsSendingVideo" xml:space="preserve">
+    <value>{0} is sending a video</value>
+  </data>
+  <data name="IsTyping" xml:space="preserve">
+    <value>{0} is typing</value>
+  </data>
+  <data name="PlayingGame" xml:space="preserve">
+    <value>Playing a game</value>
+  </data>
+  <data name="RecordingVideo" xml:space="preserve">
+    <value>Recording a video</value>
+  </data>
+  <data name="RecordingVoiceMessage" xml:space="preserve">
+    <value>Recording a voice message</value>
+  </data>
+  <data name="SendingAudio" xml:space="preserve">
+    <value>Sending an audio</value>
+  </data>
+  <data name="SendingFile" xml:space="preserve">
+    <value>Sending a file</value>
+  </data>
+  <data name="SendingPhoto" xml:space="preserve">
+    <value>Sending a photo</value>
+  </data>
+  <data name="SendingVideo" xml:space="preserve">
+    <value>Sending a video</value>
+  </data>
+  <data name="Typing" xml:space="preserve">
+    <value>Typing</value>
+  </data>
+  <data name="CompanyGenitivePlural" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CompanyGenitiveSingular" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CompanyNominativePlural" xml:space="preserve">
+    <value>Members</value>
+  </data>
+  <data name="CompanyNominativeSingular" xml:space="preserve">
+    <value>Member</value>
+  </data>
 </root>

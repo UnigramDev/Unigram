@@ -81,7 +81,7 @@ namespace Unigram.Selectors
 
             if (message.IsSticker())
             {
-                if (message.IsOut)
+                if (message.IsOut && !message.IsPost)
                 {
                     return UserStickerTemplate ?? EmptyMessageTemplate;
                 }
@@ -94,7 +94,7 @@ namespace Unigram.Selectors
             }
             else
             {
-                if (message.IsOut)
+                if (message.IsOut && !message.IsPost)
                 {
                     if (!(message?.Media is TLMessageMediaEmpty))
                     {

@@ -52,7 +52,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            DataContext = UnigramContainer.Instance.ResolverType<DialogViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<DialogViewModel>();
             CheckMessageBoxEmpty();
 
             Loaded += OnLoaded;
@@ -183,7 +183,7 @@ namespace Unigram.Views
 
         private async void gridMain_Drop(object sender, DragEventArgs e)
         {
-            gridLoading.Visibility = Visibility.Visible;
+            //gridLoading.Visibility = Visibility.Visible;
 
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
@@ -230,21 +230,21 @@ namespace Unigram.Views
                 // Send images
                 if (images.Count > 0)
                 {
-                    gridLoading.Visibility = Visibility.Collapsed;
+                    //gridLoading.Visibility = Visibility.Collapsed;
                     ViewModel.SendPhotoDrop(images);
                 }
-                if (audio.Count > 0)
-                {
-                    gridLoading.Visibility = Visibility.Collapsed;
-                }
-                if (videos.Count > 0)
-                {
-                    gridLoading.Visibility = Visibility.Collapsed;
-                }
-                if (files.Count > 0)
-                {
-                    gridLoading.Visibility = Visibility.Collapsed;
-                }
+                //if (audio.Count > 0)
+                //{
+                //    gridLoading.Visibility = Visibility.Collapsed;
+                //}
+                //if (videos.Count > 0)
+                //{
+                //    gridLoading.Visibility = Visibility.Collapsed;
+                //}
+                //if (files.Count > 0)
+                //{
+                //    gridLoading.Visibility = Visibility.Collapsed;
+                //}
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
             //{
@@ -275,7 +275,7 @@ namespace Unigram.Views
                     txtMessage.Text = (txtMessage.Text + " " + text);
                 }
 
-                gridLoading.Visibility = Visibility.Collapsed;
+                //gridLoading.Visibility = Visibility.Collapsed;
             }
 
 
@@ -406,7 +406,7 @@ namespace Unigram.Views
 
                 }
 
-                element.Visibility = Visibility.Collapsed;
+                element.Visibility = Visibility.Visible;
             }
         }
 
@@ -429,6 +429,29 @@ namespace Unigram.Views
                     {
                         element.Visibility = Visibility.Visible;
                         return;
+                    }
+                }
+
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void MessageCopyLink_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var messageCommon = element.DataContext as TLMessageCommonBase;
+                if (messageCommon != null)
+                {
+                    var channel = ViewModel.With as TLChannel;
+                    if (channel != null)
+                    {
+                        if (channel.IsBroadcast && channel.HasUsername)
+                        {
+                            element.Visibility = Visibility.Visible;
+                            return;
+                        }
                     }
                 }
 
