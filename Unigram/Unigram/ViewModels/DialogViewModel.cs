@@ -151,9 +151,9 @@ namespace Unigram.ViewModels
             var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, maxId, 15);
             if (result.IsSucceeded)
             {
-                ProcessReplies(result.Value.Messages);
+                ProcessReplies(result.Result.Messages);
 
-                foreach (var item in result.Value.Messages)
+                foreach (var item in result.Result.Messages)
                 {
                     Messages.Insert(0, item);
                     //InsertMessage(item as TLMessageCommonBase);
@@ -178,9 +178,9 @@ namespace Unigram.ViewModels
             var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -offset, maxId, 20);
             if (result.IsSucceeded)
             {
-                ProcessReplies(result.Value.Messages);
+                ProcessReplies(result.Result.Messages);
 
-                foreach (var item in result.Value.Messages)
+                foreach (var item in result.Result.Messages)
                 {
                     if (lastUnread && !item.IsUnread)
                     {
@@ -285,17 +285,17 @@ namespace Unigram.ViewModels
                 var result = await task;
                 if (result.IsSucceeded)
                 {
-                    CacheService.AddChats(result.Value.Chats, (results) => { });
-                    CacheService.AddUsers(result.Value.Users, (results) => { });
+                    CacheService.AddChats(result.Result.Chats, (results) => { });
+                    CacheService.AddUsers(result.Result.Users, (results) => { });
 
-                    for (int j = 0; j < result.Value.Messages.Count; j++)
+                    for (int j = 0; j < result.Result.Messages.Count; j++)
                     {
                         for (int k = 0; k < replyToMsgs.Count; k++)
                         {
                             var message = replyToMsgs[k];
-                            if (message != null && message.ReplyToMsgId.Value == result.Value.Messages[j].Id)
+                            if (message != null && message.ReplyToMsgId.Value == result.Result.Messages[j].Id)
                             {
-                                replyToMsgs[k].Reply = result.Value.Messages[j];
+                                replyToMsgs[k].Reply = result.Result.Messages[j];
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].Reply);
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].ReplyInfo);
 
@@ -381,19 +381,19 @@ namespace Unigram.ViewModels
 
                 var input = new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 };
                 var channelDetails = await ProtoService.GetFullChannelAsync(input);
-                DialogTitle = channelDetails.Value.Chats[0].FullName;
+                DialogTitle = channelDetails.Result.Chats[0].FullName;
 
-                var channelFull = (TLChannelFull)channelDetails.Value.FullChat;
+                var channelFull = (TLChannelFull)channelDetails.Result.FullChat;
                 if (channelFull.HasPinnedMsgId)
                 {
                     var y = await ProtoService.GetMessagesAsync(input, new TLVector<int>() { channelFull.PinnedMsgId ?? 0 });
                     if (y.IsSucceeded)
                     {
-                        PinnedMessage = y.Value.Messages.FirstOrDefault();
+                        PinnedMessage = y.Result.Messages.FirstOrDefault();
                     }
                 }
 
-                PlaceHolderColor = BindConvert.Current.Bubble(channelDetails.Value.Chats[0].Id);
+                PlaceHolderColor = BindConvert.Current.Bubble(channelDetails.Result.Chats[0].Id);
                 // TODO: photo = channelDetails.Value.Chats[0].Photo;
                 LastSeenVisible = Visibility.Collapsed;
             }
@@ -403,9 +403,9 @@ namespace Unigram.ViewModels
                 Peer = new TLInputPeerChat { ChatId = chat.Id };
 
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
-                DialogTitle = chatDetails.Value.Chats[0].FullName;
+                DialogTitle = chatDetails.Result.Chats[0].FullName;
                 // TODO: photo = chatDetails.Value.Chats[0].Photo;
-                PlaceHolderColor = BindConvert.Current.Bubble(chatDetails.Value.Chats[0].Id);
+                PlaceHolderColor = BindConvert.Current.Bubble(chatDetails.Result.Chats[0].Id);
                 LastSeenVisible = Visibility.Collapsed;
             }
 
@@ -453,7 +453,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetRecentStickersAsync(false, 0);
             if (response.IsSucceeded)
             {
-                var recent = response.Value as TLMessagesRecentStickers;
+                var recent = response.Result as TLMessagesRecentStickers;
                 if (recent != null)
                 {
                     await StickersAll(recent);
@@ -488,7 +488,7 @@ namespace Unigram.ViewModels
                 var result = await ProtoService.GetMessagesAsync(inputChannel, new TLVector<int> { channel.PinnedMsgId.Value });
                 if (result.IsSucceeded)
                 {
-                    PinnedMessage = result.Value.Messages.FirstOrDefault(x => x.Id == channel.PinnedMsgId.Value);
+                    PinnedMessage = result.Result.Messages.FirstOrDefault(x => x.Id == channel.PinnedMsgId.Value);
                 }
                 else
                 {
@@ -502,7 +502,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetAllStickersAsync(new byte[0]);
             if (response.IsSucceeded)
             {
-                var result = response.Value as TLMessagesAllStickers;
+                var result = response.Result as TLMessagesAllStickers;
                 if (result != null)
                 {
                     //var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, Extensions.Buffered<TLDocument>(x.Count)));
@@ -616,14 +616,14 @@ namespace Unigram.ViewModels
                 var result = await task;
                 if (result.IsSucceeded)
                 {
-                    CacheService.AddChats(result.Value.Chats, (results) => { });
-                    CacheService.AddUsers(result.Value.Users, (results) => { });
+                    CacheService.AddChats(result.Result.Chats, (results) => { });
+                    CacheService.AddUsers(result.Result.Users, (results) => { });
 
-                    for (int j = 0; j < result.Value.Messages.Count; j++)
+                    for (int j = 0; j < result.Result.Messages.Count; j++)
                     {
-                        if (draft.ReplyToMsgId.Value == result.Value.Messages[j].Id)
+                        if (draft.ReplyToMsgId.Value == result.Result.Messages[j].Id)
                         {
-                            Reply = result.Value.Messages[j];
+                            Reply = result.Result.Messages[j];
                         }
                     }
                 }
@@ -695,7 +695,7 @@ namespace Unigram.ViewModels
                 var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "unigramstickers" });
                 if (set.IsSucceeded)
                 {
-                    document = set.Value.Documents.FirstOrDefault(x => x.Id == 200980520715159710) as TLDocument;
+                    document = set.Result.Documents.FirstOrDefault(x => x.Id == 200980520715159710) as TLDocument;
                 }
             }
 

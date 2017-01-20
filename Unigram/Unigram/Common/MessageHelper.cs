@@ -645,10 +645,10 @@ namespace Unigram.Common
                     var response = await MTProtoService.Current.ResolveUsernameAsync(((string)data).TrimStart('@'));
                     if (response.IsSucceeded)
                     {
-                        var peerUser = response.Value.Peer as TLPeerUser;
+                        var peerUser = response.Result.Peer as TLPeerUser;
                         if (peerUser != null)
                         {
-                            var userBase = response.Value.Users.FirstOrDefault();
+                            var userBase = response.Result.Users.FirstOrDefault();
                             if (userBase != null)
                             {
                                 service.Navigate(typeof(UserInfoPage), userBase);
@@ -656,8 +656,8 @@ namespace Unigram.Common
                             }
                         }
 
-                        var peerChat = response.Value.Peer as TLPeerChat;
-                        var peerChannel = response.Value.Peer as TLPeerChannel;
+                        var peerChat = response.Result.Peer as TLPeerChat;
+                        var peerChannel = response.Result.Peer as TLPeerChannel;
                         if (peerChannel != null || peerChat != null)
                         {
                             // TODO
@@ -858,7 +858,7 @@ namespace Unigram.Common
             var response = await protoService.CheckChatInviteAsync(link);
             if (response.IsSucceeded)
             {
-                var inviteAlready = response.Value as TLChatInviteAlready;
+                var inviteAlready = response.Result as TLChatInviteAlready;
                 if (inviteAlready != null)
                 {
                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
@@ -875,7 +875,7 @@ namespace Unigram.Common
                     }
                 }
 
-                var invite = response.Value as TLChatInvite;
+                var invite = response.Result as TLChatInvite;
                 if (invite != null)
                 {
                     var content = "AppResources.JoinGroupConfirmation";
@@ -896,7 +896,7 @@ namespace Unigram.Common
                         var import = await protoService.ImportChatInviteAsync(link);
                         if (import.IsSucceeded)
                         {
-                            var updates = import.Value as TLUpdates;
+                            var updates = import.Result as TLUpdates;
                             if (updates != null)
                             {
                                 var chatBase = updates.Chats.FirstOrDefault();

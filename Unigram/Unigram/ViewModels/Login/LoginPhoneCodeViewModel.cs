@@ -59,9 +59,9 @@ namespace Unigram.ViewModels.Login
             if (result?.IsSucceeded == true)
             {
                 ProtoService.SetInitState();
-                ProtoService.CurrentUserId = result.Value.User.Id;
+                ProtoService.CurrentUserId = result.Result.User.Id;
                 SettingsHelper.IsAuthorized = true;
-                SettingsHelper.UserId = result.Value.User.Id;
+                SettingsHelper.UserId = result.Result.User.Id;
 
                 // TODO: maybe ask about notifications?
 
@@ -102,7 +102,7 @@ namespace Unigram.ViewModels.Login
                     var password = await ProtoService.GetPasswordAsync();
                     if (password?.IsSucceeded == true)
                     {
-                        NavigationService.Navigate(typeof(LoginPasswordPage), password.Value);
+                        NavigationService.Navigate(typeof(LoginPasswordPage), password.Result);
                     }
                     else
                     {

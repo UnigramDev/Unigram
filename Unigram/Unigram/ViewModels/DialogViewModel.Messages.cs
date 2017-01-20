@@ -241,7 +241,7 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    var messageEditText = this.GetMessageEditText(result.Value, message);
+                    var messageEditText = this.GetMessageEditText(result.Result, message);
                     this.StartEditMessage(messageEditText, message);
                 });
             }
@@ -440,7 +440,7 @@ namespace Unigram.ViewModels
                     var result = await ProtoService.UpdatePinnedMessageAsync(silent, inputChannel, message.Id);
                     if (result.IsSucceeded)
                     {
-                        var updates = result.Value as TLUpdates;
+                        var updates = result.Result as TLUpdates;
                         if (updates != null)
                         {
                             var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
@@ -570,16 +570,16 @@ namespace Unigram.ViewModels
             if (callbackButton != null)
             {
                 var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, false);
-                if (response.IsSucceeded && response.Value.HasMessage)
+                if (response.IsSucceeded && response.Result.HasMessage)
                 {
-                    if (response.Value.IsAlert)
+                    if (response.Result.IsAlert)
                     {
-                        await new MessageDialog(response.Value.Message).ShowAsync();
+                        await new MessageDialog(response.Result.Message).ShowAsync();
                     }
                     else
                     {
                         // TODO:
-                        await new MessageDialog(response.Value.Message).ShowAsync();
+                        await new MessageDialog(response.Result.Message).ShowAsync();
                     }
                 }
 
@@ -593,12 +593,12 @@ namespace Unigram.ViewModels
                 if (gameMedia != null)
                 {
                     var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, true);
-                    if (response.IsSucceeded && response.Value.IsHasUrl && response.Value.HasUrl)
+                    if (response.IsSucceeded && response.Result.IsHasUrl && response.Result.HasUrl)
                     {
                         var user = CacheService.GetUser(message.ViaBotId) as TLUser;
                         if (user != null)
                         {
-                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Value.Url, Username = user.Username, Title = gameMedia.Game.Title });
+                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Username = user.Username, Title = gameMedia.Game.Title });
                         }
                     }
                 }

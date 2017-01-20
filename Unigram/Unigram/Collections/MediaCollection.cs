@@ -54,12 +54,12 @@ namespace Unigram.Collections
                 var result = await _protoService.SearchAsync(_peer, _query, _filter, 0, 0, 0, _lastMaxId, 50);
                 if (result.IsSucceeded)
                 {
-                    if (result.Value.Messages.Count > 0)
+                    if (result.Result.Messages.Count > 0)
                     {
-                        _lastMaxId = result.Value.Messages.Min(x => x.Id);
+                        _lastMaxId = result.Result.Messages.Min(x => x.Id);
                     }
 
-                    return result.Value.Messages.OfType<TLMessage>().GroupBy(x =>
+                    return result.Result.Messages.OfType<TLMessage>().GroupBy(x =>
                     {
                         var clientDelta = MTProtoService.Current.ClientTicksDelta;
                         var utc0SecsLong = x.Date * 4294967296 - clientDelta;

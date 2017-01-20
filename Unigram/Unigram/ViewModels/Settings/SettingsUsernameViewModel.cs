@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Settings
                 var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
                 if (response.IsSucceeded)
                 {
-                    var user = response.Value.FirstOrDefault() as TLUser;
+                    var user = response.Result.FirstOrDefault() as TLUser;
                     if (user != null)
                     {
                         _username = user.HasUsername ? user.Username : string.Empty;
@@ -213,7 +213,7 @@ namespace Unigram.ViewModels.Settings
             var result = await ProtoService.UpdateUsernameAsync(Username);
             if (result.IsSucceeded)
             {
-                CacheService.SyncUser(result.Value, (callback) =>
+                CacheService.SyncUser(result.Result, (callback) =>
                 {
                     //Aggregator.Publish(new UserNameChangedEventArgs(result));
                 });

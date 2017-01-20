@@ -373,12 +373,12 @@ namespace Unigram.Collections
                 var response = await _protoService.GetDialogsAsync(lastDate, lastMsgId, lastPeer, 200);
                 if (response.IsSucceeded)
                 {
-                    foreach (var item in response.Value.Dialogs)
+                    foreach (var item in response.Result.Dialogs)
                     {
                         Add(item);
                     }
 
-                    return new LoadMoreItemsResult { Count = (uint)response.Value.Dialogs.Count };
+                    return new LoadMoreItemsResult { Count = (uint)response.Result.Dialogs.Count };
                 }
 
                 return new LoadMoreItemsResult { Count = 20 };
@@ -463,7 +463,7 @@ namespace Unigram.Collections
                 else
                 {
                     var response = await _protoService.GetDialogsAsync(0, 0, new TLInputPeerEmpty(), 20);
-                    var result = response.Value;
+                    var result = response.Result;
                     result.Dialogs = new TLVector<TLDialog>(result.Dialogs.OrderByDescending(x => x.GetDateIndexWithDraft()));
 
                     foreach (var dialog in result.Dialogs)
@@ -532,7 +532,7 @@ namespace Unigram.Collections
             //base.IsWorking = true;
 
             var response = await _protoService.GetDialogsAsync(0, 0, new TLInputPeerEmpty(), limit);
-            var result = response.Value;
+            var result = response.Result;
             result.Dialogs = new TLVector<TLDialog>(result.Dialogs.OrderByDescending(x => x.GetDateIndexWithDraft()));
 
             Execute.BeginOnUIThread(() =>
@@ -696,7 +696,7 @@ namespace Unigram.Collections
             var response = await _protoService.GetDialogsAsync(0, 0, new TLInputPeerEmpty(), count);
             if (response.IsSucceeded)
             {
-                var result = response.Value;
+                var result = response.Result;
                 var vector = new TLVector<TLDialog>(result.Dialogs.Count);
                 foreach (var dialog in result.Dialogs.OrderBy(x => x.GetDateIndex()))
                 {

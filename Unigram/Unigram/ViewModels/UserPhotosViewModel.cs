@@ -35,19 +35,19 @@ namespace Unigram.ViewModels
                 var result = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), 0, 0, 0);
                 if (result.IsSucceeded)
                 {
-                    if (result.Value is TLPhotosPhotosSlice)
+                    if (result.Result is TLPhotosPhotosSlice)
                     {
-                        var slice = result.Value as TLPhotosPhotosSlice;
+                        var slice = result.Result as TLPhotosPhotosSlice;
                         TotalItems = slice.Count;
                     }
                     else
                     {
-                        TotalItems = result.Value.Photos.Count;
+                        TotalItems = result.Result.Photos.Count;
                     }
 
                     Items.Clear();
 
-                    foreach (var photo in result.Value.Photos)
+                    foreach (var photo in result.Result.Photos)
                     {
                         Items.Add(photo);
                     }
@@ -66,7 +66,7 @@ namespace Unigram.ViewModels
                     var result = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), Items.Count, 0, 0);
                     if (result.IsSucceeded)
                     {
-                        foreach (var photo in result.Value.Photos)
+                        foreach (var photo in result.Result.Photos)
                         {
                             Items.Add(photo);
                         }

@@ -137,7 +137,7 @@ namespace Unigram.ViewModels
 
                 Execute.BeginOnUIThread(() =>
                 {
-                    foreach (var item in response.Value.Dialogs)
+                    foreach (var item in response.Result.Dialogs)
                     {
                         if (item.IsPinned)
                         {
@@ -798,13 +798,13 @@ namespace Unigram.ViewModels
             var result = await ProtoService.SearchAsync(query, 100);
             if (result.IsSucceeded)
             {
-                if (result.Value.Results.Count > 0)
+                if (result.Result.Results.Count > 0)
                 {
                     var parent = new KeyedList<string, TLObject>("Global search results");
 
-                    foreach (var peer in result.Value.Results)
+                    foreach (var peer in result.Result.Results)
                     {
-                        var item = result.Value.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Value.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                        var item = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
                         if (item != null)
                         {
                             parent.Add(item);
@@ -825,16 +825,16 @@ namespace Unigram.ViewModels
             {
                 KeyedList<string, TLObject> parent;
 
-                var slice = result.Value as TLMessagesMessagesSlice;
+                var slice = result.Result as TLMessagesMessagesSlice;
                 if (slice != null)
                 {
                     parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", slice.Count));
                 }
                 else
                 {
-                    if (result.Value.Messages.Count > 0)
+                    if (result.Result.Messages.Count > 0)
                     {
-                        parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", result.Value.Messages.Count));
+                        parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", result.Result.Messages.Count));
                     }
                     else
                     {
@@ -842,10 +842,10 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                foreach (var message in result.Value.Messages.OfType<TLMessageCommonBase>())
+                foreach (var message in result.Result.Messages.OfType<TLMessageCommonBase>())
                 {
                     var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
-                    var with = result.Value.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Value.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                    var with = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
                     var item = new TLDialog
                     {
                         TopMessage = message.Id,

@@ -32,7 +32,7 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.GetFeaturedStickersAsync(true, 0);
             if (response.IsSucceeded)
             {
-                var result = response.Value as TLMessagesFeaturedStickers;
+                var result = response.Result as TLMessagesFeaturedStickers;
                 if (result != null)
                 {
                     foreach (var item in result.Sets.OfType<TLStickerSetCovered>())

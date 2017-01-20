@@ -52,7 +52,7 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.GetAuthorizationsAsync();
             if (response.IsSucceeded)
             {
-                foreach (var item in response.Value.Authorizations)
+                foreach (var item in response.Result.Authorizations)
                 {
                     if (_cachedItems.ContainsKey(item.Hash))
                     {
