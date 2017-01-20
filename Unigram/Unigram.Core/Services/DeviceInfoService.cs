@@ -43,7 +43,7 @@ namespace Unigram.Core.Services
             get
             {
                 var info = new EasClientDeviceInformation();
-                return string.IsNullOrWhiteSpace(info.SystemManufacturer) ? info.FriendlyName : info.SystemManufacturer;
+                return string.IsNullOrWhiteSpace(info.SystemProductName) ? info.FriendlyName : info.SystemProductName;
             }
         }
 

@@ -190,7 +190,7 @@ namespace Unigram.ViewModels.Login
                 var state = new LoginPhoneCodePage.NavigationParameters
                 {
                     PhoneNumber = PhoneCode.TrimStart('+') + PhoneNumber,
-                    PhoneCodeHash = result.Value.PhoneCodeHash,
+                    PhoneCodeHash = result.Result.PhoneCodeHash,
                     //PhoneRegistered = result.Value.PhoneRegistered.Value,
                     //PhoneCallTimeout = result.Value.SendCallTimeout.Value
                 };

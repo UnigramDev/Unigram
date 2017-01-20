@@ -5,12 +5,12 @@ namespace Telegram.Api.Services
 {
     public class MTProtoResponse
     {
-        internal object _value;
+        internal object _result;
         internal TLRPCError _error;
 
         public MTProtoResponse(object value)
         {
-            _value = value;
+            _result = value;
         }
 
         public MTProtoResponse(TLRPCError error)
@@ -20,7 +20,7 @@ namespace Telegram.Api.Services
 
         public MTProtoResponse(object value, TLRPCError error)
         {
-            _value = value;
+            _result = value;
             _error = error;
         }
     }
@@ -34,7 +34,7 @@ namespace Telegram.Api.Services
                 value = Activator.CreateInstance<T>();
             }
 
-            Value = (T)value;
+            Result = (T)value;
         }
 
         public MTProtoResponse(TLRPCError error)
@@ -49,11 +49,11 @@ namespace Telegram.Api.Services
                 value = Activator.CreateInstance<T>();
             }
 
-            Value = (T)value;
+            Result = (T)value;
             Error = error;
         }
 
-        public T Value { get; protected set; }
+        public T Result { get; protected set; }
 
         public TLRPCError Error { get; set; }
 
@@ -61,18 +61,25 @@ namespace Telegram.Api.Services
         {
             get
             {
-                return Error == null && !Value.Equals(default(T));
+                // mtproto doesn't supports void return type, so boolean is used instead.
+                // sometimes it can be false, but the request is succeeded anyway.
+                if (Result is bool)
+                {
+                    return Error == null;
+                }
+
+                return Error == null && !Result.Equals(default(T));
             }
         }
 
         public static implicit operator MTProtoResponse<T>(MTProtoResponse str)
         {
-            return new MTProtoResponse<T>(str._value, str._error);
+            return new MTProtoResponse<T>(str._result, str._error);
         }
 
         public static implicit operator MTProtoResponse(MTProtoResponse<T> str)
         {
-            return new MTProtoResponse(str.Value, str.Error);
+            return new MTProtoResponse(str.Result, str.Error);
         }
     }
 }

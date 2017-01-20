@@ -253,8 +253,8 @@ namespace Unigram.Behaviors
                 return;
             }
 
-            var txt = "@" + AssociatedControl.Text;
-            var searchTxt = "@" + SearchString;
+            var txt = AssociatedControl.Text.StartsWith("@") ? AssociatedControl.Text : "@" + AssociatedControl.Text;
+            var searchTxt = SearchString.StartsWith("@") ? SearchString : "@" + SearchString;
             var processedCharacters = 0;
             AssociatedControl.Inlines.Clear();
 

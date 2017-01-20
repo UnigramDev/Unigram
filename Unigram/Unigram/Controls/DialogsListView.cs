@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Unigram.ViewModels;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -40,22 +41,36 @@ namespace Unigram.Controls
 
         private async void OnDrop(object sender, DragEventArgs e)
         {
-            var position = e.GetPosition(this);
+            for (int i = 0; i < 5; i++)
+            {
+                var container = ContainerFromIndex(i) as ListViewItem;
+                if (container != null)
+                {
+                    container.RenderTransform = null;
+                    Canvas.SetZIndex(container, 0);
 
-            var indexFloat = (position.Y - 48) / _currentContainer.ActualHeight;
-            var indexDelta = indexFloat - Math.Truncate(indexFloat);
+                    var visual = ElementCompositionPreview.GetElementVisual((ListViewItemPresenter)VisualTreeHelper.GetChild(container, 0));
+                    visual.StopAnimation("Offset");
+                    visual.Offset = new System.Numerics.Vector3();
+                }
+            }
 
-            //Debug.WriteLine($"Drop, Index: {(int)Math.Truncate(indexFloat)}, Delta: {indexDelta}");
+            //var position = e.GetPosition(this);
 
-            var index = (int)Math.Max(0, Math.Min(_rows.Count - 1, Math.Truncate(indexFloat)));
-            if (index != _originalIndex)
+            //var indexFloat = (position.Y - 48) / _currentContainer.ActualHeight;
+            //var indexDelta = indexFloat - Math.Truncate(indexFloat);
+
+            ////Debug.WriteLine($"Drop, Index: {(int)Math.Truncate(indexFloat)}, Delta: {indexDelta}");
+
+            //var index = (int)Math.Max(0, Math.Min(_rows.Count - 1, Math.Truncate(indexFloat)));
+            if (_currentIndex != _originalIndex)
             {
                 var source = ItemsSource as IList;
                 if (source != null)
                 {
                     var item = source[_originalIndex];
                     source.RemoveAt(_originalIndex);
-                    source.Insert(index, item);
+                    source.Insert(_currentIndex, item);
 
                     await ViewModel.Dialogs.UpdatePinnedItemsAsync();
                 }
@@ -69,9 +84,12 @@ namespace Unigram.Controls
                 var container = ContainerFromIndex(i) as ListViewItem;
                 if (container != null)
                 {
-                    //container.RenderTransform = null;
-                    //ElementCompositionPreview.GetElementVisual(item).Opacity = 1;
-                    ElementCompositionPreview.GetElementVisual((ListViewItemPresenter)VisualTreeHelper.GetChild(container, 0)).Offset = new System.Numerics.Vector3();
+                    container.RenderTransform = null;
+                    Canvas.SetZIndex(container, 0);
+
+                    var visual = ElementCompositionPreview.GetElementVisual((ListViewItemPresenter)VisualTreeHelper.GetChild(container, 0));
+                    visual.StopAnimation("Offset");
+                    visual.Offset = new System.Numerics.Vector3();
                 }
             }
         }
@@ -112,6 +130,9 @@ namespace Unigram.Controls
                 }
             }
 
+            var translate = _currentContainer.RenderTransform as TranslateTransform;
+            translate.Y += position.Y - _drag;
+
             _drag = position.Y;
         }
 
@@ -121,7 +142,7 @@ namespace Unigram.Controls
 
             e.DragUIOverride.IsCaptionVisible = false;
             e.DragUIOverride.IsGlyphVisible = false;
-            //e.DragUIOverride.IsContentVisible = false;
+            e.DragUIOverride.IsContentVisible = false;
             e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move;
         }
 
@@ -145,6 +166,9 @@ namespace Unigram.Controls
                     _currentIndex = IndexFromContainer(container);
                     _originalIndex = _currentIndex;
                     _drag = 0;
+
+                    _currentContainer.RenderTransform = new TranslateTransform();
+                    Canvas.SetZIndex(_currentContainer, 100000);
 
                     _rows = new ObservableCollection<TLDialog>(ViewModel.Dialogs.Items.Where(x => x.IsPinned));
                 }

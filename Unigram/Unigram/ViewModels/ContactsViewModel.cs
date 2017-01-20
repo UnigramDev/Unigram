@@ -52,9 +52,9 @@ namespace Unigram.ViewModels
             var hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
 
             var response = await ProtoService.GetContactsAsync(hex);
-            if (response.IsSucceeded && response.Value is TLContactsContacts)
+            if (response.IsSucceeded && response.Result is TLContactsContacts)
             {
-                var result = response.Value as TLContactsContacts;
+                var result = response.Result as TLContactsContacts;
                 if (result != null)
                 {
                     foreach (var item in result.Users.OfType<TLUser>())
@@ -101,7 +101,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
                 if (response.IsSucceeded)
                 {
-                    var user = response.Value.FirstOrDefault() as TLUser;
+                    var user = response.Result.FirstOrDefault() as TLUser;
                     if (user != null)
                     {
                         //var status = LastSeenHelper.GetLastSeen(user);
@@ -131,7 +131,7 @@ namespace Unigram.ViewModels
             var result = await ProtoService.SearchAsync(query, 100);
             if (result.IsSucceeded)
             {
-                Search.Add(new KeyedList<string, TLObject>("Global search", result.Value.Users));
+                Search.Add(new KeyedList<string, TLObject>("Global search", result.Result.Users));
             }
         }
 

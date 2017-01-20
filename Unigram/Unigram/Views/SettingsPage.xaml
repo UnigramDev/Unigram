@@ -286,16 +286,14 @@
                                                       Command="{x:Bind NotifcationPageCommand}"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Privacy and security" 
-                                                      IsEnabled="False"
-                                                      Command="{x:Bind PrivacyPageCommand}"
+                                                      Click="Privacy_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Chat settings" 
                                                       IsEnabled="False"
                                                       Command="{x:Bind ChatSettingsPageCommand}"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Stickers" 
-                                                      IsEnabled="False"
-                                                      Command="{x:Bind StickersPageCommand}"
+                                                      Click="Stickers_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Chat wallpaper" 
                                                       IsEnabled="False"
@@ -318,7 +316,7 @@
                 </Grid>
             </Grid>
 
-            <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.Row="1"/>
+            <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" HorizontalAlignment="Right"  IsHitTestVisible="False" Grid.Row="1"/>
         </Grid>
     </controls:MasterDetailView>
 </Page>

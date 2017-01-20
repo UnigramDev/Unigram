@@ -20,9 +20,9 @@ namespace Unigram.Views.Settings
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SettingsPrivacyPage : Page
+    public sealed partial class SettingsStickersPage : Page
     {
-        public SettingsPrivacyPage()
+        public SettingsStickersPage()
         {
             InitializeComponent();
         }
@@ -35,9 +35,9 @@ namespace Unigram.Views.Settings
             }
         }
 
-        private void Sessions_Click(object sender, RoutedEventArgs e)
+        private void FeaturedStickers_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsSessionsPage));
+            Frame.Navigate(typeof(SettingsFeaturedStickersPage));
         }
     }
 }

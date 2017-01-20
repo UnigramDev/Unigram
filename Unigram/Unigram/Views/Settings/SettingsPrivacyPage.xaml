@@ -9,7 +9,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="48" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
@@ -18,6 +18,11 @@
                        Style="{StaticResource BaseTextBlockStyle}"
                        VerticalAlignment="Center"
                        Margin="12,0"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
+
+        <StackPanel Grid.Row="1">
+            <Button Content="Active sessions" Click="Sessions_Click"/>
+        </StackPanel>
     </Grid>
 </Page>

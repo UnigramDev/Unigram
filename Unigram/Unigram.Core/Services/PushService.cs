@@ -40,7 +40,7 @@ namespace Unigram.Core.Services
                     if (channel.Uri != SettingsHelper.ChannelUri)
                     {
                         var result = await _protoService.RegisterDeviceAsync(8, channel.Uri);
-                        if (result.IsSucceeded && result.Value)
+                        if (result.IsSucceeded && result.Result)
                         {
                             SettingsHelper.ChannelUri = channel.Uri;
                         }

@@ -239,6 +239,7 @@ namespace Unigram
 
                 // Accent Color
                 var accentColour = Application.Current.Resources["SystemControlHighlightAccentBrush"] as SolidColorBrush;
+                var titleColor = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
 
                 // Foreground
                 titlebar.ButtonForegroundColor = Colors.White;
@@ -249,12 +250,12 @@ namespace Unigram
                 titlebar.InactiveForegroundColor = Colors.LightGray;
 
                 // Background
-                titlebar.BackgroundColor = accentColour.Color;
-                titlebar.ButtonBackgroundColor = accentColour.Color;
-                titlebar.ButtonInactiveBackgroundColor = accentColour.Color;
-                titlebar.ButtonHoverBackgroundColor = Helpers.ColorHelper.ChangeShade(accentColour.Color, -0.06f);
-                titlebar.ButtonPressedBackgroundColor = Helpers.ColorHelper.ChangeShade(accentColour.Color, -0.09f);
-                titlebar.InactiveBackgroundColor = accentColour.Color;
+                titlebar.BackgroundColor = titleColor.Color;
+                titlebar.ButtonBackgroundColor = titleColor.Color;
+                titlebar.ButtonInactiveBackgroundColor = titleColor.Color;
+                titlebar.ButtonHoverBackgroundColor = Helpers.ColorHelper.ChangeShade(titleColor.Color, -0.06f);
+                titlebar.ButtonPressedBackgroundColor = Helpers.ColorHelper.ChangeShade(titleColor.Color, -0.09f);
+                titlebar.InactiveBackgroundColor = titleColor.Color;
 
                 // Branding colours
                 //titlebar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);

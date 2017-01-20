@@ -63,7 +63,7 @@ namespace Unigram.ViewModels
             var result = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
             if (result.IsSucceeded)
             {
-                var userFull = result.Value;
+                var userFull = result.Result;
                 user.Link = userFull.Link;
                 user.ProfilePhoto = userFull.ProfilePhoto;
                 user.NotifySettings = userFull.NotifySettings;
