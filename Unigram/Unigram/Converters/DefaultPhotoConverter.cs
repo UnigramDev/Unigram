@@ -415,7 +415,6 @@ namespace Unigram.Converters
                 WriteableBitmap writeableBitmap;
                 if (_cachedWebPImages.TryGetValue(cacheKey, out weakReference) && weakReference.TryGetTarget(out writeableBitmap))
                 {
-                    Debug.WriteLine("Cached sticker");
                     return writeableBitmap;
                 }
 
@@ -423,8 +422,6 @@ namespace Unigram.Converters
                 {
                     var result = WebPImage.DecodeFromByteArray(buffer);
                     _cachedWebPImages[cacheKey] = new WeakReference<WriteableBitmap>(result);
-
-                    GC.Collect();
 
                     return result;
                 }
@@ -550,8 +547,6 @@ namespace Unigram.Converters
                 {
                     owner = sticker;
                 }
-
-                Debug.WriteLine("Download");
 
                 var renderer = _videoFactory.CreateRenderer(320, 320);
                 var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
@@ -891,8 +886,6 @@ namespace Unigram.Converters
 
             if (photoSize != null)
             {
-                Debug.WriteLine("Download");
-
                 var manager = UnigramContainer.Instance.ResolveType<IDownloadFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
@@ -929,8 +922,6 @@ namespace Unigram.Converters
                 {
                     owner = sticker;
                 }
-
-                Debug.WriteLine("Download");
 
                 var bitmap = new StickerBitmapSource();
                 var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();

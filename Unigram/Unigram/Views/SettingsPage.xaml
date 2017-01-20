@@ -293,8 +293,7 @@
                                                       Command="{x:Bind ChatSettingsPageCommand}"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Stickers" 
-                                                      IsEnabled="False"
-                                                      Command="{x:Bind StickersPageCommand}"
+                                                      Click="Stickers_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Chat wallpaper" 
                                                       IsEnabled="False"

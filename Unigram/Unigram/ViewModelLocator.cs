@@ -80,6 +80,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsUsernameViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsEditNameViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsSessionsViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsFeaturedStickersViewModel>().SingleInstance();
 
             container.Build();
 

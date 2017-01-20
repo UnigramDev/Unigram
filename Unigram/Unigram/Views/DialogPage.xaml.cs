@@ -460,6 +460,11 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.SendStickerCommand.Execute(e.ClickedItem);
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading

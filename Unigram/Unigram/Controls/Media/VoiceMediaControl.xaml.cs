@@ -17,6 +17,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Unigram.Common;
 
 namespace Unigram.Controls.Media
 {
@@ -27,6 +28,10 @@ namespace Unigram.Controls.Media
         public VoiceMediaControl()
         {
             InitializeComponent();
+
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromMilliseconds(200);
+            _timer.Tick += OnTick;
 
             DataContextChanged += (s, args) =>
             {
@@ -40,16 +45,47 @@ namespace Unigram.Controls.Media
                         var document = mediaDocument.Document as TLDocument;
                         if (document != null)
                         {
+                            UpdateGlyph();
+
                             var audioAttribute = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
-                            if (audioAttribute != null && audioAttribute.HasWaveform)
+                            if (audioAttribute != null)
                             {
-                                LengthLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
-                                UpdateSlide(audioAttribute.Waveform);
+                                DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
+
+                                if (audioAttribute.HasWaveform)
+                                {
+                                    UpdateSlide(audioAttribute.Waveform);
+                                }
+                                else
+                                {
+                                    UpdateSlide(new byte[] { 0, 0, 0 });
+                                }
                             }
                         }
                     }
                 }
             };
+        }
+
+        private void UpdateGlyph()
+        {
+            var documentMedia = ViewModel?.Media as TLMessageMediaDocument;
+            if (documentMedia != null)
+            {
+                var document = documentMedia.Document as TLDocument;
+                if (document != null)
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(document.GetFileName()) + ".ogg";
+                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                    {
+                        StatusGlyph.Glyph = _state == PlaybackState.Playing ? "\uE103" : "\uE102";
+                    }
+                    else
+                    {
+                        StatusGlyph.Glyph = "\uE118";
+                    }
+                }
+            }
         }
 
         #region Drawing
@@ -91,7 +127,7 @@ namespace Unigram.Controls.Media
             while (index < maxLines)
             {
                 var lineIndex = (int)(index * maxWidth);
-                var lineHeight = result[lineIndex] * (double)(imageHeight - 3.0) + 3.0;
+                var lineHeight = result[lineIndex] * (double)(imageHeight - 4.0) + 4.0;
 
                 var x1 = (int)(index * (lineWidth + space));
                 var y1 = imageHeight - (int)lineHeight;
@@ -153,55 +189,115 @@ namespace Unigram.Controls.Media
 
         #region Play
 
-        private AudioGraph graph;
-        private AudioDeviceOutputNode deviceOutputNode;
-        private AudioFileInputNode fileInputNode;
+        private DispatcherTimer _timer;
+        private PlaybackState _state = PlaybackState.Paused;
+        private AudioGraph _graph;
+        private AudioDeviceOutputNode _deviceOutputNode;
+        private AudioFileInputNode _fileInputNode;
 
-        private async void Grid_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private async void Toggle_Click(object sender, RoutedEventArgs e)
         {
-            var documentMedia = ViewModel?.Media as TLMessageMediaDocument;
-            if (documentMedia != null)
+            if (_state == PlaybackState.Paused)
             {
-                var document = documentMedia.Document as TLDocument;
-                if (document != null)
+                var documentMedia = ViewModel?.Media as TLMessageMediaDocument;
+                if (documentMedia != null)
                 {
-                    var fileName = Path.GetFileNameWithoutExtension(document.GetFileName()) + ".ogg";
-                    if (File.Exists(FileUtils.GetTempFileName(fileName)) == false)
+                    var document = documentMedia.Document as TLDocument;
+                    if (document != null)
                     {
-                        var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
-                        var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
+                        var fileName = Path.GetFileNameWithoutExtension(document.GetFileName()) + ".ogg";
+                        if (File.Exists(FileUtils.GetTempFileName(fileName)) == false)
+                        {
+                            _state = PlaybackState.Loading;
+                            var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
+                            var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
+                        }
+
+                        var settings = new AudioGraphSettings(AudioRenderCategory.Communications);
+                        settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
+
+                        var result = await AudioGraph.CreateAsync(settings);
+                        if (result.Status != AudioGraphCreationStatus.Success)
+                            return;
+
+                        _graph = result.Graph;
+                        Debug.WriteLine("Graph successfully created!");
+
+                        var file = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
+                        var fileProps = await file.Properties.GetMusicPropertiesAsync();
+
+                        var fileInputNodeResult = await _graph.CreateFileInputNodeAsync(file);
+                        if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
+                            return;
+
+                        var deviceOutputNodeResult = await _graph.CreateDeviceOutputNodeAsync();
+                        if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
+                            return;
+
+                        _deviceOutputNode = deviceOutputNodeResult.DeviceOutputNode;
+                        _fileInputNode = fileInputNodeResult.FileInputNode;
+                        _fileInputNode.AddOutgoingConnection(_deviceOutputNode);
+                        _fileInputNode.FileCompleted += OnFileCompleted;
+
+                        _graph.Start();
+                        _timer.Start();
+                        _state = PlaybackState.Playing;
+                        UpdateGlyph();
+                        Slide.Maximum = _fileInputNode.Duration.TotalMilliseconds;
+                        Slide.Value = 0;
                     }
-
-                    var settings = new AudioGraphSettings(AudioRenderCategory.Communications);
-                    settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
-
-                    var result = await AudioGraph.CreateAsync(settings);
-                    if (result.Status != AudioGraphCreationStatus.Success)
-                        return;
-
-                    graph = result.Graph;
-                    Debug.WriteLine("Graph successfully created!");
-
-                    var file = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
-                    var fileProps = await file.Properties.GetMusicPropertiesAsync();
-
-                    var fileInputNodeResult = await graph.CreateFileInputNodeAsync(file);
-                    if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
-                        return;
-
-                    var deviceOutputNodeResult = await graph.CreateDeviceOutputNodeAsync();
-                    if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
-                        return;
-
-                    deviceOutputNode = deviceOutputNodeResult.DeviceOutputNode;
-                    fileInputNode = fileInputNodeResult.FileInputNode;
-                    fileInputNode.AddOutgoingConnection(deviceOutputNode);
-
-                    graph.Start();
                 }
+            }
+            else if (_state == PlaybackState.Playing)
+            {
+                _graph?.Stop();
+                _state = PlaybackState.Paused;
+                UpdateGlyph();
             }
         }
 
+        private void OnFileCompleted(AudioFileInputNode sender, object args)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                _graph.Stop();
+                _timer.Stop();
+                _fileInputNode.Seek(TimeSpan.Zero);
+                _state = PlaybackState.Paused;
+                UpdateGlyph();
+                DurationLabel.Text = _fileInputNode.Duration.ToString("mm\\:ss");
+                Slide.Value = 0;
+            });
+        }
+
+        private void OnTick(object sender, object e)
+        {
+            DurationLabel.Text = _fileInputNode.Position.ToString("mm\\:ss") + " / " + _fileInputNode.Duration.ToString("mm\\:ss");
+            Slide.Value = _fileInputNode.Position.TotalMilliseconds;
+            //_position += 200;
+            ////Indicator.Value = _fileNode.Position.TotalMilliseconds;
+
+            //if (_position >= Indicator.Maximum)
+            //{
+            //    _position = 200;
+            //    _timer.Stop();
+            //    _graph.Stop();
+            //    _fileNode.Seek(TimeSpan.Zero);
+
+            //    VisualStateManager.GoToState(this, "Paused", false);
+            //    State = PlaybackState.Paused;
+            //    Indicator.Value = 0;
+            //    CurrentPlaying = null;
+            //}
+        }
+
         #endregion
+
+        private enum PlaybackState
+        {
+            Loading,
+            Playing,
+            Paused
+        }
     }
 }

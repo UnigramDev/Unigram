@@ -445,7 +445,7 @@ namespace Unigram.ViewModels
 
             Aggregator.Subscribe(this);
 
-            //await StickersRecent();
+            await StickersRecent();
         }
 
         private async Task StickersRecent()
@@ -771,6 +771,37 @@ namespace Unigram.ViewModels
                         message.RaisePropertyChanged(() => message.Media);
                     }
                 }
+            });
+        }
+
+        public RelayCommand<TLDocument> SendStickerCommand => new RelayCommand<TLDocument>(SendStickerExecute);
+        public void SendStickerExecute(TLDocument document)
+        {
+            var media = new TLMessageMediaDocument { Document = document };
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message, false);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var input = new TLInputMediaDocument
+                {
+                    Id = new TLInputDocument
+                    {
+                        Id = document.Id,
+                        AccessHash = document.AccessHash
+                    }
+                };
+
+                await ProtoService.SendMediaAsync(Peer, input, message);
             });
         }
 

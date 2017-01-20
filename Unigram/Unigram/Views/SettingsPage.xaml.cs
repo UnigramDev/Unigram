@@ -49,7 +49,7 @@ namespace Unigram.Views
         RelayCommand NotifcationPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage)));
         RelayCommand PrivacyPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyPage)));
         RelayCommand ChatSettingsPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsChatPage)));
-        RelayCommand StickersPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingStickersPage)));
+        RelayCommand StickersPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage)));
         RelayCommand WallpaperPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsWallpaperPage)));
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -86,6 +86,11 @@ namespace Unigram.Views
         private void Privacy_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyPage));
+        }
+
+        private void Stickers_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage));
         }
     }
 }
