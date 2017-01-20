@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -17,37 +17,38 @@ using Telegram.Logs;
 using Template10.Utils;
 using Unigram.Common;
 using Unigram.Controls;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class DialogsViewModel : UnigramViewModelBase, 
-        IHandle<TopMessageUpdatedEventArgs>, 
-        IHandle<DialogAddedEventArgs>, 
-        IHandle<DialogRemovedEventArgs>, 
+    public class DialogsViewModel : UnigramViewModelBase,
+        IHandle<TopMessageUpdatedEventArgs>,
+        IHandle<DialogAddedEventArgs>,
+        IHandle<DialogRemovedEventArgs>,
         //IHandle<DownloadableItem>, 
         //IHandle<UploadableItem>, 
         //IHandle<string>, 
         //IHandle<TLEncryptedChatBase>, 
-        IHandle<TLUpdateUserName>, 
-        IHandle<UpdateCompletedEventArgs>, 
-        IHandle<ChannelUpdateCompletedEventArgs>, 
-        IHandle<TLUpdateNotifySettings>, 
+        IHandle<TLUpdateUserName>,
+        IHandle<UpdateCompletedEventArgs>,
+        IHandle<ChannelUpdateCompletedEventArgs>,
+        IHandle<TLUpdateNotifySettings>,
         //IHandle<TLUpdateNewAuthorization>, 
-        IHandle<TLUpdateServiceNotification>, 
+        IHandle<TLUpdateServiceNotification>,
         //IHandle<TLUpdateUserTyping>, 
         //IHandle<TLUpdateChatUserTyping>, 
         //IHandle<ClearCacheEventArgs>, 
         //IHandle<ClearLocalDatabaseEventArgs>, 
-        IHandle<TLUpdateEditMessage>, 
-        IHandle<TLUpdateEditChannelMessage>, 
-        IHandle<TLUpdateDraftMessage>, 
+        IHandle<TLUpdateEditMessage>,
+        IHandle<TLUpdateEditChannelMessage>,
+        IHandle<TLUpdateDraftMessage>,
         IHandle<TLUpdateDialogPinned>,
         IHandle<TLUpdatePinnedDialogs>,
-        IHandle<TLUpdateChannel>, 
+        IHandle<TLUpdateChannel>,
         IHandle
     {
-        public DialogsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public DialogsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             Items = new ObservableCollection<TLDialog>();
@@ -932,6 +933,136 @@ namespace Unigram.ViewModels
                             return;
                         }
                     }
+                }
+            }
+        }
+
+        public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
+        private async void DialogDeleteExecute(TLDialog dialog)
+        {
+            string message = "Are you sure you want to delete the group?";
+            int which = 0;
+            TLInputPeerBase peer = null;
+
+            var user = dialog.With as TLUser;
+            if (user != null)
+            {
+                peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value };
+                which = 1;
+                message = "Are you sure you want to delete the conversation?";
+            }
+
+            var channel = dialog.With as TLChannel;
+            if (channel != null)
+            {
+                peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
+                if (channel.IsBroadcast) message = "Are you sure you want to delete the channel?";
+                which = (channel.IsCreator) ? 2 : 3;
+            }
+
+            var chat = dialog.With as TLChat;
+            if (chat != null)
+            {
+                peer = new TLInputPeerChat { ChatId = chat.Id };
+                which = 4;
+            }
+
+            var question = new UnigramMessageDialog();
+            question.Title = "Delete";
+            question.Message = message;
+            question.PrimaryButtonText = "Yes";
+            question.SecondaryButtonText = "No";
+
+            var failNotification = new UnigramMessageDialog();
+            failNotification.Title = "Error";
+            failNotification.Message = "Chat could not be deleted!";
+            failNotification.PrimaryButtonText = "Okay";
+            failNotification.SecondaryButtonText = "";
+            failNotification.IsSecondaryButtonEnabled = false;
+
+            var result = await question.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                switch (which)
+                {
+                    case 1:
+                        var delResultUser = await ProtoService.DeleteHistoryAsync(false, peer, 0);
+                        if (delResultUser.IsSucceeded) { CacheService.DeleteDialog(dialog); }
+                        else { await failNotification.ShowAsync(); return; }
+                        break;
+                    case 2:
+                        var delResultChannel = await ProtoService.DeleteChannelAsync(channel);
+                        if (delResultChannel.IsSucceeded) { CacheService.DeleteDialog(dialog); }
+                        else { await failNotification.ShowAsync(); return; }
+                        break;
+                    case 3:
+                        var leaveResultChat = await ProtoService.LeaveChannelAsync(channel);
+                        if (leaveResultChat.IsSucceeded) { CacheService.DeleteDialog(dialog); }
+                        else { await failNotification.ShowAsync(); return; }
+                        break;
+                    case 4:
+                        // TODO: Make normal chats deletable
+                        break;
+                    default:
+                        Debug.WriteLine("Dialog is nothing");
+                        break;
+                }
+
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    if (Items[i].Index == dialog.Index)
+                    {
+                        dialog = (Items[i] as TLDialog);
+                        Items.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+        }
+
+        public RelayCommand<TLDialog> DialogClearCommand => new RelayCommand<TLDialog>(DialogClearExecute);
+        private async void DialogClearExecute(TLDialog dialog)
+        {
+            var question = new UnigramMessageDialog();
+            question.Title = "Delete";
+            question.Message = "Do you really want to clear the chat?";
+            question.PrimaryButtonText = "Yes";
+            question.SecondaryButtonText = "No";
+
+            var clear = await question.ShowAsync();
+
+            if (clear == ContentDialogResult.Primary)
+            {
+                TLInputPeerBase peer = null;
+
+                var user = dialog.With as TLUser;
+                if (user != null)
+                {
+                    peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value };
+                }
+
+                var chat = dialog.With as TLChat;
+                if (chat != null)
+                {
+                    peer = new TLInputPeerChat { ChatId = chat.Id };
+                }
+
+                var channel = dialog.With as TLChannel;
+                if (channel != null)
+                {
+                    peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
+                }
+
+                var result = await ProtoService.DeleteHistoryAsync(true, peer, 0);
+                if (!result.IsSucceeded)
+                {
+                    var failNotification = new UnigramMessageDialog();
+                    failNotification.Title = "Error";
+                    failNotification.Message = "Clearing the chat failed!";
+                    failNotification.PrimaryButtonText = "Okay";
+                    failNotification.SecondaryButtonText = "";
+                    failNotification.IsSecondaryButtonEnabled = false;
+                    await failNotification.ShowAsync();
                 }
             }
         }
