@@ -43,18 +43,18 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}">
-                                <Run Text="{x:Bind AppName}"/>
-                                <Run Text="{x:Bind AppVersion}"/>
+                                <Run Text="{x:Bind AppName, Mode=OneWay}"/>
+                                <Run Text="{x:Bind AppVersion, Mode=OneWay}"/>
                             </TextBlock>
                             <TextBlock TextTrimming="CharacterEllipsis" Grid.ColumnSpan="2" Grid.Row="1">
-                                <Run Text="{x:Bind DeviceModel}"/><Run Text=","/>
-                                <Run Text="{x:Bind Platform}"/>
-                                <Run Text="{x:Bind SystemVersion}"/>
+                                <Run Text="{x:Bind DeviceModel, Mode=OneWay}"/><Run Text=","/>
+                                <Run Text="{x:Bind Platform, Mode=OneWay}"/>
+                                <Run Text="{x:Bind SystemVersion, Mode=OneWay}"/>
                             </TextBlock>
                             <TextBlock TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Grid.ColumnSpan="2" Grid.Row="2">
-                                <Run Text="{x:Bind Ip}"/>
+                                <Run Text="{x:Bind Ip, Mode=OneWay}"/>
                                 <Run Text="—"/>
-                                <Run Text="{x:Bind Country}"/>
+                                <Run Text="{x:Bind Country, Mode=OneWay}"/>
                             </TextBlock>
 
                             <TextBlock Text="online" Margin="12,0,0,0" VerticalAlignment="Bottom" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
@@ -77,21 +77,21 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}">
-                            <Run Text="{x:Bind AppName}"/>
-                            <Run Text="{x:Bind AppVersion}"/>
+                            <Run Text="{x:Bind AppName, Mode=OneWay}"/>
+                            <Run Text="{x:Bind AppVersion, Mode=OneWay}"/>
                         </TextBlock>
                         <TextBlock TextTrimming="CharacterEllipsis" Grid.ColumnSpan="2" Grid.Row="1">
-                            <Run Text="{x:Bind DeviceModel}"/><Run Text=","/>
-                            <Run Text="{x:Bind Platform}"/>
-                            <Run Text="{x:Bind SystemVersion}"/>
+                            <Run Text="{x:Bind DeviceModel, Mode=OneWay}"/><Run Text=","/>
+                            <Run Text="{x:Bind Platform, Mode=OneWay}"/>
+                            <Run Text="{x:Bind SystemVersion, Mode=OneWay}"/>
                         </TextBlock>
                         <TextBlock TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Grid.ColumnSpan="2" Grid.Row="2">
-                            <Run Text="{x:Bind Ip}"/>
+                            <Run Text="{x:Bind Ip, Mode=OneWay}"/>
                             <Run Text="—"/>
-                            <Run Text="{x:Bind Country}"/>
+                            <Run Text="{x:Bind Country, Mode=OneWay}"/>
                         </TextBlock>
 
-                        <TextBlock Text="{x:Bind DateActive, Converter={StaticResource DialogDateTimeConverter}}" Margin="12,0,0,0" VerticalAlignment="Bottom" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
+                        <TextBlock Text="{x:Bind DateActive, Mode=OneWay, Converter={StaticResource DialogDateTimeConverter}}" Margin="12,0,0,0" VerticalAlignment="Bottom" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

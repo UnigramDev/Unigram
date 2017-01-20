@@ -18,9 +18,12 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsSessionsViewModel : UnigramViewModelBase, IHandle<TLUpdateServiceNotification>, IHandle
     {
+        private Dictionary<long, TLAuthorization> _cachedItems;
+
         public SettingsSessionsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
+            _cachedItems = new Dictionary<long, TLAuthorization>();
             Items = new ObservableCollection<TLAuthorization>();
         }
 
@@ -49,17 +52,32 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.GetAuthorizationsAsync();
             if (response.IsSucceeded)
             {
-                Items.Clear();
-
                 foreach (var item in response.Value.Authorizations)
                 {
-                    if (item.IsCurrent)
+                    if (_cachedItems.ContainsKey(item.Hash))
                     {
-                        Current = item;
+                        var cached = _cachedItems[item.Hash];
+                        cached.Update(item);
+                        cached.RaisePropertyChanged(() => cached.AppName);
+                        cached.RaisePropertyChanged(() => cached.AppVersion);
+                        cached.RaisePropertyChanged(() => cached.DeviceModel);
+                        cached.RaisePropertyChanged(() => cached.Platform);
+                        cached.RaisePropertyChanged(() => cached.SystemVersion);
+                        cached.RaisePropertyChanged(() => cached.Ip);
+                        cached.RaisePropertyChanged(() => cached.Country);
+                        cached.RaisePropertyChanged(() => cached.DateActive);
                     }
                     else
                     {
-                        Items.Add(item);
+                        _cachedItems[item.Hash] = item;
+                        if (item.IsCurrent)
+                        {
+                            Current = item;
+                        }
+                        else
+                        {
+                            Items.Add(item);
+                        }
                     }
                 }
             }
