@@ -29,6 +29,7 @@ namespace Unigram.Controls
 
         #region Drag & Drop
 
+        private ListViewItem _currentContainer;
         private int _currentIndex;
         private double _drag;
 
@@ -36,7 +37,7 @@ namespace Unigram.Controls
         {
             var position = e.GetPosition(this);
             var container = ContainerFromIndex(_currentIndex) as ListViewItem;
-            var index = Math.Max(0, Math.Min(ViewModel.Dialogs.Items.Count(x => x.IsPinned) - 1, (int)Math.Round((position.Y - 48 - (container.ActualHeight / 2)) / container.ActualHeight)));
+            var index = (int)Math.Max(0, Math.Min(ViewModel.Dialogs.Items.Count(x => x.IsPinned) - 1, Math.Round((position.Y - 48 - (container.ActualHeight / 2)) / container.ActualHeight)));
 
             if (index != _currentIndex)
             {
@@ -59,7 +60,7 @@ namespace Unigram.Controls
                 var item = ContainerFromIndex(i) as ListViewItem;
                 if (item != null)
                 {
-                    ElementCompositionPreview.GetElementVisual(item).Opacity = 1;
+                    //ElementCompositionPreview.GetElementVisual(item).Opacity = 1;
                     ElementCompositionPreview.GetElementVisual((ListViewItemPresenter)VisualTreeHelper.GetChild(item, 0)).Offset = new System.Numerics.Vector3();
                 }
             }
@@ -67,15 +68,15 @@ namespace Unigram.Controls
 
         private void OnDragOver(object sender, DragEventArgs e)
         {
-            var pointer = e.GetPosition(this);
-            var controls = VisualTreeHelper.FindElementsInHostCoordinates(pointer, this).OfType<ListViewItem>();
-            foreach (var item in controls)
+            var position = e.GetPosition(this);
+            var index = (int)Math.Max(0, Math.Min(ViewModel.Dialogs.Items.Count(x => x.IsPinned) - 1, Math.Round((position.Y - 48 - (_currentContainer.ActualHeight / 2)) / _currentContainer.ActualHeight)));
+            if (index != _currentIndex)
             {
-                var index = IndexFromContainer(item);
-                if (index < ViewModel.Dialogs.Items.Count(x => x.IsPinned) && index != _currentIndex)
+                var item = ContainerFromIndex(index) as ListViewItem;
+                if (item != null)
                 {
                     var visual = ElementCompositionPreview.GetElementVisual((ListViewItemPresenter)VisualTreeHelper.GetChild(item, 0));
-                    var delta = pointer.Y - _drag;
+                    var delta = position.Y - _drag;
                     var going = delta < 0;
                     var drag = 0d;
 
@@ -90,7 +91,7 @@ namespace Unigram.Controls
                 }
             }
 
-            _drag = pointer.Y;
+            _drag = position.Y;
         }
 
         private void OnDragEnter(object sender, DragEventArgs e)
@@ -112,8 +113,9 @@ namespace Unigram.Controls
                 else
                 {
                     var container = ContainerFromItem(item);
-                    ElementCompositionPreview.GetElementVisual(container as ListViewItem).Opacity = 0;
+                    //ElementCompositionPreview.GetElementVisual(container as ListViewItem).Opacity = 0;
 
+                    _currentContainer = container as ListViewItem;
                     _currentIndex = IndexFromContainer(container);
                     _drag = 0;
                 }

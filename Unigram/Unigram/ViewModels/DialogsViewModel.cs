@@ -859,7 +859,7 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogPinCommand => new RelayCommand<TLDialog>(DialogPinExecute);
         private async void DialogPinExecute(TLDialog dialog)
         {
-            if (PinnedDialogsIndex == PinnedDialogsCountMax)
+            if (PinnedDialogsIndex == PinnedDialogsCountMax && !dialog.IsPinned)
             {
                 var question = new UnigramMessageDialog();
                 question.Title = "Warning";
@@ -869,25 +869,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            TLInputPeerBase peer = null;
-
-            var user = dialog.With as TLUser;
-            if (user != null)
-            {
-                peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value };
-            }
-
-            var chat = dialog.With as TLChat;
-            if (chat != null)
-            {
-                peer = new TLInputPeerChat { ChatId = chat.Id };
-            }
-
-            var channel = dialog.With as TLChannel;
-            if (channel != null)
-            {
-                peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
-            }
+            var peer = dialog.ToInputPeer();
 
             var result = await ProtoService.ToggleDialogPinAsync(peer, !dialog.IsPinned);
             if (result.IsSucceeded)
