@@ -32,95 +32,6 @@
 
         <x:Double x:Key="MenuFlyoutMaxWidth">360</x:Double>
 
-        <Style x:Key="IconMenuFlyoutItem" TargetType="MenuFlyoutItem">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="Padding" Value="{ThemeResource MenuFlyoutItemThemePadding}" />
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="UseSystemFocusVisuals" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="MenuFlyoutItem">
-                        <Grid x:Name="LayoutRoot"
-                              Padding="{TemplateBinding Padding}"
-                              Background="{TemplateBinding Background}"
-                              BorderBrush="{TemplateBinding BorderBrush}"
-                              BorderThickness="{TemplateBinding BorderThickness}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="TextBlock" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="TextBlock" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="TextBlock" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="CheckPlaceholderStates">
-                                    <VisualState x:Name="NoPlaceholder" />
-                                    <VisualState x:Name="CheckPlaceholder">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBlock" Storyboard.TargetProperty="Margin">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="PaddingSizeStates">
-                                    <VisualState x:Name="DefaultPadding" />
-                                    <VisualState x:Name="NarrowPadding">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Padding">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MenuFlyoutItemThemePaddingNarrow}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon Margin="0,0,12,0" Glyph="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBlock x:Name="TextBlock"
-                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                           Foreground="{TemplateBinding Foreground}"
-                                           Text="{TemplateBinding Text}"
-                                           TextTrimming="Clip"/>
-                            </StackPanel>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <Style TargetType="ListViewHeaderItem">
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
             <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
@@ -492,13 +403,13 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ProgressRing">
                         <Grid x:Name="Ring"
-                          Background="{TemplateBinding Background}"
-                          BorderThickness="{TemplateBinding BorderThickness}"
-                          BorderBrush="{TemplateBinding BorderBrush}"
-                          Padding="{TemplateBinding Padding}"
-                          Visibility="Collapsed"
-                          RenderTransformOrigin="0.5,0.5"
-                          FlowDirection="LeftToRight">
+                              Background="{TemplateBinding Background}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              Padding="{TemplateBinding Padding}"
+                              Visibility="Collapsed"
+                              RenderTransformOrigin="0.5,0.5"
+                              FlowDirection="LeftToRight">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="ActiveStates">
                                     <VisualState x:Name="Inactive" />
@@ -1137,16 +1048,17 @@
             </Grid>
 
             <controls:GlyphButton x:Name="btnEditMessage"
-                                      VerticalAlignment="Bottom"
-                                      Click="btnSendMessage_Click"
-                                      Glyph="&#xE10B;" 
-                                      AllowFocusOnInteraction="False"
-                                      Visibility="{Binding ReplyInfo, Converter={StaticResource EditToVisibilityConverter}}"
-                                      FontSize="24"
-                                      Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
-                                      Padding="4,0,0,0"
-                                      Grid.Column="3"
-                                      Grid.Row="1"/>
+                                  VerticalAlignment="Bottom"
+                                  Click="btnSendMessage_Click"
+                                  Glyph="&#xE10B;" 
+                                  AllowFocusOnInteraction="False"
+                                  Visibility="{Binding ReplyInfo, Converter={StaticResource EditToVisibilityConverter}}"
+                                  FontSize="24"
+                                  Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
+                                  HorizontalAlignment="Right"
+                                  Padding="4,0,0,0"
+                                  Grid.Column="3"
+                                  Grid.Row="1"/>
 
             <controls:GlyphButton x:Name="Attach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
                 <FlyoutBase.AttachedFlyout>
