@@ -75,5 +75,16 @@ namespace Unigram.Controls
                 CheckBox.IsChecked = value;
             }
         }
+
+        public static IAsyncOperation<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null)
+        {
+            var dialog = new UnigramMessageDialog();
+            dialog.Title = title;
+            dialog.Message = message;
+            dialog.PrimaryButtonText = primary;
+            dialog.SecondaryButtonText = secondary;
+
+            return dialog.ShowAsync();
+        }
     }
 }

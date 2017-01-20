@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -940,14 +940,13 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
         private async void DialogDeleteExecute(TLDialog dialog)
         {
-            string message = "Are you sure you want to delete the group?";
-            int which = 0;
-            TLInputPeerBase peer = null;
+            var peer = dialog.ToInputPeer();
+            var message = "Are you sure you want to delete the group?";
+            var which = 0;
 
             var user = dialog.With as TLUser;
             if (user != null)
             {
-                peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value };
                 which = 1;
                 message = "Are you sure you want to delete the conversation?";
             }
@@ -955,7 +954,6 @@ namespace Unigram.ViewModels
             var channel = dialog.With as TLChannel;
             if (channel != null)
             {
-                peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
                 if (channel.IsBroadcast) message = "Are you sure you want to delete the channel?";
                 which = (channel.IsCreator) ? 2 : 3;
             }
@@ -963,7 +961,6 @@ namespace Unigram.ViewModels
             var chat = dialog.With as TLChat;
             if (chat != null)
             {
-                peer = new TLInputPeerChat { ChatId = chat.Id };
                 which = 4;
             }
 
@@ -1023,46 +1020,19 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogClearCommand => new RelayCommand<TLDialog>(DialogClearExecute);
         private async void DialogClearExecute(TLDialog dialog)
         {
-            var question = new UnigramMessageDialog();
-            question.Title = "Delete";
-            question.Message = "Do you really want to clear the chat?";
-            question.PrimaryButtonText = "Yes";
-            question.SecondaryButtonText = "No";
-
-            var clear = await question.ShowAsync();
-
+            var clear = await UnigramMessageDialog.ShowAsync("Do you really want to clear the chat?", "Delete", "Yes", "No");
             if (clear == ContentDialogResult.Primary)
             {
-                TLInputPeerBase peer = null;
-
-                var user = dialog.With as TLUser;
-                if (user != null)
-                {
-                    peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value };
-                }
-
-                var chat = dialog.With as TLChat;
-                if (chat != null)
-                {
-                    peer = new TLInputPeerChat { ChatId = chat.Id };
-                }
-
-                var channel = dialog.With as TLChannel;
-                if (channel != null)
-                {
-                    peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
-                }
-
+                var peer = dialog.ToInputPeer();
                 var result = await ProtoService.DeleteHistoryAsync(true, peer, 0);
-                if (!result.IsSucceeded)
+                if (result.IsSucceeded)
                 {
-                    var failNotification = new UnigramMessageDialog();
-                    failNotification.Title = "Error";
-                    failNotification.Message = "Clearing the chat failed!";
-                    failNotification.PrimaryButtonText = "Okay";
-                    failNotification.SecondaryButtonText = "";
-                    failNotification.IsSecondaryButtonEnabled = false;
-                    await failNotification.ShowAsync();
+                    CacheService.ClearDialog(dialog.Peer);
+                    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+                }
+                else
+                {
+                    await UnigramMessageDialog.ShowAsync("Clearing the chat failed!", "Error", "Okay");
                 }
             }
         }

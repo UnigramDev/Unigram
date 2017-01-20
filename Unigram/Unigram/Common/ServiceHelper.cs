@@ -144,7 +144,7 @@ namespace Unigram.Common
                 return ReplaceLinks(Resources.MessageActionChatMigrateTo, new[] { fullName }, new[] { "tg-channel://" + channelId }, useActiveLinks);
             });
             _actionsCache.Add(typeof(TLMessageActionChannelMigrateFrom), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChannelMigrateFrom));
-            //_actionsCache.Add(typeof(TLMessageActionHistoryClear), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => string.Empty);
+            _actionsCache.Add(typeof(TLMessageActionHistoryClear), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(string.Empty));
         }
 
         #region Message
