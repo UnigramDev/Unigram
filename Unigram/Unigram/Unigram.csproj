@@ -98,6 +98,9 @@
     <None Include="project.json" />
     <Compile Include="Common\Language.cs" />
     <Compile Include="Controls\DialogsListView.cs" />
+    <Compile Include="Controls\Media\ThumbnailControl.xaml.cs">
+      <DependentUpon>ThumbnailControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\DialogViewModel.Typing.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -255,6 +258,7 @@
     <Compile Include="ViewModels\PhotosViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsEditNameViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsSessionsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsUsernameViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\UserInfoViewModel.cs" />
@@ -324,6 +328,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsPrivacyPage.xaml.cs">
       <DependentUpon>SettingsPrivacyPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsSessionsPage.xaml.cs">
+      <DependentUpon>SettingsSessionsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingStickersPage.xaml.cs">
       <DependentUpon>SettingStickersPage.xaml</DependentUpon>
@@ -450,6 +457,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Items\SharedFileListViewItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Media\ThumbnailControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -605,6 +616,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\SettingsSessionsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingStickersPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -662,6 +677,7 @@
   <ItemGroup>
     <Folder Include="Controls\Stickers\" />
     <Folder Include="Models\" />
+    <Folder Include="ViewModels\Settings\PrivacyAndSecurity\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

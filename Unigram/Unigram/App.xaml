@@ -37,6 +37,11 @@
             <converters:InitialNameStringConverter x:Key="InitialNameStringConverter" />
             <converters:DateTimeToFormatConverter x:Key="DateTimeToFormatConverter" />
             <converters:TLIntToDateTimeConverter x:Key="MessageDateTimeConverter" TodayFormat="{}{0}"/>
+            <converters:TLIntToDateTimeConverter x:Key="DialogDateTimeConverter"
+                TodayFormat="{}{0}"
+                WeekFormat="ddd"
+                RegularFormat="d MMM"
+                LongRegularFormat="dd.MM.yyyy"/>
             <converters:StateToGlyphConverter x:Key="StateToGlyphConverter"/>
             <converters:ReplyInfoToGlyphConverter x:Key="ReplyInfoToGlyphConverter"/>
             <converters:VenueToStaticImageConverter x:Key="VenueToStaticImageConverter"/>

@@ -81,8 +81,8 @@ namespace Unigram.Controls
             var dialog = new UnigramMessageDialog();
             dialog.Title = title;
             dialog.Message = message;
-            dialog.PrimaryButtonText = primary;
-            dialog.SecondaryButtonText = secondary;
+            dialog.PrimaryButtonText = primary ?? string.Empty;
+            dialog.SecondaryButtonText = secondary ?? string.Empty;
 
             return dialog.ShowAsync();
         }

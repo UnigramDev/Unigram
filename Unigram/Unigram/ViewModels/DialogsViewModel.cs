@@ -447,7 +447,17 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateServiceNotification serviceNotification)
         {
-            Debugger.Break();
+            if (serviceNotification.IsPopup)
+            {
+                Execute.BeginOnUIThread(async () =>
+                {
+                    await UnigramMessageDialog.ShowAsync(serviceNotification.Message, "Telegram", "OK");
+                });
+            }
+            else
+            {
+                Debugger.Break();
+            }
 
             //if (serviceNotification.Popup)
             //{

@@ -82,5 +82,10 @@ namespace Unigram.Views
         {
             await MasterDetail.NavigationService.NavigateModalAsync(typeof(EditYourNameView));
         }
+
+        private void Privacy_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyPage));
+        }
     }
 }
