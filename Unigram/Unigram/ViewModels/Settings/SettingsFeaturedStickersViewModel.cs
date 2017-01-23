@@ -32,6 +32,8 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.GetFeaturedStickersAsync(true, 0);
             if (response.IsSucceeded)
             {
+                Items.Clear();
+
                 var result = response.Result as TLMessagesFeaturedStickers;
                 if (result != null)
                 {

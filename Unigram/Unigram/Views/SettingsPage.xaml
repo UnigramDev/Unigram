@@ -220,7 +220,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Grid Height="64" Width="64" CornerRadius="32" Margin="12" Grid.RowSpan="2">
+                    <Grid Height="48" Width="48" CornerRadius="24" Margin="12" Grid.RowSpan="2">
                         <TextBlock Margin="12,0" FontSize="24" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.Self, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <Ellipse>
                             <Ellipse.Fill>
@@ -230,8 +230,8 @@
                         <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="32"/>
                         <controls:SimpleButton Command="{Binding PhotoCommand}" CornerRadius="32"/>
                     </Grid>
-                    <TextBlock Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
-                    <TextBlock Text="Online" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+                    <TextBlock Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+                    <TextBlock Text="online" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
 
                     <!--<StackPanel Grid.Column="1"
                                 VerticalAlignment="Center">
