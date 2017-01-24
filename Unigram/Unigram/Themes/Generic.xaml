@@ -12,6 +12,25 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="local:ProfilePictureView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ProfilePictureView">
+                    <Grid>
+                        <Ellipse Fill="{TemplateBinding Background}"/>
+                        <TextBlock Text="{TemplateBinding Text}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Ellipse>
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="{TemplateBinding Source}" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     
     <Style TargetType="local:BubbleTextBox">
         <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
@@ -206,7 +225,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProgressBarRing">
                     <Grid Background="{TemplateBinding Background}" CornerRadius="24">
-                        <SymbolIcon Symbol="Cancel" Foreground="{TemplateBinding Foreground}"/>
+                        <!--<SymbolIcon Symbol="Cancel" Foreground="{TemplateBinding Foreground}"/>-->
                         <local:ProgressBarRingSlice x:Name="Indicator" IsHitTestVisible="False" CacheMode="BitmapCache" Fill="{TemplateBinding Foreground}" InnerRadius="19" Radius="22" StartAngle="0" EndAngle="0">
                             <Path.RenderTransform>
                                 <RotateTransform x:Name="Rotation" CenterX="22" CenterY="22" Angle="0"/>

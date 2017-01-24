@@ -908,14 +908,14 @@ namespace Telegram.Api.Services
                 }
             }
 
-            lock (_debugRoot)
-            {
-                //Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2, -4} SessionId {3}\nids:", "msgs_ack", transportMessage.MessageId.Value, transportMessage.SeqNo.Value, transportMessage.SessionId.Value);
-                foreach (var id in ids)
-                {
-                    Debug.WriteLine(id);
-                }
-            }
+            //lock (_debugRoot)
+            //{
+            //    //Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2, -4} SessionId {3}\nids:", "msgs_ack", transportMessage.MessageId.Value, transportMessage.SeqNo.Value, transportMessage.SessionId.Value);
+            //    foreach (var id in ids)
+            //    {
+            //        Debug.WriteLine(id);
+            //    }
+            //}
 
             var captionString = string.Format("msgs_ack {0}", transportMessage.MsgId);
             SendPacketAsync(transport, captionString, encryptedMessage,

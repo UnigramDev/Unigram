@@ -68,7 +68,7 @@ namespace Unigram.Controls.Messages
                 {
                     var left = -8;
                     var top = -4;
-                    var right = -12;
+                    var right = -8;
                     var bottom = -8;
 
                     if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
@@ -91,17 +91,6 @@ namespace Unigram.Controls.Messages
                     {
                         top = 4;
                     }
-
-                    // Captioned photo/video/gif
-                    //if (IsInlineMedia(message.Media))
-                    //{
-                    //    StatusToDefault();
-                    //    bottom = 4;
-                    //}
-                    //else
-                    //{
-                    //    StatusToFullMedia();
-                    //}
 
                     var caption = false;
                     if (message.Media is ITLMediaCaption)

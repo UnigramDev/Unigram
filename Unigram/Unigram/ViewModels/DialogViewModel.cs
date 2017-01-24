@@ -43,24 +43,6 @@ namespace Unigram.ViewModels
     {
         public MessageCollection Messages { get; private set; } = new MessageCollection();
 
-        public Brush PlaceHolderColor { get; internal set; }
-        public string DialogTitle;
-        public string LastSeen;
-        public Visibility LastSeenVisible;
-        public string debug;
-
-
-
-
-
-
-
-
-
-
-
-
-
         private readonly IUploadFileManager _uploadFileManager;
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
@@ -85,10 +67,18 @@ namespace Unigram.ViewModels
 
         private TLDialog _currentDialog;
 
-        public TLObject With { get; set; }
-
-
-        public object photo;
+        private TLObject _with;
+        public TLObject With
+        {
+            get
+            {
+                return _with;
+            }
+            set
+            {
+                Set(ref _with, value);
+            }
+        }
 
         private string _text;
         public string Text
@@ -327,11 +317,8 @@ namespace Unigram.ViewModels
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
 
                 Messages.Clear();
-                photo = user.Photo;
-                DialogTitle = user.FullName;
-                PlaceHolderColor = BindConvert.Current.Bubble(user.Id);
-                LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
-                LastSeenVisible = Visibility.Visible;
+                //LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
+                //LastSeenVisible = Visibility.Visible;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
 
                 // test calls
@@ -381,21 +368,18 @@ namespace Unigram.ViewModels
 
                 var input = new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 };
                 var channelDetails = await ProtoService.GetFullChannelAsync(input);
-                DialogTitle = channelDetails.Result.Chats[0].FullName;
-
-                var channelFull = (TLChannelFull)channelDetails.Result.FullChat;
-                if (channelFull.HasPinnedMsgId)
+                if (channelDetails.IsSucceeded)
                 {
-                    var y = await ProtoService.GetMessagesAsync(input, new TLVector<int>() { channelFull.PinnedMsgId ?? 0 });
-                    if (y.IsSucceeded)
+                    var channelFull = channelDetails.Result.FullChat as TLChannelFull;
+                    if (channelFull.HasPinnedMsgId)
                     {
-                        PinnedMessage = y.Result.Messages.FirstOrDefault();
+                        var y = await ProtoService.GetMessagesAsync(input, new TLVector<int>() { channelFull.PinnedMsgId ?? 0 });
+                        if (y.IsSucceeded)
+                        {
+                            PinnedMessage = y.Result.Messages.FirstOrDefault();
+                        }
                     }
                 }
-
-                PlaceHolderColor = BindConvert.Current.Bubble(channelDetails.Result.Chats[0].Id);
-                // TODO: photo = channelDetails.Value.Chats[0].Photo;
-                LastSeenVisible = Visibility.Collapsed;
             }
             else if (chat != null)
             {
@@ -403,10 +387,9 @@ namespace Unigram.ViewModels
                 Peer = new TLInputPeerChat { ChatId = chat.Id };
 
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
-                DialogTitle = chatDetails.Result.Chats[0].FullName;
-                // TODO: photo = chatDetails.Value.Chats[0].Photo;
-                PlaceHolderColor = BindConvert.Current.Bubble(chatDetails.Result.Chats[0].Id);
-                LastSeenVisible = Visibility.Collapsed;
+                if (chatDetails.IsSucceeded)
+                {
+                }
             }
 
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());

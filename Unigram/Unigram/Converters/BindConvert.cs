@@ -103,7 +103,7 @@ namespace Unigram.Converters
             {
                 number = ShortNumber(views ?? 0);
 
-                if (message.HasFromId && message.From != null)
+                if (message.IsPost && message.HasFromId && message.From != null)
                 {
                     number += $"   {message.From.FullName},";
                 }

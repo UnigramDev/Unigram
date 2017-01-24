@@ -98,9 +98,12 @@
     <None Include="project.json" />
     <Compile Include="Common\Language.cs" />
     <Compile Include="Controls\DialogsListView.cs" />
+    <Compile Include="Controls\DownloadButton.cs" />
     <Compile Include="Controls\Media\ThumbnailControl.xaml.cs">
       <DependentUpon>ThumbnailControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ProfilePictureView.cs" />
+    <Compile Include="Converters\LastSeenConverter.cs" />
     <Compile Include="ViewModels\DialogViewModel.Typing.cs" />
   </ItemGroup>
   <ItemGroup>

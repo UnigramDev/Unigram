@@ -82,7 +82,7 @@ namespace Unigram.Controls.Media
                     }
                     else
                     {
-                        StatusGlyph.Glyph = "\uE118";
+                        StatusGlyph.Glyph = _state == PlaybackState.Loading ? "\uE10A" : "\uE118";
                     }
                 }
             }
@@ -120,11 +120,10 @@ namespace Unigram.Controls.Media
             var background = new WriteableBitmap((int)imageWidth, imageHeight);
             var foreground = new WriteableBitmap((int)imageWidth, imageHeight);
 
-            var backgroundOut = new byte[background.PixelWidth * background.PixelHeight * 4];
-            var foregroundOut = new byte[foreground.PixelWidth * foreground.PixelHeight * 4];
+            var backgroundBuffer = new byte[background.PixelWidth * background.PixelHeight * 4];
+            var foregroundBuffer = new byte[foreground.PixelWidth * foreground.PixelHeight * 4];
 
-            int index = 0;
-            while (index < maxLines)
+            for (int index = 0; index < maxLines; index++)
             {
                 var lineIndex = (int)(index * maxWidth);
                 var lineHeight = result[lineIndex] * (double)(imageHeight - 4.0) + 4.0;
@@ -134,17 +133,15 @@ namespace Unigram.Controls.Media
                 var x2 = (int)(index * (lineWidth + space) + lineWidth);
                 var y2 = imageHeight;
 
-                DrawFilledRectangle(ref backgroundOut, background.PixelWidth, background.PixelHeight, x1, y1, x2, y2, backgroundColor);
-                DrawFilledRectangle(ref foregroundOut, foreground.PixelWidth, foreground.PixelHeight, x1, y1, x2, y2, foregroundColor);
-
-                index++;
+                DrawFilledRectangle(ref backgroundBuffer, background.PixelWidth, background.PixelHeight, x1, y1, x2, y2, backgroundColor);
+                DrawFilledRectangle(ref foregroundBuffer, foreground.PixelWidth, foreground.PixelHeight, x1, y1, x2, y2, foregroundColor);
             }
 
             using (Stream backgroundStream = background.PixelBuffer.AsStream())
             using (Stream foregroundStream = foreground.PixelBuffer.AsStream())
             {
-                backgroundStream.Write(backgroundOut, 0, backgroundOut.Length);
-                foregroundStream.Write(foregroundOut, 0, foregroundOut.Length);
+                backgroundStream.Write(backgroundBuffer, 0, backgroundBuffer.Length);
+                foregroundStream.Write(foregroundBuffer, 0, foregroundBuffer.Length);
             }
 
             Slide.Background = new ImageBrush { ImageSource = background, AlignmentX = AlignmentX.Right, AlignmentY = AlignmentY.Center, Stretch = Stretch.None };
@@ -209,6 +206,7 @@ namespace Unigram.Controls.Media
                         if (File.Exists(FileUtils.GetTempFileName(fileName)) == false)
                         {
                             _state = PlaybackState.Loading;
+                            UpdateGlyph();
                             var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                             var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
                         }
@@ -224,7 +222,6 @@ namespace Unigram.Controls.Media
                         Debug.WriteLine("Graph successfully created!");
 
                         var file = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
-                        var fileProps = await file.Properties.GetMusicPropertiesAsync();
 
                         var fileInputNodeResult = await _graph.CreateFileInputNodeAsync(file);
                         if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)

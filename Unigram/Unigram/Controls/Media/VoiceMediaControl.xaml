@@ -90,9 +90,9 @@
         </Grid.ColumnDefinitions>
         <Grid Background="{ThemeResource MessageMediaBackgroundBrush}" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top">
             <controls:GlyphButton x:Name="StatusGlyph" Click="Toggle_Click" Glyph="&#xE118;" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Progress}"/>
         </Grid>
 
-        <controls:ProgressBarRing Background="{ThemeResource MessageMediaBackgroundBrush}" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Progress}"/>
 
         <Grid Margin="12,0,0,0" Grid.Column="1">
             <Grid.RowDefinitions>

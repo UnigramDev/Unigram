@@ -381,7 +381,7 @@
                               SelectionChanged="UsersListView_SelectionChanged">
                         <ListView.HeaderTemplate>
                             <DataTemplate x:DataType="models:TLUser">
-                                <Border Margin="0,0,0,8" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                                <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                                     <Button Click="Self_Click" Style="{StaticResource EmptyButtonStyle}">
                                         <Grid>
                                             <Grid.RowDefinitions>
@@ -392,7 +392,7 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
-                                            <Grid Background="{Binding PlaceHolderColor}" Height="48" Width="48" CornerRadius="24" Margin="12" Grid.RowSpan="2">
+                                            <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Height="48" Width="48" CornerRadius="24" Margin="12" Grid.RowSpan="2">
                                                 <TextBlock Foreground="White" x:Name="InitialName" Text="{Binding Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
                                                 <Ellipse>
                                                     <Ellipse.Fill>
@@ -410,7 +410,7 @@
                         </ListView.HeaderTemplate>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:TLUser">
-                                <Grid Margin="0,4,0,8">
+                                <Grid Margin="0,6">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
@@ -429,11 +429,15 @@
                                         <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
                                     </Grid>
                                     <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                                    <TextBlock Text="{Binding lastSeen}" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"
+                                    <TextBlock Text="{x:Bind Converter={StaticResource LastSeenConverter}}" 
+                                               x:Phase="1"
+                                               VerticalAlignment="Top" 
                                                Style="{StaticResource CaptionTextBlockStyle}" 
                                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                                TextTrimming="CharacterEllipsis" 
                                                TextWrapping="NoWrap" 
+                                               Grid.Column="1" 
+                                               Grid.Row="1"
                                                MaxLines="1"/>
                                 </Grid>
                             </DataTemplate>

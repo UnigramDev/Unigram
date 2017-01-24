@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
 {
-    public class BubblePlaceholderConverter : IValueConverter
+    public class LastSeenConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is int)
-                value = new int?((int)value);
+            var user = value as TLUser;
+            if (user != null)
+            {
+                return LastSeenHelper.GetLastSeenLabel(user);
+            }
 
-            return BindConvert.Current.Bubble((int?)value);
+            return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
