@@ -16,6 +16,7 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateEditChannelMessage>,
         IHandle<TLUpdateEditMessage>,
         IHandle<MessagesRemovedEventArgs>,
+        IHandle<TLUpdateUserStatus>,
         IHandle
     {
         public void Handle(MessagesRemovedEventArgs args)
@@ -40,6 +41,22 @@ namespace Unigram.ViewModels
                     }
                 });
             }
+        }
+
+        public void Handle(TLUpdateUserStatus statusUpdate)
+        {
+            System.Diagnostics.Debug.WriteLine("Online: " + online);
+            if (online > -1)
+            {
+                if (statusUpdate.Status.GetType() == typeof(TLUserStatusOnline)) online++;
+                else online--;
+                LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
+            }
+            else if (online == -1)
+            {
+                LastSeen = LastSeenHelper.GetLastSeen(partner).Item1;
+            }
+            System.Diagnostics.Debug.WriteLine("Online: " + online);
         }
 
         public void Handle(TLUpdateEditChannelMessage update)

@@ -553,7 +553,8 @@
                                 <TextBlock x:Name="tblDialogStatus"
                                            Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                           Style="{StaticResource CaptionTextBlockStyle}" />
+                                           Style="{StaticResource CaptionTextBlockStyle}" 
+                                           Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}" />
                                 <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}">
                                     <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
                                     <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
