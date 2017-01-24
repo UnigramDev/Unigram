@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 01/18/2017 19:46:41
+// 	Generated: 01/23/2017 14:03:55
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -108,13 +108,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} returned to the group"
+        /// Localized resource similar to "{0} joined the group"
         /// </summary>
         public static string MessageActionChatAddSelf
         {
             get
             {
-                return "{0} returned to the group";
+                return "{0} joined the group";
             }
         }
         

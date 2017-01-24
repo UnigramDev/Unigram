@@ -19,7 +19,8 @@
     <Page.Transitions>
         <TransitionCollection>
             <NavigationThemeTransition>
-                <ContinuumNavigationTransitionInfo />
+                <!--<ContinuumNavigationTransitionInfo />-->
+                <SuppressNavigationTransitionInfo />
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
@@ -524,7 +525,6 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <!-- Prevent "click effect" to the entire titlebar and other stuff -->
             <Button x:Name="btnDialogInfo"
                     Click="btnDialogInfo_Click"
                     Style="{StaticResource EmptyButtonStyle}">
@@ -536,25 +536,24 @@
                         </Grid.ColumnDefinitions>
                         <!--User icon-->
                         <Grid Width="36" Height="36" Margin="12,0">
-                            <Ellipse Fill="{x:Bind ViewModel.PlaceHolderColor}" VerticalAlignment="Center"/>
+                            <Ellipse Fill="{Binding With.Id, Converter={StaticResource BubblePlaceholderConverter}}"/>
                             <TextBlock Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.With, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <Ellipse x:Name="elpDialogIcon">
                                 <Ellipse.Fill>
-                                    <ImageBrush ImageSource="{x:Bind ViewModel.photo, Converter={StaticResource DefaultPhotoConverter}}" />
+                                    <ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" />
                                 </Ellipse.Fill>
                             </Ellipse>
                             <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
                         </Grid>
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                             <TextBlock x:Name="tblDialogName"
-                                       Text="{x:Bind Path=ViewModel.DialogTitle}"
+                                       Text="{Binding With.FullName}"
                                        Style="{StaticResource BaseTextBlockStyle}"/>
                             <Grid>
                                 <TextBlock x:Name="tblDialogStatus"
                                            Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                           Text="{x:Bind ViewModel.LastSeen}" />
+                                           Style="{StaticResource CaptionTextBlockStyle}" />
                                 <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}">
                                     <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
                                     <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
@@ -615,7 +614,7 @@
                 <ColumnDefinition Width="48"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="btnPinnedMessage" Padding="12,0" Style="{StaticResource EmptyButtonStyle}">
+            <Button x:Name="btnPinnedMessage" Padding="12,0,0,0" Style="{StaticResource EmptyButtonStyle}">
                 <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0"/>
             </Button>
             
@@ -821,8 +820,9 @@
         <Grid VerticalAlignment="Bottom" Grid.Row="2">
             <inline:InlineBotResultsView ItemClick="InlineBotResults_ItemClick"/>
 
-            <Grid x:Name="Jimmy"
-                  x:DeferLoadStrategy="Lazy"
+            <Grid x:Name="StickersPanel"
+                  Opacity="0"
+                  IsHitTestVisible="False"
                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                   BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
                   HorizontalAlignment="Right"
@@ -889,8 +889,8 @@
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>-->
                     <GridView.ItemTemplate>
-                        <DataTemplate>
-                            <Image Margin="2" Source="{Binding Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
+                        <DataTemplate x:DataType="tl:TLDocument">
+                            <Image x:Phase="3" Margin="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
                         </DataTemplate>
                     </GridView.ItemTemplate>
                     <GridView.ItemContainerStyle>
@@ -1034,8 +1034,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton x:Name="btnStickers" 
-                                      Command="{Binding SendCommand}"
-                                      CommandParameter="ciao"
+                                      Click="Stickers_Click"
                                       AllowFocusOnInteraction="False"
                                       Glyph="&#xE606;" 
                                       FontFamily="{ThemeResource TelegramThemeFontFamily}" 

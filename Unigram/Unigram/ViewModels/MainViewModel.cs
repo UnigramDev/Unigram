@@ -56,8 +56,6 @@ namespace Unigram.ViewModels
             return Task.CompletedTask;
         }
 
-        public ObservableCollection<string> ContactsList = new ObservableCollection<string>();
-
         //EXPERIMENTAL
         public ObservableCollection<SearchResult> SearchResults { get; set; }
 

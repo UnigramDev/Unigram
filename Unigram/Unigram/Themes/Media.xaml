@@ -17,28 +17,9 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Grid Width="48" Height="48" VerticalAlignment="Top">
-                <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" Tapped="Border_Tapped">
-                    <SymbolIcon Symbol="{Binding Media, Converter={StaticResource FileExistsToGlyphConverter}}" Foreground="{ThemeResource MessageMediaForegroundBrush}"/>
-                </Border>
-                <!--<controls:ImageControl TelegramSource="{Binding Document}" Stretch="UniformToFill"/>-->
-
-                <!--<controls:ProgressBarRing 
-                    Background="Transparent"
-                    Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                    SmoothValue="{Binding DownloadingProgress}" 
-                    common:Attached.Tapped="{Binding Dialog.MediaCancelDownloadingCommand, Source={StaticResource Locator}}"
-                    Maximum="1" 
-                    Visibility="Collapsed"/>
-
-                <controls:ProgressBarRing 
-                    Background="Transparent"
-                    Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                    SmoothValue="{Binding UploadingProgress}"
-                    common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
-                    Maximum="1" 
-                    Visibility="Collapsed"/>-->
-                <controls:ProgressBarRing Background="{ThemeResource MessageMediaBackgroundBrush}" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Progress}"/>
+            <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
+                <controls:DownloadButton Click="DownloadDocument_Click" Document="{Binding Media.Document}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+                <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
             </Grid>
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
                 <TextBlock Text="{Binding Media.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
@@ -55,29 +36,11 @@
             </Grid.ColumnDefinitions>
             <Grid Width="72" Height="72" Background="Black" VerticalAlignment="Top">
                 <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" Width="72" Height="72" Stretch="UniformToFill"/>
-                
-                <Border Width="48" Height="48" CornerRadius="24" Background="#54000000" Tapped="Border_Tapped">
-                    <SymbolIcon Symbol="{Binding Media, Converter={StaticResource FileExistsToGlyphConverter}}" Foreground="White"/>
-                </Border>
-                <!--<controls:ImageControl TelegramSource="{Binding Document}" Stretch="UniformToFill"/>-->
 
-                <!--<controls:ProgressBarRing 
-                    Background="Transparent"
-                    Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                    SmoothValue="{Binding DownloadingProgress}" 
-                    common:Attached.Tapped="{Binding Dialog.MediaCancelDownloadingCommand, Source={StaticResource Locator}}"
-                    Maximum="1" 
-                    Visibility="Collapsed"/>
-
-                <controls:ProgressBarRing 
-                    Background="Transparent"
-                    Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                    SmoothValue="{Binding UploadingProgress}"
-                    common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
-                    Maximum="1" 
-                    Visibility="Collapsed"/>-->
-
-                <controls:ProgressBarRing Value="{Binding Media.Progress}"/>
+                <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                    <controls:DownloadButton Click="DownloadDocument_Click" Document="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                    <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
+                </Grid>
             </Grid>
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
                 <TextBlock Text="{Binding Media.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
@@ -121,9 +84,10 @@
                 <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
             </Border>
 
-            <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                <SymbolIcon Symbol="{Binding Media, Converter={StaticResource FileExistsToGlyphConverter}}" Foreground="White"/>
-            </Border>
+            <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                <controls:DownloadButton Click="DownloadDocument_Click" Document="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Light"/>
+                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
+            </Grid>
 
             <!--<controls:ProgressBarRing 
                     SmoothValue="{Binding UploadingProgress}"
@@ -343,28 +307,9 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Grid Width="48" Height="48" VerticalAlignment="Top">
-                        <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" Tapped="Border_Tapped">
-                            <SymbolIcon Symbol="{Binding Media, Converter={StaticResource FileExistsToGlyphConverter}}" Foreground="{ThemeResource MessageMediaForegroundBrush}"/>
-                        </Border>
-                        <!--<controls:ImageControl TelegramSource="{Binding Document}" Stretch="UniformToFill"/>-->
-
-                        <!--<controls:ProgressBarRing 
-                    Background="Transparent"
-                    Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                    SmoothValue="{Binding DownloadingProgress}" 
-                    common:Attached.Tapped="{Binding Dialog.MediaCancelDownloadingCommand, Source={StaticResource Locator}}"
-                    Maximum="1" 
-                    Visibility="Collapsed"/>
-
-                <controls:ProgressBarRing 
-                    Background="Transparent"
-                    Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                    SmoothValue="{Binding UploadingProgress}"
-                    common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
-                    Maximum="1" 
-                    Visibility="Collapsed"/>-->
-                        <controls:ProgressBarRing Background="{ThemeResource MessageMediaBackgroundBrush}" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Progress}"/>
+                    <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
+                        <controls:DownloadButton Click="DownloadDocument_Click" Document="{Binding Media.Document}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+                        <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
                     </Grid>
                     <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
                         <TextBlock Text="{Binding Media.Webpage.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>

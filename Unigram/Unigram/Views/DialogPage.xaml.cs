@@ -465,6 +465,12 @@ namespace Unigram.Views
         {
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
         }
+
+        private void Stickers_Click(object sender, RoutedEventArgs e)
+        {
+            StickersPanel.IsHitTestVisible = !StickersPanel.IsHitTestVisible;
+            StickersPanel.Opacity = StickersPanel.IsHitTestVisible ? 1 : 0;
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading

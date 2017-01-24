@@ -22,7 +22,7 @@ namespace Telegram.Api.Services.FileManager
 
         void DownloadFile(string fileName, int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize);
 
-        void CancelDownloadFile(TLObject owner);
+        void CancelDownloadFile(TLDocument document);
     }
 
     public class DownloadDocumentFileManager : IDownloadDocumentFileManager
@@ -65,7 +65,7 @@ namespace Telegram.Api.Services.FileManager
                 for (var i = 0; i < _items.Count; i++)
                 {
                     var item = _items[i];
-                    if (item.Canceled)
+                    if (item.IsCancelled)
                     {
                         _items.RemoveAt(i--);
                         try
@@ -119,7 +119,7 @@ namespace Telegram.Api.Services.FileManager
                     FileUtils.CheckMissingPart(_itemsSyncRoot, part, partName);
                 }
 
-                isCanceled = part.ParentItem.Canceled;
+                isCanceled = part.ParentItem.IsCancelled;
 
                 isComplete = part.ParentItem.Parts.All(x => x.Status == PartStatus.Processed);
                 if (!isComplete)
@@ -205,7 +205,7 @@ namespace Telegram.Api.Services.FileManager
             var accessHash = fileLocation.AccessHash;
             var version = fileLocation54.Version;
 
-            if (version != null && version > 0)
+            if (version > 0)
             {
                 return string.Format("document{0}_{1}{2}", id, version, fileExtension);
             }
@@ -276,9 +276,14 @@ namespace Telegram.Api.Services.FileManager
                         bool addFile = true;
                         foreach (var item in _items)
                         {
-                            if (item.InputDocumentLocation.AccessHash == fileLocation.AccessHash
-                                && item.InputDocumentLocation.Id == fileLocation.Id)
+                            if (item.InputDocumentLocation.AccessHash == fileLocation.AccessHash &&
+                                item.InputDocumentLocation.Id == fileLocation.Id)
                             {
+                                downloadableItem.Callback = item.Callback;
+                                downloadableItem.Progress = item.Progress;
+                                addFile = false;
+
+                                Debug.WriteLine("Already downloading document");
 
                                 //item.SuppressMerge = true;
 
@@ -413,17 +418,18 @@ namespace Telegram.Api.Services.FileManager
             return parts;
         }
 
-        public void CancelDownloadFile(TLObject owner)
+        public void CancelDownloadFile(TLDocument document)
         {
             Execute.BeginOnThreadPool(() =>
             {
                 lock (_itemsSyncRoot)
                 {
-                    var items = _items.Where(x => x.Owner == owner);
+                    //var items = _items.Where(x => x.Owner == owner);
+                    var items = _items.Where(x => x.InputDocumentLocation.AccessHash == document.AccessHash && x.InputDocumentLocation.Id == document.Id);
 
                     foreach (var item in items)
                     {
-                        item.Canceled = true;
+                        item.IsCancelled = true;
                     }
                 }
             });

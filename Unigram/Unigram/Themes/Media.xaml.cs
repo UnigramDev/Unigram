@@ -23,6 +23,8 @@ using Windows.Storage;
 using Windows.System;
 using Unigram.Core.Dependency;
 using Unigram.Views;
+using Telegram.Api.Helpers;
+using Unigram.Controls;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -64,41 +66,6 @@ namespace Unigram.Themes
             }
         }
 
-        private async void Border_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            var border = sender as Border;
-            var message = border.DataContext as TLMessage;
-            var bubble = border.Ancestors<MessageControlBase>().FirstOrDefault() as MessageControlBase;
-            if (bubble != null)
-            {
-                var documentMedia = message.Media as TLMessageMediaDocument;
-                if (documentMedia != null)
-                {
-                    var document = documentMedia.Document as TLDocument;
-                    if (document != null)
-                    {
-                        var fileName = document.GetFileName();
-
-                        if (File.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, fileName)))
-                        {
-                            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appdata:///temp/" + fileName));
-                            await Launcher.LaunchFileAsync(file);
-                        }
-                        else
-                        {
-                            var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
-                            var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
-                            if (download != null)
-                            {
-                                var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appdata:///temp/" + fileName));
-                                await Launcher.LaunchFileAsync(file);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         private void InstantView_Click(object sender, RoutedEventArgs e)
         {
             var image = sender as FrameworkElement;
@@ -109,6 +76,48 @@ namespace Unigram.Themes
                 if (bubble.Context != null)
                 {
                     bubble.Context.NavigationService.Navigate(typeof(ArticlePage), message.Media);
+                }
+            }
+        }
+
+        private async void DownloadDocument_Click(object sender, RoutedEventArgs e)
+        {
+            var border = sender as DownloadButton;
+            var message = border.DataContext as TLMessage;
+            var documentMedia = message.Media as TLMessageMediaDocument;
+            if (documentMedia != null)
+            {
+                var document = documentMedia.Document as TLDocument;
+                if (document != null)
+                {
+                    var fileName = document.GetFileName();
+
+                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                    {
+                        var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
+                        await Launcher.LaunchFileAsync(file);
+                    }
+                    else
+                    {
+                        var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
+                        if (documentMedia.Progress > 0)
+                        {
+                            manager.CancelDownloadFile(document);
+
+                            border.UpdateGlyph();
+                        }
+                        else
+                        {
+                            var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
+                            if (download != null)
+                            {
+                                border.UpdateGlyph();
+
+                                var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
+                                await Launcher.LaunchFileAsync(file);
+                            }
+                        }
+                    }
                 }
             }
         }

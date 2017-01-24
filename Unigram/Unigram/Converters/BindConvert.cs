@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
+using Windows.Globalization.DateTimeFormatting;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -25,6 +26,9 @@ namespace Unigram.Converters
                 return _current;
             }
         }
+
+        public DateTimeFormatter ShortDate { get; } = new DateTimeFormatter("shortdate", Windows.System.UserProfile.GlobalizationPreferences.Languages);
+        public DateTimeFormatter ShortTime { get; } = new DateTimeFormatter("shorttime", Windows.System.UserProfile.GlobalizationPreferences.Languages);
 
         private BindConvert()
         {
@@ -58,6 +62,8 @@ namespace Unigram.Converters
 
         public string Date(int value)
         {
+            return ShortTime.Format(DateTime(value));
+
             var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
             var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
 
@@ -97,7 +103,7 @@ namespace Unigram.Converters
             {
                 number = ShortNumber(views ?? 0);
 
-                if (message.HasFromId && message.From != null)
+                if (message.IsPost && message.HasFromId && message.From != null)
                 {
                     number += $"   {message.From.FullName},";
                 }
