@@ -49,19 +49,19 @@ namespace Unigram.ViewModels
                 var result = await ProtoService.SearchAsync(_peer, string.Empty, new TLInputMessagesFilterPhotoVideo(), 0, 0, -5, _lastMaxId, 15);
                 if (result.IsSucceeded)
                 {
-                    if (result.Value is TLMessagesMessagesSlice)
+                    if (result.Result is TLMessagesMessagesSlice)
                     {
-                        var slice = result.Value as TLMessagesMessagesSlice;
+                        var slice = result.Result as TLMessagesMessagesSlice;
                         TotalItems = slice.Count;
                     }
                     else
                     {
-                        TotalItems = result.Value.Messages.Count;
+                        TotalItems = result.Result.Messages.Count;
                     }
 
                     //Items.Clear();
 
-                    foreach (var photo in result.Value.Messages)
+                    foreach (var photo in result.Result.Messages)
                     {
                         var message = photo as TLMessage;
                         var media = message.Media as TLMessageMediaPhoto;

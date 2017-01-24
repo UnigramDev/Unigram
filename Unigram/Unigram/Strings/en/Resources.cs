@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 12/07/2016 18:26:19
+// 	Generated: 01/23/2017 14:03:55
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -108,13 +108,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} returned to the group"
+        /// Localized resource similar to "{0} joined the group"
         /// </summary>
         public static string MessageActionChatAddSelf
         {
             get
             {
-                return "{0} returned to the group";
+                return "{0} joined the group";
             }
         }
         
@@ -577,6 +577,237 @@ namespace Unigram.Strings
             get
             {
                 return "You scored {0}";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} are typing"
+        /// </summary>
+        public static string AreTyping
+        {
+            get
+            {
+                return "{0} are typing";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is playing a game"
+        /// </summary>
+        public static string IsPlayingGame
+        {
+            get
+            {
+                return "{0} is playing a game";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is recording a voice message"
+        /// </summary>
+        public static string IsRecordingAudio
+        {
+            get
+            {
+                return "{0} is recording a voice message";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is recording a video"
+        /// </summary>
+        public static string IsRecordingVideo
+        {
+            get
+            {
+                return "{0} is recording a video";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is sending a audio"
+        /// </summary>
+        public static string IsSendingAudio
+        {
+            get
+            {
+                return "{0} is sending a audio";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is sending a file"
+        /// </summary>
+        public static string IsSendingFile
+        {
+            get
+            {
+                return "{0} is sending a file";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is sending a photo"
+        /// </summary>
+        public static string IsSendingPhoto
+        {
+            get
+            {
+                return "{0} is sending a photo";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is sending a video"
+        /// </summary>
+        public static string IsSendingVideo
+        {
+            get
+            {
+                return "{0} is sending a video";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is typing"
+        /// </summary>
+        public static string IsTyping
+        {
+            get
+            {
+                return "{0} is typing";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Playing a game"
+        /// </summary>
+        public static string PlayingGame
+        {
+            get
+            {
+                return "Playing a game";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recording a video"
+        /// </summary>
+        public static string RecordingVideo
+        {
+            get
+            {
+                return "Recording a video";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recording a voice message"
+        /// </summary>
+        public static string RecordingVoiceMessage
+        {
+            get
+            {
+                return "Recording a voice message";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending an audio"
+        /// </summary>
+        public static string SendingAudio
+        {
+            get
+            {
+                return "Sending an audio";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending a file"
+        /// </summary>
+        public static string SendingFile
+        {
+            get
+            {
+                return "Sending a file";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending a photo"
+        /// </summary>
+        public static string SendingPhoto
+        {
+            get
+            {
+                return "Sending a photo";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending a video"
+        /// </summary>
+        public static string SendingVideo
+        {
+            get
+            {
+                return "Sending a video";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Typing"
+        /// </summary>
+        public static string Typing
+        {
+            get
+            {
+                return "Typing";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CompanyGenitivePlural
+        {
+            get
+            {
+                return "";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CompanyGenitiveSingular
+        {
+            get
+            {
+                return "";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Members"
+        /// </summary>
+        public static string CompanyNominativePlural
+        {
+            get
+            {
+                return "Members";
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Member"
+        /// </summary>
+        public static string CompanyNominativeSingular
+        {
+            get
+            {
+                return "Member";
             }
         }
     }

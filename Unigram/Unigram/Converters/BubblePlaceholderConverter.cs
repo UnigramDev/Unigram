@@ -11,6 +11,9 @@ namespace Unigram.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            if (value is int)
+                value = new int?((int)value);
+
             return BindConvert.Current.Bubble((int?)value);
         }
 

@@ -892,10 +892,10 @@ namespace Telegram.Api.Services
             }
 	    }
 
-	    public void GetBotCallbackAnswerCallback(TLInputPeerBase peer, int messageId, byte[] data, int gameId, Action<TLMessagesBotCallbackAnswer> callback, Action<TLRPCError> faultCallback = null)
+	    public void GetBotCallbackAnswerCallback(TLInputPeerBase peer, int messageId, byte[] data, bool game, Action<TLMessagesBotCallbackAnswer> callback, Action<TLRPCError> faultCallback = null)
         {
             // TODO: Layer 56
-            var obj = new TLMessagesGetBotCallbackAnswer { Peer = peer, MsgId = messageId, Data = data, HasData = data != null, IsGame = Convert.ToBoolean(gameId) };
+            var obj = new TLMessagesGetBotCallbackAnswer { Peer = peer, MsgId = messageId, Data = data, HasData = data != null, IsGame = game };
 
             const string caption = "messages.getBotCallbackAnswer";
             SendInformativeMessage(caption, obj, callback, faultCallback);
@@ -1934,7 +1934,7 @@ namespace Telegram.Api.Services
         public void ToggleDialogPinCallback(TLInputPeerBase peer, bool pin, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesToggleDialogPin { Peer = peer, IsPinned = pin };
-
+            
             const string caption = "messages.toggleDialogPin";
             SendInformativeMessage<bool>(caption, obj, 
                 result =>
@@ -1950,6 +1950,14 @@ namespace Telegram.Api.Services
                     callback.SafeInvoke(result);
                 },
                 faultCallback);
+        }
+
+        public void ReorderPinnedDialogsCallback(TLVector<TLInputPeerBase> order, bool force, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesReorderPinnedDialogs { Order = order, IsForce = force };
+
+            const string caption = "messages.reorderPinnedDialogs";
+            SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
         public void HideReportSpamCallback(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)

@@ -4,7 +4,6 @@
     xmlns:local="using:Unigram.Themes">
 
     <ResourceDictionary.ThemeDictionaries>
-        <!-- From -->
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
             <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
@@ -20,7 +19,7 @@
 
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
 
-            <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
+            <Thickness x:Key="MessageContentPadding">8,4,8,6</Thickness>
             <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
@@ -30,10 +29,8 @@
 
             <HorizontalAlignment x:Key="MessageHorizontalAlignment">Right</HorizontalAlignment>
 
-            <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
+            <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
         </ResourceDictionary>
-
-        <!-- To -->
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
             <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
@@ -49,7 +46,7 @@
 
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
 
-            <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
+            <Thickness x:Key="MessageContentPadding">8,4,8,6</Thickness>
             <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>

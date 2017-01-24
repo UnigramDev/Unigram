@@ -95,62 +95,69 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        #region Delete
+        #region CopyLink
 
-        public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
-        private async void MessageDeleteExecute(TLMessageBase message)
+        public RelayCommand<TLMessage> MessageCopyLinkCommand => new RelayCommand<TLMessage>(MessageCopyLinkExecute);
+        private void MessageCopyLinkExecute(TLMessage message)
         {
             if (message == null) return;
 
-            var check = default(CheckBox);
-            var content = new StackPanel();
-            content.Children.Add(new TextBlock
+            var channel = With as TLChannel;
+            if (channel != null)
             {
-                Text = "Are you sure you want to delete 1 message?",
-                Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
-            });
+                var dataPackage = new DataPackage();
+                dataPackage.SetWebLink(new Uri($"https://t.me/{channel.Username}/{message.Id}"));
+                Clipboard.SetContent(dataPackage);
+            }
+        }
 
-            var messageCommon = message as TLMessageCommonBase;
-            if (messageCommon != null && messageCommon.IsOut && Peer is TLInputPeerUser)
+        #endregion
+
+        #region Delete
+
+        public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
+        private async void MessageDeleteExecute(TLMessageBase messageBase)
+        {
+            if (messageBase == null) return;
+
+            var dialog = new UnigramMessageDialog();
+            dialog.Title = "Delete";
+            dialog.Message = "Are you sure you want to delete this message?";
+            dialog.PrimaryButtonText = "Yes";
+            dialog.SecondaryButtonText = "No";
+
+            var message = messageBase as TLMessage;
+            if (message != null && message.IsOut && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
             {
-                var date = BindConvert.Current.DateTime(messageCommon.Date);
-                var elapsed = DateTime.Now - date;
-
-                if (elapsed.TotalHours < 48)
+                var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+                var config = CacheService.GetConfig();
+                if (config != null && message.Date + config.EditTimeLimit > date)
                 {
                     var user = With as TLUser;
                     if (user != null)
                     {
-                        check = new CheckBox
-                        {
-                            Content = string.Format("Delete for {0}", user.FullName),
-                            Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
-                        };
+                        dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
+                    }
 
-                        content.Children.Add(check);
+                    var chat = With as TLChat;
+                    if (chat != null)
+                    {
+                        dialog.CheckBoxLabel = "Delete for everyone";
                     }
                 }
             }
-
-            //var dialog = new MessageDialog("Do you want to delete this message?", "Delete");
-            //dialog.Commands.Add(new UICommand("Si"));
-            //dialog.Commands.Add(new UICommand("No"));
-            //var result = await dialog.ShowAsync();
-            //if (result != null && result.Label == "Si")
-
-            var dialog = new ContentDialog();
-            dialog.Title = "Delete";
-            dialog.Content = content;
-            dialog.PrimaryButtonText = "Yes";
-            dialog.SecondaryButtonText = "No";
+            else if (Peer is TLInputPeerChat)
+            {
+                dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
+            }
 
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                var revoke = check?.IsChecked == true;
+                var revoke = dialog.IsChecked == true;
 
-                var messages = new List<TLMessageBase>() { message };
-                if (message.Id == 0 && message.RandomId != 0L)
+                var messages = new List<TLMessageBase>() { messageBase };
+                if (messageBase.Id == 0 && messageBase.RandomId != 0L)
                 {
                     DeleteMessagesInternal(null, messages);
                     return;
@@ -234,7 +241,7 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    var messageEditText = this.GetMessageEditText(result.Value, message);
+                    var messageEditText = this.GetMessageEditText(result.Result, message);
                     this.StartEditMessage(messageEditText, message);
                 });
             }
@@ -387,23 +394,16 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        #region 
+        #region Pin
 
         public RelayCommand<TLMessageBase> MessagePinCommand => new RelayCommand<TLMessageBase>(MessagePinExecute);
         private async void MessagePinExecute(TLMessageBase message)
         {
             if (PinnedMessage?.Id == message.Id)
             {
-                var content = new StackPanel();
-                content.Children.Add(new TextBlock
-                {
-                    Text = "Would you like to unpin this message?",
-                    Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
-                });
-
-                var dialog = new ContentDialog();
+                var dialog = new UnigramMessageDialog();
                 dialog.Title = "Unpin message";
-                dialog.Content = content;
+                dialog.Message = "Would you like to unpin this message?";
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
@@ -422,26 +422,11 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var check = default(CheckBox);
-                var content = new StackPanel();
-                content.Children.Add(new TextBlock
-                {
-                    Text = "Would you like to pin this message?",
-                    Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0)
-                });
-
-                check = new CheckBox
-                {
-                    Content = "Notify all members",
-                    Margin = new Windows.UI.Xaml.Thickness(0, 12, 0, 0),
-                    IsChecked = true
-                };
-
-                content.Children.Add(check);
-
-                var dialog = new ContentDialog();
+                var dialog = new UnigramMessageDialog();
                 dialog.Title = "Pin message";
-                dialog.Content = content;
+                dialog.Message = "Would you like to pin this message?";
+                dialog.CheckBoxLabel = "Notify all members";
+                dialog.IsChecked = true;
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
@@ -451,11 +436,11 @@ namespace Unigram.ViewModels
                     var channel = Peer as TLInputPeerChannel;
                     var inputChannel = new TLInputChannel { ChannelId = channel.ChannelId, AccessHash = channel.AccessHash };
 
-                    var silent = check?.IsChecked == false;
+                    var silent = dialog.IsChecked == false;
                     var result = await ProtoService.UpdatePinnedMessageAsync(silent, inputChannel, message.Id);
                     if (result.IsSucceeded)
                     {
-                        var updates = result.Value as TLUpdates;
+                        var updates = result.Result as TLUpdates;
                         if (updates != null)
                         {
                             var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
@@ -584,17 +569,17 @@ namespace Unigram.ViewModels
             var callbackButton = button as TLKeyboardButtonCallback;
             if (callbackButton != null)
             {
-                var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, 0);
-                if (response.IsSucceeded && response.Value.HasMessage)
+                var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, false);
+                if (response.IsSucceeded && response.Result.HasMessage)
                 {
-                    if (response.Value.IsAlert)
+                    if (response.Result.IsAlert)
                     {
-                        await new MessageDialog(response.Value.Message).ShowAsync();
+                        await new MessageDialog(response.Result.Message).ShowAsync();
                     }
                     else
                     {
                         // TODO:
-                        await new MessageDialog(response.Value.Message).ShowAsync();
+                        await new MessageDialog(response.Result.Message).ShowAsync();
                     }
                 }
 
@@ -607,13 +592,13 @@ namespace Unigram.ViewModels
                 var gameMedia = message.Media as TLMessageMediaGame;
                 if (gameMedia != null)
                 {
-                    var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, 1);
-                    if (response.IsSucceeded && response.Value.IsHasUrl && response.Value.HasUrl)
+                    var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, true);
+                    if (response.IsSucceeded && response.Result.IsHasUrl && response.Result.HasUrl)
                     {
                         var user = CacheService.GetUser(message.ViaBotId) as TLUser;
                         if (user != null)
                         {
-                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Value.Url, Username = user.Username, Title = gameMedia.Game.Title });
+                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Username = user.Username, Title = gameMedia.Game.Title });
                         }
                     }
                 }

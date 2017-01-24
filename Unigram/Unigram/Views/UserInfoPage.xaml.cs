@@ -37,7 +37,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Required;
-            DataContext = UnigramContainer.Instance.ResolverType<UserInfoViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<UserInfoViewModel>();
 
             SizeChanged += OnSizeChanged;
         }

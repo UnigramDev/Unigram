@@ -80,12 +80,12 @@ HRESULT OpusInputByteStream::ReadMediaType(IMFMediaType** ppMediaType)
 	ReturnIfFailed(result, mediaType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM));
 	ReturnIfFailed(result, mediaType->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, TRUE));
 	ReturnIfFailed(result, mediaType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, m_header->channel_count));
-	ReturnIfFailed(result, mediaType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, m_header->input_sample_rate));
+	ReturnIfFailed(result, mediaType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, OPUS_SAMPLES_PER_SECOND));
 	ReturnIfFailed(result, mediaType->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 16));
 
 	auto blockAlign = m_header->channel_count * 2;
 	ReturnIfFailed(result, mediaType->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, blockAlign));
-	ReturnIfFailed(result, mediaType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, blockAlign * m_header->input_sample_rate));
+	ReturnIfFailed(result, mediaType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, blockAlign * OPUS_SAMPLES_PER_SECOND));
 
 	*ppMediaType = mediaType.Detach();
 	return S_OK;
@@ -96,7 +96,7 @@ HRESULT OpusInputByteStream::Seek(LONGLONG position)
 	if (m_opusFile == nullptr)
 		return MF_E_NOT_INITIALIZED;
 
-	if (op_pcm_seek(m_opusFile, static_cast<LONGLONG>((position * m_header->input_sample_rate) / 10000000.0f)) != 0)
+	if (op_pcm_seek(m_opusFile, static_cast<LONGLONG>((position * OPUS_SAMPLES_PER_SECOND) / 10000000.0f)) != 0)
 		return E_FAIL;
 
 	return S_OK;
@@ -132,7 +132,7 @@ HRESULT OpusInputByteStream::GetDuration(LONGLONG* pDuration)
 	if (length < 0)
 		return E_FAIL;
 
-	*pDuration = static_cast<LONGLONG>((10000000.0f * length) / m_header->input_sample_rate);
+	*pDuration = static_cast<LONGLONG>((10000000.0f * length) / OPUS_SAMPLES_PER_SECOND);
 	return S_OK;
 }
 

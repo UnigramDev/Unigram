@@ -75,7 +75,7 @@ namespace Unigram.Controls
                 await _recorder.StopAsync();
             }
 
-            _file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
+            _file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\recording.ogg", CreationCollisionOption.ReplaceExisting);
             _recorder = new OpusRecorder(_file);
             await _recorder.StartAsync();
 
@@ -157,8 +157,6 @@ namespace Unigram.Controls
                 wavEncodingProfile.Audio.BitsPerSample = 16;
                 wavEncodingProfile.Audio.SampleRate = 48000;
                 wavEncodingProfile.Audio.ChannelCount = 1;
-                //wavEncodingProfile.Audio.Properties[Guid.Parse("{37E48BF5-645E-4C5B-89DE-ADA9E29B696A}")] = 1;
-                //wavEncodingProfile.Container.Properties[Guid.Parse("{37E48BF5-645E-4C5B-89DE-ADA9E29B696A}")] = 1;
                 await m_mediaCapture.StartRecordToCustomSinkAsync(wavEncodingProfile, m_opusSink);
             }
 

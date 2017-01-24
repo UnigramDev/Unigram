@@ -108,7 +108,7 @@ namespace Unigram.Common
 
                             Execute.BeginOnThreadPool(async () =>
                             {
-                                var manager = UnigramContainer.Instance.ResolverType<IDownloadFileManager>();
+                                var manager = UnigramContainer.Instance.ResolveType<IDownloadFileManager>();
                                 await manager.DownloadFileAsync(fileLocation, photoSize.Size);
 
                                 Execute.BeginOnUIThread(() =>

@@ -144,7 +144,7 @@ namespace Unigram.Common
                 return ReplaceLinks(Resources.MessageActionChatMigrateTo, new[] { fullName }, new[] { "tg-channel://" + channelId }, useActiveLinks);
             });
             _actionsCache.Add(typeof(TLMessageActionChannelMigrateFrom), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChannelMigrateFrom));
-            //_actionsCache.Add(typeof(TLMessageActionHistoryClear), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => string.Empty);
+            _actionsCache.Add(typeof(TLMessageActionHistoryClear), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(string.Empty));
         }
 
         #region Message
@@ -227,7 +227,7 @@ namespace Unigram.Common
         public static Paragraph Convert(TLMessageService serviceMessage, bool useActiveLinks)
         {
             var fromId = serviceMessage.FromId;
-            var user = InMemoryCacheService.Current.GetUser(fromId);
+            var user = InMemoryCacheService.Current.GetUser(fromId ?? 0);
             var userFullName = user != null ? user.FullName : Resources.UserNominativeSingular;
             var action = serviceMessage.Action;
 
@@ -324,7 +324,7 @@ namespace Unigram.Common
                 {
                     if (!flag)
                     {
-                        return ReplaceLinks(Resources.MessageActionChannelCreate, new[] { userFullName, channelCreateAction.Title }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                        return ReplaceLinks(Resources.MessageActionChannelCreate);
                     }
 
                     return ReplaceLinks(Resources.MessageActionChatCreate, new[] { userFullName, channelCreateAction.Title }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
@@ -430,7 +430,7 @@ namespace Unigram.Common
                     }
                 }
 
-                if (lastIndex < text.Length - 1)
+                if (lastIndex < text.Length)
                 {
                     paragraph.Inlines.Add(new Run { Text = text.Substring(lastIndex, text.Length - lastIndex) });
                 }

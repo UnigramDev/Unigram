@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
@@ -15,40 +16,44 @@ using Telegram.Api.TL;
 using Telegram.Logs;
 using Template10.Utils;
 using Unigram.Common;
+using Unigram.Controls;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class DialogsViewModel : UnigramViewModelBase, 
-        IHandle<TopMessageUpdatedEventArgs>, 
-        IHandle<DialogAddedEventArgs>, 
-        IHandle<DialogRemovedEventArgs>, 
+    public class DialogsViewModel : UnigramViewModelBase,
+        IHandle<TopMessageUpdatedEventArgs>,
+        IHandle<DialogAddedEventArgs>,
+        IHandle<DialogRemovedEventArgs>,
         //IHandle<DownloadableItem>, 
         //IHandle<UploadableItem>, 
         //IHandle<string>, 
         //IHandle<TLEncryptedChatBase>, 
-        IHandle<TLUpdateUserName>, 
-        IHandle<UpdateCompletedEventArgs>, 
-        IHandle<ChannelUpdateCompletedEventArgs>, 
-        IHandle<TLUpdateNotifySettings>, 
+        IHandle<TLUpdateUserName>,
+        IHandle<UpdateCompletedEventArgs>,
+        IHandle<ChannelUpdateCompletedEventArgs>,
+        IHandle<TLUpdateNotifySettings>,
         //IHandle<TLUpdateNewAuthorization>, 
-        IHandle<TLUpdateServiceNotification>, 
+        IHandle<TLUpdateServiceNotification>,
         //IHandle<TLUpdateUserTyping>, 
         //IHandle<TLUpdateChatUserTyping>, 
         //IHandle<ClearCacheEventArgs>, 
         //IHandle<ClearLocalDatabaseEventArgs>, 
-        IHandle<TLUpdateEditMessage>, 
-        IHandle<TLUpdateEditChannelMessage>, 
-        IHandle<TLUpdateDraftMessage>, 
+        IHandle<TLUpdateEditMessage>,
+        IHandle<TLUpdateEditChannelMessage>,
+        IHandle<TLUpdateDraftMessage>,
         IHandle<TLUpdateDialogPinned>,
         IHandle<TLUpdatePinnedDialogs>,
-        IHandle<TLUpdateChannel>, 
+        IHandle<TLUpdateChannel>,
         IHandle
     {
-        public DialogsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public DialogsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             Items = new ObservableCollection<TLDialog>();
+            Search = new ObservableCollection<KeyedList<string, TLObject>>();
+            SearchTokens = new Dictionary<string, CancellationTokenSource>();
         }
 
         public int PinnedDialogsIndex { get; set; }
@@ -94,29 +99,80 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var config = CacheService.GetConfig();
+            //ProtoService.GetDialogsCallback(lastDate, lastMsgId, lastPeer, 200, (result) =>
+            //{
+            //    var pinnedIndex = 0;
+
+            //    Execute.BeginOnUIThread(() =>
+            //    {
+            //        foreach (var item in result.Dialogs)
+            //        {
+            //            if (item.IsPinned)
+            //            {
+            //                item.PinnedIndex = pinnedIndex++;
+            //            }
+
+            //            var chat = item.With as TLChat;
+            //            if (chat != null && chat.HasMigratedTo)
+            //            {
+            //                continue;
+            //            }
+            //            else
+            //            {
+            //                Items.Add(item);
+            //            }
+            //        }
+
+            //        IsFirstPinned = Items.Any(x => x.IsPinned);
+            //        PinnedDialogsIndex = pinnedIndex;
+            //        PinnedDialogsCountMax = config.PinnedDialogsCountMax;
+            //    });
+            //});
 
             var response = await ProtoService.GetDialogsAsync(lastDate, lastMsgId, lastPeer, 200);
             if (response.IsSucceeded)
             {
+                var config = CacheService.GetConfig();
                 var pinnedIndex = 0;
 
-                foreach (var item in response.Value.Dialogs)
+                Execute.BeginOnUIThread(() =>
                 {
-                    if (item.IsPinned)
+                    foreach (var item in response.Result.Dialogs)
                     {
-                        item.PinnedIndex = pinnedIndex++;
+                        if (item.IsPinned)
+                        {
+                            item.PinnedIndex = pinnedIndex++;
+                        }
+
+                        var chat = item.With as TLChat;
+                        if (chat != null && chat.HasMigratedTo)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            Items.Add(item);
+                        }
                     }
 
-                    Items.Add(item);
-                }
-
-                IsFirstPinned = Items.Any(x => x.IsPinned);
-                PinnedDialogsIndex = pinnedIndex;
-                PinnedDialogsCountMax = config.PinnedDialogsCountMax;
+                    IsFirstPinned = Items.Any(x => x.IsPinned);
+                    PinnedDialogsIndex = pinnedIndex;
+                    PinnedDialogsCountMax = config.PinnedDialogsCountMax;
+                });
             }
 
             Aggregator.Subscribe(this);
+        }
+
+        public async Task UpdatePinnedItemsAsync()
+        {
+            var pinned = Items.Where(x => x.IsPinned).Select(x => x.ToInputPeer());
+
+            var response = await ProtoService.ReorderPinnedDialogsAsync(new TLVector<TLInputPeerBase>(pinned), true);
+            if (response.IsSucceeded)
+            {
+
+            }
         }
 
         #region Handle
@@ -349,6 +405,30 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(() =>
             {
+                if (update.HasOrder)
+                {
+                    var pinned = new List<TLDialog>(update.Order.Count);
+
+                    for (int i = 0; i < update.Order.Count; i++)
+                    {
+                        var dialog = Items.FirstOrDefault(x => x.Index == update.Order[i].Id);
+                        if (dialog != null)
+                        {
+                            dialog.PinnedIndex = i;
+                            dialog.IsPinned = true;
+
+                            var index = Items.IndexOf(dialog);
+                            if (index != i)
+                            {
+                                Items.Remove(dialog);
+                                Items.Insert(i, dialog);
+                            }
+                        }
+
+                        PinnedDialogsIndex = i;
+                    }
+                }
+
                 IsFirstPinned = Items.FirstOrDefault()?.IsPinned ?? false;
             });
         }
@@ -367,7 +447,17 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateServiceNotification serviceNotification)
         {
-            Debugger.Break();
+            if (serviceNotification.IsPopup)
+            {
+                Execute.BeginOnUIThread(async () =>
+                {
+                    await UnigramMessageDialog.ShowAsync(serviceNotification.Message, "Telegram", "OK");
+                });
+            }
+            else
+            {
+                Debugger.Break();
+            }
 
             //if (serviceNotification.Popup)
             //{
@@ -667,30 +757,129 @@ namespace Unigram.ViewModels
 
         public ObservableCollection<TLDialog> Items { get; private set; }
 
+        public ObservableCollection<KeyedList<string, TLObject>> Search { get; private set; }
+
+        public Dictionary<string, CancellationTokenSource> SearchTokens { get; private set; }
+
+        private string _searchQuery;
+        public string SearchQuery
+        {
+            get
+            {
+                return _searchQuery;
+            }
+            set
+            {
+                Set(ref _searchQuery, value);
+            }
+        }
+
+        public async Task SearchAsync(string query)
+        {
+            // TODO: dialogs search
+
+            var global = await SearchGlobalAsync(query);
+            var messages = await SearchMessagesAsync(query);
+
+            Search.Clear();
+            if (global != null) Search.Add(global);
+            if (messages != null) Search.Add(messages);
+
+            SearchQuery = query;
+        }
+
+        private async Task<KeyedList<string, TLObject>> SearchGlobalAsync(string query)
+        {
+            if (query.Length < 5)
+            {
+                return null;
+            }
+
+            var result = await ProtoService.SearchAsync(query, 100);
+            if (result.IsSucceeded)
+            {
+                if (result.Result.Results.Count > 0)
+                {
+                    var parent = new KeyedList<string, TLObject>("Global search results");
+
+                    foreach (var peer in result.Result.Results)
+                    {
+                        var item = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                        if (item != null)
+                        {
+                            parent.Add(item);
+                        }
+                    }
+
+                    return parent;
+                }
+            }
+
+            return null;
+        }
+
+        private async Task<KeyedList<string, TLObject>> SearchMessagesAsync(string query)
+        {
+            var result = await ProtoService.SearchGlobalAsync(query, 0, new TLInputPeerEmpty(), 0, 20);
+            if (result.IsSucceeded)
+            {
+                KeyedList<string, TLObject> parent;
+
+                var slice = result.Result as TLMessagesMessagesSlice;
+                if (slice != null)
+                {
+                    parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", slice.Count));
+                }
+                else
+                {
+                    if (result.Result.Messages.Count > 0)
+                    {
+                        parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", result.Result.Messages.Count));
+                    }
+                    else
+                    {
+                        parent = new KeyedList<string, TLObject>("No messages found");
+                    }
+                }
+
+                foreach (var message in result.Result.Messages.OfType<TLMessageCommonBase>())
+                {
+                    var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
+                    var with = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                    var item = new TLDialog
+                    {
+                        TopMessage = message.Id,
+                        TopMessageRandomId = message.RandomId,
+                        TopMessageItem = message,
+                        With = with,
+                        Peer = peer
+                    };
+
+                    parent.Add(item);
+                }
+
+                return parent;
+            }
+
+            return null;
+        }
+
         #region Commands
 
         public RelayCommand<TLDialog> DialogPinCommand => new RelayCommand<TLDialog>(DialogPinExecute);
         private async void DialogPinExecute(TLDialog dialog)
         {
-            TLInputPeerBase peer = null;
-
-            var user = dialog.With as TLUser;
-            if (user != null)
+            if (Items.Where(x => x.IsPinned).Count() == PinnedDialogsCountMax && !dialog.IsPinned)
             {
-                peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value };
+                var question = new UnigramMessageDialog();
+                question.Title = "Warning";
+                question.Message = string.Format("Sorry, you can pin no more than {0} chats to the top.", PinnedDialogsCountMax);
+                question.PrimaryButtonText = "OK";
+                await question.ShowAsync();
+                return;
             }
 
-            var chat = dialog.With as TLChat;
-            if (chat != null)
-            {
-                peer = new TLInputPeerChat { ChatId = chat.Id };
-            }
-
-            var channel = dialog.With as TLChannel;
-            if (channel != null)
-            {
-                peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
-            }
+            var peer = dialog.ToInputPeer();
 
             var result = await ProtoService.ToggleDialogPinAsync(peer, !dialog.IsPinned);
             if (result.IsSucceeded)
@@ -736,6 +925,106 @@ namespace Unigram.ViewModels
                             return;
                         }
                     }
+                }
+            }
+        }
+
+        public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
+        private async void DialogDeleteExecute(TLDialog dialog)
+        {
+            var peer = dialog.ToInputPeer();
+            var message = "Are you sure you want to delete the group?";
+            var which = 0;
+
+            var user = dialog.With as TLUser;
+            if (user != null)
+            {
+                which = 1;
+                message = "Are you sure you want to delete the conversation?";
+            }
+
+            var channel = dialog.With as TLChannel;
+            if (channel != null)
+            {
+                if (channel.IsBroadcast) message = "Are you sure you want to delete the channel?";
+                which = (channel.IsCreator) ? 2 : 3;
+            }
+
+            var chat = dialog.With as TLChat;
+            if (chat != null)
+            {
+                which = 4;
+            }
+
+            var question = new UnigramMessageDialog();
+            question.Title = "Delete";
+            question.Message = message;
+            question.PrimaryButtonText = "Yes";
+            question.SecondaryButtonText = "No";
+
+            var failNotification = new UnigramMessageDialog();
+            failNotification.Title = "Error";
+            failNotification.Message = "Chat could not be deleted!";
+            failNotification.PrimaryButtonText = "Okay";
+            failNotification.SecondaryButtonText = "";
+            failNotification.IsSecondaryButtonEnabled = false;
+
+            var result = await question.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                switch (which)
+                {
+                    case 1:
+                        var delResultUser = await ProtoService.DeleteHistoryAsync(false, peer, 0);
+                        if (delResultUser.IsSucceeded) { CacheService.DeleteDialog(dialog); }
+                        else { await failNotification.ShowAsync(); return; }
+                        break;
+                    case 2:
+                        var delResultChannel = await ProtoService.DeleteChannelAsync(channel);
+                        if (delResultChannel.IsSucceeded) { CacheService.DeleteDialog(dialog); }
+                        else { await failNotification.ShowAsync(); return; }
+                        break;
+                    case 3:
+                        var leaveResultChat = await ProtoService.LeaveChannelAsync(channel);
+                        if (leaveResultChat.IsSucceeded) { CacheService.DeleteDialog(dialog); }
+                        else { await failNotification.ShowAsync(); return; }
+                        break;
+                    case 4:
+                        // TODO: Make normal chats deletable
+                        break;
+                    default:
+                        Debug.WriteLine("Dialog is nothing");
+                        break;
+                }
+
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    if (Items[i].Index == dialog.Index)
+                    {
+                        dialog = (Items[i] as TLDialog);
+                        Items.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+        }
+
+        public RelayCommand<TLDialog> DialogClearCommand => new RelayCommand<TLDialog>(DialogClearExecute);
+        private async void DialogClearExecute(TLDialog dialog)
+        {
+            var clear = await UnigramMessageDialog.ShowAsync("Do you really want to clear the chat?", "Delete", "Yes", "No");
+            if (clear == ContentDialogResult.Primary)
+            {
+                var peer = dialog.ToInputPeer();
+                var result = await ProtoService.DeleteHistoryAsync(true, peer, 0);
+                if (result.IsSucceeded)
+                {
+                    CacheService.ClearDialog(dialog.Peer);
+                    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+                }
+                else
+                {
+                    await UnigramMessageDialog.ShowAsync("Clearing the chat failed!", "Error", "Okay");
                 }
             }
         }

@@ -38,7 +38,6 @@ namespace Unigram.Common
 
             var owner = triggers.Owner;
             var reference = GetReference(owner);
-            var windowSize = GetUseWindowSize(owner);
 
             var paddingNear = reference.Orientation == Orientation.Horizontal
                 ? owner.Padding.Left
@@ -52,15 +51,11 @@ namespace Unigram.Common
                 ? owner.ActualWidth
                 : owner.ActualHeight;
 
-            var windowLength = reference.Orientation == Orientation.Horizontal
-                ? Window.Current.Bounds.Width
-                : Window.Current.Bounds.Height;
-
             FluidGridViewTriggerBase trigger = null;
 
             foreach (var child in triggers)
             {
-                if (child.MaybeActive(windowSize ? windowLength : parentLength))
+                if (child.MaybeActive(parentLength))
                     trigger = child;
             }
 
@@ -101,21 +96,6 @@ namespace Unigram.Common
             DependencyProperty.RegisterAttached("OrientationOnly", typeof(bool), typeof(ItemsControl), new PropertyMetadata(true));
         #endregion
 
-        #region UseWindowSize
-        public static bool GetUseWindowSize(DependencyObject obj)
-        {
-            return (bool)obj.GetValue(UseWindowSizeProperty);
-        }
-
-        public static void SetUseWindowSize(DependencyObject obj, bool value)
-        {
-            obj.SetValue(UseWindowSizeProperty, value);
-        }
-
-        public static readonly DependencyProperty UseWindowSizeProperty =
-            DependencyProperty.RegisterAttached("UseWindowSize", typeof(bool), typeof(ItemsControl), new PropertyMetadata(false));
-        #endregion
-
         #region Triggers
         public static FluidGridViewTriggerCollection GetTriggers(DependencyObject obj)
         {
@@ -123,21 +103,9 @@ namespace Unigram.Common
             var triggers = (FluidGridViewTriggerCollection)obj.GetValue(TriggersProperty);
             if (triggers == null)
             {
-                var useWindowSize = GetUseWindowSize(sender);
-
                 triggers = new FluidGridViewTriggerCollection(sender);
                 triggers.CollectionChanged += OnCollectionChanged;
-                if (useWindowSize)
-                {
-                    sender.SizeChanged += OnSizeChanged;
-                }
-                else
-                {
-                    Window.Current.SizeChanged += (s, args) =>
-                    {
-                        SetActive(triggers);
-                    };
-                }
+                sender.SizeChanged += OnSizeChanged;
 
                 obj.SetValue(TriggersProperty, triggers);
             }

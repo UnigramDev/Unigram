@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,58 +22,69 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             Items = new SortedObservableCollection<TLUser>(new TLUserComparer());
+            Search = new ObservableCollection<KeyedList<string, TLObject>>();
         }
 
-        public async Task getTLContacts()
+        public async void LoadContacts()
         {
-            var contacts = CacheService.GetContacts();
-            foreach (var item in contacts.OfType<TLUser>())
-            {
-                var user = item as TLUser;
-                if (user.IsSelf)
-                {
-                    continue;
-                }
+            await LoadContactsAsync();
+        }
 
-                //var status = LastSeenHelper.GetLastSeen(user);
-                //var listItem = new UsersPanelListItem(user as TLUser);
-                //listItem.fullName = user.FullName;
-                //listItem.lastSeen = status.Item1;
-                //listItem.lastSeenEpoch = status.Item2;
-                //listItem.Photo = listItem._parent.Photo;
-                //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+        public async Task LoadContactsAsync()
+        {
+            //var contacts = CacheService.GetContacts();
+            //foreach (var item in contacts.OfType<TLUser>())
+            //{
+            //    var user = item as TLUser;
+            //    if (user.IsSelf)
+            //    {
+            //        continue;
+            //    }
 
-                Items.Add(user);
-            }
+            //    //var status = LastSeenHelper.GetLastSeen(user);
+            //    //var listItem = new UsersPanelListItem(user as TLUser);
+            //    //listItem.fullName = user.FullName;
+            //    //listItem.lastSeen = status.Item1;
+            //    //listItem.lastSeenEpoch = status.Item2;
+            //    //listItem.Photo = listItem._parent.Photo;
+            //    //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+
+            //    Items.Add(user);
+            //}
+
+            var contacts = new TLUser[0];
 
             var input = string.Join(",", contacts.Select(x => x.Id).Union(new[] { SettingsHelper.UserId }).OrderBy(x => x));
             var hash = MD5Core.GetHash(input);
             var hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
 
             var response = await ProtoService.GetContactsAsync(hex);
-            if (response.IsSucceeded && response.Value is TLContactsContacts)
+            if (response.IsSucceeded && response.Result is TLContactsContacts)
             {
-                var result = response.Value as TLContactsContacts;
+                var result = response.Result as TLContactsContacts;
                 if (result != null)
                 {
-                    foreach (var item in result.Users.OfType<TLUser>())
+                    Execute.BeginOnUIThread(() =>
                     {
-                        var user = item as TLUser;
-                        if (user.IsSelf)
+                        foreach (var item in result.Users.OfType<TLUser>())
                         {
-                            continue;
+                            var user = item as TLUser;
+                            if (user.IsSelf)
+                            {
+                                continue;
+                            }
+
+                            //var status = LastSeenHelper.GetLastSeen(user);
+                            //var listItem = new UsersPanelListItem(user as TLUser);
+                            //listItem.fullName = user.FullName;
+                            //listItem.lastSeen = status.Item1;
+                            //listItem.lastSeenEpoch = status.Item2;
+                            //listItem.Photo = listItem._parent.Photo;
+                            //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+
+                            Items.Add(user);
                         }
-
-                        //var status = LastSeenHelper.GetLastSeen(user);
-                        //var listItem = new UsersPanelListItem(user as TLUser);
-                        //listItem.fullName = user.FullName;
-                        //listItem.lastSeen = status.Item1;
-                        //listItem.lastSeenEpoch = status.Item2;
-                        //listItem.Photo = listItem._parent.Photo;
-                        //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
-
-                        Items.Add(user);
-                    }
+                    });
                 }
             }
 
@@ -99,7 +111,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
                 if (response.IsSucceeded)
                 {
-                    var user = response.Value.FirstOrDefault() as TLUser;
+                    var user = response.Result.FirstOrDefault() as TLUser;
                     if (user != null)
                     {
                         //var status = LastSeenHelper.GetLastSeen(user);
@@ -113,6 +125,23 @@ namespace Unigram.ViewModels
                         Self = user;
                     }
                 }
+            }
+        }
+
+        public async Task SearchAsync(string query)
+        {
+            Search.Clear();
+
+            var contacts = CacheService.GetContacts().Where(x => CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.FullName, query, CompareOptions.IgnoreCase) >= 0).ToList();
+            if (contacts.Count > 0)
+            {
+                Search.Add(new KeyedList<string, TLObject>("Contacts", contacts));
+            }
+
+            var result = await ProtoService.SearchAsync(query, 100);
+            if (result.IsSucceeded)
+            {
+                Search.Add(new KeyedList<string, TLObject>("Global search", result.Result.Users));
             }
         }
 
@@ -147,6 +176,8 @@ namespace Unigram.ViewModels
         #endregion
 
         public SortedObservableCollection<TLUser> Items { get; private set; }
+
+        public ObservableCollection<KeyedList<string, TLObject>> Search { get; private set; }
 
         private TLUser _self;
         public TLUser Self

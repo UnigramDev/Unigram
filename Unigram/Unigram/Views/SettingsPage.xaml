@@ -173,7 +173,7 @@
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <ContentPresenter AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Content="{TemplateBinding Tag}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Content="{TemplateBinding Tag}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
 
                             <ToggleSwitch IsOn="{TemplateBinding IsOn}" OnContent="{x:Null}" OffContent="{x:Null}" MinWidth="0" Grid.Column="1"/>
 
@@ -193,13 +193,19 @@
             </Grid.RowDefinitions>
         
             <!-- Titlebar -->
-            <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+            <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <TextBlock x:Uid="Settings-Titlebar-Title"
-                           Text="SETTINGS"
+                           Text="Settings"
                            Style="{StaticResource BaseTextBlockStyle}"
                            VerticalAlignment="Center"
                            Margin="12,0"/>
-            </Border>
+                <controls:GlyphButton Click="EditName_Click" Glyph="&#xE104;" Grid.Column="1"/>
+                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+            </Grid>
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -214,7 +220,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Grid Height="64" Width="64" CornerRadius="32" Margin="12" Grid.RowSpan="2">
+                    <Grid Height="48" Width="48" CornerRadius="24" Margin="12" Grid.RowSpan="2">
                         <TextBlock Margin="12,0" FontSize="24" Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.Self, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <Ellipse>
                             <Ellipse.Fill>
@@ -224,8 +230,8 @@
                         <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="32"/>
                         <controls:SimpleButton Command="{Binding PhotoCommand}" CornerRadius="32"/>
                     </Grid>
-                    <TextBlock Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
-                    <TextBlock Text="Online" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+                    <TextBlock Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+                    <TextBlock Text="online" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
 
                     <!--<StackPanel Grid.Column="1"
                                 VerticalAlignment="Center">
@@ -255,16 +261,19 @@
                     </StackPanel>-->
                 </Grid>
                 <Grid Grid.Row="1">
-                    <ScrollViewer>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  VerticalScrollMode="Auto">
                         <StackPanel>
                             <local:TableStackPanel x:Name="SwitchGroup1" 
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
                                 <controls:HyperCheckButton Content="Enabled" 
+                                                           IsEnabled="False"
                                                            Tag="Enable Location Services" 
                                                            Style="{ThemeResource CheckButtonStyle}"/>
                                 <controls:HyperCheckButton Content="Enabled" 
+                                                           IsEnabled="False"
                                                            Tag="Sync with People Hub" 
                                                            Style="{ThemeResource CheckButtonStyle}"/>
                             </local:TableStackPanel>
@@ -273,25 +282,41 @@
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
                                 <controls:HyperButton Content="Notifications and sounds" 
+                                                      IsEnabled="False"
                                                       Command="{x:Bind NotifcationPageCommand}"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Privacy and security" 
-                                                      Command="{x:Bind PrivacyPageCommand}"
+                                                      Click="Privacy_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Chat settings" 
+                                                      IsEnabled="False"
                                                       Command="{x:Bind ChatSettingsPageCommand}"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Stickers" 
-                                                      Command="{x:Bind StickersPageCommand}"
+                                                      Click="Stickers_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Chat wallpaper" 
+                                                      IsEnabled="False"
                                                       Command="{x:Bind WallpaperPageCommand}"
+                                                      Style="{StaticResource HyperButtonStyle}"/>
+                            </local:TableStackPanel>
+                            <local:TableStackPanel x:Name="OptionsGroup2" 
+                                                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                                   Margin="0,24,0,0">
+                                <controls:HyperButton Content="Phone"
+                                                      IsEnabled="False"
+                                                      Style="{StaticResource HyperButtonStyle}"/>
+                                <controls:HyperButton Content="Username"
+                                                      Click="Username_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                             </local:TableStackPanel>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
             </Grid>
+
+            <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" HorizontalAlignment="Right"  IsHitTestVisible="False" Grid.Row="1"/>
         </Grid>
     </controls:MasterDetailView>
 </Page>

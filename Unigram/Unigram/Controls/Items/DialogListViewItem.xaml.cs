@@ -10,9 +10,11 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Converters;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Globalization.DateTimeFormatting;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.UI;
@@ -433,7 +435,8 @@ namespace Unigram.Controls.Items
                 //Today
                 if (dateTime.Date == DateTime.Now.Date)
                 {
-                    TimeLabel.Text = dateTime.ToString(string.Format("{0}", shortTimePattern), cultureInfo);
+                    //TimeLabel.Text = dateTime.ToString(string.Format("{0}", shortTimePattern), cultureInfo);
+                    TimeLabel.Text = BindConvert.Current.ShortTime.Format(dateTime);
                     return;
                 }
 
@@ -452,15 +455,38 @@ namespace Unigram.Controls.Items
                 }
 
                 //Long long time ago
-                TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
+                //TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
+                TimeLabel.Text = BindConvert.Current.ShortDate.Format(dateTime);
             }
         }
 
         private void UpdateUnreadCount()
         {
-            ((TextBlock)UnreadLabel.Child).Text = ViewModel?.UnreadCount.ToString() ?? string.Empty;
+            UnreadBadge.Text = ViewModel?.UnreadCount.ToString() ?? string.Empty;
             UnreadLabel.Visibility = ViewModel?.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
             Highlight.Visibility = ViewModel?.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private Visibility UpdateUnreadBadgeBrush(TLPeerNotifySettingsBase settingsBase)
+        {
+            var settings = settingsBase as TLPeerNotifySettings;
+            if (settings != null)
+            {
+                return settings.MuteUntil == 0 && !settings.IsSilent ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return Visibility.Visible;
+        }
+
+        private Visibility UpdateUnreadBadgeMutedBrush(TLPeerNotifySettingsBase settingsBase)
+        {
+            var settings = settingsBase as TLPeerNotifySettings;
+            if (settings != null)
+            {
+                return settings.MuteUntil == 0 && !settings.IsSilent ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            return Visibility.Collapsed;
         }
 
         private void UpdateChannelType()

@@ -18,6 +18,7 @@ using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Core.Notifications;
 using Unigram.ViewModels;
+using Unigram.Views.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
@@ -52,11 +53,24 @@ namespace Unigram.Views
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            DataContext = UnigramContainer.Instance.ResolverType<MainViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<MainViewModel>();
 
             Loaded += OnLoaded;
 
+            Theme.RegisterPropertyChangedCallback(Border.BackgroundProperty, OnThemeChanged);
+
             searchInit();
+        }
+
+        private async void OnThemeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (_canvas != null)
+            {
+                _backgroundImage = await CanvasBitmap.LoadAsync(_canvas, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
+                _backgroundBrush = new CanvasImageBrush(_canvas, _backgroundImage);
+                _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
+                _canvas.Invalidate();
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -128,30 +142,30 @@ namespace Unigram.Views
 
         private void OnStateChanged(object sender, EventArgs e)
         {
-            if (lvMasterChats.SelectionMode == ListViewSelectionMode.Multiple)
+            if (DialogsListView.SelectionMode == ListViewSelectionMode.Multiple)
             {
                 ChangeListState();
             }
 
             if (MasterDetail.CurrentState == MasterDetailState.Narrow)
             {
-                lvMasterChats.IsItemClickEnabled = true;
-                lvMasterChats.SelectionMode = ListViewSelectionMode.None;
-                lvMasterChats.SelectedItem = null;
+                DialogsListView.IsItemClickEnabled = true;
+                DialogsListView.SelectionMode = ListViewSelectionMode.None;
+                DialogsListView.SelectedItem = null;
                 Separator.BorderThickness = new Thickness(0);
             }
             else
             {
-                lvMasterChats.IsItemClickEnabled = false;
-                lvMasterChats.SelectionMode = ListViewSelectionMode.Single;
-                lvMasterChats.SelectedItem = _lastSelected;
+                DialogsListView.IsItemClickEnabled = false;
+                DialogsListView.SelectionMode = ListViewSelectionMode.Single;
+                DialogsListView.SelectedItem = _lastSelected;
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
             }
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (lvMasterChats.SelectionMode != ListViewSelectionMode.Multiple)
+            if (DialogsListView.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 _lastSelected = e.ClickedItem;
 
@@ -162,18 +176,18 @@ namespace Unigram.Views
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (lvMasterChats.SelectedItem != null && _lastSelected != lvMasterChats.SelectedItem && lvMasterChats.SelectionMode != ListViewSelectionMode.Multiple)
+            if (DialogsListView.SelectedItem != null && _lastSelected != DialogsListView.SelectedItem && DialogsListView.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                _lastSelected = lvMasterChats.SelectedItem;
+                _lastSelected = DialogsListView.SelectedItem;
 
-                var dialog = lvMasterChats.SelectedItem as TLDialog;
+                var dialog = DialogsListView.SelectedItem as TLDialog;
                 MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
             }
         }
 
         private void cbtnMasterSelect_Click(object sender, RoutedEventArgs e)
         {
-            lvMasterChats.SelectionMode = ListViewSelectionMode.Multiple;
+            DialogsListView.SelectionMode = ListViewSelectionMode.Multiple;
             cbtnMasterDeleteSelected.Visibility = Visibility.Visible;
             cbtnMasterMuteSelected.Visibility = Visibility.Visible;
             cbtnCancelSelection.Visibility = Visibility.Visible;
@@ -209,7 +223,7 @@ namespace Unigram.Views
             cbtnCancelSelection.Visibility = Visibility.Collapsed;
             cbtnMasterSelect.Visibility = Visibility.Visible;
             cbtnMasterNewChat.Visibility = Visibility.Visible;
-            lvMasterChats.SelectionMode = ListViewSelectionMode.Single;
+            DialogsListView.SelectionMode = ListViewSelectionMode.Single;
             SystemNavigationManager.GetForCurrentView().BackRequested -= Select_BackRequested;
 
             if (!ViewModel.NavigationService.CanGoBack)
@@ -225,29 +239,33 @@ namespace Unigram.Views
 
         private void searchInit()
         {
-            var SearchTextChangedObservable = Observable.FromEventPattern<TextChangedEventArgs>(txtSearch, "TextChanged");
-            var throttled = SearchTextChangedObservable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x => {
-                if (((TextBox)x.Sender).Text == "")
+            var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchDialogs, "TextChanged");
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x => 
+            {
+                if (string.IsNullOrWhiteSpace(SearchDialogs.Text))
+                {
                     return;
-                    if (lvMasterChats.ItemsSource != ViewModel.SearchDialogs)
-                    {
-                        searchChats.ItemsSource = ViewModel.SearchResults;
-                    }
-                    ViewModel.GetSearchDialogs(((TextBox)x.Sender).Text);
-     
+                }
+
+                ViewModel.Dialogs.SearchAsync(SearchDialogs.Text);
             });
         }
 
         private void PivotItem_Loaded(object sender, RoutedEventArgs e)
         {
+            var dialogs = ViewModel.Dialogs;
+            var contacts = ViewModel.Contacts;
+
             try
             {
-                Execute.BeginOnUIThread(async () =>
+                Execute.BeginOnThreadPool(() =>
                 {
-                    ViewModel.Dialogs.LoadFirstSlice();
-                    await ViewModel.Contacts.getTLContacts();
-                    await ViewModel.Contacts.GetSelfAsync();
+                    dialogs.LoadFirstSlice();
+                    contacts.LoadContacts();
                 });
+
+                //ViewModel.Contacts.getTLContacts();
+                ViewModel.Contacts.GetSelfAsync();
             }
             catch { }
         }
@@ -277,14 +295,17 @@ namespace Unigram.Views
         private CanvasBitmap _backgroundImage;
         private CanvasImageBrush _backgroundBrush;
 
+        private CanvasControl _canvas;
+
         private void BackgroundCanvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
+            _canvas = sender;
+
             args.TrackAsyncAction(Task.Run(async () =>
             {
                 _backgroundImage = await CanvasBitmap.LoadAsync(sender, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
                 _backgroundBrush = new CanvasImageBrush(sender, _backgroundImage);
                 _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
-                //_backgroundBrush.Transform = Matrix3x2.CreateScale(_logicalDpi / 96f);
             }).AsAsyncAction());
         }
 
@@ -297,14 +318,14 @@ namespace Unigram.Views
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (txtSearch.Text != "")
+            if (SearchDialogs.Text != "")
             {
-                searchChats.Visibility = Visibility.Visible;
+                DialogsSearchListView.Visibility = Visibility.Visible;
             }
             else
             {
                 //  lvMasterChats.Visibility = Visibility.Visible;
-                searchChats.Visibility = Visibility.Collapsed;
+                DialogsSearchListView.Visibility = Visibility.Collapsed;
                 // lvMasterChats.ItemsSource = ViewModel.Dialogs;
             }
         }

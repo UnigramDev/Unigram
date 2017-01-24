@@ -3,6 +3,9 @@
 
 #include <iostream>  
 #include <iomanip>
+#include <sstream>
+#include <windows.h>
+#include "Shlwapi.h"
 
 using namespace Windows::UI::Notifications;
 using namespace Windows::ApplicationModel::Resources;
@@ -10,6 +13,7 @@ using namespace Windows::Data::Json;
 using namespace Windows::Data::Xml::Dom;
 using namespace Unigram::Native::Tasks;
 using namespace Platform;
+using namespace Windows::Storage;
 
 void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 {
@@ -61,8 +65,9 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		auto launch = GetLaunch(custom, loc_key);
 		auto tag = GetTag(custom);
 		auto group = GetGroup(custom);
+		auto picture = GetPicture(custom);
 
-		UpdateToast(caption, message, sound, launch, tag, group);
+		UpdateToast(caption, message, sound, launch, tag, group, picture, loc_key);
 		UpdateBadge(data->GetNamedNumber("badge"));
 
 		if (loc_key != L"DC_UPDATE") 
@@ -147,6 +152,16 @@ String^ NotificationTask::GetLaunch(JsonObject^ custom, String^ loc_key)
 		launch += custom->GetNamedString("from_id")->Data();
 		launch += L"&amp;";
 	}
+	if (custom->HasKey("mtpeer"))
+	{
+		auto mtpeer = custom->GetNamedObject("mtpeer");
+		if (mtpeer->HasKey("ah"))
+		{
+			launch += L"access_hash=";
+			launch += mtpeer->GetNamedString("ah")->Data();
+			launch += L"&amp;";
+		}
+	}
 
 	launch += L"Action=";
 	launch += loc_key->Data();
@@ -172,6 +187,54 @@ String^ NotificationTask::GetGroup(JsonObject^ custom)
 	else if (custom->HasKey("from_id"))
 	{
 		return String::Concat("u", custom->GetNamedString("from_id"));
+	}
+
+	return nullptr;
+}
+
+String^ NotificationTask::GetPicture(JsonObject^ custom)
+{
+	if (custom->HasKey("mtpeer"))
+	{
+		auto mtpeer = custom->GetNamedObject("mtpeer");
+		if (mtpeer->HasKey("ph"))
+		{
+			auto ph = mtpeer->GetNamedObject("ph");
+			auto volume_id = ph->GetNamedString("volume_id");
+			auto local_id = ph->GetNamedString("local_id");
+			auto secret = ph->GetNamedString("secret");
+
+			std::wstringstream almost;
+			almost << L"ms-appdata:///local/temp/"
+					<< volume_id->Data()
+					<< L"_"
+					<< local_id->Data()
+					<< L"_"
+					<< secret->Data()
+					<< L".jpg";
+
+			return ref new String(almost.str().c_str());
+
+			//auto temp = ApplicationData::Current->LocalFolder->Path;
+
+			//std::wstringstream wss;
+			//wss << temp->Data()
+			//	<< L"\\temp\\"
+			//	<< volume_id->Data()
+			//	<< L"_"
+			//	<< local_id->Data()
+			//	<< L"_"
+			//	<< secret->Data()
+			//	<< L".jpg";
+
+			//WIN32_FIND_DATA FindFileData;
+			//HANDLE handle = FindFirstFile(wss.str().c_str(), &FindFileData);
+			//int found = handle != INVALID_HANDLE_VALUE;
+			//if (found)
+			//{
+			//	FindClose(handle);
+			//}
+		}
 	}
 
 	return nullptr;
@@ -222,10 +285,11 @@ void NotificationTask::UpdateTile(String^ caption, String^ message)
 	updater->Update(notification);
 }
 
-void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group)
+void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ loc_key)
 {
+	std::wstring key = loc_key->Data();
 	std::wstring actions = L"";
-	if (group != nullptr)
+	if (group != nullptr && key.find(L"CHANNEL"))
 	{
 		actions = L"<actions><input id='QuickMessage' type='text' placeHolderContent='Type a message...' /><action activationType='background' arguments='";
 		actions += launch->Data();
@@ -234,7 +298,16 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 
 	std::wstring xml = L"<toast launch='";
 	xml += launch->Data();
-	xml += L"'><visual><binding template='ToastGeneric'><text><![CDATA[";
+	xml += L"'><visual><binding template='ToastGeneric'>";
+
+	if (picture != nullptr)
+	{
+		xml += L"<image placement='appLogoOverride' hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
+	}
+
+	xml += L"<text><![CDATA[";
 	xml += caption->Data();
 	xml += L"]]></text><text><![CDATA[";
 	xml += message->Data();

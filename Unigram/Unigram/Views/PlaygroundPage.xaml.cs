@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
@@ -27,6 +29,7 @@ using Windows.Media.MediaProperties;
 using Windows.Media.Render;
 using Windows.Phone.Media.Devices;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -35,6 +38,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -51,153 +55,422 @@ namespace Unigram.Views
         {
             this.InitializeComponent();
 
-
+            Loaded += PlaygroundPage_Loaded;
         }
 
-        private async void Start_PointerPressed(object sender, PointerRoutedEventArgs e)
+        private void PlaygroundPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (recorder?.IsRecording == true)
+            Storyboard1.Begin();
+        }
+
+        private void BackgroundCanvas_Draw(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
+        {
+            //var startAngle = DegreesToRadians(-15);
+            //var sweepAngle = DegreesToRadians(30);
+
+            //var progress = (float)Slide.Value / 100f;
+            //var size = 1 + 4 * progress;
+
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    using (var builder = new CanvasPathBuilder(sender))
+            //    {
+
+            //        var centerPoint = new Vector2((1 + 4 * progress), 6);
+            //        var startPoint = centerPoint + Vector2.Transform(Vector2.UnitX, Matrix3x2.CreateRotation(startAngle)) * size;
+
+            //        builder.BeginFigure(startPoint);
+            //        builder.AddArc(centerPoint, size, size, startAngle, sweepAngle);
+            //        builder.EndFigure(CanvasFigureLoop.Open);
+
+            //        using (var geometry = CanvasGeometry.CreatePath(builder))
+            //        {
+            //            var alpha = (i == 0) ? progress : (i == 4 - 1) ? (1.0f - progress) : 1.0f;
+            //            args.DrawingSession.DrawGeometry(geometry, Color.FromArgb((byte)(alpha * 255), 0xFF, 0x00, 0x0), 2, new CanvasStrokeStyle { StartCap = CanvasCapStyle.Round, EndCap = CanvasCapStyle.Round });
+            //        }
+
+            //        size += 4;
+            //    }
+            //}
+        }
+
+        public float DegreesToRadians(float angle)
+        {
+            return (float)((Math.PI / 180) * angle);
+        }
+
+        private void Slide_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            //BackgroundCanvas.Invalidate();
+        }
+    }
+
+    public class ProgressBarRingSlice : Windows.UI.Xaml.Shapes.Path
+    {
+        private bool _isUpdating;
+
+        #region StartAngle
+        /// <summary>
+        /// The start angle property.
+        /// </summary>
+        public static readonly DependencyProperty StartAngleProperty =
+            DependencyProperty.Register(
+                "StartAngle",
+                typeof(double),
+                typeof(ProgressBarRingSlice),
+                new PropertyMetadata(
+                    0d,
+                    OnStartAngleChanged));
+
+        /// <summary>
+        /// Gets or sets the start angle.
+        /// </summary>
+        /// <value>
+        /// The start angle.
+        /// </value>
+        public double StartAngle
+        {
+            get { return (double)GetValue(StartAngleProperty); }
+            set { SetValue(StartAngleProperty, value); }
+        }
+
+        private static void OnStartAngleChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (ProgressBarRingSlice)sender;
+            var oldStartAngle = (double)e.OldValue;
+            var newStartAngle = (double)e.NewValue;
+            target.OnStartAngleChanged(oldStartAngle, newStartAngle);
+        }
+
+        private void OnStartAngleChanged(double oldStartAngle, double newStartAngle)
+        {
+            UpdatePath();
+        }
+        #endregion
+
+        #region EndAngle
+        /// <summary>
+        /// The end angle property.
+        /// </summary>
+        public static readonly DependencyProperty EndAngleProperty =
+            DependencyProperty.Register(
+                "EndAngle",
+                typeof(double),
+                typeof(ProgressBarRingSlice),
+                new PropertyMetadata(
+                    0d,
+                    OnEndAngleChanged));
+
+        /// <summary>
+        /// Gets or sets the end angle.
+        /// </summary>
+        /// <value>
+        /// The end angle.
+        /// </value>
+        public double EndAngle
+        {
+            get { return (double)GetValue(EndAngleProperty); }
+            set { SetValue(EndAngleProperty, value); }
+        }
+
+        private static void OnEndAngleChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (ProgressBarRingSlice)sender;
+            var oldEndAngle = (double)e.OldValue;
+            var newEndAngle = (double)e.NewValue;
+            target.OnEndAngleChanged(oldEndAngle, newEndAngle);
+        }
+
+        private void OnEndAngleChanged(double oldEndAngle, double newEndAngle)
+        {
+            UpdatePath();
+        }
+        #endregion
+
+        #region Radius
+        /// <summary>
+        /// The radius property
+        /// </summary>
+        public static readonly DependencyProperty RadiusProperty =
+            DependencyProperty.Register(
+                "Radius",
+                typeof(double),
+                typeof(ProgressBarRingSlice),
+                new PropertyMetadata(
+                    0d,
+                    OnRadiusChanged));
+
+        /// <summary>
+        /// Gets or sets the outer radius.
+        /// </summary>
+        /// <value>
+        /// The outer radius.
+        /// </value>
+        public double Radius
+        {
+            get { return (double)GetValue(RadiusProperty); }
+            set { SetValue(RadiusProperty, value); }
+        }
+
+        private static void OnRadiusChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (ProgressBarRingSlice)sender;
+            var oldRadius = (double)e.OldValue;
+            var newRadius = (double)e.NewValue;
+            target.OnRadiusChanged(oldRadius, newRadius);
+        }
+
+        private void OnRadiusChanged(double oldRadius, double newRadius)
+        {
+            Width = Height = 2 * Radius;
+            UpdatePath();
+        }
+        #endregion
+
+        #region InnerRadius
+        /// <summary>
+        /// The inner radius property
+        /// </summary>
+        public static readonly DependencyProperty InnerRadiusProperty =
+            DependencyProperty.Register(
+                "InnerRadius",
+                typeof(double),
+                typeof(ProgressBarRingSlice),
+                new PropertyMetadata(
+                    0d,
+                    OnInnerRadiusChanged));
+
+        /// <summary>
+        /// Gets or sets the inner radius.
+        /// </summary>
+        /// <value>
+        /// The inner radius.
+        /// </value>
+        public double InnerRadius
+        {
+            get { return (double)GetValue(InnerRadiusProperty); }
+            set { SetValue(InnerRadiusProperty, value); }
+        }
+
+        private static void OnInnerRadiusChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (ProgressBarRingSlice)sender;
+            var oldInnerRadius = (double)e.OldValue;
+            var newInnerRadius = (double)e.NewValue;
+            target.OnInnerRadiusChanged(oldInnerRadius, newInnerRadius);
+        }
+
+        private void OnInnerRadiusChanged(double oldInnerRadius, double newInnerRadius)
+        {
+            if (newInnerRadius < 0)
             {
-                await recorder.StopAsync();
+                throw new ArgumentException("InnerRadius can't be a negative value.", "InnerRadius");
             }
 
-            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
-            recorder = new OpusRecorder(file);
-            await recorder.StartAsync();
+            UpdatePath();
         }
 
-        private async void Start_PointerReleased(object sender, PointerRoutedEventArgs e)
+        #endregion
+
+        #region Center
+        /// <summary>
+        /// Center Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty CenterProperty =
+            DependencyProperty.Register(
+                "Center",
+                typeof(Point?),
+                typeof(ProgressBarRingSlice),
+                new PropertyMetadata(null, OnCenterChanged));
+
+        /// <summary>
+        /// Gets or sets the Center property. This dependency property 
+        /// indicates the center point.
+        /// Center point is calculated based on Radius and StrokeThickness if not specified.    
+        /// </summary>
+        public Point? Center
         {
-            if (recorder.IsRecording)
+            get { return (Point?)GetValue(CenterProperty); }
+            set { SetValue(CenterProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the Center property.
+        /// </summary>
+        /// <param name="d">
+        /// The <see cref="DependencyObject"/> on which
+        /// the property has changed value.
+        /// </param>
+        /// <param name="e">
+        /// Event data that is issued by any event that
+        /// tracks changes to the effective value of this property.
+        /// </param>
+        private static void OnCenterChanged(
+            DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (ProgressBarRingSlice)d;
+            Point? oldCenter = (Point?)e.OldValue;
+            Point? newCenter = target.Center;
+            target.OnCenterChanged(oldCenter, newCenter);
+        }
+
+        /// <summary>
+        /// Provides derived classes an opportunity to handle changes
+        /// to the Center property.
+        /// </summary>
+        /// <param name="oldCenter">The old Center value</param>
+        /// <param name="newCenter">The new Center value</param>
+        private void OnCenterChanged(
+            Point? oldCenter, Point? newCenter)
+        {
+            UpdatePath();
+        }
+        #endregion
+
+        #region Value
+
+
+
+        public double Value
+        {
+            get { return (double)GetValue(ValueProperty); }
+            set { SetValue(ValueProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Value.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ValueProperty =
+            DependencyProperty.Register("Value", typeof(double), typeof(ProgressBarRingSlice), new PropertyMetadata(0.0, OnValueChanged));
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (ProgressBarRingSlice)d;
+            var oldInnerRadius = (double)e.OldValue;
+            var newInnerRadius = (double)e.NewValue;
+            target.OnValueChanged(oldInnerRadius, newInnerRadius);
+        }
+
+        private void OnValueChanged(double oldInnerRadius, double newInnerRadius)
+        {
+            if (newInnerRadius < 0)
             {
-                await recorder.StopAsync();
-
-                var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.OpenIfExists);
-
-                var cacheService = UnigramContainer.Instance.ResolverType<ICacheService>();
-                var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
-                var updatesService = UnigramContainer.Instance.ResolverType<IUpdatesService>();
-                var uploadManager = UnigramContainer.Instance.ResolverType<IUploadAudioManager>();
-
-                var contacts = await protoService.GetDialogsAsync(0, 0, new TLInputPeerEmpty(), 200);
-                //var user = contacts.Value.Users.OfType<TLUser>().FirstOrDefault(x => x.FullName.Equals("Andrea Cocci"));
-                var channel = contacts.Value.Chats.OfType<TLChannel>().FirstOrDefault(x => x.FullName.Equals("Unigram Insiders"));
-
-                var fileLocation = new TLFileLocation
-                {
-                    VolumeId = TLLong.Random(),
-                    LocalId = TLInt.Random(),
-                    Secret = TLLong.Random(),
-                    DCId = 0
-                };
-
-                var fileName = string.Format("{0}_{1}_{2}.ogg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-                var fileCache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-
-                await file.CopyAndReplaceAsync(fileCache);
-
-                var basicProps = await fileCache.GetBasicPropertiesAsync();
-                var imageProps = await fileCache.Properties.GetMusicPropertiesAsync();
-
-                var date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
-
-                var media = new TLMessageMediaDocument
-                {
-                    // TODO: Document = ...
-                    //Caption = "Yolo"
-                };
-
-                var message = TLUtils.GetMessage(SettingsHelper.UserId, new TLPeerChannel { ChannelId = channel.Id }, TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
-
-                var fileId = TLLong.Random();
-                var upload = await uploadManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
-                if (upload != null)
-                {
-                    var inputMedia = new TLInputMediaUploadedDocument
-                    {
-                        File = new TLInputFile
-                        {
-                            Id = upload.FileId,
-                            Md5Checksum = string.Empty,
-                            Name = fileName,
-                            Parts = upload.Parts.Count
-                        },
-                        MimeType = "audio/ogg",
-                        Caption = media.Caption,
-                        Attributes = new TLVector<TLDocumentAttributeBase>
-                        {
-                            new TLDocumentAttributeAnimated(),
-                            new TLDocumentAttributeAudio
-                            {
-                                IsVoice = true,
-                                Duration = 50
-                            }
-                        }
-                    };
-
-                    var result = await protoService.SendMediaAsync(new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value }, inputMedia, message);
-                }
+                throw new ArgumentException("InnerRadius can't be a negative value.", "InnerRadius");
             }
+
+            UpdatePath();
         }
 
-        private AudioGraph graph;
-        private AudioDeviceOutputNode deviceOutputNode;
-        private AudioFileInputNode fileInputNode;
-        private CreateAudioFileInputNodeResult fileInputNodeResult;
-        private CreateAudioDeviceOutputNodeResult deviceOutputNodeResult;
-        private StorageFile file;
 
-        private async void Media_Loaded(object sender, RoutedEventArgs e)
+        #endregion
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProgressBarRingSlice" /> class.
+        /// </summary>
+        public ProgressBarRingSlice()
         {
+            SizeChanged += OnSizeChanged;
+            //new PropertyChangeEventSource<double>(
+            //    this, "StrokeThickness", BindingMode.OneWay).ValueChanged +=
+            //    OnStrokeThicknessChanged;
+        }
 
+        private void OnStrokeThicknessChanged(object sender, double e)
+        {
+            UpdatePath();
+        }
 
+        private void OnSizeChanged(object sender, SizeChangedEventArgs sizeChangedEventArgs)
+        {
+            UpdatePath();
+        }
 
+        /// <summary>
+        /// Suspends path updates until EndUpdate is called;
+        /// </summary>
+        public void BeginUpdate()
+        {
+            _isUpdating = true;
+        }
 
+        /// <summary>
+        /// Resumes immediate path updates every time a component property value changes. Updates the path.
+        /// </summary>
+        public void EndUpdate()
+        {
+            _isUpdating = false;
+            UpdatePath();
+        }
 
-            if (recorder?.IsRecording == true)
+        private TranslateTransform _transform;
+
+        private void UpdatePath()
+        {
+            if (_transform == null)
             {
-                await recorder.StopAsync();
-                //Media.Source = new Uri("ms-appdata:///temp/recording.ogg");
-                //Media.Play();
+                _transform = new TranslateTransform();
+                RenderTransform = _transform;
+                RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+            }
 
-                file = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
+            var size = Radius + 1 + 4 * Value;
+            var innerRadius = size - 2 + StrokeThickness / 2;
+            var outerRadius = size - StrokeThickness / 2;
 
-                var settings = new AudioGraphSettings(AudioRenderCategory.Communications);
-                settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
+            //_transform.X = -size;
+            //Width = Height = size * 2;
+            //Margin = new Thickness(-size, 5 - size, 0, 5 - size);
+            //Margin = new Thickness(-size, 0, 0, 0);
 
-                var result = await AudioGraph.CreateAsync(settings);
-                if (result.Status != AudioGraphCreationStatus.Success)
-                    return;
-
-                graph = result.Graph;
-                Debug.WriteLine("Graph successfully created!");
-
-                fileInputNodeResult = await graph.CreateFileInputNodeAsync(file);
-                if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
-                    return;
-
-                deviceOutputNodeResult = await graph.CreateDeviceOutputNodeAsync();
-                if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
-                    return;
-
-                deviceOutputNode = deviceOutputNodeResult.DeviceOutputNode;
-                fileInputNode = fileInputNodeResult.FileInputNode;
-                fileInputNode.AddOutgoingConnection(deviceOutputNode);
-                 
-                graph.Start();
-
-                //var file2 = await ApplicationData.Current.TemporaryFolder.GetFileAsync("recording.ogg");
-                //Media.SetSource(await file2.OpenReadAsync(), "audio/ogg");
-                //Media.Play();
-
+            if (_isUpdating ||
+                ActualWidth == 0 ||
+                innerRadius <= 0 ||
+                outerRadius < innerRadius)
+            {
                 return;
             }
 
-            file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
-            recorder = new OpusRecorder(file);
-            await recorder.StartAsync();
+            var center =
+                Center ??
+                new Point(
+                    outerRadius + StrokeThickness / 2,
+                    outerRadius + StrokeThickness / 2);
 
+            //center = new Point(Width / 2, Height / 2);
+
+            if (EndAngle > 0 && EndAngle < 360)
+            {
+                var pathGeometry = new PathGeometry();
+                var pathFigure = new PathFigure();
+                pathFigure.IsClosed = false;
+
+                // Starting Point
+                pathFigure.StartPoint =
+                    new Point(
+                        center.X + Math.Sin(StartAngle * Math.PI / 180) * innerRadius,
+                        center.Y - Math.Cos(StartAngle * Math.PI / 180) * innerRadius);
+
+                // Inner Arc
+                var innerArcSegment = new ArcSegment();
+                innerArcSegment.IsLargeArc = (EndAngle - StartAngle) >= 180.0;
+                innerArcSegment.Point =
+                    new Point(
+                        center.X + Math.Sin(EndAngle * Math.PI / 180) * innerRadius,
+                        center.Y - Math.Cos(EndAngle * Math.PI / 180) * innerRadius);
+                innerArcSegment.Size = new Size(innerRadius, innerRadius);
+                innerArcSegment.SweepDirection = SweepDirection.Clockwise;
+
+                pathFigure.Segments.Add(innerArcSegment);
+                pathGeometry.Figures.Add(pathFigure);
+
+                InvalidateArrange();
+                Data = pathGeometry;
+            }
         }
+
+        //protected override Size MeasureOverride(Size availableSize)
+        //{
+        //    var size = (Radius + 1 + 4 * Value) * 2;
+        //    return new Size(size, size);
+        //}
     }
 
     public class VoiceButton : GlyphButton

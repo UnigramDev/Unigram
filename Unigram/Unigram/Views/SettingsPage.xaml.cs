@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Unigram.Views.Settings;
@@ -21,7 +23,7 @@ namespace Unigram.Views
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            DataContext = UnigramContainer.Instance.ResolverType<SettingsViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<SettingsViewModel>();
 
             Loaded += OnLoaded;
         }
@@ -34,13 +36,20 @@ namespace Unigram.Views
 
         private void OnStateChanged(object p1, object p2)
         {
-            
+            if (MasterDetail.CurrentState == MasterDetailState.Narrow)
+            {
+                Separator.BorderThickness = new Thickness(0);
+            }
+            else
+            {
+                Separator.BorderThickness = new Thickness(0, 0, 1, 0);
+            }
         }
 
         RelayCommand NotifcationPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage)));
         RelayCommand PrivacyPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyPage)));
         RelayCommand ChatSettingsPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsChatPage)));
-        RelayCommand StickersPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingStickersPage)));
+        RelayCommand StickersPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage)));
         RelayCommand WallpaperPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsWallpaperPage)));
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -62,6 +71,26 @@ namespace Unigram.Views
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
+        }
+
+        private void Username_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsUsernamePage));
+        }
+
+        private async void EditName_Click(object sender, RoutedEventArgs e)
+        {
+            await MasterDetail.NavigationService.NavigateModalAsync(typeof(EditYourNameView));
+        }
+
+        private void Privacy_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyPage));
+        }
+
+        private void Stickers_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage));
         }
     }
 }

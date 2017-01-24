@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -15,7 +16,9 @@ using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Core.Dependency;
 using Unigram.Views;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Email;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Popups;
@@ -642,10 +645,10 @@ namespace Unigram.Common
                     var response = await MTProtoService.Current.ResolveUsernameAsync(((string)data).TrimStart('@'));
                     if (response.IsSucceeded)
                     {
-                        var peerUser = response.Value.Peer as TLPeerUser;
+                        var peerUser = response.Result.Peer as TLPeerUser;
                         if (peerUser != null)
                         {
-                            var userBase = response.Value.Users.FirstOrDefault();
+                            var userBase = response.Result.Users.FirstOrDefault();
                             if (userBase != null)
                             {
                                 service.Navigate(typeof(UserInfoPage), userBase);
@@ -653,8 +656,8 @@ namespace Unigram.Common
                             }
                         }
 
-                        var peerChat = response.Value.Peer as TLPeerChat;
-                        var peerChannel = response.Value.Peer as TLPeerChannel;
+                        var peerChat = response.Result.Peer as TLPeerChat;
+                        var peerChannel = response.Result.Peer as TLPeerChannel;
                         if (peerChannel != null || peerChat != null)
                         {
                             // TODO
@@ -851,11 +854,11 @@ namespace Unigram.Common
 
         private static async void NavigateToInviteLink(string link)
         {
-            var protoService = UnigramContainer.Instance.ResolverType<IMTProtoService>();
+            var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>();
             var response = await protoService.CheckChatInviteAsync(link);
             if (response.IsSucceeded)
             {
-                var inviteAlready = response.Value as TLChatInviteAlready;
+                var inviteAlready = response.Result as TLChatInviteAlready;
                 if (inviteAlready != null)
                 {
                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
@@ -872,7 +875,7 @@ namespace Unigram.Common
                     }
                 }
 
-                var invite = response.Value as TLChatInvite;
+                var invite = response.Result as TLChatInvite;
                 if (invite != null)
                 {
                     var content = "AppResources.JoinGroupConfirmation";
@@ -893,7 +896,7 @@ namespace Unigram.Common
                         var import = await protoService.ImportChatInviteAsync(link);
                         if (import.IsSucceeded)
                         {
-                            var updates = import.Value as TLUpdates;
+                            var updates = import.Result as TLUpdates;
                             if (updates != null)
                             {
                                 var chatBase = updates.Chats.FirstOrDefault();
@@ -1115,6 +1118,75 @@ namespace Unigram.Common
                     message.Entities.Add(entity);
                 }
             }
+        }
+
+        public static void CopyToClipboard(TLMessage message)
+        {
+            CopyToClipboard(message.Message, (IEnumerable<TLMessageEntityBase>)message.Entities ?? new TLMessageEntityBase[0]);
+        }
+
+        public static void CopyToClipboard(string message, IEnumerable<TLMessageEntityBase> entities)
+        {
+            var tdesktop = GetTDesktopClipboard(entities);
+
+            var package = new DataPackage();
+            if (tdesktop != null) package.SetData("application/x-td-field-tags", tdesktop);
+            package.SetText(message);
+            Clipboard.SetContent(package);
+        }
+
+        private static IRandomAccessStream GetTDesktopClipboard(IEnumerable<TLMessageEntityBase> entities)
+        {
+            var mentions = entities.Where(x => x is TLInputMessageEntityMentionName || x is TLMessageEntityMentionName).ToList();
+            if (mentions.Count > 0)
+            {
+                using (var stream = new InMemoryRandomAccessStream())
+                {
+                    using (var writer = new BinaryWriter(stream.AsStream()))
+                    {
+                        var count = BitConverter.GetBytes(mentions.Count);
+                        Array.Reverse(count);
+                        writer.Write(count);
+
+                        foreach (var entity in mentions)
+                        {
+                            var offset = BitConverter.GetBytes(entity.Offset);
+                            Array.Reverse(offset);
+                            writer.Write(offset);
+
+                            var length = BitConverter.GetBytes(entity.Length);
+                            Array.Reverse(length);
+                            writer.Write(length);
+
+                            var tag = string.Empty;
+                            var inputMention = entity as TLInputMessageEntityMentionName;
+                            if (inputMention != null)
+                            {
+                                var userId = inputMention.UserId as TLInputUser;
+                                var tempTag = $"mention://user.{userId.UserId}.{userId.AccessHash}:{SettingsHelper.UserId}";
+
+                                foreach (var c in tempTag)
+                                {
+                                    tag += $"\0{c}";
+                                }
+                            }
+
+                            //tag = "\0m\0e\0n\0t\0i\0o\0n\0:\0/\0/\0u\0s\0e\0r\0.\02\04\03\01\03\06\06\05\01\0.\04\07\01\06\00\02\09\07\09\00\03\03\08\04\01\04\04\07\03\0:\03\08\04\07\05\08\06\01";
+
+                            var tagLength = BitConverter.GetBytes(tag.Length);
+                            Array.Reverse(tagLength);
+                            writer.Write(tagLength);
+
+                            var tagBytes = Encoding.ASCII.GetBytes(tag);
+                            writer.Write(tagBytes);
+                        }
+
+                        return stream.CloneStream();
+                    }
+                }
+            }
+
+            return null;
         }
     }
 

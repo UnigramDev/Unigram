@@ -8,7 +8,7 @@ using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLChat : ITLReadMaxId, INotifyPropertyChanged
+    public partial class TLChat : ITLReadMaxId, ITLInputPeer, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public override void RaisePropertyChanged(string propertyName)
@@ -59,6 +59,11 @@ namespace Telegram.Api.TL
         {
             to.Write(ReadInboxMaxId);
             to.Write(ReadOutboxMaxId);
+        }
+
+        public TLInputPeerBase ToInputPeer()
+        {
+            return new TLInputPeerChat { ChatId = Id };
         }
     }
 }

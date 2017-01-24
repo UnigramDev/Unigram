@@ -130,6 +130,7 @@
     <Compile Include="Services\MTProtoResponse.cs" />
     <Compile Include="Services\MTProtoService.Channel.cs" />
     <Compile Include="TL\Core\ITLChannelInviter.cs" />
+    <Compile Include="TL\Core\ITLInputPeer.cs" />
     <Compile Include="TL\Core\ITLMediaCaption.cs" />
     <Compile Include="TL\Core\ITLMultiChannelPts.cs" />
     <Compile Include="TL\Core\ITLRandomId.cs" />
@@ -345,6 +346,7 @@
     <Compile Include="TL\Methods\Upload\TLUploadSaveFilePart.cs" />
     <Compile Include="TL\Methods\Users\TLUsersGetFullUser.cs" />
     <Compile Include="TL\Methods\Users\TLUsersGetUsers.cs" />
+    <Compile Include="TL\Partial\TLAuthorization.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
     <Compile Include="TL\Partial\TLDraftMessageBase.Partial.cs" />
     <Compile Include="TL\Partial\TLInputFileLocationBase.Partial.cs" />
@@ -1116,11 +1118,6 @@
     <Compile Include="Transport\TcpTransportWinRT.cs" />
     <Compile Include="Transport\TransportService.cs" />
     <EmbeddedResource Include="Properties\Unigram.Api.rd.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <SDKReference Include="SQLite.UWP.2015, Version=3.16.2">
-      <Name>SQLite for Universal Windows Platform</Name>
-    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

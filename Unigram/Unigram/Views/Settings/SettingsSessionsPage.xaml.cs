@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Core.Dependency;
+using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -20,19 +22,24 @@ namespace Unigram.Views.Settings
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SettingStickersPage : Page
+    public sealed partial class SettingsSessionsPage : Page
     {
-        public SettingStickersPage()
+        public SettingsSessionsViewModel ViewModel => DataContext as SettingsSessionsViewModel;
+
+        public SettingsSessionsPage()
         {
             InitializeComponent();
+            DataContext = UnigramContainer.Instance.ResolveType<SettingsSessionsViewModel>();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            while (Frame.BackStackDepth > 1)
-            {
-                Frame.BackStack.RemoveAt(1);
-            }
+            ViewModel.TerminateCommand.Execute(e.ClickedItem);
+        }
+
+        private void TerminateOthers_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.TerminateOthersCommand.Execute(null);
         }
     }
 }
