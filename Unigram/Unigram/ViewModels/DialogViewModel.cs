@@ -406,7 +406,8 @@ namespace Unigram.ViewModels
                         foreach (TLUserBase now in temp.Result.Users)
                         {
                             TLUser tempUser = now as TLUser;
-                            if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("Online") && !tempUser.IsSelf) online++;
+                            
+                            if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
                         }
                         participantCount = channelFull.ParticipantsCount ?? default(int);
                     }

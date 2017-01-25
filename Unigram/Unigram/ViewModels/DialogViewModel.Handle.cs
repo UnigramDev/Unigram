@@ -7,6 +7,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
+using Unigram.Common;
 
 namespace Unigram.ViewModels
 {
