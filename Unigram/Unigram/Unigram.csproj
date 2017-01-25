@@ -103,6 +103,9 @@
       <DependentUpon>ThumbnailControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProfilePictureView.cs" />
+    <Compile Include="Controls\Views\StickersView.xaml.cs">
+      <DependentUpon>StickersView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\LastSeenConverter.cs" />
     <Compile Include="ViewModels\DialogViewModel.Typing.cs" />
   </ItemGroup>
@@ -508,6 +511,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\SendPhotosView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\StickersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

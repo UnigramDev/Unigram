@@ -461,11 +461,6 @@ namespace Unigram.Views
 
         #endregion
 
-        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            ViewModel.SendStickerCommand.Execute(e.ClickedItem);
-        }
-
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
             StickersPanel.IsHitTestVisible = !StickersPanel.IsHitTestVisible;

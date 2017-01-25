@@ -450,7 +450,7 @@
     <value>{0} joined the group</value>
   </data>
   <data name="MessageActionChatAddUser" xml:space="preserve">
-    <value>{0} invited {1}</value>
+    <value>{0} added {1}</value>
   </data>
   <data name="MessageActionChatCreate" xml:space="preserve">
     <value>{0} created the group "{1}"</value>

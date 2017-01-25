@@ -32,7 +32,7 @@ namespace Unigram.Common
             else return input;
         }
 
-        public static void AddRange<T>(this IList<T> list, IList<T> source)
+        public static void AddRange<T>(this IList<T> list, IEnumerable<T> source)
         {
             foreach (var item in source)
             {

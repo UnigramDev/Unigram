@@ -46,21 +46,28 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateUserStatus statusUpdate)
         {
-            if (online > -1)
+            Execute.BeginOnUIThread(() =>
             {
-                if (statusUpdate.Status.GetType() == typeof(TLUserStatusOnline)) online++;
-                else online--;
-                LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
-            }
-            else if (online == -1)
-            {
-                LastSeen = LastSeenHelper.GetLastSeen(partner).Item1;
-            }
+                var user = With as TLUser;
+                if (user != null)
+                {
+                    LastSeen = LastSeenHelper.GetLastSeenTime(user);
+                }
+                else
+                {
+                    if (online > -1)
+                    {
+                        if (statusUpdate.Status.GetType() == typeof(TLUserStatusOnline)) online++;
+                        else online--;
+                        LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
+                    }
+                }
+            });
         }
 
         public void Handle(TLUpdateEditChannelMessage update)
         {
-            var channel = this.With as TLChannel;
+            var channel = With as TLChannel;
             if (channel == null)
             {
                 return;

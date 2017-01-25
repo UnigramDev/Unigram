@@ -308,7 +308,7 @@ namespace Unigram.Converters
                 }
                 else if (TLMessage.IsGif(tLDocument3))
                 {
-                    return ReturnOrEnqueueGif(tLDocument3, null);
+                    return ReturnOrEnqueueGif(tLDocument3, parameter != null && string.Equals(parameter.ToString(), "thumbnail", StringComparison.OrdinalIgnoreCase));
                 }
                 else
                 {
@@ -521,11 +521,32 @@ namespace Unigram.Converters
         //    return null;
         //}
 
-        public static ImageSource ReturnOrEnqueueGif(TLDocument document, TLObject sticker)
+        public static ImageSource ReturnOrEnqueueGif(TLDocument document, bool thumbnail)
         {
             if (document == null)
             {
                 return null;
+            }
+
+            if (thumbnail)
+            {
+                var photoSize = document.Thumb as TLPhotoSize;
+                if (photoSize != null)
+                {
+                    var fileLocation = photoSize.Location as TLFileLocation;
+                    if (fileLocation != null)
+                    {
+                        return ReturnOrEnqueueImage(false, fileLocation, document, photoSize.Size, null);
+                    }
+                }
+
+                var photoCachedSize = document.Thumb as TLPhotoCachedSize;
+                if (photoCachedSize != null)
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.SetByteSource(photoCachedSize.Bytes);
+                    return bitmap;
+                }
             }
 
             var width = 0;
@@ -542,12 +563,6 @@ namespace Unigram.Converters
 
             if (!File.Exists(FileUtils.GetTempFileName(filename)))
             {
-                TLObject owner = document;
-                if (sticker != null)
-                {
-                    owner = sticker;
-                }
-
                 var renderer = _videoFactory.CreateRenderer(320, 320);
                 var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>

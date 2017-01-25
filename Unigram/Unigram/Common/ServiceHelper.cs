@@ -92,7 +92,7 @@ namespace Unigram.Common
 
                 // TODO: replace last ", " with "and "
 
-                var codesReplace = string.Empty;
+                var codesReplace = "{1}";
                 if (codes.Count > 1)
                 {
                     codesReplace = string.Concat(string.Join(", ", codes.Take(codes.Count - 1)), " and ", codes.Last());

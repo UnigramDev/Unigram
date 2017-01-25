@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
+using Unigram.Core.Dependency;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
