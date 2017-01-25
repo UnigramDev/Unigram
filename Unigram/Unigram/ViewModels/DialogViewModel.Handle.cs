@@ -7,6 +7,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
+using Unigram.Common;
 
 namespace Unigram.ViewModels
 {
@@ -16,6 +17,7 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateEditChannelMessage>,
         IHandle<TLUpdateEditMessage>,
         IHandle<MessagesRemovedEventArgs>,
+        IHandle<TLUpdateUserStatus>,
         IHandle
     {
         public void Handle(MessagesRemovedEventArgs args)
@@ -39,6 +41,20 @@ namespace Unigram.ViewModels
                         }
                     }
                 });
+            }
+        }
+
+        public void Handle(TLUpdateUserStatus statusUpdate)
+        {
+            if (online > -1)
+            {
+                if (statusUpdate.Status.GetType() == typeof(TLUserStatusOnline)) online++;
+                else online--;
+                LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
+            }
+            else if (online == -1)
+            {
+                LastSeen = LastSeenHelper.GetLastSeen(partner).Item1;
             }
         }
 

@@ -48,6 +48,11 @@ namespace Unigram.ViewModels
         private readonly IUploadDocumentManager _uploadDocumentManager;
         private readonly IUploadVideoManager _uploadVideoManager;
 
+        public Visibility LastSeenVisible;
+        public int participantCount = 0;
+        public int online = 0;
+        public TLUser partner;
+
         public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, FeaturedStickersViewModel featuredStickers)
             : base(protoService, cacheService, aggregator)
         {
@@ -77,6 +82,19 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _with, value);
+            }
+        }
+
+        private string _lastSeen;
+        public string LastSeen
+        {
+            get
+            {
+                return _lastSeen;
+            }
+            set
+            {
+                Set(ref _lastSeen, value);
             }
         }
 
@@ -317,9 +335,11 @@ namespace Unigram.ViewModels
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
 
                 Messages.Clear();
-                //LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
-                //LastSeenVisible = Visibility.Visible;
+                LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
+                LastSeenVisible = Visibility.Visible;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
+                online = -1;
+                partner = user;
 
                 // test calls
                 //var config = await ProtoService.GetDHConfigAsync(0, 0);
@@ -379,7 +399,32 @@ namespace Unigram.ViewModels
                             PinnedMessage = y.Result.Messages.FirstOrDefault();
                         }
                     }
+                    online = 0;
+                    participantCount = channelFull.ParticipantsCount ?? default(int);
+                    if (participantCount < 200)
+                    {
+                        try
+                        {
+                            var temp = await ProtoService.GetParticipantsAsync(input, null, 0, 5000);
+                            foreach (TLUserBase now in temp.Result.Users)
+                            {
+                                TLUser tempUser = now as TLUser;
+
+                                if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e.ToString());
+                            online = -2;
+                        }
+                    }else{
+                        online = -2;
+                    }
+                    LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
+                    LastSeenVisible = Visibility.Visible;
                 }
+
             }
             else if (chat != null)
             {
@@ -390,6 +435,20 @@ namespace Unigram.ViewModels
                 if (chatDetails.IsSucceeded)
                 {
                 }
+
+                participantCount = chatDetails.Result.Users.Count;
+                if (participantCount < 200)
+                {
+                    foreach (TLUserBase now in chatDetails.Result.Users)
+                    {
+                        TLUser tempUser = now as TLUser;
+                        if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
+                    }
+                }else{
+                    online = -2;
+                }
+                LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
+                LastSeenVisible = Visibility.Visible;
             }
 
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
