@@ -400,20 +400,25 @@ namespace Unigram.ViewModels
                         }
                     }
                     online = 0;
-                    try
+                    participantCount = channelFull.ParticipantsCount ?? default(int);
+                    if (participantCount < 200)
                     {
-                        var temp = await ProtoService.GetParticipantsAsync(input, null, 0, 5000);
-                        foreach (TLUserBase now in temp.Result.Users)
+                        try
                         {
-                            TLUser tempUser = now as TLUser;
-                            
-                            if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
+                            var temp = await ProtoService.GetParticipantsAsync(input, null, 0, 5000);
+                            foreach (TLUserBase now in temp.Result.Users)
+                            {
+                                TLUser tempUser = now as TLUser;
+
+                                if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
+                            }
                         }
-                        participantCount = channelFull.ParticipantsCount ?? default(int);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e.ToString());
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e.ToString());
+                            online = -2;
+                        }
+                    }else{
                         online = -2;
                     }
                     LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
@@ -431,12 +436,17 @@ namespace Unigram.ViewModels
                 {
                 }
 
-                foreach (TLUserBase now in chatDetails.Result.Users)
-                {
-                    TLUser tempUser = now as TLUser;
-                    if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("Online") && !tempUser.IsSelf) online++;
-                }
                 participantCount = chatDetails.Result.Users.Count;
+                if (participantCount < 200)
+                {
+                    foreach (TLUserBase now in chatDetails.Result.Users)
+                    {
+                        TLUser tempUser = now as TLUser;
+                        if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
+                    }
+                }else{
+                    online = -2;
+                }
                 LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
                 LastSeenVisible = Visibility.Visible;
             }

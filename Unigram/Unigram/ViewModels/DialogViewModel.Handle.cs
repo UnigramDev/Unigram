@@ -46,7 +46,6 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateUserStatus statusUpdate)
         {
-            System.Diagnostics.Debug.WriteLine("Online: " + online);
             if (online > -1)
             {
                 if (statusUpdate.Status.GetType() == typeof(TLUserStatusOnline)) online++;
@@ -57,7 +56,6 @@ namespace Unigram.ViewModels
             {
                 LastSeen = LastSeenHelper.GetLastSeen(partner).Item1;
             }
-            System.Diagnostics.Debug.WriteLine("Online: " + online);
         }
 
         public void Handle(TLUpdateEditChannelMessage update)
