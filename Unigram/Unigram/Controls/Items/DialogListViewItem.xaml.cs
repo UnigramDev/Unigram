@@ -458,6 +458,10 @@ namespace Unigram.Controls.Items
                 //TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
                 TimeLabel.Text = BindConvert.Current.ShortDate.Format(dateTime);
             }
+            else
+            {
+                TimeLabel.Text = string.Empty;
+            }
         }
 
         private void UpdateUnreadCount()

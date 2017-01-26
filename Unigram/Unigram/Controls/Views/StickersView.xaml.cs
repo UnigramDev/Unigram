@@ -94,20 +94,17 @@ namespace Unigram.Controls.Views
 
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (e.IsIntermediate == false)
+            var scrollingHost = Stickers.ItemsPanelRoot as ItemsWrapGrid;
+            if (scrollingHost != null)
             {
-                var scrollingHost = Stickers.ItemsPanelRoot as ItemsWrapGrid;
-                if (scrollingHost != null)
+                var first = Stickers.ContainerFromIndex(scrollingHost.FirstVisibleIndex);
+                if (first != null)
                 {
-                    var first = Stickers.ContainerFromIndex(scrollingHost.FirstVisibleIndex);
-                    if (first != null)
+                    var header = Stickers.GroupHeaderContainerFromItemContainer(first) as GridViewHeaderItem;
+                    if (header != null && header != Toolbar.SelectedItem)
                     {
-                        var header = Stickers.GroupHeaderContainerFromItemContainer(first) as GridViewHeaderItem;
-                        if (header != null)
-                        {
-                            Toolbar.SelectedItem = header.Content;
-                            Toolbar.ScrollIntoView(header.Content);
-                        }
+                        Toolbar.SelectedItem = header.Content;
+                        Toolbar.ScrollIntoView(header.Content);
                     }
                 }
             }

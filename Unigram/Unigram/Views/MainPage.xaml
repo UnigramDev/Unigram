@@ -282,7 +282,7 @@
                                     </selectors:SearchTemplateSelector.UserTemplate>
                                     <selectors:SearchTemplateSelector.ChannelTemplate>
                                         <DataTemplate x:DataType="models:TLChannel">
-                                            <Grid Margin="0,4,0,8">
+                                            <Grid Margin="0,6">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto"/>
                                                     <RowDefinition Height="Auto"/>
@@ -352,7 +352,8 @@
                                                     <ControlTemplate TargetType="ListViewHeaderItem">
                                                         <Border Background="{TemplateBinding Background}"
                                                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                                                BorderThickness="{TemplateBinding BorderThickness}">
+                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
                                                             <ContentPresenter x:Name="ContentPresenter"
                                                                               Margin="{TemplateBinding Padding}"
                                                                               Content="{TemplateBinding Content}"
