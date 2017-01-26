@@ -842,21 +842,29 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                foreach (var message in result.Result.Messages.OfType<TLMessageCommonBase>())
-                {
-                    var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
-                    var with = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
-                    var item = new TLDialog
+                CacheService.SyncUsersAndChats(result.Result.Users, result.Result.Chats,
+                    tuple =>
                     {
-                        TopMessage = message.Id,
-                        TopMessageRandomId = message.RandomId,
-                        TopMessageItem = message,
-                        With = with,
-                        Peer = peer
-                    };
+                        result.Result.Users = tuple.Item1;
+                        result.Result.Chats = tuple.Item2;
 
-                    parent.Add(item);
-                }
+                        foreach (var message in result.Result.Messages.OfType<TLMessageCommonBase>())
+                        {
+                            var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
+                            var with = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                            var item = new TLDialog
+                            {
+                                TopMessage = message.Id,
+                                TopMessageRandomId = message.RandomId,
+                                TopMessageItem = message,
+                                With = with,
+                                Peer = peer
+                            };
+
+                            parent.Add(item);
+                        }
+                    });
+
 
                 return parent;
             }
