@@ -864,14 +864,21 @@ namespace Unigram.ViewModels
                 {
                     var parent = new KeyedList<string, TLObject>("Global search results");
 
-                    foreach (var peer in result.Result.Results)
-                    {
-                        var item = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
-                        if (item != null)
+                    CacheService.SyncUsersAndChats(result.Result.Users, result.Result.Chats,
+                        tuple =>
                         {
-                            parent.Add(item);
-                        }
-                    }
+                            result.Result.Users = tuple.Item1;
+                            result.Result.Chats = tuple.Item2;
+
+                            foreach (var peer in result.Result.Results)
+                            {
+                                var item = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                                if (item != null)
+                                {
+                                    parent.Add(item);
+                                }
+                            }
+                        });
 
                     return parent;
                 }
