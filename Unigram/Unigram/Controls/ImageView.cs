@@ -117,6 +117,15 @@ namespace Unigram.Controls
                 }
             }
 
+            var inlineResult = Constraint as TLBotInlineResult;
+            if (inlineResult != null)
+            {
+                width = inlineResult.HasW ? inlineResult.W.Value : 0;
+                height = inlineResult.HasH ? inlineResult.H.Value : 0;
+
+                goto Calculate;
+            }
+
             Calculate:
             if (width > availableWidth || height > availableHeight)
             {

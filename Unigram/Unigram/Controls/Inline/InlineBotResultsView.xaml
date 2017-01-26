@@ -57,14 +57,31 @@
 
         <DataTemplate x:Key="PhotoTemplate" x:DataType="models:TLBotInlineMediaResult">
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="6,12">
-                <Image Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="Uniform"/>
+                <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{Binding Photo}"
+                                    Height="96"/>
                 <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="PhotoResultTemplate" x:DataType="models:TLBotInlineResult">
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="6,12">
-                <Image Source="{Binding ThumbUrl}" Stretch="Uniform"/>
+                <controls:ImageView Source="{Binding ThumbUrl}" Constraint="{Binding}" Height="96"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GifTemplate" x:DataType="models:TLBotInlineResult">
+            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="6,12">
+                <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{Binding Photo}"
+                                    Height="96"/>
+                <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GifResultTemplate" x:DataType="models:TLBotInlineResult">
+            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="6,12">
+                <controls:ImageView Source="{Binding ThumbUrl}" Constraint="{Binding}" Height="96"/>
             </Grid>
         </DataTemplate>
 
@@ -73,7 +90,9 @@
             ResultTemplate="{StaticResource ResultTemplate}"
             GameResultTemplate="{StaticResource GameResultTemplate}"
             PhotoTemplate="{StaticResource PhotoTemplate}"
-            PhotoResultTemplate="{StaticResource PhotoResultTemplate}"/>
+            PhotoResultTemplate="{StaticResource PhotoResultTemplate}"
+            GifTemplate="{StaticResource GifTemplate}"
+            GifResultTemplate="{StaticResource GifResultTemplate}"/>
 
         <!--<selectors:InlineBotResultTemplateSelector 
                 x:Key="InlineBotResultTemplateSelector"
@@ -151,10 +170,10 @@
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.Header>
-                <Border Width="8" Height="8"/>
+                <Border Width="6" Height="6"/>
             </ListView.Header>
             <ListView.Footer>
-                <Border Width="8" Height="8"/>
+                <Border Width="6" Height="6"/>
             </ListView.Footer>
         </controls:OrientableListView>
     </Grid>
