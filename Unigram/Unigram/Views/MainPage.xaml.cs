@@ -246,6 +246,7 @@ namespace Unigram.Views
             {
                 if (string.IsNullOrWhiteSpace(SearchDialogs.Text))
                 {
+                    ViewModel.Dialogs.Search.Clear();
                     return;
                 }
 

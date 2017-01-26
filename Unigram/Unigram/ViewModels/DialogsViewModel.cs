@@ -804,30 +804,28 @@ namespace Unigram.ViewModels
                     var user = dialog.With as TLUser;
                     if (user != null)
                     {
-                        return (user.HasFirstName && user.FirstName.StartsWith(query, StringComparison.OrdinalIgnoreCase)) ||
-                               (user.HasLastName && user.LastName.StartsWith(query, StringComparison.OrdinalIgnoreCase)) ||
+                        return (user.FullName.Search(query, StringComparison.OrdinalIgnoreCase)) ||
                                (user.HasUsername && user.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     var channel = dialog.With as TLChannel;
                     if (channel != null)
                     {
-                        return (channel.Title.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                        return (channel.Title.Search(query, StringComparison.OrdinalIgnoreCase)) ||
                                (channel.HasUsername && channel.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     var chat = dialog.With as TLChat;
                     if (chat != null)
                     {
-                        return (chat.Title.Contains(query, StringComparison.OrdinalIgnoreCase));
+                        return (chat.Title.Search(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     return false;
                 }).ToList();
 
                 var contactsResults = contacts.OfType<TLUser>().Where(x =>
-                    (x.HasFirstName && x.FirstName.StartsWith(query, StringComparison.OrdinalIgnoreCase)) ||
-                    (x.HasLastName && x.LastName.StartsWith(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (x.FullName.Search(query, StringComparison.OrdinalIgnoreCase)) ||
                     (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase)));
 
                 foreach (var result in contactsResults)

@@ -28,6 +28,25 @@ namespace Unigram.Common
             return source.IndexOf(toCheck, comp) >= 0;
         }
 
+        public static bool Search(this string source, string check, StringComparison comp)
+        {
+            return check.Split(' ').All(x =>
+            {
+                var index = source.IndexOf(x, comp);
+                if (index > -1)
+                {
+                    return index == 0 || source[index - 1] == ' ';
+                }
+
+                return false;
+            });
+
+            var sourceSplit = source.Split(' ');
+            var checkSplit = check.Split(' ');
+
+            return sourceSplit.Any(x => checkSplit.Any(y => x.StartsWith(y, comp)));
+        }
+
         public static string TrimEnd(this string input, string suffixToRemove)
         {
             if (input != null && suffixToRemove != null && input.EndsWith(suffixToRemove))
