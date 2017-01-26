@@ -893,6 +893,138 @@ namespace Unigram.ViewModels
             });
         }
 
+        public RelayCommand<StorageFile> SendFileCommand => new RelayCommand<StorageFile>(SendFileExecute);
+        private async void SendFileExecute(StorageFile file)
+        {
+            ObservableCollection<StorageFile> storages = null;
+
+            if (file == null)
+            {
+                var picker = new FileOpenPicker();
+                picker.ViewMode = PickerViewMode.Thumbnail;
+                picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+                picker.FileTypeFilter.Add("*");
+
+                var files = await picker.PickMultipleFilesAsync();
+                if (files != null)
+                {
+                    storages = new ObservableCollection<StorageFile>(files);
+                }
+            }
+            else
+            {
+                storages = new ObservableCollection<StorageFile> { file };
+            }
+
+            if (storages != null && storages.Count > 0)
+            {
+                foreach (var storage in storages)
+                {
+                    await SendFileAsync(storage, null);
+                }
+            }
+        }
+
+        private async Task SendFileAsync(StorageFile file, string caption)
+        {
+            var fileLocation = new TLFileLocation
+            {
+                VolumeId = TLLong.Random(),
+                LocalId = TLInt.Random(),
+                Secret = TLLong.Random(),
+                DCId = 0
+            };
+
+            var fileName = string.Format("{0}_{1}_{2}.dat", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+            var fileCache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\" + fileName, CreationCollisionOption.ReplaceExisting);
+
+            await file.CopyAndReplaceAsync(fileCache);
+
+            var basicProps = await fileCache.GetBasicPropertiesAsync();
+
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var document = new TLDocument
+            {
+                Id = 0,
+                AccessHash = 0,
+                Date = date,
+                Size = (int)basicProps.Size,
+                MimeType = fileCache.ContentType,
+                Attributes = new TLVector<TLDocumentAttributeBase>
+                {
+                    new TLDocumentAttributeFilename
+                    {
+                        FileName = file.Name
+                    }
+                }
+            };
+
+            var media = new TLMessageMediaDocument
+            {
+                Document = document,
+                Caption = caption
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var fileId = TLLong.Random();
+                var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
+                if (upload != null)
+                {
+                    var inputMedia = new TLInputMediaUploadedDocument
+                    {
+                        File = new TLInputFile
+                        {
+                            Id = upload.FileId,
+                            Md5Checksum = string.Empty,
+                            Name = fileName,
+                            Parts = upload.Parts.Count,
+                        },
+                        MimeType = document.MimeType,
+                        Caption = media.Caption,
+                        Attributes = new TLVector<TLDocumentAttributeBase>
+                        {
+                            new TLDocumentAttributeFilename
+                            {
+                                FileName = file.Name
+                            }
+                        }
+                    };
+
+                    var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                    //if (result.IsSucceeded)
+                    //{
+                    //    var update = result.Result as TLUpdates;
+                    //    if (update != null)
+                    //    {
+                    //        var newMessage = update.Updates.OfType<TLUpdateNewMessage>().FirstOrDefault();
+                    //        if (newMessage != null)
+                    //        {
+                    //            var newM = newMessage.Message as TLMessage;
+                    //            if (newM != null)
+                    //            {
+                    //                message.Media = newM.Media;
+                    //                message.RaisePropertyChanged(() => message.Media);
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                }
+            });
+        }
+
         public RelayCommand<StoragePhoto> SendPhotoCommand => new RelayCommand<StoragePhoto>(SendPhotoExecute);
         private async void SendPhotoExecute(StoragePhoto file)
         {

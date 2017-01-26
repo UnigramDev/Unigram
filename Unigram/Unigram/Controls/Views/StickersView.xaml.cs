@@ -15,6 +15,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using LinqToVisualTree;
+using Unigram.Common;
+using Telegram.Api.TL;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -49,6 +51,16 @@ namespace Unigram.Controls.Views
             }
         }
 
+        private void Stickers_Loaded(object sender, RoutedEventArgs e)
+        {
+            var scrollingHost = Stickers.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+            if (scrollingHost != null)
+            {
+                // Syncronizes GridView with the toolbar ListView
+                scrollingHost.ViewChanged += ScrollingHost_ViewChanged;
+            }
+        }
+
         private void Gifs_ItemClick(object sender, ItemClickEventArgs e)
         {
             ViewModel.SendGifCommand.Execute(e.ClickedItem);
@@ -57,6 +69,48 @@ namespace Unigram.Controls.Views
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
+        }
+
+        private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Pivot.SelectedIndex == 0)
+            {
+                if (Toolbar.Items.Count > 0)
+                {
+                    Toolbar.SelectedIndex = 0;
+                }
+            }
+            else
+            {
+                // TODO
+            }
+        }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Pivot.SelectedIndex = Math.Min(1, Toolbar.SelectedIndex);
+            //Stickers.ScrollIntoView(ViewModel.StickerSets[Toolbar.SelectedIndex][0]);
+        }
+
+        private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (e.IsIntermediate == false)
+            {
+                var scrollingHost = Stickers.ItemsPanelRoot as ItemsWrapGrid;
+                if (scrollingHost != null)
+                {
+                    var first = Stickers.ContainerFromIndex(scrollingHost.FirstVisibleIndex);
+                    if (first != null)
+                    {
+                        var header = Stickers.GroupHeaderContainerFromItemContainer(first) as GridViewHeaderItem;
+                        if (header != null)
+                        {
+                            Toolbar.SelectedItem = header.Content;
+                            Toolbar.ScrollIntoView(header.Content);
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -93,7 +93,7 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Border Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" BorderThickness="0,0,0,0"/>
+            <Border Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" BorderThickness="0,0,0,1"/>
             <!--<Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{ThemeResource AppBarThemeCompactHeight}"/>
@@ -191,7 +191,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>                           
-                            <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
+                            <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8">
                                     <controls:SearchTextBox x:Name="SearchDialogs" 
                                                             PlaceholderText="Search chats and messages"
@@ -446,7 +446,7 @@
                 </PivotItem>
             </Pivot>
             
-            <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="2"/>
+            <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.Row="1" Grid.RowSpan="2"/>
 
             <!-- Master - Command Bar -->
             <CommandBar x:Name="cmbarMaster" x:DeferLoadStrategy="Lazy" Visibility="Collapsed" Grid.Row="2">

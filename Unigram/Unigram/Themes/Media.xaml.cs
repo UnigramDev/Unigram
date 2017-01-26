@@ -99,15 +99,23 @@ namespace Unigram.Themes
                     }
                     else
                     {
-                        var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
-                        if (documentMedia.Progress > 0)
+                        if (documentMedia.DownloadingProgress > 0)
                         {
+                            var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                             manager.CancelDownloadFile(document);
+
+                            border.UpdateGlyph();
+                        }
+                        else if (documentMedia.UploadingProgress > 0)
+                        {
+                            var manager = UnigramContainer.Instance.ResolveType<IUploadDocumentManager>();
+                            manager.CancelUploadFile(document.Id);
 
                             border.UpdateGlyph();
                         }
                         else
                         {
+                            var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                             var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
                             if (download != null)
                             {

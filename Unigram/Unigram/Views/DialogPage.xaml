@@ -949,9 +949,9 @@
                                         Command="{Binding SendPhotoCommand}"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                                         x:Uid="FCBTN-File"
-                                        IsEnabled="False"
                                         Text="File"
-                                        Tag="&#xE160;"/>
+                                        Tag="&#xE160;"
+                                        Command="{Binding SendFileCommand}"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                                         x:Uid="FCBTN-Location"
                                         IsEnabled="False"

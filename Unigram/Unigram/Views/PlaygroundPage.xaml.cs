@@ -105,7 +105,7 @@ namespace Unigram.Views
         }
     }
 
-    public class ProgressBarRingSlice : Windows.UI.Xaml.Shapes.Path
+    public class Anubi : Windows.UI.Xaml.Shapes.Path
     {
         private bool _isUpdating;
 
@@ -117,7 +117,7 @@ namespace Unigram.Views
             DependencyProperty.Register(
                 "StartAngle",
                 typeof(double),
-                typeof(ProgressBarRingSlice),
+                typeof(Anubi),
                 new PropertyMetadata(
                     0d,
                     OnStartAngleChanged));
@@ -136,7 +136,7 @@ namespace Unigram.Views
 
         private static void OnStartAngleChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var target = (ProgressBarRingSlice)sender;
+            var target = (Anubi)sender;
             var oldStartAngle = (double)e.OldValue;
             var newStartAngle = (double)e.NewValue;
             target.OnStartAngleChanged(oldStartAngle, newStartAngle);
@@ -156,7 +156,7 @@ namespace Unigram.Views
             DependencyProperty.Register(
                 "EndAngle",
                 typeof(double),
-                typeof(ProgressBarRingSlice),
+                typeof(Anubi),
                 new PropertyMetadata(
                     0d,
                     OnEndAngleChanged));
@@ -175,7 +175,7 @@ namespace Unigram.Views
 
         private static void OnEndAngleChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var target = (ProgressBarRingSlice)sender;
+            var target = (Anubi)sender;
             var oldEndAngle = (double)e.OldValue;
             var newEndAngle = (double)e.NewValue;
             target.OnEndAngleChanged(oldEndAngle, newEndAngle);
@@ -195,7 +195,7 @@ namespace Unigram.Views
             DependencyProperty.Register(
                 "Radius",
                 typeof(double),
-                typeof(ProgressBarRingSlice),
+                typeof(Anubi),
                 new PropertyMetadata(
                     0d,
                     OnRadiusChanged));
@@ -214,7 +214,7 @@ namespace Unigram.Views
 
         private static void OnRadiusChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var target = (ProgressBarRingSlice)sender;
+            var target = (Anubi)sender;
             var oldRadius = (double)e.OldValue;
             var newRadius = (double)e.NewValue;
             target.OnRadiusChanged(oldRadius, newRadius);
@@ -235,7 +235,7 @@ namespace Unigram.Views
             DependencyProperty.Register(
                 "InnerRadius",
                 typeof(double),
-                typeof(ProgressBarRingSlice),
+                typeof(Anubi),
                 new PropertyMetadata(
                     0d,
                     OnInnerRadiusChanged));
@@ -254,7 +254,7 @@ namespace Unigram.Views
 
         private static void OnInnerRadiusChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var target = (ProgressBarRingSlice)sender;
+            var target = (Anubi)sender;
             var oldInnerRadius = (double)e.OldValue;
             var newInnerRadius = (double)e.NewValue;
             target.OnInnerRadiusChanged(oldInnerRadius, newInnerRadius);
@@ -280,7 +280,7 @@ namespace Unigram.Views
             DependencyProperty.Register(
                 "Center",
                 typeof(Point?),
-                typeof(ProgressBarRingSlice),
+                typeof(Anubi),
                 new PropertyMetadata(null, OnCenterChanged));
 
         /// <summary>
@@ -308,7 +308,7 @@ namespace Unigram.Views
         private static void OnCenterChanged(
             DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var target = (ProgressBarRingSlice)d;
+            var target = (Anubi)d;
             Point? oldCenter = (Point?)e.OldValue;
             Point? newCenter = target.Center;
             target.OnCenterChanged(oldCenter, newCenter);
@@ -339,11 +339,11 @@ namespace Unigram.Views
 
         // Using a DependencyProperty as the backing store for Value.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value", typeof(double), typeof(ProgressBarRingSlice), new PropertyMetadata(0.0, OnValueChanged));
+            DependencyProperty.Register("Value", typeof(double), typeof(Anubi), new PropertyMetadata(0.0, OnValueChanged));
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var target = (ProgressBarRingSlice)d;
+            var target = (Anubi)d;
             var oldInnerRadius = (double)e.OldValue;
             var newInnerRadius = (double)e.NewValue;
             target.OnValueChanged(oldInnerRadius, newInnerRadius);
@@ -363,9 +363,9 @@ namespace Unigram.Views
         #endregion
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProgressBarRingSlice" /> class.
+        /// Initializes a new instance of the <see cref="Anubi" /> class.
         /// </summary>
-        public ProgressBarRingSlice()
+        public Anubi()
         {
             SizeChanged += OnSizeChanged;
             //new PropertyChangeEventSource<double>(

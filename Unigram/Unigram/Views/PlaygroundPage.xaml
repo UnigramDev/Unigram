@@ -182,6 +182,10 @@
         <StackPanel VerticalAlignment="Center">
             <ProgressRing IsActive="True" Style="{StaticResource UploadProgressRingStyle}" Margin="20,0"/>
 
+            <Border CornerRadius="24" Height="48" Width="48" Background="#54000000" Margin="12">
+                <controls:ProgressBarRingSlice StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stroke="Blue" StrokeThickness="2" StartAngle="0" EndAngle="30" InnerRadius="20" Radius="22"/>
+            </Border>
+
             <Grid Width="20" Height="10">
                 <!--<Ellipse x:Name="Dot1" Fill="Red" Width="3" Height="3" HorizontalAlignment="Left" Margin="0.5,0,0,0" RenderTransformOrigin="0.5,0.5">
                      <Ellipse.RenderTransform>

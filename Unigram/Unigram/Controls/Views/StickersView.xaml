@@ -27,7 +27,7 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Pivot Grid.Row="1">
+        <Pivot x:Name="Pivot" SelectedIndex="1" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
             <PivotItem Margin="0,-48,0,0">
                 <GridView x:Name="GifsView"
                           ItemsSource="{Binding SavedGifs}"
@@ -64,11 +64,13 @@
                 </GridView>
             </PivotItem>
             <PivotItem Margin="0,-48,0,0">
-                <GridView ItemsSource="{Binding Source={StaticResource Stickers}}"
+                <GridView x:Name="Stickers"
+                          ItemsSource="{Binding Source={StaticResource Stickers}}"
                           common:FluidGridView.OrientationOnly="False"
                           IsItemClickEnabled="True"
                           SelectionMode="None"
                           ItemClick="Stickers_ItemClick"
+                          Loaded="Stickers_Loaded"
                           Padding="12,0">
                     <common:FluidGridView.Triggers>
                         <common:FluidGridViewTrigger RowsOrColumns="5"/>
@@ -136,9 +138,11 @@
                 </GridView>
             </PivotItem>
         </Pivot>
-        <ListView ItemsSource="{Binding StickerSets}"
+        <ListView x:Name="Toolbar"
+                  ItemsSource="{Binding StickerSets}"
                   Height="{ThemeResource AppBarThemeCompactHeight}"
                   Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                  SelectionChanged="ListView_SelectionChanged"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.HorizontalScrollMode="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
