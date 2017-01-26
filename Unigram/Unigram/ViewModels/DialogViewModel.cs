@@ -165,6 +165,19 @@ namespace Unigram.ViewModels
                     Messages.Insert(0, item);
                     //InsertMessage(item as TLMessageCommonBase);
                 }
+
+                foreach (var item in result.Result.Messages.Reverse())
+                {
+                    var message = item as TLMessage;
+                    if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                    {
+                        var user = CacheService.GetUser(message.FromId) as TLUser;
+                        if (user != null && user.IsBot)
+                        {
+                            SetReplyMarkup(message);
+                        }
+                    }
+                }
             }
 
             _isLoadingNextSlice = false;

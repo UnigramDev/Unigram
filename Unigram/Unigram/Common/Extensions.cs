@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Unigram.Common
@@ -28,23 +29,18 @@ namespace Unigram.Common
             return source.IndexOf(toCheck, comp) >= 0;
         }
 
-        public static bool Search(this string source, string check, StringComparison comp)
+        public static bool Like(this string source, string query, StringComparison comp)
         {
-            return check.Split(' ').All(x =>
+            return query.Split(' ').All(x =>
             {
                 var index = source.IndexOf(x, comp);
                 if (index > -1)
                 {
-                    return index == 0 || source[index - 1] == ' ';
+                    return index == 0 || char.IsSeparator(source[index - 1]) || !char.IsLetterOrDigit(source[index - 1]);
                 }
 
                 return false;
             });
-
-            var sourceSplit = source.Split(' ');
-            var checkSplit = check.Split(' ');
-
-            return sourceSplit.Any(x => checkSplit.Any(y => x.StartsWith(y, comp)));
         }
 
         public static string TrimEnd(this string input, string suffixToRemove)

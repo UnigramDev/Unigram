@@ -80,7 +80,7 @@ namespace Unigram.Views
         {
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
-            ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
+            //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)

@@ -817,9 +817,10 @@
             </Border>
         </Grid>
 
-        <Grid VerticalAlignment="Bottom" Grid.Row="2">
+        <Grid Grid.Row="2">
             <inline:InlineBotResultsView ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>
             <views:StickersView x:Name="StickersPanel" Opacity="0" IsHitTestVisible="False"/>
+            <views:ReplyMarkupView x:Name="ReplyMarkupPanel" VerticalAlignment="Bottom"/>
         </Grid>
 
         <!-- Input pane -->
@@ -1010,7 +1011,7 @@
                 </FlyoutBase.AttachedFlyout>
             </controls:GlyphButton>
 
-            <ScrollViewer x:Name="ReplyMarkupViewer"
+            <!--<ScrollViewer x:Name="ReplyMarkupViewer"
                           VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto"
                           HorizontalScrollBarVisibility="Disabled"
@@ -1018,7 +1019,7 @@
                           Grid.ColumnSpan="4"
                           Grid.Row="2">
                 <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0"/>
-            </ScrollViewer>
+            </ScrollViewer>-->
 
             <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="4"/>
         </Grid>
