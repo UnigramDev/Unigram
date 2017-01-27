@@ -299,12 +299,13 @@ namespace Unigram.ViewModels
 
         public async Task LoadFirstSliceAsync()
         {
-            if (_isLoadingNextSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice) return;
             _isLoadingNextSlice = true;
+            _isLoadingPreviousSlice = true;
 
             Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
-            var maxId = _currentDialog.ReadInboxMaxId;
+            var maxId = _currentDialog?.ReadInboxMaxId ?? int.MaxValue;
             var lastRead = true;
 
             var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -19, maxId, 20);
@@ -324,7 +325,7 @@ namespace Unigram.ViewModels
                             IsOut = true,
                             IsUnread = true,
                             Date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now),
-                            Action = new TLMessageActionUnreadMessages { Count = _currentDialog.UnreadCount },
+                            Action = new TLMessageActionUnreadMessages { Count = _currentDialog?.UnreadCount ?? 0 },
                             RandomId = TLLong.Random()
                         };
 
@@ -339,6 +340,7 @@ namespace Unigram.ViewModels
             }
 
             _isLoadingNextSlice = false;
+            _isLoadingPreviousSlice = false;
         }
 
         public class TLMessageActionUnreadMessages : TLMessageActionBase
@@ -528,11 +530,14 @@ namespace Unigram.ViewModels
                         try
                         {
                             var temp = await ProtoService.GetParticipantsAsync(input, null, 0, 5000);
-                            foreach (TLUserBase now in temp.Result.Users)
+                            if (temp.IsSucceeded)
                             {
-                                TLUser tempUser = now as TLUser;
+                                foreach (TLUserBase now in temp.Result.Users)
+                                {
+                                    TLUser tempUser = now as TLUser;
 
-                                if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
+                                    if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
+                                }
                             }
                         }
                         catch (Exception e)

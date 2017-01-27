@@ -48,25 +48,51 @@ namespace Unigram.Controls
             var channel = with as TLChannel;
             if (channel != null)
             {
-                if (channel.IsBroadcast)
+                if (channel.IsLeft)
                 {
-                    if (channel.IsCreator || channel.IsEditor)
+                    Content = channel.IsBroadcast ? "Join channel" : "Join";
+                    return Visibility.Visible;
+                }
+                else if (channel.IsKicked)
+                {
+                    Content = "Delete and exit";
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    if (channel.IsBroadcast)
                     {
-                        return Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        var settings = channel.NotifySettings as TLPeerNotifySettings;
-                        if (settings != null)
+                        if (channel.IsLeft)
                         {
-                            Content = settings.IsSilent || settings.MuteUntil > 0 ? "Unmute" : "Mute";
+                            Content = "Join channel";
+                            return Visibility.Visible;
+                        }
+                        else if (channel.IsKicked)
+                        {
+                            Content = "Delete and exit";
+                            return Visibility.Visible;
                         }
                         else
                         {
-                            Content = "Mute";
-                        }
+                            if (channel.IsCreator || channel.IsEditor)
+                            {
+                                return Visibility.Collapsed;
+                            }
+                            else
+                            {
+                                var settings = channel.NotifySettings as TLPeerNotifySettings;
+                                if (settings != null)
+                                {
+                                    Content = settings.IsSilent || settings.MuteUntil > 0 ? "Unmute" : "Mute";
+                                }
+                                else
+                                {
+                                    Content = "Mute";
+                                }
 
-                        return Visibility.Visible;
+                                return Visibility.Visible;
+                            }
+                        }
                     }
                 }
             }
