@@ -82,7 +82,7 @@ namespace Unigram.Themes
 
         private async void DownloadDocument_Click(object sender, RoutedEventArgs e)
         {
-            var border = sender as DownloadButton;
+            var border = sender as TransferButton;
             var message = border.DataContext as TLMessage;
             var documentMedia = message.Media as TLMessageMediaDocument;
             if (documentMedia != null)
