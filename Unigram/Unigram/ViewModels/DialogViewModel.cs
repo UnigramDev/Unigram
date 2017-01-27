@@ -160,13 +160,13 @@ namespace Unigram.ViewModels
             {
                 ProcessReplies(result.Result.Messages);
 
-                foreach (var item in result.Result.Messages)
+                foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
                 {
                     Messages.Insert(0, item);
                     //InsertMessage(item as TLMessageCommonBase);
                 }
 
-                foreach (var item in result.Result.Messages.Reverse())
+                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
                 {
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
