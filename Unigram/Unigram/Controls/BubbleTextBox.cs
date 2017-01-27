@@ -14,11 +14,13 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Dependency;
+using Unigram.Core.Models;
 using Unigram.Core.Rtf;
 using Unigram.Core.Rtf.Write;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI;
@@ -191,13 +193,35 @@ namespace Unigram.Controls
 
                 Document.Selection.SetText(TextSetOptions.None, result);
             }
-            else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-td-field-tags"))
+            else if (package.Contains(StandardDataFormats.StorageItems))
             {
-                // This is Telegram Desktop mentions format
+                e.Handled = true;
+            }
+            else if (package.Contains(StandardDataFormats.Bitmap))
+            {
+                e.Handled = true;
+
+                var bitmap = await package.GetBitmapAsync();
+                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = new byte[(int)stream.Size];
+                    reader.ReadBytes(buffer);
+                    await FileIO.WriteBytesAsync(cache, buffer);
+                }
+
+                ViewModel.SendPhotoCommand.Execute(new StoragePhoto(cache));
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {
                 // This is our field format
+            }
+            else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-td-field-tags"))
+            {
+                // This is Telegram Desktop mentions format
             }
         }
 
