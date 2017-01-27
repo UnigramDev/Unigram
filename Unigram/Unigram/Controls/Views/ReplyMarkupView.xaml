@@ -10,7 +10,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
+    <Grid Visibility="Collapsed">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState>
