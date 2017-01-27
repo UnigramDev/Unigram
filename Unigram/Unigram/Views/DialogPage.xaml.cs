@@ -66,8 +66,6 @@ namespace Unigram.Views
 
             _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
-
-            lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -91,14 +89,6 @@ namespace Unigram.Views
 
         //private bool _isAlreadyLoading;
         //private bool _isAlreadyCalled;
-
-        private async void LvScroller_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            if (lvDialogs.ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
-            {
-                await ViewModel.LoadNextSliceAsync();
-            }
-        }
 
         private void CheckMessageBoxEmpty()
         {

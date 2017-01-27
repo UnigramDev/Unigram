@@ -627,5 +627,18 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        #region Open reply
+
+        public RelayCommand<TLMessageCommonBase> MessageOpenReplyCommand => new RelayCommand<TLMessageCommonBase>(MessageOpenReplyExecute);
+        private async void MessageOpenReplyExecute(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon != null && messageCommon.ReplyToMsgId.HasValue)
+            {
+                await LoadMessageSliceAsync(messageCommon.Id, messageCommon.ReplyToMsgId.Value);
+            }
+        }
+
+        #endregion
     }
 }

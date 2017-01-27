@@ -815,6 +815,17 @@
             <Border x:Name="DateHeader" Visibility="Collapsed" Background="#7F89A0B4" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="12,5,12,6" Margin="0,12,0,2" Grid.ColumnSpan="2">
                 <RichTextBlock x:Name="DateHeaderLabel" IsTextSelectionEnabled="False" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
             </Border>
+
+            <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" 
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Bottom"
+                    BorderThickness="1"
+                    CornerRadius="24"
+                    Margin="12"
+                    Grid.ColumnSpan="2">
+                <controls:GlyphButton Command="{Binding PreviousSliceCommand}" FontSize="16" Width="36" Height="36" Glyph="&#xE74B;" CornerRadius="24"/>
+            </Border>
         </Grid>
 
         <Grid Grid.Row="2">

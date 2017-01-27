@@ -9,6 +9,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,7 +25,7 @@ namespace Unigram.Controls
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MessageReference : Grid
+    public sealed partial class MessageReference : UserControl
     {
         public MessageReference()
         {
@@ -770,5 +771,23 @@ namespace Unigram.Controls
             var from = message.From?.FullName ?? string.Empty;
             return from;
         }
+
+        #region Cursor
+
+        // Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 1);
+
+        protected override void OnPointerEntered(PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 1);
+            base.OnPointerEntered(e);
+        }
+
+        protected override void OnPointerExited(PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
+            base.OnPointerExited(e);
+        }
+
+        #endregion
     }
 }

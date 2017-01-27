@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Unigram.Strings;
+using static Unigram.ViewModels.DialogViewModel;
 
 namespace Unigram.Common
 {
@@ -145,6 +146,7 @@ namespace Unigram.Common
             });
             _actionsCache.Add(typeof(TLMessageActionChannelMigrateFrom), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChannelMigrateFrom));
             _actionsCache.Add(typeof(TLMessageActionHistoryClear), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(string.Empty));
+            _actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(string.Format("{0} unread messages", ((TLMessageActionUnreadMessages)action).Count)));
         }
 
         #region Message
