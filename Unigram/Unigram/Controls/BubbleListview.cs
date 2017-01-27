@@ -66,17 +66,14 @@ namespace Unigram.Controls
         {
             if (ScrollingHost.ScrollableHeight < 120)
             {
-                if (ViewModel.IsFirstSliceLoaded)
-                {
-                    ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
-                    await ViewModel.LoadNextSliceAsync();
-                }
-                else
+                if (!ViewModel.IsFirstSliceLoaded)
                 {
                     ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
-                    await Task.WhenAll(ViewModel.LoadPreviousSliceAsync(), ViewModel.LoadNextSliceAsync());
-                    //ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                    await ViewModel.LoadPreviousSliceAsync();
                 }
+
+                ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                await ViewModel.LoadNextSliceAsync();
             }
         }
 

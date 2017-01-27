@@ -253,8 +253,9 @@ namespace Unigram.ViewModels
 
         public async Task LoadMessageSliceAsync(int? previousId, int maxId)
         {
-            if (_isLoadingNextSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice) return;
             _isLoadingNextSlice = true;
+            _isLoadingPreviousSlice = true;
 
             Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
@@ -263,12 +264,12 @@ namespace Unigram.ViewModels
                 _goBackStack.Push(previousId.Value);
             }
 
+            Messages.Clear();
+
             var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -6, maxId, 15);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
-
-                Messages.Clear();
 
                 foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
                 {
@@ -293,6 +294,7 @@ namespace Unigram.ViewModels
             }
 
             _isLoadingNextSlice = false;
+            _isLoadingPreviousSlice = false;
         }
 
         public async Task LoadFirstSliceAsync()
