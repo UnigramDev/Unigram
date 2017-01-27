@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -14,6 +15,11 @@ namespace Unigram.Controls
     /// </summary>
     public class BubbleActionButton : Button
     {
+        public BubbleActionButton()
+        {
+            DefaultStyleKey = typeof(BubbleActionButton);
+        }
+
         #region With
 
         public object With
@@ -34,35 +40,55 @@ namespace Unigram.Controls
 
         private void OnWidthChanged(object newValue, object oldValue)
         {
-            var channel = newValue as TLChannel;
+            Visibility = UpdateVisibility(newValue);
+        }
+
+        private Visibility UpdateVisibility(object with)
+        {
+            var channel = with as TLChannel;
             if (channel != null)
             {
                 if (channel.IsBroadcast)
                 {
                     if (channel.IsCreator || channel.IsEditor)
                     {
-                        Visibility = Visibility.Collapsed;
+                        return Visibility.Collapsed;
                     }
                     else
                     {
                         var settings = channel.NotifySettings as TLPeerNotifySettings;
                         if (settings != null)
                         {
-                            Content = settings.MuteUntil == 0 || !settings.IsSilent ? "Mute" : "Unmute";
+                            Content = settings.IsSilent || settings.MuteUntil > 0 ? "Unmute" : "Mute";
                         }
                         else
                         {
                             Content = "Mute";
                         }
 
-                        Visibility = Visibility.Visible;
+                        return Visibility.Visible;
                     }
                 }
-                else
-                {
-                    Visibility = Visibility.Collapsed;
-                }
             }
+
+            var user = with as TLUser;
+            if (user != null)
+            {
+                // TODO: check if blocked
+                // WARNING: this is absolutely the wrong way
+                //var response = await MTProtoService.Current.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
+                //if (response.IsSucceeded)
+                //{
+                //    var blocked = response.Result.IsBlocked;
+                //    if (blocked)
+                //    {
+                //        Content = "Unblock";
+                //        return Visibility.Visible;
+                //    }
+                //}
+            }
+
+            return Visibility.Collapsed;
         }
     }
 }
