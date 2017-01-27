@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 01/25/2017 19:16:54
+// 	Generated: 01/27/2017 16:51:48
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -350,13 +350,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a sticker"
+        /// Localized resource similar to "{0} pinned a {1}sticker"
         /// </summary>
         public static string MessageActionPinSticker
         {
             get
             {
-                return "{0} pinned a sticker";
+                return "{0} pinned a {1}sticker";
             }
         }
         

@@ -513,7 +513,7 @@
     <value>{0} pinned a photo</value>
   </data>
   <data name="MessageActionPinSticker" xml:space="preserve">
-    <value>{0} pinned a sticker</value>
+    <value>{0} pinned a {1}sticker</value>
   </data>
   <data name="MessageActionPinText" xml:space="preserve">
     <value>{0} pinned "{1}"</value>

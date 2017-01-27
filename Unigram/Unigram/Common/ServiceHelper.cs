@@ -262,7 +262,19 @@ namespace Unigram.Common
                             {
                                 if (TLMessage.IsSticker(documentMedia.Document))
                                 {
-                                    return ReplaceLinks(Resources.MessageActionPinSticker, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                                    var emoji = string.Empty;
+
+                                    var documentSticker = documentMedia.Document as TLDocument;
+                                    if (documentSticker != null)
+                                    {
+                                        var attribute = documentSticker.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                                        if (attribute != null)
+                                        {
+                                            emoji = $"{attribute.Alt} ";
+                                        }
+                                    }
+
+                                    return ReplaceLinks(Resources.MessageActionPinSticker, new[] { userFullName, emoji }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
                                 }
                                 if (TLMessage.IsVoice(documentMedia.Document))
                                 {
