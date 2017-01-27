@@ -14,6 +14,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Common;
+using Unigram.Controls;
 using Unigram.Core.Dependency;
 using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
@@ -686,14 +687,14 @@ namespace Unigram.Common
                     {
                         if (type == TLType.MessageEntityTextUrl)
                         {
-                            var dialog = new MessageDialog(navigation, "Open this link?");
-                            dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
-                            dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
-                            dialog.DefaultCommandIndex = 0;
-                            dialog.CancelCommandIndex = 1;
+                            var dialog = new UnigramMessageDialog(navigation, "Open this link?");
+                            dialog.Title = "Open this link?";
+                            dialog.Message = navigation;
+                            dialog.PrimaryButtonText = "Open";
+                            dialog.SecondaryButtonText = "Cancel";
 
                             var result = await dialog.ShowAsync();
-                            if (result == null || (int)result?.Id == 1)
+                            if (result != ContentDialogResult.Primary)
                             {
                                 return;
                             }
@@ -884,14 +885,14 @@ namespace Unigram.Common
                         content = "AppResources.JoinChannelConfirmation";
                     }
 
-                    var dialog = new MessageDialog(content, invite.Title);
-                    dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
-                    dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
-                    dialog.DefaultCommandIndex = 0;
-                    dialog.CancelCommandIndex = 1;
+                    var dialog = new UnigramMessageDialog(content, invite.Title);
+                    dialog.Title = invite.Title;
+                    dialog.Content = content;
+                    dialog.PrimaryButtonText = "OK";
+                    dialog.SecondaryButtonText = "Cancel";
 
                     var result = await dialog.ShowAsync();
-                    if (result != null && (int)result?.Id == 0)
+                    if (result == ContentDialogResult.Primary)
                     {
                         var import = await protoService.ImportChatInviteAsync(link);
                         if (import.IsSucceeded)
