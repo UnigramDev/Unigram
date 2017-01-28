@@ -9,6 +9,7 @@ using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
@@ -64,50 +65,101 @@ namespace Unigram.ViewModels
         {
             if (messageBase == null) return;
 
-            var dialog = new UnigramMessageDialog();
-            dialog.Title = "Delete";
-            dialog.Message = "Are you sure you want to delete this message?";
-            dialog.PrimaryButtonText = "Yes";
-            dialog.SecondaryButtonText = "No";
-
             var message = messageBase as TLMessage;
-            if (message != null && message.IsOut && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
+            if (message != null && !message.IsOut && !message.IsPost && Peer is TLInputPeerChannel)
             {
-                var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
-                var config = CacheService.GetConfig();
-                if (config != null && message.Date + config.EditTimeLimit > date)
+                var dialog = new DeleteChannelMessageDialog();
+
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
                 {
-                    var user = With as TLUser;
-                    if (user != null)
+                    var channel = With as TLChannel;
+
+                    if (dialog.DeleteAll)
                     {
-                        dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
+                        // TODO
+                    }
+                    else
+                    {
+                        var messages = new List<TLMessageBase>() { messageBase };
+                        if (messageBase.Id == 0 && messageBase.RandomId != 0L)
+                        {
+                            DeleteMessagesInternal(null, messages);
+                            return;
+                        }
+
+                        DeleteMessages(null, null, messages, true, null, DeleteMessagesInternal);
                     }
 
-                    var chat = With as TLChat;
-                    if (chat != null)
+                    if (dialog.BanUser)
                     {
-                        dialog.CheckBoxLabel = "Delete for everyone";
+                        var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
+                        if (response.IsSucceeded)
+                        {
+                            var updates = response.Result as TLUpdates;
+                            if (updates != null)
+                            {
+                                var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
+                                if (newChannelMessageUpdate != null)
+                                {
+                                    Aggregator.Publish(newChannelMessageUpdate.Message);
+                                }
+                            }
+                        }
+                    }
+
+                    if (dialog.ReportSpam)
+                    {
+                        var response = await ProtoService.ReportSpamAsync(channel.ToInputChannel(), message.From.ToInputUser(), new TLVector<int> { message.Id });
                     }
                 }
             }
-            else if (Peer is TLInputPeerChat)
+            else
             {
-                dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
-            }
+                var dialog = new UnigramMessageDialog();
+                dialog.Title = "Delete";
+                dialog.Message = "Do you want to delete this message?";
+                dialog.PrimaryButtonText = "Yes";
+                dialog.SecondaryButtonText = "No";
 
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                var revoke = dialog.IsChecked == true;
-
-                var messages = new List<TLMessageBase>() { messageBase };
-                if (messageBase.Id == 0 && messageBase.RandomId != 0L)
+                if (message != null && message.IsOut && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
                 {
-                    DeleteMessagesInternal(null, messages);
-                    return;
+                    var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+                    var config = CacheService.GetConfig();
+                    if (config != null && message.Date + config.EditTimeLimit > date)
+                    {
+                        var user = With as TLUser;
+                        if (user != null)
+                        {
+                            dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
+                        }
+
+                        var chat = With as TLChat;
+                        if (chat != null)
+                        {
+                            dialog.CheckBoxLabel = "Delete for everyone";
+                        }
+                    }
+                }
+                else if (Peer is TLInputPeerChat)
+                {
+                    dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
                 }
 
-                DeleteMessages(null, null, messages, revoke, null, DeleteMessagesInternal);
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    var revoke = dialog.IsChecked == true;
+
+                    var messages = new List<TLMessageBase>() { messageBase };
+                    if (messageBase.Id == 0 && messageBase.RandomId != 0L)
+                    {
+                        DeleteMessagesInternal(null, messages);
+                        return;
+                    }
+
+                    DeleteMessages(null, null, messages, revoke, null, DeleteMessagesInternal);
+                }
             }
         }
 

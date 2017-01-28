@@ -72,5 +72,10 @@ namespace Telegram.Api.TL
         {
             return new TLInputPeerChannel { ChannelId = Id, AccessHash = AccessHash.Value };
         }
+
+        public TLInputChannelBase ToInputChannel()
+        {
+            return new TLInputChannel { ChannelId = Id, AccessHash = AccessHash.Value };
+        }
     }
 }

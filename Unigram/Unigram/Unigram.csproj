@@ -104,6 +104,9 @@
       <DependentUpon>ThumbnailControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProfilePictureView.cs" />
+    <Compile Include="Controls\Views\DeleteChannelMessageDialog.xaml.cs">
+      <DependentUpon>DeleteChannelMessageDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\ReplyMarkupView.xaml.cs">
       <DependentUpon>ReplyMarkupView.xaml</DependentUpon>
     </Compile>
@@ -491,6 +494,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\UnigramMessageDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\DeleteChannelMessageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
