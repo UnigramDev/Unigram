@@ -100,7 +100,7 @@ namespace Unigram.Converters
             if ((dateTime.Date == DateTime.Now.Date) && !string.IsNullOrEmpty(TodayFormat))
             {
                 //return dateTime.ToString(string.Format(TodayFormat, shortTimePattern), cultureInfo);
-                BindConvert.Current.ShortTime.Format(dateTime);
+                return BindConvert.Current.ShortTime.Format(dateTime);
             }
 
             //Yesterday
