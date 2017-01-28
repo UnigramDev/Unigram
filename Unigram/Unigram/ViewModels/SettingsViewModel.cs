@@ -34,7 +34,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
                 if (response.IsSucceeded)
                 {
-                    var user = response.Value.FirstOrDefault() as TLUser;
+                    var user = response.Result.FirstOrDefault() as TLUser;
                     if (user != null)
                     {
                         Self = user;

@@ -57,6 +57,35 @@ namespace Unigram.Views
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+
+            lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+        }
+
+        private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
+            {
+                ManagePanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ManagePanel.Visibility = Visibility.Visible;
+            }
+
+            //ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
+            //ViewModel.MessagesDeleteCommand.RaiseCanExecuteChanged();
+        }
+
+        private void Manage_Click(object sender, RoutedEventArgs e)
+        {
+            if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
+            {
+                lvDialogs.SelectionMode = ListViewSelectionMode.Multiple;
+            }
+            else
+            {
+                lvDialogs.SelectionMode = ListViewSelectionMode.None;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -66,8 +95,6 @@ namespace Unigram.Views
 
             _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
-
-            lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -80,7 +107,7 @@ namespace Unigram.Views
         {
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
-            ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
+            //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -91,14 +118,6 @@ namespace Unigram.Views
 
         //private bool _isAlreadyLoading;
         //private bool _isAlreadyCalled;
-
-        private async void LvScroller_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            if (lvDialogs.ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
-            {
-                await ViewModel.LoadNextSliceAsync();
-            }
-        }
 
         private void CheckMessageBoxEmpty()
         {
@@ -460,6 +479,27 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void Stickers_Click(object sender, RoutedEventArgs e)
+        {
+            StickersPanel.IsHitTestVisible = !StickersPanel.IsHitTestVisible;
+            StickersPanel.Opacity = StickersPanel.IsHitTestVisible ? 1 : 0;
+        }
+
+        private void ProfileBubble_Click(object sender, RoutedEventArgs e)
+        {
+            var control = sender as FrameworkElement;
+            var message = control.DataContext as TLMessage;
+            if (message != null && message.HasFromId)
+            {
+                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.FromId.Value });
+            }
+        }
+
+        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.SelectedMessages = new List<TLMessageBase>(lvDialogs.SelectedItems.Cast<TLMessageBase>());
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading

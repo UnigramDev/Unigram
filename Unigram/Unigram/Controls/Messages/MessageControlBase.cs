@@ -18,6 +18,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
@@ -221,6 +222,11 @@ namespace Unigram.Controls.Messages
 
                 tooltip.Content = text;
             }
+        }
+
+        protected void Reply_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Context.MessageOpenReplyCommand.Execute(ViewModel);
         }
 
         /// <summary>

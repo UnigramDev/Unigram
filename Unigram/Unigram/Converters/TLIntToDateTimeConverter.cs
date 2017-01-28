@@ -3,6 +3,7 @@ using System.Globalization;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
+using Windows.Globalization.DateTimeFormatting;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
@@ -93,28 +94,40 @@ namespace Unigram.Converters
             var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
 
             if (WeekFormat == null)
-                return dateTime.ToString(string.Format(TodayFormat, shortTimePattern), cultureInfo);
+                return BindConvert.Current.ShortTime.Format(dateTime);
 
             //Today
             if ((dateTime.Date == DateTime.Now.Date) && !string.IsNullOrEmpty(TodayFormat))
-                return dateTime.ToString(string.Format(TodayFormat, shortTimePattern), cultureInfo);
+            {
+                //return dateTime.ToString(string.Format(TodayFormat, shortTimePattern), cultureInfo);
+                return BindConvert.Current.ShortTime.Format(dateTime);
+            }
 
             //Yesterday
             if ((dateTime.Date.AddDays(1) == DateTime.Now.Date) && !string.IsNullOrEmpty(YesterdayString))
+            {
                 return YesterdayString;
+            }
 
             if ((dateTime.Date.AddDays(1) == DateTime.Now.Date) && !string.IsNullOrEmpty(YesterdayFormat))
+            {
                 return dateTime.ToString(string.Format(YesterdayFormat, shortTimePattern), cultureInfo);
+            }
 
             if (dateTime.Date.AddDays(7) >= DateTime.Now.Date && !string.IsNullOrEmpty(WeekFormat))
+            {
                 return dateTime.ToString(string.Format(WeekFormat, shortTimePattern), cultureInfo);
+            }
 
             //Long time ago (no more than one year ago)
             if (dateTime.Date.AddDays(365) >= DateTime.Now.Date && !string.IsNullOrEmpty(RegularFormat))
+            {
                 return dateTime.ToString(string.Format(RegularFormat, shortTimePattern), cultureInfo);
+            }
 
             //Long long time ago
-            return dateTime.ToString(string.Format(LongRegularFormat, shortTimePattern), cultureInfo);
+            //return dateTime.ToString(string.Format(LongRegularFormat, shortTimePattern), cultureInfo);
+            return BindConvert.Current.ShortDate.Format(dateTime);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

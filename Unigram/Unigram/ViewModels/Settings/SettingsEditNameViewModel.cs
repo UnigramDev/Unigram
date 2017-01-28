@@ -34,7 +34,7 @@ namespace Unigram.ViewModels.Settings
                 var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
                 if (response.IsSucceeded)
                 {
-                    var user = response.Value.FirstOrDefault() as TLUser;
+                    var user = response.Result.FirstOrDefault() as TLUser;
                     if (user != null)
                     {
                         Self = user;
@@ -90,7 +90,7 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.UpdateProfileAsync(_firstName, _lastName, null);
             if (response.IsSucceeded)
             {
-                response.Value.RaisePropertyChanged(() => response.Value.FullName);
+                response.Result.RaisePropertyChanged(() => response.Result.FullName);
                 NavigationService.PopModal();
             }
         }

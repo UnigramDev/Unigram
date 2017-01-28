@@ -14,6 +14,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Common;
+using Unigram.Controls;
 using Unigram.Core.Dependency;
 using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
@@ -645,10 +646,10 @@ namespace Unigram.Common
                     var response = await MTProtoService.Current.ResolveUsernameAsync(((string)data).TrimStart('@'));
                     if (response.IsSucceeded)
                     {
-                        var peerUser = response.Value.Peer as TLPeerUser;
+                        var peerUser = response.Result.Peer as TLPeerUser;
                         if (peerUser != null)
                         {
-                            var userBase = response.Value.Users.FirstOrDefault();
+                            var userBase = response.Result.Users.FirstOrDefault();
                             if (userBase != null)
                             {
                                 service.Navigate(typeof(UserInfoPage), userBase);
@@ -656,8 +657,8 @@ namespace Unigram.Common
                             }
                         }
 
-                        var peerChat = response.Value.Peer as TLPeerChat;
-                        var peerChannel = response.Value.Peer as TLPeerChannel;
+                        var peerChat = response.Result.Peer as TLPeerChat;
+                        var peerChannel = response.Result.Peer as TLPeerChannel;
                         if (peerChannel != null || peerChat != null)
                         {
                             // TODO
@@ -686,14 +687,14 @@ namespace Unigram.Common
                     {
                         if (type == TLType.MessageEntityTextUrl)
                         {
-                            var dialog = new MessageDialog(navigation, "Open this link?");
-                            dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
-                            dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
-                            dialog.DefaultCommandIndex = 0;
-                            dialog.CancelCommandIndex = 1;
+                            var dialog = new UnigramMessageDialog(navigation, "Open this link?");
+                            dialog.Title = "Open this link?";
+                            dialog.Message = navigation;
+                            dialog.PrimaryButtonText = "Open";
+                            dialog.SecondaryButtonText = "Cancel";
 
                             var result = await dialog.ShowAsync();
-                            if (result == null || (int)result?.Id == 1)
+                            if (result != ContentDialogResult.Primary)
                             {
                                 return;
                             }
@@ -858,7 +859,7 @@ namespace Unigram.Common
             var response = await protoService.CheckChatInviteAsync(link);
             if (response.IsSucceeded)
             {
-                var inviteAlready = response.Value as TLChatInviteAlready;
+                var inviteAlready = response.Result as TLChatInviteAlready;
                 if (inviteAlready != null)
                 {
                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
@@ -875,7 +876,7 @@ namespace Unigram.Common
                     }
                 }
 
-                var invite = response.Value as TLChatInvite;
+                var invite = response.Result as TLChatInvite;
                 if (invite != null)
                 {
                     var content = "AppResources.JoinGroupConfirmation";
@@ -884,19 +885,19 @@ namespace Unigram.Common
                         content = "AppResources.JoinChannelConfirmation";
                     }
 
-                    var dialog = new MessageDialog(content, invite.Title);
-                    dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
-                    dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
-                    dialog.DefaultCommandIndex = 0;
-                    dialog.CancelCommandIndex = 1;
+                    var dialog = new UnigramMessageDialog(content, invite.Title);
+                    dialog.Title = invite.Title;
+                    dialog.Content = content;
+                    dialog.PrimaryButtonText = "OK";
+                    dialog.SecondaryButtonText = "Cancel";
 
                     var result = await dialog.ShowAsync();
-                    if (result != null && (int)result?.Id == 0)
+                    if (result == ContentDialogResult.Primary)
                     {
                         var import = await protoService.ImportChatInviteAsync(link);
                         if (import.IsSucceeded)
                         {
-                            var updates = import.Value as TLUpdates;
+                            var updates = import.Result as TLUpdates;
                             if (updates != null)
                             {
                                 var chatBase = updates.Chats.FirstOrDefault();

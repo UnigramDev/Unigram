@@ -32,8 +32,7 @@
                               ItemsSource="{Binding MediaCollection}"
                               SelectionMode="None"
                               Padding="6,0,6,6"
-                              common:FluidGridView.OrientationOnly="False"
-                              common:FluidGridView.UseWindowSize="True">
+                              common:FluidGridView.OrientationOnly="False">
                         <common:FluidGridView.Triggers>
                             <common:LengthGridViewTrigger ItemLength="72"/>
                         </common:FluidGridView.Triggers>

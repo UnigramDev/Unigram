@@ -10,9 +10,11 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Converters;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Globalization.DateTimeFormatting;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.UI;
@@ -433,7 +435,8 @@ namespace Unigram.Controls.Items
                 //Today
                 if (dateTime.Date == DateTime.Now.Date)
                 {
-                    TimeLabel.Text = dateTime.ToString(string.Format("{0}", shortTimePattern), cultureInfo);
+                    //TimeLabel.Text = dateTime.ToString(string.Format("{0}", shortTimePattern), cultureInfo);
+                    TimeLabel.Text = BindConvert.Current.ShortTime.Format(dateTime);
                     return;
                 }
 
@@ -444,15 +447,13 @@ namespace Unigram.Controls.Items
                     return;
                 }
 
-                //Long time ago (no more than one year ago)
-                if (dateTime.Date.AddDays(365) >= DateTime.Now.Date)
-                {
-                    TimeLabel.Text = dateTime.ToString(string.Format("d MMM", shortTimePattern), cultureInfo);
-                    return;
-                }
-
                 //Long long time ago
-                TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
+                //TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
+                TimeLabel.Text = BindConvert.Current.ShortDate.Format(dateTime);
+            }
+            else
+            {
+                TimeLabel.Text = string.Empty;
             }
         }
 

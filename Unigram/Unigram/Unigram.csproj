@@ -97,6 +97,23 @@
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <None Include="project.json" />
     <Compile Include="Common\Language.cs" />
+    <Compile Include="Controls\BubbleActionButton.cs" />
+    <Compile Include="Controls\DialogsListView.cs" />
+    <Compile Include="Controls\TransferButton.cs" />
+    <Compile Include="Controls\Media\ThumbnailControl.xaml.cs">
+      <DependentUpon>ThumbnailControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProfilePictureView.cs" />
+    <Compile Include="Controls\Views\DeleteChannelMessageDialog.xaml.cs">
+      <DependentUpon>DeleteChannelMessageDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\ReplyMarkupView.xaml.cs">
+      <DependentUpon>ReplyMarkupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\StickersView.xaml.cs">
+      <DependentUpon>StickersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\LastSeenConverter.cs" />
     <Compile Include="ViewModels\DialogViewModel.Typing.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -254,6 +271,8 @@
     <Compile Include="ViewModels\PhotosViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsEditNameViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsFeaturedStickersViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsSessionsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsUsernameViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\UserInfoViewModel.cs" />
@@ -318,14 +337,20 @@
     <Compile Include="Views\Settings\SettingsChatPage.xaml.cs">
       <DependentUpon>SettingsChatPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsFeaturedStickersPage.xaml.cs">
+      <DependentUpon>SettingsFeaturedStickersPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsNotificationsPage.xaml.cs">
       <DependentUpon>SettingsNotificationsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsPrivacyPage.xaml.cs">
       <DependentUpon>SettingsPrivacyPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingStickersPage.xaml.cs">
-      <DependentUpon>SettingStickersPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsSessionsPage.xaml.cs">
+      <DependentUpon>SettingsSessionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsStickersPage.xaml.cs">
+      <DependentUpon>SettingsStickersPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
       <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
@@ -452,6 +477,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Media\ThumbnailControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Media\VoiceMediaControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -465,6 +494,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\UnigramMessageDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\DeleteChannelMessageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -488,7 +521,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Views\ReplyMarkupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\SendPhotosView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\StickersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -596,6 +637,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\SettingsFeaturedStickersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsNotificationsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -604,7 +649,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\SettingStickersPage.xaml">
+    <Page Include="Views\Settings\SettingsSessionsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsStickersPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -661,6 +710,7 @@
   <ItemGroup>
     <Folder Include="Controls\Stickers\" />
     <Folder Include="Models\" />
+    <Folder Include="ViewModels\Settings\PrivacyAndSecurity\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

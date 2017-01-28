@@ -4,6 +4,7 @@ using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Template10.Services.SerializationService;
+using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
@@ -152,6 +154,9 @@ namespace Unigram.Views
                 DialogsListView.IsItemClickEnabled = true;
                 DialogsListView.SelectionMode = ListViewSelectionMode.None;
                 DialogsListView.SelectedItem = null;
+                DialogsSearchListView.IsItemClickEnabled = true;
+                DialogsSearchListView.SelectionMode = ListViewSelectionMode.None;
+                DialogsSearchListView.SelectedItem = null;
                 Separator.BorderThickness = new Thickness(0);
             }
             else
@@ -159,29 +164,64 @@ namespace Unigram.Views
                 DialogsListView.IsItemClickEnabled = false;
                 DialogsListView.SelectionMode = ListViewSelectionMode.Single;
                 DialogsListView.SelectedItem = _lastSelected;
+                DialogsSearchListView.IsItemClickEnabled = false;
+                DialogsSearchListView.SelectionMode = ListViewSelectionMode.Single;
+                DialogsSearchListView.SelectedItem = _lastSelected;
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
             }
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (DialogsListView.SelectionMode != ListViewSelectionMode.Multiple)
+            var listView = sender as ListView;
+            if (listView.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 _lastSelected = e.ClickedItem;
 
                 var dialog = e.ClickedItem as TLDialog;
-                MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                if (dialog != null)
+                {
+                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                }
+
+                var user = e.ClickedItem as TLUser;
+                if (user != null)
+                {
+                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                }
+
+                var channel = e.ClickedItem as TLChannel;
+                if (channel != null)
+                {
+                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
+                }
             }
         }
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (DialogsListView.SelectedItem != null && _lastSelected != DialogsListView.SelectedItem && DialogsListView.SelectionMode != ListViewSelectionMode.Multiple)
+            var listView = sender as ListView;
+            if (listView.SelectedItem != null && _lastSelected != listView.SelectedItem && listView.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                _lastSelected = DialogsListView.SelectedItem;
+                _lastSelected = listView.SelectedItem;
 
-                var dialog = DialogsListView.SelectedItem as TLDialog;
-                MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                var dialog = listView.SelectedItem as TLDialog;
+                if (dialog != null)
+                {
+                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                }
+
+                var user = listView.SelectedItem as TLUser;
+                if (user != null)
+                {
+                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                }
+
+                var channel = listView.SelectedItem as TLChannel;
+                if (channel != null)
+                {
+                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
+                }
             }
         }
 
@@ -244,6 +284,7 @@ namespace Unigram.Views
             {
                 if (string.IsNullOrWhiteSpace(SearchDialogs.Text))
                 {
+                    ViewModel.Dialogs.Search.Clear();
                     return;
                 }
 
@@ -254,14 +295,18 @@ namespace Unigram.Views
         private void PivotItem_Loaded(object sender, RoutedEventArgs e)
         {
             var dialogs = ViewModel.Dialogs;
+            var contacts = ViewModel.Contacts;
+
             try
             {
                 Execute.BeginOnThreadPool(() =>
                 {
                     dialogs.LoadFirstSlice();
-                    //await ViewModel.Contacts.getTLContacts();
-                    //await ViewModel.Contacts.GetSelfAsync();
+                    contacts.LoadContacts();
                 });
+
+                //ViewModel.Contacts.getTLContacts();
+                ViewModel.Contacts.GetSelfAsync();
             }
             catch { }
         }

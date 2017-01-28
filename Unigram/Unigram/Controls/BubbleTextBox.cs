@@ -14,11 +14,13 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Dependency;
+using Unigram.Core.Models;
 using Unigram.Core.Rtf;
 using Unigram.Core.Rtf.Write;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI;
@@ -191,13 +193,35 @@ namespace Unigram.Controls
 
                 Document.Selection.SetText(TextSetOptions.None, result);
             }
-            else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-td-field-tags"))
+            else if (package.Contains(StandardDataFormats.StorageItems))
             {
-                // This is Telegram Desktop mentions format
+                e.Handled = true;
+            }
+            else if (package.Contains(StandardDataFormats.Bitmap))
+            {
+                e.Handled = true;
+
+                var bitmap = await package.GetBitmapAsync();
+                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = new byte[(int)stream.Size];
+                    reader.ReadBytes(buffer);
+                    await FileIO.WriteBytesAsync(cache, buffer);
+                }
+
+                ViewModel.SendPhotoCommand.Execute(new StoragePhoto(cache));
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {
                 // This is our field format
+            }
+            else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-td-field-tags"))
+            {
+                // This is Telegram Desktop mentions format
             }
         }
 
@@ -272,9 +296,10 @@ namespace Unigram.Controls
                 // Check if CTRL or Shift is also pressed in addition to Enter key.
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+                var key = Window.Current.CoreWindow.GetKeyState(args.VirtualKey);
 
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && !IsEmpty)
+                if (key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down))
                 {
                     AcceptsReturn = false;
                     await SendAsync();
@@ -771,10 +796,12 @@ namespace Unigram.Controls
 
                 _isDirty = true;
                 Document.SetText(TextSetOptions.FormatRtf, document.Render());
+                Document.Selection.SetRange(text.Length, text.Length);
             }
             else
             {
                 Document.SetText(TextSetOptions.None, text);
+                Document.Selection.SetRange(text.Length, text.Length);
             }
         }
 
@@ -806,7 +833,7 @@ namespace Unigram.Controls
 
                 if (flag)
                 {
-                    OnMessageChanged(message.Message, message.Entities);
+                    OnMessageChanged(args.Text, message.Entities);
                 }
             });
         }
@@ -854,9 +881,12 @@ namespace Unigram.Controls
     {
         public TLMessage Message { get; private set; }
 
-        public EditMessageEventArgs(TLMessage message)
+        public string Text { get; private set; }
+
+        public EditMessageEventArgs(TLMessage message, string text)
         {
             Message = message;
+            Text = text;
         }
     }
 

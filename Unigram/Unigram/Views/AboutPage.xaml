@@ -196,7 +196,7 @@
                                Text="Special thanks:"
                                FontSize="18"
                                Style="{StaticResource BaseTextBlockStyle}" />
-                    <TextBlock Text="We want to especially thank these people for their help and knowlegde while building the app:" 
+                    <TextBlock Text="We want to especially thank these people for their help and knowledge while building the app:" 
                                FontSize="14"
                                TextWrapping="Wrap"
                                Margin="0,0,0,6"/>

@@ -1,29 +1,97 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-   public class BubbleListView : ListView
+   public class BubbleListView : ListView, IHandle<string>, IHandle
     {
+        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+
         public ScrollViewer ScrollingHost { get; private set; }
+        public ItemsStackPanel ItemsStack { get; private set; }
 
         public BubbleListView()
         {
             DefaultStyleKey = typeof(ListView);
+
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Aggregator.Subscribe(this);
+
+            var panel = ItemsPanelRoot as ItemsStackPanel;
+            if (panel != null)
+            {
+                ItemsStack = panel;
+                ItemsStack.SizeChanged += Panel_SizeChanged;
+            }
+        }
+
+        public void Handle(string message)
+        {
+            if (message == "PORCODIO")
+            {
+                Execute.BeginOnUIThread(async () =>
+                {
+                    await ViewModel.LoadFirstSliceAsync();
+                });
+            }
         }
 
         protected override void OnApplyTemplate()
         {
             ScrollingHost = (ScrollViewer)GetTemplateChild("ScrollViewer");
+            ScrollingHost.ViewChanged += ScrollingHost_ViewChanged;
 
             base.OnApplyTemplate();
+        }
+
+        private async void Panel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ScrollingHost.ScrollableHeight < 120)
+            {
+                if (!ViewModel.IsFirstSliceLoaded)
+                {
+                    ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+                    await ViewModel.LoadPreviousSliceAsync();
+                }
+
+                ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                await ViewModel.LoadNextSliceAsync();
+            }
+        }
+
+        private async void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
+            {
+                ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                await ViewModel.LoadNextSliceAsync();
+            }
+            else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
+            {
+                if (ViewModel.IsFirstSliceLoaded == false)
+                {
+                    ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+                    await ViewModel.LoadPreviousSliceAsync();
+                }
+            }
         }
 
         private int count;
@@ -76,11 +144,11 @@ namespace Unigram.Controls
                         {
                             if (message.IsSticker())
                             {
-                                bubble.Padding = new Thickness(12, 0, 12, 0);
+                                bubble.Padding = new Thickness(12, 0, 24, 0);
                             }
                             else
                             {
-                                bubble.Padding = new Thickness(56, 0, 12, 0);
+                                bubble.Padding = new Thickness(56, 0, 24, 0);
                             }
                         }
                         else
@@ -99,13 +167,13 @@ namespace Unigram.Controls
                     {
                         if (message.IsSticker())
                         {
-                            bubble.Padding = new Thickness(12, 0, 12, 0);
+                            bubble.Padding = new Thickness(12, 0, 24, 0);
                         }
                         else
                         {
                             if (message.IsOut && !message.IsPost)
                             {
-                                bubble.Padding = new Thickness(56, 0, 12, 0);
+                                bubble.Padding = new Thickness(56, 0, 24, 0);
                             }
                             else
                             {

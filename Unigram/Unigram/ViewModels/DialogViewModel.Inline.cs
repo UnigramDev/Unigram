@@ -69,7 +69,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.ResolveUsernameAsync(username);
                 if (response.IsSucceeded)
                 {
-                    CurrentInlineBot = response.Value.Users.FirstOrDefault() as TLUser;
+                    CurrentInlineBot = response.Result.Users.FirstOrDefault() as TLUser;
                     GetInlineBotResults(command ?? string.Empty);
                 }
             }
@@ -90,13 +90,13 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, text, string.Empty);
                 if (response.IsSucceeded)
                 {
-                    foreach (var item in response.Value.Results)
+                    foreach (var item in response.Result.Results)
                     {
-                        item.QueryId = response.Value.QueryId;
+                        item.QueryId = response.Result.QueryId;
                     }
 
-                    InlineBotResults = response.Value;
-                    Debug.WriteLine(response.Value.Results.Count.ToString());
+                    InlineBotResults = response.Result;
+                    Debug.WriteLine(response.Result.Results.Count.ToString());
                 }
             }
         }

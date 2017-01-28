@@ -56,8 +56,6 @@ namespace Unigram.ViewModels
             return Task.CompletedTask;
         }
 
-        public ObservableCollection<string> ContactsList = new ObservableCollection<string>();
-
         //EXPERIMENTAL
         public ObservableCollection<SearchResult> SearchResults { get; set; }
 
@@ -101,7 +99,7 @@ namespace Unigram.ViewModels
             if (query.Length > 1)
             {
                 var result = await ProtoService.SearchGlobalAsync(query, 0, null, 0, 20);
-                var messages = result.Value.Messages;
+                var messages = result.Result.Messages;
                 foreach (var item in messages)
                 {
                     TLUser userX = new TLUser();
@@ -162,12 +160,12 @@ namespace Unigram.ViewModels
             if (query.Length > 4)
             {
                 var result = await ProtoService.SearchAsync(query, 20);
-                var users = result.Value.Users;
+                var users = result.Result.Users;
                 foreach (var item in users)
                 {
                     SearchResults.Add(new SearchResult(null, SearchResult.ResultType.GlobalUsers, item));
                 }
-                var chats = result.Value.Chats;
+                var chats = result.Result.Chats;
                 foreach(var item in chats)
                 {
                     SearchResults.Add(new SearchResult(null, SearchResult.ResultType.GlobalChats, null, item));

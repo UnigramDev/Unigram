@@ -12,7 +12,80 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style TargetType="local:ProfilePictureView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ProfilePictureView">
+                    <Grid>
+                        <Ellipse Fill="{TemplateBinding Background}"/>
+                        <TextBlock Text="{TemplateBinding Text}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Ellipse>
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="{TemplateBinding Source}" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:BubbleActionButton">
+        <Setter Property="Foreground" Value="{ThemeResource TelegramForegroundAccentBrush}"/>
+        <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+        <Setter Property="UseSystemFocusVisuals" Value="True"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:BubbleActionButton">
+                    <Grid Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckedStates">
+                                <VisualState x:Name="Unchecked"/>
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Indicator">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Border x:Name="RootGrid">
+                            <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:BubbleTextBox">
         <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
         <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
@@ -196,7 +269,7 @@
     </Style>
 
     <Style TargetType="local:ProgressBarRing">
-        <Setter Property="Background" Value="#54000000"/>
+        <Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
         <Setter Property="Foreground" Value="#FFFFFFFF"/>
         <Setter Property="Minimum" Value="0"/>
         <Setter Property="Maximum" Value="1"/>
@@ -206,8 +279,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProgressBarRing">
                     <Grid Background="{TemplateBinding Background}" CornerRadius="24">
-                        <SymbolIcon Symbol="Cancel" Foreground="{TemplateBinding Foreground}"/>
-                        <local:ProgressBarRingSlice x:Name="Indicator" IsHitTestVisible="False" CacheMode="BitmapCache" Fill="{TemplateBinding Foreground}" InnerRadius="19" Radius="22" StartAngle="0" EndAngle="0">
+                        <local:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" InnerRadius="20" Radius="22" StartAngle="0" EndAngle="0">
                             <Path.RenderTransform>
                                 <RotateTransform x:Name="Rotation" CenterX="22" CenterY="22" Angle="0"/>
                             </Path.RenderTransform>

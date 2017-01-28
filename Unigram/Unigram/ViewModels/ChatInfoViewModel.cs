@@ -39,7 +39,7 @@ namespace Unigram.ViewModels
                 x.ChannelId = channel.ChannelId;
                 x.AccessHash = channel.AccessHash;
                 var channelDetails = await ProtoService.GetFullChannelAsync(x);
-                Status = ((TLChannelFull)channelDetails.Value.FullChat).About;
+                Status = ((TLChannelFull)channelDetails.Result.FullChat).About;
                 // TODO: photo = channelDetails.Value.Chats[0].Photo;
             }
             if (chat != null)
@@ -74,7 +74,7 @@ namespace Unigram.ViewModels
                 x.ChannelId = channel.ChannelId;
                 x.AccessHash = channel.AccessHash;
                 var participants = await ProtoService.GetParticipantsAsync(x, null, 0, int.MaxValue);
-                foreach (var item in participants.Value.Users)
+                foreach (var item in participants.Result.Users)
                 {
                     var User = item as TLUser;
                     //var TempX = new UsersPanelListItem(User);
@@ -90,7 +90,7 @@ namespace Unigram.ViewModels
             {
                 //set visibility
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
-                foreach (var item in chatDetails.Value.Users)
+                foreach (var item in chatDetails.Result.Users)
                 {
                     var User = item as TLUser;
                     //var TempX = new UsersPanelListItem(User);

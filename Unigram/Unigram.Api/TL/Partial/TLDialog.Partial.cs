@@ -34,6 +34,17 @@ namespace Telegram.Api.TL
             return Messages.Count;
         }
 
+        public TLInputPeerBase ToInputPeer()
+        {
+            var peer = With as ITLInputPeer;
+            if (peer != null)
+            {
+                return peer.ToInputPeer();
+            }
+
+            return null;
+        }
+
         public virtual void Update(TLDialog dialog)
         {
             Flags = dialog.Flags;

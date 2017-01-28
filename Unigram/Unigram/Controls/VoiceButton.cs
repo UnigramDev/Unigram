@@ -75,7 +75,7 @@ namespace Unigram.Controls
                 await _recorder.StopAsync();
             }
 
-            _file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("recording.ogg", CreationCollisionOption.ReplaceExisting);
+            _file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\recording.ogg", CreationCollisionOption.ReplaceExisting);
             _recorder = new OpusRecorder(_file);
             await _recorder.StartAsync();
 

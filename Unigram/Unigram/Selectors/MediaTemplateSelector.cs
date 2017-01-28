@@ -88,7 +88,7 @@ namespace Unigram.Selectors
                     //    return GifTemplate;
                     //}
 
-                    if (!(document.Thumb is TLPhotoSizeEmpty))
+                    if (document.Thumb != null && !(document.Thumb is TLPhotoSizeEmpty))
                     {
                         return DocumentThumbTemplate;
                     }

@@ -28,7 +28,9 @@
 
             <x:Double x:Key="TelegramMediaMinWidth">96</x:Double>
             <x:Double x:Key="TelegramMediaMinHeight">96</x:Double>
-            
+
+            <MediaElement x:Key="AudioPlayer"/>
+
             <!-- Temp -->
             <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />
             <converters:BubblePlaceholderConverter x:Key="BubblePlaceholderConverter" />
@@ -37,12 +39,17 @@
             <converters:InitialNameStringConverter x:Key="InitialNameStringConverter" />
             <converters:DateTimeToFormatConverter x:Key="DateTimeToFormatConverter" />
             <converters:TLIntToDateTimeConverter x:Key="MessageDateTimeConverter" TodayFormat="{}{0}"/>
+            <converters:TLIntToDateTimeConverter x:Key="DialogDateTimeConverter"
+                TodayFormat="{}{0}"
+                WeekFormat="ddd"
+                LongRegularFormat="dd.MM.yyyy"/>
             <converters:StateToGlyphConverter x:Key="StateToGlyphConverter"/>
             <converters:ReplyInfoToGlyphConverter x:Key="ReplyInfoToGlyphConverter"/>
             <converters:VenueToStaticImageConverter x:Key="VenueToStaticImageConverter"/>
             <converters:FileExistsToGlyphConverter x:Key="FileExistsToGlyphConverter"/>
             <converters:EditToVisibilityConverter x:Key="EditToVisibilityConverter"/>
             <converters:FileSizeConverter x:Key="FileSizeConverter"/>
+            <converters:LastSeenConverter x:Key="LastSeenConverter"/>
 
             <!--<SolidColorBrush x:Key="PlaceholderBlueBrush" Color="LightBlue"/>
             <SolidColorBrush x:Key="PlaceholderCyanBrush" Color="LightCyan"/>

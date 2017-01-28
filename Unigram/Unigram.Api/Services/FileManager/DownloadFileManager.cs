@@ -61,7 +61,7 @@ namespace Telegram.Api.Services.FileManager
                 for (var i = 0; i < _items.Count; i++)
                 {
                     var item = _items[i];
-                    if (item.Canceled)
+                    if (item.IsCancelled)
                     {
                         _items.RemoveAt(i--);
                         try
@@ -100,7 +100,7 @@ namespace Telegram.Api.Services.FileManager
             {
                 lock (_itemsSyncRoot)
                 {
-                    part.ParentItem.Canceled = true;
+                    part.ParentItem.IsCancelled = true;
                     part.Status = PartStatus.Processed;
                     _items.Remove(part.ParentItem);
                 }
@@ -114,7 +114,7 @@ namespace Telegram.Api.Services.FileManager
                 {
                     lock (_itemsSyncRoot)
                     {
-                        part.ParentItem.Canceled = true;
+                        part.ParentItem.IsCancelled = true;
                         part.Status = PartStatus.Processed;
                         _items.Remove(part.ParentItem);
                     }
@@ -148,7 +148,7 @@ namespace Telegram.Api.Services.FileManager
                     }
                 }
 
-                isCanceled = part.ParentItem.Canceled;
+                isCanceled = part.ParentItem.IsCancelled;
 
                 isComplete = part.ParentItem.Parts.All(x => x.Status == PartStatus.Processed);
                 if (!isComplete)
@@ -262,10 +262,14 @@ namespace Telegram.Api.Services.FileManager
                     bool addFile = true;
                     foreach (var item in _items)
                     {
-                        if (item.Location.VolumeId == file.VolumeId
-                            && item.Location.LocalId == file.LocalId)
+                        if (item.Location.VolumeId == file.VolumeId &&
+                            item.Location.LocalId == file.LocalId)
                         {
+                            downloadableItem.Callback = item.Callback;
+                            downloadableItem.Progress = item.Progress;
                             addFile = false;
+
+                            Debug.WriteLine("Already downloading document");
                             break;
                         }
                     }
@@ -355,7 +359,7 @@ namespace Telegram.Api.Services.FileManager
 
                 foreach (var item in items)
                 {
-                    item.Canceled = true;
+                    item.IsCancelled = true;
                 }
             }
         }

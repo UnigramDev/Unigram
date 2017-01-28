@@ -85,7 +85,7 @@ namespace Unigram.ViewModels
                 var result = await ProtoService.GetFullUserAsync(user.ToInputUser());
                 if (result.IsSucceeded)
                 {
-                    Full = result.Value;
+                    Full = result.Result;
                     RaisePropertyChanged(() => AboutVisibility);
                     RaisePropertyChanged(() => BlockVisibility);
                     RaisePropertyChanged(() => UnblockVisibility);
@@ -93,8 +93,7 @@ namespace Unigram.ViewModels
                     RaisePropertyChanged(() => UnstopVisibility);
                 }
 
-                var Status = LastSeenHelper.GetLastSeenTime(user);
-                LastSeen = Status.Item1;
+                LastSeen = LastSeenHelper.GetLastSeenTime(user);
 
                 Aggregator.Subscribe(this);
             }
@@ -252,7 +251,7 @@ namespace Unigram.ViewModels
             if (user != null)
             {
                 var result = await ProtoService.BlockAsync(user.ToInputUser());
-                if (result.IsSucceeded && result.Value)
+                if (result.IsSucceeded && result.Result)
                 {
                     CacheService.Commit();
                     Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = true });
@@ -267,7 +266,7 @@ namespace Unigram.ViewModels
             if (user != null)
             {
                 var result = await ProtoService.UnblockAsync(user.ToInputUser());
-                if (result.IsSucceeded && result.Value)
+                if (result.IsSucceeded && result.Result)
                 {
                     CacheService.Commit();
                     Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = false });
@@ -337,7 +336,7 @@ namespace Unigram.ViewModels
                     }
 
                     var result = await ProtoService.ReportPeerAsync(user.ToInputPeer(), reason);
-                    if (result.IsSucceeded && result.Value)
+                    if (result.IsSucceeded && result.Result)
                     {
                         await new MessageDialog("Resources.ReportSpamNotification", "Unigram").ShowAsync();
                     }

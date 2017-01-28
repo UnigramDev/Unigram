@@ -33,7 +33,7 @@ namespace Telegram.Api.Services.FileManager
 
         public List<UploadablePart> Parts { get; set; }
 
-        public bool Canceled { get; set; }
+        public bool IsCancelled { get; set; }
 
         internal TaskCompletionSource<UploadableItem> Callback { get; set; }
 

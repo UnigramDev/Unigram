@@ -110,7 +110,7 @@ namespace Telegram.Api.Helpers
             lock (itemsSyncRoot)
             {
                 part.Status = PartStatus.Processed;
-                canceled = part.ParentItem.Canceled;
+                canceled = part.ParentItem.IsCancelled;
                 if (!canceled)
                 {
                     flag = Enumerable.All(part.ParentItem.Parts, (UploadablePart x) => x.Status == PartStatus.Processed);

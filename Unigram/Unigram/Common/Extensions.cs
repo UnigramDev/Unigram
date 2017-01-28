@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Unigram.Common
@@ -23,6 +24,25 @@ namespace Unigram.Common
             return queryDict;
         }
 
+        public static bool Contains(this string source, string toCheck, StringComparison comp)
+        {
+            return source.IndexOf(toCheck, comp) >= 0;
+        }
+
+        public static bool Like(this string source, string query, StringComparison comp)
+        {
+            return query.Split(' ').All(x =>
+            {
+                var index = source.IndexOf(x, comp);
+                if (index > -1)
+                {
+                    return index == 0 || char.IsSeparator(source[index - 1]) || !char.IsLetterOrDigit(source[index - 1]);
+                }
+
+                return false;
+            });
+        }
+
         public static string TrimEnd(this string input, string suffixToRemove)
         {
             if (input != null && suffixToRemove != null && input.EndsWith(suffixToRemove))
@@ -32,7 +52,7 @@ namespace Unigram.Common
             else return input;
         }
 
-        public static void AddRange<T>(this IList<T> list, IList<T> source)
+        public static void AddRange<T>(this IList<T> list, IEnumerable<T> source)
         {
             foreach (var item in source)
             {
