@@ -6,7 +6,7 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#3B4245"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#324A5C"/>
             <SolidColorBrush x:Key="MessageBorderBrush" Color="#00000000"/>
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
@@ -34,14 +34,11 @@
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000"/>
             <SolidColorBrush x:Key="MessageBackgroundBrush" Color="Honeydew"/>
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="#00000000"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="#29748ea2"/>
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
 
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
-            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
-
-            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
