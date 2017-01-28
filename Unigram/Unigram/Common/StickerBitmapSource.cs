@@ -27,50 +27,5 @@ namespace Unigram.Common
             IsSet = true;
             return SetSourceAsync(streamSource);
         }
-
-        #region Source
-
-        public static object GetSource(DependencyObject obj)
-        {
-            return (object)obj.GetValue(SourceProperty);
-        }
-
-        public static void SetSource(DependencyObject obj, object value)
-        {
-            obj.SetValue(SourceProperty, value);
-        }
-
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.RegisterAttached("Source", typeof(object), typeof(Image), new PropertyMetadata(null, OnSourceChanged));
-
-        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as Image;
-            var document = e.NewValue as TLDocument;
-            if (document != null)
-            {
-                TLDocumentAttributeImageSize imageSize = null;
-                for (int i = 0; i < document.Attributes.Count; i++)
-                {
-                    imageSize = (document.Attributes[i] as TLDocumentAttributeImageSize);
-                    if (imageSize != null)
-                    {
-                        break;
-                    }
-                }
-                if (imageSize != null)
-                {
-                    var ratioX = sender.MaxWidth / (double)imageSize.W;
-                    var ratioY = sender.MaxHeight / (double)imageSize.H;
-                    var ratio = Math.Min(ratioX, ratioY);
-
-                    sender.Width = (imageSize.W * ratio);
-                    sender.Height = (imageSize.H * ratio);
-                }
-            }
-        }
-
-        #endregion
-
     }
 }

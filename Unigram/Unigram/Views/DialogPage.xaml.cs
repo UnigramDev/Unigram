@@ -59,6 +59,11 @@ namespace Unigram.Views
             Unloaded += OnUnloaded;
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
@@ -455,6 +460,16 @@ namespace Unigram.Views
         {
             StickersPanel.IsHitTestVisible = !StickersPanel.IsHitTestVisible;
             StickersPanel.Opacity = StickersPanel.IsHitTestVisible ? 1 : 0;
+        }
+
+        private void ProfileBubble_Click(object sender, RoutedEventArgs e)
+        {
+            var control = sender as FrameworkElement;
+            var message = control.DataContext as TLMessage;
+            if (message != null && message.HasFromId)
+            {
+                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.FromId.Value });
+            }
         }
     }
 

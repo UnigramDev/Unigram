@@ -315,7 +315,7 @@ namespace Unigram.ViewModels
 
                 foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
                 {
-                    if (item.Id >= maxId && lastRead)
+                    if (item.Id > maxId && lastRead)
                     {
                         var serviceMessage = new TLMessageService
                         {
@@ -324,7 +324,7 @@ namespace Unigram.ViewModels
                             State = TLMessageState.Sending,
                             IsOut = true,
                             IsUnread = true,
-                            Date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now),
+                            Date = item.Date,
                             Action = new TLMessageActionUnreadMessages { Count = _currentDialog?.UnreadCount ?? 0 },
                             RandomId = TLLong.Random()
                         };

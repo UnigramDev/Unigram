@@ -447,13 +447,6 @@ namespace Unigram.Controls.Items
                     return;
                 }
 
-                //Long time ago (no more than one year ago)
-                if (dateTime.Date.AddDays(365) >= DateTime.Now.Date)
-                {
-                    TimeLabel.Text = dateTime.ToString(string.Format("d MMM", shortTimePattern), cultureInfo);
-                    return;
-                }
-
                 //Long long time ago
                 //TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
                 TimeLabel.Text = BindConvert.Current.ShortDate.Format(dateTime);
