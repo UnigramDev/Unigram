@@ -51,7 +51,7 @@ namespace Telegram.Api.TL
 
             foreach (var i in Sizes)
             {
-                var size = i.Type[0];
+                var size = i.Type.Length > 0 ? i.Type[0] : 'z';
                 int newThumbLevel = -1, newMediumLevel = -1, newFullLevel = -1;
 
                 switch (size)

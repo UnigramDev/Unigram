@@ -296,9 +296,10 @@ namespace Unigram.Controls
                 // Check if CTRL or Shift is also pressed in addition to Enter key.
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+                var key = Window.Current.CoreWindow.GetKeyState(args.VirtualKey);
 
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && !IsEmpty)
+                if (key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down))
                 {
                     AcceptsReturn = false;
                     await SendAsync();
@@ -795,10 +796,12 @@ namespace Unigram.Controls
 
                 _isDirty = true;
                 Document.SetText(TextSetOptions.FormatRtf, document.Render());
+                Document.Selection.SetRange(text.Length, text.Length);
             }
             else
             {
                 Document.SetText(TextSetOptions.None, text);
+                Document.Selection.SetRange(text.Length, text.Length);
             }
         }
 
@@ -830,7 +833,7 @@ namespace Unigram.Controls
 
                 if (flag)
                 {
-                    OnMessageChanged(message.Message, message.Entities);
+                    OnMessageChanged(args.Text, message.Entities);
                 }
             });
         }
@@ -878,9 +881,12 @@ namespace Unigram.Controls
     {
         public TLMessage Message { get; private set; }
 
-        public EditMessageEventArgs(TLMessage message)
+        public string Text { get; private set; }
+
+        public EditMessageEventArgs(TLMessage message, string text)
         {
             Message = message;
+            Text = text;
         }
     }
 

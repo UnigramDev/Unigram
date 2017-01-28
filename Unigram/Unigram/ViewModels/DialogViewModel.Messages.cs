@@ -358,8 +358,8 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    var messageEditText = this.GetMessageEditText(result.Result, message);
-                    this.StartEditMessage(messageEditText, message);
+                    var messageEditText = GetMessageEditText(result.Result, message);
+                    StartEditMessage(messageEditText, message);
                 });
             }
             else
@@ -372,7 +372,7 @@ namespace Unigram.ViewModels
                     //    MessageBox.Show(AppResources.EditMessageError, AppResources.Error, 0);
                     //    return;
                     //}
-                    Telegram.Api.Helpers.Execute.ShowDebugMessage("messages.getMessageEditData error " + result.Error);
+                    Execute.ShowDebugMessage("messages.getMessageEditData error " + result.Error);
                 });
             }
         }
@@ -403,7 +403,7 @@ namespace Unigram.ViewModels
                 EditUntil = editUntil
             };
 
-            Aggregator.Publish(new EditMessageEventArgs(_editedMessage));
+            Aggregator.Publish(new EditMessageEventArgs(_editedMessage, text));
 
             //if (this._editMessageTimer == null)
             //{
@@ -426,87 +426,102 @@ namespace Unigram.ViewModels
 
         private string GetMessageEditText(TLMessagesMessageEditData editData, TLMessage message)
         {
-            if (!editData.IsCaption)
+            if (editData.IsCaption)
             {
-                var text = message.Message.ToString();
-                var stringBuilder = new StringBuilder();
-
-                if (message != null && message.Entities != null && message.Entities.Count > 0)
+                var mediaCaption = message.Media as ITLMediaCaption;
+                if (mediaCaption != null)
                 {
-                    //this.ClearMentions();
-
-                    if (message.Entities.FirstOrDefault(x => !(x is TLMessageEntityMentionName) && !(x is TLInputMessageEntityMentionName)) == null)
-                    {
-                        for (int i = 0; i < message.Entities.Count; i++)
-                        {
-                            int num = (i == 0) ? 0 : (message.Entities[i - 1].Offset + message.Entities[i - 1].Length);
-                            int num2 = (i == 0) ? message.Entities[i].Offset : (message.Entities[i].Offset - num);
-
-                            stringBuilder.Append(text.Substring(num, num2));
-
-                            var entityMentionName = message.Entities[i] as TLMessageEntityMentionName;
-                            if (entityMentionName != null)
-                            {
-                                var user = CacheService.GetUser(entityMentionName.UserId);
-                                if (user != null)
-                                {
-                                    //this.AddMention(user);
-                                    string text2 = text.Substring(message.Entities[i].Offset, message.Entities[i].Length);
-                                    stringBuilder.Append(string.Format("@({0})", text2));
-                                }
-                            }
-                            else
-                            {
-                                var entityInputMentionName = message.Entities[i] as TLInputMessageEntityMentionName;
-                                if (entityInputMentionName != null)
-                                {
-                                    var inputUser = entityInputMentionName.UserId as TLInputUser;
-                                    if (inputUser != null)
-                                    {
-                                        TLUserBase user2 = this.CacheService.GetUser(inputUser.UserId);
-                                        if (user2 != null)
-                                        {
-                                            //this.AddMention(user2);
-                                            string text3 = text.Substring(message.Entities[i].Offset, message.Entities[i].Length);
-                                            stringBuilder.Append(string.Format("@({0})", text3));
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    num = message.Entities[i].Offset;
-                                    num2 = message.Entities[i].Length;
-                                    stringBuilder.Append(text.Substring(num, num2));
-                                }
-                            }
-                        }
-
-                        var baseEntity = message.Entities[message.Entities.Count - 1];
-                        if (baseEntity != null)
-                        {
-                            stringBuilder.Append(text.Substring(baseEntity.Offset + baseEntity.Length));
-                        }
-                    }
-                    else
-                    {
-                        stringBuilder.Append(text);
-                    }
+                    return mediaCaption.Caption;
                 }
-                else
-                {
-                    stringBuilder.Append(text);
-                }
-
-                return stringBuilder.ToString();
             }
-
-            var mediaCaption = message.Media as ITLMediaCaption;
-            if (mediaCaption != null)
+            else
             {
-                return mediaCaption.Caption;
+                return message.Message;
             }
 
             return null;
+
+            //if (!editData.IsCaption)
+            //{
+            //    var text = message.Message.ToString();
+            //    var stringBuilder = new StringBuilder();
+
+            //    if (message != null && message.Entities != null && message.Entities.Count > 0)
+            //    {
+            //        //this.ClearMentions();
+
+            //        if (message.Entities.FirstOrDefault(x => !(x is TLMessageEntityMentionName) && !(x is TLInputMessageEntityMentionName)) == null)
+            //        {
+            //            for (int i = 0; i < message.Entities.Count; i++)
+            //            {
+            //                int num = (i == 0) ? 0 : (message.Entities[i - 1].Offset + message.Entities[i - 1].Length);
+            //                int num2 = (i == 0) ? message.Entities[i].Offset : (message.Entities[i].Offset - num);
+
+            //                stringBuilder.Append(text.Substring(num, num2));
+
+            //                var entityMentionName = message.Entities[i] as TLMessageEntityMentionName;
+            //                if (entityMentionName != null)
+            //                {
+            //                    var user = CacheService.GetUser(entityMentionName.UserId);
+            //                    if (user != null)
+            //                    {
+            //                        //this.AddMention(user);
+            //                        string text2 = text.Substring(message.Entities[i].Offset, message.Entities[i].Length);
+            //                        stringBuilder.Append(string.Format("@({0})", text2));
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    var entityInputMentionName = message.Entities[i] as TLInputMessageEntityMentionName;
+            //                    if (entityInputMentionName != null)
+            //                    {
+            //                        var inputUser = entityInputMentionName.UserId as TLInputUser;
+            //                        if (inputUser != null)
+            //                        {
+            //                            TLUserBase user2 = this.CacheService.GetUser(inputUser.UserId);
+            //                            if (user2 != null)
+            //                            {
+            //                                //this.AddMention(user2);
+            //                                string text3 = text.Substring(message.Entities[i].Offset, message.Entities[i].Length);
+            //                                stringBuilder.Append(string.Format("@({0})", text3));
+            //                            }
+            //                        }
+            //                    }
+            //                    else
+            //                    {
+            //                        num = message.Entities[i].Offset;
+            //                        num2 = message.Entities[i].Length;
+            //                        stringBuilder.Append(text.Substring(num, num2));
+            //                    }
+            //                }
+            //            }
+
+            //            var baseEntity = message.Entities[message.Entities.Count - 1];
+            //            if (baseEntity != null)
+            //            {
+            //                stringBuilder.Append(text.Substring(baseEntity.Offset + baseEntity.Length));
+            //            }
+            //        }
+            //        else
+            //        {
+            //            stringBuilder.Append(text);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        stringBuilder.Append(text);
+            //    }
+
+            //    return stringBuilder.ToString();
+            //}
+
+            //var mediaCaption = message.Media as ITLMediaCaption;
+            //if (mediaCaption != null)
+            //{
+            //    return mediaCaption.Caption;
+            //}
+
+            //return null;
         }
 
         #endregion

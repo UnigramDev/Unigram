@@ -948,6 +948,11 @@ namespace Unigram.ViewModels
                 }
             }
 
+            if (string.IsNullOrWhiteSpace(messageText))
+            {
+                return;
+            }
+
             var previousMessage = InsertSendingMessage(message, useReplyMarkup);
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
