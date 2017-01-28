@@ -38,6 +38,9 @@
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
 
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+            
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
