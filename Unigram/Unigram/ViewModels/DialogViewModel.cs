@@ -43,6 +43,21 @@ namespace Unigram.ViewModels
     {
         public MessageCollection Messages { get; private set; } = new MessageCollection();
 
+        private List<TLMessageBase> _selectedMessages;
+        public List<TLMessageBase> SelectedMessages
+        {
+            get
+            {
+                return _selectedMessages;
+            }
+            set
+            {
+                Set(ref _selectedMessages, value);
+                MessagesForwardCommand.RaiseCanExecuteChanged();
+                MessagesDeleteCommand.RaiseCanExecuteChanged();
+            }
+        }
+
         private readonly IUploadFileManager _uploadFileManager;
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;

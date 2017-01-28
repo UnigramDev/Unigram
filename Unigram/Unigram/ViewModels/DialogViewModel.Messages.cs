@@ -57,62 +57,6 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        #region Forward
-
-        public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
-        private void MessageForwardExecute(TLMessageBase message)
-        {
-        }
-
-        #endregion
-
-        #region Copy
-
-        public RelayCommand<TLMessage> MessageCopyCommand => new RelayCommand<TLMessage>(MessageCopyExecute);
-        private void MessageCopyExecute(TLMessage message)
-        {
-            if (message == null) return;
-
-            string text = null;
-
-            var media = message.Media as ITLMediaCaption;
-            if (media != null && !string.IsNullOrWhiteSpace(media.Caption))
-            {
-                text = media.Caption;
-            }
-            else if (!string.IsNullOrWhiteSpace(message.Message))
-            {
-                text = message.Message;
-            }
-
-            if (text != null)
-            {
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(text);
-                Clipboard.SetContent(dataPackage);
-            }
-        }
-
-        #endregion
-
-        #region CopyLink
-
-        public RelayCommand<TLMessage> MessageCopyLinkCommand => new RelayCommand<TLMessage>(MessageCopyLinkExecute);
-        private void MessageCopyLinkExecute(TLMessage message)
-        {
-            if (message == null) return;
-
-            var channel = With as TLChannel;
-            if (channel != null)
-            {
-                var dataPackage = new DataPackage();
-                dataPackage.SetWebLink(new Uri($"https://t.me/{channel.Username}/{message.Id}"));
-                Clipboard.SetContent(dataPackage);
-            }
-        }
-
-        #endregion
-
         #region Delete
 
         public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
@@ -226,6 +170,127 @@ namespace Unigram.ViewModels
                 {
                     remoteCallback?.Invoke(lastItem, remoteMessages);
                 }
+            }
+        }
+
+        #endregion
+
+        #region Forward
+
+        public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
+        private void MessageForwardExecute(TLMessageBase message)
+        {
+        }
+
+        #endregion
+
+        #region Multiple Delete
+
+        private RelayCommand _messagesDeleteCommand;
+        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages?.Count > 0));
+
+        private void MessagesDeleteExecute()
+        {
+            //TLMessageBase lastMessage = null;
+            //var localMessages = new List<TLMessageBase>();
+            //var remoteMessages = new List<TLMessageBase>();
+            //for (int i = 0; i < Messages.Count; i++)
+            //{
+            //    var message = Messages[i];
+            //    if (message.IsSelected)
+            //    {
+            //        if (message.Index == 0 && message.RandomIndex != 0L)
+            //        {
+            //            localMessages.Add(message);
+            //            lastMessage = null;
+            //        }
+            //        else if (message.Index != 0)
+            //        {
+            //            remoteMessages.Add(message);
+            //            lastMessage = null;
+            //        }
+            //    }
+            //    else if (lastMessage == null)
+            //    {
+            //        lastMessage = message;
+            //    }
+            //}
+
+            //if (localMessages.Count > 0 || remoteMessages.Count > 0)
+            //{
+            //    //this.IsSelectionEnabled = false;
+            //}
+
+            //if (With is TLBroadcastChat)
+            //{
+            //    DeleteMessagesInternal(lastMessage, localMessages);
+            //    DeleteMessagesInternal(lastMessage, remoteMessages);
+            //    return;
+            //}
+
+            //DeleteMessages(lastMessage, localMessages, remoteMessages, DeleteMessagesInternal, DeleteMessagesInternal);
+        }
+
+        #endregion
+
+        #region Multiple Forward
+
+        private RelayCommand _messagesForwardCommand;
+        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages?.Count > 0));
+
+        private void MessagesForwardExecute()
+        {
+            //_stateService.ForwardMessages = Messages.Where(x => x.IsSelected).ToList();
+            //_stateService.ForwardMessages.Reverse();
+
+            //SelectionMode = Windows.UI.Xaml.Controls.ListViewSelectionMode.None;
+            //NavigationService.GoBack();
+        }
+
+        #endregion
+
+        #region Copy
+
+        public RelayCommand<TLMessage> MessageCopyCommand => new RelayCommand<TLMessage>(MessageCopyExecute);
+        private void MessageCopyExecute(TLMessage message)
+        {
+            if (message == null) return;
+
+            string text = null;
+
+            var media = message.Media as ITLMediaCaption;
+            if (media != null && !string.IsNullOrWhiteSpace(media.Caption))
+            {
+                text = media.Caption;
+            }
+            else if (!string.IsNullOrWhiteSpace(message.Message))
+            {
+                text = message.Message;
+            }
+
+            if (text != null)
+            {
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(text);
+                Clipboard.SetContent(dataPackage);
+            }
+        }
+
+        #endregion
+
+        #region CopyLink
+
+        public RelayCommand<TLMessage> MessageCopyLinkCommand => new RelayCommand<TLMessage>(MessageCopyLinkExecute);
+        private void MessageCopyLinkExecute(TLMessage message)
+        {
+            if (message == null) return;
+
+            var channel = With as TLChannel;
+            if (channel != null)
+            {
+                var dataPackage = new DataPackage();
+                dataPackage.SetWebLink(new Uri($"https://t.me/{channel.Username}/{message.Id}"));
+                Clipboard.SetContent(dataPackage);
             }
         }
 

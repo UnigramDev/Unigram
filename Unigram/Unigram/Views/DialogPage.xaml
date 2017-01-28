@@ -583,6 +583,10 @@
                 <Button.Flyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
+                                        Click="Manage_Click"
+                                        Tag="&#xE133;"
+                                        Text="Manage" />
+                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
                                         x:Name="cbtnReportSpam"
                                         x:Uid="FCBTN-ReportSpam"
                                         IsEnabled="False"
@@ -603,6 +607,47 @@
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
+
+            <Grid x:Name="ManagePanel" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Visibility="Collapsed" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Command="{Binding MessagesForwardCommand}" Margin="12,0,4,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Forward" VerticalAlignment="Center"/>
+                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition/>
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Clip>
+                                <RectangleGeometry Rect="0,0,200,32"/>
+                            </ContentControl.Clip>
+                        </ContentControl>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding MessagesDeleteCommand}" Margin="4,0,12,0" Grid.Column="1">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Delete" VerticalAlignment="Center"/>
+                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition/>
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Clip>
+                                <RectangleGeometry Rect="0,0,200,32"/>
+                            </ContentControl.Clip>
+                        </ContentControl>
+                    </StackPanel>
+                </Button>
+
+                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="3"/>
+            </Grid>
 
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
@@ -628,23 +673,13 @@
         </Grid>
 
         <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="44"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-
-            <Canvas x:Name="Headers" SizeChanged="Headers_SizeChanged">
-                <Canvas.Clip>
-                    <RectangleGeometry/>
-                </Canvas.Clip>
-            </Canvas>
-
             <controls:BubbleListView x:Name="lvDialogs" 
                                      ItemsSource="{Binding Messages}"
                                      ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                                      ItemContainerTransitions="{x:Null}"
                                      ShowsScrollingPlaceholders="False"
                                      SelectionMode="None"
+                                     SelectionChanged="List_SelectionChanged"
                                      Grid.ColumnSpan="2">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -654,43 +689,6 @@
                 </ListView.ItemsPanel>
                 <ListView.ItemContainerStyleSelector>
                     <selectors:MessageStyleSelector>
-                        <selectors:MessageStyleSelector.ChatFriendMessageStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                                <Setter Property="TabNavigation" Value="Local"/>
-                                <Setter Property="IsHoldingEnabled" Value="True"/>
-                                <Setter Property="Padding" Value="12,0,12,0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
-                                <Setter Property="MinHeight" Value="0"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListViewItem">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="56"/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
-                                                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12,12,0,0" Width="36" Height="36">
-                                                    <Ellipse Fill="{Binding FromId, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36"/>
-                                                    <Ellipse Width="36" Height="36">
-                                                        <Ellipse.Fill>
-                                                            <ImageBrush ImageSource="{Binding From.Photo, Converter={StaticResource DefaultPhotoConverter}}" />
-                                                        </Ellipse.Fill>
-                                                    </Ellipse>
-                                                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
-                                                </Grid>
-                                                <ContentPresenter Grid.Column="1"/>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </selectors:MessageStyleSelector.ChatFriendMessageStyle>
                         <selectors:MessageStyleSelector.MessageStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -701,7 +699,7 @@
                                 <Setter Property="IsHoldingEnabled" Value="True"/>
                                 <Setter Property="Padding" Value="12,0,12,0"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                                 <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
                                 <Setter Property="MinHeight" Value="0"/>
                                 <Setter Property="Template">
@@ -746,7 +744,7 @@
                                 <Setter Property="IsHoldingEnabled" Value="True"/>
                                 <Setter Property="Padding" Value="12,0,12,0"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                                 <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
                                 <Setter Property="MinHeight" Value="0"/>
                                 <Setter Property="Template">
@@ -755,8 +753,8 @@
                                             <ListViewItemPresenter
                                                 ContentTransitions="{TemplateBinding ContentTransitions}"
                                                 SelectionCheckMarkVisualEnabled="False"
-                                                CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                                CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                CheckBrush="{x:Null}"
+                                                CheckBoxBrush="{x:Null}"
                                                 DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
                                                 DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
                                                 FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
@@ -775,7 +773,7 @@
                                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                                 ContentMargin="{TemplateBinding Padding}"
-                                                CheckMode="Inline"/>
+                                                CheckMode="Overlay"/>
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>

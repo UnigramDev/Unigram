@@ -94,7 +94,7 @@ namespace Unigram.Converters
             var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
 
             if (WeekFormat == null)
-                return dateTime.ToString(string.Format(TodayFormat, shortTimePattern), cultureInfo);
+                return BindConvert.Current.ShortTime.Format(dateTime);
 
             //Today
             if ((dateTime.Date == DateTime.Now.Date) && !string.IsNullOrEmpty(TodayFormat))

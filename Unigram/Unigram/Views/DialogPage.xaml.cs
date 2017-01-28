@@ -57,11 +57,35 @@ namespace Unigram.Views
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+
+            lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
         {
-            base.OnNavigatedTo(e);
+            if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
+            {
+                ManagePanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ManagePanel.Visibility = Visibility.Visible;
+            }
+
+            //ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
+            //ViewModel.MessagesDeleteCommand.RaiseCanExecuteChanged();
+        }
+
+        private void Manage_Click(object sender, RoutedEventArgs e)
+        {
+            if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
+            {
+                lvDialogs.SelectionMode = ListViewSelectionMode.Multiple;
+            }
+            else
+            {
+                lvDialogs.SelectionMode = ListViewSelectionMode.None;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -470,6 +494,11 @@ namespace Unigram.Views
             {
                 ViewModel.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.FromId.Value });
             }
+        }
+
+        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.SelectedMessages = new List<TLMessageBase>(lvDialogs.SelectedItems.Cast<TLMessageBase>());
         }
     }
 
