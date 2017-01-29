@@ -152,6 +152,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool _isReportSpam;
+        public bool IsReportSpam
+        {
+            get
+            {
+                return _isReportSpam;
+            }
+            set
+            {
+                Set(ref _isReportSpam, value);
+            }
+        }
+
         public bool IsFirstSliceLoaded { get; set; }
 
         private bool _isLoadingNextSlice;
@@ -473,6 +486,8 @@ namespace Unigram.ViewModels
 
             if (user != null)
             {
+                var full = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
+
                 With = user;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
 
@@ -608,6 +623,12 @@ namespace Unigram.ViewModels
                     Aggregator.Publish(new TLUpdateDraftMessage { Draft = draft, Peer = Peer.ToPeer() });
                     ProcessDraftReply(draft);
                 }
+            }
+
+            var settings = await ProtoService.GetPeerSettingsAsync(Peer);
+            if (settings.IsSucceeded)
+            {
+                IsReportSpam = settings.Result.IsReportSpam;
             }
 
             //if (dialog != null && Messages.Count > 0)
@@ -1735,6 +1756,33 @@ namespace Unigram.ViewModels
                         CacheService.Commit();
                         RaisePropertyChanged(() => With);
                     }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Report Spam
+
+        public RelayCommand HideReportSpamCommand => new RelayCommand(HideReportSpamExecute);
+        private async void HideReportSpamExecute()
+        {
+            var response = await ProtoService.HideReportSpamAsync(Peer);
+            if (response.IsSucceeded)
+            {
+                IsReportSpam = false;
+            }
+        }
+
+        public RelayCommand ReportSpamCommand => new RelayCommand(ReportSpamExecute);
+        private async void ReportSpamExecute()
+        {
+            if (IsReportSpam)
+            {
+                var response = await ProtoService.ReportSpamAsync(Peer);
+                if (response.IsSucceeded)
+                {
+
                 }
             }
         }
