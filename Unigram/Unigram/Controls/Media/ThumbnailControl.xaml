@@ -12,6 +12,9 @@
 
     <Grid>
         <controls:ImageView/>
-        <controls:ProgressBarRing/>
+        <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="24">
+            <controls:TransferButton CornerRadius="24" RequestedTheme="Dark"/>
+            <controls:ProgressBarRing/>
+        </Grid>
     </Grid>
 </UserControl>

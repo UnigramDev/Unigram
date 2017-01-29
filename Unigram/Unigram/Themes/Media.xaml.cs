@@ -104,14 +104,14 @@ namespace Unigram.Themes
                             var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                             manager.CancelDownloadFile(document);
 
-                            border.UpdateGlyph();
+                            border.Update();
                         }
                         else if (documentMedia.UploadingProgress > 0)
                         {
                             var manager = UnigramContainer.Instance.ResolveType<IUploadDocumentManager>();
                             manager.CancelUploadFile(document.Id);
 
-                            border.UpdateGlyph();
+                            border.Update();
                         }
                         else
                         {
@@ -119,7 +119,7 @@ namespace Unigram.Themes
                             var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
                             if (download != null)
                             {
-                                border.UpdateGlyph();
+                                border.Update();
 
                                 var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
                                 await Launcher.LaunchFileAsync(file);

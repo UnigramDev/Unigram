@@ -14,46 +14,6 @@ namespace Unigram.Controls
 {
     public class TransferButton : GlyphButton
     {
-        #region Document
-
-        public TLDocument Document
-        {
-            get { return (TLDocument)GetValue(DocumentProperty); }
-            set { SetValue(DocumentProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for Document.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty DocumentProperty =
-            DependencyProperty.Register("Document", typeof(TLDocument), typeof(TransferButton), new PropertyMetadata(null, OnDocumentChanged));
-
-        private static void OnDocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((TransferButton)d).OnDocumentChanged((TLDocument)e.NewValue, (TLDocument)e.OldValue);
-        }
-
-        private void OnDocumentChanged(TLDocument newValue, TLDocument oldValue)
-        {
-            if (newValue != null)
-            {
-                var fileName = newValue.GetFileName();
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                {
-                    if (TLMessage.IsVideo(newValue))
-                    {
-                        Glyph = "\uE102";
-                        return;
-                    }
-
-                    Glyph = "\uE160";
-                    return;
-                }
-
-                Glyph = "\uE118";
-            }
-        }
-
-        #endregion
-
         #region Media
 
         public TLMessageMediaBase Media
@@ -68,13 +28,69 @@ namespace Unigram.Controls
 
         private static void OnMediaChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            ((TransferButton)d).OnMediaChanged((TLMessageMediaBase)e.NewValue, (TLMessageMediaBase)e.OldValue);
+        }
+
+        private void OnMediaChanged(TLMessageMediaBase newValue, TLMessageMediaBase oldValue)
+        {
+            Glyph = UpdateGlyph(newValue, oldValue);
         }
 
         #endregion
 
-        public void UpdateGlyph()
+        public void Update()
         {
-            OnDocumentChanged(Document, Document);
+            OnMediaChanged(Media, Media);
+        }
+
+        private string UpdateGlyph(TLMessageMediaBase newValue, TLMessageMediaBase oldValue)
+        {
+            var photoMedia = newValue as TLMessageMediaPhoto;
+            if (photoMedia != null)
+            {
+                var photo = photoMedia.Photo as TLPhoto;
+                if (photo != null)
+                {
+                    var photoSize = photo.Full as TLPhotoSize;
+                    if( photoSize != null)
+                    {
+                        var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
+                        if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                        {
+                            Visibility = Visibility.Collapsed;
+                            return "\uE160";
+                        }
+
+                        Visibility = Visibility.Visible;
+                        return "\uE118";
+                    }
+                }
+            }
+
+            var documentMedia = newValue as TLMessageMediaDocument;
+            if (documentMedia != null)
+            {
+                Visibility = Visibility.Visible;
+
+                var document = documentMedia.Document as TLDocument;
+                if (document != null)
+                {
+                    var fileName = document.GetFileName();
+                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                    {
+                        if (TLMessage.IsVideo(document))
+                        {
+                            return "\uE102";
+                        }
+
+                        return "\uE160";
+                    }
+
+                    return "\uE118";
+                }
+            }
+
+            return "\uE118";
         }
     }
 }
