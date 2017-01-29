@@ -20,6 +20,11 @@ namespace Telegram.Api.TL
         {
             get
             {
+                if (IsDeleted)
+                {
+                    return "Name Hidden";
+                }
+
                 //if (this is TLUserEmpty)
                 //{
                 //    return "Empty user";

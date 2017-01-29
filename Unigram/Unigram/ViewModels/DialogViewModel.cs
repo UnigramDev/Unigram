@@ -96,6 +96,7 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _with, value);
+                RaisePropertyChanged(() => IsSilentVisible);
             }
         }
 
@@ -281,7 +282,7 @@ namespace Unigram.ViewModels
 
             Messages.Clear();
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -6, maxId, 15);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -19, maxId, 20);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -837,6 +838,26 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool _isSilent;
+        public bool IsSilent
+        {
+            get
+            {
+                return _isSilent && With is TLChannel && ((TLChannel)With).IsBroadcast;
+            }
+            set
+            {
+                Set(ref _isSilent, value);
+            }
+        }
+
+        public bool IsSilentVisible
+        {
+            get
+            {
+                return With is TLChannel && ((TLChannel)With).IsBroadcast;
+            }
+        }
 
         #region Reply 
 
@@ -918,6 +939,12 @@ namespace Unigram.ViewModels
             message.HasEntities = entities != null;
 
             MessageHelper.PreprocessEntities(ref message);
+
+            var channel = With as TLChannel;
+            if (channel != null && channel.IsBroadcast)
+            {
+                message.IsSilent = IsSilent;
+            }
 
             if (Reply != null)
             {
@@ -1615,6 +1642,104 @@ namespace Unigram.ViewModels
             }
             return result;
         }
+
+        #region Toggle mute
+
+        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
+        private async void ToggleMuteExecute()
+        {
+            var channel = With as TLChannel;
+            if (channel != null)
+            {
+                var notifySettings = channel.NotifySettings as TLPeerNotifySettings;
+                if (notifySettings != null)
+                {
+                    var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
+                    var settings = new TLInputPeerNotifySettings
+                    {
+                        MuteUntil = muteUntil,
+                        IsShowPreviews = notifySettings.IsShowPreviews,
+                        IsSilent = notifySettings.IsSilent,
+                        Sound = notifySettings.Sound
+                    };
+
+                    var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = Peer }, settings);
+                    if (response.IsSucceeded)
+                    {
+                        notifySettings.MuteUntil = muteUntil;
+                        channel.RaisePropertyChanged(() => channel.NotifySettings);
+
+                        var dialog = CacheService.GetDialog(Peer.ToPeer());
+                        if (dialog != null)
+                        {
+                            dialog.NotifySettings = channel.NotifySettings;
+                            dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                            dialog.RaisePropertyChanged(() => dialog.Self);
+
+                            var dialogChannel = dialog.With as TLChannel;
+                            if (dialogChannel != null)
+                            {
+                                dialogChannel.NotifySettings = channel.NotifySettings;
+                            }
+                        }
+
+                        CacheService.Commit();
+                        RaisePropertyChanged(() => With);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Toggle silent
+
+        public RelayCommand ToggleSilentCommand => new RelayCommand(ToggleSilentExecute);
+        private async void ToggleSilentExecute()
+        {
+            var channel = With as TLChannel;
+            if (channel != null)
+            {
+                var notifySettings = channel.NotifySettings as TLPeerNotifySettings;
+                if (notifySettings != null)
+                {
+                    var silent = !notifySettings.IsSilent;
+                    var settings = new TLInputPeerNotifySettings
+                    {
+                        MuteUntil = notifySettings.MuteUntil,
+                        IsShowPreviews = notifySettings.IsShowPreviews,
+                        IsSilent = silent,
+                        Sound = notifySettings.Sound
+                    };
+
+                    var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = Peer }, settings);
+                    if (response.IsSucceeded)
+                    {
+                        notifySettings.IsSilent = silent;
+                        channel.RaisePropertyChanged(() => channel.NotifySettings);
+
+                        var dialog = CacheService.GetDialog(Peer.ToPeer());
+                        if (dialog != null)
+                        {
+                            dialog.NotifySettings = channel.NotifySettings;
+                            dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                            dialog.RaisePropertyChanged(() => dialog.Self);
+
+                            var dialogChannel = dialog.With as TLChannel;
+                            if (dialogChannel != null)
+                            {
+                                dialogChannel.NotifySettings = channel.NotifySettings;
+                            }
+                        }
+
+                        CacheService.Commit();
+                        RaisePropertyChanged(() => With);
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 
     public class MessageCollection : ObservableCollection<TLMessageBase>

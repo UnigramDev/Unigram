@@ -133,11 +133,11 @@
                 </Style>
             </MenuFlyout.MenuFlyoutPresenterStyle>
             <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
-            <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin"/>
-            <MenuFlyoutItem Loaded="MessageEdit_Loaded" Command="{x:Bind ViewModel.MessageEditCommand}" CommandParameter="{Binding}" Text="Edit"/>
-            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete"/>
-            <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward" IsEnabled="False"/>
-            <MenuFlyoutItem Loaded="MessageCopy_Loaded" Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy"/>
+            <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin message"/>
+            <MenuFlyoutItem Loaded="MessageEdit_Loaded" Command="{x:Bind ViewModel.MessageEditCommand}" CommandParameter="{Binding}" Text="Edit message"/>
+            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
+            <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward message" IsEnabled="False"/>
+            <MenuFlyoutItem Loaded="MessageCopy_Loaded" Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy text"/>
             <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
         </MenuFlyout>
 
@@ -663,7 +663,7 @@
                 <ColumnDefinition Width="48"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="btnPinnedMessage" Padding="12,0,0,0" Style="{StaticResource EmptyButtonStyle}">
+            <Button x:Name="btnPinnedMessage" Padding="12,0,48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
                 <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0"/>
             </Button>
             
@@ -915,15 +915,24 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+                <controls:GlyphToggleButton UncheckedGlyph="&#xE609;"
+                                            CheckedGlyph="&#xE60A;"
+                                            FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                            IsChecked="{Binding With.NotifySettings.IsSilent}"
+                                            Command="{x:Bind ViewModel.ToggleSilentCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.IsSilentVisible, Mode=OneWay}"/>
+
                 <controls:GlyphButton x:Name="btnStickers" 
                                       Click="Stickers_Click"
                                       AllowFocusOnInteraction="False"
                                       Glyph="&#xE606;" 
                                       FontFamily="{ThemeResource TelegramThemeFontFamily}" 
-                                      VerticalAlignment="Bottom"/>
+                                      VerticalAlignment="Bottom"
+                                      Grid.Column="1"/>
 
-                <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="1">
+                <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="2">
                     <controls:VoiceButton x:Name="btnVoiceMessage"
                                           AllowFocusOnInteraction="False"
                                           Glyph="&#xE720;"/>
@@ -937,7 +946,7 @@
                                       FontSize="24"
                                       Foreground="{ThemeResource TelegramBackgroundAccentBrush}" 
                                       Padding="4,0,0,0"
-                                      Grid.Column="1"/>
+                                      Grid.Column="2"/>
             </Grid>
 
             <controls:GlyphButton x:Name="btnEditMessage"
@@ -1024,7 +1033,11 @@
                 </FlyoutBase.AttachedFlyout>
             </controls:GlyphButton>
 
-            <controls:BubbleActionButton With="{x:Bind ViewModel.With, Mode=OneWay}" Grid.ColumnSpan="4" Grid.Row="1"/>
+            <controls:BubbleActionButton
+                With="{x:Bind ViewModel.With, Mode=OneWay}" 
+                ToggleMuteCommand="{x:Bind ViewModel.ToggleMuteCommand}"
+                Grid.ColumnSpan="4" 
+                Grid.Row="1"/>
 
             <!--<ScrollViewer x:Name="ReplyMarkupViewer"
                           VerticalScrollBarVisibility="Auto"
