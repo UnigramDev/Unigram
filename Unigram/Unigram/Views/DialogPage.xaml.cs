@@ -72,8 +72,8 @@ namespace Unigram.Views
                 ManagePanel.Visibility = Visibility.Visible;
             }
 
-            //ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
-            //ViewModel.MessagesDeleteCommand.RaiseCanExecuteChanged();
+            ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
+            ViewModel.MessagesDeleteCommand.RaiseCanExecuteChanged();
         }
 
         private void Manage_Click(object sender, RoutedEventArgs e)

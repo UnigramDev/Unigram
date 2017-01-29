@@ -288,9 +288,8 @@
                                 <controls:HyperButton Content="Privacy and security" 
                                                       Click="Privacy_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
-                                <controls:HyperButton Content="Chat settings" 
-                                                      IsEnabled="False"
-                                                      Command="{x:Bind ChatSettingsPageCommand}"
+                                <controls:HyperButton Content="Data and storage" 
+                                                      Click="Data_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Stickers" 
                                                       Click="Stickers_Click"

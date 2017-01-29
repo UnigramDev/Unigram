@@ -273,6 +273,7 @@
     <Compile Include="ViewModels\Settings\SettingsEditNameViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsFeaturedStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSessionsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsUsernameViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\UserInfoViewModel.cs" />
@@ -334,8 +335,8 @@
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsChatPage.xaml.cs">
-      <DependentUpon>SettingsChatPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsDataPage.xaml.cs">
+      <DependentUpon>SettingsDataPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsFeaturedStickersPage.xaml.cs">
       <DependentUpon>SettingsFeaturedStickersPage.xaml</DependentUpon>
@@ -351,6 +352,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsStickersPage.xaml.cs">
       <DependentUpon>SettingsStickersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsStoragePage.xaml.cs">
+      <DependentUpon>SettingsStoragePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
       <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
@@ -633,9 +637,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\SettingsChatPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Views\Settings\SettingsDataPage.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsFeaturedStickersPage.xaml">
       <SubType>Designer</SubType>
@@ -654,6 +658,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsStickersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsStoragePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
