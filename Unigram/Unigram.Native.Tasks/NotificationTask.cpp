@@ -66,8 +66,9 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		auto tag = GetTag(custom);
 		auto group = GetGroup(custom);
 		auto picture = GetPicture(custom);
+		auto date = GetDate(notification);
 
-		UpdateToast(caption, message, sound, launch, tag, group, picture, loc_key);
+		UpdateToast(caption, message, sound, launch, tag, group, picture, date, loc_key);
 		UpdateBadge(data->GetNamedNumber("badge"));
 
 		if (loc_key != L"DC_UPDATE") 
@@ -240,6 +241,17 @@ String^ NotificationTask::GetPicture(JsonObject^ custom)
 	return nullptr;
 }
 
+String^ NotificationTask::GetDate(JsonObject^ notification)
+{
+	const time_t rawtime = notification->GetNamedNumber(L"date");
+	struct tm * dt = NULL;
+	wchar_t buffer[30];
+	localtime_s(dt, &rawtime);
+	//wcsftime(buffer, sizeof(buffer), L"%m%d%H%M%y", dt);
+	wcsftime(buffer, sizeof(buffer), L"%F%T%Z", dt);
+	return ref new String(buffer);
+}
+
 void NotificationTask::UpdateBadge(int badgeNumber)
 {
 	auto updater = BadgeUpdateManager::CreateBadgeUpdaterForApplication();
@@ -285,7 +297,7 @@ void NotificationTask::UpdateTile(String^ caption, String^ message)
 	updater->Update(notification);
 }
 
-void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ loc_key)
+void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
 {
 	std::wstring key = loc_key->Data();
 	std::wstring actions = L"";
@@ -298,6 +310,8 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 
 	std::wstring xml = L"<toast launch='";
 	xml += launch->Data();
+	xml += L"' displaytimestamp='";
+	xml += date->Data();
 	xml += L"'><visual><binding template='ToastGeneric'>";
 
 	if (picture != nullptr)
@@ -311,7 +325,8 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	xml += caption->Data();
 	xml += L"]]></text><text><![CDATA[";
 	xml += message->Data();
-	xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
+	//xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
+	xml += L"]]></text></binding></visual>";
 	xml += actions;
 	xml += L"</toast>";
 
