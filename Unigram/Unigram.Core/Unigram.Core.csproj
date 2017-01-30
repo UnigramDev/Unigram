@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\PhoneNumber.cs" />
+    <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Dependency\UnigramContainerBuilder.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Managers\BackgroundTaskManager.cs" />

@@ -36,6 +36,7 @@ using Unigram.Core.Models;
 using Unigram.Controls;
 using Unigram.Core.Helpers;
 using Org.BouncyCastle.Security;
+using Unigram.Core;
 
 namespace Unigram.ViewModels
 {
@@ -654,12 +655,19 @@ namespace Unigram.ViewModels
             //Aggregator.Publish("PORCODIO");
 
             //StickersRecent();
-            //GifsSaved();
+            GifsSaved();
         }
 
         private async void GifsSaved()
         {
-            var response = await ProtoService.GetSavedGifsAsync(0);
+            var cached = DatabaseContext.Current.SelectGifs();
+            if (cached.Count > 0)
+            {
+                SavedGifs.Clear();
+                SavedGifs.AddRange(cached);
+            }
+
+            var response = await ProtoService.GetSavedGifsAsync(SettingsHelper.GifsHash);
             if (response.IsSucceeded)
             {
                 var result = response.Result as TLMessagesSavedGifs;
@@ -667,6 +675,9 @@ namespace Unigram.ViewModels
                 {
                     SavedGifs.Clear();
                     SavedGifs.AddRange(result.Gifs.OfType<TLDocument>());
+
+                    SettingsHelper.GifsHash = result.Hash;
+                    DatabaseContext.Current.InsertGifs(result.Gifs.OfType<TLDocument>(), true);
                 }
             }
         }
