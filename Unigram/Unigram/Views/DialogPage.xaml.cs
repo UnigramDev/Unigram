@@ -376,7 +376,7 @@ namespace Unigram.Views
                         if (messageCommon.ToId is TLPeerChannel)
                         {
                             element.Visibility = Visibility.Visible;
-                            element.Text = ViewModel.PinnedMessage != null && ViewModel.PinnedMessage.Id == messageCommon.Id ? "Unpin" : "Pin";
+                            element.Text = ViewModel.PinnedMessage != null && ViewModel.PinnedMessage.Id == messageCommon.Id ? "Unpin message" : "Pin message";
                             return;
                         }
                     }
@@ -511,7 +511,22 @@ namespace Unigram.Views
             }
         }
 
+        private void MessageStickerPackInfo_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MessageSaveStickerAs_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         #endregion
+
+        private void MessageSaveSticker_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading

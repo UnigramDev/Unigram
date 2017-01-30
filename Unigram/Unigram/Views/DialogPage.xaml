@@ -127,11 +127,6 @@
 
         <!-- Teorically temporary location, but we'll see -->
         <MenuFlyout x:Key="MessageMenuFlyout">
-            <MenuFlyout.MenuFlyoutPresenterStyle>
-                <Style TargetType="MenuFlyoutPresenter">
-                    <Setter Property="RequestedTheme" Value="Light"/>
-                </Style>
-            </MenuFlyout.MenuFlyoutPresenterStyle>
             <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
             <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin message"/>
             <MenuFlyoutItem Loaded="MessageEdit_Loaded" Command="{x:Bind ViewModel.MessageEditCommand}" CommandParameter="{Binding}" Text="Edit message"/>
@@ -139,6 +134,15 @@
             <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward message" IsEnabled="False"/>
             <MenuFlyoutItem Loaded="MessageCopy_Loaded" Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy text"/>
             <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
+        </MenuFlyout>
+
+        <MenuFlyout x:Key="StickerMenuFlyout">
+            <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
+            <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin message"/>
+            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
+            <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward message" IsEnabled="False"/>
+            <MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Sticker pack info"/>
+            <MenuFlyoutItem Loaded="MessageSaveSticker_Loaded" Command="{x:Bind ViewModel.MessageSaveStickerCommand}" CommandParameter="{Binding}" Text="Save image as..."/>
         </MenuFlyout>
 
         <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
@@ -178,7 +182,7 @@
                     </controls:MessageReference>
                 </StackPanel>
 
-                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1" Grid.Row="1">
+                <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Column="1" Grid.Row="1">
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
@@ -207,7 +211,7 @@
                 <!-- TODO: not the right way -->
                 <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst), Mode=OneWay}"/>
 
-                <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Row="1">
+                <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
@@ -273,8 +277,8 @@
                     </Grid.RowDefinitions>
                     <!-- TODO: not the right way -->
                     <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst), Mode=OneWay}"/>
-                    
-                    <Grid ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Row="1">
+
+                    <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
                         <controls:ImageView
                             Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"

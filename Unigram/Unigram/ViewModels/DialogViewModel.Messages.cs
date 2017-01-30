@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
@@ -11,8 +13,12 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
+using Unigram.Native;
 using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
@@ -768,6 +774,63 @@ namespace Unigram.ViewModels
             if (messageCommon != null && messageCommon.ReplyToMsgId.HasValue)
             {
                 await LoadMessageSliceAsync(messageCommon.Id, messageCommon.ReplyToMsgId.Value);
+            }
+        }
+
+        #endregion
+
+        #region Save sticker as
+
+        public RelayCommand<TLMessage> MessageSaveStickerCommand => new RelayCommand<TLMessage>(MessageSaveStickerExecute);
+        private async void MessageSaveStickerExecute(TLMessage message)
+        {
+            if (message != null)
+            {
+                var documentMedia = message.Media as TLMessageMediaDocument;
+                if (documentMedia != null)
+                {
+                    var document = documentMedia.Document as TLDocument;
+                    if (document != null)
+                    {
+                        var fileName = document.GetFileName();
+                        if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                        {
+                            var picker = new FileSavePicker();
+                            picker.FileTypeChoices.Add("WebP image", new[] { ".webp" });
+                            picker.FileTypeChoices.Add("PNG image", new[] { ".png" });
+                            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                            picker.SuggestedFileName = "sticker.webp";
+
+                            var file = await picker.PickSaveFileAsync();
+                            if (file != null)
+                            {
+                                var sticker = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
+
+                                if (Path.GetExtension(file.Name).Equals(".webp"))
+                                {
+                                    await sticker.CopyAndReplaceAsync(file);
+                                }
+                                else if (Path.GetExtension(file.Name).Equals(".png"))
+                                {
+                                    var buffer = await FileIO.ReadBufferAsync(sticker);
+                                    var bitmap = WebPImage.DecodeFromBuffer(buffer);
+
+                                    using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                                    {
+                                        var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                                        var pixelStream = bitmap.PixelBuffer.AsStream();
+                                        var pixels = new byte[pixelStream.Length];
+
+                                        await pixelStream.ReadAsync(pixels, 0, pixels.Length);
+
+                                        encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, (uint)bitmap.PixelWidth, (uint)bitmap.PixelHeight, 96.0, 96.0, pixels);
+                                        await encoder.FlushAsync();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
