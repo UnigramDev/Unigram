@@ -244,11 +244,10 @@ String^ NotificationTask::GetPicture(JsonObject^ custom)
 String^ NotificationTask::GetDate(JsonObject^ notification)
 {
 	const time_t rawtime = notification->GetNamedNumber(L"date");
-	struct tm * dt = NULL;
+	struct tm dt;
 	wchar_t buffer[30];
-	localtime_s(dt, &rawtime);
-	//wcsftime(buffer, sizeof(buffer), L"%m%d%H%M%y", dt);
-	wcsftime(buffer, sizeof(buffer), L"%F%T%Z", dt);
+	localtime_s(&dt, &rawtime);
+	wcsftime(buffer, sizeof(buffer), L"%FT%T%zZ", &dt);
 	return ref new String(buffer);
 }
 

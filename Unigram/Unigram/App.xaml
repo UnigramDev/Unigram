@@ -32,6 +32,7 @@
             <MediaElement x:Key="AudioPlayer"/>
 
             <!-- Temp -->
+            <converters:PhoneNumberFormatConverter x:Key="PhoneNumberFormatConverter"/>
             <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />
             <converters:BubblePlaceholderConverter x:Key="BubblePlaceholderConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
