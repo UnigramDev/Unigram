@@ -749,7 +749,7 @@ namespace Telegram.Api.TL
                     }
                 }
 
-                var container = obj.Query as TLMessageContainer;
+                var container = obj.Query as TLMsgContainer;
                 if (container != null)
                 {
                     foreach (var message in container.Messages)

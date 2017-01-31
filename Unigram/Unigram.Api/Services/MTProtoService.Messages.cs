@@ -484,7 +484,7 @@ namespace Telegram.Api.Services
 	            return;
 	        }
 
-	        var container = new TLMessageContainer { Messages = new List<TLContainerTransportMessage>() };
+	        var container = new TLMsgContainer { Messages = new List<TLContainerTransportMessage>() };
             var historyItems = new List<HistoryItem>();
             for (var i = 0; i < sets.Count; i++)
             {
@@ -1821,7 +1821,7 @@ namespace Telegram.Api.Services
 
 	    public void SendActionsAsync(List<TLObject> actions, Action<TLObject, object> callback, Action<TLRPCError> faultCallback = null)
 	    {
-	        var container = new TLMessageContainer { Messages = new List<TLContainerTransportMessage>() };
+	        var container = new TLMsgContainer { Messages = new List<TLContainerTransportMessage>() };
 	        var historyItems = new List<HistoryItem>();
 	        for (var i = 0; i < actions.Count; i++)
 	        {

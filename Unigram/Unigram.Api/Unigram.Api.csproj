@@ -448,7 +448,7 @@
     <Compile Include="TL\Core\TLInt128.cs" />
     <Compile Include="TL\Core\TLInt256.cs" />
     <Compile Include="TL\Core\TLLong.cs" />
-    <Compile Include="TL\Core\TLMessageContainer.cs" />
+    <Compile Include="TL\Core\TLMsgContainer.cs" />
     <Compile Include="TL\Core\TLMessageState.cs" />
     <Compile Include="TL\Core\TLNonEncryptedTransportMessage.cs" />
     <Compile Include="TL\Core\TLObject.cs" />

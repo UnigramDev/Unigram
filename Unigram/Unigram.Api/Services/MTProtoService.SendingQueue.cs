@@ -500,7 +500,7 @@ namespace Telegram.Api.Services
             }
         }
 
-        private static TLMessageContainer CreateContainer(IList<HistoryItem> items)
+        private static TLMsgContainer CreateContainer(IList<HistoryItem> items)
         {
             var messages = new List<TLContainerTransportMessage>();
 
@@ -523,7 +523,7 @@ namespace Telegram.Api.Services
                 messages.Add(transportMessage);
             }
 
-            var container = new TLMessageContainer
+            var container = new TLMsgContainer
             {
                 Messages = new List<TLContainerTransportMessage> (messages)
             };
