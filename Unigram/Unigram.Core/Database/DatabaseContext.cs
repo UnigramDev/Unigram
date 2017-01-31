@@ -51,37 +51,37 @@ namespace Unigram.Core
             return str.Replace("'", "''");
         }
 
-        public void InsertGifs(IEnumerable<TLDocument> gifs, bool delete)
+        public void InsertDocuments(string table, IEnumerable<TLDocument> documents, bool delete)
         {
             Database database;
             Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
 
-            Execute(database, string.Format(CREATE_TABLE_DOCUMENT, "Gifs"));
+            Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
             Execute(database, "BEGIN IMMEDIATE TRANSACTION");
 
             if (delete)
             {
-                Execute(database, "DELETE FROM `Gifs`");
+                Execute(database, string.Format("DELETE FROM `{0}`", table));
             }
 
-            foreach (var item in gifs)
+            foreach (var item in documents)
             {
-                Execute(database, string.Format(INSERT_TABLE_DOCUMENT, "Gifs", item.Id, item.AccessHash, item.Date, Escape(item.MimeType), item.Size, item.DCId, item.Version));
+                Execute(database, string.Format(INSERT_TABLE_DOCUMENT, table, item.Id, item.AccessHash, item.Date, Escape(item.MimeType), item.Size, item.DCId, item.Version));
             }
 
             Execute(database, "COMMIT TRANSACTION");
             Sqlite3.sqlite3_close(database);
         }
 
-        public List<TLDocument> SelectGifs()
+        public List<TLDocument> SelectDocuments(string table)
         {
             Database database;
             Statement statement;
             Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
 
-            Execute(database, string.Format(CREATE_TABLE_DOCUMENT, "Gifs"));
+            Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
 
-            Sqlite3.sqlite3_prepare_v2(database, $"SELECT Id,AccessHash,Date,MimeType,Size,DCId,Version FROM `Gifs`", out statement);
+            Sqlite3.sqlite3_prepare_v2(database, string.Format("SELECT Id,AccessHash,Date,MimeType,Size,DCId,Version FROM `{0}`", table), out statement);
 
             var result = new List<TLDocument>();
             while (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)

@@ -660,7 +660,7 @@ namespace Unigram.ViewModels
 
         private async void GifsSaved()
         {
-            var cached = DatabaseContext.Current.SelectGifs();
+            var cached = DatabaseContext.Current.SelectDocuments("Gifs");
             if (cached.Count > 0)
             {
                 SavedGifs.Clear();
@@ -673,11 +673,13 @@ namespace Unigram.ViewModels
                 var result = response.Result as TLMessagesSavedGifs;
                 if (result != null)
                 {
+                    var gifs = result.Gifs.OfType<TLDocument>();
+
                     SavedGifs.Clear();
-                    SavedGifs.AddRange(result.Gifs.OfType<TLDocument>());
+                    SavedGifs.AddRange(gifs);
 
                     SettingsHelper.GifsHash = result.Hash;
-                    DatabaseContext.Current.InsertGifs(result.Gifs.OfType<TLDocument>(), true);
+                    DatabaseContext.Current.InsertDocuments("Gifs", gifs, true);
                 }
             }
         }
@@ -740,7 +742,7 @@ namespace Unigram.ViewModels
                 if (result != null)
                 {
                     //var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, Extensions.Buffered<TLDocument>(x.Count)));
-                    var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, result.Documents.OfType<TLDocument>().Where(y => ((TLInputStickerSetID)y.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().Stickerset).Id == x.Id)));
+                    var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, result.Documents.OfType<TLDocument>().Where(y => ((TLInputStickerSetID)y.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().StickerSet).Id == x.Id)));
                     StickerSets = new List<KeyedList<TLStickerSet, TLDocument>>(stickerSets);
                     StickerSets.Insert(0, new KeyedList<TLStickerSet, TLDocument>(new TLStickerSet { Title = "Frequently used", ShortName = "tlg/recentlyUsed" }, recent.Stickers.OfType<TLDocument>()));
                     RaisePropertyChanged(() => StickerSets);

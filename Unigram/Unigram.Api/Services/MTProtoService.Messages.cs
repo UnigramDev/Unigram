@@ -489,7 +489,7 @@ namespace Telegram.Api.Services
             for (var i = 0; i < sets.Count; i++)
             {
                 var set = sets[i];
-                var obj = new TLMessagesGetStickerSet { Stickerset = new TLInputStickerSetID { Id = set.Id, AccessHash = set.AccessHash } };
+                var obj = new TLMessagesGetStickerSet { StickerSet = new TLInputStickerSetID { Id = set.Id, AccessHash = set.AccessHash } };
                 int sequenceNumber;
                 long messageId;
                 lock (_activeTransportRoot)
@@ -543,7 +543,7 @@ namespace Telegram.Api.Services
 
 	    public void GetStickerSetCallback(TLInputStickerSetBase stickerset, Action<TLMessagesStickerSet> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesGetStickerSet { Stickerset = stickerset };
+            var obj = new TLMessagesGetStickerSet { StickerSet = stickerset };
 
             const string caption = "messages.getStickerSet";
             SendInformativeMessage(caption, obj, callback, faultCallback);
@@ -551,7 +551,7 @@ namespace Telegram.Api.Services
 
         public void InstallStickerSetCallback(TLInputStickerSetBase stickerset, bool archived, Action<TLMessagesStickerSetInstallResultBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesInstallStickerSet { Stickerset = stickerset, Archived = archived };
+            var obj = new TLMessagesInstallStickerSet { StickerSet = stickerset, Archived = archived };
 
             const string caption = "messages.installStickerSet";
 
@@ -609,7 +609,7 @@ namespace Telegram.Api.Services
 
         public void UninstallStickerSetCallback(TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesUninstallStickerSet { Stickerset = stickerset };
+            var obj = new TLMessagesUninstallStickerSet { StickerSet = stickerset };
 
             const string caption = "messages.uninstallStickerSet";
             SendInformativeMessage(caption, obj, callback, faultCallback);

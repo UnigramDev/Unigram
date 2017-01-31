@@ -8,7 +8,7 @@ namespace Telegram.Api.TL.Methods.Messages
 	/// </summary>
 	public partial class TLMessagesGetStickerSet : TLObject
 	{
-		public TLInputStickerSetBase Stickerset { get; set; }
+		public TLInputStickerSetBase StickerSet { get; set; }
 
 		public TLMessagesGetStickerSet() { }
 		public TLMessagesGetStickerSet(TLBinaryReader from)
@@ -20,13 +20,13 @@ namespace Telegram.Api.TL.Methods.Messages
 
 		public override void Read(TLBinaryReader from)
 		{
-			Stickerset = TLFactory.Read<TLInputStickerSetBase>(from);
+			StickerSet = TLFactory.Read<TLInputStickerSetBase>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x2619A90E);
-			to.WriteObject(Stickerset);
+			to.WriteObject(StickerSet);
 		}
 	}
 }

@@ -17,7 +17,7 @@ namespace Telegram.Api.TL
 
 		public Flag Flags { get; set; }
 		public String Alt { get; set; }
-		public TLInputStickerSetBase Stickerset { get; set; }
+		public TLInputStickerSetBase StickerSet { get; set; }
 		public TLMaskCoords MaskCoords { get; set; }
 
 		public TLDocumentAttributeSticker() { }
@@ -32,7 +32,7 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			Alt = from.ReadString();
-			Stickerset = TLFactory.Read<TLInputStickerSetBase>(from);
+			StickerSet = TLFactory.Read<TLInputStickerSetBase>(from);
 			if (HasMaskCoords) MaskCoords = TLFactory.Read<TLMaskCoords>(from);
 		}
 
@@ -43,7 +43,7 @@ namespace Telegram.Api.TL
 			to.Write(0x6319D612);
 			to.Write((Int32)Flags);
 			to.Write(Alt);
-			to.WriteObject(Stickerset);
+			to.WriteObject(StickerSet);
 			if (HasMaskCoords) to.WriteObject(MaskCoords);
 		}
 
