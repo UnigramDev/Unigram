@@ -1161,7 +1161,7 @@ namespace Telegram.Api.Services
                 var encryptedMessage = new TLEncryptedTransportMessage();
                 using (var reader = new TLBinaryReader(bytes))
                 {
-                    encryptedMessage.Read(reader, false);
+                    encryptedMessage.Read(reader);
                 }
 
                 byte[] authKey2 = null;

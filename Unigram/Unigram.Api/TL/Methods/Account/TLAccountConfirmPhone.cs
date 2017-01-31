@@ -12,26 +12,24 @@ namespace Telegram.Api.TL.Methods.Account
 		public String PhoneCode { get; set; }
 
 		public TLAccountConfirmPhone() { }
-		public TLAccountConfirmPhone(TLBinaryReader from, bool cache = false)
+		public TLAccountConfirmPhone(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountConfirmPhone; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			PhoneCodeHash = from.ReadString();
 			PhoneCode = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x5F2178C3);
 			to.Write(PhoneCodeHash);
 			to.Write(PhoneCode);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

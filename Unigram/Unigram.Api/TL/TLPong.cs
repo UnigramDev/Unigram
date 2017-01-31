@@ -9,26 +9,24 @@ namespace Telegram.Api.TL
 		public Int64 PingId { get; set; }
 
 		public TLPong() { }
-		public TLPong(TLBinaryReader from, bool cache = false)
+		public TLPong(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.Pong; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			MsgId = from.ReadInt64();
 			PingId = from.ReadInt64();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x347773C5);
 			to.Write(MsgId);
 			to.Write(PingId);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -23,24 +23,23 @@ namespace Telegram.Api.TL.Methods.Updates
 		public Int32 Qts { get; set; }
 
 		public TLUpdatesGetDifference() { }
-		public TLUpdatesGetDifference(TLBinaryReader from, bool cache = false)
+		public TLUpdatesGetDifference(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdatesGetDifference; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Pts = from.ReadInt32();
 			if (HasPtsTotalLimit) PtsTotalLimit = from.ReadInt32();
 			Date = from.ReadInt32();
 			Qts = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -50,7 +49,6 @@ namespace Telegram.Api.TL.Methods.Updates
 			if (HasPtsTotalLimit) to.Write(PtsTotalLimit.Value);
 			to.Write(Date);
 			to.Write(Qts);
-			if (cache) WriteToCache(to);
 		}
 
 		private void UpdateFlags()

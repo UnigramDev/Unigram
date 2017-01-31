@@ -20,28 +20,26 @@ namespace Telegram.Api.TL
 		public String Sound { get; set; }
 
 		public TLPeerNotifySettings() { }
-		public TLPeerNotifySettings(TLBinaryReader from, bool cache = false)
+		public TLPeerNotifySettings(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PeerNotifySettings; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			MuteUntil = from.ReadInt32();
 			Sound = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x9ACDA4C0);
 			to.Write((Int32)Flags);
 			to.Write(MuteUntil);
 			to.Write(Sound);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

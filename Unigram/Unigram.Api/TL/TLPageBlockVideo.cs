@@ -20,28 +20,26 @@ namespace Telegram.Api.TL
 		public TLRichTextBase Caption { get; set; }
 
 		public TLPageBlockVideo() { }
-		public TLPageBlockVideo(TLBinaryReader from, bool cache = false)
+		public TLPageBlockVideo(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PageBlockVideo; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			VideoId = from.ReadInt64();
-			Caption = TLFactory.Read<TLRichTextBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Caption = TLFactory.Read<TLRichTextBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xD9D71866);
 			to.Write((Int32)Flags);
 			to.Write(VideoId);
-			to.WriteObject(Caption, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Caption);
 		}
 	}
 }

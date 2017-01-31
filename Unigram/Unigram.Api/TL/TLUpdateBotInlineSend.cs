@@ -23,25 +23,24 @@ namespace Telegram.Api.TL
 		public TLInputBotInlineMessageID MsgId { get; set; }
 
 		public TLUpdateBotInlineSend() { }
-		public TLUpdateBotInlineSend(TLBinaryReader from, bool cache = false)
+		public TLUpdateBotInlineSend(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateBotInlineSend; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			UserId = from.ReadInt32();
 			Query = from.ReadString();
-			if (HasGeo) Geo = TLFactory.Read<TLGeoPointBase>(from, cache);
+			if (HasGeo) Geo = TLFactory.Read<TLGeoPointBase>(from);
 			Id = from.ReadString();
-			if (HasMsgId) MsgId = TLFactory.Read<TLInputBotInlineMessageID>(from, cache);
-			if (cache) ReadFromCache(from);
+			if (HasMsgId) MsgId = TLFactory.Read<TLInputBotInlineMessageID>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -49,10 +48,9 @@ namespace Telegram.Api.TL
 			to.Write((Int32)Flags);
 			to.Write(UserId);
 			to.Write(Query);
-			if (HasGeo) to.WriteObject(Geo, cache);
+			if (HasGeo) to.WriteObject(Geo);
 			to.Write(Id);
-			if (HasMsgId) to.WriteObject(MsgId, cache);
-			if (cache) WriteToCache(to);
+			if (HasMsgId) to.WriteObject(MsgId);
 		}
 
 		private void UpdateFlags()

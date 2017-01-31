@@ -13,34 +13,32 @@ namespace Telegram.Api.TL
 		public Int32 ServerTime { get; set; }
 
 		public TLServerDHInnerData() { }
-		public TLServerDHInnerData(TLBinaryReader from, bool cache = false)
+		public TLServerDHInnerData(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ServerDHInnerData; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Nonce = new TLInt128(from, cache);
-			ServerNonce = new TLInt128(from, cache);
+			Nonce = new TLInt128(from);
+			ServerNonce = new TLInt128(from);
 			G = from.ReadInt32();
 			DHPrime = from.ReadByteArray();
 			GA = from.ReadByteArray();
 			ServerTime = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xB5890DBA);
-			to.WriteObject(Nonce, cache);
-			to.WriteObject(ServerNonce, cache);
+			to.WriteObject(Nonce);
+			to.WriteObject(ServerNonce);
 			to.Write(G);
 			to.WriteByteArray(DHPrime);
 			to.WriteByteArray(GA);
 			to.Write(ServerTime);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

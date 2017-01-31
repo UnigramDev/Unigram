@@ -12,26 +12,24 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLInputUserBase UserId { get; set; }
 
 		public TLMessagesGetInlineGameHighScores() { }
-		public TLMessagesGetInlineGameHighScores(TLBinaryReader from, bool cache = false)
+		public TLMessagesGetInlineGameHighScores(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesGetInlineGameHighScores; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Id = TLFactory.Read<TLInputBotInlineMessageID>(from, cache);
-			UserId = TLFactory.Read<TLInputUserBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Id = TLFactory.Read<TLInputBotInlineMessageID>(from);
+			UserId = TLFactory.Read<TLInputUserBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xF635E1B);
-			to.WriteObject(Id, cache);
-			to.WriteObject(UserId, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Id);
+			to.WriteObject(UserId);
 		}
 	}
 }

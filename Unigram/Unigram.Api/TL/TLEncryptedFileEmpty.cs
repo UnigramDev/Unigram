@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLEncryptedFileEmpty : TLEncryptedFileBase 
 	{
 		public TLEncryptedFileEmpty() { }
-		public TLEncryptedFileEmpty(TLBinaryReader from, bool cache = false)
+		public TLEncryptedFileEmpty(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.EncryptedFileEmpty; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xC21F497E);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

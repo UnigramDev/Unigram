@@ -8,30 +8,28 @@ namespace Telegram.Api.TL
 		public Int32 Count { get; set; }
 
 		public TLMessagesMessagesSlice() { }
-		public TLMessagesMessagesSlice(TLBinaryReader from, bool cache = false)
+		public TLMessagesMessagesSlice(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesMessagesSlice; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Count = from.ReadInt32();
-			Messages = TLFactory.Read<TLVector<TLMessageBase>>(from, cache);
-			Chats = TLFactory.Read<TLVector<TLChatBase>>(from, cache);
-			Users = TLFactory.Read<TLVector<TLUserBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Messages = TLFactory.Read<TLVector<TLMessageBase>>(from);
+			Chats = TLFactory.Read<TLVector<TLChatBase>>(from);
+			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xB446AE3);
 			to.Write(Count);
-			to.WriteObject(Messages, cache);
-			to.WriteObject(Chats, cache);
-			to.WriteObject(Users, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Messages);
+			to.WriteObject(Chats);
+			to.WriteObject(Users);
 		}
 	}
 }

@@ -8,24 +8,22 @@ namespace Telegram.Api.TL
 		public TLVector<TLStickerSetCoveredBase> Sets { get; set; }
 
 		public TLMessagesStickerSetInstallResultArchive() { }
-		public TLMessagesStickerSetInstallResultArchive(TLBinaryReader from, bool cache = false)
+		public TLMessagesStickerSetInstallResultArchive(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesStickerSetInstallResultArchive; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Sets = TLFactory.Read<TLVector<TLStickerSetCoveredBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Sets = TLFactory.Read<TLVector<TLStickerSetCoveredBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x35E410A8);
-			to.WriteObject(Sets, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Sets);
 		}
 	}
 }

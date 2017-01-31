@@ -12,26 +12,24 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Boolean Archived { get; set; }
 
 		public TLMessagesInstallStickerSet() { }
-		public TLMessagesInstallStickerSet(TLBinaryReader from, bool cache = false)
+		public TLMessagesInstallStickerSet(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesInstallStickerSet; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Stickerset = TLFactory.Read<TLInputStickerSetBase>(from, cache);
+			Stickerset = TLFactory.Read<TLInputStickerSetBase>(from);
 			Archived = from.ReadBoolean();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xC78FE460);
-			to.WriteObject(Stickerset, cache);
+			to.WriteObject(Stickerset);
 			to.Write(Archived);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

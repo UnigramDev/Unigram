@@ -20,14 +20,14 @@ namespace Telegram.Api.TL
 		public String Region { get; set; }
 
 		public TLAuthorization() { }
-		public TLAuthorization(TLBinaryReader from, bool cache = false)
+		public TLAuthorization(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.Authorization; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Hash = from.ReadInt64();
 			Flags = from.ReadInt32();
@@ -42,10 +42,9 @@ namespace Telegram.Api.TL
 			Ip = from.ReadString();
 			Country = from.ReadString();
 			Region = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x7BF2E6F6);
 			to.Write(Hash);
@@ -61,7 +60,6 @@ namespace Telegram.Api.TL
 			to.Write(Ip);
 			to.Write(Country);
 			to.Write(Region);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -6,26 +6,24 @@ namespace Telegram.Api.TL
 	public partial class TLAccountNoPassword : TLAccountPasswordBase 
 	{
 		public TLAccountNoPassword() { }
-		public TLAccountNoPassword(TLBinaryReader from, bool cache = false)
+		public TLAccountNoPassword(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountNoPassword; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			NewSalt = from.ReadByteArray();
 			EmailUnconfirmedPattern = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x96DABC18);
 			to.WriteByteArray(NewSalt);
 			to.Write(EmailUnconfirmedPattern);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLDocumentAttributeAnimated : TLDocumentAttributeBase 
 	{
 		public TLDocumentAttributeAnimated() { }
-		public TLDocumentAttributeAnimated(TLBinaryReader from, bool cache = false)
+		public TLDocumentAttributeAnimated(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.DocumentAttributeAnimated; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x11B58939);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

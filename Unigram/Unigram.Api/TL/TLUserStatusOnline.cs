@@ -8,24 +8,22 @@ namespace Telegram.Api.TL
 		public Int32 Expires { get; set; }
 
 		public TLUserStatusOnline() { }
-		public TLUserStatusOnline(TLBinaryReader from, bool cache = false)
+		public TLUserStatusOnline(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.UserStatusOnline; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Expires = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xEDB93949);
 			to.Write(Expires);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -10,24 +10,23 @@ namespace Telegram.Api.TL
 		public Boolean HasRecovery { get; set; }
 
 		public TLAccountPassword() { }
-		public TLAccountPassword(TLBinaryReader from, bool cache = false)
+		public TLAccountPassword(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountPassword; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			CurrentSalt = from.ReadByteArray();
 			NewSalt = from.ReadByteArray();
 			Hint = from.ReadString();
 			HasRecovery = from.ReadBoolean();
 			EmailUnconfirmedPattern = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x7C18141C);
 			to.WriteByteArray(CurrentSalt);
@@ -35,7 +34,6 @@ namespace Telegram.Api.TL
 			to.Write(Hint);
 			to.Write(HasRecovery);
 			to.Write(EmailUnconfirmedPattern);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

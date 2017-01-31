@@ -9,26 +9,24 @@ namespace Telegram.Api.TL
 		public String ShortName { get; set; }
 
 		public TLInputGameShortName() { }
-		public TLInputGameShortName(TLBinaryReader from, bool cache = false)
+		public TLInputGameShortName(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputGameShortName; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			BotId = TLFactory.Read<TLInputUserBase>(from, cache);
+			BotId = TLFactory.Read<TLInputUserBase>(from);
 			ShortName = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xC331E80A);
-			to.WriteObject(BotId, cache);
+			to.WriteObject(BotId);
 			to.Write(ShortName);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

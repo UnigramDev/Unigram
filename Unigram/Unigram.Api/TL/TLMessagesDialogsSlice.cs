@@ -8,32 +8,30 @@ namespace Telegram.Api.TL
 		public Int32 Count { get; set; }
 
 		public TLMessagesDialogsSlice() { }
-		public TLMessagesDialogsSlice(TLBinaryReader from, bool cache = false)
+		public TLMessagesDialogsSlice(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesDialogsSlice; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Count = from.ReadInt32();
-			Dialogs = TLFactory.Read<TLVector<TLDialog>>(from, cache);
-			Messages = TLFactory.Read<TLVector<TLMessageBase>>(from, cache);
-			Chats = TLFactory.Read<TLVector<TLChatBase>>(from, cache);
-			Users = TLFactory.Read<TLVector<TLUserBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Dialogs = TLFactory.Read<TLVector<TLDialog>>(from);
+			Messages = TLFactory.Read<TLVector<TLMessageBase>>(from);
+			Chats = TLFactory.Read<TLVector<TLChatBase>>(from);
+			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x71E094F3);
 			to.Write(Count);
-			to.WriteObject(Dialogs, cache);
-			to.WriteObject(Messages, cache);
-			to.WriteObject(Chats, cache);
-			to.WriteObject(Users, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Dialogs);
+			to.WriteObject(Messages);
+			to.WriteObject(Chats);
+			to.WriteObject(Users);
 		}
 	}
 }

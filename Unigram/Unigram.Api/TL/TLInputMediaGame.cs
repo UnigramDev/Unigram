@@ -8,24 +8,22 @@ namespace Telegram.Api.TL
 		public TLInputGameBase Id { get; set; }
 
 		public TLInputMediaGame() { }
-		public TLInputMediaGame(TLBinaryReader from, bool cache = false)
+		public TLInputMediaGame(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputMediaGame; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Id = TLFactory.Read<TLInputGameBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Id = TLFactory.Read<TLInputGameBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xD33F43F3);
-			to.WriteObject(Id, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Id);
 		}
 	}
 }

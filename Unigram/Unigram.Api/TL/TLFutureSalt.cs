@@ -10,28 +10,26 @@ namespace Telegram.Api.TL
 		public Int64 Salt { get; set; }
 
 		public TLFutureSalt() { }
-		public TLFutureSalt(TLBinaryReader from, bool cache = false)
+		public TLFutureSalt(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.FutureSalt; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			ValidSince = from.ReadInt32();
 			ValidUntil = from.ReadInt32();
 			Salt = from.ReadInt64();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x0949D9DC);
 			to.Write(ValidSince);
 			to.Write(ValidUntil);
 			to.Write(Salt);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

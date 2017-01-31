@@ -11,24 +11,22 @@ namespace Telegram.Api.TL.Methods.Account
 		public Byte[] CurrentPasswordHash { get; set; }
 
 		public TLAccountGetPasswordSettings() { }
-		public TLAccountGetPasswordSettings(TLBinaryReader from, bool cache = false)
+		public TLAccountGetPasswordSettings(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountGetPasswordSettings; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			CurrentPasswordHash = from.ReadByteArray();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xBC8D11BB);
 			to.WriteByteArray(CurrentPasswordHash);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

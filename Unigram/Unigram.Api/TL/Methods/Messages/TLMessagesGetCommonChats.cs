@@ -13,28 +13,26 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int32 Limit { get; set; }
 
 		public TLMessagesGetCommonChats() { }
-		public TLMessagesGetCommonChats(TLBinaryReader from, bool cache = false)
+		public TLMessagesGetCommonChats(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesGetCommonChats; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			UserId = TLFactory.Read<TLInputUserBase>(from, cache);
+			UserId = TLFactory.Read<TLInputUserBase>(from);
 			MaxId = from.ReadInt32();
 			Limit = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xD0A48C4);
-			to.WriteObject(UserId, cache);
+			to.WriteObject(UserId);
 			to.Write(MaxId);
 			to.Write(Limit);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

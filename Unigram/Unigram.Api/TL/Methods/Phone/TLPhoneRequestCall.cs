@@ -14,30 +14,28 @@ namespace Telegram.Api.TL.Methods.Phone
 		public TLPhoneCallProtocol Protocol { get; set; }
 
 		public TLPhoneRequestCall() { }
-		public TLPhoneRequestCall(TLBinaryReader from, bool cache = false)
+		public TLPhoneRequestCall(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PhoneRequestCall; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			UserId = TLFactory.Read<TLInputUserBase>(from, cache);
+			UserId = TLFactory.Read<TLInputUserBase>(from);
 			RandomId = from.ReadInt32();
 			GA = from.ReadByteArray();
-			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from, cache);
-			if (cache) ReadFromCache(from);
+			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xA41AA5E4);
-			to.WriteObject(UserId, cache);
+			to.WriteObject(UserId);
 			to.Write(RandomId);
 			to.WriteByteArray(GA);
-			to.WriteObject(Protocol, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Protocol);
 		}
 	}
 }

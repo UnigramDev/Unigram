@@ -20,30 +20,28 @@ namespace Telegram.Api.TL
 		public String Title { get; set; }
 
 		public TLChannelForbidden() { }
-		public TLChannelForbidden(TLBinaryReader from, bool cache = false)
+		public TLChannelForbidden(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelForbidden; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
 			AccessHash = from.ReadInt64();
 			Title = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x8537784F);
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			to.Write(AccessHash);
 			to.Write(Title);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

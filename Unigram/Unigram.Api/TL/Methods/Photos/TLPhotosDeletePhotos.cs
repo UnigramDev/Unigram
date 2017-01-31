@@ -11,24 +11,22 @@ namespace Telegram.Api.TL.Methods.Photos
 		public TLVector<TLInputPhotoBase> Id { get; set; }
 
 		public TLPhotosDeletePhotos() { }
-		public TLPhotosDeletePhotos(TLBinaryReader from, bool cache = false)
+		public TLPhotosDeletePhotos(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PhotosDeletePhotos; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Id = TLFactory.Read<TLVector<TLInputPhotoBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Id = TLFactory.Read<TLVector<TLInputPhotoBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x87CF7F2F);
-			to.WriteObject(Id, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Id);
 		}
 	}
 }

@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLChannelRoleEditor : TLChannelParticipantRoleBase 
 	{
 		public TLChannelRoleEditor() { }
-		public TLChannelRoleEditor(TLBinaryReader from, bool cache = false)
+		public TLChannelRoleEditor(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelRoleEditor; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x820BFE8C);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

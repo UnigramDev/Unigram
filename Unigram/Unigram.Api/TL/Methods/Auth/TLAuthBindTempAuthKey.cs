@@ -14,30 +14,28 @@ namespace Telegram.Api.TL.Methods.Auth
 		public Byte[] EncryptedMessage { get; set; }
 
 		public TLAuthBindTempAuthKey() { }
-		public TLAuthBindTempAuthKey(TLBinaryReader from, bool cache = false)
+		public TLAuthBindTempAuthKey(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.AuthBindTempAuthKey; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			PermAuthKeyId = from.ReadInt64();
 			Nonce = from.ReadInt64();
 			ExpiresAt = from.ReadInt32();
 			EncryptedMessage = from.ReadByteArray();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xCDD42A05);
 			to.Write(PermAuthKeyId);
 			to.Write(Nonce);
 			to.Write(ExpiresAt);
 			to.WriteByteArray(EncryptedMessage);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

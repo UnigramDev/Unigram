@@ -11,24 +11,22 @@ namespace Telegram.Api.TL.Methods.Channels
 		public TLInputChannelBase Channel { get; set; }
 
 		public TLChannelsLeaveChannel() { }
-		public TLChannelsLeaveChannel(TLBinaryReader from, bool cache = false)
+		public TLChannelsLeaveChannel(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelsLeaveChannel; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Channel = TLFactory.Read<TLInputChannelBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Channel = TLFactory.Read<TLInputChannelBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xF836AA95);
-			to.WriteObject(Channel, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Channel);
 		}
 	}
 }

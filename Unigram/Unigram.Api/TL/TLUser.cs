@@ -66,14 +66,14 @@ namespace Telegram.Api.TL
 		public String BotInlinePlaceholder { get; set; }
 
 		public TLUser() { }
-		public TLUser(TLBinaryReader from, bool cache = false)
+		public TLUser(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.User; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
@@ -82,15 +82,14 @@ namespace Telegram.Api.TL
 			if (HasLastName) LastName = from.ReadString();
 			if (HasUsername) Username = from.ReadString();
 			if (HasPhone) Phone = from.ReadString();
-			if (HasPhoto) Photo = TLFactory.Read<TLUserProfilePhotoBase>(from, cache);
-			if (HasStatus) Status = TLFactory.Read<TLUserStatusBase>(from, cache);
+			if (HasPhoto) Photo = TLFactory.Read<TLUserProfilePhotoBase>(from);
+			if (HasStatus) Status = TLFactory.Read<TLUserStatusBase>(from);
 			if (HasBotInfoVersion) BotInfoVersion = from.ReadInt32();
 			if (HasRestrictionReason) RestrictionReason = from.ReadString();
 			if (HasBotInlinePlaceholder) BotInlinePlaceholder = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -102,12 +101,11 @@ namespace Telegram.Api.TL
 			if (HasLastName) to.Write(LastName);
 			if (HasUsername) to.Write(Username);
 			if (HasPhone) to.Write(Phone);
-			if (HasPhoto) to.WriteObject(Photo, cache);
-			if (HasStatus) to.WriteObject(Status, cache);
+			if (HasPhoto) to.WriteObject(Photo);
+			if (HasStatus) to.WriteObject(Status);
 			if (HasBotInfoVersion) to.Write(BotInfoVersion.Value);
 			if (HasRestrictionReason) to.Write(RestrictionReason);
 			if (HasBotInlinePlaceholder) to.Write(BotInlinePlaceholder);
-			if (cache) WriteToCache(to);
 		}
 
 		private void UpdateFlags()

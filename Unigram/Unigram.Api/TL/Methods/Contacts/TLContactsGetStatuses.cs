@@ -9,22 +9,20 @@ namespace Telegram.Api.TL.Methods.Contacts
 	public partial class TLContactsGetStatuses : TLObject
 	{
 		public TLContactsGetStatuses() { }
-		public TLContactsGetStatuses(TLBinaryReader from, bool cache = false)
+		public TLContactsGetStatuses(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactsGetStatuses; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xC4A353EE);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

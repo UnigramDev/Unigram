@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLChannelParticipantsRecent : TLChannelParticipantsFilterBase 
 	{
 		public TLChannelParticipantsRecent() { }
-		public TLChannelParticipantsRecent(TLBinaryReader from, bool cache = false)
+		public TLChannelParticipantsRecent(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelParticipantsRecent; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xDE3F3C79);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

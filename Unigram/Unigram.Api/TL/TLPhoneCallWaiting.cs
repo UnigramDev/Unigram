@@ -22,14 +22,14 @@ namespace Telegram.Api.TL
 		public Int32? ReceiveDate { get; set; }
 
 		public TLPhoneCallWaiting() { }
-		public TLPhoneCallWaiting(TLBinaryReader from, bool cache = false)
+		public TLPhoneCallWaiting(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PhoneCallWaiting; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt64();
@@ -37,12 +37,11 @@ namespace Telegram.Api.TL
 			Date = from.ReadInt32();
 			AdminId = from.ReadInt32();
 			ParticipantId = from.ReadInt32();
-			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from, cache);
+			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from);
 			if (HasReceiveDate) ReceiveDate = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -53,9 +52,8 @@ namespace Telegram.Api.TL
 			to.Write(Date);
 			to.Write(AdminId);
 			to.Write(ParticipantId);
-			to.WriteObject(Protocol, cache);
+			to.WriteObject(Protocol);
 			if (HasReceiveDate) to.Write(ReceiveDate.Value);
-			if (cache) WriteToCache(to);
 		}
 
 		private void UpdateFlags()

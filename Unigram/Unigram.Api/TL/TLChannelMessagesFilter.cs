@@ -17,26 +17,24 @@ namespace Telegram.Api.TL
 		public TLVector<TLMessageRange> Ranges { get; set; }
 
 		public TLChannelMessagesFilter() { }
-		public TLChannelMessagesFilter(TLBinaryReader from, bool cache = false)
+		public TLChannelMessagesFilter(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelMessagesFilter; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Ranges = TLFactory.Read<TLVector<TLMessageRange>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Ranges = TLFactory.Read<TLVector<TLMessageRange>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xCD77D957);
 			to.Write((Int32)Flags);
-			to.WriteObject(Ranges, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Ranges);
 		}
 	}
 }

@@ -17,17 +17,17 @@ namespace Telegram.Api.TL
 
         public List<TLMessageBase> CommitMessages { get; set; } = new List<TLMessageBase>();
 
-        public override void ReadFromCache(TLBinaryReader from)
-        {
-            Messages = new ObservableCollection<TLMessageBase>(TLFactory.Read<TLVector<TLMessageBase>>(from, true));
-            CommitMessages = new List<TLMessageBase>(TLFactory.Read<TLVector<TLMessageBase>>(from, true));
-        }
+        //public override void ReadFromCache(TLBinaryReader from)
+        //{
+        //    Messages = new ObservableCollection<TLMessageBase>(TLFactory.Read<TLVector<TLMessageBase>>(from, true));
+        //    CommitMessages = new List<TLMessageBase>(TLFactory.Read<TLVector<TLMessageBase>>(from, true));
+        //}
 
-        public override void WriteToCache(TLBinaryWriter to)
-        {
-            to.WriteObject(new TLVector<TLMessageBase>(Messages), true);
-            to.WriteObject(new TLVector<TLMessageBase>(CommitMessages), true);
-        }
+        //public override void WriteToCache(TLBinaryWriter to)
+        //{
+        //    to.WriteObject(new TLVector<TLMessageBase>(Messages), true);
+        //    to.WriteObject(new TLVector<TLMessageBase>(CommitMessages), true);
+        //}
 
         public virtual int CountMessages()
         {

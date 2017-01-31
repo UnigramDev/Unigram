@@ -17,30 +17,28 @@ namespace Telegram.Api.TL
 		public TLGeoPointBase Geo { get; set; }
 
 		public TLBotInlineMessageMediaGeo() { }
-		public TLBotInlineMessageMediaGeo(TLBinaryReader from, bool cache = false)
+		public TLBotInlineMessageMediaGeo(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.BotInlineMessageMediaGeo; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Geo = TLFactory.Read<TLGeoPointBase>(from, cache);
-			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Geo = TLFactory.Read<TLGeoPointBase>(from);
+			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
 			to.Write(0x3A8FD8B8);
 			to.Write((Int32)Flags);
-			to.WriteObject(Geo, cache);
-			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Geo);
+			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
 		}
 
 		private void UpdateFlags()

@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLRPCAnswerDroppedRunning : TLRPCDropAnswerBase 
 	{
 		public TLRPCAnswerDroppedRunning() { }
-		public TLRPCAnswerDroppedRunning(TLBinaryReader from, bool cache = false)
+		public TLRPCAnswerDroppedRunning(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.RPCAnswerDroppedRunning; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xCD78E586);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

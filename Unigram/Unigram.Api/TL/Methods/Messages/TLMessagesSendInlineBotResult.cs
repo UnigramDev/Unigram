@@ -30,36 +30,34 @@ namespace Telegram.Api.TL.Methods.Messages
 		public String Id { get; set; }
 
 		public TLMessagesSendInlineBotResult() { }
-		public TLMessagesSendInlineBotResult(TLBinaryReader from, bool cache = false)
+		public TLMessagesSendInlineBotResult(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSendInlineBotResult; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
+			Peer = TLFactory.Read<TLInputPeerBase>(from);
 			if (HasReplyToMsgId) ReplyToMsgId = from.ReadInt32();
 			RandomId = from.ReadInt64();
 			QueryId = from.ReadInt64();
 			Id = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
 			to.Write(0xB16E06FE);
 			to.Write((Int32)Flags);
-			to.WriteObject(Peer, cache);
+			to.WriteObject(Peer);
 			if (HasReplyToMsgId) to.Write(ReplyToMsgId.Value);
 			to.Write(RandomId);
 			to.Write(QueryId);
 			to.Write(Id);
-			if (cache) WriteToCache(to);
 		}
 
 		private void UpdateFlags()

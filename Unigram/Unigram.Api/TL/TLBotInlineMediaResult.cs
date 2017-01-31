@@ -24,27 +24,26 @@ namespace Telegram.Api.TL
 		public TLDocumentBase Document { get; set; }
 
 		public TLBotInlineMediaResult() { }
-		public TLBotInlineMediaResult(TLBinaryReader from, bool cache = false)
+		public TLBotInlineMediaResult(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.BotInlineMediaResult; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadString();
 			Type = from.ReadString();
-			if (HasPhoto) Photo = TLFactory.Read<TLPhotoBase>(from, cache);
-			if (HasDocument) Document = TLFactory.Read<TLDocumentBase>(from, cache);
+			if (HasPhoto) Photo = TLFactory.Read<TLPhotoBase>(from);
+			if (HasDocument) Document = TLFactory.Read<TLDocumentBase>(from);
 			if (HasTitle) Title = from.ReadString();
 			if (HasDescription) Description = from.ReadString();
-			SendMessage = TLFactory.Read<TLBotInlineMessageBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			SendMessage = TLFactory.Read<TLBotInlineMessageBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -52,12 +51,11 @@ namespace Telegram.Api.TL
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			to.Write(Type);
-			if (HasPhoto) to.WriteObject(Photo, cache);
-			if (HasDocument) to.WriteObject(Document, cache);
+			if (HasPhoto) to.WriteObject(Photo);
+			if (HasDocument) to.WriteObject(Document);
 			if (HasTitle) to.Write(Title);
 			if (HasDescription) to.Write(Description);
-			to.WriteObject(SendMessage, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(SendMessage);
 		}
 
 		private void UpdateFlags()

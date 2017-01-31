@@ -9,26 +9,24 @@ namespace Telegram.Api.TL
 		public TLVector<TLUserBase> Users { get; set; }
 
 		public TLChannelsChannelParticipant() { }
-		public TLChannelsChannelParticipant(TLBinaryReader from, bool cache = false)
+		public TLChannelsChannelParticipant(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelsChannelParticipant; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Participant = TLFactory.Read<TLChannelParticipantBase>(from, cache);
-			Users = TLFactory.Read<TLVector<TLUserBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Participant = TLFactory.Read<TLChannelParticipantBase>(from);
+			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xD0D9B163);
-			to.WriteObject(Participant, cache);
-			to.WriteObject(Users, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Participant);
+			to.WriteObject(Users);
 		}
 	}
 }

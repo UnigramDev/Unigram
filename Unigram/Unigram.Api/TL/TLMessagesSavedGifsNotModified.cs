@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLMessagesSavedGifsNotModified : TLMessagesSavedGifsBase 
 	{
 		public TLMessagesSavedGifsNotModified() { }
-		public TLMessagesSavedGifsNotModified(TLBinaryReader from, bool cache = false)
+		public TLMessagesSavedGifsNotModified(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSavedGifsNotModified; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xE8025CA2);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

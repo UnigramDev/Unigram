@@ -12,24 +12,23 @@ namespace Telegram.Api.TL
 		public Byte[] PeerTag { get; set; }
 
 		public TLPhoneConnection() { }
-		public TLPhoneConnection(TLBinaryReader from, bool cache = false)
+		public TLPhoneConnection(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PhoneConnection; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Id = from.ReadInt64();
 			Ip = from.ReadString();
 			Ipv6 = from.ReadString();
 			Port = from.ReadInt32();
 			PeerTag = from.ReadByteArray();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x9D4C17C0);
 			to.Write(Id);
@@ -37,7 +36,6 @@ namespace Telegram.Api.TL
 			to.Write(Ipv6);
 			to.Write(Port);
 			to.WriteByteArray(PeerTag);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -8,24 +8,22 @@ namespace Telegram.Api.TL
 		public TLVector<TLKeyboardButtonRow> Rows { get; set; }
 
 		public TLReplyInlineMarkup() { }
-		public TLReplyInlineMarkup(TLBinaryReader from, bool cache = false)
+		public TLReplyInlineMarkup(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ReplyInlineMarkup; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Rows = TLFactory.Read<TLVector<TLKeyboardButtonRow>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Rows = TLFactory.Read<TLVector<TLKeyboardButtonRow>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x48A30254);
-			to.WriteObject(Rows, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Rows);
 		}
 	}
 }

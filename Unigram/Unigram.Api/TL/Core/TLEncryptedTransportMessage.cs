@@ -35,7 +35,7 @@ namespace Telegram.Api.TL
             using (var reader = new TLBinaryReader(data2))
             {
                 Query = new TLTransportMessage();
-                Query.Read(reader, false);
+                Query.Read(reader);
             }
 
             //from.ReadUInt64();
@@ -52,7 +52,7 @@ namespace Telegram.Api.TL
             {
                 using (var writer = new TLBinaryWriter(output))
                 {
-                    writer.WriteObject(Query, false);
+                    writer.WriteObject(Query);
                     var buffer = output.ToArray();
 
                     var random = new Random();
@@ -101,13 +101,13 @@ namespace Telegram.Api.TL
             return this;
         }
 
-        public override void Read(TLBinaryReader from, bool cache = false)
+        public override void Read(TLBinaryReader from)
         {
             AuthKeyId = from.ReadInt64();
             MsgKey = from.ReadBytes(16);
         }
 
-        public override void Write(TLBinaryWriter to, bool cache = false)
+        public override void Write(TLBinaryWriter to)
         {
             to.Write(_encrypted);
         }

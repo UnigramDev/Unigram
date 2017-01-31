@@ -19,24 +19,23 @@ namespace Telegram.Api.TL
 		public String LastName { get; set; }
 
 		public TLInputBotInlineMessageMediaContact() { }
-		public TLInputBotInlineMessageMediaContact(TLBinaryReader from, bool cache = false)
+		public TLInputBotInlineMessageMediaContact(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputBotInlineMessageMediaContact; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			PhoneNumber = from.ReadString();
 			FirstName = from.ReadString();
 			LastName = from.ReadString();
-			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -45,8 +44,7 @@ namespace Telegram.Api.TL
 			to.Write(PhoneNumber);
 			to.Write(FirstName);
 			to.Write(LastName);
-			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
-			if (cache) WriteToCache(to);
+			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
 		}
 
 		private void UpdateFlags()

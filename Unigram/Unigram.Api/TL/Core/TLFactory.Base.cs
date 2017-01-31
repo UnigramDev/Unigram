@@ -10,7 +10,7 @@ namespace Telegram.Api.TL
 {
     public static partial class TLFactory
     {
-        public static T Read<T>(TLBinaryReader from, bool cache)
+        public static T Read<T>(TLBinaryReader from)
         {
             if (typeof(T) == typeof(UInt32)) return (T)(Object)from.ReadUInt32();
             else if (typeof(T) == typeof(Int32)) return (T)(Object)from.ReadInt32();
@@ -22,18 +22,18 @@ namespace Telegram.Api.TL
             else if (typeof(T) == typeof(Byte[])) return (T)(Object)from.ReadByteArray();
             else if (typeof(T) == typeof(TLInt128)) return (T)(Object)new TLInt128(from);
             else if (typeof(T) == typeof(TLInt256)) return (T)(Object)new TLInt256(from);
-            else if (typeof(T) == typeof(TLNonEncryptedTransportMessage)) return (T)(Object)new TLNonEncryptedTransportMessage(from, false);
+            else if (typeof(T) == typeof(TLNonEncryptedTransportMessage)) return (T)(Object)new TLNonEncryptedTransportMessage(from);
 
             var type = from.ReadUInt32();
             if (type == 0xFFFFFF0D || typeof(T) == typeof(TLActionInfo))
             {
-                return (T)(Object)new TLActionInfo(from, true);
+                return (T)(Object)new TLActionInfo(from);
             }
             else if ((TLType)type == TLType.Vector)
             {
                 if (typeof(T) != typeof(object))
                 {
-                    return (T)(Object)Activator.CreateInstance(typeof(T), from, cache);
+                    return (T)(Object)Activator.CreateInstance(typeof(T), from);
                 }
                 else
                 {
@@ -55,7 +55,7 @@ namespace Telegram.Api.TL
                             var d1 = typeof(TLVector<>);
                             var typeArgs = new Type[] { innerType };
                             var makeme = d1.MakeGenericType(typeArgs);
-                            return (T)(Object)Activator.CreateInstance(makeme, from, cache);
+                            return (T)(Object)Activator.CreateInstance(makeme, from);
                         }
                         else
                         {
@@ -82,11 +82,11 @@ namespace Telegram.Api.TL
             }
             else
             {
-                return Read<T>(from, (TLType)type, cache);
+                return Read<T>(from, (TLType)type);
             }
         }
 
-        public static void Write(TLBinaryWriter to, object value, bool toCache)
+        public static void Write(TLBinaryWriter to, object value)
         {
             var type = value.GetType();
             if (type == typeof(UInt32)) to.Write((uint)value);
@@ -99,14 +99,14 @@ namespace Telegram.Api.TL
             else if (type == typeof(Byte[])) to.WriteByteArray((byte[])value);
             else if (type == typeof(TLInt128)) ((TLInt128)value).Write(to);
             else if (type == typeof(TLInt256)) ((TLInt256)value).Write(to);
-            else ((TLObject)value).Write(to, toCache);
+            else ((TLObject)value).Write(to);
         }
 
         public static T From<T>(byte[] bytes)
         {
             using (var reader = new TLBinaryReader(bytes))
             {
-                return Read<T>(reader, false);
+                return Read<T>(reader);
             }
         }
     }

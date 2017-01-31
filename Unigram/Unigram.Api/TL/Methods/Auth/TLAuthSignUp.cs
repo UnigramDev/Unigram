@@ -15,24 +15,23 @@ namespace Telegram.Api.TL.Methods.Auth
 		public String LastName { get; set; }
 
 		public TLAuthSignUp() { }
-		public TLAuthSignUp(TLBinaryReader from, bool cache = false)
+		public TLAuthSignUp(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.AuthSignUp; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			PhoneNumber = from.ReadString();
 			PhoneCodeHash = from.ReadString();
 			PhoneCode = from.ReadString();
 			FirstName = from.ReadString();
 			LastName = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x1B067634);
 			to.Write(PhoneNumber);
@@ -40,7 +39,6 @@ namespace Telegram.Api.TL.Methods.Auth
 			to.Write(PhoneCode);
 			to.Write(FirstName);
 			to.Write(LastName);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

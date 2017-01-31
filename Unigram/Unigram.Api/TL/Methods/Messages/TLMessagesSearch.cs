@@ -25,40 +25,38 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int32 Limit { get; set; }
 
 		public TLMessagesSearch() { }
-		public TLMessagesSearch(TLBinaryReader from, bool cache = false)
+		public TLMessagesSearch(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSearch; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
+			Peer = TLFactory.Read<TLInputPeerBase>(from);
 			Q = from.ReadString();
-			Filter = TLFactory.Read<TLMessagesFilterBase>(from, cache);
+			Filter = TLFactory.Read<TLMessagesFilterBase>(from);
 			MinDate = from.ReadInt32();
 			MaxDate = from.ReadInt32();
 			Offset = from.ReadInt32();
 			MaxId = from.ReadInt32();
 			Limit = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xD4569248);
 			to.Write((Int32)Flags);
-			to.WriteObject(Peer, cache);
+			to.WriteObject(Peer);
 			to.Write(Q);
-			to.WriteObject(Filter, cache);
+			to.WriteObject(Filter);
 			to.Write(MinDate);
 			to.Write(MaxDate);
 			to.Write(Offset);
 			to.Write(MaxId);
 			to.Write(Limit);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

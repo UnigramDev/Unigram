@@ -50,33 +50,32 @@ namespace Telegram.Api.TL
 		public Int32? EditDate { get; set; }
 
 		public TLMessage() { }
-		public TLMessage(TLBinaryReader from, bool cache = false)
+		public TLMessage(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.Message; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
 			if (HasFromId) FromId = from.ReadInt32();
-			ToId = TLFactory.Read<TLPeerBase>(from, cache);
-			if (HasFwdFrom) FwdFrom = TLFactory.Read<TLMessageFwdHeader>(from, cache);
+			ToId = TLFactory.Read<TLPeerBase>(from);
+			if (HasFwdFrom) FwdFrom = TLFactory.Read<TLMessageFwdHeader>(from);
 			if (HasViaBotId) ViaBotId = from.ReadInt32();
 			if (HasReplyToMsgId) ReplyToMsgId = from.ReadInt32();
 			Date = from.ReadInt32();
 			Message = from.ReadString();
-			if (HasMedia) Media = TLFactory.Read<TLMessageMediaBase>(from, cache);
-			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache);
-			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache);
+			if (HasMedia) Media = TLFactory.Read<TLMessageMediaBase>(from);
+			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from);
+			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from);
 			if (HasViews) Views = from.ReadInt32();
 			if (HasEditDate) EditDate = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -84,18 +83,17 @@ namespace Telegram.Api.TL
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			if (HasFromId) to.Write(FromId.Value);
-			to.WriteObject(ToId, cache);
-			if (HasFwdFrom) to.WriteObject(FwdFrom, cache);
+			to.WriteObject(ToId);
+			if (HasFwdFrom) to.WriteObject(FwdFrom);
 			if (HasViaBotId) to.Write(ViaBotId.Value);
 			if (HasReplyToMsgId) to.Write(ReplyToMsgId.Value);
 			to.Write(Date);
 			to.Write(Message);
-			if (HasMedia) to.WriteObject(Media, cache);
-			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
-			if (HasEntities) to.WriteObject(Entities, cache);
+			if (HasMedia) to.WriteObject(Media);
+			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
+			if (HasEntities) to.WriteObject(Entities);
 			if (HasViews) to.Write(Views.Value);
 			if (HasEditDate) to.Write(EditDate.Value);
-			if (cache) WriteToCache(to);
 		}
 
 		private void UpdateFlags()

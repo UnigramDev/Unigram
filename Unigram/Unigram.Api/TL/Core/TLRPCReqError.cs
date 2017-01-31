@@ -11,21 +11,21 @@ namespace Telegram.Api.TL
         public Int64 QueryId;
 
         public TLRPCReqError() { }
-        public TLRPCReqError(TLBinaryReader from, bool fromCache)
+        public TLRPCReqError(TLBinaryReader from)
         {
-            Read(from, fromCache);
+            Read(from);
         }
 
         public override TLType TypeId { get { return TLType.RPCReqError; } }
 
-        public override void Read(TLBinaryReader from, bool fromCache)
+        public override void Read(TLBinaryReader from)
         {
             QueryId = from.ReadInt64();
             ErrorCode = from.ReadInt32();
             ErrorMessage = from.ReadString();
         }
 
-        public override void Write(TLBinaryWriter to, bool toCache)
+        public override void Write(TLBinaryWriter to)
         {
             to.Write(0x7AE432F5);
             to.Write(QueryId);

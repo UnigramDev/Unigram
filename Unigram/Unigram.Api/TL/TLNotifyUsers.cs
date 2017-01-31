@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLNotifyUsers : TLNotifyPeerBase 
 	{
 		public TLNotifyUsers() { }
-		public TLNotifyUsers(TLBinaryReader from, bool cache = false)
+		public TLNotifyUsers(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.NotifyUsers; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xB4C83B4C);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

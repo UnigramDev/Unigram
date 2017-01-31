@@ -17,28 +17,26 @@ namespace Telegram.Api.TL
 		public String Query { get; set; }
 
 		public TLKeyboardButtonSwitchInline() { }
-		public TLKeyboardButtonSwitchInline(TLBinaryReader from, bool cache = false)
+		public TLKeyboardButtonSwitchInline(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.KeyboardButtonSwitchInline; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Text = from.ReadString();
 			Query = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x568A748);
 			to.Write((Int32)Flags);
 			to.Write(Text);
 			to.Write(Query);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

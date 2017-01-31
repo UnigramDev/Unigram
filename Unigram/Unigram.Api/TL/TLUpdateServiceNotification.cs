@@ -23,25 +23,24 @@ namespace Telegram.Api.TL
 		public TLVector<TLMessageEntityBase> Entities { get; set; }
 
 		public TLUpdateServiceNotification() { }
-		public TLUpdateServiceNotification(TLBinaryReader from, bool cache = false)
+		public TLUpdateServiceNotification(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateServiceNotification; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			if (HasInboxDate) InboxDate = from.ReadInt32();
 			Type = from.ReadString();
 			Message = from.ReadString();
-			Media = TLFactory.Read<TLMessageMediaBase>(from, cache);
-			Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Media = TLFactory.Read<TLMessageMediaBase>(from);
+			Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -50,9 +49,8 @@ namespace Telegram.Api.TL
 			if (HasInboxDate) to.Write(InboxDate.Value);
 			to.Write(Type);
 			to.Write(Message);
-			to.WriteObject(Media, cache);
-			to.WriteObject(Entities, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Media);
+			to.WriteObject(Entities);
 		}
 
 		private void UpdateFlags()

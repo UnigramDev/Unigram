@@ -11,30 +11,28 @@ namespace Telegram.Api.TL
 		public TLVector<Int64> ServerPublicKeyFingerprints { get; set; }
 
 		public TLResPQ() { }
-		public TLResPQ(TLBinaryReader from, bool cache = false)
+		public TLResPQ(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ResPQ; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Nonce = new TLInt128(from, cache);
-			ServerNonce = new TLInt128(from, cache);
+			Nonce = new TLInt128(from);
+			ServerNonce = new TLInt128(from);
 			PQ = from.ReadByteArray();
-			ServerPublicKeyFingerprints = TLFactory.Read<TLVector<Int64>>(from, cache);
-			if (cache) ReadFromCache(from);
+			ServerPublicKeyFingerprints = TLFactory.Read<TLVector<Int64>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x05162463);
-			to.WriteObject(Nonce, cache);
-			to.WriteObject(ServerNonce, cache);
+			to.WriteObject(Nonce);
+			to.WriteObject(ServerNonce);
 			to.WriteByteArray(PQ);
-			to.WriteObject(ServerPublicKeyFingerprints, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(ServerPublicKeyFingerprints);
 		}
 	}
 }

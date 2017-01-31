@@ -10,28 +10,26 @@ namespace Telegram.Api.TL
 		public Int32 Date { get; set; }
 
 		public TLUpdateEncryptedMessagesRead() { }
-		public TLUpdateEncryptedMessagesRead(TLBinaryReader from, bool cache = false)
+		public TLUpdateEncryptedMessagesRead(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateEncryptedMessagesRead; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			ChatId = from.ReadInt32();
 			MaxDate = from.ReadInt32();
 			Date = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x38FE25B7);
 			to.Write(ChatId);
 			to.Write(MaxDate);
 			to.Write(Date);
-			if (cache) WriteToCache(to);
 		}
 	}
 }
