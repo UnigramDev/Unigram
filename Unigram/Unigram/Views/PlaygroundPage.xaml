@@ -12,6 +12,16 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <SolidColorBrush x:Key="HyperlinkDisabledThemeBrush" Color="#66FFFFFF" />
+        <SolidColorBrush x:Key="HyperlinkForegroundThemeBrush" Color="#FF9C72FF" />
+        <SolidColorBrush x:Key="HyperlinkPointerOverForegroundThemeBrush" Color="#CC9C72FF" />
+        <SolidColorBrush x:Key="HyperlinkPressedForegroundThemeBrush" Color="#999C72FF" />
+
+        <SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="{ThemeResource SystemColorHotlightColor}" />
+        <SolidColorBrush x:Key="SystemControlHyperlinkBaseHighBrush" Color="{StaticResource SystemColorHotlightColor}" />
+        <SolidColorBrush x:Key="SystemControlHyperlinkBaseMediumBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+        <SolidColorBrush x:Key="SystemControlHyperlinkBaseMediumHighBrush" Color="{StaticResource SystemColorHotlightColor}" />
+
         <Style x:Key="UploadProgressRingStyle" TargetType="ProgressRing">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
@@ -215,6 +225,12 @@
                  </Grid>
                  </Viewbox>-->
             <ProgressRing IsActive="True" Style="{StaticResource TypingProgressRingStyle}" Margin="20,0"/>
+
+            <TextBlock>
+                <Hyperlink>
+                    <Run Text="Ciaone!"/>
+                </Hyperlink>
+            </TextBlock>
         </StackPanel>
 
 

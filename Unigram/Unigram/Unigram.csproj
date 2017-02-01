@@ -719,7 +719,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controls\Stickers\" />
-    <Folder Include="Models\" />
     <Folder Include="ViewModels\Settings\PrivacyAndSecurity\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

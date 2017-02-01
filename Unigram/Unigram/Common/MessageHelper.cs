@@ -90,7 +90,7 @@ namespace Unigram.Common
                     return;
                 }
 
-                var foreground = Application.Current.Resources["MessageHyperlinkForegroundBrush"] as SolidColorBrush;
+                var foreground = sender.Resources["MessageHyperlinkForegroundBrush"] as SolidColorBrush;
 
                 var paragraph = new Paragraph();
 
