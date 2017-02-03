@@ -47,6 +47,15 @@ namespace Unigram.Views
 
         private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
+            if (lvDialogs.ScrollingHost.ScrollableHeight - lvDialogs.ScrollingHost.VerticalOffset < 120)
+            {
+                Arrow.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Arrow.Visibility = Visibility.Visible;
+            }
+
             //if (ViewModel.Peer is TLInputPeerUser)
             //{
             //    lvDialogs.ScrollingHost.ViewChanged -= OnViewChanged;
