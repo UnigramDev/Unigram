@@ -63,7 +63,7 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
-    <CornerRadius x:Key="MessageCornerRadius">0</CornerRadius>
+    <CornerRadius x:Key="MessageCornerRadius">6</CornerRadius>
     <SolidColorBrush x:Key="TelegramDialogLabelStateBrush" Color="#64BC54"/>
     <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramForegroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
