@@ -31,6 +31,7 @@ using Windows.Media;
 using System.IO;
 using Template10.Services.NavigationService;
 using Unigram.Common;
+using Unigram.Views.Login;
 
 namespace Unigram
 {
@@ -119,8 +120,8 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(PlaygroundPage));
-            //return Task.CompletedTask;
+            NavigationService.Navigate(typeof(LoginWelcomePage));
+            return Task.CompletedTask;
 
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
 

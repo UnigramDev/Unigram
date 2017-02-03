@@ -12,31 +12,14 @@ using Telegram.Api.TL;
 using Telegram.Api;
 using Windows.UI.Xaml;
 using System.ComponentModel;
+using System.Threading.Tasks;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Login
 {
 
     public class LoginPhoneNumberViewModel : UnigramViewModelBase
     {
-
-
-        public Visibility _pBarVisibility = Visibility.Collapsed;
-        public Visibility pBarVisibility
-        {
-            get { return _pBarVisibility; }
-            set
-            {
-                _pBarVisibility = value;
-                RaisePropertyChanged("pBarVisibility");
-            }
-        }
-
-        private void NotifyPropertyChanged(string info)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
         public LoginPhoneNumberViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
@@ -59,8 +42,7 @@ namespace Unigram.ViewModels.Login
             }
 
             Countries = list;
-            
-            pBarVisibility = Visibility.Collapsed;
+
             // IDEA FELA
 
             //if(SelectedCountry == null)
@@ -77,6 +59,12 @@ namespace Unigram.ViewModels.Login
             {
                 GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
             }
+        }
+
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        {
+            IsLoading = false;
+            return Task.CompletedTask;
         }
 
         private void GotUserCountry(object sender, CountryEventArgs e)
@@ -171,19 +159,34 @@ namespace Unigram.ViewModels.Login
             }
         }
 
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get
+            {
+                return _isLoading;
+            }
+            set
+            {
+                Set(ref _isLoading, value);
+                SendCommand.RaiseCanExecuteChanged();
+            }
+        }
+
         public List<KeyedList<string, Country>> Countries { get; private set; }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
-           
             if(PhoneCode == null || PhoneNumber == null)
             {
                 await new MessageDialog("Please type phone number and phone code").ShowAsync();
-                pBarVisibility = Visibility.Collapsed;
                 return;
             }
-            pBarVisibility = Visibility.Visible;
+
+            IsLoading = true;
+
             var result = await ProtoService.SendCodeAsync(PhoneCode.TrimStart('+') + PhoneNumber, /* TODO: Verify */ null);
             if (result?.IsSucceeded == true)
             {
@@ -199,7 +202,7 @@ namespace Unigram.ViewModels.Login
             }
             else if (result.Error != null)
             {
-                pBarVisibility = Visibility.Collapsed;
+                IsLoading = false;
                 await new MessageDialog(result.Error.ErrorMessage, result.Error.ErrorCode.ToString()).ShowAsync();
             }
         }
