@@ -335,7 +335,7 @@
                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
                 </Border>
 
-                <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,12,0,0">
+                <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,12,0,0">
                     <Ellipse>
                         <Ellipse.Fill>
                             <ImageBrush ImageSource="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}"/>
@@ -959,6 +959,7 @@
                                       Glyph="&#xE606;" 
                                       FontFamily="{ThemeResource TelegramThemeFontFamily}" 
                                       VerticalAlignment="Bottom"
+                                      Visibility="Collapsed"
                                       Grid.Column="1"/>
 
                 <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="2">

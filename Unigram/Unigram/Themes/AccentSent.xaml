@@ -5,18 +5,18 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
-            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#ffffff"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource SystemAccentColorDark2}"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="{ThemeResource SystemAccentColorDark3}"/>
+            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
-            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
-            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
-            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-
+            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource SystemAccentColorDark3}"/>
+            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource SystemAccentColor}"/>
+            
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#000000"/>
 
             <Thickness x:Key="MessageContentPadding">8,4,8,6</Thickness>
