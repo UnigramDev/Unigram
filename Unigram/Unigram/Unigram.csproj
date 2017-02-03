@@ -100,6 +100,8 @@
     <Compile Include="Controls\BubbleActionButton.cs" />
     <Compile Include="Controls\DialogsListView.cs" />
     <Compile Include="Controls\GlyphToggleButton.cs" />
+    <Compile Include="Controls\ProgressShape.cs" />
+    <Compile Include="Controls\ProgressVoice.cs" />
     <Compile Include="Controls\TransferButton.cs" />
     <Compile Include="Controls\Media\ThumbnailControl.xaml.cs">
       <DependentUpon>ThumbnailControl.xaml</DependentUpon>
