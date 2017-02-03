@@ -934,6 +934,15 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        public RelayCommand PinnedCommand => new RelayCommand(PinnedExecute);
+        private async void PinnedExecute()
+        {
+            if (PinnedMessage != null)
+            {
+                await LoadMessageSliceAsync(null, PinnedMessage.Id);
+            }
+        }
+
         public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
         private async void SendMessage(string args)
         {

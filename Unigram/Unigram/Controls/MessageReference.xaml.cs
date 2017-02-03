@@ -727,8 +727,23 @@ namespace Unigram.Controls
 
         private bool SetServicePhotoTemplate(TLMessageService message, string title)
         {
-            Visibility = Visibility.Collapsed;
-            return false;
+            Visibility = Visibility.Visible;
+
+            FindName(nameof(ThumbRoot));
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Visible;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = string.Empty;
+            MessageLabel.Text = ServiceHelper.Convert(message);
+
+            var action = message.Action as TLMessageActionChatEditPhoto;
+            if (action != null)
+            {
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(action.Photo, "thumbnail");
+            }
+
+            return true;
         }
 
         private bool SetEmptyTemplate(TLMessage message, string title)

@@ -465,7 +465,7 @@
     <value>{0} removed {1}</value>
   </data>
   <data name="MessageActionChatEditPhoto" xml:space="preserve">
-    <value>{0} changed group photo</value>
+    <value>{0} updated group photo</value>
   </data>
   <data name="MessageActionChatEditTitle" xml:space="preserve">
     <value>{0} changed group name to "{1}"</value>

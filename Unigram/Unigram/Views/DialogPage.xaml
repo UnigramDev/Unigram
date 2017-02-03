@@ -145,6 +145,11 @@
             <MenuFlyoutItem Loaded="MessageSaveSticker_Loaded" Command="{x:Bind ViewModel.MessageSaveStickerCommand}" CommandParameter="{Binding}" Text="Save image as..."/>
         </MenuFlyout>
 
+        <MenuFlyout x:Key="ServiceMenuFlyout">
+            <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
+            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
+        </MenuFlyout>
+
         <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
             <Grid Margin="0,2">
                 <Grid.ColumnDefinitions>
@@ -319,14 +324,14 @@
 
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12,0,2">
+            <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12,0,2">
                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,12,0,2">
-                <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6">
+                <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6">
                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
                 </Border>
 
@@ -669,7 +674,7 @@
                 <ColumnDefinition Width="48"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="btnPinnedMessage" Padding="12,0,48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
+            <Button x:Name="btnPinnedMessage" Command="{Binding PinnedCommand}" Padding="12,0,48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
                 <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0"/>
             </Button>
             
