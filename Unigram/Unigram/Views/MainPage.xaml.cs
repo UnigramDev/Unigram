@@ -32,6 +32,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.ViewManagement;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -62,6 +63,8 @@ namespace Unigram.Views
             Theme.RegisterPropertyChangedCallback(Border.BackgroundProperty, OnThemeChanged);
 
             searchInit();
+
+            InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
         }
 
         private async void OnThemeChanged(DependencyObject sender, DependencyProperty dp)
