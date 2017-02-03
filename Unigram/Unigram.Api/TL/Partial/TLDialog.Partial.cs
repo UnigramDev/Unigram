@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
+using Telegram.Helpers;
 using Windows.UI.Xaml;
 
 namespace Telegram.Api.TL
@@ -292,7 +293,6 @@ namespace Telegram.Api.TL
 
         public int PinnedIndex { get; set; }
 
-        private string _fullName;
         public string FullName
         {
             get
@@ -304,6 +304,11 @@ namespace Telegram.Api.TL
                     if (user != null && user.IsSelf)
                     {
                         return "You";
+                    }
+
+                    if (user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact)
+                    {
+                        return PhoneNumber.Format(user.Phone);
                     }
 
                     if (userBase.Id == 333000)

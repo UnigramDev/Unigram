@@ -107,6 +107,7 @@
     <None Include="project.json" />
     <Compile Include="Constants.cs" />
     <Compile Include="Constants.Secret.cs" />
+    <Compile Include="Helpers\PhoneNumber.cs" />
     <Compile Include="Services\FileManager\DownloadAudioFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadableItem.cs" />
