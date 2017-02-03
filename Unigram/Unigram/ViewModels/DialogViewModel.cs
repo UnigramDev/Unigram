@@ -632,24 +632,24 @@ namespace Unigram.ViewModels
                 IsReportSpam = settings.Result.IsReportSpam;
             }
 
-            //if (dialog != null && Messages.Count > 0)
-            //{
-            //    var unread = dialog.UnreadCount;
-            //    if (Peer is TLInputPeerChannel)
-            //    {
-            //        if (channel != null)
-            //        {
-            //            await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
-            //    }
+            if (dialog != null && Messages.Count > 0)
+            {
+                var unread = dialog.UnreadCount;
+                if (Peer is TLInputPeerChannel)
+                {
+                    if (channel != null)
+                    {
+                        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+                    }
+                }
+                else
+                {
+                    await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+                }
 
-            //    dialog.UnreadCount = dialog.UnreadCount - unread;
-            //    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-            //}
+                dialog.UnreadCount = dialog.UnreadCount - unread;
+                dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            }
 
             Aggregator.Subscribe(this);
             //Aggregator.Publish("PORCODIO");

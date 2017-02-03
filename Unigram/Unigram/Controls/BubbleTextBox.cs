@@ -38,7 +38,6 @@ namespace Unigram.Controls
     {
         private ContentControl InlinePlaceholderTextContentPresenter;
 
-        // TODO: TEMP!!!
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         private MenuFlyout _flyout;
