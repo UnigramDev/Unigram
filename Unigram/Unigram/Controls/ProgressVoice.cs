@@ -65,8 +65,12 @@ namespace Unigram.Controls
                         }
                         else
                         {
-                            UpdateSlide(new byte[] { 0, 0, 0 });
+                            UpdateSlide(new byte[] { 0 });
                         }
+                    }
+                    else
+                    {
+                        UpdateSlide(new byte[] { 0 });
                     }
                 }
             }
