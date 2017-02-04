@@ -102,7 +102,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="CaptionInput" KeyDown="TextBox_KeyDown" Text="{x:Bind SelectedItem.Caption, Mode=TwoWay}" InputScope="Chat" PlaceholderText="Add a caption..." Margin="12,8"/>
+            <TextBox x:Name="CaptionInput" KeyDown="TextBox_KeyDown" Text="{x:Bind SelectedItem.Caption, Mode=TwoWay}" MaxLength="200" InputScope="Chat" PlaceholderText="Add a caption..." Margin="12,8"/>
             <controls:GlyphButton x:Name="Remove" Click="Remove_Click" Glyph="&#xE107;" Grid.Column="1"/>
         </Grid>
 

@@ -18,9 +18,6 @@
 
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#FFFFFF"/>
 
-            <Thickness x:Key="MessageContentPadding">8,4,8,6</Thickness>
-            <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
-
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
 
             <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
@@ -47,9 +44,6 @@
 
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#000000"/>
 
-            <Thickness x:Key="MessageContentPadding">8,4,8,6</Thickness>
-            <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
-
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
 
             <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
@@ -63,7 +57,11 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+
+    <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
+    <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
     <CornerRadius x:Key="MessageCornerRadius">0</CornerRadius>
+    
     <SolidColorBrush x:Key="TelegramDialogLabelStateBrush" Color="#64BC54"/>
     <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramForegroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>

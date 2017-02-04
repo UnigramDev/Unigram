@@ -118,13 +118,30 @@
 
     <DataTemplate x:Key="MediaGeoPointTemplate">
         <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-            <Image Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" MaxWidth="320" MaxHeight="240"/>
+            <controls:ImageView Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" Constraint="{Binding Media}" MaxWidth="320" MaxHeight="240"/>
             <Border Width="20" Height="20" CornerRadius="10" Background="#54000000">
                 <Border CornerRadius="10" Margin="1" Background="White">
                     <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
                 </Border>
             </Border>
         </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaVenueTemplate">
+        <StackPanel>
+            <StackPanel Padding="{ThemeResource MessageContentPadding}">
+                <TextBlock Text="{Binding Media.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Address}" Style="{StaticResource BodyTextBlockStyle}"/>
+            </StackPanel>
+            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                <controls:ImageView Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" Constraint="{Binding Media}" MaxWidth="320" MaxHeight="240"/>
+                <Border Width="20" Height="20" CornerRadius="10" Background="#54000000">
+                    <Border CornerRadius="10" Margin="1" Background="White">
+                        <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
+                    </Border>
+                </Border>
+            </Grid>
+        </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Key="WebPageMediaTemplate">
@@ -377,6 +394,7 @@
         GifTemplate="{StaticResource MediaGifTemplate}"
         PhotoTemplate="{StaticResource MediaPhotoTemplate}"
         VideoTemplate="{StaticResource MediaVideoTemplate}"
+        VenueTemplate="{StaticResource MediaVenueTemplate}"
         WebPageTemplate="{StaticResource WebPageMediaTemplate}"
         WebPageGifTemplate="{StaticResource WebPageGifMediaTemplate}"
         WebPageDocumentTemplate="{StaticResource WebPageDocumentMediaTemplate}"

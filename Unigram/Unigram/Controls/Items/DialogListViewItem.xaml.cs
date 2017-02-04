@@ -254,6 +254,10 @@ namespace Unigram.Controls.Items
                             //return text + Resources.GeoPoint;
                             return text + "GeoPoint";
                         }
+                        else if (message.Media is TLMessageMediaVenue)
+                        {
+                            return text + "Venue";
+                        }
                         else if (message.Media is TLMessageMediaPhoto)
                         {
                             if (!string.IsNullOrEmpty(((TLMessageMediaPhoto)message.Media).Caption))
