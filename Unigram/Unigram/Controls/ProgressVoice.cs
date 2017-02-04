@@ -85,11 +85,11 @@ namespace Unigram.Controls
             for (int i = 0; i < result.Length; i++)
             {
                 int j = (i * 5) / 8, shift = (i * 5) % 8;
-                result[i] = ((waveform[j] | (waveform[j + 1] << 8)) >> shift & 0x1F) / 31.0;
+                result[i] = ((waveform[j] | ((j + 1 < waveform.Length ? waveform[j + 1] : 0) << 8)) >> shift & 0x1F) / 31.0;
             }
 
             var imageWidth = 209.0;
-            var imageHeight = 28;
+            var imageHeight = 24;
 
             var space = 1.0;
             var lineWidth = 2.0;
@@ -97,24 +97,18 @@ namespace Unigram.Controls
             var maxLines = (imageWidth - space) / (lineWidth + space);
             var maxWidth = (double)lines / maxLines;
 
-            //var background = new WriteableBitmap((int)imageWidth, imageHeight);
-            //var foreground = new WriteableBitmap((int)imageWidth, imageHeight);
-
             var geometry1 = new GeometryGroup();
             var geometry2 = new GeometryGroup();
 
             for (int index = 0; index < maxLines; index++)
             {
                 var lineIndex = (int)(index * maxWidth);
-                var lineHeight = result[lineIndex] * (double)(imageHeight - 4.0) + 4.0;
+                var lineHeight = result[lineIndex] * (double)(imageHeight - 2.0) + 2.0;
 
                 var x1 = (int)(index * (lineWidth + space));
                 var y1 = imageHeight - (int)lineHeight;
                 var x2 = (int)(index * (lineWidth + space) + lineWidth);
                 var y2 = imageHeight;
-
-                //DrawFilledRectangle(ref backgroundBuffer, background.PixelWidth, background.PixelHeight, x1, y1, x2, y2, backgroundColor);
-                //DrawFilledRectangle(ref foregroundBuffer, foreground.PixelWidth, foreground.PixelHeight, x1, y1, x2, y2, foregroundColor);
 
                 var rectangle1 = new RectangleGeometry();
                 rectangle1.Rect = new Rect(new Point(x1, y1), new Point(x2, y2));
@@ -127,16 +121,6 @@ namespace Unigram.Controls
 
             ProgressBarIndicator.Data = geometry1;
             HorizontalTrackRect.Data = geometry2;
-
-            //using (Stream backgroundStream = background.PixelBuffer.AsStream())
-            //using (Stream foregroundStream = foreground.PixelBuffer.AsStream())
-            //{
-            //    backgroundStream.Write(backgroundBuffer, 0, backgroundBuffer.Length);
-            //    foregroundStream.Write(foregroundBuffer, 0, foregroundBuffer.Length);
-            //}
-
-            //Slide.Background = new ImageBrush { ImageSource = background, AlignmentX = AlignmentX.Right, AlignmentY = AlignmentY.Center, Stretch = Stretch.None };
-            //Slide.Foreground = new ImageBrush { ImageSource = foreground, AlignmentX = AlignmentX.Left, AlignmentY = AlignmentY.Center, Stretch = Stretch.None };
         }
     }
 }
