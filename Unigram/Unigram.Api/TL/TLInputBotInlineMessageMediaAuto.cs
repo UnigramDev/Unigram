@@ -17,30 +17,28 @@ namespace Telegram.Api.TL
 		public String Caption { get; set; }
 
 		public TLInputBotInlineMessageMediaAuto() { }
-		public TLInputBotInlineMessageMediaAuto(TLBinaryReader from, bool cache = false)
+		public TLInputBotInlineMessageMediaAuto(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputBotInlineMessageMediaAuto; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Caption = from.ReadString();
-			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
 			to.Write(0x292FED13);
 			to.Write((Int32)Flags);
 			to.Write(Caption);
-			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
-			if (cache) WriteToCache(to);
+			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
 		}
 
 		private void UpdateFlags()

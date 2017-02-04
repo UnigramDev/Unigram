@@ -18,30 +18,28 @@ namespace Telegram.Api.TL
 		public TLUserBase User { get; set; }
 
 		public TLAuthAuthorization() { }
-		public TLAuthAuthorization(TLBinaryReader from, bool cache = false)
+		public TLAuthAuthorization(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.AuthAuthorization; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			if (HasTmpSessions) TmpSessions = from.ReadInt32();
-			User = TLFactory.Read<TLUserBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			User = TLFactory.Read<TLUserBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
 			to.Write(0xCD050916);
 			to.Write((Int32)Flags);
 			if (HasTmpSessions) to.Write(TmpSessions.Value);
-			to.WriteObject(User, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(User);
 		}
 
 		private void UpdateFlags()

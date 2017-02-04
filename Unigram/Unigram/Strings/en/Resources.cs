@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 01/23/2017 14:03:55
+// 	Generated: 02/03/2017 15:14:54
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -119,13 +119,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} invited {1}"
+        /// Localized resource similar to "{0} added {1}"
         /// </summary>
         public static string MessageActionChatAddUser
         {
             get
             {
-                return "{0} invited {1}";
+                return "{0} added {1}";
             }
         }
         
@@ -174,13 +174,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} changed group photo"
+        /// Localized resource similar to "{0} updated group photo"
         /// </summary>
         public static string MessageActionChatEditPhoto
         {
             get
             {
-                return "{0} changed group photo";
+                return "{0} updated group photo";
             }
         }
         
@@ -350,13 +350,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a sticker"
+        /// Localized resource similar to "{0} pinned a {1}sticker"
         /// </summary>
         public static string MessageActionPinSticker
         {
             get
             {
-                return "{0} pinned a sticker";
+                return "{0} pinned a {1}sticker";
             }
         }
         

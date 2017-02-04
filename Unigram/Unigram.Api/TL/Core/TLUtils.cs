@@ -564,7 +564,7 @@ namespace Telegram.Api.TL
                         {
                             using (var from = new TLBinaryReader(fileStream))
                             {
-                                return TLFactory.Read<T>(from, true);
+                                return TLFactory.Read<T>(from);
                             }
                         }
                     }
@@ -749,7 +749,7 @@ namespace Telegram.Api.TL
                     }
                 }
 
-                var container = obj.Query as TLMessageContainer;
+                var container = obj.Query as TLMsgContainer;
                 if (container != null)
                 {
                     foreach (var message in container.Messages)

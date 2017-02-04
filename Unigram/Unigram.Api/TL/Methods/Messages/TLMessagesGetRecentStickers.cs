@@ -20,26 +20,24 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int32 Hash { get; set; }
 
 		public TLMessagesGetRecentStickers() { }
-		public TLMessagesGetRecentStickers(TLBinaryReader from, bool cache = false)
+		public TLMessagesGetRecentStickers(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesGetRecentStickers; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Hash = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x5EA192C9);
 			to.Write((Int32)Flags);
 			to.Write(Hash);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLTopPeerCategoryBotsPM : TLTopPeerCategoryBase 
 	{
 		public TLTopPeerCategoryBotsPM() { }
-		public TLTopPeerCategoryBotsPM(TLBinaryReader from, bool cache = false)
+		public TLTopPeerCategoryBotsPM(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.TopPeerCategoryBotsPM; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xAB661B5B);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

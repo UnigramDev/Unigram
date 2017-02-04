@@ -13,28 +13,26 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int32 FwdLimit { get; set; }
 
 		public TLMessagesAddChatUser() { }
-		public TLMessagesAddChatUser(TLBinaryReader from, bool cache = false)
+		public TLMessagesAddChatUser(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesAddChatUser; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			ChatId = from.ReadInt32();
-			UserId = TLFactory.Read<TLInputUserBase>(from, cache);
+			UserId = TLFactory.Read<TLInputUserBase>(from);
 			FwdLimit = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xF9A0AA09);
 			to.Write(ChatId);
-			to.WriteObject(UserId, cache);
+			to.WriteObject(UserId);
 			to.Write(FwdLimit);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

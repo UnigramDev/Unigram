@@ -10,28 +10,26 @@ namespace Telegram.Api.TL
 		public Int32 NearestDC { get; set; }
 
 		public TLNearestDC() { }
-		public TLNearestDC(TLBinaryReader from, bool cache = false)
+		public TLNearestDC(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.NearestDC; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Country = from.ReadString();
 			ThisDC = from.ReadInt32();
 			NearestDC = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x8E1A1775);
 			to.Write(Country);
 			to.Write(ThisDC);
 			to.Write(NearestDC);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

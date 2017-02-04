@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Unigram.Strings;
+using static Unigram.ViewModels.DialogViewModel;
 
 namespace Unigram.Common
 {
@@ -92,7 +93,7 @@ namespace Unigram.Common
 
                 // TODO: replace last ", " with "and "
 
-                var codesReplace = string.Empty;
+                var codesReplace = "{1}";
                 if (codes.Count > 1)
                 {
                     codesReplace = string.Concat(string.Join(", ", codes.Take(codes.Count - 1)), " and ", codes.Last());
@@ -145,6 +146,7 @@ namespace Unigram.Common
             });
             _actionsCache.Add(typeof(TLMessageActionChannelMigrateFrom), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChannelMigrateFrom));
             _actionsCache.Add(typeof(TLMessageActionHistoryClear), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(string.Empty));
+            _actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(string.Format("{0} unread messages", ((TLMessageActionUnreadMessages)action).Count)));
         }
 
         #region Message
@@ -262,7 +264,19 @@ namespace Unigram.Common
                             {
                                 if (TLMessage.IsSticker(documentMedia.Document))
                                 {
-                                    return ReplaceLinks(Resources.MessageActionPinSticker, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                                    var emoji = string.Empty;
+
+                                    var documentSticker = documentMedia.Document as TLDocument;
+                                    if (documentSticker != null)
+                                    {
+                                        var attribute = documentSticker.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                                        if (attribute != null)
+                                        {
+                                            emoji = $"{attribute.Alt} ";
+                                        }
+                                    }
+
+                                    return ReplaceLinks(Resources.MessageActionPinSticker, new[] { userFullName, emoji }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
                                 }
                                 if (TLMessage.IsVoice(documentMedia.Document))
                                 {

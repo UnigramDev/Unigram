@@ -13,34 +13,32 @@ namespace Telegram.Api.TL
 		public Int32 Seq { get; set; }
 
 		public TLUpdatesCombined() { }
-		public TLUpdatesCombined(TLBinaryReader from, bool cache = false)
+		public TLUpdatesCombined(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdatesCombined; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Updates = TLFactory.Read<TLVector<TLUpdateBase>>(from, cache);
-			Users = TLFactory.Read<TLVector<TLUserBase>>(from, cache);
-			Chats = TLFactory.Read<TLVector<TLChatBase>>(from, cache);
+			Updates = TLFactory.Read<TLVector<TLUpdateBase>>(from);
+			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
+			Chats = TLFactory.Read<TLVector<TLChatBase>>(from);
 			Date = from.ReadInt32();
 			SeqStart = from.ReadInt32();
 			Seq = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x725B04C3);
-			to.WriteObject(Updates, cache);
-			to.WriteObject(Users, cache);
-			to.WriteObject(Chats, cache);
+			to.WriteObject(Updates);
+			to.WriteObject(Users);
+			to.WriteObject(Chats);
 			to.Write(Date);
 			to.Write(SeqStart);
 			to.Write(Seq);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

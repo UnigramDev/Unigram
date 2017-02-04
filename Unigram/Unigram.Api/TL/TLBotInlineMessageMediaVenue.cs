@@ -21,38 +21,36 @@ namespace Telegram.Api.TL
 		public String VenueId { get; set; }
 
 		public TLBotInlineMessageMediaVenue() { }
-		public TLBotInlineMessageMediaVenue(TLBinaryReader from, bool cache = false)
+		public TLBotInlineMessageMediaVenue(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.BotInlineMessageMediaVenue; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Geo = TLFactory.Read<TLGeoPointBase>(from, cache);
+			Geo = TLFactory.Read<TLGeoPointBase>(from);
 			Title = from.ReadString();
 			Address = from.ReadString();
 			Provider = from.ReadString();
 			VenueId = from.ReadString();
-			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
 			to.Write(0x4366232E);
 			to.Write((Int32)Flags);
-			to.WriteObject(Geo, cache);
+			to.WriteObject(Geo);
 			to.Write(Title);
 			to.Write(Address);
 			to.Write(Provider);
 			to.Write(VenueId);
-			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
-			if (cache) WriteToCache(to);
+			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
 		}
 
 		private void UpdateFlags()

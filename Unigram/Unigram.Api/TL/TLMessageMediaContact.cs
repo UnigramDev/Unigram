@@ -11,30 +11,28 @@ namespace Telegram.Api.TL
 		public Int32 UserId { get; set; }
 
 		public TLMessageMediaContact() { }
-		public TLMessageMediaContact(TLBinaryReader from, bool cache = false)
+		public TLMessageMediaContact(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageMediaContact; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			PhoneNumber = from.ReadString();
 			FirstName = from.ReadString();
 			LastName = from.ReadString();
 			UserId = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x5E7D2F39);
 			to.Write(PhoneNumber);
 			to.Write(FirstName);
 			to.Write(LastName);
 			to.Write(UserId);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

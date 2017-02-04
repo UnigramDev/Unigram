@@ -81,6 +81,14 @@ namespace Unigram.Controls
             var width = 0.0;
             var height = 0.0;
 
+            if (Constraint is TLMessageMediaGeo || Constraint is TLMessageMediaVenue)
+            {
+                width = 320;
+                height = 240;
+
+                goto Calculate;
+            }
+
             var photo = Constraint as TLPhoto;
             if (photo != null)
             {
@@ -115,6 +123,15 @@ namespace Unigram.Controls
 
                     goto Calculate;
                 }
+            }
+
+            var inlineResult = Constraint as TLBotInlineResult;
+            if (inlineResult != null)
+            {
+                width = inlineResult.HasW ? inlineResult.W.Value : 0;
+                height = inlineResult.HasH ? inlineResult.H.Value : 0;
+
+                goto Calculate;
             }
 
             Calculate:

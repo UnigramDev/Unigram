@@ -15,28 +15,27 @@ namespace Telegram.Api.TL
 		public TLVector<TLDocumentAttributeBase> Attributes { get; set; }
 
 		public TLDocument() { }
-		public TLDocument(TLBinaryReader from, bool cache = false)
+		public TLDocument(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.Document; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Id = from.ReadInt64();
 			AccessHash = from.ReadInt64();
 			Date = from.ReadInt32();
 			MimeType = from.ReadString();
 			Size = from.ReadInt32();
-			Thumb = TLFactory.Read<TLPhotoSizeBase>(from, cache);
+			Thumb = TLFactory.Read<TLPhotoSizeBase>(from);
 			DCId = from.ReadInt32();
 			Version = from.ReadInt32();
-			Attributes = TLFactory.Read<TLVector<TLDocumentAttributeBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Attributes = TLFactory.Read<TLVector<TLDocumentAttributeBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x87232BC7);
 			to.Write(Id);
@@ -44,11 +43,10 @@ namespace Telegram.Api.TL
 			to.Write(Date);
 			to.Write(MimeType);
 			to.Write(Size);
-			to.WriteObject(Thumb, cache);
+			to.WriteObject(Thumb);
 			to.Write(DCId);
 			to.Write(Version);
-			to.WriteObject(Attributes, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Attributes);
 		}
 	}
 }

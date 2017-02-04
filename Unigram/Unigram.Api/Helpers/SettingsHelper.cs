@@ -155,6 +155,23 @@ namespace Telegram.Api.Helpers
                 ApplicationData.Current.LocalSettings.Values["DatabaseVersion"] = value;
             }
         }
+
+        public static int GifsHash
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("GifsHash"))
+                {
+                    return (int)ApplicationData.Current.LocalSettings.Values["GifsHash"];
+                }
+
+                return 0;
+            }
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values["GifsHash"] = value;
+            }
+        }
     }
 
     //public static class SettingsHelper

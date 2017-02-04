@@ -23,30 +23,28 @@ namespace Telegram.Api.TL
 		public Int32 Port { get; set; }
 
 		public TLDCOption() { }
-		public TLDCOption(TLBinaryReader from, bool cache = false)
+		public TLDCOption(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.DCOption; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
 			IpAddress = from.ReadString();
 			Port = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x5D8C6CC);
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			to.Write(IpAddress);
 			to.Write(Port);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

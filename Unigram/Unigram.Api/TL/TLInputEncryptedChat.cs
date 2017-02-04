@@ -9,26 +9,24 @@ namespace Telegram.Api.TL
 		public Int64 AccessHash { get; set; }
 
 		public TLInputEncryptedChat() { }
-		public TLInputEncryptedChat(TLBinaryReader from, bool cache = false)
+		public TLInputEncryptedChat(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputEncryptedChat; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			ChatId = from.ReadInt32();
 			AccessHash = from.ReadInt64();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xF141B5E1);
 			to.Write(ChatId);
 			to.Write(AccessHash);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

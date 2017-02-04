@@ -52,14 +52,14 @@ namespace Unigram.Controls.Media
                             {
                                 DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
 
-                                if (audioAttribute.HasWaveform)
-                                {
-                                    UpdateSlide(audioAttribute.Waveform);
-                                }
-                                else
-                                {
-                                    UpdateSlide(new byte[] { 0, 0, 0 });
-                                }
+                                //if (audioAttribute.HasWaveform)
+                                //{
+                                //    UpdateSlide(audioAttribute.Waveform);
+                                //}
+                                //else
+                                //{
+                                //    UpdateSlide(new byte[] { 0, 0, 0 });
+                                //}
                             }
                         }
                     }
@@ -211,7 +211,7 @@ namespace Unigram.Controls.Media
                             var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
                         }
 
-                        var settings = new AudioGraphSettings(AudioRenderCategory.Communications);
+                        var settings = new AudioGraphSettings(AudioRenderCategory.Media);
                         settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
 
                         var result = await AudioGraph.CreateAsync(settings);

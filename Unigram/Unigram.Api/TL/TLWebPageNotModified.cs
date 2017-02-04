@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLWebPageNotModified : TLWebPageBase 
 	{
 		public TLWebPageNotModified() { }
-		public TLWebPageNotModified(TLBinaryReader from, bool cache = false)
+		public TLWebPageNotModified(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.WebPageNotModified; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x85849473);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

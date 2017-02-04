@@ -6,37 +6,37 @@ using System.Threading.Tasks;
 
 namespace Telegram.Api.TL
 {
-    public class TLMessageContainer : TLObject
+    public class TLMsgContainer : TLObject
     {
         public List<TLContainerTransportMessage> Messages { get; set; }
 
-        public TLMessageContainer() { }
-        public TLMessageContainer(TLBinaryReader from, bool cache = false)
+        public TLMsgContainer() { }
+        public TLMsgContainer(TLBinaryReader from)
         {
-            Read(from, cache);
+            Read(from);
         }
 
         public override TLType TypeId { get { return TLType.MsgContainer; } }
 
-        public override void Read(TLBinaryReader from, bool cache = false)
+        public override void Read(TLBinaryReader from)
         {
             Messages = new List<TLContainerTransportMessage>();
 
             var count = from.ReadUInt32();
             for (int i = 0; i < count; i++)
             {
-                Messages.Add(new TLContainerTransportMessage(from, cache));
+                Messages.Add(new TLContainerTransportMessage(from));
             }
         }
 
-        public override void Write(TLBinaryWriter to, bool cache = false)
+        public override void Write(TLBinaryWriter to)
         {
             to.Write(0x73F1F8DC);
             to.Write(Messages.Count);
             
             foreach (var item in Messages)
             {
-                item.Write(to, cache);
+                item.Write(to);
             }
         }
     }

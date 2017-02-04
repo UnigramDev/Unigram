@@ -54,9 +54,8 @@ namespace Unigram.Views.Login
 
         private void PhoneNumber_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == Windows.System.VirtualKey.Enter && txtMasterPhoneInputPhoneNumber.Text != null)
+            if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                ViewModel.PhoneNumber = txtMasterPhoneInputPhoneNumber.Text;
                 ViewModel.SendCommand.Execute(sender);
                 e.Handled = true;
             }

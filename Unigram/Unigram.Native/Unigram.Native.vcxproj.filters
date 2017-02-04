@@ -85,6 +85,7 @@
     <ClCompile Include="MediaSource.cpp">
       <Filter>MediaFoundation</Filter>
     </ClCompile>
+    <ClCompile Include="NativeUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -172,5 +173,6 @@
     <ClInclude Include="MediaSink.h">
       <Filter>MediaFoundation</Filter>
     </ClInclude>
+    <ClInclude Include="NativeUtils.h" />
   </ItemGroup>
 </Project>

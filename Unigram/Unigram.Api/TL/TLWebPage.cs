@@ -56,14 +56,14 @@ namespace Telegram.Api.TL
 		public TLPageBase CachedPage { get; set; }
 
 		public TLWebPage() { }
-		public TLWebPage(TLBinaryReader from, bool cache = false)
+		public TLWebPage(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.WebPage; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt64();
@@ -74,19 +74,18 @@ namespace Telegram.Api.TL
 			if (HasSiteName) SiteName = from.ReadString();
 			if (HasTitle) Title = from.ReadString();
 			if (HasDescription) Description = from.ReadString();
-			if (HasPhoto) Photo = TLFactory.Read<TLPhotoBase>(from, cache);
+			if (HasPhoto) Photo = TLFactory.Read<TLPhotoBase>(from);
 			if (HasEmbedUrl) EmbedUrl = from.ReadString();
 			if (HasEmbedType) EmbedType = from.ReadString();
 			if (HasEmbedWidth) EmbedWidth = from.ReadInt32();
 			if (HasEmbedHeight) EmbedHeight = from.ReadInt32();
 			if (HasDuration) Duration = from.ReadInt32();
 			if (HasAuthor) Author = from.ReadString();
-			if (HasDocument) Document = TLFactory.Read<TLDocumentBase>(from, cache);
-			if (HasCachedPage) CachedPage = TLFactory.Read<TLPageBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			if (HasDocument) Document = TLFactory.Read<TLDocumentBase>(from);
+			if (HasCachedPage) CachedPage = TLFactory.Read<TLPageBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -100,16 +99,15 @@ namespace Telegram.Api.TL
 			if (HasSiteName) to.Write(SiteName);
 			if (HasTitle) to.Write(Title);
 			if (HasDescription) to.Write(Description);
-			if (HasPhoto) to.WriteObject(Photo, cache);
+			if (HasPhoto) to.WriteObject(Photo);
 			if (HasEmbedUrl) to.Write(EmbedUrl);
 			if (HasEmbedType) to.Write(EmbedType);
 			if (HasEmbedWidth) to.Write(EmbedWidth.Value);
 			if (HasEmbedHeight) to.Write(EmbedHeight.Value);
 			if (HasDuration) to.Write(Duration.Value);
 			if (HasAuthor) to.Write(Author);
-			if (HasDocument) to.WriteObject(Document, cache);
-			if (HasCachedPage) to.WriteObject(CachedPage, cache);
-			if (cache) WriteToCache(to);
+			if (HasDocument) to.WriteObject(Document);
+			if (HasCachedPage) to.WriteObject(CachedPage);
 		}
 
 		private void UpdateFlags()

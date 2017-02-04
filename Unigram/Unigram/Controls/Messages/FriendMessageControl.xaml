@@ -58,6 +58,7 @@
             <controls:MessageReference 
                 Message="{x:Bind ViewModel.Reply, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
+                Tapped="Reply_Tapped"
                 Grid.Row="1"/>
 
             <RichTextBlock 
@@ -65,7 +66,11 @@
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}" 
                 Style="{ThemeResource BodyRichTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
-                Grid.Row="2"/>
+                Grid.Row="2">
+                <RichTextBlock.Resources>
+                    <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
+                </RichTextBlock.Resources>
+            </RichTextBlock>
 
             <controls:MediaControl
                 x:Name="MediaControl"

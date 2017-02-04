@@ -9,6 +9,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Windows.UI.Xaml.Controls;
@@ -24,7 +25,7 @@ namespace Unigram.ViewModels.Settings
             : base(protoService, cacheService, aggregator)
         {
             _cachedItems = new Dictionary<long, TLAuthorization>();
-            Items = new ObservableCollection<TLAuthorization>();
+            Items = new SortedObservableCollection<TLAuthorization>(new TLAuthorizationComparer());
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -56,16 +57,26 @@ namespace Unigram.ViewModels.Settings
                 {
                     if (_cachedItems.ContainsKey(item.Hash))
                     {
-                        var cached = _cachedItems[item.Hash];
-                        cached.Update(item);
-                        cached.RaisePropertyChanged(() => cached.AppName);
-                        cached.RaisePropertyChanged(() => cached.AppVersion);
-                        cached.RaisePropertyChanged(() => cached.DeviceModel);
-                        cached.RaisePropertyChanged(() => cached.Platform);
-                        cached.RaisePropertyChanged(() => cached.SystemVersion);
-                        cached.RaisePropertyChanged(() => cached.Ip);
-                        cached.RaisePropertyChanged(() => cached.Country);
-                        cached.RaisePropertyChanged(() => cached.DateActive);
+                        if (item.IsCurrent)
+                        {
+                            var cached = _cachedItems[item.Hash];
+                            cached.Update(item);
+                            cached.RaisePropertyChanged(() => cached.AppName);
+                            cached.RaisePropertyChanged(() => cached.AppVersion);
+                            cached.RaisePropertyChanged(() => cached.DeviceModel);
+                            cached.RaisePropertyChanged(() => cached.Platform);
+                            cached.RaisePropertyChanged(() => cached.SystemVersion);
+                            cached.RaisePropertyChanged(() => cached.Ip);
+                            cached.RaisePropertyChanged(() => cached.Country);
+                            cached.RaisePropertyChanged(() => cached.DateActive);
+                        }
+                        else
+                        {
+                            Items.Remove(_cachedItems[item.Hash]);
+                            Items.Add(item);
+
+                            _cachedItems[item.Hash] = item;
+                        }
                     }
                     else
                     {
@@ -132,6 +143,26 @@ namespace Unigram.ViewModels.Settings
                     Execute.ShowDebugMessage("auth.resetAuthotization error " + response.Error);
                 }
             }
+        }
+    }
+
+    public class TLAuthorizationComparer : IComparer<TLAuthorization>
+    {
+        public int Compare(TLAuthorization x, TLAuthorization y)
+        {
+            var epoch = y.DateActive.CompareTo(x.DateActive);
+            if (epoch == 0)
+            {
+                var appName = x.AppName.CompareTo(y.AppName);
+                if (appName == 0)
+                {
+                    return x.Hash.CompareTo(y.Hash);
+                }
+
+                return appName;
+            }
+
+            return epoch;
         }
     }
 }

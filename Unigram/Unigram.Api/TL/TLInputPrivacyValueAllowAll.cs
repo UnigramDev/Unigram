@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLInputPrivacyValueAllowAll : TLInputPrivacyRuleBase 
 	{
 		public TLInputPrivacyValueAllowAll() { }
-		public TLInputPrivacyValueAllowAll(TLBinaryReader from, bool cache = false)
+		public TLInputPrivacyValueAllowAll(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputPrivacyValueAllowAll; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x184B35CE);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

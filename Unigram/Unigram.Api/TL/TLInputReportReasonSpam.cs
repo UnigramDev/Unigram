@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLInputReportReasonSpam : TLReportReasonBase 
 	{
 		public TLInputReportReasonSpam() { }
-		public TLInputReportReasonSpam(TLBinaryReader from, bool cache = false)
+		public TLInputReportReasonSpam(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputReportReasonSpam; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x58DBCAB8);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

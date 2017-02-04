@@ -68,7 +68,7 @@ namespace Unigram.Controls.Messages
                 {
                     var left = -8;
                     var top = -4;
-                    var right = -8;
+                    var right = -12;
                     var bottom = -8;
 
                     if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))

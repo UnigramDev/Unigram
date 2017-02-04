@@ -21,36 +21,34 @@ namespace Telegram.Api.TL
 		public TLVector<TLInputDocumentBase> Stickers { get; set; }
 
 		public TLInputMediaUploadedDocument() { }
-		public TLInputMediaUploadedDocument(TLBinaryReader from, bool cache = false)
+		public TLInputMediaUploadedDocument(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputMediaUploadedDocument; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			File = TLFactory.Read<TLInputFileBase>(from, cache);
+			File = TLFactory.Read<TLInputFileBase>(from);
 			MimeType = from.ReadString();
-			Attributes = TLFactory.Read<TLVector<TLDocumentAttributeBase>>(from, cache);
+			Attributes = TLFactory.Read<TLVector<TLDocumentAttributeBase>>(from);
 			Caption = from.ReadString();
-			if (HasStickers) Stickers = TLFactory.Read<TLVector<TLInputDocumentBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			if (HasStickers) Stickers = TLFactory.Read<TLVector<TLInputDocumentBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
 			to.Write(0xD070F1E9);
 			to.Write((Int32)Flags);
-			to.WriteObject(File, cache);
+			to.WriteObject(File);
 			to.Write(MimeType);
-			to.WriteObject(Attributes, cache);
+			to.WriteObject(Attributes);
 			to.Write(Caption);
-			if (HasStickers) to.WriteObject(Stickers, cache);
-			if (cache) WriteToCache(to);
+			if (HasStickers) to.WriteObject(Stickers);
 		}
 
 		private void UpdateFlags()

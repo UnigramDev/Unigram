@@ -14,30 +14,28 @@ namespace Telegram.Api.TL.Methods.Channels
 		public Int32 Limit { get; set; }
 
 		public TLChannelsGetParticipants() { }
-		public TLChannelsGetParticipants(TLBinaryReader from, bool cache = false)
+		public TLChannelsGetParticipants(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelsGetParticipants; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Channel = TLFactory.Read<TLInputChannelBase>(from, cache);
-			Filter = TLFactory.Read<TLChannelParticipantsFilterBase>(from, cache);
+			Channel = TLFactory.Read<TLInputChannelBase>(from);
+			Filter = TLFactory.Read<TLChannelParticipantsFilterBase>(from);
 			Offset = from.ReadInt32();
 			Limit = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x24D98F92);
-			to.WriteObject(Channel, cache);
-			to.WriteObject(Filter, cache);
+			to.WriteObject(Channel);
+			to.WriteObject(Filter);
 			to.Write(Offset);
 			to.Write(Limit);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

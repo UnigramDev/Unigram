@@ -17,14 +17,14 @@ namespace Telegram.Api.TL
 		public Int32 StartDate { get; set; }
 
 		public TLPhoneCall() { }
-		public TLPhoneCall(TLBinaryReader from, bool cache = false)
+		public TLPhoneCall(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PhoneCall; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Id = from.ReadInt64();
 			AccessHash = from.ReadInt64();
@@ -33,14 +33,13 @@ namespace Telegram.Api.TL
 			ParticipantId = from.ReadInt32();
 			GAOrB = from.ReadByteArray();
 			KeyFingerprint = from.ReadInt64();
-			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from, cache);
-			Connection = TLFactory.Read<TLPhoneConnection>(from, cache);
-			AlternativeConnections = TLFactory.Read<TLVector<TLPhoneConnection>>(from, cache);
+			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from);
+			Connection = TLFactory.Read<TLPhoneConnection>(from);
+			AlternativeConnections = TLFactory.Read<TLVector<TLPhoneConnection>>(from);
 			StartDate = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xFFE6AB67);
 			to.Write(Id);
@@ -50,11 +49,10 @@ namespace Telegram.Api.TL
 			to.Write(ParticipantId);
 			to.WriteByteArray(GAOrB);
 			to.Write(KeyFingerprint);
-			to.WriteObject(Protocol, cache);
-			to.WriteObject(Connection, cache);
-			to.WriteObject(AlternativeConnections, cache);
+			to.WriteObject(Protocol);
+			to.WriteObject(Connection);
+			to.WriteObject(AlternativeConnections);
 			to.Write(StartDate);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

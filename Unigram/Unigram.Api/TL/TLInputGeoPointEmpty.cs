@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLInputGeoPointEmpty : TLInputGeoPointBase 
 	{
 		public TLInputGeoPointEmpty() { }
-		public TLInputGeoPointEmpty(TLBinaryReader from, bool cache = false)
+		public TLInputGeoPointEmpty(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputGeoPointEmpty; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xE4C123D6);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

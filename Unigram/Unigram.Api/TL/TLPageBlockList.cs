@@ -9,26 +9,24 @@ namespace Telegram.Api.TL
 		public TLVector<TLRichTextBase> Items { get; set; }
 
 		public TLPageBlockList() { }
-		public TLPageBlockList(TLBinaryReader from, bool cache = false)
+		public TLPageBlockList(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PageBlockList; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Ordered = from.ReadBoolean();
-			Items = TLFactory.Read<TLVector<TLRichTextBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Items = TLFactory.Read<TLVector<TLRichTextBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x3A58C7F4);
 			to.Write(Ordered);
-			to.WriteObject(Items, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Items);
 		}
 	}
 }

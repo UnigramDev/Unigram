@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLUserStatusLastWeek : TLUserStatusBase 
 	{
 		public TLUserStatusLastWeek() { }
-		public TLUserStatusLastWeek(TLBinaryReader from, bool cache = false)
+		public TLUserStatusLastWeek(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.UserStatusLastWeek; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x7BF09FC);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

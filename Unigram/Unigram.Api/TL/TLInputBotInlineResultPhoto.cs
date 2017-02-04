@@ -9,30 +9,28 @@ namespace Telegram.Api.TL
 		public TLInputPhotoBase Photo { get; set; }
 
 		public TLInputBotInlineResultPhoto() { }
-		public TLInputBotInlineResultPhoto(TLBinaryReader from, bool cache = false)
+		public TLInputBotInlineResultPhoto(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputBotInlineResultPhoto; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Id = from.ReadString();
 			Type = from.ReadString();
-			Photo = TLFactory.Read<TLInputPhotoBase>(from, cache);
-			SendMessage = TLFactory.Read<TLInputBotInlineMessageBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Photo = TLFactory.Read<TLInputPhotoBase>(from);
+			SendMessage = TLFactory.Read<TLInputBotInlineMessageBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xA8D864A7);
 			to.Write(Id);
 			to.Write(Type);
-			to.WriteObject(Photo, cache);
-			to.WriteObject(SendMessage, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Photo);
+			to.WriteObject(SendMessage);
 		}
 	}
 }

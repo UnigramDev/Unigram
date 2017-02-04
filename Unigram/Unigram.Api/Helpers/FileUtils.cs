@@ -110,7 +110,7 @@ namespace Telegram.Api.Helpers
             lock (itemsSyncRoot)
             {
                 part.Status = PartStatus.Processed;
-                canceled = part.ParentItem.Canceled;
+                canceled = part.ParentItem.IsCancelled;
                 if (!canceled)
                 {
                     flag = Enumerable.All(part.ParentItem.Parts, (UploadablePart x) => x.Status == PartStatus.Processed);
@@ -537,7 +537,7 @@ namespace Telegram.Api.Helpers
             {
                 using (var to = new TLBinaryWriter(file))
                 {
-                    data.Write(to, true);
+                    data.Write(to);
                 }
             }
             File.Copy(Path.Combine(ApplicationData.Current.LocalFolder.Path, text), Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName), true);

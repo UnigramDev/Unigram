@@ -23,28 +23,26 @@ namespace Telegram.Api.TL.Methods.Channels
 		public String About { get; set; }
 
 		public TLChannelsCreateChannel() { }
-		public TLChannelsCreateChannel(TLBinaryReader from, bool cache = false)
+		public TLChannelsCreateChannel(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelsCreateChannel; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Title = from.ReadString();
 			About = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xF4893D7F);
 			to.Write((Int32)Flags);
 			to.Write(Title);
 			to.Write(About);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

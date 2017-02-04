@@ -15,32 +15,30 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int32 Limit { get; set; }
 
 		public TLMessagesSearchGlobal() { }
-		public TLMessagesSearchGlobal(TLBinaryReader from, bool cache = false)
+		public TLMessagesSearchGlobal(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSearchGlobal; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Q = from.ReadString();
 			OffsetDate = from.ReadInt32();
-			OffsetPeer = TLFactory.Read<TLInputPeerBase>(from, cache);
+			OffsetPeer = TLFactory.Read<TLInputPeerBase>(from);
 			OffsetId = from.ReadInt32();
 			Limit = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x9E3CACB0);
 			to.Write(Q);
 			to.Write(OffsetDate);
-			to.WriteObject(OffsetPeer, cache);
+			to.WriteObject(OffsetPeer);
 			to.Write(OffsetId);
 			to.Write(Limit);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -10,28 +10,26 @@ namespace Telegram.Api.TL
 		public Int32 H { get; set; }
 
 		public TLDocumentAttributeVideo() { }
-		public TLDocumentAttributeVideo(TLBinaryReader from, bool cache = false)
+		public TLDocumentAttributeVideo(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.DocumentAttributeVideo; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Duration = from.ReadInt32();
 			W = from.ReadInt32();
 			H = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x5910CCCB);
 			to.Write(Duration);
 			to.Write(W);
 			to.Write(H);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

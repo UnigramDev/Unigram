@@ -9,6 +9,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,24 +25,26 @@ namespace Unigram.Controls
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MessageReference : Grid
+    public sealed partial class MessageReference : UserControl
     {
         public MessageReference()
         {
             InitializeComponent();
         }
 
-        public string Title
-        {
-            get
-            {
-                return TitleLabel.Text;
-            }
-            set
-            {
-                TitleLabel.Text = value;
-            }
-        }
+        //public string Title
+        //{
+        //    get
+        //    {
+        //        return TitleLabel.Text;
+        //    }
+        //    set
+        //    {
+        //        TitleLabel.Text = value;
+        //    }
+        //}
+
+        public string Title { get; set; }
 
         #region Message
 
@@ -400,7 +403,7 @@ namespace Unigram.Controls
                     MessageLabel.Text += photoMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(photoMedia);
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(photoMedia, "thumbnail");
             }
 
             return true;
@@ -458,7 +461,7 @@ namespace Unigram.Controls
             {
                 ServiceLabel.Text = $"🎮 {gameMedia.Game.Title}";
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(gameMedia.Game.Photo);
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(gameMedia.Game.Photo, "thumbnail");
             }
 
             return true;
@@ -573,7 +576,7 @@ namespace Unigram.Controls
                     ServiceLabel.Text = string.Empty;
                     MessageLabel.Text = message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
 
-                    ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(webPage.Photo);
+                    ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(webPage.Photo, "thumbnail");
                 }
                 else
                 {
@@ -605,7 +608,7 @@ namespace Unigram.Controls
                     MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document);
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, "thumbnail");
             }
 
             return true;
@@ -684,7 +687,7 @@ namespace Unigram.Controls
                         if (ThumbRoot != null)
                             ThumbRoot.Visibility = Visibility.Visible;
 
-                        ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document);
+                        ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, "thumbnail");
                     }
                     else
                     {
@@ -724,8 +727,23 @@ namespace Unigram.Controls
 
         private bool SetServicePhotoTemplate(TLMessageService message, string title)
         {
-            Visibility = Visibility.Collapsed;
-            return false;
+            Visibility = Visibility.Visible;
+
+            FindName(nameof(ThumbRoot));
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Visible;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = string.Empty;
+            MessageLabel.Text = ServiceHelper.Convert(message);
+
+            var action = message.Action as TLMessageActionChatEditPhoto;
+            if (action != null)
+            {
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(action.Photo, "thumbnail");
+            }
+
+            return true;
         }
 
         private bool SetEmptyTemplate(TLMessage message, string title)
@@ -768,5 +786,23 @@ namespace Unigram.Controls
             var from = message.From?.FullName ?? string.Empty;
             return from;
         }
+
+        #region Cursor
+
+        // Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 1);
+
+        protected override void OnPointerEntered(PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 1);
+            base.OnPointerEntered(e);
+        }
+
+        protected override void OnPointerExited(PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
+            base.OnPointerExited(e);
+        }
+
+        #endregion
     }
 }

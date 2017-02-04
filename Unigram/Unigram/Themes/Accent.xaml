@@ -16,10 +16,7 @@
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#ffffff"/>
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#007ee5"/>
 
-            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
-
-            <Thickness x:Key="MessageContentPadding">8,4,8,6</Thickness>
-            <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#FFFFFF"/>
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
 
@@ -45,10 +42,7 @@
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#ffffff"/>
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#007ee5"/>
 
-            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
-
-            <Thickness x:Key="MessageContentPadding">8,4,8,6</Thickness>
-            <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#000000"/>
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
 
@@ -63,7 +57,11 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+
+    <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
+    <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
     <CornerRadius x:Key="MessageCornerRadius">0</CornerRadius>
+    
     <SolidColorBrush x:Key="TelegramDialogLabelStateBrush" Color="#64BC54"/>
     <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramForegroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
@@ -73,7 +71,7 @@
     <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>
     <SolidColorBrush x:Key="TelegramDialogUnreadBadgeBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#BBBBBB"/>
-    <SolidColorBrush x:Key="TelegramDialogUnreadLabelBrush" Color="{StaticResource SystemAltHighColor}"/>
+    <SolidColorBrush x:Key="TelegramDialogUnreadLabelBrush" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="TelegramDialogVerifiedForegroundBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="{StaticResource SystemAltHighColor}"/>
 </ResourceDictionary>

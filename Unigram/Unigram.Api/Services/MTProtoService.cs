@@ -1061,9 +1061,9 @@ namespace Telegram.Api.Services
             {
                 ids.Add(response.MsgId);
             }
-            if (response.Query is TLMessageContainer)
+            if (response.Query is TLMsgContainer)
             {
-                var container = (TLMessageContainer)response.Query;
+                var container = (TLMsgContainer)response.Query;
                 foreach (var message in container.Messages)
                 {
                     if (message.SeqNo % 2 == 1)
@@ -1087,9 +1087,9 @@ namespace Telegram.Api.Services
             {
                 ids.Add(response.MsgId);
             }
-            if (response.Query is TLMessageContainer)
+            if (response.Query is TLMsgContainer)
             {
-                var container = (TLMessageContainer)response.Query;
+                var container = (TLMsgContainer)response.Query;
                 foreach (var message in container.Messages)
                 {
                     if (message.SeqNo % 2 == 1)
@@ -1161,7 +1161,7 @@ namespace Telegram.Api.Services
                 var encryptedMessage = new TLEncryptedTransportMessage();
                 using (var reader = new TLBinaryReader(bytes))
                 {
-                    encryptedMessage.Read(reader, false);
+                    encryptedMessage.Read(reader);
                 }
 
                 byte[] authKey2 = null;

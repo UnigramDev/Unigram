@@ -60,7 +60,7 @@ namespace Unigram.Core.Services
 
             using (var from = new TLBinaryReader(bytes))
             {
-                return TLFactory.Read<T>(from, true);
+                return TLFactory.Read<T>(from);
             }
         }
 
@@ -78,7 +78,7 @@ namespace Unigram.Core.Services
                 {
                     using (var to = new TLBinaryWriter(stream))
                     {
-                        obj.Write(to, true);
+                        obj.Write(to);
                     }
 
                     return BitConverter.ToString(stream.ToArray()).Replace("-", string.Empty);

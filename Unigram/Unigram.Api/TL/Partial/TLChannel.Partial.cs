@@ -50,17 +50,17 @@ namespace Telegram.Api.TL
             }
         }
 
-        public override void ReadFromCache(TLBinaryReader from)
-        {
-            ((ITLReadMaxId)this).ReadInboxMaxId = from.ReadInt32();
-            ((ITLReadMaxId)this).ReadOutboxMaxId = from.ReadInt32();
-        }
+        //public override void ReadFromCache(TLBinaryReader from)
+        //{
+        //    ((ITLReadMaxId)this).ReadInboxMaxId = from.ReadInt32();
+        //    ((ITLReadMaxId)this).ReadOutboxMaxId = from.ReadInt32();
+        //}
 
-        public override void WriteToCache(TLBinaryWriter to)
-        {
-            to.Write(((ITLReadMaxId)this).ReadInboxMaxId);
-            to.Write(((ITLReadMaxId)this).ReadOutboxMaxId);
-        }
+        //public override void WriteToCache(TLBinaryWriter to)
+        //{
+        //    to.Write(((ITLReadMaxId)this).ReadInboxMaxId);
+        //    to.Write(((ITLReadMaxId)this).ReadOutboxMaxId);
+        //}
 
         public event PropertyChangedEventHandler PropertyChanged;
         public override void RaisePropertyChanged(string propertyName)
@@ -71,6 +71,11 @@ namespace Telegram.Api.TL
         public TLInputPeerBase ToInputPeer()
         {
             return new TLInputPeerChannel { ChannelId = Id, AccessHash = AccessHash.Value };
+        }
+
+        public TLInputChannelBase ToInputChannel()
+        {
+            return new TLInputChannel { ChannelId = Id, AccessHash = AccessHash.Value };
         }
     }
 }

@@ -57,6 +57,35 @@ namespace Unigram.Views
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+
+            lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+        }
+
+        private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
+            {
+                ManagePanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ManagePanel.Visibility = Visibility.Visible;
+            }
+
+            ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
+            ViewModel.MessagesDeleteCommand.RaiseCanExecuteChanged();
+        }
+
+        private void Manage_Click(object sender, RoutedEventArgs e)
+        {
+            if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
+            {
+                lvDialogs.SelectionMode = ListViewSelectionMode.Multiple;
+            }
+            else
+            {
+                lvDialogs.SelectionMode = ListViewSelectionMode.None;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -66,8 +95,6 @@ namespace Unigram.Views
 
             _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
-
-            lvDialogs.ScrollingHost.ViewChanged += LvScroller_ViewChanged;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -80,7 +107,7 @@ namespace Unigram.Views
         {
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
-            ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
+            //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -91,14 +118,6 @@ namespace Unigram.Views
 
         //private bool _isAlreadyLoading;
         //private bool _isAlreadyCalled;
-
-        private async void LvScroller_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            if (lvDialogs.ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
-            {
-                await ViewModel.LoadNextSliceAsync();
-            }
-        }
 
         private void CheckMessageBoxEmpty()
         {
@@ -288,6 +307,27 @@ namespace Unigram.Views
             ViewModel.KeyboardButtonExecute(e.Button, null);
         }
 
+        private void Stickers_Click(object sender, RoutedEventArgs e)
+        {
+            StickersPanel.IsHitTestVisible = !StickersPanel.IsHitTestVisible;
+            StickersPanel.Opacity = StickersPanel.IsHitTestVisible ? 1 : 0;
+        }
+
+        private void ProfileBubble_Click(object sender, RoutedEventArgs e)
+        {
+            var control = sender as FrameworkElement;
+            var message = control.DataContext as TLMessage;
+            if (message != null && message.HasFromId)
+            {
+                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.FromId.Value });
+            }
+        }
+
+        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.SelectedMessages = new List<TLMessageBase>(lvDialogs.SelectedItems.Cast<TLMessageBase>());
+        }
+
         #region Context menu
 
         private void MessageReply_Loaded(object sender, RoutedEventArgs e)
@@ -306,7 +346,19 @@ namespace Unigram.Views
                     //        element.Visibility = messageCommon.ToId.Id == channel.MigratedFromChatId ? Visibility.Collapsed : Visibility.Visible;
                     //    }
                     //}
+
+                    var channel = ViewModel.With as TLChannel;
+                    if (channel != null)
+                    {
+                        if (channel.IsBroadcast)
+                        {
+                            element.Visibility = channel.IsCreator || channel.IsEditor ? Visibility.Visible : Visibility.Collapsed;
+                            return;
+                        }
+                    }
                 }
+
+                element.Visibility = Visibility.Visible;
             }
         }
 
@@ -319,12 +371,12 @@ namespace Unigram.Views
                 if (messageCommon != null)
                 {
                     var channel = ViewModel.With as TLChannel;
-                    if (channel != null && (channel.IsEditor || channel.IsCreator))
+                    if (channel != null && (channel.IsEditor || channel.IsCreator) && !channel.IsBroadcast)
                     {
                         if (messageCommon.ToId is TLPeerChannel)
                         {
                             element.Visibility = Visibility.Visible;
-                            element.Text = ViewModel.PinnedMessage != null && ViewModel.PinnedMessage.Id == messageCommon.Id ? "Unpin" : "Pin";
+                            element.Text = ViewModel.PinnedMessage != null && ViewModel.PinnedMessage.Id == messageCommon.Id ? "Unpin message" : "Pin message";
                             return;
                         }
                     }
@@ -342,15 +394,15 @@ namespace Unigram.Views
                 var message = element.DataContext as TLMessage;
                 if (message != null)
                 {
-                    var channel = ViewModel.With as TLChannel;
-                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsCreator && channel.IsEditor)) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                    if (message.IsSticker())
                     {
-                        if (message.IsSticker())
-                        {
-                            element.Visibility = Visibility.Collapsed;
-                            return;
-                        }
+                        element.Visibility = Visibility.Collapsed;
+                        return;
+                    }
 
+                    var channel = ViewModel.With as TLChannel;
+                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                    {
                         var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
                         var config = ViewModel.CacheService.GetConfig();
                         if (config != null && message.Date + config.EditTimeLimit < date)
@@ -459,17 +511,21 @@ namespace Unigram.Views
             }
         }
 
-        #endregion
-
-        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
+        private void MessageStickerPackInfo_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.SendStickerCommand.Execute(e.ClickedItem);
+
         }
 
-        private void Stickers_Click(object sender, RoutedEventArgs e)
+        private void MessageSaveStickerAs_Loaded(object sender, RoutedEventArgs e)
         {
-            StickersPanel.IsHitTestVisible = !StickersPanel.IsHitTestVisible;
-            StickersPanel.Opacity = StickersPanel.IsHitTestVisible ? 1 : 0;
+
+        }
+
+        #endregion
+
+        private void MessageSaveSticker_Loaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 

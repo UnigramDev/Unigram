@@ -22,32 +22,30 @@ namespace Telegram.Api.TL
 		public TLVector<TLMessageEntityBase> Entities { get; set; }
 
 		public TLBotInlineMessageText() { }
-		public TLBotInlineMessageText(TLBinaryReader from, bool cache = false)
+		public TLBotInlineMessageText(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.BotInlineMessageText; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Message = from.ReadString();
-			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from, cache);
-			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from);
+			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
 			to.Write(0x8C7F65E2);
 			to.Write((Int32)Flags);
 			to.Write(Message);
-			if (HasEntities) to.WriteObject(Entities, cache);
-			if (HasReplyMarkup) to.WriteObject(ReplyMarkup, cache);
-			if (cache) WriteToCache(to);
+			if (HasEntities) to.WriteObject(Entities);
+			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
 		}
 
 		private void UpdateFlags()

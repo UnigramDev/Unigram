@@ -29,26 +29,25 @@ namespace Telegram.Api.TL
 		public TLMessageActionBase Action { get; set; }
 
 		public TLMessageService() { }
-		public TLMessageService(TLBinaryReader from, bool cache = false)
+		public TLMessageService(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageService; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
 			if (HasFromId) FromId = from.ReadInt32();
-			ToId = TLFactory.Read<TLPeerBase>(from, cache);
+			ToId = TLFactory.Read<TLPeerBase>(from);
 			if (HasReplyToMsgId) ReplyToMsgId = from.ReadInt32();
 			Date = from.ReadInt32();
-			Action = TLFactory.Read<TLMessageActionBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Action = TLFactory.Read<TLMessageActionBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -56,11 +55,10 @@ namespace Telegram.Api.TL
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			if (HasFromId) to.Write(FromId.Value);
-			to.WriteObject(ToId, cache);
+			to.WriteObject(ToId);
 			if (HasReplyToMsgId) to.Write(ReplyToMsgId.Value);
 			to.Write(Date);
-			to.WriteObject(Action, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Action);
 		}
 
 		private void UpdateFlags()

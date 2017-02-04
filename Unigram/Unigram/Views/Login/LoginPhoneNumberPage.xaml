@@ -179,150 +179,87 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid x:Name="Header"
-              Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
-              Height="{ThemeResource AppBarThemeCompactHeight}"
-              Canvas.ZIndex="2"
-              Grid.Row="0">
-            <TextBlock x:Name="tblPivotTitle"
-                       Text="UNIGRAM"
-                       Style="{ThemeResource BaseTextBlockStyle}"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       Margin="12,0" />
+        <Grid x:Name="Header" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Unigram" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+            <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;" Grid.Column="1"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
-        <RelativePanel x:Name="rpMain" Grid.Row="1" >
-            <!-- Master - Titlebar -->
-            <!--<RelativePanel x:Name="rpMasterTitlebar"
-                 Background="{ThemeResource SystemControlBackgroundListMediumBrush}"
-                 Style="{StaticResource StyleRPMasterTitleBar}">
-                 <TextBlock x:Name="tblMasterTitle"
-                 x:Uid="Login-Titlebar-Title"
-                 Text="WELCOME TO UNIGRAM" 
-                 Style="{ThemeResource BaseTextBlockStyle}"
-                 Padding="12,0"
-                 RelativePanel.AlignVerticalCenterWithPanel="True"/>
-                 </RelativePanel>-->
+        
+        <Grid x:Name="ContentPanel" Padding="12,32" MaxWidth="360" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Uid="Login-PhoneNumber-Title" Text="Your phone number" Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock x:Uid="Login-PhoneNumber-Intro"
+                       Text="Please select the country you live in and enter your phone number"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       Padding="0,8,0,16"
+                       Grid.Row="1"/>
 
-            <!-- Master - Main content -->
-            <RelativePanel x:Name="rpMasterContent"
-                           RelativePanel.AlignLeftWithPanel="True"
-                           RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.AlignBottomWithPanel="True"
-                           RelativePanel.AlignTopWithPanel="True">
-                <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
-                              RelativePanel.AlignRightWithPanel="True"
-                              RelativePanel.AlignBottomWithPanel="True"
-                              RelativePanel.AlignTopWithPanel="True"
-                              VerticalAlignment="Stretch">
-                    <RelativePanel Padding="16" x:Name="rpScrollContent">
-                        
+            <ComboBox x:Uid="Login-PhoneNumber-CountryInput"
+                      ItemsSource="{Binding Source={StaticResource Countries}}"
+                      SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
+                      Header="Country:"
+                      MinWidth="280"
+                      PlaceholderText="Select your country..."
+                      HorizontalAlignment="Stretch"
+                      Grid.Row="2">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
 
-                        <!-- Master - Phone Number -->
-                        <RelativePanel x:Name="rpMasterPhone"
-                                       Visibility="Visible"
-                                       Padding="0,16,0,0"
-                                       RelativePanel.AlignLeftWithPanel="True"
-                                       RelativePanel.AlignRightWithPanel="True" 
-                                       RelativePanel.AlignBottomWithPanel="True"
-                                       RelativePanel.AlignTopWithPanel="True"
-                                       VerticalAlignment="Stretch">
-                            <TextBlock x:Name="tblMasterPhoneTitle"
-                                       x:Uid="Login-PhoneNumber-Title"
-                                       Text="Your phone number"
-                                       Style="{ThemeResource TitleTextBlockStyle}"
-                                       RelativePanel.AlignLeftWithPanel="True"
-                                       RelativePanel.AlignRightWithPanel="True"
-                                       RelativePanel.AlignTopWithPanel="True"/>
-                            <TextBlock x:Name="tblMasterPhoneIntro"
-                                       x:Uid="Login-PhoneNumber-Intro"
-                                       Text="Please select the country you live in and enter your phone number"
-                                       TextWrapping="Wrap"
-                                       FontSize="14"
-                                       Padding="0,8,0,0"
-                                       RelativePanel.AlignLeftWithPanel="True"
-                                       RelativePanel.AlignRightWithPanel="True"
-                                       RelativePanel.Below="tblMasterPhoneTitle" />
-                            <RelativePanel x:Name="rpMasterPhoneInput"
-                                           Padding="0,0,0,0"
-                                           RelativePanel.AlignLeftWithPanel="True"
-                                           RelativePanel.AlignRightWithPanel="True"
-                                           RelativePanel.AlignBottomWithPanel="True"
-                                           RelativePanel.Below="tblMasterPhoneIntro" 
-                                           VerticalAlignment="Stretch">
-                                <!-- The user can select his/her country here -->
-                                <ComboBox x:Name="cboxMasterPhoneInputCounty"
-                                          x:Uid="Login-PhoneNumber-CountryInput"
-                                          ItemsSource="{Binding Source={StaticResource Countries}}"
-                                          SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
-                                          Header="Country:"
-                                          MinWidth="280"
-                                          PlaceholderText="Select your country..."
-                                          Margin="0,16,0,0"
-                                          HorizontalAlignment="Stretch"
-                                          RelativePanel.AlignLeftWithPanel="True"
-                                          RelativePanel.AlignRightWithPanel="True"
-                                          RelativePanel.AlignTopWithPanel="True">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Name}"/>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
+            <Grid Margin="0,12,0,8" Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-                                <!-- The user can enter their phone number here -->
-                                <controls:UpdateTextBox
-                                    x:Name="txtMasterPhoneInputCountryCode"
-                                    x:Uid="Login-PhoneNumber-CountryCode"
-                                    Text="{Binding PhoneCode, Mode=TwoWay}"
-                                    Margin="0,12,0,0"
-                                    Width="30"
-                                    Header="Code:"
-                                    InputScope="TelephoneNumber"
-                                    PlaceholderText="+"
-                                    RelativePanel.AlignLeftWithPanel="True"
-                                    RelativePanel.Below="cboxMasterPhoneInputCounty" Style="{StaticResource PhoneCodeTextBoxStyle}"/>
-                                <controls:UpdateTextBox
-                                    x:Name="txtMasterPhoneInputPhoneNumber"
-                                    x:Uid="Login-PhoneNumber-PhoneNumber"
-                                    Text="{Binding PhoneNumber, Mode=TwoWay}"
-                                    Margin="80,12,0,0"
-                                    MinWidth="200"
-                                    InputScope="TelephoneNumber"
-                                    IsTextPredictionEnabled="False"
-                                    KeyDown="PhoneNumber_KeyDown"
-                                    Header="Phone number:"
-                                    PlaceholderText="Enter your phone number" 
-                                    HorizontalAlignment="Stretch"
-                                    RelativePanel.AlignRightWithPanel="True"
-                                    RelativePanel.AlignLeftWithPanel="True"
-                                    RelativePanel.Below="cboxMasterPhoneInputCounty"/>
-                                <Button x:Name="btnMasterPhoneInputConfirm"
-                                        x:Uid="BTN-Next"
-                                        Command="{x:Bind ViewModel.SendCommand}"
-                                        Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                        Content="Next"
-                                        Padding="24,4"
-                                        MinWidth="160"
-                                        Margin="0,32,0,16"         
-                                        RelativePanel.Below="txtMasterPhoneInputPhoneNumber"
-                                        RelativePanel.AlignRightWithPanel="True"/>
-                                <ProgressBar x:Name="pbarLoadingBar" 
-                                             Width="{Binding ElementName=rpMasterPhoneInput, Path=ActualWidth}"
-                                             Margin="0,10,0,0"
-                                             RelativePanel.Below="txtMasterPhoneInputPhoneNumber" 
-                                             IsIndeterminate="True"
-                                             Background="{ThemeResource FocusVisualBlackStrokeThemeBrush}"
-                                             Visibility="{x:Bind ViewModel.pBarVisibility,Mode=OneWay}">
-                                </ProgressBar>
-                            </RelativePanel>
-                        </RelativePanel>
-                        <!-- END OF Master - Phone Number -->
-                    </RelativePanel>
-                </ScrollViewer>
-            </RelativePanel>
-            <!-- END OF Master - Main content-->
-        </RelativePanel>
+                <!-- The user can enter their phone number here -->
+                <controls:UpdateTextBox x:Uid="Login-PhoneNumber-CountryCode"
+                                        Text="{Binding PhoneCode, Mode=TwoWay}"
+                                        Margin="0,0,12,0"
+                                        Width="30"
+                                        Header="Code:"
+                                        InputScope="TelephoneNumber"
+                                        PlaceholderText="+"
+                                        Style="{StaticResource PhoneCodeTextBoxStyle}"/>
+                <controls:UpdateTextBox x:Uid="Login-PhoneNumber-PhoneNumber"
+                                        Text="{Binding PhoneNumber, Mode=TwoWay}"
+                                        MinWidth="200"
+                                        InputScope="TelephoneNumber"
+                                        IsTextPredictionEnabled="False"
+                                        KeyDown="PhoneNumber_KeyDown"
+                                        Header="Phone number:"
+                                        PlaceholderText="Enter your phone number" 
+                                        Grid.Column="1"/>
+
+            </Grid>
+
+            <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
+
+            <Button x:Name="NextButton"
+                    x:Uid="BTN-Next"
+                    Command="{x:Bind ViewModel.SendCommand}"
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                    HorizontalAlignment="Stretch"
+                    Content="Next"
+                    Margin="0,8,0,0"         
+                    Grid.Row="5"
+                    Visibility="Collapsed"/>
+
+        </Grid>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="DisplayModeStates">
@@ -331,26 +268,16 @@
                         <AdaptiveTrigger MinWindowWidth="600" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
-                        <Setter Target="rpScrollContent.HorizontalAlignment" Value="Center"/>
-                        <Setter Target="rpScrollContent.Width" Value="400"/>
-                        <Setter Target="rpScrollContent.VerticalAlignment" Value="Center"/>
-                        <Setter Target="rpMasterPhoneInput.HorizontalAlignment" Value="Center"/>
-                        <Setter Target="btnMasterPhoneInputConfirm.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
-                        <Setter Target="btnMasterPhoneInputConfirm.Width" Value="200"/>
-                        <Setter Target="btnMasterPhoneInputConfirm.Margin" Value="0,24,0,0"/>
-                        <Setter Target="btnMasterPhoneInputConfirm.(RelativePanel.Below)" Value="txtMasterPhoneInputPhoneNumber"/>
-                        <Setter Target="btnMasterPhoneInputConfirm.(RelativePanel.AlignRightWithPanel)" Value="False"/>
+                        <Setter Target="ContentPanel.VerticalAlignment" Value="Center" />
                         <Setter Target="Header.Visibility" Value="Collapsed"/>
+                        <Setter Target="NextGlyph.Visibility" Value="Collapsed"/>
+                        <Setter Target="NextButton.Visibility" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Compact">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
-                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>

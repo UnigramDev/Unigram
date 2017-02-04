@@ -14,6 +14,15 @@ namespace Unigram.Common
     {
         public static Tuple<string, DateTime> GetLastSeen(TLUser user)
         {
+            if (user.Id == 777000)
+            {
+                return Tuple.Create("Service notifications", DateTime.Now);
+            }
+            if (user.IsBot)
+            {
+                // TODO: messages access
+                return Tuple.Create("Bot", DateTime.Now);
+            }
             if (user.IsSelf)
             {
                 return Tuple.Create("Chat with yourself", DateTime.Now);
@@ -57,6 +66,15 @@ namespace Unigram.Common
 
         public static string GetLastSeenLabel(TLUser user)
         {
+            if (user.Id == 777000)
+            {
+                return "Service notifications";
+            }
+            if (user.IsBot)
+            {
+                // TODO: messages access
+                return "Bot";
+            }
             if (user.IsSelf)
             {
                 return "Chat with yourself";
@@ -89,29 +107,23 @@ namespace Unigram.Common
                 }
             }
 
-            if (user.IsBot)
-            {
-                // TODO
-            }
-
             // Debugger.Break();
             return "Last seen a long time ago";
         }
 
-        public static Tuple<string, DateTime> GetLastSeenTime(TLUser user)
+        public static string GetLastSeenTime(TLUser user)
         {
             if (!user.IsSelf&&user.HasStatus && user.Status != null && user.Status.TypeId == TLType.UserStatusOffline)
             {
                 var status = user.Status as TLUserStatusOffline;
                 var seen = TLUtils.ToDateTime(status.WasOnline);
                 var now = DateTime.Now;
-                var time = ((now.Date == seen.Date) ? "today at " : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? "yesterday at " : new DateTimeFormatter("shortdate").Format(seen)+" ")) + new DateTimeFormatter("shorttime").Format(seen);
-                return Tuple.Create($"Last seen {time}", seen); ;
+                var time = ((now.Date == seen.Date) ? "today at " : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? "yesterday at " : BindConvert.Current.ShortDate.Format(seen) + " ")) + BindConvert.Current.ShortTime.Format(seen);
+                return $"Last seen {time}";
             }
             else
             {
-                var result = GetLastSeen(user);
-                return result;
+                return GetLastSeenLabel(user);
             }
         }
     }

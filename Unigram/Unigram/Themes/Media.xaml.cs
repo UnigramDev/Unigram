@@ -82,7 +82,7 @@ namespace Unigram.Themes
 
         private async void DownloadDocument_Click(object sender, RoutedEventArgs e)
         {
-            var border = sender as DownloadButton;
+            var border = sender as TransferButton;
             var message = border.DataContext as TLMessage;
             var documentMedia = message.Media as TLMessageMediaDocument;
             if (documentMedia != null)
@@ -99,19 +99,27 @@ namespace Unigram.Themes
                     }
                     else
                     {
-                        var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
-                        if (documentMedia.Progress > 0)
+                        if (documentMedia.DownloadingProgress > 0)
                         {
+                            var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                             manager.CancelDownloadFile(document);
 
-                            border.UpdateGlyph();
+                            border.Update();
+                        }
+                        else if (documentMedia.UploadingProgress > 0)
+                        {
+                            var manager = UnigramContainer.Instance.ResolveType<IUploadDocumentManager>();
+                            manager.CancelUploadFile(document.Id);
+
+                            border.Update();
                         }
                         else
                         {
+                            var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                             var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
                             if (download != null)
                             {
-                                border.UpdateGlyph();
+                                border.Update();
 
                                 var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
                                 await Launcher.LaunchFileAsync(file);

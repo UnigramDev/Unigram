@@ -15,6 +15,8 @@ namespace Unigram.Selectors
 
         public DataTemplate ChannelTemplate { get; set; }
 
+        public DataTemplate ChannelForbiddenTemplate { get; set; }
+
         public DataTemplate MessageTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
@@ -29,6 +31,12 @@ namespace Unigram.Selectors
             if (channel != null)
             {
                 return ChannelTemplate;
+            }
+
+            var channelForbidden = item as TLChannelForbidden;
+            if( channelForbidden != null)
+            {
+                return ChannelForbiddenTemplate;
             }
 
             var dialog = item as TLDialog;

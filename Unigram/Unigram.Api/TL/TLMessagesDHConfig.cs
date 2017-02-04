@@ -10,30 +10,28 @@ namespace Telegram.Api.TL
 		public Int32 Version { get; set; }
 
 		public TLMessagesDHConfig() { }
-		public TLMessagesDHConfig(TLBinaryReader from, bool cache = false)
+		public TLMessagesDHConfig(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesDHConfig; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			G = from.ReadInt32();
 			P = from.ReadByteArray();
 			Version = from.ReadInt32();
 			Random = from.ReadByteArray();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x2C221EDD);
 			to.Write(G);
 			to.WriteByteArray(P);
 			to.Write(Version);
 			to.WriteByteArray(Random);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

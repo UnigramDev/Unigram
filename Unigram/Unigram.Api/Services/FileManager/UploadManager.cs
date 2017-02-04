@@ -62,17 +62,19 @@ namespace Telegram.Api.Services.FileManager
                 for (var i = 0; i < _items.Count; i++)
                 {
                     var item = _items[i];
-                    if (item.Canceled)
+                    if (item.IsCancelled)
                     {
                         _items.RemoveAt(i--);
                         try
                         {
-                            _eventAggregator.Publish(new UploadingCanceledEventArgs(item));
-
                             // TODO: verify
                             if (item.Callback != null)
                             {
                                 item.Callback.TrySetResult(null);
+                            }
+                            else
+                            {
+                                _eventAggregator.Publish(new UploadingCanceledEventArgs(item));
                             }
                         }
                         catch (Exception e)
@@ -113,7 +115,7 @@ namespace Telegram.Api.Services.FileManager
                     bool result = PutFile(part.ParentItem.FileId, part.FilePart, bytes);
                     while (!result)
                     {
-                        if (part.ParentItem.Canceled)
+                        if (part.ParentItem.IsCancelled)
                         {
                             return;
                         }
@@ -125,7 +127,7 @@ namespace Telegram.Api.Services.FileManager
                     bool result = PutBigFile(part.ParentItem.FileId, part.FilePart, part.ParentItem.Parts.Count, bytes);
                     while (!result)
                     {
-                        if (part.ParentItem.Canceled)
+                        if (part.ParentItem.IsCancelled)
                         {
                             return;
                         }
@@ -143,7 +145,7 @@ namespace Telegram.Api.Services.FileManager
                 lock (_itemsSyncRoot)
                 {
                     part.Status = PartStatus.Processed;
-                    isCanceled = part.ParentItem.Canceled;
+                    isCanceled = part.ParentItem.IsCancelled;
                     if (!isCanceled)
                     {
                         isComplete = part.ParentItem.Parts.All(x => x.Status == PartStatus.Processed);
@@ -362,7 +364,7 @@ namespace Telegram.Api.Services.FileManager
 
                 if (item != null)
                 {
-                    item.Canceled = true;
+                    item.IsCancelled = true;
                     //_items.Remove(item);
                 }
             }

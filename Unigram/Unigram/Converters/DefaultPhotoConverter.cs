@@ -172,23 +172,30 @@ namespace Unigram.Converters
             {
                 //return new TLBitmapImage(photo, true);
 
-                double num = 400;
-                double num2;
-                if (double.TryParse((string)parameter, out num2))
+                //double num = 400;
+                //double num2;
+                //if (double.TryParse((string)parameter, out num2))
+                //{
+                //    num = num2;
+                //}
+
+                //TLPhotoSize photoSize = null;
+                //foreach (var current in photo.Sizes.OfType<TLPhotoSize>())
+                //{
+                //    if (photoSize == null || Math.Abs(num - photoSize.W) > Math.Abs(num - current.W))
+                //    {
+                //        photoSize = current;
+                //    }
+                //}
+
+                var photoSizeBase = photo.Full;
+
+                if (parameter != null && string.Equals(parameter.ToString(), "thumbnail", StringComparison.OrdinalIgnoreCase))
                 {
-                    num = num2;
+                    photoSizeBase = photo.Thumb;
                 }
 
-                TLPhotoSize photoSize = null;
-                foreach (var current in photo.Sizes.OfType<TLPhotoSize>())
-                {
-                    if (photoSize == null || Math.Abs(num - photoSize.W) > Math.Abs(num - current.W))
-                    {
-                        photoSize = current;
-                    }
-                }
-
-                if (photoSize != null)
+                if (photoSizeBase != null)
                 {
                     //if (!string.IsNullOrEmpty(photoSize.TempUrl))
                     //{
@@ -199,10 +206,22 @@ namespace Unigram.Converters
                     //    return photoSize.TempUrl;
                     //}
 
-                    var fileLocation = photoSize.Location as TLFileLocation;
-                    if (fileLocation != null /*&& (photoMedia == null || !photoMedia.IsCanceled)*/)
+                    var photoSize = photoSizeBase as TLPhotoSize;
+                    if (photoSize != null)
                     {
-                        return ReturnOrEnqueueImage(false, fileLocation, photo, photoSize.Size, photoMedia);
+                        var fileLocation = photoSize.Location as TLFileLocation;
+                        if (fileLocation != null /*&& (photoMedia == null || !photoMedia.IsCanceled)*/)
+                        {
+                            return ReturnOrEnqueueImage(false, fileLocation, photo, photoSize.Size, photoMedia);
+                        }
+                    }
+
+                    var photoCachedSize = photoSizeBase as TLPhotoCachedSize;
+                    if (photoCachedSize != null)
+                    {
+                        var bitmap = new BitmapImage();
+                        bitmap.SetByteSource(photoCachedSize.Bytes);
+                        return bitmap;
                     }
                 }
             }
@@ -308,7 +327,7 @@ namespace Unigram.Converters
                 }
                 else if (TLMessage.IsGif(tLDocument3))
                 {
-                    return ReturnOrEnqueueGif(tLDocument3, null);
+                    return ReturnOrEnqueueGif(tLDocument3, parameter != null && string.Equals(parameter.ToString(), "thumbnail", StringComparison.OrdinalIgnoreCase));
                 }
                 else
                 {
@@ -521,11 +540,32 @@ namespace Unigram.Converters
         //    return null;
         //}
 
-        public static ImageSource ReturnOrEnqueueGif(TLDocument document, TLObject sticker)
+        public static ImageSource ReturnOrEnqueueGif(TLDocument document, bool thumbnail)
         {
             if (document == null)
             {
                 return null;
+            }
+
+            if (thumbnail)
+            {
+                var photoSize = document.Thumb as TLPhotoSize;
+                if (photoSize != null)
+                {
+                    var fileLocation = photoSize.Location as TLFileLocation;
+                    if (fileLocation != null)
+                    {
+                        return ReturnOrEnqueueImage(false, fileLocation, document, photoSize.Size, null);
+                    }
+                }
+
+                var photoCachedSize = document.Thumb as TLPhotoCachedSize;
+                if (photoCachedSize != null)
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.SetByteSource(photoCachedSize.Bytes);
+                    return bitmap;
+                }
             }
 
             var width = 0;
@@ -542,12 +582,6 @@ namespace Unigram.Converters
 
             if (!File.Exists(FileUtils.GetTempFileName(filename)))
             {
-                TLObject owner = document;
-                if (sticker != null)
-                {
-                    owner = sticker;
-                }
-
                 var renderer = _videoFactory.CreateRenderer(320, 320);
                 var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>

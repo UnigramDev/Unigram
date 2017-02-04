@@ -9,22 +9,20 @@ namespace Telegram.Api.TL.Methods.Help
 	public partial class TLHelpGetInviteText : TLObject
 	{
 		public TLHelpGetInviteText() { }
-		public TLHelpGetInviteText(TLBinaryReader from, bool cache = false)
+		public TLHelpGetInviteText(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.HelpGetInviteText; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x4D392343);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

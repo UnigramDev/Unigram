@@ -28,14 +28,14 @@ namespace Telegram.Api.TL
 		public Int32 Hash { get; set; }
 
 		public TLStickerSet() { }
-		public TLStickerSet(TLBinaryReader from, bool cache = false)
+		public TLStickerSet(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.StickerSet; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt64();
@@ -44,10 +44,9 @@ namespace Telegram.Api.TL
 			ShortName = from.ReadString();
 			Count = from.ReadInt32();
 			Hash = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xCD303B41);
 			to.Write((Int32)Flags);
@@ -57,7 +56,6 @@ namespace Telegram.Api.TL
 			to.Write(ShortName);
 			to.Write(Count);
 			to.Write(Hash);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

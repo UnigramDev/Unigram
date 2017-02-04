@@ -23,14 +23,14 @@ namespace Telegram.Api.TL
 		public TLDocumentBase Document { get; set; }
 
 		public TLGame() { }
-		public TLGame(TLBinaryReader from, bool cache = false)
+		public TLGame(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.Game; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt64();
@@ -38,12 +38,11 @@ namespace Telegram.Api.TL
 			ShortName = from.ReadString();
 			Title = from.ReadString();
 			Description = from.ReadString();
-			Photo = TLFactory.Read<TLPhotoBase>(from, cache);
-			if (HasDocument) Document = TLFactory.Read<TLDocumentBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Photo = TLFactory.Read<TLPhotoBase>(from);
+			if (HasDocument) Document = TLFactory.Read<TLDocumentBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -54,9 +53,8 @@ namespace Telegram.Api.TL
 			to.Write(ShortName);
 			to.Write(Title);
 			to.Write(Description);
-			to.WriteObject(Photo, cache);
-			if (HasDocument) to.WriteObject(Document, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Photo);
+			if (HasDocument) to.WriteObject(Document);
 		}
 
 		private void UpdateFlags()

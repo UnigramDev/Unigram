@@ -19,32 +19,30 @@ namespace Telegram.Api.TL
 		public TLVector<TLPhotoSizeBase> Sizes { get; set; }
 
 		public TLPhoto() { }
-		public TLPhoto(TLBinaryReader from, bool cache = false)
+		public TLPhoto(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.Photo; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt64();
 			AccessHash = from.ReadInt64();
 			Date = from.ReadInt32();
-			Sizes = TLFactory.Read<TLVector<TLPhotoSizeBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Sizes = TLFactory.Read<TLVector<TLPhotoSizeBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x9288DD29);
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			to.Write(AccessHash);
 			to.Write(Date);
-			to.WriteObject(Sizes, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Sizes);
 		}
 	}
 }

@@ -800,7 +800,7 @@ namespace Telegram.Api.Services.Cache
             try
             {
                 var withId = peer.Id;
-                var dialogBase = _database.Dialogs.FirstOrDefault(x => x.WithId == withId && peer.GetType() == x.Peer.GetType());
+                var dialogBase = _database.Dialogs.FirstOrDefault(x => x.WithId == withId && peer.TypeId == x.Peer.TypeId);
 
                 var dialog = dialogBase as TLDialog;
                 if (dialog != null)
@@ -865,7 +865,7 @@ namespace Telegram.Api.Services.Cache
             try
             {
                 var withId = peer.Id;
-                var dialogBase = _database.Dialogs.FirstOrDefault(x => x.WithId == withId && peer.GetType() == x.Peer.GetType());
+                var dialogBase = _database.Dialogs.FirstOrDefault(x => x.WithId == withId && peer.TypeId == x.Peer.TypeId);
 
                 var dialog = dialogBase as TLDialog;
                 if (dialog != null)
@@ -1255,7 +1255,7 @@ namespace Telegram.Api.Services.Cache
                         _database.AddMessageToContext(cachedMessage);
                     }
 
-                    if (message.GetType() == cachedMessage.GetType())
+                    if (message.TypeId == cachedMessage.TypeId)
                     {
                         cachedMessage.Edit(message);
                     }
@@ -1312,7 +1312,7 @@ namespace Telegram.Api.Services.Cache
                         _database.AddMessageToContext(cachedMessage);
                     }
 
-                    if (message.GetType() == cachedMessage.GetType())
+                    if (message.TypeId == cachedMessage.TypeId)
                     {
                         cachedMessage.Update(message);
                     }
@@ -1558,7 +1558,7 @@ namespace Telegram.Api.Services.Cache
                 }
 
                 // update fields
-                if (message.GetType() == cachedMessage.GetType())
+                if (message.TypeId == cachedMessage.TypeId)
                 {
                     cachedMessage.Update(message);
                     //_database.Storage.Modify(cachedMessage);
@@ -1620,7 +1620,7 @@ namespace Telegram.Api.Services.Cache
 
                     if (cachedMessage != null)
                     {
-                        if (message.GetType() == cachedMessage.GetType())
+                        if (message.TypeId == cachedMessage.TypeId)
                         {
                             cachedMessage.Update(message);
                         }
@@ -1996,7 +1996,7 @@ namespace Telegram.Api.Services.Cache
                         if (cachedMessage != null)
                         {
                             // update fields
-                            if (message.GetType() == cachedMessage.GetType())
+                            if (message.TypeId == cachedMessage.TypeId)
                             {
                                 cachedMessage.Update(message);
                                 //_database.Storage.Modify(cachedMessage);
@@ -2198,7 +2198,7 @@ namespace Telegram.Api.Services.Cache
                 var isMinUser = user45 != null && user45.IsMin;
 
                 // update fields
-                if (user.GetType() == cachedUser.GetType())
+                if (user.TypeId == cachedUser.TypeId)
                 {
                     cachedUser.Update(user);
                     result = cachedUser;
@@ -2240,7 +2240,7 @@ namespace Telegram.Api.Services.Cache
                         var isMinUser = user45 != null && user45.IsMin;
 
                         // update fields
-                        if (user.GetType() == cachedUser.GetType())
+                        if (user.TypeId == cachedUser.TypeId)
                         {
                             cachedUser.Update(user);
                             result.Add(cachedUser);
@@ -2767,7 +2767,7 @@ namespace Telegram.Api.Services.Cache
                         var isMinChannel = channel49 != null && channel49.IsMin;
 
                         // update fields
-                        if (chat.GetType() == cachedChat.GetType())
+                        if (chat.TypeId == cachedChat.TypeId)
                         {
                             cachedChat.Update(chat);
                         }
@@ -2820,7 +2820,7 @@ namespace Telegram.Api.Services.Cache
                 var isMinChannel = channel49 != null && channel49.IsMin;
 
                 // update fields
-                if (chat.GetType() == cachedChat.GetType())
+                if (chat.TypeId == cachedChat.TypeId)
                 {
                     cachedChat.Update(chat);
                 }
@@ -3140,7 +3140,7 @@ namespace Telegram.Api.Services.Cache
                     var isMinUser = user45 != null && user45.IsMin;
 
                     // update fields
-                    if (user.GetType() == cachedUser.GetType())
+                    if (user.TypeId == cachedUser.TypeId)
                     {
                         cachedUser.Update(user);
                         result.Users.Add(cachedUser);
@@ -3219,7 +3219,7 @@ namespace Telegram.Api.Services.Cache
                     var isMinUser = user45 != null && user45.IsMin;
 
                     // update fields
-                    if (user.GetType() == cachedUser.GetType())
+                    if (user.TypeId == cachedUser.TypeId)
                     {
                         cachedUser.Update(user);
                         result.Users.Add(cachedUser);

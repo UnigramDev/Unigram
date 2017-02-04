@@ -24,36 +24,34 @@ namespace Telegram.Api.TL.Methods.Messages
 		public String Offset { get; set; }
 
 		public TLMessagesGetInlineBotResults() { }
-		public TLMessagesGetInlineBotResults(TLBinaryReader from, bool cache = false)
+		public TLMessagesGetInlineBotResults(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesGetInlineBotResults; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Bot = TLFactory.Read<TLInputUserBase>(from, cache);
-			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
-			if (HasGeoPoint) GeoPoint = TLFactory.Read<TLInputGeoPointBase>(from, cache);
+			Bot = TLFactory.Read<TLInputUserBase>(from);
+			Peer = TLFactory.Read<TLInputPeerBase>(from);
+			if (HasGeoPoint) GeoPoint = TLFactory.Read<TLInputGeoPointBase>(from);
 			Query = from.ReadString();
 			Offset = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
 			to.Write(0x514E999D);
 			to.Write((Int32)Flags);
-			to.WriteObject(Bot, cache);
-			to.WriteObject(Peer, cache);
-			if (HasGeoPoint) to.WriteObject(GeoPoint, cache);
+			to.WriteObject(Bot);
+			to.WriteObject(Peer);
+			if (HasGeoPoint) to.WriteObject(GeoPoint);
 			to.Write(Query);
 			to.Write(Offset);
-			if (cache) WriteToCache(to);
 		}
 
 		private void UpdateFlags()

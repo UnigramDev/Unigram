@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLMessageActionChatDeletePhoto : TLMessageActionBase 
 	{
 		public TLMessageActionChatDeletePhoto() { }
-		public TLMessageActionChatDeletePhoto(TLBinaryReader from, bool cache = false)
+		public TLMessageActionChatDeletePhoto(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageActionChatDeletePhoto; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x95E3FBEF);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

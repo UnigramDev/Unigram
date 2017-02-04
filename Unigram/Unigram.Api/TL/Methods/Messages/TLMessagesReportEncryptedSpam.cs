@@ -11,24 +11,22 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLInputEncryptedChat Peer { get; set; }
 
 		public TLMessagesReportEncryptedSpam() { }
-		public TLMessagesReportEncryptedSpam(TLBinaryReader from, bool cache = false)
+		public TLMessagesReportEncryptedSpam(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesReportEncryptedSpam; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Peer = TLFactory.Read<TLInputEncryptedChat>(from, cache);
-			if (cache) ReadFromCache(from);
+			Peer = TLFactory.Read<TLInputEncryptedChat>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x4B0C8C0F);
-			to.WriteObject(Peer, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Peer);
 		}
 	}
 }

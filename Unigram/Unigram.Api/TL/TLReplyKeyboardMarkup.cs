@@ -21,26 +21,24 @@ namespace Telegram.Api.TL
 		public TLVector<TLKeyboardButtonRow> Rows { get; set; }
 
 		public TLReplyKeyboardMarkup() { }
-		public TLReplyKeyboardMarkup(TLBinaryReader from, bool cache = false)
+		public TLReplyKeyboardMarkup(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ReplyKeyboardMarkup; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Rows = TLFactory.Read<TLVector<TLKeyboardButtonRow>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Rows = TLFactory.Read<TLVector<TLKeyboardButtonRow>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x3502758C);
 			to.Write((Int32)Flags);
-			to.WriteObject(Rows, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Rows);
 		}
 	}
 }

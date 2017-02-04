@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLSendMessageGeoLocationAction : TLSendMessageActionBase 
 	{
 		public TLSendMessageGeoLocationAction() { }
-		public TLSendMessageGeoLocationAction(TLBinaryReader from, bool cache = false)
+		public TLSendMessageGeoLocationAction(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.SendMessageGeoLocationAction; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x176F8BA1);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

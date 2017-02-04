@@ -160,14 +160,14 @@ namespace Unigram.Core.Rtf.Write
             // ---------------------------------------------------
             // Insert color table
             // ---------------------------------------------------
-            rtf.AppendLine(@"{\colortbl");
-            rtf.AppendLine(";");
-            for (int i = 1; i < _colorTable.Count; i++) {
-                RtfColor c = _colorTable[i];
-                rtf.AppendLine(@"\red" + c.Red + @"\green" + c.Green + @"\blue" + c.Blue + ";");
-            }
-            rtf.AppendLine("}");
-            rtf.AppendLine();
+            //rtf.AppendLine(@"{\colortbl");
+            //rtf.AppendLine(";");
+            //for (int i = 1; i < _colorTable.Count; i++) {
+            //    RtfColor c = _colorTable[i];
+            //    rtf.AppendLine(@"\red" + c.Red + @"\green" + c.Green + @"\blue" + c.Blue + ";");
+            //}
+            //rtf.AppendLine("}");
+            //rtf.AppendLine();
 
             // ---------------------------------------------------
             // Preliminary

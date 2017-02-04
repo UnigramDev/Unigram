@@ -777,15 +777,77 @@ namespace Unigram.ViewModels
         public async Task SearchAsync(string query)
         {
             // TODO: dialogs search
+            query = query.TrimStart('@');
 
+            var local = await SearchLocalAsync(query);
             var global = await SearchGlobalAsync(query);
             var messages = await SearchMessagesAsync(query);
 
             Search.Clear();
+            if (local != null) Search.Add(local);
             if (global != null) Search.Add(global);
             if (messages != null) Search.Add(messages);
 
             SearchQuery = query;
+        }
+
+        private async Task<KeyedList<string, TLObject>> SearchLocalAsync(string query)
+        {
+            var dialogs = await Task.Run(() => CacheService.GetDialogs());
+            var contacts = await Task.Run(() => CacheService.GetContacts());
+
+            if (dialogs != null && contacts != null)
+            {
+                var simple = new List<TLDialog>();
+                var parent = dialogs.Where(dialog =>
+                {
+                    var user = dialog.With as TLUser;
+                    if (user != null)
+                    {
+                        return (user.FullName.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                               (user.HasUsername && user.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    var channel = dialog.With as TLChannel;
+                    if (channel != null)
+                    {
+                        return (channel.Title.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                               (channel.HasUsername && channel.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    var chat = dialog.With as TLChat;
+                    if (chat != null)
+                    {
+                        return (chat.Title.Like(query, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    return false;
+                }).ToList();
+
+                var contactsResults = contacts.OfType<TLUser>().Where(x =>
+                    (x.FullName.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase)));
+
+                foreach (var result in contactsResults)
+                {
+                    var dialog = parent.FirstOrDefault(x => x.Peer.TypeId == TLType.PeerUser && x.Index == result.Id);
+                    if (dialog == null)
+                    {
+                        simple.Add(new TLDialog
+                        {
+                            With = result,
+                            Peer = new TLPeerUser { UserId = result.Id }
+                        });
+                    }
+                }
+
+                if (parent.Count > 0 || simple.Count > 0)
+                {
+                    return new KeyedList<string, TLObject>(null, parent.OrderByDescending(x => x.GetDateIndexWithDraft()).Union(simple.OrderBy(x => x.FullName)));
+                }
+            }
+
+            return null;
         }
 
         private async Task<KeyedList<string, TLObject>> SearchGlobalAsync(string query)
@@ -802,14 +864,21 @@ namespace Unigram.ViewModels
                 {
                     var parent = new KeyedList<string, TLObject>("Global search results");
 
-                    foreach (var peer in result.Result.Results)
-                    {
-                        var item = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
-                        if (item != null)
+                    CacheService.SyncUsersAndChats(result.Result.Users, result.Result.Chats,
+                        tuple =>
                         {
-                            parent.Add(item);
-                        }
-                    }
+                            result.Result.Users = tuple.Item1;
+                            result.Result.Chats = tuple.Item2;
+
+                            foreach (var peer in result.Result.Results)
+                            {
+                                var item = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                                if (item != null)
+                                {
+                                    parent.Add(item);
+                                }
+                            }
+                        });
 
                     return parent;
                 }
@@ -842,21 +911,29 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                foreach (var message in result.Result.Messages.OfType<TLMessageCommonBase>())
-                {
-                    var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
-                    var with = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
-                    var item = new TLDialog
+                CacheService.SyncUsersAndChats(result.Result.Users, result.Result.Chats,
+                    tuple =>
                     {
-                        TopMessage = message.Id,
-                        TopMessageRandomId = message.RandomId,
-                        TopMessageItem = message,
-                        With = with,
-                        Peer = peer
-                    };
+                        result.Result.Users = tuple.Item1;
+                        result.Result.Chats = tuple.Item2;
 
-                    parent.Add(item);
-                }
+                        foreach (var message in result.Result.Messages.OfType<TLMessageCommonBase>())
+                        {
+                            var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
+                            var with = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                            var item = new TLDialog
+                            {
+                                TopMessage = message.Id,
+                                TopMessageRandomId = message.RandomId,
+                                TopMessageItem = message,
+                                With = with,
+                                Peer = peer
+                            };
+
+                            parent.Add(item);
+                        }
+                    });
+
 
                 return parent;
             }

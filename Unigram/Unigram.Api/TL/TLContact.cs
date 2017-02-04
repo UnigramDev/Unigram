@@ -9,26 +9,24 @@ namespace Telegram.Api.TL
 		public Boolean Mutual { get; set; }
 
 		public TLContact() { }
-		public TLContact(TLBinaryReader from, bool cache = false)
+		public TLContact(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.Contact; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			UserId = from.ReadInt32();
 			Mutual = from.ReadBoolean();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xF911C994);
 			to.Write(UserId);
 			to.Write(Mutual);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

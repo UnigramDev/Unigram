@@ -34,27 +34,26 @@ namespace Telegram.Api.TL
 		public TLInputChannelBase MigratedTo { get; set; }
 
 		public TLChat() { }
-		public TLChat(TLBinaryReader from, bool cache = false)
+		public TLChat(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.Chat; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = from.ReadInt32();
 			Title = from.ReadString();
-			Photo = TLFactory.Read<TLChatPhotoBase>(from, cache);
+			Photo = TLFactory.Read<TLChatPhotoBase>(from);
 			ParticipantsCount = from.ReadInt32();
 			Date = from.ReadInt32();
 			Version = from.ReadInt32();
-			if (HasMigratedTo) MigratedTo = TLFactory.Read<TLInputChannelBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			if (HasMigratedTo) MigratedTo = TLFactory.Read<TLInputChannelBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -62,12 +61,11 @@ namespace Telegram.Api.TL
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			to.Write(Title);
-			to.WriteObject(Photo, cache);
+			to.WriteObject(Photo);
 			to.Write(ParticipantsCount);
 			to.Write(Date);
 			to.Write(Version);
-			if (HasMigratedTo) to.WriteObject(MigratedTo, cache);
-			if (cache) WriteToCache(to);
+			if (HasMigratedTo) to.WriteObject(MigratedTo);
 		}
 
 		private void UpdateFlags()

@@ -1,0 +1,19 @@
+﻿<ContentDialog
+    x:Class="Unigram.Controls.Views.DeleteChannelMessageDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Delete"
+    PrimaryButtonText="Delete"
+    SecondaryButtonText="Cancel">
+
+    <StackPanel>
+        <TextBlock Text="Do you want to delete this message?" Margin="0,24,0,0" Style="{StaticResource BodyTextBlockStyle}"/>
+        <CheckBox x:Name="BanUserCheck" Content="Ban user" Margin="0,24,0,0"/>
+        <CheckBox x:Name="ReportSpamCheck" Content="Report Spam"/>
+        <CheckBox x:Name="DeleteAllCheck" Content="Delete all from this user"/>
+    </StackPanel>
+</ContentDialog>

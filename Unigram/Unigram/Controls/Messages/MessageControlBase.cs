@@ -18,6 +18,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
@@ -223,75 +224,15 @@ namespace Unigram.Controls.Messages
             }
         }
 
+        protected void Reply_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Context.MessageOpenReplyCommand.Execute(ViewModel);
+        }
+
         /// <summary>
         /// x:Bind hack
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
-
-        #region Static
-        protected static SolidColorBrush StatusDarkBackgroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageOverlayBackgroundBrush"]; } }
-        protected static SolidColorBrush StatusDarkForegroundBrush { get { return new SolidColorBrush(Colors.White); } }
-        protected static SolidColorBrush StatusLightLabelForegroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageSubtleLabelBrush"]; } }
-        protected static SolidColorBrush StatusLightGlyphForegroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageSubtleGlyphBrush"]; } }
-
-        protected static bool IsFullMedia(TLMessageMediaBase media)
-        {
-            if (media == null) return false;
-
-            if (media.TypeId == TLType.MessageMediaGeo) return true;
-            if (media.TypeId == TLType.MessageMediaPhoto) return true;
-            if (media.TypeId == TLType.MessageMediaDocument)
-            {
-                var documentMedia = media as TLMessageMediaDocument;
-                if (TLMessage.IsGif(documentMedia.Document)) return true;
-                else if (TLMessage.IsVideo(documentMedia.Document)) return true;
-            }
-
-            return false;
-        }
-
-        protected static bool IsInlineMedia(TLMessageMediaBase media)
-        {
-            if (media == null) return false;
-
-            if (media.TypeId == TLType.MessageMediaContact) return true;
-            if (media.TypeId == TLType.MessageMediaVenue) return true;
-            if (media.TypeId == TLType.MessageMediaPhoto)
-            {
-                var photoMedia = media as TLMessageMediaPhoto;
-                if (string.IsNullOrWhiteSpace(photoMedia.Caption))
-                {
-                    return false;
-                }
-
-                return true;
-            }
-            if (media.TypeId == TLType.MessageMediaDocument)
-            {
-                var documentMedia = media as TLMessageMediaDocument;
-                if (TLMessage.IsMusic(documentMedia.Document)) return true;
-                else if (TLMessage.IsVoice(documentMedia.Document)) return true;
-                else if (TLMessage.IsVideo(documentMedia.Document))
-                {
-                    if (string.IsNullOrWhiteSpace(documentMedia.Caption))
-                    {
-                        return false;
-                    }
-                }
-                else if (TLMessage.IsGif(documentMedia.Document))
-                {
-                    if (string.IsNullOrWhiteSpace(documentMedia.Caption))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-        #endregion
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -372,5 +313,71 @@ namespace Unigram.Controls.Messages
             }
         }
 
+
+        #region Static
+        protected static SolidColorBrush StatusDarkBackgroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageOverlayBackgroundBrush"]; } }
+        protected static SolidColorBrush StatusDarkForegroundBrush { get { return new SolidColorBrush(Colors.White); } }
+        protected static SolidColorBrush StatusLightLabelForegroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageSubtleLabelBrush"]; } }
+        protected static SolidColorBrush StatusLightGlyphForegroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageSubtleGlyphBrush"]; } }
+
+        protected static bool IsFullMedia(TLMessageMediaBase media)
+        {
+            if (media == null) return false;
+
+            if (media.TypeId == TLType.MessageMediaGeo) return true;
+            else if (media.TypeId == TLType.MessageMediaVenue) return true;
+            else if (media.TypeId == TLType.MessageMediaPhoto) return true;
+            else if (media.TypeId == TLType.MessageMediaDocument)
+            {
+                var documentMedia = media as TLMessageMediaDocument;
+                if (TLMessage.IsGif(documentMedia.Document)) return true;
+                else if (TLMessage.IsVideo(documentMedia.Document)) return true;
+            }
+
+            return false;
+        }
+
+        protected static bool IsInlineMedia(TLMessageMediaBase media)
+        {
+            if (media == null) return false;
+
+            if (media.TypeId == TLType.MessageMediaContact) return true;
+            else if (media.TypeId == TLType.MessageMediaVenue) return true;
+            else if (media.TypeId == TLType.MessageMediaPhoto)
+            {
+                var photoMedia = media as TLMessageMediaPhoto;
+                if (string.IsNullOrWhiteSpace(photoMedia.Caption))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            else if (media.TypeId == TLType.MessageMediaDocument)
+            {
+                var documentMedia = media as TLMessageMediaDocument;
+                if (TLMessage.IsMusic(documentMedia.Document)) return true;
+                else if (TLMessage.IsVoice(documentMedia.Document)) return true;
+                else if (TLMessage.IsVideo(documentMedia.Document))
+                {
+                    if (string.IsNullOrWhiteSpace(documentMedia.Caption))
+                    {
+                        return false;
+                    }
+                }
+                else if (TLMessage.IsGif(documentMedia.Document))
+                {
+                    if (string.IsNullOrWhiteSpace(documentMedia.Caption))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+        #endregion
     }
 }

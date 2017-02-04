@@ -12,26 +12,24 @@ namespace Telegram.Api.TL.Methods.Contacts
 		public Int32 Limit { get; set; }
 
 		public TLContactsSearch() { }
-		public TLContactsSearch(TLBinaryReader from, bool cache = false)
+		public TLContactsSearch(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactsSearch; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Q = from.ReadString();
 			Limit = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x11F812D8);
 			to.Write(Q);
 			to.Write(Limit);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

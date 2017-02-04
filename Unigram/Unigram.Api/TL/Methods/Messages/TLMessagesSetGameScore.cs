@@ -25,32 +25,30 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int32 Score { get; set; }
 
 		public TLMessagesSetGameScore() { }
-		public TLMessagesSetGameScore(TLBinaryReader from, bool cache = false)
+		public TLMessagesSetGameScore(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSetGameScore; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
+			Peer = TLFactory.Read<TLInputPeerBase>(from);
 			Id = from.ReadInt32();
-			UserId = TLFactory.Read<TLInputUserBase>(from, cache);
+			UserId = TLFactory.Read<TLInputUserBase>(from);
 			Score = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x8EF8ECC0);
 			to.Write((Int32)Flags);
-			to.WriteObject(Peer, cache);
+			to.WriteObject(Peer);
 			to.Write(Id);
-			to.WriteObject(UserId, cache);
+			to.WriteObject(UserId);
 			to.Write(Score);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

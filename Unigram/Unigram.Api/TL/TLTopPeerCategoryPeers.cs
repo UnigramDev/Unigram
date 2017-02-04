@@ -10,28 +10,26 @@ namespace Telegram.Api.TL
 		public TLVector<TLTopPeer> Peers { get; set; }
 
 		public TLTopPeerCategoryPeers() { }
-		public TLTopPeerCategoryPeers(TLBinaryReader from, bool cache = false)
+		public TLTopPeerCategoryPeers(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.TopPeerCategoryPeers; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Category = TLFactory.Read<TLTopPeerCategoryBase>(from, cache);
+			Category = TLFactory.Read<TLTopPeerCategoryBase>(from);
 			Count = from.ReadInt32();
-			Peers = TLFactory.Read<TLVector<TLTopPeer>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Peers = TLFactory.Read<TLVector<TLTopPeer>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xFB834291);
-			to.WriteObject(Category, cache);
+			to.WriteObject(Category);
 			to.Write(Count);
-			to.WriteObject(Peers, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Peers);
 		}
 	}
 }

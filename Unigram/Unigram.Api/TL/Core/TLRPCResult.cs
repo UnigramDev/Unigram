@@ -13,18 +13,17 @@ namespace Telegram.Api.TL
         //public TLObject Query { get; set; }
 
         public TLRPCResult() { }
-        public TLRPCResult(TLBinaryReader from, bool fromCache)
+        public TLRPCResult(TLBinaryReader from)
         {
-            Read(from, fromCache);
+            Read(from);
         }
 
         public override TLType TypeId { get { return TLType.RPCResult; } }
 
-        public override void Read(TLBinaryReader from, bool fromCache)
+        public override void Read(TLBinaryReader from)
         {
             RequestMsgId = from.ReadInt64();
-            Query = TLFactory.Read<object>(from, fromCache);
-            //Query = TLFactory.Read<TLObject>(from);
+            Query = TLFactory.Read<object>(from);
         }
 
         //public override void Write(TLBinaryWriter to)

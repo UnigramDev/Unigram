@@ -23,7 +23,7 @@ namespace Unigram.Controls
 
     public class ReplyMarkupPanel : Grid
     {
-        private double _keyboardHeight = 200;
+        private double _keyboardHeight = 300;
 
         #region IsInline
 
@@ -63,14 +63,14 @@ namespace Unigram.Controls
 
         private void OnIsInlineChanged(bool newValue, bool oldValue)
         {
-            if (newValue)
-            {
-                InputPane.GetForCurrentView().Showing -= InputPane_Showing;
-            }
-            else
-            {
-                InputPane.GetForCurrentView().Showing += InputPane_Showing;
-            }
+            //if (newValue)
+            //{
+            //    InputPane.GetForCurrentView().Showing -= InputPane_Showing;
+            //}
+            //else
+            //{
+            //    InputPane.GetForCurrentView().Showing += InputPane_Showing;
+            //}
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)

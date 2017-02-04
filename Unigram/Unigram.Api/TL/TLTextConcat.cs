@@ -8,24 +8,22 @@ namespace Telegram.Api.TL
 		public TLVector<TLRichTextBase> Texts { get; set; }
 
 		public TLTextConcat() { }
-		public TLTextConcat(TLBinaryReader from, bool cache = false)
+		public TLTextConcat(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.TextConcat; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Texts = TLFactory.Read<TLVector<TLRichTextBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Texts = TLFactory.Read<TLVector<TLRichTextBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x7E6260D7);
-			to.WriteObject(Texts, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Texts);
 		}
 	}
 }

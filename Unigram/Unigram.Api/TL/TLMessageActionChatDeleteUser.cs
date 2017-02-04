@@ -8,24 +8,22 @@ namespace Telegram.Api.TL
 		public Int32 UserId { get; set; }
 
 		public TLMessageActionChatDeleteUser() { }
-		public TLMessageActionChatDeleteUser(TLBinaryReader from, bool cache = false)
+		public TLMessageActionChatDeleteUser(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageActionChatDeleteUser; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			UserId = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xB2AE9B0C);
 			to.Write(UserId);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -450,7 +450,7 @@
     <value>{0} joined the group</value>
   </data>
   <data name="MessageActionChatAddUser" xml:space="preserve">
-    <value>{0} invited {1}</value>
+    <value>{0} added {1}</value>
   </data>
   <data name="MessageActionChatCreate" xml:space="preserve">
     <value>{0} created the group "{1}"</value>
@@ -465,7 +465,7 @@
     <value>{0} removed {1}</value>
   </data>
   <data name="MessageActionChatEditPhoto" xml:space="preserve">
-    <value>{0} changed group photo</value>
+    <value>{0} updated group photo</value>
   </data>
   <data name="MessageActionChatEditTitle" xml:space="preserve">
     <value>{0} changed group name to "{1}"</value>
@@ -513,7 +513,7 @@
     <value>{0} pinned a photo</value>
   </data>
   <data name="MessageActionPinSticker" xml:space="preserve">
-    <value>{0} pinned a sticker</value>
+    <value>{0} pinned a {1}sticker</value>
   </data>
   <data name="MessageActionPinText" xml:space="preserve">
     <value>{0} pinned "{1}"</value>

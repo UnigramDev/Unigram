@@ -23,32 +23,30 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int32 Limit { get; set; }
 
 		public TLMessagesGetDialogs() { }
-		public TLMessagesGetDialogs(TLBinaryReader from, bool cache = false)
+		public TLMessagesGetDialogs(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesGetDialogs; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			OffsetDate = from.ReadInt32();
 			OffsetId = from.ReadInt32();
-			OffsetPeer = TLFactory.Read<TLInputPeerBase>(from, cache);
+			OffsetPeer = TLFactory.Read<TLInputPeerBase>(from);
 			Limit = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x191BA9C5);
 			to.Write((Int32)Flags);
 			to.Write(OffsetDate);
 			to.Write(OffsetId);
-			to.WriteObject(OffsetPeer, cache);
+			to.WriteObject(OffsetPeer);
 			to.Write(Limit);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

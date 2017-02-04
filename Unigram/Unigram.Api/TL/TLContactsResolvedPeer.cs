@@ -10,28 +10,26 @@ namespace Telegram.Api.TL
 		public TLVector<TLUserBase> Users { get; set; }
 
 		public TLContactsResolvedPeer() { }
-		public TLContactsResolvedPeer(TLBinaryReader from, bool cache = false)
+		public TLContactsResolvedPeer(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactsResolvedPeer; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Peer = TLFactory.Read<TLPeerBase>(from, cache);
-			Chats = TLFactory.Read<TLVector<TLChatBase>>(from, cache);
-			Users = TLFactory.Read<TLVector<TLUserBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Peer = TLFactory.Read<TLPeerBase>(from);
+			Chats = TLFactory.Read<TLVector<TLChatBase>>(from);
+			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x7F077AD9);
-			to.WriteObject(Peer, cache);
-			to.WriteObject(Chats, cache);
-			to.WriteObject(Users, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Peer);
+			to.WriteObject(Chats);
+			to.WriteObject(Users);
 		}
 	}
 }

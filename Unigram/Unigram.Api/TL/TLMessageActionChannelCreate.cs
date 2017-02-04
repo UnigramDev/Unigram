@@ -8,24 +8,22 @@ namespace Telegram.Api.TL
 		public String Title { get; set; }
 
 		public TLMessageActionChannelCreate() { }
-		public TLMessageActionChannelCreate(TLBinaryReader from, bool cache = false)
+		public TLMessageActionChannelCreate(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageActionChannelCreate; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Title = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x95D2AC92);
 			to.Write(Title);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

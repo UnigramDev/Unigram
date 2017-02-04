@@ -13,28 +13,26 @@ namespace Telegram.Api.TL.Methods
 		public Byte[] EncryptedData { get; set; }
 
 		public TLSetClientDHParams() { }
-		public TLSetClientDHParams(TLBinaryReader from, bool cache = false)
+		public TLSetClientDHParams(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.SetClientDHParams; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Nonce = new TLInt128(from, cache);
-			ServerNonce = new TLInt128(from, cache);
+			Nonce = new TLInt128(from);
+			ServerNonce = new TLInt128(from);
 			EncryptedData = from.ReadByteArray();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xF5045F1F);
-			to.WriteObject(Nonce, cache);
-			to.WriteObject(ServerNonce, cache);
+			to.WriteObject(Nonce);
+			to.WriteObject(ServerNonce);
 			to.WriteByteArray(EncryptedData);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

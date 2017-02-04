@@ -14,30 +14,28 @@ namespace Telegram.Api.TL.Methods.Upload
 		public Byte[] Bytes { get; set; }
 
 		public TLUploadSaveBigFilePart() { }
-		public TLUploadSaveBigFilePart(TLBinaryReader from, bool cache = false)
+		public TLUploadSaveBigFilePart(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.UploadSaveBigFilePart; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			FileId = from.ReadInt64();
 			FilePart = from.ReadInt32();
 			FileTotalParts = from.ReadInt32();
 			Bytes = from.ReadByteArray();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xDE7B673D);
 			to.Write(FileId);
 			to.Write(FilePart);
 			to.Write(FileTotalParts);
 			to.WriteByteArray(Bytes);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

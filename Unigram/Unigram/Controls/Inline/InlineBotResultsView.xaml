@@ -15,7 +15,7 @@
     <UserControl.Resources>
 
         <DataTemplate x:Key="ResultTemplate">
-            <Grid Margin="12,6">
+            <Grid Margin="8,4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -38,7 +38,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="GameResultTemplate">
-            <Grid Margin="12,6">
+            <Grid Margin="8,4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -56,15 +56,32 @@
         </DataTemplate>
 
         <DataTemplate x:Key="PhotoTemplate" x:DataType="models:TLBotInlineMediaResult">
-            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="6,12">
-                <Image Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="Uniform"/>
+            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
+                <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{Binding Photo}"
+                                    Height="96"/>
                 <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="PhotoResultTemplate" x:DataType="models:TLBotInlineResult">
-            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="6,12">
-                <Image Source="{Binding ThumbUrl}" Stretch="Uniform"/>
+            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
+                <controls:ImageView Source="{Binding ThumbUrl}" Constraint="{Binding}" Height="96"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GifTemplate" x:DataType="models:TLBotInlineResult">
+            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
+                <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{Binding Photo}"
+                                    Height="96"/>
+                <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GifResultTemplate" x:DataType="models:TLBotInlineResult">
+            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
+                <controls:ImageView Source="{Binding ThumbUrl}" Constraint="{Binding}" Height="96"/>
             </Grid>
         </DataTemplate>
 
@@ -73,7 +90,9 @@
             ResultTemplate="{StaticResource ResultTemplate}"
             GameResultTemplate="{StaticResource GameResultTemplate}"
             PhotoTemplate="{StaticResource PhotoTemplate}"
-            PhotoResultTemplate="{StaticResource PhotoResultTemplate}"/>
+            PhotoResultTemplate="{StaticResource PhotoResultTemplate}"
+            GifTemplate="{StaticResource GifTemplate}"
+            GifResultTemplate="{StaticResource GifResultTemplate}"/>
 
         <!--<selectors:InlineBotResultTemplateSelector 
                 x:Key="InlineBotResultTemplateSelector"
@@ -88,14 +107,8 @@
                 StickerResultTemplate="{StaticResource StickerResultTemplate}"
                 AudioResultTemplate="{StaticResource AudioResultTemplate}"/>-->
     </UserControl.Resources>
-    
-    <Grid x:Name="BackgroundElement"
-          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-          MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-          BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
-          BorderThickness="0,1,0,0"
-          Visibility="{Binding InlineBotResultsVisibility}">
-          <!--Visibility="{Binding InlineBotResults.Results.Count, Converter={StaticResource BooleanToVisibilityConverter}}"-->
+
+    <Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState>
@@ -108,54 +121,67 @@
                         <AdaptiveTrigger MinWindowWidth="500"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="Show.Width" Value="376*"/>
+                        <Setter Target="Show.MaxWidth" Value="376"/>
+                        <Setter Target="Hide.Width" Value="*"/>
                         <Setter Target="BackgroundElement.BorderThickness" Value="1"/>
                         <Setter Target="BackgroundElement.Margin" Value="8"/>
-                        <Setter Target="BackgroundElement.HorizontalAlignment" Value="Left"/>
-                        <Setter Target="BackgroundElement.Width" Value="360"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <!--<Grid.Visibility>
-            <Binding Path="InlineBotResults.Results.Count" Converter="{StaticResource BooleanToVisibilityConverter}">
-                <Binding.TargetNullValue>
-                    <Visibility>Collapsed</Visibility>
-                </Binding.TargetNullValue>
-                <Binding.FallbackValue>
-                    <Visibility>Collapsed</Visibility>
-                </Binding.FallbackValue>
-            </Binding>
-        </Grid.Visibility>-->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Button Content="{Binding InlineBotResults.SwitchPm.Text}" 
-                Visibility="{Binding InlineBotResults.SwitchPm, Converter={StaticResource NullToVisibilityConverter}}"
-                HorizontalAlignment="Stretch"/>
-        <controls:OrientableListView ItemsSource="{Binding InlineBotResults.Results}" 
-                                     IsHorizontal="{Binding InlineBotResults.IsGallery}"
-                                     ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
-                                     ItemClick="ListView_ItemClick"
-                                     IsItemClickEnabled="True"
-                                     SelectionMode="None"
-                                     Grid.Row="1">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    <Setter Property="Margin" Value="0"/>
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="MinWidth" Value="0"/>
-                    <Setter Property="MinHeight" Value="0"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.Header>
-                <Border Width="8" Height="8"/>
-            </ListView.Header>
-            <ListView.Footer>
-                <Border Width="8" Height="8"/>
-            </ListView.Footer>
-        </controls:OrientableListView>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="Show"/>
+            <ColumnDefinition x:Name="Hide" Width="0"/>
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="BackgroundElement"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+              BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
+              BorderThickness="0,1,0,0"
+              Visibility="{Binding InlineBotResultsVisibility}">
+              <!--Visibility="{Binding InlineBotResults.Results.Count, Converter={StaticResource BooleanToVisibilityConverter}}"-->
+            <!--<Grid.Visibility>
+                <Binding Path="InlineBotResults.Results.Count" Converter="{StaticResource BooleanToVisibilityConverter}">
+                    <Binding.TargetNullValue>
+                        <Visibility>Collapsed</Visibility>
+                    </Binding.TargetNullValue>
+                    <Binding.FallbackValue>
+                        <Visibility>Collapsed</Visibility>
+                    </Binding.FallbackValue>
+                </Binding>
+            </Grid.Visibility>-->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Button Content="{Binding InlineBotResults.SwitchPm.Text}" 
+                    Visibility="{Binding InlineBotResults.SwitchPm, Converter={StaticResource NullToVisibilityConverter}}"
+                    HorizontalAlignment="Stretch"/>
+            <controls:OrientableListView ItemsSource="{Binding InlineBotResults.Results}" 
+                                         IsHorizontal="{Binding InlineBotResults.IsGallery}"
+                                         ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
+                                         ItemClick="ListView_ItemClick"
+                                         IsItemClickEnabled="True"
+                                         SelectionMode="None"
+                                         Grid.Row="1">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="MinWidth" Value="0"/>
+                        <Setter Property="MinHeight" Value="0"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.Header>
+                    <Border Width="4" Height="4"/>
+                </ListView.Header>
+                <ListView.Footer>
+                    <Border Width="4" Height="4"/>
+                </ListView.Footer>
+            </controls:OrientableListView>
+        </Grid>
     </Grid>
 </UserControl>

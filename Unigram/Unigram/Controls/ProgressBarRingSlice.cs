@@ -299,7 +299,7 @@ namespace Unigram.Controls
             {
                 var pathGeometry = new PathGeometry();
                 var pathFigure = new PathFigure();
-                pathFigure.IsClosed = true;
+                pathFigure.IsClosed = false;
 
                 // Starting Point
                 pathFigure.StartPoint =
@@ -336,8 +336,8 @@ namespace Unigram.Controls
                 outerArcSegment.SweepDirection = SweepDirection.Counterclockwise;
 
                 pathFigure.Segments.Add(innerArcSegment);
-                pathFigure.Segments.Add(lineSegment);
-                pathFigure.Segments.Add(outerArcSegment);
+                //pathFigure.Segments.Add(lineSegment);
+                //pathFigure.Segments.Add(outerArcSegment);
                 pathGeometry.Figures.Add(pathFigure);
 
                 InvalidateArrange();
