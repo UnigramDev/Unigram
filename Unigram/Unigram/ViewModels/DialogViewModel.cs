@@ -658,30 +658,41 @@ namespace Unigram.ViewModels
             GifsSaved();
         }
 
-        private async void GifsSaved()
+        private void GifsSaved()
         {
-            var cached = DatabaseContext.Current.SelectDocuments("Gifs");
-            if (cached.Count > 0)
+            Execute.BeginOnThreadPool(async () =>
             {
-                SavedGifs.Clear();
-                SavedGifs.AddRange(cached);
-            }
-
-            var response = await ProtoService.GetSavedGifsAsync(SettingsHelper.GifsHash);
-            if (response.IsSucceeded)
-            {
-                var result = response.Result as TLMessagesSavedGifs;
-                if (result != null)
+                var response = await ProtoService.GetSavedGifsAsync(SettingsHelper.GifsHash);
+                if (response.IsSucceeded)
                 {
-                    var gifs = result.Gifs.OfType<TLDocument>();
+                    var result = response.Result as TLMessagesSavedGifs;
+                    if (result != null)
+                    {
+                        var gifs = result.Gifs.OfType<TLDocument>();
 
-                    SavedGifs.Clear();
-                    SavedGifs.AddRange(gifs);
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            SavedGifs.Clear();
+                            SavedGifs.AddRange(gifs);
+                        });
 
-                    SettingsHelper.GifsHash = result.Hash;
-                    DatabaseContext.Current.InsertDocuments("Gifs", gifs, true);
+                        SettingsHelper.GifsHash = result.Hash;
+                        DatabaseContext.Current.InsertDocuments("Gifs", gifs, true);
+                    }
+                    else
+                    {
+                        var cached = DatabaseContext.Current.SelectDocuments("Gifs");
+                        if (cached.Count > 0)
+                        {
+                            Execute.BeginOnUIThread(() =>
+                            {
+                                SavedGifs.Clear();
+                                SavedGifs.AddRange(cached);
+                            });
+                        }
+                    }
                 }
-            }
+            });
         }
 
         private async void StickersRecent()

@@ -95,7 +95,7 @@ namespace Unigram.Controls
             {
                 await _file.DeleteAsync();
             }
-            else
+            else if (_file != null)
             {
                 await ViewModel.SendAudioAsync(_file, (int)(DateTime.Now - _start).TotalSeconds, true, null, null, null);
             }

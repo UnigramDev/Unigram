@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Telegram.Api.TL;
 using Universal.WinSQLite;
 using Windows.Storage;
@@ -28,8 +29,9 @@ namespace Unigram.Core
 
         #region Queries
 
-        private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE `{0}`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'DCId' int, 'Version' int)";
-        private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,DCId,Version) VALUES({1},{2},{3},'{4}',{5},{6},{7});";
+        private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE `{0}`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'Thumb' string, 'DCId' int, 'Version' int, 'Attributes' string)";
+        private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes) VALUES({1},{2},{3},'{4}',{5},'{6}',{7},{8},'{9}');";
+        private const string SELECT_TABLE_DCOUMENT = "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes FROM `{0}`";
 
         #endregion
 
@@ -64,9 +66,13 @@ namespace Unigram.Core
                 Execute(database, string.Format("DELETE FROM `{0}`", table));
             }
 
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
             foreach (var item in documents)
             {
-                Execute(database, string.Format(INSERT_TABLE_DOCUMENT, table, item.Id, item.AccessHash, item.Date, Escape(item.MimeType), item.Size, item.DCId, item.Version));
+                var thumb = JsonConvert.SerializeObject(item.Thumb, settings);
+                var attributes = JsonConvert.SerializeObject(item.Attributes, settings);
+
+                Execute(database, string.Format(INSERT_TABLE_DOCUMENT, table, item.Id, item.AccessHash, item.Date, Escape(item.MimeType), item.Size, Escape(thumb), item.DCId, item.Version, Escape(attributes)));
             }
 
             Execute(database, "COMMIT TRANSACTION");
@@ -81,8 +87,9 @@ namespace Unigram.Core
 
             Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
 
-            Sqlite3.sqlite3_prepare_v2(database, string.Format("SELECT Id,AccessHash,Date,MimeType,Size,DCId,Version FROM `{0}`", table), out statement);
+            Sqlite3.sqlite3_prepare_v2(database, string.Format(SELECT_TABLE_DCOUMENT, table), out statement);
 
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
             var result = new List<TLDocument>();
             while (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
             {
@@ -93,10 +100,10 @@ namespace Unigram.Core
                     Date = Sqlite3.sqlite3_column_int(statement, 2),
                     MimeType = Sqlite3.sqlite3_column_text(statement, 3),
                     Size = Sqlite3.sqlite3_column_int(statement, 4),
-                    DCId = Sqlite3.sqlite3_column_int(statement, 5),
-                    Version = Sqlite3.sqlite3_column_int(statement, 6),
-                    Attributes = new TLVector<TLDocumentAttributeBase>(),
-                    Thumb = new TLPhotoSizeEmpty()
+                    Thumb = JsonConvert.DeserializeObject<TLPhotoSizeBase>(Sqlite3.sqlite3_column_text(statement, 5), settings),
+                    DCId = Sqlite3.sqlite3_column_int(statement, 6),
+                    Version = Sqlite3.sqlite3_column_int(statement, 7),
+                    Attributes = JsonConvert.DeserializeObject<TLVector<TLDocumentAttributeBase>>(Sqlite3.sqlite3_column_text(statement, 8), settings)
                 });
             }
 
