@@ -49,14 +49,31 @@ namespace Unigram.ViewModels.Login
             }
         }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get
+            {
+                return _isLoading;
+            }
+            set
+            {
+                Set(ref _isLoading, value);
+                SendCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
             var phoneNumber = _sentCode.PhoneNumber;
             var phoneCodeHash = _sentCode.PhoneCodeHash;
 
+            IsLoading = true;
+
             var result = await ProtoService.SignInAsync(phoneNumber, phoneCodeHash, PhoneCode);
-            if (result?.IsSucceeded == true)
+            if (result.IsSucceeded)
             {
                 ProtoService.SetInitState();
                 ProtoService.CurrentUserId = result.Result.User.Id;
@@ -69,6 +86,8 @@ namespace Unigram.ViewModels.Login
             }
             else
             {
+                IsLoading = false;
+
                 if (result.Error.TypeEquals(TLErrorType.PHONE_NUMBER_UNOCCUPIED))
                 {
                     //var signup = await ProtoService.SignUpAsync(phoneNumber, phoneCodeHash, PhoneCode, "Paolo", "Veneziani");
@@ -100,7 +119,7 @@ namespace Unigram.ViewModels.Login
                 {
                     //this.IsWorking = true;
                     var password = await ProtoService.GetPasswordAsync();
-                    if (password?.IsSucceeded == true)
+                    if (password.IsSucceeded)
                     {
                         NavigationService.Navigate(typeof(LoginPasswordPage), password.Result);
                     }

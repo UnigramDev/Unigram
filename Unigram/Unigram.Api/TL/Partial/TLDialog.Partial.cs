@@ -306,11 +306,6 @@ namespace Telegram.Api.TL
                         return "You";
                     }
 
-                    if (user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact)
-                    {
-                        return PhoneNumber.Format(user.Phone);
-                    }
-
                     if (userBase.Id == 333000)
                     {
                         //return AppResources.AppName;
@@ -321,6 +316,11 @@ namespace Telegram.Api.TL
                     {
                         //return AppResources.TelegramNotifications;
                         return "Telegram";
+                    }
+
+                    if (user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact)
+                    {
+                        return PhoneNumber.Format(user.Phone);
                     }
 
                     //                    var userRequest = user as TLUserRequest;
