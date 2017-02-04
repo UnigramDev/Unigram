@@ -128,7 +128,7 @@ namespace Unigram.ViewModels
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
-                if (message != null && message.IsOut && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
+                if (message != null && message.IsOut && message.ToId.Id != SettingsHelper.UserId && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
                 {
                     var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
                     var config = CacheService.GetConfig();
