@@ -198,7 +198,7 @@
     <comment>Login - Code - Code Input - Placeholder Text</comment>
   </data>
   <data name="Login-Code-Intro.Text" xml:space="preserve">
-    <value>We've send you a message with the code:</value>
+    <value>We've sent you a message with the code.</value>
     <comment>Login - Code - Intro</comment>
   </data>
   <data name="Login-Code-Title.Text" xml:space="preserve">
