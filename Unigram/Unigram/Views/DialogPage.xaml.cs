@@ -403,7 +403,7 @@ namespace Unigram.Views
                     }
 
                     var channel = ViewModel.With as TLChannel;
-                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
                     {
                         var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
                         var config = ViewModel.CacheService.GetConfig();
