@@ -32,6 +32,7 @@ using System.IO;
 using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Views.Login;
+using Windows.UI.Core;
 
 namespace Unigram
 {
@@ -180,6 +181,7 @@ namespace Unigram
             ShowStatusBar();
             ColourTitleBar();
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Task.Run(() => OnStartSync());
             return Task.CompletedTask;

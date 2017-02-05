@@ -79,8 +79,8 @@ namespace Unigram.Controls
 
         private void _popupHost_Opened(object sender, object e)
         {
-            BackButtonVisibility = SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility;
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            //BackButtonVisibility = SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility;
+            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
             //BootStrapper.BackRequested += BootStrapper_BackRequested;
             //Window.Current.SizeChanged += OnSizeChanged;
@@ -92,7 +92,7 @@ namespace Unigram.Controls
         {
             _callback.TrySetResult(_result);
 
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
+            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
             ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
             BootStrapper.BackRequested -= BootStrapper_BackRequested;
         }

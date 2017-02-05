@@ -77,6 +77,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<UserInfoViewModel>();
             container.ContainerBuilder.RegisterType<ChatInfoViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
+            container.ContainerBuilder.RegisterType<ArticleViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStorageViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<FeaturedStickersViewModel>().SingleInstance();

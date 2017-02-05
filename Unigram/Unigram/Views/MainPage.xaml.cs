@@ -237,7 +237,7 @@ namespace Unigram.Views
             cbtnMasterSelect.Visibility = Visibility.Collapsed;
             cbtnMasterNewChat.Visibility = Visibility.Collapsed;
 
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             SystemNavigationManager.GetForCurrentView().BackRequested += Select_BackRequested;
         }
 
@@ -269,10 +269,10 @@ namespace Unigram.Views
             DialogsListView.SelectionMode = ListViewSelectionMode.Single;
             SystemNavigationManager.GetForCurrentView().BackRequested -= Select_BackRequested;
 
-            if (!ViewModel.NavigationService.CanGoBack)
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            }
+            //if (!ViewModel.NavigationService.CanGoBack)
+            //{
+            //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            //}
         }
 
         private void cbtnCancelSelection_Click(object sender, RoutedEventArgs e)

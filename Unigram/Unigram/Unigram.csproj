@@ -118,6 +118,7 @@
     </Compile>
     <Compile Include="Converters\LastSeenConverter.cs" />
     <Compile Include="Converters\PhoneNumberFormatConverter.cs" />
+    <Compile Include="ViewModels\ArticleViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Typing.cs" />
   </ItemGroup>
   <ItemGroup>
