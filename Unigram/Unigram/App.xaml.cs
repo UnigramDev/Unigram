@@ -120,7 +120,7 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(LoginWelcomePage));
+            //NavigationService.Navigate(typeof(BlankPage1));
             //return Task.CompletedTask;
 
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();

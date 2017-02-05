@@ -355,10 +355,11 @@ namespace Unigram.Views
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.Margin = new Thickness(12, 0, 12, 12);
 
-            foreach (var text in block.Items)
+            for (int i = 0; i < block.Items.Count; i++)
             {
+                var text = block.Items[i];
                 var run = new Run();
-                textBlock.Inlines.Add(new Run { Text = "• " });
+                textBlock.Inlines.Add(new Run { Text = block.Ordered ? $"{i + 1}. " : "• " });
                 textBlock.Inlines.Add(run);
                 ProcessText(text, textBlock.Inlines, run);
                 textBlock.Inlines.Add(new LineBreak());

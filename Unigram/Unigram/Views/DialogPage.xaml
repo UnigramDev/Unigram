@@ -27,10 +27,6 @@
     </Page.Transitions>
 
     <Page.Resources>
-        <Style TargetType="ScrollBar">
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-
         <x:Double x:Key="MenuFlyoutMaxWidth">360</x:Double>
 
         <Style TargetType="ListViewHeaderItem">
@@ -134,6 +130,7 @@
             <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward message" IsEnabled="False"/>
             <MenuFlyoutItem Loaded="MessageCopy_Loaded" Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy text"/>
             <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
+            <MenuFlyoutItem Loaded="MessageSaveMedia_Loaded" Command="{x:Bind ViewModel.MessageSaveMediaCommand}" CommandParameter="{Binding}" Text="Save file as..."/>
         </MenuFlyout>
 
         <MenuFlyout x:Key="StickerMenuFlyout">

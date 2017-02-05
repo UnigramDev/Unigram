@@ -51,7 +51,26 @@ namespace Telegram.Api.TL
 
         public string GetFileName()
         {
-            return string.Format("document{0}_{1}{2}", Id, AccessHash, Path.GetExtension(FileName));
+            return string.Format("document{0}_{1}{2}", Id, AccessHash, GetFileExtension());
+        }
+
+        public string GetFileExtension()
+        {
+            var attribute = Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
+            if (attribute != null)
+            {
+                return Path.GetExtension(attribute.FileName);
+            }
+
+            var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+            if (videoAttribute != null)
+            {
+                return ".mp4";
+            }
+
+            // TODO: mime conversion?
+
+            return ".dat";
         }
 
         public TLInputDocumentFileLocation ToInputFileLocation()

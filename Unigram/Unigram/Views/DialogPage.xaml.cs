@@ -396,12 +396,6 @@ namespace Unigram.Views
                 var message = element.DataContext as TLMessage;
                 if (message != null)
                 {
-                    if (message.IsSticker())
-                    {
-                        element.Visibility = Visibility.Collapsed;
-                        return;
-                    }
-
                     var channel = ViewModel.With as TLChannel;
                     if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
                     {
@@ -518,17 +512,33 @@ namespace Unigram.Views
 
         }
 
-        private void MessageSaveStickerAs_Loaded(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        #endregion
-
         private void MessageSaveSticker_Loaded(object sender, RoutedEventArgs e)
         {
 
         }
+
+        private void MessageSaveMedia_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var message = element.DataContext as TLMessage;
+                if (message != null)
+                {
+                    if (message.Media is TLMessageMediaDocument || message.Media is TLMessageMediaPhoto)
+                    {
+                        // TOOD: check if file exists
+
+                        Visibility = Visibility.Visible;
+                        return;
+                    }
+                }
+
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        #endregion
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading
