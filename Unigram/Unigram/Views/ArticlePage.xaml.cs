@@ -351,17 +351,44 @@ namespace Unigram.Views
 
         private void ProcessList(TLPageBase page, TLPageBlockList block)
         {
-            var textBlock = new TextBlock();
+            var textBlock = new RichTextBlock();
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.Margin = new Thickness(12, 0, 12, 12);
 
-            foreach (var text in block.Items)
+            if (!block.Ordered)
             {
-                var run = new Run();
-                textBlock.Inlines.Add(new Run { Text = "• " });
-                textBlock.Inlines.Add(run);
-                ProcessText(text, textBlock.Inlines, run);
-                textBlock.Inlines.Add(new LineBreak());
+                foreach (var text in block.Items)
+                {
+                    var par = new Paragraph();
+                    par.TextIndent = -25;
+                    Thickness m = par.Margin;
+                    m.Left += 25;
+                    par.Margin = m;
+
+                    var span = new Span();
+                    par.Inlines.Add(new Run { Text = "•\t" });
+                    par.Inlines.Add(span);
+                    ProcessText(text, par.Inlines, span);
+                    textBlock.Blocks.Add(par);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < block.Items.Count; i++)
+                {
+                    var text = block.Items[i];
+                    var par = new Paragraph();
+                    par.TextIndent = -25;
+                    Thickness m = par.Margin;
+                    m.Left += 25;
+                    par.Margin = m;
+
+                    var span = new Span();
+                    par.Inlines.Add(new Run { Text = (i+1) + ".\t" });
+                    par.Inlines.Add(span);
+                    ProcessText(text, par.Inlines, span);
+                    textBlock.Blocks.Add(par);
+                }
             }
 
             _containers.Peek().Children.Add(textBlock);
@@ -436,36 +463,36 @@ namespace Unigram.Views
             if (text != null && text.TypeId != TLType.TextEmpty)
             {
                 var textBlock = new TextBlock();
-                var run = new Run();
-                textBlock.Inlines.Add(run);
+                var span = new Span();
+                textBlock.Inlines.Add(span);
                 textBlock.TextWrapping = TextWrapping.Wrap;
                 textBlock.Margin = new Thickness(12, 0, 12, 12);
 
-                ProcessText(text, textBlock.Inlines, run);
+                ProcessText(text, textBlock.Inlines, span);
 
                 switch (block.TypeId)
                 {
                     case TLType.PageBlockTitle:
                         textBlock.FontSize = 24;
-                        textBlock.FontFamily = new FontFamily("Times New Roman");
+                        //textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubtitle:
                         textBlock.FontSize = 21;
-                        textBlock.FontFamily = new FontFamily("Times New Roman");
+                        //textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockHeader:
                         textBlock.FontSize = 21;
-                        textBlock.FontFamily = new FontFamily("Times New Roman");
+                        //textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubheader:
                         textBlock.FontSize = 18;
-                        textBlock.FontFamily = new FontFamily("Times New Roman");
+                        //textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
@@ -547,14 +574,14 @@ namespace Unigram.Views
         private void ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block)
         {
             var textBlock = new TextBlock();
-            var run = new Run();
+            var span = new Span();
             textBlock.FontSize = 14;
             textBlock.Inlines.Add(new Run { Text = "By " });
-            textBlock.Inlines.Add(run);
+            textBlock.Inlines.Add(span);
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.Margin = new Thickness(12, 0, 12, 12);
             textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-            ProcessText(block.Author, textBlock.Inlines, run);
+            ProcessText(block.Author, textBlock.Inlines, span);
 
             textBlock.Inlines.Add(new Run { Text = " • " });
             //textBlock.Inlines.Add(new Run { Text = DateTimeFormatter.LongDate.Format(BindConvert.Current.DateTime(block.PublishedDate)) });
@@ -563,58 +590,61 @@ namespace Unigram.Views
             _containers.Peek().Children.Add(textBlock);
         }
 
-        private void ProcessText(TLRichTextBase text, InlineCollection collection, Run run)
+        private void ProcessText(TLRichTextBase text, InlineCollection collection, Span span)
         {
             switch (text.TypeId)
             {
                 case TLType.TextPlain:
                     var plainText = (TLTextPlain)text;
-                    run.Text = plainText.Text;
+                    span.Inlines.Add(new Run { Text = plainText.Text });
                     break;
                 case TLType.TextConcat:
                     var concatText = (TLTextConcat)text;
                     foreach (var concat in concatText.Texts)
                     {
-                        var concatRun = new Run();
+                        var concatRun = new Span();
                         collection.Add(concatRun);
                         ProcessText(concat, collection, concatRun);
                     }
                     break;
                 case TLType.TextBold:
                     var boldText = (TLTextBold)text;
-                    run.FontWeight = FontWeights.SemiBold;
-                    ProcessText(boldText.Text, collection, run);
+                    span.FontWeight = FontWeights.SemiBold;
+                    ProcessText(boldText.Text, collection, span);
                     break;
                 case TLType.TextEmail:
                     var emailText = (TLTextEmail)text;
-                    ProcessText(emailText.Text, collection, run);
+                    ProcessText(emailText.Text, collection, span);
                     break;
                 case TLType.TextFixed:
                     var fixedText = (TLTextFixed)text;
-                    ProcessText(fixedText.Text, collection, run);
+                    ProcessText(fixedText.Text, collection, span);
                     break;
                 case TLType.TextItalic:
                     var italicText = (TLTextItalic)text;
-                    run.FontStyle = FontStyle.Italic;
-                    ProcessText(italicText.Text, collection, run);
+                    span.FontStyle = FontStyle.Italic;
+                    ProcessText(italicText.Text, collection, span);
                     break;
                 case TLType.TextStrike:
                     var strikeText = (TLTextStrike)text;
                     // TODO: not supported in xaml
-                    ProcessText(strikeText.Text, collection, run);
+                    ProcessText(strikeText.Text, collection, span);
                     break;
                 case TLType.TextUnderline:
                     var underlineText = (TLTextUnderline)text;
-                    // TODO: not supported in xaml
-                    ProcessText(underlineText.Text, collection, run);
+                    var underline = new Underline();
+                    var underlineSpan = new Span();
+                    underline.Inlines.Add(underlineSpan);
+                    collection.Add(underline);
+                    ProcessText(underlineText.Text, underline.Inlines, underlineSpan);
                     break;
                 case TLType.TextUrl:
                     var urlText = (TLTextUrl)text;
                     var hyperlink = new Hyperlink();
-                    var hyperlinkRun = new Run();
-                    hyperlink.Inlines.Add(hyperlinkRun);
+                    var hyperlinkSpan = new Span();
+                    hyperlink.Inlines.Add(hyperlinkSpan);
                     collection.Add(hyperlink);
-                    ProcessText(urlText.Text, hyperlink.Inlines, hyperlinkRun);
+                    ProcessText(urlText.Text, hyperlink.Inlines, hyperlinkSpan);
                     break;
                 case TLType.TextEmpty:
                     var emptyText = (TLTextEmpty)text;
