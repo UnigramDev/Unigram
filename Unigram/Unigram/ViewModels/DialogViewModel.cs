@@ -576,7 +576,7 @@ namespace Unigram.ViewModels
 
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
 
-            //await LoadNextSliceAsync();
+            await LoadFirstSliceAsync();
 
             var dialog = _currentDialog;
             if (dialog != null && dialog.HasDraft)
@@ -609,10 +609,10 @@ namespace Unigram.ViewModels
             //}
 
             Aggregator.Subscribe(this);
-            Aggregator.Publish("PORCODIO");
+            //Aggregator.Publish("PORCODIO");
 
-            StickersRecent();
-            GifsSaved();
+            //StickersRecent();
+            //GifsSaved();
         }
 
         private async void GifsSaved()

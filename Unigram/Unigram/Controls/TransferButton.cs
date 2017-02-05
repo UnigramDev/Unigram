@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class DownloadButton : GlyphButton
+    public class TransferButton : GlyphButton
     {
         #region Document
 
@@ -24,11 +24,11 @@ namespace Unigram.Controls
 
         // Using a DependencyProperty as the backing store for Document.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DocumentProperty =
-            DependencyProperty.Register("Document", typeof(TLDocument), typeof(DownloadButton), new PropertyMetadata(null, OnDocumentChanged));
+            DependencyProperty.Register("Document", typeof(TLDocument), typeof(TransferButton), new PropertyMetadata(null, OnDocumentChanged));
 
         private static void OnDocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((DownloadButton)d).OnDocumentChanged((TLDocument)e.NewValue, (TLDocument)e.OldValue);
+            ((TransferButton)d).OnDocumentChanged((TLDocument)e.NewValue, (TLDocument)e.OldValue);
         }
 
         private void OnDocumentChanged(TLDocument newValue, TLDocument oldValue)
@@ -64,7 +64,7 @@ namespace Unigram.Controls
 
         // Using a DependencyProperty as the backing store for Media.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MediaProperty =
-            DependencyProperty.Register("Media", typeof(TLMessageMediaBase), typeof(DownloadButton), new PropertyMetadata(null, OnMediaChanged));
+            DependencyProperty.Register("Media", typeof(TLMessageMediaBase), typeof(TransferButton), new PropertyMetadata(null, OnMediaChanged));
 
         private static void OnMediaChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

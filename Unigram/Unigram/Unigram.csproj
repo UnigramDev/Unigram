@@ -97,8 +97,9 @@
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <None Include="project.json" />
     <Compile Include="Common\Language.cs" />
+    <Compile Include="Controls\BubbleActionButton.cs" />
     <Compile Include="Controls\DialogsListView.cs" />
-    <Compile Include="Controls\DownloadButton.cs" />
+    <Compile Include="Controls\TransferButton.cs" />
     <Compile Include="Controls\Media\ThumbnailControl.xaml.cs">
       <DependentUpon>ThumbnailControl.xaml</DependentUpon>
     </Compile>

@@ -1022,6 +1022,8 @@
                 </FlyoutBase.AttachedFlyout>
             </controls:GlyphButton>
 
+            <controls:BubbleActionButton With="{x:Bind ViewModel.With, Mode=OneWay}" Grid.ColumnSpan="4" Grid.Row="1"/>
+
             <!--<ScrollViewer x:Name="ReplyMarkupViewer"
                           VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto"
