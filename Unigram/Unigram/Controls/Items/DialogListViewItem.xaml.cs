@@ -107,36 +107,7 @@ namespace Unigram.Controls.Items
 
         private void UpdatePicture()
         {
-            switch (Utils.GetColorIndex(ViewModel.WithId))
-            {
-                case 0:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderRedBrush"] as SolidColorBrush;
-                    break;
-                case 1:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderGreenBrush"] as SolidColorBrush;
-                    break;
-                case 2:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderYellowBrush"] as SolidColorBrush;
-                    break;
-                case 3:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderBlueBrush"] as SolidColorBrush;
-                    break;
-                case 4:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderPurpleBrush"] as SolidColorBrush;
-                    break;
-                case 5:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderPinkBrush"] as SolidColorBrush;
-                    break;
-                case 6:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderCyanBrush"] as SolidColorBrush;
-                    break;
-                case 7:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderOrangeBrush"] as SolidColorBrush;
-                    break;
-                default:
-                    Placeholder.Fill = Application.Current.Resources["ListViewItemPlaceholderBackgroundThemeBrush"] as SolidColorBrush;
-                    break;
-            }
+            Placeholder.Fill = BindConvert.Current.Bubble(ViewModel.WithId);
         }
 
         private string UpdateBriefLabel(TLDialog dialog)

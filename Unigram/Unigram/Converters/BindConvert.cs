@@ -35,7 +35,22 @@ namespace Unigram.Converters
 
         }
 
+        private Dictionary<int, SolidColorBrush> _cacheBrushes = new Dictionary<int, SolidColorBrush>();
+
         public SolidColorBrush Bubble(int? value)
+        {
+            if (_cacheBrushes.ContainsKey(value ?? 0))
+            {
+                return _cacheBrushes[value ?? 0];
+            }
+
+            var brush = BubbleInternal(value);
+            _cacheBrushes[value ?? 0] = brush;
+
+            return brush;
+        }
+
+        private SolidColorBrush BubbleInternal(int? value)
         {
             switch (Utils.GetColorIndex(value ?? 0))
             {
@@ -63,11 +78,6 @@ namespace Unigram.Converters
         public string Date(int value)
         {
             return ShortTime.Format(DateTime(value));
-
-            var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
-            var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
-
-            return DateTime(value).ToString(string.Format("{0}", shortTimePattern), cultureInfo);
         }
 
         public DateTime DateTime(int value)

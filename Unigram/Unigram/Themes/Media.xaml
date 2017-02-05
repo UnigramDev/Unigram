@@ -80,7 +80,7 @@
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="6,2,6,4" Margin="4">
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
                 <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
             </Border>
 
@@ -373,7 +373,7 @@
                                         MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="4">
+                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,2,8,4" Margin="4">
                         <TextBlock Text="GAME" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                     </Border>
                 </Grid>

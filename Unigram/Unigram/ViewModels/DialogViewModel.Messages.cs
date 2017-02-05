@@ -801,6 +801,12 @@ namespace Unigram.ViewModels
                             picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
                             picker.SuggestedFileName = "sticker.webp";
 
+                            var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
+                            if (fileNameAttribute != null)
+                            {
+                                picker.SuggestedFileName = fileNameAttribute.FileName;
+                            }
+
                             var file = await picker.PickSaveFileAsync();
                             if (file != null)
                             {
