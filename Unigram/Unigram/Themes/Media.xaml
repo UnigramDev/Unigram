@@ -85,7 +85,7 @@
             </Border>
 
             <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="White" CornerRadius="24" RequestedTheme="Light"/>
+                <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
                 <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
             </Grid>
 

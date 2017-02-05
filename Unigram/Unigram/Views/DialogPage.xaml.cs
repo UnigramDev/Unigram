@@ -107,6 +107,8 @@ namespace Unigram.Views
         {
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
+            StickersPanel.Height = args.OccludedRect.Height;
+            ReplyMarkupPanel.Height = args.OccludedRect.Height;
             //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
         }
 
@@ -147,17 +149,18 @@ namespace Unigram.Views
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.With is TLUserBase) //Se non è zuppa allora è pan bagnato
+            if (ViewModel.With is TLUserBase)
+            {
                 ViewModel.NavigationService.Navigate(typeof(UserInfoPage), ViewModel.Peer.ToPeer());
+            }
             else if (ViewModel.With is TLChannel)
+            {
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
+            }
             else if (ViewModel.With is TLChat)
+            {
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
-        }
-
-        private void btnClosePinnedMessage_Click(object sender, RoutedEventArgs e)
-        {
-            grdPinnedMessage.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void Attach_Click(object sender, RoutedEventArgs e)
@@ -309,8 +312,7 @@ namespace Unigram.Views
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
-            StickersPanel.IsHitTestVisible = !StickersPanel.IsHitTestVisible;
-            StickersPanel.Opacity = StickersPanel.IsHitTestVisible ? 1 : 0;
+            StickersPanel.Visibility = StickersPanel.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void ProfileBubble_Click(object sender, RoutedEventArgs e)

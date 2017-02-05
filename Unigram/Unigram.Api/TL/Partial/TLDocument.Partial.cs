@@ -19,6 +19,12 @@ namespace Telegram.Api.TL
                     return attribute.FileName;
                 }
 
+                var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+                if (videoAttribute != null)
+                {
+                    return "Video.mp4";
+                }
+
                 return "Resources.Document";
             }
         }
@@ -45,12 +51,7 @@ namespace Telegram.Api.TL
 
         public string GetFileName()
         {
-            return string.Format("document{0}_{1}{2}", new object[]
-            {
-                Id,
-                AccessHash,
-                Path.GetExtension(FileName)
-            });
+            return string.Format("document{0}_{1}{2}", Id, AccessHash, Path.GetExtension(FileName));
         }
 
         public TLInputDocumentFileLocation ToInputFileLocation()

@@ -37,6 +37,7 @@ using Unigram.Controls;
 using Unigram.Core.Helpers;
 using Org.BouncyCastle.Security;
 using Unigram.Core;
+using Unigram.Services;
 
 namespace Unigram.ViewModels
 {
@@ -59,6 +60,7 @@ namespace Unigram.ViewModels
             }
         }
 
+        private readonly IGifsService _gifsService;
         private readonly IUploadFileManager _uploadFileManager;
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
@@ -67,9 +69,10 @@ namespace Unigram.ViewModels
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, FeaturedStickersViewModel featuredStickers)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IGifsService gifsService, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, FeaturedStickersViewModel featuredStickers)
             : base(protoService, cacheService, aggregator)
         {
+            _gifsService = gifsService;
             _uploadFileManager = uploadFileManager;
             _uploadAudioManager = uploadAudioManager;
             _uploadDocumentManager = uploadDocumentManager;
@@ -320,7 +323,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                IsFirstSliceLoaded = result.Result.Messages.Count < 15;
+                IsFirstSliceLoaded = result.Result.Messages.Count < 20;
             }
 
             _isLoadingNextSlice = false;
@@ -392,7 +395,7 @@ namespace Unigram.ViewModels
                     if (replyId != null && replyId.Value != 0)
                     {
                         var channelId = new int?();
-                        var channel = message.ToId as TLPeerChat;
+                        var channel = message.ToId as TLPeerChannel;
                         if (channel != null)
                         {
                             channelId = channel.Id;
@@ -655,7 +658,7 @@ namespace Unigram.ViewModels
             //Aggregator.Publish("PORCODIO");
 
             //StickersRecent();
-            GifsSaved();
+            //GifsSaved();
         }
 
         private void GifsSaved()
@@ -778,6 +781,7 @@ namespace Unigram.ViewModels
 
         public List<KeyedList<TLStickerSet, TLDocument>> StickerSets { get; set; }
 
+        public int SavedGifsHash { get; private set; }
         public ObservableCollection<TLDocument> SavedGifs { get; private set; }
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
@@ -1818,6 +1822,28 @@ namespace Unigram.ViewModels
 
                 }
             }
+        }
+
+        #endregion
+
+        #region Stickers
+
+        public RelayCommand OpenStickersCommand => new RelayCommand(OpenStickersExecute);
+        private void OpenStickersExecute()
+        {
+            Execute.BeginOnThreadPool(async () =>
+            {
+                var gifs = await _gifsService.GetSavedGifs();
+                if (gifs.Key != SavedGifsHash)
+                {
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        SavedGifsHash = gifs.Key;
+                        SavedGifs.Clear();
+                        SavedGifs.AddRange(gifs);
+                    });
+                }
+            });
         }
 
         #endregion
