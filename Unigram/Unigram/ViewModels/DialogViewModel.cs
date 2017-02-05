@@ -496,9 +496,7 @@ namespace Unigram.ViewModels
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
 
                 Messages.Clear();
-                LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
-                online = -1;
 
                 // test calls
                 //var config = await ProtoService.GetDHConfigAsync(0, 0);

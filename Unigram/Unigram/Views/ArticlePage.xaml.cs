@@ -8,6 +8,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods.Messages;
+using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
@@ -668,7 +669,7 @@ namespace Unigram.Views
                 {
                     if (uri.Host.Equals("t.me") || uri.Host.Equals("telegram.me"))
                     {
-
+                        MessageHelper.HandleTelegramUrl(urlText.Url);
                     }
                     else
                     {

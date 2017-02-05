@@ -67,6 +67,12 @@ namespace Unigram.ViewModels
 
         private async Task<string> GetSubtitle()
         {
+            var user = With as TLUser;
+            if (user != null && user.HasStatus)
+            {
+                return LastSeenHelper.GetLastSeenTime(user);
+            }
+
             var channel = With as TLChannel;
             if (channel != null)
             {
