@@ -12,26 +12,24 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLSendMessageActionBase Action { get; set; }
 
 		public TLMessagesSetTyping() { }
-		public TLMessagesSetTyping(TLBinaryReader from, bool cache = false)
+		public TLMessagesSetTyping(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSetTyping; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
-			Action = TLFactory.Read<TLSendMessageActionBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Peer = TLFactory.Read<TLInputPeerBase>(from);
+			Action = TLFactory.Read<TLSendMessageActionBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xA3825E50);
-			to.WriteObject(Peer, cache);
-			to.WriteObject(Action, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Peer);
+			to.WriteObject(Action);
 		}
 	}
 }

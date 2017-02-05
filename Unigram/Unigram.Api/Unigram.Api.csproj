@@ -107,6 +107,7 @@
     <None Include="project.json" />
     <Compile Include="Constants.cs" />
     <Compile Include="Constants.Secret.cs" />
+    <Compile Include="Helpers\PhoneNumber.cs" />
     <Compile Include="Services\FileManager\DownloadAudioFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadableItem.cs" />
@@ -373,6 +374,7 @@
     <Compile Include="TL\Partial\TLFileLocationBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesDialogsBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesMessagesBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLStickerSet.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdateBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdatesBase.Partial.cs" />
@@ -447,7 +449,7 @@
     <Compile Include="TL\Core\TLInt128.cs" />
     <Compile Include="TL\Core\TLInt256.cs" />
     <Compile Include="TL\Core\TLLong.cs" />
-    <Compile Include="TL\Core\TLMessageContainer.cs" />
+    <Compile Include="TL\Core\TLMsgContainer.cs" />
     <Compile Include="TL\Core\TLMessageState.cs" />
     <Compile Include="TL\Core\TLNonEncryptedTransportMessage.cs" />
     <Compile Include="TL\Core\TLObject.cs" />

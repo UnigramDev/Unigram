@@ -15,9 +15,9 @@ namespace Telegram.Api.TL
         public TLObject Query { get; set; }
 
         public TLGzipPacked() { }
-        public TLGzipPacked(TLBinaryReader from, bool fromCache)
+        public TLGzipPacked(TLBinaryReader from)
         {
-            Read(from, fromCache);
+            Read(from);
         }
 
         public override TLType TypeId { get { return TLType.GzipPacked; } }
@@ -44,7 +44,7 @@ namespace Telegram.Api.TL
         //    return this;
         //}
 
-        public override void Read(TLBinaryReader from, bool fromCache)
+        public override void Read(TLBinaryReader from)
         {
             var data = from.ReadByteArray();
             var buffer = new byte[4096];
@@ -62,12 +62,12 @@ namespace Telegram.Api.TL
                 input.Seek(0, SeekOrigin.Begin);
                 using (var reader = new TLBinaryReader(input))
                 {
-                    Query = TLFactory.Read<TLObject>(reader, fromCache);
+                    Query = TLFactory.Read<TLObject>(reader);
                 }
             }
         }
 
-        public override void Write(TLBinaryWriter to, bool toCache)
+        public override void Write(TLBinaryWriter to)
         {
             // TODO: maybe
             throw new NotImplementedException();

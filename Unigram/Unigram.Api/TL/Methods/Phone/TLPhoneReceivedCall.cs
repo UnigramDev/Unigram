@@ -11,24 +11,22 @@ namespace Telegram.Api.TL.Methods.Phone
 		public TLInputPhoneCall Peer { get; set; }
 
 		public TLPhoneReceivedCall() { }
-		public TLPhoneReceivedCall(TLBinaryReader from, bool cache = false)
+		public TLPhoneReceivedCall(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PhoneReceivedCall; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Peer = TLFactory.Read<TLInputPhoneCall>(from, cache);
-			if (cache) ReadFromCache(from);
+			Peer = TLFactory.Read<TLInputPhoneCall>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x17D54F61);
-			to.WriteObject(Peer, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Peer);
 		}
 	}
 }

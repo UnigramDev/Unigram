@@ -234,6 +234,7 @@
     <ClInclude Include="MediaFoundationExtensions.h" />
     <ClInclude Include="MediaSink.h" />
     <ClInclude Include="MediaSource.h" />
+    <ClInclude Include="NativeUtils.h" />
     <ClInclude Include="Opus\OpusCodec.h" />
     <ClInclude Include="Opus\OpusByteStreamHandler.h" />
     <ClInclude Include="Opus\OpusInputByteStream.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="MediaFoundationExtensions.cpp" />
     <ClCompile Include="MediaSink.cpp" />
     <ClCompile Include="MediaSource.cpp" />
+    <ClCompile Include="NativeUtils.cpp" />
     <ClCompile Include="Opus\OpusCodec.cpp" />
     <ClCompile Include="Opus\OpusByteStreamHandler.cpp" />
     <ClCompile Include="Opus\OpusInputByteStream.cpp" />

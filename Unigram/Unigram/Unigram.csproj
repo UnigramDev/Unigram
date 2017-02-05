@@ -99,11 +99,17 @@
     <Compile Include="Common\Language.cs" />
     <Compile Include="Controls\BubbleActionButton.cs" />
     <Compile Include="Controls\DialogsListView.cs" />
+    <Compile Include="Controls\GlyphToggleButton.cs" />
+    <Compile Include="Controls\ProgressShape.cs" />
+    <Compile Include="Controls\ProgressVoice.cs" />
     <Compile Include="Controls\TransferButton.cs" />
     <Compile Include="Controls\Media\ThumbnailControl.xaml.cs">
       <DependentUpon>ThumbnailControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProfilePictureView.cs" />
+    <Compile Include="Controls\Views\DeleteChannelMessageDialog.xaml.cs">
+      <DependentUpon>DeleteChannelMessageDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\ReplyMarkupView.xaml.cs">
       <DependentUpon>ReplyMarkupView.xaml</DependentUpon>
     </Compile>
@@ -111,6 +117,7 @@
       <DependentUpon>StickersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\LastSeenConverter.cs" />
+    <Compile Include="Converters\PhoneNumberFormatConverter.cs" />
     <Compile Include="ViewModels\DialogViewModel.Typing.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -171,7 +178,6 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\FluidGridView.cs" />
     <Compile Include="Common\IncrementalCollection.cs" />
-    <Compile Include="Common\KeyedList.cs" />
     <Compile Include="Common\LastSeenHelper.cs" />
     <Compile Include="Common\LazyBitmapImage.cs" />
     <Compile Include="Common\LinqToVisualTree.cs" />
@@ -270,6 +276,7 @@
     <Compile Include="ViewModels\Settings\SettingsEditNameViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsFeaturedStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSessionsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsUsernameViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\UserInfoViewModel.cs" />
@@ -331,8 +338,8 @@
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsChatPage.xaml.cs">
-      <DependentUpon>SettingsChatPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsDataPage.xaml.cs">
+      <DependentUpon>SettingsDataPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsFeaturedStickersPage.xaml.cs">
       <DependentUpon>SettingsFeaturedStickersPage.xaml</DependentUpon>
@@ -348,6 +355,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsStickersPage.xaml.cs">
       <DependentUpon>SettingsStickersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsStoragePage.xaml.cs">
+      <DependentUpon>SettingsStoragePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
       <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
@@ -494,6 +504,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\DeleteChannelMessageDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\EditYourNameView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -626,9 +640,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\SettingsChatPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Views\Settings\SettingsDataPage.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsFeaturedStickersPage.xaml">
       <SubType>Designer</SubType>
@@ -647,6 +661,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsStickersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsStoragePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -702,7 +720,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controls\Stickers\" />
-    <Folder Include="Models\" />
     <Folder Include="ViewModels\Settings\PrivacyAndSecurity\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

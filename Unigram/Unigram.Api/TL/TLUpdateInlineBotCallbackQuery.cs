@@ -24,26 +24,25 @@ namespace Telegram.Api.TL
 		public String GameShortName { get; set; }
 
 		public TLUpdateInlineBotCallbackQuery() { }
-		public TLUpdateInlineBotCallbackQuery(TLBinaryReader from, bool cache = false)
+		public TLUpdateInlineBotCallbackQuery(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateInlineBotCallbackQuery; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			QueryId = from.ReadInt64();
 			UserId = from.ReadInt32();
-			MsgId = TLFactory.Read<TLInputBotInlineMessageID>(from, cache);
+			MsgId = TLFactory.Read<TLInputBotInlineMessageID>(from);
 			ChatInstance = from.ReadInt64();
 			if (HasData) Data = from.ReadByteArray();
 			if (HasGameShortName) GameShortName = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -51,11 +50,10 @@ namespace Telegram.Api.TL
 			to.Write((Int32)Flags);
 			to.Write(QueryId);
 			to.Write(UserId);
-			to.WriteObject(MsgId, cache);
+			to.WriteObject(MsgId);
 			to.Write(ChatInstance);
 			if (HasData) to.WriteByteArray(Data);
 			if (HasGameShortName) to.Write(GameShortName);
-			if (cache) WriteToCache(to);
 		}
 
 		private void UpdateFlags()

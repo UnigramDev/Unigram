@@ -16,24 +16,22 @@ namespace Telegram.Api.TL
 		public Flag Flags { get; set; }
 
 		public TLInputMessagesFilterPhoneCalls() { }
-		public TLInputMessagesFilterPhoneCalls(TLBinaryReader from, bool cache = false)
+		public TLInputMessagesFilterPhoneCalls(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputMessagesFilterPhoneCalls; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x80C99768);
 			to.Write((Int32)Flags);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

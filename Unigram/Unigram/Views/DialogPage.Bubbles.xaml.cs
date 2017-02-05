@@ -47,6 +47,15 @@ namespace Unigram.Views
 
         private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
+            if (lvDialogs.ScrollingHost.ScrollableHeight - lvDialogs.ScrollingHost.VerticalOffset < 120)
+            {
+                Arrow.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Arrow.Visibility = Visibility.Visible;
+            }
+
             //if (ViewModel.Peer is TLInputPeerUser)
             //{
             //    lvDialogs.ScrollingHost.ViewChanged -= OnViewChanged;
@@ -216,7 +225,7 @@ namespace Unigram.Views
                 {
                     _cache.Push(item.Value);
                     _inUse.Remove(item.Key);
-                    Headers.Children.Remove(item.Value);
+                    ////Headers.Children.Remove(item.Value);
                 }
             }
         }
@@ -231,7 +240,7 @@ namespace Unigram.Views
                 border.Tag = message;
 
                 _inUse[index] = border;
-                Headers.Children.Add(border);
+                ////Headers.Children.Add(border);
 
                 return ElementCompositionPreview.GetElementVisual(ellipse);
             }
@@ -251,15 +260,15 @@ namespace Unigram.Views
                 border.Tag = message;
 
                 _inUse[index] = border;
-                Headers.Children.Add(border);
+                ////Headers.Children.Add(border);
 
                 return ElementCompositionPreview.GetElementVisual(ellipse);
             }
         }
 
-        private void Headers_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Headers.Clip.Rect = new Rect(0, 0, e.NewSize.Width, e.NewSize.Height);
-        }
+        //private void Headers_SizeChanged(object sender, SizeChangedEventArgs e)
+        //{
+        //    Headers.Clip.Rect = new Rect(0, 0, e.NewSize.Width, e.NewSize.Height);
+        //}
     }
 }

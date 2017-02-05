@@ -10,28 +10,26 @@ namespace Telegram.Api.TL
 		public TLVector<Int64> Unread { get; set; }
 
 		public TLMessagesFeaturedStickers() { }
-		public TLMessagesFeaturedStickers(TLBinaryReader from, bool cache = false)
+		public TLMessagesFeaturedStickers(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesFeaturedStickers; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Hash = from.ReadInt32();
-			Sets = TLFactory.Read<TLVector<TLStickerSetCoveredBase>>(from, cache);
-			Unread = TLFactory.Read<TLVector<Int64>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Sets = TLFactory.Read<TLVector<TLStickerSetCoveredBase>>(from);
+			Unread = TLFactory.Read<TLVector<Int64>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xF89D88E5);
 			to.Write(Hash);
-			to.WriteObject(Sets, cache);
-			to.WriteObject(Unread, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Sets);
+			to.WriteObject(Unread);
 		}
 	}
 }

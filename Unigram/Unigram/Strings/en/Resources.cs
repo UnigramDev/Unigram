@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 01/27/2017 16:51:48
+// 	Generated: 02/04/2017 16:49:32
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -174,13 +174,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} changed group photo"
+        /// Localized resource similar to "{0} updated group photo"
         /// </summary>
         public static string MessageActionChatEditPhoto
         {
             get
             {
-                return "{0} changed group photo";
+                return "{0} updated group photo";
             }
         }
         

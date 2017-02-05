@@ -13,14 +13,14 @@ namespace Telegram.Api.TL
 		public TLPhoneCallProtocol Protocol { get; set; }
 
 		public TLPhoneCallRequested() { }
-		public TLPhoneCallRequested(TLBinaryReader from, bool cache = false)
+		public TLPhoneCallRequested(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PhoneCallRequested; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Id = from.ReadInt64();
 			AccessHash = from.ReadInt64();
@@ -28,11 +28,10 @@ namespace Telegram.Api.TL
 			AdminId = from.ReadInt32();
 			ParticipantId = from.ReadInt32();
 			GA = from.ReadByteArray();
-			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from, cache);
-			if (cache) ReadFromCache(from);
+			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x6C448AE8);
 			to.Write(Id);
@@ -41,8 +40,7 @@ namespace Telegram.Api.TL
 			to.Write(AdminId);
 			to.Write(ParticipantId);
 			to.WriteByteArray(GA);
-			to.WriteObject(Protocol, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Protocol);
 		}
 	}
 }

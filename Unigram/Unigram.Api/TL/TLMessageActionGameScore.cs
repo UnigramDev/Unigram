@@ -9,26 +9,24 @@ namespace Telegram.Api.TL
 		public Int32 Score { get; set; }
 
 		public TLMessageActionGameScore() { }
-		public TLMessageActionGameScore(TLBinaryReader from, bool cache = false)
+		public TLMessageActionGameScore(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageActionGameScore; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			GameId = from.ReadInt64();
 			Score = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x92A72876);
 			to.Write(GameId);
 			to.Write(Score);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

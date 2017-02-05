@@ -11,24 +11,22 @@ namespace Telegram.Api.TL.Methods
 		public TLObject Query { get; set; }
 
 		public TLInvokeWithoutUpdates() { }
-		public TLInvokeWithoutUpdates(TLBinaryReader from, bool cache = false)
+		public TLInvokeWithoutUpdates(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InvokeWithoutUpdates; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Query = TLFactory.Read<TLObject>(from, cache);
-			if (cache) ReadFromCache(from);
+			Query = TLFactory.Read<TLObject>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xBF9459B7);
-			to.WriteObject(Query, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Query);
 		}
 	}
 }

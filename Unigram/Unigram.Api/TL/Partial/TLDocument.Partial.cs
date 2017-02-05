@@ -19,6 +19,12 @@ namespace Telegram.Api.TL
                     return attribute.FileName;
                 }
 
+                var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+                if (videoAttribute != null)
+                {
+                    return "Video.mp4";
+                }
+
                 return "Resources.Document";
             }
         }
@@ -45,12 +51,26 @@ namespace Telegram.Api.TL
 
         public string GetFileName()
         {
-            return string.Format("document{0}_{1}{2}", new object[]
+            return string.Format("document{0}_{1}{2}", Id, AccessHash, GetFileExtension());
+        }
+
+        public string GetFileExtension()
+        {
+            var attribute = Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
+            if (attribute != null)
             {
-                Id,
-                AccessHash,
-                Path.GetExtension(FileName)
-            });
+                return Path.GetExtension(attribute.FileName);
+            }
+
+            var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+            if (videoAttribute != null)
+            {
+                return ".mp4";
+            }
+
+            // TODO: mime conversion?
+
+            return ".dat";
         }
 
         public TLInputDocumentFileLocation ToInputFileLocation()

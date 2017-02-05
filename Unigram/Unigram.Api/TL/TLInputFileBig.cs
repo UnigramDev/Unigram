@@ -6,28 +6,26 @@ namespace Telegram.Api.TL
 	public partial class TLInputFileBig : TLInputFileBase 
 	{
 		public TLInputFileBig() { }
-		public TLInputFileBig(TLBinaryReader from, bool cache = false)
+		public TLInputFileBig(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputFileBig; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Id = from.ReadInt64();
 			Parts = from.ReadInt32();
 			Name = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xFA4F0BB5);
 			to.Write(Id);
 			to.Write(Parts);
 			to.Write(Name);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

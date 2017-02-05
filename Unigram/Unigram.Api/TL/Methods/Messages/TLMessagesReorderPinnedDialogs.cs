@@ -20,26 +20,24 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLVector<TLInputPeerBase> Order { get; set; }
 
 		public TLMessagesReorderPinnedDialogs() { }
-		public TLMessagesReorderPinnedDialogs(TLBinaryReader from, bool cache = false)
+		public TLMessagesReorderPinnedDialogs(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesReorderPinnedDialogs; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Order = TLFactory.Read<TLVector<TLInputPeerBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Order = TLFactory.Read<TLVector<TLInputPeerBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x959FF644);
 			to.Write((Int32)Flags);
-			to.WriteObject(Order, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Order);
 		}
 	}
 }

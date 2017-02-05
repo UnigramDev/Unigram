@@ -12,32 +12,30 @@ namespace Telegram.Api.TL
 		public String VenueId { get; set; }
 
 		public TLInputMediaVenue() { }
-		public TLInputMediaVenue(TLBinaryReader from, bool cache = false)
+		public TLInputMediaVenue(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputMediaVenue; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			GeoPoint = TLFactory.Read<TLInputGeoPointBase>(from, cache);
+			GeoPoint = TLFactory.Read<TLInputGeoPointBase>(from);
 			Title = from.ReadString();
 			Address = from.ReadString();
 			Provider = from.ReadString();
 			VenueId = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x2827A81A);
-			to.WriteObject(GeoPoint, cache);
+			to.WriteObject(GeoPoint);
 			to.Write(Title);
 			to.Write(Address);
 			to.Write(Provider);
 			to.Write(VenueId);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

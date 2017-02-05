@@ -18,7 +18,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
-                <controls:TransferButton Click="DownloadDocument_Click" Document="{Binding Media.Document}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+                <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
                 <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
             </Grid>
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
@@ -38,7 +38,7 @@
                 <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" Width="72" Height="72" Stretch="UniformToFill"/>
 
                 <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                    <controls:TransferButton Click="DownloadDocument_Click" Document="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                    <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
                     <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
                 </Grid>
             </Grid>
@@ -53,7 +53,7 @@
         <Grid Background="Black" 
               MinWidth="{ThemeResource TelegramMediaMinWidth}" 
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
-            <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}}"
+            <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
                                 Constraint="{Binding Media.Photo}" 
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
@@ -80,12 +80,12 @@
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="6,2,6,4" Margin="4">
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
                 <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
             </Border>
 
             <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                <controls:TransferButton Click="DownloadDocument_Click" Document="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Light"/>
+                <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
                 <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
             </Grid>
 
@@ -118,13 +118,30 @@
 
     <DataTemplate x:Key="MediaGeoPointTemplate">
         <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-            <Image Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" MaxWidth="320" MaxHeight="240"/>
+            <controls:ImageView Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" Constraint="{Binding Media}" MaxWidth="320" MaxHeight="240"/>
             <Border Width="20" Height="20" CornerRadius="10" Background="#54000000">
                 <Border CornerRadius="10" Margin="1" Background="White">
                     <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
                 </Border>
             </Border>
         </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaVenueTemplate">
+        <StackPanel>
+            <StackPanel Padding="{ThemeResource MessageContentPadding}">
+                <TextBlock Text="{Binding Media.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Address}" Style="{StaticResource BodyTextBlockStyle}"/>
+            </StackPanel>
+            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                <controls:ImageView Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" Constraint="{Binding Media}" MaxWidth="320" MaxHeight="240"/>
+                <Border Width="20" Height="20" CornerRadius="10" Background="#54000000">
+                    <Border CornerRadius="10" Margin="1" Background="White">
+                        <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
+                    </Border>
+                </Border>
+            </Grid>
+        </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Key="WebPageMediaTemplate">
@@ -220,7 +237,7 @@
                       MinWidth="{ThemeResource TelegramMediaMinWidth}" 
                       MinHeight="{ThemeResource TelegramMediaMinHeight}"
                       HorizontalAlignment="Left">
-                    <controls:ImageView Source="{Binding Media.Webpage.Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                    <controls:ImageView Source="{Binding Media.Webpage.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
                                         Constraint="{Binding Media.Webpage.Photo}" 
                                         MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
@@ -308,7 +325,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
-                        <controls:TransferButton Click="DownloadDocument_Click" Document="{Binding Media.Document}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+                        <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
                         <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
                     </Grid>
                     <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
@@ -356,7 +373,7 @@
                                         MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="4">
+                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,2,8,4" Margin="4">
                         <TextBlock Text="GAME" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
                     </Border>
                 </Grid>
@@ -377,6 +394,7 @@
         GifTemplate="{StaticResource MediaGifTemplate}"
         PhotoTemplate="{StaticResource MediaPhotoTemplate}"
         VideoTemplate="{StaticResource MediaVideoTemplate}"
+        VenueTemplate="{StaticResource MediaVenueTemplate}"
         WebPageTemplate="{StaticResource WebPageMediaTemplate}"
         WebPageGifTemplate="{StaticResource WebPageGifMediaTemplate}"
         WebPageDocumentTemplate="{StaticResource WebPageDocumentMediaTemplate}"

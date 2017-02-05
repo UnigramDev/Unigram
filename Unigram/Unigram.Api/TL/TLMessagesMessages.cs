@@ -6,28 +6,26 @@ namespace Telegram.Api.TL
 	public partial class TLMessagesMessages : TLMessagesMessagesBase 
 	{
 		public TLMessagesMessages() { }
-		public TLMessagesMessages(TLBinaryReader from, bool cache = false)
+		public TLMessagesMessages(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesMessages; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Messages = TLFactory.Read<TLVector<TLMessageBase>>(from, cache);
-			Chats = TLFactory.Read<TLVector<TLChatBase>>(from, cache);
-			Users = TLFactory.Read<TLVector<TLUserBase>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Messages = TLFactory.Read<TLVector<TLMessageBase>>(from);
+			Chats = TLFactory.Read<TLVector<TLChatBase>>(from);
+			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x8C718E87);
-			to.WriteObject(Messages, cache);
-			to.WriteObject(Chats, cache);
-			to.WriteObject(Users, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Messages);
+			to.WriteObject(Chats);
+			to.WriteObject(Users);
 		}
 	}
 }

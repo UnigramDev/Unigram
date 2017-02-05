@@ -6,28 +6,26 @@ namespace Telegram.Api.TL
 	public partial class TLBadMsgNotification : TLBadMsgNotificationBase 
 	{
 		public TLBadMsgNotification() { }
-		public TLBadMsgNotification(TLBinaryReader from, bool cache = false)
+		public TLBadMsgNotification(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.BadMsgNotification; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			BadMsgId = from.ReadInt64();
 			BadMsgSeqno = from.ReadInt32();
 			ErrorCode = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xA7EFF811);
 			to.Write(BadMsgId);
 			to.Write(BadMsgSeqno);
 			to.Write(ErrorCode);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

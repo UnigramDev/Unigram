@@ -262,10 +262,14 @@ namespace Telegram.Api.Services.FileManager
                     bool addFile = true;
                     foreach (var item in _items)
                     {
-                        if (item.Location.VolumeId == file.VolumeId
-                            && item.Location.LocalId == file.LocalId)
+                        if (item.Location.VolumeId == file.VolumeId &&
+                            item.Location.LocalId == file.LocalId)
                         {
+                            downloadableItem.Callback = item.Callback;
+                            downloadableItem.Progress = item.Progress;
                             addFile = false;
+
+                            Debug.WriteLine("Already downloading document");
                             break;
                         }
                     }

@@ -11,24 +11,22 @@ namespace Telegram.Api.TL.Methods.Auth
 		public TLVector<Int64> ExceptAuthKeys { get; set; }
 
 		public TLAuthDropTempAuthKeys() { }
-		public TLAuthDropTempAuthKeys(TLBinaryReader from, bool cache = false)
+		public TLAuthDropTempAuthKeys(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.AuthDropTempAuthKeys; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			ExceptAuthKeys = TLFactory.Read<TLVector<Int64>>(from, cache);
-			if (cache) ReadFromCache(from);
+			ExceptAuthKeys = TLFactory.Read<TLVector<Int64>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x8E48A188);
-			to.WriteObject(ExceptAuthKeys, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(ExceptAuthKeys);
 		}
 	}
 }

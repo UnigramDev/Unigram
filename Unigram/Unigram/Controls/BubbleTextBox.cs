@@ -38,7 +38,6 @@ namespace Unigram.Controls
     {
         private ContentControl InlinePlaceholderTextContentPresenter;
 
-        // TODO: TEMP!!!
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         private MenuFlyout _flyout;
@@ -296,9 +295,10 @@ namespace Unigram.Controls
                 // Check if CTRL or Shift is also pressed in addition to Enter key.
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+                var key = Window.Current.CoreWindow.GetKeyState(args.VirtualKey);
 
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && !IsEmpty)
+                if (key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down))
                 {
                     AcceptsReturn = false;
                     await SendAsync();
@@ -440,7 +440,7 @@ namespace Unigram.Controls
             Document.GetText(TextGetOptions.NoHidden, out planText);
 
             //Document.SetText(TextSetOptions.FormatRtf, string.Empty);
-            Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
+            Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
 
             _updatingText = true;
             planText = planText.Trim();
@@ -670,7 +670,7 @@ namespace Unigram.Controls
 
             if (string.IsNullOrEmpty(newValue))
             {
-                Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
+                Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
             }
             else
             {
@@ -795,10 +795,12 @@ namespace Unigram.Controls
 
                 _isDirty = true;
                 Document.SetText(TextSetOptions.FormatRtf, document.Render());
+                Document.Selection.SetRange(text.Length, text.Length);
             }
             else
             {
                 Document.SetText(TextSetOptions.None, text);
+                Document.Selection.SetRange(text.Length, text.Length);
             }
         }
 
@@ -830,7 +832,7 @@ namespace Unigram.Controls
 
                 if (flag)
                 {
-                    OnMessageChanged(message.Message, message.Entities);
+                    OnMessageChanged(args.Text, message.Entities);
                 }
             });
         }
@@ -867,7 +869,7 @@ namespace Unigram.Controls
                     var emptyDraft = args.Draft as TLDraftMessageEmpty;
                     if (emptyDraft != null)
                     {
-                        Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\colortbl ;\red0\green0\blue0;}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
+                        Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
                     }
                 }
             });
@@ -878,9 +880,12 @@ namespace Unigram.Controls
     {
         public TLMessage Message { get; private set; }
 
-        public EditMessageEventArgs(TLMessage message)
+        public string Text { get; private set; }
+
+        public EditMessageEventArgs(TLMessage message, string text)
         {
             Message = message;
+            Text = text;
         }
     }
 

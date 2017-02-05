@@ -21,32 +21,30 @@ namespace Telegram.Api.TL
 		public Int32? Duration { get; set; }
 
 		public TLMessageActionPhoneCall() { }
-		public TLMessageActionPhoneCall(TLBinaryReader from, bool cache = false)
+		public TLMessageActionPhoneCall(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageActionPhoneCall; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			CallId = from.ReadInt64();
-			if (HasReason) Reason = TLFactory.Read<TLPhoneCallDiscardReasonBase>(from, cache);
+			if (HasReason) Reason = TLFactory.Read<TLPhoneCallDiscardReasonBase>(from);
 			if (HasDuration) Duration = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
 			to.Write(0x80E11A7F);
 			to.Write((Int32)Flags);
 			to.Write(CallId);
-			if (HasReason) to.WriteObject(Reason, cache);
+			if (HasReason) to.WriteObject(Reason);
 			if (HasDuration) to.Write(Duration.Value);
-			if (cache) WriteToCache(to);
 		}
 
 		private void UpdateFlags()

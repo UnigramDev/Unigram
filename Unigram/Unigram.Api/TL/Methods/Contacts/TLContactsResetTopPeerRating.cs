@@ -12,26 +12,24 @@ namespace Telegram.Api.TL.Methods.Contacts
 		public TLInputPeerBase Peer { get; set; }
 
 		public TLContactsResetTopPeerRating() { }
-		public TLContactsResetTopPeerRating(TLBinaryReader from, bool cache = false)
+		public TLContactsResetTopPeerRating(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ContactsResetTopPeerRating; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Category = TLFactory.Read<TLTopPeerCategoryBase>(from, cache);
-			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Category = TLFactory.Read<TLTopPeerCategoryBase>(from);
+			Peer = TLFactory.Read<TLInputPeerBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x1AE373AC);
-			to.WriteObject(Category, cache);
-			to.WriteObject(Peer, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Category);
+			to.WriteObject(Peer);
 		}
 	}
 }

@@ -11,24 +11,22 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int32 MaxQts { get; set; }
 
 		public TLMessagesReceivedQueue() { }
-		public TLMessagesReceivedQueue(TLBinaryReader from, bool cache = false)
+		public TLMessagesReceivedQueue(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesReceivedQueue; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			MaxQts = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x55A5BB66);
 			to.Write(MaxQts);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

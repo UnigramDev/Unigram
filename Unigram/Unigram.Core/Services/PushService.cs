@@ -36,14 +36,19 @@ namespace Unigram.Core.Services
 
                 try
                 {
+
                     var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
                     if (channel.Uri != SettingsHelper.ChannelUri)
                     {
+                        var oldUri = SettingsHelper.ChannelUri;
+
                         var result = await _protoService.RegisterDeviceAsync(8, channel.Uri);
-                        if (result.IsSucceeded && result.Result)
+                        if (result.IsSucceeded)
                         {
                             SettingsHelper.ChannelUri = channel.Uri;
                         }
+
+                        await _protoService.UnregisterDeviceAsync(8, oldUri);
                     }
                 }
                 catch { }

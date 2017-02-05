@@ -8,26 +8,24 @@ namespace Telegram.Api.TL
 		public Byte[] Data { get; set; }
 
 		public TLKeyboardButtonCallback() { }
-		public TLKeyboardButtonCallback(TLBinaryReader from, bool cache = false)
+		public TLKeyboardButtonCallback(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.KeyboardButtonCallback; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Text = from.ReadString();
 			Data = from.ReadByteArray();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x683A5E46);
 			to.Write(Text);
 			to.WriteByteArray(Data);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

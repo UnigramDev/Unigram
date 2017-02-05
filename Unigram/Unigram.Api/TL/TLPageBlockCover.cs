@@ -8,24 +8,22 @@ namespace Telegram.Api.TL
 		public TLPageBlockBase Cover { get; set; }
 
 		public TLPageBlockCover() { }
-		public TLPageBlockCover(TLBinaryReader from, bool cache = false)
+		public TLPageBlockCover(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PageBlockCover; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Cover = TLFactory.Read<TLPageBlockBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Cover = TLFactory.Read<TLPageBlockBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x39F23300);
-			to.WriteObject(Cover, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Cover);
 		}
 	}
 }

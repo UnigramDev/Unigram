@@ -11,30 +11,28 @@ namespace Telegram.Api.TL
 		public Int32 KeyFingerprint { get; set; }
 
 		public TLInputEncryptedFileUploaded() { }
-		public TLInputEncryptedFileUploaded(TLBinaryReader from, bool cache = false)
+		public TLInputEncryptedFileUploaded(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputEncryptedFileUploaded; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Id = from.ReadInt64();
 			Parts = from.ReadInt32();
 			Md5Checksum = from.ReadString();
 			KeyFingerprint = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x64BD0306);
 			to.Write(Id);
 			to.Write(Parts);
 			to.Write(Md5Checksum);
 			to.Write(KeyFingerprint);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

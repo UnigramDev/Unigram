@@ -6,24 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLDestroySessionNone : TLDestroySessionResBase 
 	{
 		public TLDestroySessionNone() { }
-		public TLDestroySessionNone(TLBinaryReader from, bool cache = false)
+		public TLDestroySessionNone(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.DestroySessionNone; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			SessionId = from.ReadInt64();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x62D350C9);
 			to.Write(SessionId);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

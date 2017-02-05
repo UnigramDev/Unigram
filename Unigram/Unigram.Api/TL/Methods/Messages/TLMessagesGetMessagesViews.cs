@@ -13,28 +13,26 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Boolean Increment { get; set; }
 
 		public TLMessagesGetMessagesViews() { }
-		public TLMessagesGetMessagesViews(TLBinaryReader from, bool cache = false)
+		public TLMessagesGetMessagesViews(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesGetMessagesViews; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
-			Id = TLFactory.Read<TLVector<Int32>>(from, cache);
+			Peer = TLFactory.Read<TLInputPeerBase>(from);
+			Id = TLFactory.Read<TLVector<Int32>>(from);
 			Increment = from.ReadBoolean();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xC4C8A55D);
-			to.WriteObject(Peer, cache);
-			to.WriteObject(Id, cache);
+			to.WriteObject(Peer);
+			to.WriteObject(Id);
 			to.Write(Increment);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -11,30 +11,28 @@ namespace Telegram.Api.TL
 		public Double Zoom { get; set; }
 
 		public TLMaskCoords() { }
-		public TLMaskCoords(TLBinaryReader from, bool cache = false)
+		public TLMaskCoords(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MaskCoords; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			N = from.ReadInt32();
 			X = from.ReadDouble();
 			Y = from.ReadDouble();
 			Zoom = from.ReadDouble();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xAED6DBB2);
 			to.Write(N);
 			to.Write(X);
 			to.Write(Y);
 			to.Write(Zoom);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

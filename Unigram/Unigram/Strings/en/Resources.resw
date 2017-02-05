@@ -198,7 +198,7 @@
     <comment>Login - Code - Code Input - Placeholder Text</comment>
   </data>
   <data name="Login-Code-Intro.Text" xml:space="preserve">
-    <value>We've send you a message with the code:</value>
+    <value>We've sent you a message with the code.</value>
     <comment>Login - Code - Intro</comment>
   </data>
   <data name="Login-Code-Title.Text" xml:space="preserve">
@@ -465,7 +465,7 @@
     <value>{0} removed {1}</value>
   </data>
   <data name="MessageActionChatEditPhoto" xml:space="preserve">
-    <value>{0} changed group photo</value>
+    <value>{0} updated group photo</value>
   </data>
   <data name="MessageActionChatEditTitle" xml:space="preserve">
     <value>{0} changed group name to "{1}"</value>

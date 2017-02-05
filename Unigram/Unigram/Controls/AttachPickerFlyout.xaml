@@ -23,7 +23,7 @@
               ScrollViewer.VerticalScrollBarVisibility="Disabled"
               ScrollViewer.VerticalScrollMode="Disabled"
               MaxWidth="{ThemeResource MenuFlyoutMaxWidth}"
-              Height="72"
+              Height="88"
               Padding="12">
         <ListView.ItemsPanel>
             <ItemsPanelTemplate>
@@ -36,18 +36,53 @@
                 <Setter Property="MinHeight" Value="0"/>
                 <Setter Property="Margin" Value="0,0,12,0"/>
                 <Setter Property="Padding" Value="0"/>
+                <!--<Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListViewItem">
+                            <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                   Control.IsTemplateFocusTarget="True"
+                                                   FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                                   FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                                                   FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                                                   FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                                                   FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                                                   SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                                                   CheckBrush="{ThemeResource ListViewItemCheckBrush}"
+                                                   CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                                                   DragBackground="{ThemeResource ListViewItemDragBackground}"
+                                                   DragForeground="{ThemeResource ListViewItemDragForeground}"
+                                                   FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                                                   FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                                                   PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                                                   PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                                   PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                                                   SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                                                   SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                                                   SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                                                   PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                                   SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                                                   DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                   DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                   ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                   HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                   VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                   ContentMargin="{TemplateBinding Padding}"
+                                                   CheckMode="Overlay" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>-->
             </Style>
         </ListView.ItemContainerStyle>
         <ListView.Header>
             <Grid x:Name="Camera" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" RequestedTheme="Dark" Margin="0,0,12,0">
-                <local:GlyphButton Click="Camera_Click" Glyph="&#xE114;"/>
+                <local:GlyphButton Click="Camera_Click" Glyph="&#xE114;" Width="64" Height="64"/>
                 <Border BorderBrush="#26000000" BorderThickness="1"/>
             </Grid>
         </ListView.Header>
         <ListView.ItemTemplate>
             <DataTemplate>
                 <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                    <Image Source="{Binding Thumbnail}" Width="48" Height="48"/>
+                    <Image Source="{Binding Thumbnail}" Width="64" Height="64"/>
                     <Border BorderBrush="#26000000" BorderThickness="1"/>
                 </Grid>
             </DataTemplate>

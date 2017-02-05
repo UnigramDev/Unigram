@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
+using Telegram.Helpers;
 using Windows.UI.Xaml;
 
 namespace Telegram.Api.TL
@@ -17,17 +18,17 @@ namespace Telegram.Api.TL
 
         public List<TLMessageBase> CommitMessages { get; set; } = new List<TLMessageBase>();
 
-        public override void ReadFromCache(TLBinaryReader from)
-        {
-            Messages = new ObservableCollection<TLMessageBase>(TLFactory.Read<TLVector<TLMessageBase>>(from, true));
-            CommitMessages = new List<TLMessageBase>(TLFactory.Read<TLVector<TLMessageBase>>(from, true));
-        }
+        //public override void ReadFromCache(TLBinaryReader from)
+        //{
+        //    Messages = new ObservableCollection<TLMessageBase>(TLFactory.Read<TLVector<TLMessageBase>>(from, true));
+        //    CommitMessages = new List<TLMessageBase>(TLFactory.Read<TLVector<TLMessageBase>>(from, true));
+        //}
 
-        public override void WriteToCache(TLBinaryWriter to)
-        {
-            to.WriteObject(new TLVector<TLMessageBase>(Messages), true);
-            to.WriteObject(new TLVector<TLMessageBase>(CommitMessages), true);
-        }
+        //public override void WriteToCache(TLBinaryWriter to)
+        //{
+        //    to.WriteObject(new TLVector<TLMessageBase>(Messages), true);
+        //    to.WriteObject(new TLVector<TLMessageBase>(CommitMessages), true);
+        //}
 
         public virtual int CountMessages()
         {
@@ -292,7 +293,6 @@ namespace Telegram.Api.TL
 
         public int PinnedIndex { get; set; }
 
-        private string _fullName;
         public string FullName
         {
             get
@@ -316,6 +316,11 @@ namespace Telegram.Api.TL
                     {
                         //return AppResources.TelegramNotifications;
                         return "Telegram";
+                    }
+
+                    if (user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact)
+                    {
+                        return PhoneNumber.Format(user.Phone);
                     }
 
                     //                    var userRequest = user as TLUserRequest;

@@ -18,150 +18,52 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid x:Name="Header"
-              Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
-              Height="{ThemeResource AppBarThemeCompactHeight}"
-              Canvas.ZIndex="2"
-              Grid.Row="0">
-            <TextBlock x:Name="tblPivotTitle"
-                       Text="UNIGRAM"
-                       Style="{ThemeResource BaseTextBlockStyle}"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       Margin="12,0" />
+        <Grid x:Name="Header" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Uid="Login-Code-Title" Text="Your code" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+            <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;" Grid.Column="1"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
-        <RelativePanel x:Name="rpMain" Grid.Row="1">
-            <!-- Master - Titlebar -->
-            <!--<RelativePanel x:Name="rpMasterTitlebar"
-                 Style="{StaticResource StyleRPMasterTitleBar}">
-                 <TextBlock x:Name="tblMasterTitle"
-                 x:Uid="Login-Titlebar-Title"
-                 Text="WELCOME TO UNIGRAM" 
-                 Style="{StaticResource BaseTextBlockStyle}"
-                 RequestedTheme="Dark"
-                 Padding="16,0"
-                 RelativePanel.AlignVerticalCenterWithPanel="True"/>
-                 </RelativePanel>-->
 
-            <!-- Master - Main content -->
-            <RelativePanel x:Name="rpMasterContent"
-                           RelativePanel.AlignLeftWithPanel="True"
-                           RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.AlignTopWithPanel="True"
-                           RelativePanel.AlignBottomWithPanel="True">
-                <ScrollViewer RelativePanel.AlignLeftWithPanel="True"
-                              RelativePanel.AlignRightWithPanel="True"
-                              RelativePanel.AlignBottomWithPanel="True"
-                              RelativePanel.AlignTopWithPanel="True">
-                    <RelativePanel Padding="16" x:Name="rpScrollContent">
+        <Grid x:Name="ContentPanel" Padding="12,20" MaxWidth="360" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="TitleLabel" x:Uid="Login-Code-Title" Text="Your code" Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock x:Uid="Login-Code-Intro"
+                       Text="We've sent you a message with the code."
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       Padding="0,8,0,16"
+                       Grid.Row="1"/>
 
-                        <!-- Master - logo and intro -->
-                        <RelativePanel x:Name="rpMasterWelcomeIntro"
-                                       RelativePanel.AlignLeftWithPanel="True"
-                                       RelativePanel.AlignRightWithPanel="True"
-                                       Visibility="Collapsed">
-                            <Canvas Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                    Height="96"
-                                    Width="96"
-                                    x:Name="imgMasterWelcomeLogo">
-                                <Image 
-                                    Height="96"
-                                    Width="96"  
-                                    Source="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
-                            </Canvas>
-                            <TextBlock x:Name="tblMasterWelcomeIntroText"
-                                       x:Uid="Login-Intro-Intro"
-                                       Padding="16,0"
-                                       Text="Unigram is an UWP Telegram-app built by the Windows Community, for the Windows community"
-                                       TextWrapping="Wrap"
-                                       Style="{ThemeResource BodyTextBlockStyle}"                              
-                                       RelativePanel.AlignRightWithPanel="True"
-                                       RelativePanel.AlignVerticalCenterWithPanel="True"
-                                       RelativePanel.RightOf="imgMasterWelcomeLogo"/>
-                        </RelativePanel>
-                        <!-- END OF Master - Logo and intro -->
+            <controls:UpdateTextBox x:Uid="Login-Code-Code"
+                                                    Text="{Binding PhoneCode, Mode=TwoWay}"
+                                                    Margin="0,12,0,8"
+                                                    InputScope="Digits"
+                                                    IsTextPredictionEnabled="False"
+                                                    Header="Enter your code:"
+                                                    PlaceholderText="Your code"
+                                    Grid.Row="3"/>
 
-                        <!-- Master - Code -->
-                        <RelativePanel x:Name="rpMasterCode"
-                                       Visibility="Visible"
-                                       Padding="0,16,0,0"
-                                       RelativePanel.AlignLeftWithPanel="True"
-                                       RelativePanel.AlignRightWithPanel="True"
-                                       RelativePanel.AlignBottomWithPanel="True"
-                                       RelativePanel.AlignTopWithPanel="True"
-                                       VerticalAlignment="Stretch">
-                            <!-- Title of this block and stuff -->
-                            <TextBlock x:Name="tblMasterCodeTitle"
-                                       x:Uid="Login-Code-Title"
-                                       Text="Your code"
-                                       Style="{StaticResource TitleTextBlockStyle}"
-                                       RelativePanel.AlignLeftWithPanel="True"
-                                       RelativePanel.AlignRightWithPanel="True"
-                                       RelativePanel.AlignTopWithPanel="True"/>
-                            <TextBlock x:Name="tblMasterCodeIntro"
-                                       x:Uid="Login-Code-Intro"
-                                       Text="We've send you a message with the code:"
-                                       TextWrapping="Wrap"
-                                       FontSize="14"
-                                       Padding="0,8,0,0"
-                                       RelativePanel.AlignLeftWithPanel="True"
-                                       RelativePanel.AlignRightWithPanel="True"
-                                       RelativePanel.Below="tblMasterCodeTitle" />
-                            <RelativePanel x:Name="rpMasterCodeInput"
-                                           Padding="0,0,0,0"
-                                           RelativePanel.AlignLeftWithPanel="True"
-                                           RelativePanel.AlignRightWithPanel="True"
-                                           RelativePanel.AlignBottomWithPanel="True"
-                                           RelativePanel.Below="tblMasterCodeIntro">
-                                <!-- Input for the user to fill in the recieved code -->
-                                <controls:UpdateTextBox x:Name="txtMasterCodeInputInput"
-                                                        x:Uid="Login-Code-Code"
-                                                        Text="{Binding PhoneCode, Mode=TwoWay}"
-                                                        Margin="0,16,0,0"
-                                                        InputScope="Digits"
-                                                        IsTextPredictionEnabled="False"
-                                                        Header="Enter your code:"
-                                                        PlaceholderText="Your code" 
-                                                        RelativePanel.AlignLeftWithPanel="True"
-                                                        RelativePanel.AlignRightWithPanel="True"
-                                                        RelativePanel.AlignTopWithPanel="True" 
-                                                        TextChanged="txtMasterCodeInputInput_TextChanged"/>
-                                <ProgressBar x:Name="pbarLoading" 
-                                             IsIndeterminate="True"
-                                             Background="{ThemeResource FocusVisualBlackStrokeThemeBrush}"
-                                             Width="{Binding ElementName=rpMasterCodeInput, Path=ActualWidth}"
-                                             Margin="0,5,0,0"
-                                             RelativePanel.Below="txtMasterCodeInputInput"
-                                             Visibility="Collapsed"/>
-                                <!-- Button to take the user to the next page -->
-                                <Button x:Name="btnMasterCodeInputConfirm"
-                                        x:Uid="BTN-Next"
-                                        Command="{x:Bind ViewModel.SendCommand}"
-                                        Background="{StaticResource SystemControlBackgroundAccentBrush}"
-                                        RequestedTheme="Dark"
-                                        Content="Next"
-                                        Padding="24,6"
-                                        Margin="0,32,0,0"
-                                        MinWidth="160"
-                                        RelativePanel.AlignRightWithPanel="True"
-                                        RelativePanel.Below="txtMasterCodeInputInput" 
-                                        Click="btnMasterCodeInputConfirm_Click"/>
-                                <!-- Button in case the user did not recieve a code -->
-                                <Button x:Name="btnMasterCodeInputNoCode"
-                                        x:Uid="BTN-CodeNotRecieved"
-                                        Content="I haven't received a code"
-                                        Style="{StaticResource TextBlockButtonStyle}"
-                                        Margin="0,8,-8,0"
-                                        RelativePanel.AlignRightWithPanel="True"
-                                        RelativePanel.Below="btnMasterCodeInputConfirm"
-                                        RelativePanel.AlignHorizontalCenterWithPanel="True"/>
-                            </RelativePanel>
-                        </RelativePanel>
-                        <!-- END OF Master - Code -->
-                    </RelativePanel>
-                </ScrollViewer>
-            </RelativePanel>
-        </RelativePanel>
+            <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
+
+            <Button x:Name="NextButton"
+                    x:Uid="BTN-Next"
+                    Command="{x:Bind ViewModel.SendCommand}"
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                    HorizontalAlignment="Stretch"
+                    Content="Next"
+                    Margin="0,8,0,0"         
+                    Grid.Row="5"
+                    Visibility="Collapsed"/>
+        </Grid>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="DisplayModeStates">
@@ -170,32 +72,17 @@
                         <AdaptiveTrigger MinWindowWidth="600" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
-                        <Setter Target="rpScrollContent.HorizontalAlignment" Value="Center"/>
-                        <Setter Target="btnMasterCodeInputNoCode.HorizontalAlignment" Value="Center"/>
-                        <Setter Target="rpScrollContent.Width" Value="400"/>
-                        <Setter Target="rpMasterWelcomeIntro.Margin" Value="0,0,0,32"/>
-                        <Setter Target="rpScrollContent.VerticalAlignment" Value="Center"/>
-                        <Setter Target="rpMasterCodeInput.HorizontalAlignment" Value="Center"/>
-                        <Setter Target="btnMasterCodeInputConfirm.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True"/>
-                        <Setter Target="btnMasterCodeInputConfirm.Width" Value="200"/>
-                        <Setter Target="btnMasterCodeInputConfirm.Margin" Value="0,24,0,0"/>
-                        <Setter Target="btnMasterCodeInputConfirm.(RelativePanel.Below)" Value="txtMasterCodeInputInput"/>
-                        <Setter Target="btnMasterCodeInputConfirm.(RelativePanel.AlignRightWithPanel)" Value="False"/>
-                        <Setter Target="btnMasterCodeInputNoCode.(RelativePanel.AlignRightWithPanel)" Value="False"/>
-                        <Setter Target="tblMasterCodeIntro.HorizontalAlignment" Value="Center"/>
-                        <Setter Target="tblMasterCodeIntro.Margin" Value="0,0,0,32"/>
-                        <Setter Target="tblMasterCodeTitle.HorizontalAlignment" Value="Center"/>
+                        <Setter Target="ContentPanel.VerticalAlignment" Value="Center" />
                         <Setter Target="Header.Visibility" Value="Collapsed"/>
+                        <Setter Target="NextGlyph.Visibility" Value="Collapsed"/>
+                        <Setter Target="NextButton.Visibility" Value="Visible"/>
+                        <Setter Target="TitleLabel.Visibility" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Compact">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
-                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>

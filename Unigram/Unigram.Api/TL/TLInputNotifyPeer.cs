@@ -8,24 +8,22 @@ namespace Telegram.Api.TL
 		public TLInputPeerBase Peer { get; set; }
 
 		public TLInputNotifyPeer() { }
-		public TLInputNotifyPeer(TLBinaryReader from, bool cache = false)
+		public TLInputNotifyPeer(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputNotifyPeer; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Peer = TLFactory.Read<TLInputPeerBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xB8BC5B0C);
-			to.WriteObject(Peer, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Peer);
 		}
 	}
 }

@@ -13,28 +13,26 @@ namespace Telegram.Api.TL.Methods.Channels
 		public Boolean Kicked { get; set; }
 
 		public TLChannelsKickFromChannel() { }
-		public TLChannelsKickFromChannel(TLBinaryReader from, bool cache = false)
+		public TLChannelsKickFromChannel(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ChannelsKickFromChannel; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Channel = TLFactory.Read<TLInputChannelBase>(from, cache);
-			UserId = TLFactory.Read<TLInputUserBase>(from, cache);
+			Channel = TLFactory.Read<TLInputChannelBase>(from);
+			UserId = TLFactory.Read<TLInputUserBase>(from);
 			Kicked = from.ReadBoolean();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xA672DE14);
-			to.WriteObject(Channel, cache);
-			to.WriteObject(UserId, cache);
+			to.WriteObject(Channel);
+			to.WriteObject(UserId);
 			to.Write(Kicked);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

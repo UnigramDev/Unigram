@@ -9,26 +9,24 @@ namespace Telegram.Api.TL
 		public String Caption { get; set; }
 
 		public TLMessageMediaPhoto() { }
-		public TLMessageMediaPhoto(TLBinaryReader from, bool cache = false)
+		public TLMessageMediaPhoto(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessageMediaPhoto; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Photo = TLFactory.Read<TLPhotoBase>(from, cache);
+			Photo = TLFactory.Read<TLPhotoBase>(from);
 			Caption = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x3D8CE53D);
-			to.WriteObject(Photo, cache);
+			to.WriteObject(Photo);
 			to.Write(Caption);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

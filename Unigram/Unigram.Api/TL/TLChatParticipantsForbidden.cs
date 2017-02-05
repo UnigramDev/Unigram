@@ -17,30 +17,28 @@ namespace Telegram.Api.TL
 		public TLChatParticipantBase SelfParticipant { get; set; }
 
 		public TLChatParticipantsForbidden() { }
-		public TLChatParticipantsForbidden(TLBinaryReader from, bool cache = false)
+		public TLChatParticipantsForbidden(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ChatParticipantsForbidden; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			ChatId = from.ReadInt32();
-			if (HasSelfParticipant) SelfParticipant = TLFactory.Read<TLChatParticipantBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			if (HasSelfParticipant) SelfParticipant = TLFactory.Read<TLChatParticipantBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
 			to.Write(0xFC900C2B);
 			to.Write((Int32)Flags);
 			to.Write(ChatId);
-			if (HasSelfParticipant) to.WriteObject(SelfParticipant, cache);
-			if (cache) WriteToCache(to);
+			if (HasSelfParticipant) to.WriteObject(SelfParticipant);
 		}
 
 		private void UpdateFlags()

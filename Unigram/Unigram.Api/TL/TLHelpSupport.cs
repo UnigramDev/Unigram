@@ -9,26 +9,24 @@ namespace Telegram.Api.TL
 		public TLUserBase User { get; set; }
 
 		public TLHelpSupport() { }
-		public TLHelpSupport(TLBinaryReader from, bool cache = false)
+		public TLHelpSupport(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.HelpSupport; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			PhoneNumber = from.ReadString();
-			User = TLFactory.Read<TLUserBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			User = TLFactory.Read<TLUserBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x17C6B5F6);
 			to.Write(PhoneNumber);
-			to.WriteObject(User, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(User);
 		}
 	}
 }

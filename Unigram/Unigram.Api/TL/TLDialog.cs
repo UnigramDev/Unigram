@@ -28,42 +28,40 @@ namespace Telegram.Api.TL
 		public TLDraftMessageBase Draft { get; set; }
 
 		public TLDialog() { }
-		public TLDialog(TLBinaryReader from, bool cache = false)
+		public TLDialog(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.Dialog; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Peer = TLFactory.Read<TLPeerBase>(from, cache);
+			Peer = TLFactory.Read<TLPeerBase>(from);
 			TopMessage = from.ReadInt32();
 			ReadInboxMaxId = from.ReadInt32();
 			ReadOutboxMaxId = from.ReadInt32();
 			UnreadCount = from.ReadInt32();
-			NotifySettings = TLFactory.Read<TLPeerNotifySettingsBase>(from, cache);
+			NotifySettings = TLFactory.Read<TLPeerNotifySettingsBase>(from);
 			if (HasPts) Pts = from.ReadInt32();
-			if (HasDraft) Draft = TLFactory.Read<TLDraftMessageBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			if (HasDraft) Draft = TLFactory.Read<TLDraftMessageBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
 			to.Write(0x66FFBA14);
 			to.Write((Int32)Flags);
-			to.WriteObject(Peer, cache);
+			to.WriteObject(Peer);
 			to.Write(TopMessage);
 			to.Write(ReadInboxMaxId);
 			to.Write(ReadOutboxMaxId);
 			to.Write(UnreadCount);
-			to.WriteObject(NotifySettings, cache);
+			to.WriteObject(NotifySettings);
 			if (HasPts) to.Write(Pts.Value);
-			if (HasDraft) to.WriteObject(Draft, cache);
-			if (cache) WriteToCache(to);
+			if (HasDraft) to.WriteObject(Draft);
 		}
 
 		private void UpdateFlags()

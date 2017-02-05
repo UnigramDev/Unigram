@@ -8,24 +8,22 @@ namespace Telegram.Api.TL
 		public Boolean PhoneRegistered { get; set; }
 
 		public TLAuthCheckedPhone() { }
-		public TLAuthCheckedPhone(TLBinaryReader from, bool cache = false)
+		public TLAuthCheckedPhone(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.AuthCheckedPhone; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			PhoneRegistered = from.ReadBoolean();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x811EA28E);
 			to.Write(PhoneRegistered);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

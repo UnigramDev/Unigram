@@ -30,14 +30,14 @@ namespace Telegram.Api.TL
 		public TLRichTextBase Caption { get; set; }
 
 		public TLPageBlockEmbed() { }
-		public TLPageBlockEmbed(TLBinaryReader from, bool cache = false)
+		public TLPageBlockEmbed(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PageBlockEmbed; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			if (HasUrl) Url = from.ReadString();
@@ -45,11 +45,10 @@ namespace Telegram.Api.TL
 			if (HasPosterPhotoId) PosterPhotoId = from.ReadInt64();
 			W = from.ReadInt32();
 			H = from.ReadInt32();
-			Caption = TLFactory.Read<TLRichTextBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Caption = TLFactory.Read<TLRichTextBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -60,8 +59,7 @@ namespace Telegram.Api.TL
 			if (HasPosterPhotoId) to.Write(PosterPhotoId.Value);
 			to.Write(W);
 			to.Write(H);
-			to.WriteObject(Caption, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Caption);
 		}
 
 		private void UpdateFlags()

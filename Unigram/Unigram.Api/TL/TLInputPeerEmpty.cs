@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLInputPeerEmpty : TLInputPeerBase 
 	{
 		public TLInputPeerEmpty() { }
-		public TLInputPeerEmpty(TLBinaryReader from, bool cache = false)
+		public TLInputPeerEmpty(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.InputPeerEmpty; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x7F3B18EA);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

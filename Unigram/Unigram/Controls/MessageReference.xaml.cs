@@ -403,7 +403,7 @@ namespace Unigram.Controls
                     MessageLabel.Text += photoMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(photoMedia);
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(photoMedia, "thumbnail");
             }
 
             return true;
@@ -461,7 +461,7 @@ namespace Unigram.Controls
             {
                 ServiceLabel.Text = $"🎮 {gameMedia.Game.Title}";
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(gameMedia.Game.Photo);
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(gameMedia.Game.Photo, "thumbnail");
             }
 
             return true;
@@ -576,7 +576,7 @@ namespace Unigram.Controls
                     ServiceLabel.Text = string.Empty;
                     MessageLabel.Text = message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
 
-                    ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(webPage.Photo);
+                    ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(webPage.Photo, "thumbnail");
                 }
                 else
                 {
@@ -608,7 +608,7 @@ namespace Unigram.Controls
                     MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document);
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, "thumbnail");
             }
 
             return true;
@@ -687,7 +687,7 @@ namespace Unigram.Controls
                         if (ThumbRoot != null)
                             ThumbRoot.Visibility = Visibility.Visible;
 
-                        ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document);
+                        ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, "thumbnail");
                     }
                     else
                     {
@@ -727,8 +727,23 @@ namespace Unigram.Controls
 
         private bool SetServicePhotoTemplate(TLMessageService message, string title)
         {
-            Visibility = Visibility.Collapsed;
-            return false;
+            Visibility = Visibility.Visible;
+
+            FindName(nameof(ThumbRoot));
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Visible;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = string.Empty;
+            MessageLabel.Text = ServiceHelper.Convert(message);
+
+            var action = message.Action as TLMessageActionChatEditPhoto;
+            if (action != null)
+            {
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(action.Photo, "thumbnail");
+            }
+
+            return true;
         }
 
         private bool SetEmptyTemplate(TLMessage message, string title)

@@ -6,24 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLKeyboardButton : TLKeyboardButtonBase 
 	{
 		public TLKeyboardButton() { }
-		public TLKeyboardButton(TLBinaryReader from, bool cache = false)
+		public TLKeyboardButton(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.KeyboardButton; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Text = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xA2FA4880);
 			to.Write(Text);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

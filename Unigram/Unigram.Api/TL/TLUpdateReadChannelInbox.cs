@@ -9,26 +9,24 @@ namespace Telegram.Api.TL
 		public Int32 MaxId { get; set; }
 
 		public TLUpdateReadChannelInbox() { }
-		public TLUpdateReadChannelInbox(TLBinaryReader from, bool cache = false)
+		public TLUpdateReadChannelInbox(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.UpdateReadChannelInbox; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			ChannelId = from.ReadInt32();
 			MaxId = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x4214F37F);
 			to.Write(ChannelId);
 			to.Write(MaxId);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

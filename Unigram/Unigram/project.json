@@ -1,11 +1,12 @@
 ﻿{
   "dependencies": {
-    "Autofac": "4.2.1",
-    "HockeySDK.UWP": "4.1.5",
+    "Autofac": "4.3.0",
+    "HockeySDK.UWP": "4.1.6",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "Newtonsoft.Json": "9.0.1",
     "System.Reactive": "3.1.1",
     "Template10": "1.1.12",
+    "Universal.WinSQLite": "3.12.2.2",
     "Win2D.uwp": "1.20.0"
   },
   "frameworks": {

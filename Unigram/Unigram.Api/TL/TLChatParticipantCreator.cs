@@ -6,24 +6,22 @@ namespace Telegram.Api.TL
 	public partial class TLChatParticipantCreator : TLChatParticipantBase 
 	{
 		public TLChatParticipantCreator() { }
-		public TLChatParticipantCreator(TLBinaryReader from, bool cache = false)
+		public TLChatParticipantCreator(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.ChatParticipantCreator; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			UserId = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xDA13538A);
 			to.Write(UserId);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -20,26 +20,24 @@ namespace Telegram.Api.TL.Methods.Messages
 		public TLInputPeerBase Peer { get; set; }
 
 		public TLMessagesToggleDialogPin() { }
-		public TLMessagesToggleDialogPin(TLBinaryReader from, bool cache = false)
+		public TLMessagesToggleDialogPin(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesToggleDialogPin; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Peer = TLFactory.Read<TLInputPeerBase>(from, cache);
-			if (cache) ReadFromCache(from);
+			Peer = TLFactory.Read<TLInputPeerBase>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x3289BE6A);
 			to.Write((Int32)Flags);
-			to.WriteObject(Peer, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Peer);
 		}
 	}
 }

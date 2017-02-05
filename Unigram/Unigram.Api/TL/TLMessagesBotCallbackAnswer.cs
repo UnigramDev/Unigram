@@ -25,23 +25,22 @@ namespace Telegram.Api.TL
 		public Int32 CacheTime { get; set; }
 
 		public TLMessagesBotCallbackAnswer() { }
-		public TLMessagesBotCallbackAnswer(TLBinaryReader from, bool cache = false)
+		public TLMessagesBotCallbackAnswer(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesBotCallbackAnswer; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			if (HasMessage) Message = from.ReadString();
 			if (HasUrl) Url = from.ReadString();
 			CacheTime = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -50,7 +49,6 @@ namespace Telegram.Api.TL
 			if (HasMessage) to.Write(Message);
 			if (HasUrl) to.Write(Url);
 			to.Write(CacheTime);
-			if (cache) WriteToCache(to);
 		}
 
 		private void UpdateFlags()

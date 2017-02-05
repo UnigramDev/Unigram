@@ -12,26 +12,24 @@ namespace Telegram.Api.TL.Methods.Messages
 		public Int32 Offset { get; set; }
 
 		public TLMessagesSearchGifs() { }
-		public TLMessagesSearchGifs(TLBinaryReader from, bool cache = false)
+		public TLMessagesSearchGifs(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesSearchGifs; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Q = from.ReadString();
 			Offset = from.ReadInt32();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xBF9A776B);
 			to.Write(Q);
 			to.Write(Offset);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

@@ -11,24 +11,22 @@ namespace Telegram.Api.TL.Methods.Help
 		public TLVector<TLInputAppEvent> Events { get; set; }
 
 		public TLHelpSaveAppLog() { }
-		public TLHelpSaveAppLog(TLBinaryReader from, bool cache = false)
+		public TLHelpSaveAppLog(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.HelpSaveAppLog; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Events = TLFactory.Read<TLVector<TLInputAppEvent>>(from, cache);
-			if (cache) ReadFromCache(from);
+			Events = TLFactory.Read<TLVector<TLInputAppEvent>>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x6F02F748);
-			to.WriteObject(Events, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Events);
 		}
 	}
 }

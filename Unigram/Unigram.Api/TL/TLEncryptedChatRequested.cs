@@ -12,14 +12,14 @@ namespace Telegram.Api.TL
 		public Byte[] GA { get; set; }
 
 		public TLEncryptedChatRequested() { }
-		public TLEncryptedChatRequested(TLBinaryReader from, bool cache = false)
+		public TLEncryptedChatRequested(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.EncryptedChatRequested; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Id = from.ReadInt32();
 			AccessHash = from.ReadInt64();
@@ -27,10 +27,9 @@ namespace Telegram.Api.TL
 			AdminId = from.ReadInt32();
 			ParticipantId = from.ReadInt32();
 			GA = from.ReadByteArray();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xC878527E);
 			to.Write(Id);
@@ -39,7 +38,6 @@ namespace Telegram.Api.TL
 			to.Write(AdminId);
 			to.Write(ParticipantId);
 			to.WriteByteArray(GA);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

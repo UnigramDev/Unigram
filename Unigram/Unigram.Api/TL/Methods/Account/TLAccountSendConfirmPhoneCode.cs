@@ -23,22 +23,21 @@ namespace Telegram.Api.TL.Methods.Account
 		public Boolean? CurrentNumber { get; set; }
 
 		public TLAccountSendConfirmPhoneCode() { }
-		public TLAccountSendConfirmPhoneCode(TLBinaryReader from, bool cache = false)
+		public TLAccountSendConfirmPhoneCode(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountSendConfirmPhoneCode; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
 			Hash = from.ReadString();
 			if (HasCurrentNumber) CurrentNumber = from.ReadBoolean();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
@@ -46,7 +45,6 @@ namespace Telegram.Api.TL.Methods.Account
 			to.Write((Int32)Flags);
 			to.Write(Hash);
 			if (HasCurrentNumber) to.Write(CurrentNumber.Value);
-			if (cache) WriteToCache(to);
 		}
 
 		private void UpdateFlags()

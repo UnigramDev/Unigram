@@ -81,6 +81,14 @@ namespace Unigram.Controls
             var width = 0.0;
             var height = 0.0;
 
+            if (Constraint is TLMessageMediaGeo || Constraint is TLMessageMediaVenue)
+            {
+                width = 320;
+                height = 240;
+
+                goto Calculate;
+            }
+
             var photo = Constraint as TLPhoto;
             if (photo != null)
             {

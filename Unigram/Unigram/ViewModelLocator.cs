@@ -24,6 +24,7 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Login;
 using Unigram.Views.Login;
 using Unigram.ViewModels.Settings;
+using Unigram.Services;
 
 namespace Unigram
 {
@@ -63,6 +64,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
             container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();
             container.ContainerBuilder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
 
             // ViewModels
             container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();
@@ -76,6 +78,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<ChatInfoViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsStorageViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<FeaturedStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsUsernameViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsEditNameViewModel>().SingleInstance();

@@ -6,22 +6,20 @@ namespace Telegram.Api.TL
 	public partial class TLPageBlockDivider : TLPageBlockBase 
 	{
 		public TLPageBlockDivider() { }
-		public TLPageBlockDivider(TLBinaryReader from, bool cache = false)
+		public TLPageBlockDivider(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.PageBlockDivider; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xDB20B188);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

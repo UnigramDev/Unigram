@@ -12,26 +12,24 @@ namespace Telegram.Api.TL.Methods.Account
 		public TLInputPeerNotifySettings Settings { get; set; }
 
 		public TLAccountUpdateNotifySettings() { }
-		public TLAccountUpdateNotifySettings(TLBinaryReader from, bool cache = false)
+		public TLAccountUpdateNotifySettings(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.AccountUpdateNotifySettings; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
-			Peer = TLFactory.Read<TLInputNotifyPeerBase>(from, cache);
-			Settings = TLFactory.Read<TLInputPeerNotifySettings>(from, cache);
-			if (cache) ReadFromCache(from);
+			Peer = TLFactory.Read<TLInputNotifyPeerBase>(from);
+			Settings = TLFactory.Read<TLInputPeerNotifySettings>(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x84BE5B93);
-			to.WriteObject(Peer, cache);
-			to.WriteObject(Settings, cache);
-			if (cache) WriteToCache(to);
+			to.WriteObject(Peer);
+			to.WriteObject(Settings);
 		}
 	}
 }

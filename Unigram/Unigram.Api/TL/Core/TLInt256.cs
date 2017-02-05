@@ -17,23 +17,23 @@ namespace Telegram.Api.TL
             High = new TLInt128();
         }
 
-        public TLInt256(TLBinaryReader from, bool cache = false)
+        public TLInt256(TLBinaryReader from)
         {
             Low = new TLInt128();
             High = new TLInt128();
 
-            Read(from, cache);
+            Read(from);
         }
 
         public override TLType TypeId { get { return TLType.Int256; } }
 
-        public override void Read(TLBinaryReader from, bool cache = false)
+        public override void Read(TLBinaryReader from)
         {
             Low.Read(from);
             High.Read(from);
         }
 
-        public override void Write(TLBinaryWriter to, bool cache = false)
+        public override void Write(TLBinaryWriter to)
         {
             Low.Write(to);
             High.Write(to);

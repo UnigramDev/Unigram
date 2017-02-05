@@ -13,28 +13,26 @@ namespace Telegram.Api.TL.Methods.Messages
 		public String MimeType { get; set; }
 
 		public TLMessagesGetDocumentByHash() { }
-		public TLMessagesGetDocumentByHash(TLBinaryReader from, bool cache = false)
+		public TLMessagesGetDocumentByHash(TLBinaryReader from)
 		{
-			Read(from, cache);
+			Read(from);
 		}
 
 		public override TLType TypeId { get { return TLType.MessagesGetDocumentByHash; } }
 
-		public override void Read(TLBinaryReader from, bool cache = false)
+		public override void Read(TLBinaryReader from)
 		{
 			Sha256 = from.ReadByteArray();
 			Size = from.ReadInt32();
 			MimeType = from.ReadString();
-			if (cache) ReadFromCache(from);
 		}
 
-		public override void Write(TLBinaryWriter to, bool cache = false)
+		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0x338E2464);
 			to.WriteByteArray(Sha256);
 			to.Write(Size);
 			to.Write(MimeType);
-			if (cache) WriteToCache(to);
 		}
 	}
 }

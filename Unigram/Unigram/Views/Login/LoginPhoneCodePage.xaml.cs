@@ -39,27 +39,9 @@ namespace Unigram.Views.Login
             //}
         }
 
-        private void btnMasterCodeInputConfirm_Click(object sender, RoutedEventArgs e)
-        {
-            btnMasterCodeInputConfirm.IsEnabled = false;
-            txtMasterCodeInputInput.IsEnabled = false;
-            pbarLoading.Visibility = Visibility.Visible;
-        }
-
-        private void txtMasterCodeInputInput_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (txtMasterCodeInputInput.Text.Length == 5)
-            {
-                btnMasterCodeInputConfirm.IsEnabled = false;
-                txtMasterCodeInputInput.IsEnabled = false;
-                pbarLoading.Visibility = Visibility.Visible;
-            }
-        }
-
         public class NavigationParameters
         {
             public string PhoneNumber { get; set; }
-
             public string PhoneCodeHash { get; set; }
         }
     }
