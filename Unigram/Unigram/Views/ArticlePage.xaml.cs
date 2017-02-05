@@ -363,7 +363,7 @@ namespace Unigram.Views
                 par.TextIndent = -24;
                 par.Margin = new Thickness(24, 0, 0, 0);
 
-                var span = new Span();
+                var span = new Run();
                 par.Inlines.Add(new Run { Text = block.Ordered ? (i + 1) + ".\t" : "•\t" });
                 par.Inlines.Add(span);
                 ProcessText(text, par.Inlines, span);
@@ -442,7 +442,7 @@ namespace Unigram.Views
             if (text != null && text.TypeId != TLType.TextEmpty)
             {
                 var textBlock = new TextBlock();
-                var span = new Span();
+                var span = new Run();
                 textBlock.Inlines.Add(span);
                 textBlock.TextWrapping = TextWrapping.Wrap;
                 textBlock.Margin = new Thickness(12, 0, 12, 12);
@@ -553,7 +553,7 @@ namespace Unigram.Views
         private void ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block)
         {
             var textBlock = new TextBlock();
-            var span = new Span();
+            var span = new Run();
             textBlock.FontSize = 14;
             textBlock.Inlines.Add(new Run { Text = "By " });
             textBlock.Inlines.Add(span);
@@ -569,19 +569,19 @@ namespace Unigram.Views
             _containers.Peek().Children.Add(textBlock);
         }
 
-        private void ProcessText(TLRichTextBase text, InlineCollection collection, Span span)
+        private void ProcessText(TLRichTextBase text, InlineCollection collection, Run span)
         {
             switch (text.TypeId)
             {
                 case TLType.TextPlain:
                     var plainText = (TLTextPlain)text;
-                    span.Inlines.Add(new Run { Text = plainText.Text });
+                    span.Text = plainText.Text;
                     break;
                 case TLType.TextConcat:
                     var concatText = (TLTextConcat)text;
                     foreach (var concat in concatText.Texts)
                     {
-                        var concatRun = new Span();
+                        var concatRun = new Run();
                         collection.Add(concatRun);
                         ProcessText(concat, collection, concatRun);
                     }
@@ -612,7 +612,7 @@ namespace Unigram.Views
                 case TLType.TextUnderline:
                     var underlineText = (TLTextUnderline)text;
                     var underline = new Underline();
-                    var underlineSpan = new Span();
+                    var underlineSpan = new Run();
                     underline.Inlines.Add(underlineSpan);
                     collection.Add(underline);
                     ProcessText(underlineText.Text, underline.Inlines, underlineSpan);
@@ -620,7 +620,7 @@ namespace Unigram.Views
                 case TLType.TextUrl:
                     var urlText = (TLTextUrl)text;
                     var hyperlink = new Hyperlink();
-                    var hyperlinkSpan = new Span();
+                    var hyperlinkSpan = new Run();
                     hyperlink.Inlines.Add(hyperlinkSpan);
                     collection.Add(hyperlink);
                     ProcessText(urlText.Text, hyperlink.Inlines, hyperlinkSpan);
