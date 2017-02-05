@@ -249,7 +249,7 @@ namespace Unigram.Views
                     items.Add(image);
                 }
             }
-            
+
             var flip = new FlipView();
             flip.ItemsSource = items;
 
@@ -354,41 +354,20 @@ namespace Unigram.Views
             var textBlock = new RichTextBlock();
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.Margin = new Thickness(12, 0, 12, 12);
+            textBlock.IsTextSelectionEnabled = false;
 
-            if (!block.Ordered)
+            for (int i = 0; i < block.Items.Count; i++)
             {
-                foreach (var text in block.Items)
-                {
-                    var par = new Paragraph();
-                    par.TextIndent = -25;
-                    Thickness m = par.Margin;
-                    m.Left += 25;
-                    par.Margin = m;
+                var text = block.Items[i];
+                var par = new Paragraph();
+                par.TextIndent = -24;
+                par.Margin = new Thickness(24, 0, 0, 0);
 
-                    var span = new Span();
-                    par.Inlines.Add(new Run { Text = "•\t" });
-                    par.Inlines.Add(span);
-                    ProcessText(text, par.Inlines, span);
-                    textBlock.Blocks.Add(par);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < block.Items.Count; i++)
-                {
-                    var text = block.Items[i];
-                    var par = new Paragraph();
-                    par.TextIndent = -25;
-                    Thickness m = par.Margin;
-                    m.Left += 25;
-                    par.Margin = m;
-
-                    var span = new Span();
-                    par.Inlines.Add(new Run { Text = (i+1) + ".\t" });
-                    par.Inlines.Add(span);
-                    ProcessText(text, par.Inlines, span);
-                    textBlock.Blocks.Add(par);
-                }
+                var span = new Span();
+                par.Inlines.Add(new Run { Text = block.Ordered ? (i + 1) + ".\t" : "•\t" });
+                par.Inlines.Add(span);
+                ProcessText(text, par.Inlines, span);
+                textBlock.Blocks.Add(par);
             }
 
             _containers.Peek().Children.Add(textBlock);

@@ -558,34 +558,34 @@ namespace Unigram.ViewModels
                             PinnedMessage = y.Result.Messages.FirstOrDefault();
                         }
                     }
-                    online = 0;
-                    participantCount = channelFull.ParticipantsCount ?? default(int);
-                    if (participantCount < 200)
-                    {
-                        try
-                        {
-                            var temp = await ProtoService.GetParticipantsAsync(input, null, 0, 5000);
-                            if (temp.IsSucceeded)
-                            {
-                                foreach (TLUserBase now in temp.Result.Users)
-                                {
-                                    TLUser tempUser = now as TLUser;
+                    //online = 0;
+                    //participantCount = channelFull.ParticipantsCount ?? default(int);
+                    //if (participantCount < 200)
+                    //{
+                    //    try
+                    //    {
+                    //        var temp = await ProtoService.GetParticipantsAsync(input, null, 0, 5000);
+                    //        if (temp.IsSucceeded)
+                    //        {
+                    //            foreach (TLUserBase now in temp.Result.Users)
+                    //            {
+                    //                TLUser tempUser = now as TLUser;
 
-                                    if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
-                                }
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine(e.ToString());
-                            online = -2;
-                        }
-                    }
-                    else
-                    {
-                        online = -2;
-                    }
-                    LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
+                    //                if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
+                    //            }
+                    //        }
+                    //    }
+                    //    catch (Exception e)
+                    //    {
+                    //        Debug.WriteLine(e.ToString());
+                    //        online = -2;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    online = -2;
+                    //}
+                    //LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
                 }
 
             }
@@ -594,24 +594,24 @@ namespace Unigram.ViewModels
                 With = chat;
                 Peer = new TLInputPeerChat { ChatId = chat.Id };
 
-                var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
-                if (chatDetails.IsSucceeded)
-                {
-                    participantCount = chatDetails.Result.Users.Count;
-                    if (participantCount < 200)
-                    {
-                        foreach (TLUserBase now in chatDetails.Result.Users)
-                        {
-                            TLUser tempUser = now as TLUser;
-                            if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
-                        }
-                    }
-                    else
-                    {
-                        online = -2;
-                    }
-                    LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
-                }
+                //var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
+                //if (chatDetails.IsSucceeded)
+                //{
+                //    participantCount = chatDetails.Result.Users.Count;
+                //    if (participantCount < 200)
+                //    {
+                //        foreach (TLUserBase now in chatDetails.Result.Users)
+                //        {
+                //            TLUser tempUser = now as TLUser;
+                //            if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
+                //        }
+                //    }
+                //    else
+                //    {
+                //        online = -2;
+                //    }
+                //    LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
+                //}
             }
 
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
@@ -634,6 +634,8 @@ namespace Unigram.ViewModels
             {
                 IsReportSpam = settings.Result.IsReportSpam;
             }
+
+            LastSeen = await GetSubtitle();
 
             //if (dialog != null && Messages.Count > 0)
             //{

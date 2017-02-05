@@ -13,21 +13,17 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
-              Height="{ThemeResource AppBarThemeCompactHeight}">
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <!-- Prevent "click effect" to the entire titlebar and other stuff -->
             <StackPanel Margin="12,0" VerticalAlignment="Center">
-                <TextBlock x:Name="tblDialogName"
-                            Style="{StaticResource BaseTextBlockStyle}"/>
-                <TextBlock x:Name="tblDialogStatus"
-                            Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}" />
+                <TextBlock x:Name="tblDialogName" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock x:Name="tblDialogStatus" Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" />
             </StackPanel>
             <controls:GlyphButton Glyph="&#xE72D;" Grid.Column="1"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
         <WebView x:Name="View" Grid.Row="1"/>
