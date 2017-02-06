@@ -206,12 +206,12 @@ String^ NotificationTask::GetPicture(JsonObject^ custom)
 			auto secret = ph->GetNamedString("secret");
 
 			std::wstring volumeSTR = volume_id->Data();
-			unsigned long long volumeULL = wcstoull(volumeSTR.c_str(), NULL, 0);
-			signed long long volumeLL = static_cast<signed long long>(volumeULL);
+			auto volumeULL = wcstoull(volumeSTR.c_str(), NULL, 0);
+			auto volumeLL = static_cast<signed long long>(volumeULL);
 
 			std::wstring secretSTR = secret->Data();
-			unsigned long long secretULL = wcstoull(secretSTR.c_str(), NULL, 0);
-			signed long long secretLL = static_cast<signed long long>(secretULL);
+			auto secretULL = wcstoull(secretSTR.c_str(), NULL, 0);
+			auto secretLL = static_cast<signed long long>(secretULL);
 
 			std::wstringstream almost;
 			almost << L"ms-appdata:///local/temp/"
