@@ -45,7 +45,7 @@ namespace Unigram.ViewModels
     {
         public MessageCollection Messages { get; private set; } = new MessageCollection();
 
-        private List<TLMessageBase> _selectedMessages;
+        private List<TLMessageBase> _selectedMessages = new List<TLMessageBase>();
         public List<TLMessageBase> SelectedMessages
         {
             get
