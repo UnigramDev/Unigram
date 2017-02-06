@@ -36,7 +36,7 @@ The app uses the following NuGet packages to work:
 * [Universal.WinSQLite](https://www.nuget.org/packages/Universal.WinSQLite/)
 * [Win2D.uwp](https://www.nuget.org/packages/Win2D.uwp/)
 
-The project also relies on `libogg`, `libopus`, `libopusfile` and `libwebp` that are included in the solution.
+The project also relies on `libogg`, `libopus`, `libopusfile` and `libwebp` that are included in the repository.
 
 Our main goal:
 -
