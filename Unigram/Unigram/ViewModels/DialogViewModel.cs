@@ -280,7 +280,7 @@ namespace Unigram.ViewModels
             else
             {
                 Messages.Clear();
-                await LoadNextSliceAsync();
+                await LoadFirstSliceAsync();
             }
         }
 
@@ -483,6 +483,12 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            var tuple = parameter as Tuple<TLPeerBase, int>;
+            if (tuple != null)
+            {
+                parameter = tuple.Item1;
+            }
+
             var participant = GetParticipant(parameter as TLPeerBase);
             var channel = participant as TLChannel;
             var chat = participant as TLChat;
@@ -614,7 +620,14 @@ namespace Unigram.ViewModels
 
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
 
-            await LoadFirstSliceAsync();
+            if (tuple != null)
+            {
+                await LoadMessageSliceAsync(null, tuple.Item2);
+            }
+            else
+            {
+                await LoadFirstSliceAsync();
+            }
 
             var dialog = _currentDialog;
             if (dialog != null && dialog.HasDraft)

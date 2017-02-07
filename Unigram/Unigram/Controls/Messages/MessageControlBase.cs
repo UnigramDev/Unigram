@@ -113,10 +113,10 @@ namespace Unigram.Controls.Messages
 
                     var name = string.Empty;
 
-                    var chat = message.FwdFromChannel;
-                    if (chat != null)
+                    var channel = message.FwdFromChannel;
+                    if (channel != null)
                     {
-                        name = chat.FullName;
+                        name = channel.FullName;
                     }
 
                     var user = message.FwdFromUser;
@@ -187,7 +187,7 @@ namespace Unigram.Controls.Messages
                 if (message.FwdFrom.HasChannelPost)
                 {
                     // TODO
-                    Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerChannel { ChannelId = message.FwdFromChannel.Id });
+                    Context.NavigationService.Navigate(typeof(DialogPage), new Tuple<TLPeerBase, int>(new TLPeerChannel { ChannelId = message.FwdFromChannel.Id }, message.FwdFrom.ChannelPost ?? int.MaxValue));
                 }
                 else
                 {
