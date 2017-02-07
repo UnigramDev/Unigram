@@ -232,33 +232,6 @@
                     </Grid>
                     <TextBlock Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
                     <TextBlock Text="online" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
-
-                    <!--<StackPanel Grid.Column="1"
-                                VerticalAlignment="Center">
-                        <TextBlock x:Name="tblUserInfoChatName"
-                                   Visibility="Visible"
-                                   Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}"
-                                   Margin="0,4,0,0"
-                                   TextWrapping="WrapWholeWords"
-                                   Style="{ThemeResource SubtitleTextBlockStyle}"
-                                   FontWeight="SemiBold"/>
-                        <TextBlock x:Name="tblUserInfoUserName" 
-                                   Visibility="{Binding Self.Username, Converter={StaticResource NullToVisibilityConverter}}"
-                                   Margin="0,4"                              
-                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                   Style="{ThemeResource BodyTextBlockStyle}"
-                                   TextTrimming="CharacterEllipsis">
-                            <Run Text="@"/><Run Text="{Binding Self.Username}"/>
-                        </TextBlock>
-                        <TextBlock x:Name="tblUserInfoPhone" 
-                                   Visibility="{Binding Self.Username, Converter={StaticResource NullToVisibilityConverter}}"
-                                   Margin="0,4"
-                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                   Style="{ThemeResource BodyTextBlockStyle}"
-                                   TextTrimming="CharacterEllipsis">
-                            <Run Text="+"/><Run Text="{Binding Self.Phone}"/>
-                        </TextBlock>
-                    </StackPanel>-->
                 </Grid>
                 <Grid Grid.Row="1">
                     <ScrollViewer VerticalScrollBarVisibility="Auto"

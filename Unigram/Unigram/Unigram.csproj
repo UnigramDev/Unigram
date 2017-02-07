@@ -94,6 +94,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="Views\UsersPickerPage.xaml.cs">
+      <DependentUpon>UsersPickerPage.xaml</DependentUpon>
+    </Compile>
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <None Include="project.json" />
     <Compile Include="Common\Language.cs" />
@@ -291,8 +295,14 @@
     <Compile Include="Views\BlankPage.xaml.cs">
       <DependentUpon>BlankPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Channels\CreateChannelPage.xaml.cs">
+      <DependentUpon>CreateChannelPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChatInfoPage.xaml.cs">
       <DependentUpon>ChatInfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\CreateChatPage.xaml.cs">
+      <DependentUpon>CreateChatPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DialogInfoAdminsPage.xaml.cs">
       <DependentUpon>DialogInfoAdminsPage.xaml</DependentUpon>
@@ -581,7 +591,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Channels\CreateChannelPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ChatInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\CreateChatPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -682,6 +700,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UserInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UsersPickerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
