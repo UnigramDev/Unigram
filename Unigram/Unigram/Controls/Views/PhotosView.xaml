@@ -40,7 +40,7 @@
 
         <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}" Padding="12,0">
             <Grid.Background>
-                <SolidColorBrush Color="Red" Opacity="0.6"/>
+                <SolidColorBrush Color="#333" Opacity="0.6"/>
             </Grid.Background>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -61,7 +61,7 @@
         <Border Grid.Row="2">
             <CommandBar x:Name="BotBar">
                 <CommandBar.Background>
-                    <SolidColorBrush Color="Red" Opacity="0.6"/>
+                    <SolidColorBrush Color="#333" Opacity="0.6"/>
                 </CommandBar.Background>
 
             </CommandBar>
