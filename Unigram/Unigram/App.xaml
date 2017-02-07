@@ -81,6 +81,7 @@
                 <Setter Property="MaxLines" Value="1"/>
                 <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
             </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 

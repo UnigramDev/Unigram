@@ -351,7 +351,7 @@ namespace Unigram.ViewModels
                 var settings = Item?.NotifySettings as TLPeerNotifySettings;
                 if (settings != null)
                 {
-                    return settings.MuteUntil == 0 && !settings.IsSilent;
+                    return settings.MuteUntil == 0;
                 }
 
                 return false;

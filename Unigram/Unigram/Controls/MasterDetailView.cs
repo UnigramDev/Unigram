@@ -65,22 +65,22 @@ namespace Unigram.Controls
             {
                 if (CurrentState != MasterDetailState.Narrow)
                 {
-                    if (DetailFrame.SourcePageType == typeof(DialogPage) ||
-                        DetailFrame.SourcePageType == typeof(AboutPage) ||
-                        DetailFrame.SourcePageType == typeof(SettingsPage))
-                    {
-                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                            AppViewBackButtonVisibility.Collapsed;
-                    }else
-                    {
-                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                        AppViewBackButtonVisibility.Visible;
-                    }
+                    //if (DetailFrame.SourcePageType == typeof(DialogPage) ||
+                    //    DetailFrame.SourcePageType == typeof(AboutPage) ||
+                    //    DetailFrame.SourcePageType == typeof(SettingsPage))
+                    //{
+                    //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    //        AppViewBackButtonVisibility.Collapsed;
+                    //}else
+                    //{
+                    //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    //    AppViewBackButtonVisibility.Visible;
+                    //}
                 }
                 else
                 {
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                        AppViewBackButtonVisibility.Visible;
+                    //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    //    AppViewBackButtonVisibility.Visible;
                 }
             }
         }
@@ -158,8 +158,8 @@ namespace Unigram.Controls
                     IsMasterHidden = true;
 
                     // Now that there is a backstack, show the back button in titlebar
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    AppViewBackButtonVisibility.Visible;
+                    //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    //AppViewBackButtonVisibility.Visible;
 
                     var anim = new DrillInThemeAnimation();
                     anim.EntranceTarget = new Border();
@@ -174,8 +174,8 @@ namespace Unigram.Controls
                     IsMasterHidden = false;
 
                     // No navigation backstack, hide back button in titlebar
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    AppViewBackButtonVisibility.Collapsed;
+                    //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    //AppViewBackButtonVisibility.Collapsed;
 
                     var anim = new DrillOutThemeAnimation();
                     anim.EntranceTarget = MasterPresenter;

@@ -23,12 +23,12 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Unigram" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+            <TextBlock x:Uid="Login-Code-Title" Text="Your code" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
             <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;" Grid.Column="1"/>
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
-        <Grid x:Name="ContentPanel" Padding="12,32" MaxWidth="360" Grid.Row="1">
+        <Grid x:Name="ContentPanel" Padding="12,20" MaxWidth="360" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -36,7 +36,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Uid="Login-Code-Title" Text="Your code" Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock x:Name="TitleLabel" x:Uid="Login-Code-Title" Text="Your code" Style="{ThemeResource TitleTextBlockStyle}"/>
             <TextBlock x:Uid="Login-Code-Intro"
                        Text="We've sent you a message with the code."
                        Style="{StaticResource BodyTextBlockStyle}"
@@ -76,6 +76,7 @@
                         <Setter Target="Header.Visibility" Value="Collapsed"/>
                         <Setter Target="NextGlyph.Visibility" Value="Collapsed"/>
                         <Setter Target="NextButton.Visibility" Value="Visible"/>
+                        <Setter Target="TitleLabel.Visibility" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Compact">

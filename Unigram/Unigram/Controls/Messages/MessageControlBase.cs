@@ -88,6 +88,7 @@ namespace Unigram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId) });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = paragraph.Foreground;
                     hyperlink.Click += (s, args) => From_Click(message);
 
                     paragraph.Inlines.Add(hyperlink);
@@ -97,6 +98,7 @@ namespace Unigram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = InMemoryCacheService.Current.GetChat(message.ToId.Id).FullName, Foreground = Convert.Bubble(message.ToId.Id) });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = paragraph.Foreground;
                     hyperlink.Click += (s, args) => From_Click(message);
 
                     paragraph.Inlines.Add(hyperlink);
@@ -133,6 +135,7 @@ namespace Unigram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = name });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = paragraph.Foreground;
                     hyperlink.Click += (s, args) => FwdFrom_Click(message);
 
                     paragraph.Inlines.Add(hyperlink);
@@ -143,6 +146,7 @@ namespace Unigram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = paragraph.Foreground;
                     hyperlink.Click += (s, args) => ViaBot_Click(message);
 
                     paragraph.Inlines.Add(hyperlink);

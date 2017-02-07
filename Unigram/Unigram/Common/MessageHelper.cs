@@ -15,6 +15,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
@@ -140,16 +141,13 @@ namespace Unigram.Common
 
                 if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMediaCaption || message?.Media == null)
                 {
-                    var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
-                    var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
-                    var date = new DateTime(2015, 09, 05, 12, 59, 59, DateTimeKind.Local).ToString(shortTimePattern, cultureInfo);
-
                     if (IsAnyCharacterRightToLeft(message.Message))
                     {
                         paragraph.Inlines.Add(new LineBreak());
                     }
                     else
                     {
+                        var date = BindConvert.Current.Date(message.Date);
                         var placeholder = message.IsOut ? $"  {date}  " : $"  {date}";
                         if (message.HasEditDate)
                         {
@@ -266,7 +264,12 @@ namespace Unigram.Common
 
         private static bool IsAnyCharacterRightToLeft(string s)
         {
-            for (var i = 0; i < s.Length; i += char.IsSurrogatePair(s, i) ? 2 : 1)
+            if (s.Length > 2)
+            {
+                s = s.Substring(s.Length - 2);
+            }
+
+            for (int i = 0; i < s.Length; i += char.IsSurrogatePair(s, i) ? 2 : 1)
             {
                 var codepoint = char.ConvertToUtf32(s, i);
                 if (IsRandALCat(codepoint))
@@ -274,7 +277,7 @@ namespace Unigram.Common
                     return true;
                 }
 
-                return false;
+                //return false;
             }
 
             return false;

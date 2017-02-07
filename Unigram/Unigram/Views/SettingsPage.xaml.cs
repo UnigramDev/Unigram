@@ -53,16 +53,16 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (Frame.CanGoBack)
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    AppViewBackButtonVisibility.Visible;
-            }
-            else
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    AppViewBackButtonVisibility.Collapsed;
-            }
+            //if (Frame.CanGoBack)
+            //{
+            //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+            //        AppViewBackButtonVisibility.Visible;
+            //}
+            //else
+            //{
+            //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+            //        AppViewBackButtonVisibility.Collapsed;
+            //}
 
             if (MasterDetail.NavigationService == null)
             {

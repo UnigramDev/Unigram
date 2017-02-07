@@ -32,6 +32,7 @@ using System.IO;
 using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Views.Login;
+using Windows.UI.Core;
 
 namespace Unigram
 {
@@ -120,7 +121,7 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(LoginWelcomePage));
+            //NavigationService.Navigate(typeof(BlankPage1));
             //return Task.CompletedTask;
 
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
@@ -180,6 +181,7 @@ namespace Unigram
             ShowStatusBar();
             ColourTitleBar();
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Task.Run(() => OnStartSync());
             return Task.CompletedTask;

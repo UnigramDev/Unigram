@@ -27,10 +27,6 @@
     </Page.Transitions>
 
     <Page.Resources>
-        <Style TargetType="ScrollBar">
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-
         <x:Double x:Key="MenuFlyoutMaxWidth">360</x:Double>
 
         <Style TargetType="ListViewHeaderItem">
@@ -134,6 +130,7 @@
             <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward message" IsEnabled="False"/>
             <MenuFlyoutItem Loaded="MessageCopy_Loaded" Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy text"/>
             <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
+            <MenuFlyoutItem Loaded="MessageSaveMedia_Loaded" Command="{x:Bind ViewModel.MessageSaveMediaCommand}" CommandParameter="{Binding}" Text="Save file as..."/>
         </MenuFlyout>
 
         <MenuFlyout x:Key="StickerMenuFlyout">
@@ -518,20 +515,39 @@
 
     </Page.Resources>
 
-    <Grid x:Name="gridMain"
+    <Grid x:Name="LayoutRoot"
           Background="Transparent"
           AllowDrop="True"
           DragOver="gridMain_DragOver"
           Drop="gridMain_Drop">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="500"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="KeyboardItems.(Grid.Row)" Value="2"/>
+                        <Setter Target="KeyboardItems.VerticalAlignment" Value="Bottom"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto"/>
+            <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Titlebar -->
-        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+        <Grid x:Name="Header" Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -664,7 +680,7 @@
         </Grid>
         <!-- END OF Titlebar -->
 
-        <Grid x:Name="grdPinnedMessage"
+        <Grid x:Name="PinnedMessage"
               Visibility="{x:Bind ViewModel.PinnedMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
               Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}"
@@ -678,12 +694,12 @@
                 <controls:MessageReference Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0"/>
             </Button>
             
-            <controls:GlyphButton Click="btnClosePinnedMessage_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="1"/>
+            <controls:GlyphButton Glyph="&#xE106;" FontSize="12" Grid.Column="1"/>
 
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
-        <Grid Grid.Row="2">
+        <Grid x:Name="Messages" Grid.Row="2">
             <controls:BubbleListView x:Name="lvDialogs" 
                                      ItemsSource="{Binding Messages}"
                                      ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
@@ -859,16 +875,17 @@
                     Grid.ColumnSpan="2">
                 <controls:GlyphButton Command="{Binding PreviousSliceCommand}" FontSize="16" Width="36" Height="36" Glyph="&#xE74B;" CornerRadius="24"/>
             </Border>
+            
+            <inline:InlineBotResultsView ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>
         </Grid>
 
-        <Grid Grid.Row="2">
-            <inline:InlineBotResultsView ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>
-            <views:StickersView x:Name="StickersPanel" Opacity="0" IsHitTestVisible="False"/>
-            <views:ReplyMarkupView x:Name="ReplyMarkupPanel" VerticalAlignment="Bottom"/>
+        <Grid x:Name="KeyboardItems" Grid.Row="4">
+            <views:StickersView x:Name="StickersPanel" Visibility="Collapsed"/>
+            <views:ReplyMarkupView x:Name="ReplyMarkupPanel" Visibility="Collapsed"/>
         </Grid>
 
         <!-- Input pane -->
-        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+        <Grid x:Name="TextArea" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderThickness="0,0,0,0"
               BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"
@@ -876,7 +893,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -957,11 +973,11 @@
 
                 <controls:GlyphButton x:Name="btnStickers" 
                                       Click="Stickers_Click"
+                                      Command="{x:Bind ViewModel.OpenStickersCommand}"
                                       AllowFocusOnInteraction="False"
                                       Glyph="&#xE606;" 
                                       FontFamily="{ThemeResource TelegramThemeFontFamily}" 
                                       VerticalAlignment="Bottom"
-                                      Visibility="Collapsed"
                                       Grid.Column="1"/>
 
                 <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="2">

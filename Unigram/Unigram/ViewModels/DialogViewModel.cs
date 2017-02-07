@@ -37,6 +37,7 @@ using Unigram.Controls;
 using Unigram.Core.Helpers;
 using Org.BouncyCastle.Security;
 using Unigram.Core;
+using Unigram.Services;
 
 namespace Unigram.ViewModels
 {
@@ -44,7 +45,7 @@ namespace Unigram.ViewModels
     {
         public MessageCollection Messages { get; private set; } = new MessageCollection();
 
-        private List<TLMessageBase> _selectedMessages;
+        private List<TLMessageBase> _selectedMessages = new List<TLMessageBase>();
         public List<TLMessageBase> SelectedMessages
         {
             get
@@ -59,6 +60,7 @@ namespace Unigram.ViewModels
             }
         }
 
+        private readonly IGifsService _gifsService;
         private readonly IUploadFileManager _uploadFileManager;
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
@@ -67,9 +69,10 @@ namespace Unigram.ViewModels
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, FeaturedStickersViewModel featuredStickers)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IGifsService gifsService, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, FeaturedStickersViewModel featuredStickers)
             : base(protoService, cacheService, aggregator)
         {
+            _gifsService = gifsService;
             _uploadFileManager = uploadFileManager;
             _uploadAudioManager = uploadAudioManager;
             _uploadDocumentManager = uploadDocumentManager;
@@ -296,7 +299,7 @@ namespace Unigram.ViewModels
 
             Messages.Clear();
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -19, maxId, 20);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -1, maxId, 20);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -320,7 +323,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                IsFirstSliceLoaded = result.Result.Messages.Count < 15;
+                IsFirstSliceLoaded = result.Result.Messages.Count < 20;
             }
 
             _isLoadingNextSlice = false;
@@ -392,7 +395,7 @@ namespace Unigram.ViewModels
                     if (replyId != null && replyId.Value != 0)
                     {
                         var channelId = new int?();
-                        var channel = message.ToId as TLPeerChat;
+                        var channel = message.ToId as TLPeerChannel;
                         if (channel != null)
                         {
                             channelId = channel.Id;
@@ -493,9 +496,7 @@ namespace Unigram.ViewModels
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
 
                 Messages.Clear();
-                LastSeen = LastSeenHelper.GetLastSeen(user).Item1;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
-                online = -1;
 
                 // test calls
                 //var config = await ProtoService.GetDHConfigAsync(0, 0);
@@ -555,34 +556,34 @@ namespace Unigram.ViewModels
                             PinnedMessage = y.Result.Messages.FirstOrDefault();
                         }
                     }
-                    online = 0;
-                    participantCount = channelFull.ParticipantsCount ?? default(int);
-                    if (participantCount < 200)
-                    {
-                        try
-                        {
-                            var temp = await ProtoService.GetParticipantsAsync(input, null, 0, 5000);
-                            if (temp.IsSucceeded)
-                            {
-                                foreach (TLUserBase now in temp.Result.Users)
-                                {
-                                    TLUser tempUser = now as TLUser;
+                    //online = 0;
+                    //participantCount = channelFull.ParticipantsCount ?? default(int);
+                    //if (participantCount < 200)
+                    //{
+                    //    try
+                    //    {
+                    //        var temp = await ProtoService.GetParticipantsAsync(input, null, 0, 5000);
+                    //        if (temp.IsSucceeded)
+                    //        {
+                    //            foreach (TLUserBase now in temp.Result.Users)
+                    //            {
+                    //                TLUser tempUser = now as TLUser;
 
-                                    if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
-                                }
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine(e.ToString());
-                            online = -2;
-                        }
-                    }
-                    else
-                    {
-                        online = -2;
-                    }
-                    LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
+                    //                if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
+                    //            }
+                    //        }
+                    //    }
+                    //    catch (Exception e)
+                    //    {
+                    //        Debug.WriteLine(e.ToString());
+                    //        online = -2;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    online = -2;
+                    //}
+                    //LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
                 }
 
             }
@@ -591,24 +592,24 @@ namespace Unigram.ViewModels
                 With = chat;
                 Peer = new TLInputPeerChat { ChatId = chat.Id };
 
-                var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
-                if (chatDetails.IsSucceeded)
-                {
-                    participantCount = chatDetails.Result.Users.Count;
-                    if (participantCount < 200)
-                    {
-                        foreach (TLUserBase now in chatDetails.Result.Users)
-                        {
-                            TLUser tempUser = now as TLUser;
-                            if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
-                        }
-                    }
-                    else
-                    {
-                        online = -2;
-                    }
-                    LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
-                }
+                //var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
+                //if (chatDetails.IsSucceeded)
+                //{
+                //    participantCount = chatDetails.Result.Users.Count;
+                //    if (participantCount < 200)
+                //    {
+                //        foreach (TLUserBase now in chatDetails.Result.Users)
+                //        {
+                //            TLUser tempUser = now as TLUser;
+                //            if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
+                //        }
+                //    }
+                //    else
+                //    {
+                //        online = -2;
+                //    }
+                //    LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
+                //}
             }
 
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
@@ -632,56 +633,69 @@ namespace Unigram.ViewModels
                 IsReportSpam = settings.Result.IsReportSpam;
             }
 
-            if (dialog != null && Messages.Count > 0)
-            {
-                var unread = dialog.UnreadCount;
-                if (Peer is TLInputPeerChannel)
-                {
-                    if (channel != null)
-                    {
-                        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
-                    }
-                }
-                else
-                {
-                    await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
-                }
+            LastSeen = await GetSubtitle();
 
-                dialog.UnreadCount = dialog.UnreadCount - unread;
-                dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-            }
+            //if (dialog != null && Messages.Count > 0)
+            //{
+            //    var unread = dialog.UnreadCount;
+            //    if (Peer is TLInputPeerChannel)
+            //    {
+            //        if (channel != null)
+            //        {
+            //            await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+            //    }
+
+            //    dialog.UnreadCount = dialog.UnreadCount - unread;
+            //    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            //}
 
             Aggregator.Subscribe(this);
             //Aggregator.Publish("PORCODIO");
 
             //StickersRecent();
-            GifsSaved();
+            //GifsSaved();
         }
 
-        private async void GifsSaved()
+        private void GifsSaved()
         {
-            var cached = DatabaseContext.Current.SelectDocuments("Gifs");
-            if (cached.Count > 0)
+            Execute.BeginOnThreadPool(async () =>
             {
-                SavedGifs.Clear();
-                SavedGifs.AddRange(cached);
-            }
-
-            var response = await ProtoService.GetSavedGifsAsync(SettingsHelper.GifsHash);
-            if (response.IsSucceeded)
-            {
-                var result = response.Result as TLMessagesSavedGifs;
-                if (result != null)
+                var response = await ProtoService.GetSavedGifsAsync(SettingsHelper.GifsHash);
+                if (response.IsSucceeded)
                 {
-                    var gifs = result.Gifs.OfType<TLDocument>();
+                    var result = response.Result as TLMessagesSavedGifs;
+                    if (result != null)
+                    {
+                        var gifs = result.Gifs.OfType<TLDocument>();
 
-                    SavedGifs.Clear();
-                    SavedGifs.AddRange(gifs);
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            SavedGifs.Clear();
+                            SavedGifs.AddRange(gifs);
+                        });
 
-                    SettingsHelper.GifsHash = result.Hash;
-                    DatabaseContext.Current.InsertDocuments("Gifs", gifs, true);
+                        SettingsHelper.GifsHash = result.Hash;
+                        DatabaseContext.Current.InsertDocuments("Gifs", gifs, true);
+                    }
+                    else
+                    {
+                        var cached = DatabaseContext.Current.SelectDocuments("Gifs");
+                        if (cached.Count > 0)
+                        {
+                            Execute.BeginOnUIThread(() =>
+                            {
+                                SavedGifs.Clear();
+                                SavedGifs.AddRange(cached);
+                            });
+                        }
+                    }
                 }
-            }
+            });
         }
 
         private async void StickersRecent()
@@ -767,6 +781,7 @@ namespace Unigram.ViewModels
 
         public List<KeyedList<TLStickerSet, TLDocument>> StickerSets { get; set; }
 
+        public int SavedGifsHash { get; private set; }
         public ObservableCollection<TLDocument> SavedGifs { get; private set; }
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
@@ -1807,6 +1822,28 @@ namespace Unigram.ViewModels
 
                 }
             }
+        }
+
+        #endregion
+
+        #region Stickers
+
+        public RelayCommand OpenStickersCommand => new RelayCommand(OpenStickersExecute);
+        private void OpenStickersExecute()
+        {
+            Execute.BeginOnThreadPool(async () =>
+            {
+                var gifs = await _gifsService.GetSavedGifs();
+                if (gifs.Key != SavedGifsHash)
+                {
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        SavedGifsHash = gifs.Key;
+                        SavedGifs.Clear();
+                        SavedGifs.AddRange(gifs);
+                    });
+                }
+            });
         }
 
         #endregion

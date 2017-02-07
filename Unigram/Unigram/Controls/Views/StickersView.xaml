@@ -54,7 +54,7 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Pivot x:Name="Pivot" SelectedIndex="1" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
+            <Pivot x:Name="Pivot" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
                 <PivotItem Margin="0,-48,0,0">
                     <GridView x:Name="GifsView"
                               ItemsSource="{Binding SavedGifs}"
@@ -63,12 +63,12 @@
                               SelectionMode="None"
                               ItemClick="Gifs_ItemClick"
                               Loaded="Gifs_Loaded"
-                              Padding="12,0">
+                              Padding="10,0,10,10">
                         <common:FluidGridView.Triggers>
                             <common:FluidGridViewTrigger RowsOrColumns="5"/>
                         </common:FluidGridView.Triggers>
                         <GridView.Header>
-                            <Border x:Name="StickyHeader" Padding="12,8,0,9" Margin="-12,0" Canvas.ZIndex="1000">
+                            <Border x:Name="StickyHeader" Padding="12,8,0,9" Margin="-10,0" Canvas.ZIndex="1000">
                                 <TextBlock Text="Saved GIFs" Style="{StaticResource BaseTextBlockStyle}"/>
                             </Border>
                         </GridView.Header>

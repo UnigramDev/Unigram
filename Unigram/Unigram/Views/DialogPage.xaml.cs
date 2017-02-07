@@ -51,8 +51,8 @@ namespace Unigram.Views
         public DialogPage()
         {
             InitializeComponent();
-
             DataContext = UnigramContainer.Instance.ResolveType<DialogViewModel>();
+
             CheckMessageBoxEmpty();
 
             Loaded += OnLoaded;
@@ -107,6 +107,8 @@ namespace Unigram.Views
         {
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
+            StickersPanel.Height = args.OccludedRect.Height;
+            ReplyMarkupPanel.Height = args.OccludedRect.Height;
             //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
         }
 
@@ -147,17 +149,18 @@ namespace Unigram.Views
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.With is TLUserBase) //Se non è zuppa allora è pan bagnato
+            if (ViewModel.With is TLUserBase)
+            {
                 ViewModel.NavigationService.Navigate(typeof(UserInfoPage), ViewModel.Peer.ToPeer());
+            }
             else if (ViewModel.With is TLChannel)
+            {
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
+            }
             else if (ViewModel.With is TLChat)
+            {
                 ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
-        }
-
-        private void btnClosePinnedMessage_Click(object sender, RoutedEventArgs e)
-        {
-            grdPinnedMessage.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void Attach_Click(object sender, RoutedEventArgs e)
@@ -309,8 +312,7 @@ namespace Unigram.Views
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
-            StickersPanel.IsHitTestVisible = !StickersPanel.IsHitTestVisible;
-            StickersPanel.Opacity = StickersPanel.IsHitTestVisible ? 1 : 0;
+            StickersPanel.Visibility = StickersPanel.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void ProfileBubble_Click(object sender, RoutedEventArgs e)
@@ -394,14 +396,8 @@ namespace Unigram.Views
                 var message = element.DataContext as TLMessage;
                 if (message != null)
                 {
-                    if (message.IsSticker())
-                    {
-                        element.Visibility = Visibility.Collapsed;
-                        return;
-                    }
-
                     var channel = ViewModel.With as TLChannel;
-                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
                     {
                         var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
                         var config = ViewModel.CacheService.GetConfig();
@@ -516,17 +512,33 @@ namespace Unigram.Views
 
         }
 
-        private void MessageSaveStickerAs_Loaded(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        #endregion
-
         private void MessageSaveSticker_Loaded(object sender, RoutedEventArgs e)
         {
 
         }
+
+        private void MessageSaveMedia_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var message = element.DataContext as TLMessage;
+                if (message != null)
+                {
+                    if (message.Media is TLMessageMediaDocument || message.Media is TLMessageMediaPhoto)
+                    {
+                        // TOOD: check if file exists
+
+                        Visibility = Visibility.Visible;
+                        return;
+                    }
+                }
+
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        #endregion
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading

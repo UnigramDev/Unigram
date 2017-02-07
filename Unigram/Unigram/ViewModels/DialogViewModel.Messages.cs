@@ -801,6 +801,12 @@ namespace Unigram.ViewModels
                             picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
                             picker.SuggestedFileName = "sticker.webp";
 
+                            var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
+                            if (fileNameAttribute != null)
+                            {
+                                picker.SuggestedFileName = fileNameAttribute.FileName;
+                            }
+
                             var file = await picker.PickSaveFileAsync();
                             if (file != null)
                             {
@@ -827,6 +833,78 @@ namespace Unigram.ViewModels
                                         await encoder.FlushAsync();
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Save file as
+
+        public RelayCommand<TLMessage> MessageSaveMediaCommand => new RelayCommand<TLMessage>(MessageSaveMediaExecute);
+        private async void MessageSaveMediaExecute(TLMessage message)
+        {
+            if (message != null)
+            {
+                var photoMedia = message.Media as TLMessageMediaPhoto;
+                if (photoMedia != null)
+                {
+                    var photo = photoMedia.Photo as TLPhoto;
+                    if (photo != null)
+                    {
+                        var photoSize = photo.Full as TLPhotoSize;
+                        if (photoSize != null)
+                        {
+                            var location = photoSize.Location;
+                            var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+                            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                            {
+                                var picker = new FileSavePicker();
+                                picker.FileTypeChoices.Add("JPEG Image", new[] { ".jpg" });
+                                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                                picker.SuggestedFileName = BindConvert.Current.DateTime(message.Date).ToString("photo_yyyyMMdd_HH_mm_ss") + ".jpg";
+
+                                var file = await picker.PickSaveFileAsync();
+                                if (file != null)
+                                {
+                                    var result = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
+                                    await result.CopyAndReplaceAsync(file);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                var documentMedia = message.Media as TLMessageMediaDocument;
+                if (documentMedia != null)
+                {
+                    var document = documentMedia.Document as TLDocument;
+                    if (document != null)
+                    {
+                        var fileName = document.GetFileName();
+                        if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                        {
+                            var extension = document.GetFileExtension();
+
+                            var picker = new FileSavePicker();
+                            picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { document.GetFileExtension() });
+                            picker.SuggestedStartLocation = PickerLocationId.Downloads;
+                            picker.SuggestedFileName = BindConvert.Current.DateTime(message.Date).ToString("photo_yyyyMMdd_HH_mm_ss") + extension;
+
+                            var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
+                            if (fileNameAttribute != null)
+                            {
+                                picker.SuggestedFileName = fileNameAttribute.FileName;
+                            }
+
+                            var file = await picker.PickSaveFileAsync();
+                            if (file != null)
+                            {
+                                var result = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
+                                await result.CopyAndReplaceAsync(file);
                             }
                         }
                     }
