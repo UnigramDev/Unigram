@@ -484,5 +484,15 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void NewChat_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(UsersPickerPage));
+        }
+
+        private void NewChannel_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

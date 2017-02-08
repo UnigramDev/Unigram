@@ -163,8 +163,8 @@ namespace Unigram.Common
                             }
                         }
 
-                        paragraph.Inlines.Add(new Run { Text = placeholder, Foreground = null });
-                    }
+                        paragraph.Inlines.Add(new Run { Text = "\u200E" + placeholder, Foreground = null });
+                        }
                 }
 
                 sender.Blocks.Clear();

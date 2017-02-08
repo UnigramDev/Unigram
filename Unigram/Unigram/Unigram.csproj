@@ -94,7 +94,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Compile Include="Controls\TagsTextBox.cs" />
+    <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="ViewModels\UsersPickerViewModel.cs" />
     <Compile Include="Views\UsersPickerPage.xaml.cs">
       <DependentUpon>UsersPickerPage.xaml</DependentUpon>
     </Compile>
@@ -321,12 +324,6 @@
     </Compile>
     <Compile Include="Views\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HomeNewChatPage.xaml.cs">
-      <DependentUpon>HomeNewChatPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HomeSearchPage.xaml.cs">
-      <DependentUpon>HomeSearchPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Login\LoginPasswordPage.xaml.cs">
       <DependentUpon>LoginPasswordPage.xaml</DependentUpon>
@@ -620,14 +617,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\GamePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\HomeNewChatPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\HomeSearchPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -160,11 +160,11 @@
                             <Button.Flyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                                                    IsEnabled="False"
+                                                    Click="NewChat_Click"
                                                     Tag="&#xE125;"
                                                     Text="New Group" />
                                     <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                                                    IsEnabled="False"
+                                                    Click="NewChannel_Click"
                                                     Tag="&#xE789;"
                                                     Text="New Channel" />
                                     <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
@@ -198,8 +198,6 @@
                                                             TextChanged="txtSearch_TextChanged"
                                                             Margin="0"/>
                                 </Border>
-
-                                <Border BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" BorderThickness="0,0,0,1"/>
                             </Grid>
                             
                             <controls:DialogsListView x:Name="DialogsListView"

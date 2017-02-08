@@ -21,7 +21,7 @@ namespace Unigram.ViewModels
         public ContactsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new SortedObservableCollection<TLUser>(new TLUserComparer());
+            Items = new SortedObservableCollection<TLUser>(new TLUserComparer(true));
             Search = new ObservableCollection<KeyedList<string, TLObject>>();
         }
 
@@ -195,10 +195,32 @@ namespace Unigram.ViewModels
 
     public class TLUserComparer : IComparer<TLUser>
     {
+        private bool _epoch;
+
+        public TLUserComparer(bool epoch)
+        {
+            _epoch = epoch;
+        }
+
         public int Compare(TLUser x, TLUser y)
         {
-            var epoch = LastSeenHelper.GetLastSeen(y).Item2.CompareTo(LastSeenHelper.GetLastSeen(x).Item2);
-            if (epoch == 0)
+            if (_epoch)
+            {
+                var epoch = LastSeenHelper.GetLastSeen(y).Item2.CompareTo(LastSeenHelper.GetLastSeen(x).Item2);
+                if (epoch == 0)
+                {
+                    var fullName = x.FullName.CompareTo(y.FullName);
+                    if (fullName == 0)
+                    {
+                        return y.Id.CompareTo(x.Id);
+                    }
+
+                    return fullName;
+                }
+
+                return epoch;
+            }
+            else
             {
                 var fullName = x.FullName.CompareTo(y.FullName);
                 if (fullName == 0)
@@ -208,8 +230,6 @@ namespace Unigram.ViewModels
 
                 return fullName;
             }
-
-            return epoch;
         }
     }
 }
