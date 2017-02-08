@@ -97,9 +97,14 @@
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
-    <Compile Include="ViewModels\UsersPickerViewModel.cs" />
-    <Compile Include="Views\UsersPickerPage.xaml.cs">
-      <DependentUpon>UsersPickerPage.xaml</DependentUpon>
+    <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
+    <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
+    <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
+    <Compile Include="Views\Channels\CreateChannelStep2Page.xaml.cs">
+      <DependentUpon>CreateChannelStep2Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UsersSelectionPage.xaml.cs">
+      <DependentUpon>UsersSelectionPage.xaml</DependentUpon>
     </Compile>
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <None Include="project.json" />
@@ -298,8 +303,8 @@
     <Compile Include="Views\BlankPage.xaml.cs">
       <DependentUpon>BlankPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Channels\CreateChannelPage.xaml.cs">
-      <DependentUpon>CreateChannelPage.xaml</DependentUpon>
+    <Compile Include="Views\Channels\CreateChannelStep1Page.xaml.cs">
+      <DependentUpon>CreateChannelStep1Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatInfoPage.xaml.cs">
       <DependentUpon>ChatInfoPage.xaml</DependentUpon>
@@ -588,7 +593,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Channels\CreateChannelPage.xaml">
+    <Page Include="Views\Channels\CreateChannelStep1Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Channels\CreateChannelStep2Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -692,7 +701,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\UsersPickerPage.xaml">
+    <Page Include="Views\UsersSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

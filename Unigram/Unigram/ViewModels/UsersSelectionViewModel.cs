@@ -14,9 +14,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class UsersPickerViewModel : UnigramViewModelBase
+    public class UsersSelectionViewModel : UnigramViewModelBase
     {
-        public UsersPickerViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public UsersSelectionViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
             Items = new SortedObservableCollection<TLUser>(new TLUserComparer(false));

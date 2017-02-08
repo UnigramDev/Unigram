@@ -24,14 +24,14 @@ namespace Unigram.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class UsersPickerPage : Page
+    public sealed partial class UsersSelectionPage : Page
     {
-        public UsersPickerViewModel ViewModel => DataContext as UsersPickerViewModel;
+        public UsersSelectionViewModel ViewModel => DataContext as UsersSelectionViewModel;
 
-        public UsersPickerPage()
+        public UsersSelectionPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<UsersPickerViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<UsersSelectionViewModel>();
 
             ViewModel.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
         }

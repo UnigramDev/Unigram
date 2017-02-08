@@ -1819,6 +1819,19 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        public Task<MTProtoResponse<TLMessagesChatsBase>> GetAdminedPublicChannelsAsync()
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatsBase>>();
+            GetAdminedPublicChannelsCallback((callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesChatsBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesChatsBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
         public Task<MTProtoResponse<TLUploadFile>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFile>>();

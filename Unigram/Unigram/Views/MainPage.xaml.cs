@@ -33,6 +33,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.ViewManagement;
+using Unigram.Views.Channels;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -487,12 +488,12 @@ namespace Unigram.Views
 
         private void NewChat_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(UsersPickerPage));
+            MasterDetail.NavigationService.Navigate(typeof(UsersSelectionPage));
         }
 
         private void NewChannel_Click(object sender, RoutedEventArgs e)
         {
-
+            MasterDetail.NavigationService.Navigate(typeof(CreateChannelStep1Page));
         }
     }
 }

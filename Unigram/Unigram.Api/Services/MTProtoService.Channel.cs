@@ -41,6 +41,23 @@ namespace Telegram.Api.Services
             SendInformativeMessage("channels.getMessages", obj, callback, faultCallback);
         }
 
+        public void GetAdminedPublicChannelsCallback(Action<TLMessagesChatsBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLChannelsGetAdminedPublicChannels();
+
+            const string caption = "channels.getAdminedPublicChannels";
+            SendInformativeMessage<TLMessagesChatsBase>(caption, obj, 
+                result =>
+            {
+                var chats = result as TLMessagesChats;
+                if (chats != null)
+                {
+                    _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), chats.Chats, tuple => callback.SafeInvoke(result));
+                }
+            }, 
+            faultCallback);
+        }
+
         public void EditAdminCallback(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsEditAdmin { Channel = channel.ToInputChannel(), UserId = userId, Role = role };
