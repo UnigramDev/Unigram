@@ -47,7 +47,7 @@
                 </Border>
             </Grid>
 
-            <TextBox Text="{x:Bind ViewModel.About, Mode=TwoWay}" Header="Description" AcceptsReturn="True" TextWrapping="Wrap" Margin="12,12,12,8" Grid.Row="1"/>
+            <TextBox Text="{x:Bind ViewModel.About, Mode=TwoWay}" MaxLength="{StaticResource ChannelAboutMaxLength}" Header="Description" AcceptsReturn="True" TextWrapping="Wrap" Margin="12,12,12,8" Grid.Row="1"/>
             <TextBlock Text="You can provide an optional description for your channel." Margin="12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
         </Grid>
     </Grid>

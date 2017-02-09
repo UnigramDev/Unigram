@@ -78,7 +78,7 @@ namespace Unigram.ViewModels
             }
 
             var input = string.Join(",", contacts.Select(x => x.Id).Union(new[] { SettingsHelper.UserId }).OrderBy(x => x));
-            var hash = MD5Core.GetHash(input);
+            var hash = Utils.ComputeMD5(input);
             var hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
 
             var response = await ProtoService.GetContactsAsync(hex);

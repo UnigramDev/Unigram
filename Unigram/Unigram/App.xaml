@@ -29,6 +29,8 @@
             <x:Double x:Key="TelegramMediaMinWidth">96</x:Double>
             <x:Double x:Key="TelegramMediaMinHeight">96</x:Double>
 
+            <x:Int32 x:Key="ChannelAboutMaxLength">255</x:Int32>
+
             <MediaElement x:Key="AudioPlayer"/>
 
             <!-- Temp -->

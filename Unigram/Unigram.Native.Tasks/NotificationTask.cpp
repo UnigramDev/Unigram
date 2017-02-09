@@ -61,7 +61,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 
 		auto caption = GetCaption(loc_args, loc_key);
 		auto message = GetMessage(loc_args, loc_key);
-		auto sound = ref new String(L"Default"); // data->GetNamedString("sound");
+		auto sound = data->GetNamedString("sound", "Default");
 		auto launch = GetLaunch(custom, loc_key);
 		auto tag = GetTag(custom);
 		auto group = GetGroup(custom);
@@ -213,8 +213,27 @@ String^ NotificationTask::GetPicture(JsonObject^ custom)
 			auto secretULL = wcstoull(secretSTR.c_str(), NULL, 0);
 			auto secretLL = static_cast<signed long long>(secretULL);
 
-			std::wstringstream almost;
-			almost << L"ms-appdata:///local/temp/"
+			auto temp = ApplicationData::Current->LocalFolder->Path;
+
+			std::wstringstream path;
+			path << temp->Data()
+				<< L"\\temp\\"
+				<< volumeLL
+				<< L"_"
+				<< local_id->Data()
+				<< L"_"
+				<< secretLL
+				<< L".jpg";
+
+			WIN32_FIND_DATA FindFileData;
+			HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
+			int found = handle != INVALID_HANDLE_VALUE;
+			if (found)
+			{
+				FindClose(handle);
+
+				std::wstringstream almost;
+				almost << L"ms-appdata:///local/temp/"
 					<< volumeLL
 					<< L"_"
 					<< local_id->Data()
@@ -222,27 +241,21 @@ String^ NotificationTask::GetPicture(JsonObject^ custom)
 					<< secretLL
 					<< L".jpg";
 
-			return ref new String(almost.str().c_str());
+				return ref new String(almost.str().c_str());
+			}
+			else 
+			{
+				std::wstringstream almost;
+				almost << L"ms-appx:///Assets/Images/"
+					<< volumeLL
+					<< L"_"
+					<< local_id->Data()
+					<< L"_"
+					<< secretLL
+					<< L".jpg";
 
-			//auto temp = ApplicationData::Current->LocalFolder->Path;
-
-			//std::wstringstream wss;
-			//wss << temp->Data()
-			//	<< L"\\temp\\"
-			//	<< volume_id->Data()
-			//	<< L"_"
-			//	<< local_id->Data()
-			//	<< L"_"
-			//	<< secret->Data()
-			//	<< L".jpg";
-
-			//WIN32_FIND_DATA FindFileData;
-			//HANDLE handle = FindFirstFile(wss.str().c_str(), &FindFileData);
-			//int found = handle != INVALID_HANDLE_VALUE;
-			//if (found)
-			//{
-			//	FindClose(handle);
-			//}
+				return ref new String(almost.str().c_str());
+			}
 		}
 	}
 
