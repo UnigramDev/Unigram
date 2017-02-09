@@ -99,6 +99,8 @@
     <Compile Include="Controls\WrapPanel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
+    <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
+    <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="Views\Channels\CreateChannelStep2Page.xaml.cs">
       <DependentUpon>CreateChannelStep2Page.xaml</DependentUpon>
@@ -309,8 +311,8 @@
     <Compile Include="Views\ChatInfoPage.xaml.cs">
       <DependentUpon>ChatInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Chats\CreateChatPage.xaml.cs">
-      <DependentUpon>CreateChatPage.xaml</DependentUpon>
+    <Compile Include="Views\Chats\CreateChatStep1Page.xaml.cs">
+      <DependentUpon>CreateChatStep1Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DialogInfoAdminsPage.xaml.cs">
       <DependentUpon>DialogInfoAdminsPage.xaml</DependentUpon>
@@ -605,7 +607,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Chats\CreateChatPage.xaml">
+    <Page Include="Views\Chats\CreateChatStep1Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

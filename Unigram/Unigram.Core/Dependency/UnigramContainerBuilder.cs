@@ -55,6 +55,16 @@ namespace Unigram.Core.Dependency
             return result;
         }
 
+        public object ResolveType(Type type)
+        {
+            if (_container != null)
+            {
+                return _container.Resolve(type);
+            }
+
+            return null;
+        }
+
         public TService ResolveType<TService>(object key)
         {
             if (_cachedServices.ContainsKey(key))

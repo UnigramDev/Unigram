@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
 using Template10.Utils;
+using Unigram.Common;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -31,7 +32,7 @@ namespace Unigram.Views
         public UsersSelectionPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<UsersSelectionViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType(UnigramNavigationService.ViewModels.Dequeue());
 
             ViewModel.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
         }
@@ -76,6 +77,12 @@ namespace Unigram.Views
         private void TagsTextBox_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight, null);
+        }
+
+        public class NavigationParameters
+        {
+            public Type InnerType { get; set; }
+            public object Parameter { get; set; }
         }
     }
 }

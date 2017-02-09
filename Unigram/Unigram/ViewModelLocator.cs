@@ -26,6 +26,7 @@ using Unigram.Views.Login;
 using Unigram.ViewModels.Settings;
 using Unigram.Services;
 using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Chats;
 
 namespace Unigram
 {
@@ -78,9 +79,9 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<UserInfoViewModel>();
             container.ContainerBuilder.RegisterType<ChatInfoViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
-            container.ContainerBuilder.RegisterType<CreateChannelStep1ViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<CreateChannelStep2ViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<UsersSelectionViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<CreateChannelStep1ViewModel>(); //.SingleInstance();
+            container.ContainerBuilder.RegisterType<CreateChannelStep2ViewModel>(); //.SingleInstance();
+            container.ContainerBuilder.RegisterType<CreateChatStep2ViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<ArticleViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStorageViewModel>().SingleInstance();

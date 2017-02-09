@@ -10,6 +10,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Collections;
+using Unigram.Common;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -21,7 +22,46 @@ namespace Unigram.ViewModels
         {
             Items = new SortedObservableCollection<TLUser>(new TLUserComparer(false));
             SelectedItems = new ObservableCollection<TLUser>();
+            SelectedItems.CollectionChanged += OnCollectionChanged;
         }
+
+        private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            SendCommand.RaiseCanExecuteChanged();
+        }
+
+        #region Overrides
+
+        public virtual string Title
+        {
+            get
+            {
+                return "Title";
+            }
+        }
+
+        public virtual int Maximum
+        {
+            get
+            {
+                return 5000;
+            }
+        }
+
+        public virtual int Minimum
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        protected virtual void SendExecute()
+        {
+
+        }
+
+        #endregion
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
@@ -64,5 +104,8 @@ namespace Unigram.ViewModels
         public SortedObservableCollection<TLUser> Items { get; private set; }
 
         public ObservableCollection<TLUser> SelectedItems { get; private set; }
+
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => Minimum <= SelectedItems.Count && Maximum >= SelectedItems.Count);
     }
 }

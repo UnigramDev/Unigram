@@ -626,6 +626,8 @@ namespace Telegram.Api.Helpers
 
         public static int GetColorIndex(int id)
         {
+            return id % 6;
+
             if (id < 0)
             {
                 id += 256;

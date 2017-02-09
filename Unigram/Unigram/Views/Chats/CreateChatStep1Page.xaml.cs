@@ -20,9 +20,9 @@ namespace Unigram.Views.Chats
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class CreateChatPage : Page
+    public sealed partial class CreateChatStep1Page : Page
     {
-        public CreateChatPage()
+        public CreateChatStep1Page()
         {
             this.InitializeComponent();
         }

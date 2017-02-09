@@ -23,8 +23,7 @@
             <StackPanel VerticalAlignment="Center" Margin="12,0">
                 <TextBlock Text="Title" Style="{StaticResource BaseTextBlockStyle}"/>
                 <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
-                    <Run Text="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"/>
-                    <Run Text="of 5000 selected"/>
+                    <Run Text="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"/><Run Text="/"/><Run Text="{x:Bind ViewModel.Maximum}"/>
                 </TextBlock>
             </StackPanel>
             <controls:GlyphButton Glyph="&#xE10B;" Grid.Column="1"/>
@@ -42,9 +41,9 @@
 
         <ListView x:Name="List"
                   ItemsSource="{x:Bind ViewModel.Items}" 
-                    SelectionMode="Multiple" 
-                    SelectionChanged="ListView_SelectionChanged"
-                    Grid.Row="2">
+                  SelectionMode="Multiple" 
+                  SelectionChanged="ListView_SelectionChanged"
+                  Grid.Row="2">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="tl:TLUser">
                     <Grid Margin="0,6">
@@ -67,15 +66,15 @@
                         </Grid>
                         <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                         <TextBlock Text="{x:Bind Converter={StaticResource LastSeenConverter}}" 
-                                            x:Phase="1"
-                                            VerticalAlignment="Top" 
-                                            Style="{StaticResource CaptionTextBlockStyle}" 
-                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                            TextTrimming="CharacterEllipsis" 
-                                            TextWrapping="NoWrap" 
-                                            Grid.Column="1" 
-                                            Grid.Row="1"
-                                            MaxLines="1"/>
+                                   VerticalAlignment="Top" 
+                                   Style="{StaticResource CaptionTextBlockStyle}" 
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   TextTrimming="CharacterEllipsis" 
+                                   TextWrapping="NoWrap" 
+                                   Grid.Column="1" 
+                                   Grid.Row="1"
+                                   MaxLines="1"
+                                   x:Phase="1"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
