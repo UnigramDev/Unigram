@@ -589,7 +589,16 @@ namespace Unigram.Views
             {
                 case TLType.TextPlain:
                     var plainText = (TLTextPlain)text;
-                    span.Text = plainText.Text;
+
+                    // Strikethrough fallback
+                    if (GetIsStrikethrough(span))
+                    {
+                        span.Text = StrikethroughFallback(plainText.Text);
+                    }
+                    else
+                    {
+                        span.Text = plainText.Text;
+                    }
                     break;
                 case TLType.TextConcat:
                     var concatText = (TLTextConcat)text;
@@ -630,6 +639,7 @@ namespace Unigram.Views
                     else
                     {
                         // TODO: not supported in xaml
+                        SetIsStrikethrough(span, true);
                         ProcessText(strikeText.Text, collection, span);
                     }
                     break;
@@ -646,37 +656,25 @@ namespace Unigram.Views
                     else
                     {
                         var underline = new Underline();
-                        var underlineSpan = new Run();
-                        underline.Inlines.Add(underlineSpan);
+                        collection.Remove(span);
                         collection.Add(underline);
-                        ProcessText(underlineText.Text, underline.Inlines, underlineSpan);
+                        underline.Inlines.Add(span);
+                        ProcessText(underlineText.Text, underline.Inlines, span);
                     }
                     break;
                 case TLType.TextUrl:
                     var urlText = (TLTextUrl)text;
                     var hyperlink = new Hyperlink();
-                    var hyperlinkSpan = new Run();
-                    hyperlink.Inlines.Add(hyperlinkSpan);
-                    hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
+                    collection.Remove(span);
                     collection.Add(hyperlink);
-                    ProcessText(urlText.Text, hyperlink.Inlines, hyperlinkSpan);
+                    hyperlink.Inlines.Add(span);
+                    hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
+                    ProcessText(urlText.Text, hyperlink.Inlines, span);
                     break;
                 case TLType.TextEmpty:
                     var emptyText = (TLTextEmpty)text;
                     break;
             }
-        }
-
-        private string StrikethroughFallback(string text)
-        {
-            var sb = new StringBuilder(text.Length * 2);
-            foreach (var ch in text)
-            {
-                sb.Append((char)0x0336);
-                sb.Append(ch);
-            }
-
-            return sb.ToString();
         }
 
         private async void Hyperlink_Click(TLTextUrl urlText)
@@ -695,7 +693,6 @@ namespace Unigram.Views
                     fault =>
                     {
                     });
-
             }
             else
             {
@@ -713,5 +710,34 @@ namespace Unigram.Views
                 }
             }
         }
+
+        #region Strikethrough
+
+        private string StrikethroughFallback(string text)
+        {
+            var sb = new StringBuilder(text.Length * 2);
+            foreach (var ch in text)
+            {
+                sb.Append((char)0x0336);
+                sb.Append(ch);
+            }
+
+            return sb.ToString();
+        }
+
+        public static bool GetIsStrikethrough(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsStrikethroughProperty);
+        }
+
+        public static void SetIsStrikethrough(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsStrikethroughProperty, value);
+        }
+
+        public static readonly DependencyProperty IsStrikethroughProperty =
+            DependencyProperty.RegisterAttached("IsStrikethrough", typeof(bool), typeof(ArticlePage), new PropertyMetadata(false));
+
+        #endregion
     }
 }
