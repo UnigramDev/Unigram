@@ -9,6 +9,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.Views;
@@ -231,6 +232,24 @@ namespace Unigram.Controls.Messages
         protected void Reply_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Context.MessageOpenReplyCommand.Execute(ViewModel);
+        }
+
+        protected void MessageControl_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            Point point;
+            if (args.TryGetPosition(sender, out point))
+            {
+                var text = sender as RichTextBlock;
+                var hyperlink = text.GetHyperlinkFromPoint(point);
+                if (hyperlink != null)
+                {
+                    var flyout = new MenuFlyout();
+                    flyout.Items.Add(new MenuFlyoutItem { Text = "Open link" });
+                    flyout.Items.Add(new MenuFlyoutItem { Text = "Copy link" });
+                    flyout.ShowAt(sender, point);
+                    args.Handled = true;
+                }
+            }
         }
 
         /// <summary>

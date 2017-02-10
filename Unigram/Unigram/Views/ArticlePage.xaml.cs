@@ -66,7 +66,6 @@ namespace Unigram.Views
             var webpage = parameter as TLWebPage;
             if (webpage != null && webpage.HasCachedPage)
             {
-
                 if (webpage.HasPhoto && !webpage.CachedPage.Photos.Any(x => x.Id == webpage.Photo.Id))
                 {
                     webpage.CachedPage.Photos.Insert(0, webpage.Photo);
@@ -78,11 +77,6 @@ namespace Unigram.Views
                     ProcessBlock(webpage.CachedPage, block);
                     processed++;
                 }
-
-                //if (_containers.Count > 0)
-                //{
-                //    LayoutRoot.Children.Add(_containers.Pop());
-                //}
 
                 var part = webpage.CachedPage as TLPagePart;
                 if (part != null)
@@ -100,13 +94,6 @@ namespace Unigram.Views
                             }
                         }
                     }
-                    //protoService.SendInformativeMessageInternal<TLWebPage>("messages.getWebPage", new TLMessagesGetWebPage { Url = webpage.Url, Hash = webpage.Hash },
-                    //    result =>
-                    //    {
-                    //    },
-                    //    fault =>
-                    //    {
-                    //    });
                 }
             }
 
@@ -158,14 +145,80 @@ namespace Unigram.Views
                 case TLType.PageBlockCollage:
                     ProcessCollage(page, (TLPageBlockCollage)block);
                     break;
+                case TLType.PageBlockEmbed:
+                    ProcessEmbed(page, (TLPageBlockEmbed)block);
+                    break;
                 case TLType.PageBlockPreformatted:
                 case TLType.PageBlockPullquote:
-                case TLType.PageBlockEmbed:
                 case TLType.PageBlockUnsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
                     break;
                 case TLType.PageBlockAnchor:
                     break;
+            }
+        }
+
+        private void ProcessEmbed(TLPageBase page, TLPageBlockEmbed block)
+        {
+            if (block.Caption.TypeId != TLType.TextEmpty)
+            {
+                _containers.Push(new StackPanel { HorizontalAlignment = HorizontalAlignment.Center });
+            }
+
+            FrameworkElement child = null;
+
+            //if (block.HasPosterPhotoId)
+            //{
+            //    var photo = page.Photos.FirstOrDefault(x => x.Id == block.PosterPhotoId);
+            //    var image = new ImageView();
+            //    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, "thumbnail");
+            //    image.Constraint = photo;
+            //    child = image;
+            //}
+            if (block.HasHtml)
+            {
+                var view = new WebView();
+                view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
+
+                var ratio = new RatioControl();
+                ratio.MaxWidth = block.W;
+                ratio.MaxHeight = block.H;
+                ratio.Content = view;
+                ratio.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                ratio.VerticalContentAlignment = VerticalAlignment.Stretch;
+                child = ratio;
+            }
+            else if (block.HasUrl)
+            {
+                var view = new WebView();
+                view.Navigate(new Uri(block.Url));
+
+                var ratio = new RatioControl();
+                ratio.MaxWidth = block.W;
+                ratio.MaxHeight = block.H;
+                ratio.Content = view;
+                ratio.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                ratio.VerticalContentAlignment = VerticalAlignment.Stretch;
+                child = ratio;
+            }
+
+            _containers.Peek().Children.Add(child);
+
+            if (block.Caption.TypeId != TLType.TextEmpty)
+            {
+                ProcessTextBlock(page, block, true);
+
+                var panel = _containers.Pop();
+                _containers.Peek().Children.Add(panel);
+            }
+            else
+            {
+                child.Margin = new Thickness(0, 0, 0, 12);
+            }
+
+            if (_parents.Count > 0 && _parents.Peek().TypeId == TLType.PageBlockCover)
+            {
+                child.Margin = new Thickness(0, -12, 0, 12);
             }
         }
 
@@ -458,6 +511,12 @@ namespace Unigram.Views
                 case TLType.PageBlockSlideshow:
                     text = ((TLPageBlockSlideshow)block).Caption;
                     break;
+                case TLType.PageBlockEmbed:
+                    text = ((TLPageBlockEmbed)block).Caption;
+                    break;
+                case TLType.PageBlockEmbedPost:
+                    text = ((TLPageBlockEmbedPost)block).Caption;
+                    break;
                 case TLType.PageBlockBlockquote:
                     text = caption ? ((TLPageBlockBlockquote)block).Caption : ((TLPageBlockBlockquote)block).Text;
                     break;
@@ -506,16 +565,10 @@ namespace Unigram.Views
                         textBlock.FontSize = 14;
                         break;
                     case TLType.PageBlockPhoto:
-                        textBlock.FontSize = 14;
-                        textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                        textBlock.Margin = new Thickness(12, 4, 12, 12);
-                        break;
                     case TLType.PageBlockVideo:
-                        textBlock.FontSize = 14;
-                        textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                        textBlock.Margin = new Thickness(12, 4, 12, 12);
-                        break;
                     case TLType.PageBlockSlideshow:
+                    case TLType.PageBlockEmbed:
+                    case TLType.PageBlockEmbedPost:
                         textBlock.FontSize = 14;
                         textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
                         textBlock.Margin = new Thickness(12, 4, 12, 12);

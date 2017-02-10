@@ -66,6 +66,7 @@
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}" 
                 Style="{ThemeResource BodyRichTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
+                ContextRequested="MessageControl_ContextRequested"
                 Grid.Row="2">
                 <RichTextBlock.Resources>
                     <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
