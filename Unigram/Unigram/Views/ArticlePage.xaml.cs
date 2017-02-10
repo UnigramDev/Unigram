@@ -683,7 +683,7 @@ namespace Unigram.Views
             if (urlText.WebpageId != 0)
             {
                 var protoService = (MTProtoService)MTProtoService.Current;
-                protoService.SendInformativeMessageInternal<TLWebPage>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
+                protoService.SendInformativeMessageInternal<TLWebPageBase>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
                     result =>
                     {
                         Execute.BeginOnUIThread(() =>
@@ -693,6 +693,7 @@ namespace Unigram.Views
                     },
                     fault =>
                     {
+                        Debugger.Break();
                     });
             }
             else

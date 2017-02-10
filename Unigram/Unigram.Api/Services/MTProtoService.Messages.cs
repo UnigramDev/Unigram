@@ -294,6 +294,14 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
 	    }
 
+        public void GetWebPageCallback(string url, int hash, Action<TLWebPageBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetWebPage { Url = url, Hash = hash };
+
+            const string caption = "messages.getWebPage";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
         public void GetFeaturedStickersCallback(bool full, int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetFeaturedStickers { Hash = hash };

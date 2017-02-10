@@ -83,6 +83,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLAuthAuthorization>> CheckPasswordAsync(byte[] passwordHash);
         Task<MTProtoResponse<bool>> ResetTopPeerRatingAsync(TLTopPeerCategoryBase category, TLInputPeerBase peer);
         Task<MTProtoResponse<TLMessageMediaBase>> GetWebPagePreviewAsync(string message);
+        Task<MTProtoResponse<TLWebPageBase>> GetWebPageAsync(string url, int hash);
         Task<MTProtoResponse<TLUpdatesBase>> EditChatPhotoAsync(int chatId, TLInputChatPhotoBase photo);
         Task<MTProtoResponse<TLUserBase>> UpdateUsernameAsync(string username);
         Task<MTProtoResponse<TLAuthSentCode>> SendConfirmPhoneCodeAsync(string hash, bool currentNumber);
