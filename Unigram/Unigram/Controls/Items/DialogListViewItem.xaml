@@ -30,7 +30,7 @@
         </Ellipse>
         <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2"/>
 
-        <Grid VerticalAlignment="Top" Margin="8,2,0,0" Grid.Column="1">
+        <Grid VerticalAlignment="Top" Margin="8,3,0,0" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
@@ -116,7 +116,7 @@
                     CornerRadius="10" 
                     VerticalAlignment="Top" 
                     HorizontalAlignment="Right" 
-                    Margin="8,2,0,0"
+                    Margin="8,1,0,0"
                     Visibility="Collapsed"
                     Grid.Column="2">
                 <Border Visibility="{x:Bind UpdateUnreadBadgeBrush(ViewModel.NotifySettings)}" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"/>
