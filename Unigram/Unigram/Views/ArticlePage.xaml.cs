@@ -49,11 +49,11 @@ namespace Unigram.Views
             DataContext = UnigramContainer.Instance.ResolveType<ArticleViewModel>();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             LayoutRoot.Children.Clear();
             _containers.Clear();
-            _containers.Push(new StackPanel());
+            _containers.Push(LayoutRoot);
 
             var parameter = TLSerializationService.Current.Deserialize((string)e.Parameter);
 
@@ -66,34 +66,47 @@ namespace Unigram.Views
             var webpage = parameter as TLWebPage;
             if (webpage != null && webpage.HasCachedPage)
             {
-                var part = webpage.CachedPage as TLPagePart;
-                if (part != null)
-                {
-                    var protoService = (MTProtoService)MTProtoService.Current;
-                    protoService.SendInformativeMessageInternal<TLWebPage>("messages.getWebPage", new TLMessagesGetWebPage { Url = webpage.Url, Hash = webpage.Hash },
-                        result =>
-                        {
-                        },
-                        fault =>
-                        {
-                        });
-                }
-
-                var full = webpage.CachedPage as TLPageFull;
 
                 if (webpage.HasPhoto && !webpage.CachedPage.Photos.Any(x => x.Id == webpage.Photo.Id))
                 {
                     webpage.CachedPage.Photos.Insert(0, webpage.Photo);
                 }
 
+                var processed = 0;
                 foreach (var block in webpage.CachedPage.Blocks)
                 {
                     ProcessBlock(webpage.CachedPage, block);
+                    processed++;
                 }
 
-                if (_containers.Count > 0)
+                //if (_containers.Count > 0)
+                //{
+                //    LayoutRoot.Children.Add(_containers.Pop());
+                //}
+
+                var part = webpage.CachedPage as TLPagePart;
+                if (part != null)
                 {
-                    LayoutRoot.Children.Add(_containers.Pop());
+                    var protoService = (MTProtoService)MTProtoService.Current;
+                    var response = await protoService.GetWebPageAsync(webpage.Url, webpage.Hash);
+                    if (response.IsSucceeded)
+                    {
+                        var newpage = response.Result as TLWebPage;
+                        if (newpage != null && newpage.HasCachedPage)
+                        {
+                            for (int i = processed; i < newpage.CachedPage.Blocks.Count; i++)
+                            {
+                                ProcessBlock(newpage.CachedPage, newpage.CachedPage.Blocks[i]);
+                            }
+                        }
+                    }
+                    //protoService.SendInformativeMessageInternal<TLWebPage>("messages.getWebPage", new TLMessagesGetWebPage { Url = webpage.Url, Hash = webpage.Hash },
+                    //    result =>
+                    //    {
+                    //    },
+                    //    fault =>
+                    //    {
+                    //    });
                 }
             }
 
@@ -576,7 +589,7 @@ namespace Unigram.Views
             textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
             ProcessText(block.Author, textBlock.Inlines, span);
 
-            textBlock.Inlines.Add(new Run { Text = " • " });
+            textBlock.Inlines.Add(new Run { Text = " — " });
             //textBlock.Inlines.Add(new Run { Text = DateTimeFormatter.LongDate.Format(BindConvert.Current.DateTime(block.PublishedDate)) });
             textBlock.Inlines.Add(new Run { Text = BindConvert.Current.DateTime(block.PublishedDate).ToString("dd MMMM yyyy") });
 
