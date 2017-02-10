@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
@@ -664,6 +665,18 @@ namespace Unigram.Views
                     var emptyText = (TLTextEmpty)text;
                     break;
             }
+        }
+
+        private string StrikethroughFallback(string text)
+        {
+            var sb = new StringBuilder(text.Length * 2);
+            foreach (var ch in text)
+            {
+                sb.Append((char)0x0336);
+                sb.Append(ch);
+            }
+
+            return sb.ToString();
         }
 
         private async void Hyperlink_Click(TLTextUrl urlText)
