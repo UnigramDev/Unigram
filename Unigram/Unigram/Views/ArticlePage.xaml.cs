@@ -620,6 +620,7 @@ namespace Unigram.Views
                     break;
                 case TLType.TextFixed:
                     var fixedText = (TLTextFixed)text;
+                    span.FontFamily = new FontFamily("Consolas");
                     ProcessText(fixedText.Text, collection, span);
                     break;
                 case TLType.TextItalic:
