@@ -22,14 +22,13 @@ namespace Unigram.Views.Chats
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class CreateChatStep1Page : Page
+    public sealed partial class CreateChatStep2Page : Page
     {
-        public CreateChatStep1ViewModel ViewModel => DataContext as CreateChatStep1ViewModel;
-
-        public CreateChatStep1Page()
+        public CreateChatStep2Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<CreateChatStep1ViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<CreateChatStep2ViewModel>();
+            View.Attach();
         }
     }
 }

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Unigram.Common;
+using Unigram.Views.Chats;
 
 namespace Unigram.ViewModels.Chats
 {
@@ -26,7 +28,15 @@ namespace Unigram.ViewModels.Chats
             set
             {
                 Set(ref _title, value);
+                SendCommand.RaiseCanExecuteChanged();
             }
+        }
+
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
+        private void SendExecute()
+        {
+            NavigationService.Navigate(typeof(CreateChatStep2Page), _title);
         }
     }
 }

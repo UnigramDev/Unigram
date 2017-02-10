@@ -9,13 +9,17 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Template10.Services.NavigationService;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Core.Dependency;
+using Unigram.Views;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class UsersSelectionViewModel : UnigramViewModelBase
+    public abstract class UsersSelectionViewModel : UnigramViewModelBase
     {
         public UsersSelectionViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
@@ -56,9 +60,20 @@ namespace Unigram.ViewModels
             }
         }
 
-        protected virtual void SendExecute()
+        public virtual ListViewSelectionMode SelectionMode
         {
+            get
+            {
+                return ListViewSelectionMode.Multiple;
+            }
+        }
 
+        public virtual bool AllowGlobalSearch
+        {
+            get
+            {
+                return true;
+            }
         }
 
         #endregion
@@ -87,6 +102,8 @@ namespace Unigram.ViewModels
                 var result = response.Result as TLContactsContacts;
                 if (result != null)
                 {
+                    Items.Clear();
+
                     foreach (var item in result.Users.OfType<TLUser>())
                     {
                         var user = item as TLUser;
@@ -107,5 +124,24 @@ namespace Unigram.ViewModels
 
         private RelayCommand _sendCommand;
         public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => Minimum <= SelectedItems.Count && Maximum >= SelectedItems.Count);
+        protected virtual void SendExecute()
+        {
+
+        }
+    }
+
+    public interface IUsersSelection : INavigable
+    {
+        string Title { get; }
+        
+        int Maximum { get; } 
+
+        int Minimum { get; }
+
+        bool IsMultipleSelectionEnabled { get; }
+
+        bool AllowGlobalSearch { get; }
+
+        void SendExecute();
     }
 }

@@ -21,7 +21,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center" Margin="12,0">
-                <TextBlock Text="Title" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind ViewModel.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
                 <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
                     <Run Text="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"/><Run Text="/"/><Run Text="{x:Bind ViewModel.Maximum}"/>
                 </TextBlock>

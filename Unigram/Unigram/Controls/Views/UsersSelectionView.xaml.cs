@@ -4,9 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
-using Template10.Utils;
-using Unigram.Common;
-using Unigram.Core.Dependency;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -18,22 +15,21 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Unigram.Views
+namespace Unigram.Controls.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class UsersSelectionPage : Page
+    public sealed partial class UsersSelectionView : Grid
     {
         public UsersSelectionViewModel ViewModel => DataContext as UsersSelectionViewModel;
 
-        public UsersSelectionPage()
+        public UsersSelectionView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType(UnigramNavigationService.ViewModels.Dequeue());
+        }
 
+        public void Attach()
+        {
             ViewModel.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
         }
 

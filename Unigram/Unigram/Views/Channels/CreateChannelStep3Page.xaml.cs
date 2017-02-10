@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Core.Dependency;
-using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Channels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -17,19 +17,18 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Unigram.Views.Chats
+namespace Unigram.Views.Channels
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class CreateChatStep1Page : Page
+    public sealed partial class CreateChannelStep3Page : Page
     {
-        public CreateChatStep1ViewModel ViewModel => DataContext as CreateChatStep1ViewModel;
-
-        public CreateChatStep1Page()
+        public CreateChannelStep3Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<CreateChatStep1ViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<CreateChannelStep3ViewModel>();
+            View.Attach();
         }
     }
 }

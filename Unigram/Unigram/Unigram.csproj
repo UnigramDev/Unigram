@@ -96,14 +96,25 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
+    <Compile Include="Controls\TLListView.cs" />
+    <Compile Include="Controls\Views\UsersSelectionView.xaml.cs">
+      <DependentUpon>UsersSelectionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\WrapPanel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
+    <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="Views\Channels\CreateChannelStep2Page.xaml.cs">
       <DependentUpon>CreateChannelStep2Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Channels\CreateChannelStep3Page.xaml.cs">
+      <DependentUpon>CreateChannelStep3Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
+      <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UsersSelectionPage.xaml.cs">
       <DependentUpon>UsersSelectionPage.xaml</DependentUpon>
@@ -555,6 +566,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\UsersSelectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Accent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -603,11 +618,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Channels\CreateChannelStep3Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ChatInfoPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\CreateChatStep1Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\CreateChatStep2Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

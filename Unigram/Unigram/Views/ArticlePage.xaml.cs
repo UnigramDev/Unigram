@@ -16,6 +16,7 @@ using Unigram.Core.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.System;
 using Windows.UI;
@@ -465,25 +466,25 @@ namespace Unigram.Views
                 {
                     case TLType.PageBlockTitle:
                         textBlock.FontSize = 24;
-                        //textBlock.FontFamily = new FontFamily("Times New Roman");
+                        textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubtitle:
                         textBlock.FontSize = 21;
-                        //textBlock.FontFamily = new FontFamily("Times New Roman");
+                        textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockHeader:
                         textBlock.FontSize = 21;
-                        //textBlock.FontFamily = new FontFamily("Times New Roman");
+                        textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubheader:
                         textBlock.FontSize = 18;
-                        //textBlock.FontFamily = new FontFamily("Times New Roman");
+                        textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
@@ -618,16 +619,37 @@ namespace Unigram.Views
                     break;
                 case TLType.TextStrike:
                     var strikeText = (TLTextStrike)text;
-                    // TODO: not supported in xaml
-                    ProcessText(strikeText.Text, collection, span);
+                    // 10.0.15021 or higher
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
+                    {
+                        // TODO: uncomment when RTM SDK will be publicly available
+                        //span.TextDecorations = Windows.UI.Text.TextDecorations.Strikethrough;
+                        //ProcessText(underlineText.Text, collection, span);
+                    }
+                    else
+                    {
+                        // TODO: not supported in xaml
+                        ProcessText(strikeText.Text, collection, span);
+                    }
                     break;
                 case TLType.TextUnderline:
                     var underlineText = (TLTextUnderline)text;
-                    var underline = new Underline();
-                    var underlineSpan = new Run();
-                    underline.Inlines.Add(underlineSpan);
-                    collection.Add(underline);
-                    ProcessText(underlineText.Text, underline.Inlines, underlineSpan);
+
+                    // 10.0.15021 or higher
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
+                    {
+                        // TODO: uncomment when RTM SDK will be publicly available
+                        //span.TextDecorations = Windows.UI.Text.TextDecorations.Underline;
+                        //ProcessText(underlineText.Text, collection, span);
+                    }
+                    else
+                    {
+                        var underline = new Underline();
+                        var underlineSpan = new Run();
+                        underline.Inlines.Add(underlineSpan);
+                        collection.Add(underline);
+                        ProcessText(underlineText.Text, underline.Inlines, underlineSpan);
+                    }
                     break;
                 case TLType.TextUrl:
                     var urlText = (TLTextUrl)text;

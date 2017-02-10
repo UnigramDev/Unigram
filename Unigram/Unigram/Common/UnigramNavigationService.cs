@@ -10,6 +10,7 @@ using Template10.Services.NavigationService;
 using Template10.Services.SerializationService;
 using Template10.Services.ViewService;
 using Unigram.Core.Dependency;
+using Unigram.Views;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
@@ -69,6 +70,12 @@ namespace Unigram.Common
 
             ViewModels.Enqueue(typeof(T));
             service.Navigate(page, parameter, infoOverride);
+        }
+
+        public static void SelectUsers<T>(this INavigationService service, object parameter = null, NavigationTransitionInfo infoOverride = null)
+        {
+            ViewModels.Enqueue(typeof(T));
+            service.Navigate(typeof(UsersSelectionPage), parameter, infoOverride);
         }
 
         public static Queue<Type> ViewModels { get; } = new Queue<Type>();
