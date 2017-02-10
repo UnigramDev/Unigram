@@ -443,10 +443,10 @@ namespace Unigram.Views
                 par.TextIndent = -24;
                 par.Margin = new Thickness(24, 0, 0, 0);
 
-                var span = new Run();
+                var span = new Span();
                 par.Inlines.Add(new Run { Text = block.Ordered ? (i + 1) + ".\t" : "•\t" });
                 par.Inlines.Add(span);
-                ProcessText(text, par.Inlines, span);
+                ProcessText(text, span);
                 textBlock.Blocks.Add(par);
             }
 
@@ -528,12 +528,11 @@ namespace Unigram.Views
             if (text != null && text.TypeId != TLType.TextEmpty)
             {
                 var textBlock = new TextBlock();
-                var span = new Run();
+                var span = new Span();
                 textBlock.Inlines.Add(span);
                 textBlock.TextWrapping = TextWrapping.Wrap;
                 textBlock.Margin = new Thickness(12, 0, 12, 12);
-
-                ProcessText(text, textBlock.Inlines, span);
+                ProcessText(text, span);
 
                 switch (block.TypeId)
                 {
@@ -633,14 +632,14 @@ namespace Unigram.Views
         private void ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block)
         {
             var textBlock = new TextBlock();
-            var span = new Run();
+            var span = new Span();
             textBlock.FontSize = 14;
             textBlock.Inlines.Add(new Run { Text = "By " });
             textBlock.Inlines.Add(span);
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.Margin = new Thickness(12, 0, 12, 12);
             textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-            ProcessText(block.Author, textBlock.Inlines, span);
+            ProcessText(block.Author, span);
 
             textBlock.Inlines.Add(new Run { Text = " — " });
             //textBlock.Inlines.Add(new Run { Text = DateTimeFormatter.LongDate.Format(BindConvert.Current.DateTime(block.PublishedDate)) });
@@ -649,7 +648,7 @@ namespace Unigram.Views
             _containers.Peek().Children.Add(textBlock);
         }
 
-        private void ProcessText(TLRichTextBase text, InlineCollection collection, Run span)
+        private void ProcessText(TLRichTextBase text, Span span)
         {
             switch (text.TypeId)
             {
@@ -659,40 +658,40 @@ namespace Unigram.Views
                     // Strikethrough fallback
                     if (GetIsStrikethrough(span))
                     {
-                        span.Text = StrikethroughFallback(plainText.Text);
+                        span.Inlines.Add(new Run { Text = StrikethroughFallback(plainText.Text) });
                     }
                     else
                     {
-                        span.Text = plainText.Text;
+                        span.Inlines.Add(new Run { Text = plainText.Text });
                     }
                     break;
                 case TLType.TextConcat:
                     var concatText = (TLTextConcat)text;
                     foreach (var concat in concatText.Texts)
                     {
-                        var concatRun = new Run();
-                        collection.Add(concatRun);
-                        ProcessText(concat, collection, concatRun);
+                        var concatRun = new Span();
+                        span.Inlines.Add(concatRun);
+                        ProcessText(concat, concatRun);
                     }
                     break;
                 case TLType.TextBold:
                     var boldText = (TLTextBold)text;
                     span.FontWeight = FontWeights.SemiBold;
-                    ProcessText(boldText.Text, collection, span);
+                    ProcessText(boldText.Text, span);
                     break;
                 case TLType.TextEmail:
                     var emailText = (TLTextEmail)text;
-                    ProcessText(emailText.Text, collection, span);
+                    ProcessText(emailText.Text, span);
                     break;
                 case TLType.TextFixed:
                     var fixedText = (TLTextFixed)text;
                     span.FontFamily = new FontFamily("Consolas");
-                    ProcessText(fixedText.Text, collection, span);
+                    ProcessText(fixedText.Text, span);
                     break;
                 case TLType.TextItalic:
                     var italicText = (TLTextItalic)text;
                     span.FontStyle = FontStyle.Italic;
-                    ProcessText(italicText.Text, collection, span);
+                    ProcessText(italicText.Text, span);
                     break;
                 case TLType.TextStrike:
                     var strikeText = (TLTextStrike)text;
@@ -707,7 +706,7 @@ namespace Unigram.Views
                     {
                         // TODO: not supported in xaml
                         SetIsStrikethrough(span, true);
-                        ProcessText(strikeText.Text, collection, span);
+                        ProcessText(strikeText.Text, span);
                     }
                     break;
                 case TLType.TextUnderline:
@@ -723,20 +722,16 @@ namespace Unigram.Views
                     else
                     {
                         var underline = new Underline();
-                        collection.Remove(span);
-                        collection.Add(underline);
-                        underline.Inlines.Add(span);
-                        ProcessText(underlineText.Text, underline.Inlines, span);
+                        span.Inlines.Add(underline);
+                        ProcessText(underlineText.Text, underline);
                     }
                     break;
                 case TLType.TextUrl:
                     var urlText = (TLTextUrl)text;
                     var hyperlink = new Hyperlink();
-                    collection.Remove(span);
-                    collection.Add(hyperlink);
-                    hyperlink.Inlines.Add(span);
+                    span.Inlines.Add(hyperlink);
                     hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
-                    ProcessText(urlText.Text, hyperlink.Inlines, span);
+                    ProcessText(urlText.Text, hyperlink);
                     break;
                 case TLType.TextEmpty:
                     var emptyText = (TLTextEmpty)text;
