@@ -3,6 +3,7 @@
     "Autofac": "4.3.0",
     "HockeySDK.UWP": "4.1.6",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
+    "Microsoft.Xaml.Behaviors.Uwp.Managed": "2.0.0",
     "Newtonsoft.Json": "9.0.1",
     "System.Reactive": "3.1.1",
     "Template10": "1.1.12",
