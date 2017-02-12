@@ -127,7 +127,7 @@
             <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin message"/>
             <MenuFlyoutItem Loaded="MessageEdit_Loaded" Command="{x:Bind ViewModel.MessageEditCommand}" CommandParameter="{Binding}" Text="Edit message"/>
             <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
-            <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward message" IsEnabled="False"/>
+            <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward message" IsEnabled="False" Visibility="Collapsed"/>
             <MenuFlyoutItem Loaded="MessageCopy_Loaded" Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy text"/>
             <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
             <MenuFlyoutItem Loaded="MessageSaveMedia_Loaded" Command="{x:Bind ViewModel.MessageSaveMediaCommand}" CommandParameter="{Binding}" Text="Save file as..."/>
@@ -137,7 +137,7 @@
             <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
             <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin message"/>
             <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
-            <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward message" IsEnabled="False"/>
+            <MenuFlyoutItem Loaded="MessageForward_Loaded" Text="Forward message" IsEnabled="False" Visibility="Collapsed"/>
             <MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Sticker pack info"/>
             <MenuFlyoutItem Loaded="MessageSaveSticker_Loaded" Command="{x:Bind ViewModel.MessageSaveStickerCommand}" CommandParameter="{Binding}" Text="Save image as..."/>
         </MenuFlyout>
@@ -616,18 +616,21 @@
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
                                         x:Name="cbtnReportSpam"
                                         x:Uid="FCBTN-ReportSpam"
+                                        Visibility="Collapsed"
                                         IsEnabled="False"
                                         Tag="&#xE1DE;"
                                         Text="Report spam" />
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                                         x:Name="cbtnSearch"
                                         x:Uid="FCBTN-Search"
+                                        Visibility="Collapsed"
                                         IsEnabled="False"
                                         Tag="&#xE11A;"
                                         Text="Search" />
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
                                         x:Name="cbtnPinToStart"
                                         x:Uid="FCBTN-Pin"
+                                        Visibility="Collapsed"
                                         IsEnabled="False"
                                         Tag="&#xE141;"
                                         Text="Pin to Start"/>
@@ -1025,11 +1028,13 @@
                                         Command="{Binding SendFileCommand}"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                                         x:Uid="FCBTN-Location"
+                                        Visibility="Collapsed"
                                         IsEnabled="False"
                                         Text="Location" 
                                         Tag="&#xE1C4;"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
                                         x:Uid="FCBTN-Contact"
+                                        Visibility="Collapsed"
                                         IsEnabled="False"
                                         Text="Contact"
                                         Tag="&#xE136;"/>
