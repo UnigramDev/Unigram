@@ -612,7 +612,8 @@
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
                                         Click="Manage_Click"
                                         Tag="&#xE133;"
-                                        Text="Manage" />
+                                        Text="Manage" 
+                                        MinWidth="120"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}" 
                                         x:Name="cbtnReportSpam"
                                         x:Uid="FCBTN-ReportSpam"

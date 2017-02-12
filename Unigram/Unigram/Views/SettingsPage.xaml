@@ -242,10 +242,12 @@
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
                                 <controls:HyperCheckButton Content="Enabled" 
+                                                           Visibility="Collapsed"
                                                            IsEnabled="False"
                                                            Tag="Enable Location Services" 
                                                            Style="{ThemeResource CheckButtonStyle}"/>
                                 <controls:HyperCheckButton Content="Enabled" 
+                                                           Visibility="Collapsed"
                                                            IsEnabled="False"
                                                            Tag="Sync with People Hub" 
                                                            Style="{ThemeResource CheckButtonStyle}"/>
@@ -255,7 +257,7 @@
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
                                 <controls:HyperButton Content="Notifications and sounds" 
-                                                      IsEnabled="False"
+                                                      Visibility="Collapsed"
                                                       Command="{x:Bind NotifcationPageCommand}"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Privacy and security" 
@@ -268,7 +270,7 @@
                                                       Click="Stickers_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Chat wallpaper" 
-                                                      IsEnabled="False"
+                                                      Visibility="Collapsed"
                                                       Command="{x:Bind WallpaperPageCommand}"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                             </local:TableStackPanel>
@@ -277,6 +279,7 @@
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
                                 <controls:HyperButton Content="Phone"
+                                                      Visibility="Collapsed"
                                                       IsEnabled="False"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Username"
