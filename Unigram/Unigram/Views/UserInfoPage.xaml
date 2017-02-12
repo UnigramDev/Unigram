@@ -312,7 +312,7 @@
                                               Command="{Binding SendMessageCommand}"
                                               Style="{StaticResource HyperButtonStyle}"/>
 
-                        <controls:HyperButton Content="Add contact" 
+                        <controls:HyperButton Content="Show contact" 
                                               Command="{Binding AddContactCommand}"
                                               Style="{StaticResource HyperButtonStyle}"/>
 
@@ -320,7 +320,9 @@
                                               Visibility="{Binding AddToGroupVisibility}"
                                               Style="{StaticResource HyperButtonStyle}"/>
 
+                        <!-- Manually hidden -->
                         <controls:HyperButton Content="Share contact" 
+                                              Visibility="Collapsed"
                                               IsEnabled="False"
                                               Style="{StaticResource HyperButtonStyle}"/>
 

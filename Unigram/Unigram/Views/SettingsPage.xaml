@@ -241,11 +241,13 @@
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
+                                <!-- Manually hidden -->
                                 <controls:HyperCheckButton Content="Enabled" 
                                                            Visibility="Collapsed"
                                                            IsEnabled="False"
                                                            Tag="Enable Location Services" 
                                                            Style="{ThemeResource CheckButtonStyle}"/>
+                                <!-- Manually hidden -->
                                 <controls:HyperCheckButton Content="Enabled" 
                                                            Visibility="Collapsed"
                                                            IsEnabled="False"
@@ -256,6 +258,7 @@
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
+                                <!-- Manually hidden -->
                                 <controls:HyperButton Content="Notifications and sounds" 
                                                       Visibility="Collapsed"
                                                       Command="{x:Bind NotifcationPageCommand}"
@@ -269,6 +272,7 @@
                                 <controls:HyperButton Content="Stickers" 
                                                       Click="Stickers_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
+                                <!-- Manually hidden -->
                                 <controls:HyperButton Content="Chat wallpaper" 
                                                       Visibility="Collapsed"
                                                       Command="{x:Bind WallpaperPageCommand}"
@@ -278,6 +282,7 @@
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
+                                <!-- Manually hidden -->
                                 <controls:HyperButton Content="Phone"
                                                       Visibility="Collapsed"
                                                       IsEnabled="False"
