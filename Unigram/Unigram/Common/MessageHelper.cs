@@ -268,10 +268,10 @@ namespace Unigram.Common
 
         private static bool IsAnyCharacterRightToLeft(string s)
         {
-            if (s.Length > 2)
-            {
-                s = s.Substring(s.Length - 2);
-            }
+            //if (s.Length > 2)
+            //{
+            //    s = s.Substring(s.Length - 2);
+            //}
 
             for (int i = 0; i < s.Length; i += char.IsSurrogatePair(s, i) ? 2 : 1)
             {
@@ -281,7 +281,7 @@ namespace Unigram.Common
                     return true;
                 }
 
-                //return false;
+                return false;
             }
 
             return false;
