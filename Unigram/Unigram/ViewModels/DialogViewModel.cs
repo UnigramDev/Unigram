@@ -672,6 +672,9 @@ namespace Unigram.ViewModels
 
             //StickersRecent();
             //GifsSaved();
+
+            var file = await KnownFolders.SavedPictures.CreateFileAsync("TEST.TXT", CreationCollisionOption.GenerateUniqueName);
+            await FileIO.WriteTextAsync(file, DateTime.Now.ToString());
         }
 
         private void GifsSaved()
@@ -797,10 +800,12 @@ namespace Unigram.ViewModels
         public int SavedGifsHash { get; private set; }
         public ObservableCollection<TLDocument> SavedGifs { get; private set; }
 
-        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public override async Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
+            var file = await KnownFolders.SavedPictures.CreateFileAsync("TEST.TXT", CreationCollisionOption.GenerateUniqueName);
+            await FileIO.WriteTextAsync(file, DateTime.Now.ToString());
             Aggregator.Unsubscribe(this);
-            return base.OnNavigatedFromAsync(pageState, suspending);
+            //return base.OnNavigatedFromAsync(pageState, suspending);
         }
 
         private TLObject GetParticipant(TLPeerBase peer)

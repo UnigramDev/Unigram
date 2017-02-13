@@ -129,14 +129,14 @@ namespace Unigram.Controls
                     var panel = new Grid();
                     panel.HorizontalAlignment = HorizontalAlignment.Stretch;
                     panel.VerticalAlignment = VerticalAlignment.Stretch;
-                    panel.Margin = new Thickness(-4, 0, -4, 0);
+                    panel.Margin = new Thickness(-2, 0, -2, 0);
 
                     for (int i = 0; i < row.Buttons.Count; i++)
                     {
                         var button = new GlyphButton();
                         button.DataContext = row.Buttons[i];
                         button.Content = row.Buttons[i].Text;
-                        button.Margin = new Thickness(4);
+                        button.Margin = new Thickness(2);
                         button.HorizontalAlignment = HorizontalAlignment.Stretch;
                         button.VerticalAlignment = VerticalAlignment.Stretch;
                         button.Click += Button_Click;
