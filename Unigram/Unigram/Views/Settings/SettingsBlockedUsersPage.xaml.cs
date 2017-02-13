@@ -31,5 +31,10 @@ namespace Unigram.Views.Settings
             InitializeComponent();
             DataContext = UnigramContainer.Instance.ResolveType<SettingsBlockedUsersViewModel>();
         }
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.UnblockCommand.Execute(e.ClickedItem);
+        }
     }
 }

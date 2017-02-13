@@ -12,7 +12,9 @@ using Telegram.Api.TL;
 using Template10.Utils;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Views.Settings;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -35,6 +37,8 @@ namespace Unigram.ViewModels.Settings
 
         private async Task UpdateAsync()
         {
+            Items.Clear();
+
             var response = await ProtoService.GetBlockedAsync(0, int.MaxValue);
             if (response.IsSucceeded)
             {
@@ -96,6 +100,26 @@ namespace Unigram.ViewModels.Settings
         private void BlockExecute()
         {
             NavigationService.Navigate(typeof(SettingsBlockUserPage), new TLVector<TLUserBase>(Items));
+        }
+
+        public RelayCommand<TLUser> UnblockCommand => new RelayCommand<TLUser>(UnblockExecute);
+        private async void UnblockExecute(TLUser user)
+        {
+            var dialog = new UnigramMessageDialog();
+            dialog.Title = "Unblock";
+            dialog.Message = "You sure?";
+            dialog.PrimaryButtonText = "Yes";
+            dialog.SecondaryButtonText = "No";
+
+            var confirm = await dialog.ShowAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var response = await ProtoService.UnblockAsync(user.ToInputUser());
+                if (response.IsSucceeded)
+                {
+                    Items.Remove(user);
+                }
+            }
         }
     }
 }

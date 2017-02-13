@@ -733,6 +733,9 @@ namespace Unigram.ViewModels
 
         private static void ReorderDrafts(IList<TLDialog> dialogs)
         {
+            dialogs = dialogs.OrderByDescending(x => x.GetDateIndexWithDraft()).ToList();
+            return;
+
             for (int i = 0; i < dialogs.Count; i++)
             {
                 var dialog = dialogs[i] as TLDialog;

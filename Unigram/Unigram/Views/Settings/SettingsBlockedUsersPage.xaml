@@ -25,6 +25,8 @@
         </Grid>
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                  ItemClick="ListView_ItemClick"
+                  IsItemClickEnabled="True"
                   SelectionMode="None"
                   Grid.Row="1">
             <ListView.ItemTemplate>
