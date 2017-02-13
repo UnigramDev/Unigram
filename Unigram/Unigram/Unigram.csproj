@@ -107,6 +107,8 @@
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="Views\Channels\CreateChannelStep2Page.xaml.cs">
       <DependentUpon>CreateChannelStep2Page.xaml</DependentUpon>
@@ -116,6 +118,15 @@
     </Compile>
     <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
       <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsBlockedUsersPage.xaml.cs">
+      <DependentUpon>SettingsBlockedUsersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsBlockUserPage.xaml.cs">
+      <DependentUpon>SettingsBlockUserPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsLastSeenPage.xaml.cs">
+      <DependentUpon>SettingsLastSeenPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UsersSelectionPage.xaml.cs">
       <DependentUpon>UsersSelectionPage.xaml</DependentUpon>
@@ -683,11 +694,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\SettingsBlockedUsersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsBlockUserPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsDataPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsFeaturedStickersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsLastSeenPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

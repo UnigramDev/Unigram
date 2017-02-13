@@ -54,10 +54,7 @@ namespace Unigram.ViewModels.Chats
             if (config == null) return;
 
             var peers = new TLVector<TLInputUserBase>(SelectedItems.Select(x => x.ToInputUser()));
-            if (peers.Count > config.ChatSizeMax)
-            {
-            }
-            else
+            if (peers.Count <= config.ChatSizeMax)
             {
                 // Classic chat
                 var response = await ProtoService.CreateChatAsync(peers, _title);
@@ -79,6 +76,9 @@ namespace Unigram.ViewModels.Chats
                 {
                     Execute.ShowDebugMessage("messages.createChat error " + response.Error);
                 }
+            }
+            else
+            {
             }
         }
     }

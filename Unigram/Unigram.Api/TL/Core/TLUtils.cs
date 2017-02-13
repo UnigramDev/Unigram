@@ -154,9 +154,9 @@ namespace Telegram.Api.TL
                 RandomId = randomId,
                 ReplyToMsgId = replyToMsgId
             };
-            if (m.FromId != 0) m.HasFromId = true;
+            if (m.FromId != null) m.HasFromId = true;
             if (m.Media != null) m.HasMedia = true;
-            if (m.ReplyToMsgId != 0) m.HasReplyToMsgId = true;
+            if (m.ReplyToMsgId != null) m.HasReplyToMsgId = true;
 #else
             var m = new TLMessage
             {

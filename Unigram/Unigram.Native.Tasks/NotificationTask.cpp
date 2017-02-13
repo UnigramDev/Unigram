@@ -56,8 +56,8 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 	if (!muted)
 	{
 		auto loc_key = data->GetNamedString("loc_key");
-		auto custom = data->GetNamedObject("custom");
 		auto loc_args = data->GetNamedArray("loc_args");
+		auto custom = data->GetNamedObject("custom");
 
 		auto caption = GetCaption(loc_args, loc_key);
 		auto message = GetMessage(loc_args, loc_key);

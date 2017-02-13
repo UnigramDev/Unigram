@@ -89,7 +89,7 @@ namespace Unigram.ViewModels
                         else if (channelFull.HasParticipantsCount)
                         {
                             var config = CacheService.GetConfig();
-                            if (config != null && channelFull.ParticipantsCount > config.ChatSizeMax)
+                            if (config != null && channelFull.ParticipantsCount <= config.ChatSizeMax)
                             {
                                 var participants = await ProtoService.GetParticipantsAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value }, null, 0, config.ChatSizeMax);
                                 if (participants.IsSucceeded)

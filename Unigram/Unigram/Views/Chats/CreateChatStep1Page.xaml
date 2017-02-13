@@ -43,7 +43,7 @@
                     <controls:GlyphButton Glyph="&#xE114;" FontSize="16" CornerRadius="24"/>
                 </Grid>
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                    <TextBox Text="{x:Bind ViewModel.Title, Mode=TwoWay}" PlaceholderText="Group name"/>
+                    <controls:UpdateTextBox Text="{Binding Title, Mode=TwoWay}" MaxLength="{StaticResource ChatTitleMaxLength}" PlaceholderText="Group name"/>
                 </Border>
             </Grid>
         </Grid>
