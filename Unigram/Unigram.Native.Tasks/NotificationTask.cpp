@@ -57,7 +57,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 	{
 		auto loc_key = data->GetNamedString("loc_key");
 		auto loc_args = data->GetNamedArray("loc_args");
-		auto custom = data->GetNamedObject("custom");
+		auto custom = data->GetNamedObject("custom", nullptr);
 
 		auto caption = GetCaption(loc_args, loc_key);
 		auto message = GetMessage(loc_args, loc_key);
@@ -71,7 +71,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		UpdateToast(caption, message, sound, launch, tag, group, picture, date, loc_key);
 		UpdateBadge(data->GetNamedNumber("badge"));
 
-		if (loc_key != L"DC_UPDATE") 
+		if (loc_key != L"DC_UPDATE")
 		{
 			UpdateTile(caption, message);
 		}
@@ -172,22 +172,30 @@ String^ NotificationTask::GetLaunch(JsonObject^ custom, String^ loc_key)
 
 String^ NotificationTask::GetTag(JsonObject^ custom)
 {
-	return custom->GetNamedString("msg_id");
+	if (custom) 
+	{
+		return custom->GetNamedString("msg_id");
+	}
+
+	return nullptr;
 }
 
 String^ NotificationTask::GetGroup(JsonObject^ custom)
 {
-	if (custom->HasKey("chat_id"))
+	if (custom)
 	{
-		return String::Concat("c", custom->GetNamedString("chat_id"));
-	}
-	else if (custom->HasKey("channel_id"))
-	{
-		return String::Concat("c", custom->GetNamedString("channel_id"));
-	}
-	else if (custom->HasKey("from_id"))
-	{
-		return String::Concat("u", custom->GetNamedString("from_id"));
+		if (custom->HasKey("chat_id"))
+		{
+			return String::Concat("c", custom->GetNamedString("chat_id"));
+		}
+		else if (custom->HasKey("channel_id"))
+		{
+			return String::Concat("c", custom->GetNamedString("channel_id"));
+		}
+		else if (custom->HasKey("from_id"))
+		{
+			return String::Concat("u", custom->GetNamedString("from_id"));
+		}
 	}
 
 	return nullptr;
@@ -195,7 +203,7 @@ String^ NotificationTask::GetGroup(JsonObject^ custom)
 
 String^ NotificationTask::GetPicture(JsonObject^ custom)
 {
-	if (custom->HasKey("mtpeer"))
+	if (custom && custom->HasKey("mtpeer"))
 	{
 		auto mtpeer = custom->GetNamedObject("mtpeer");
 		if (mtpeer->HasKey("ph"))
@@ -243,7 +251,7 @@ String^ NotificationTask::GetPicture(JsonObject^ custom)
 
 				return ref new String(almost.str().c_str());
 			}
-			else 
+			else
 			{
 				std::wstringstream almost;
 				almost << L"ms-appx:///Assets/Images/"
@@ -290,7 +298,7 @@ void NotificationTask::UpdateBadge(int badgeNumber)
 
 void NotificationTask::UpdateTile(String^ caption, String^ message)
 {
-	std::wstring body =  L"<text hint-style='body'><![CDATA[";
+	std::wstring body = L"<text hint-style='body'><![CDATA[";
 	body += caption->Data();
 	body += L"]]></text>";
 	body += L"<text hint-style='captionSubtle' hint-wrap='true'><![CDATA[";
