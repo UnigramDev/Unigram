@@ -648,24 +648,26 @@ namespace Unigram.ViewModels
 
             LastSeen = await GetSubtitle();
 
-            //if (dialog != null && Messages.Count > 0)
-            //{
-            //    var unread = dialog.UnreadCount;
-            //    if (Peer is TLInputPeerChannel)
-            //    {
-            //        if (channel != null)
-            //        {
-            //            await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
-            //    }
+#if !DEBUG
+            if (dialog != null && Messages.Count > 0)
+            {
+                var unread = dialog.UnreadCount;
+                if (Peer is TLInputPeerChannel)
+                {
+                    if (channel != null)
+                    {
+                        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+                    }
+                }
+                else
+                {
+                    await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+                }
 
-            //    dialog.UnreadCount = dialog.UnreadCount - unread;
-            //    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-            //}
+                dialog.UnreadCount = dialog.UnreadCount - unread;
+                dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            }
+#endif
 
             Aggregator.Subscribe(this);
             //Aggregator.Publish("PORCODIO");
@@ -926,7 +928,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        #region Reply 
+#region Reply 
 
         private TLMessageBase _reply;
         public TLMessageBase Reply
@@ -965,7 +967,7 @@ namespace Unigram.ViewModels
 
         public RelayCommand ClearReplyCommand => new RelayCommand(() => { Reply = null; });
 
-        #endregion
+#endregion
 
         public RelayCommand PinnedCommand => new RelayCommand(PinnedExecute);
         private async void PinnedExecute()
@@ -1719,7 +1721,7 @@ namespace Unigram.ViewModels
             return result;
         }
 
-        #region Toggle mute
+#region Toggle mute
 
         public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
         private async void ToggleMuteExecute()
@@ -1766,9 +1768,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Toggle silent
+#region Toggle silent
 
         public RelayCommand ToggleSilentCommand => new RelayCommand(ToggleSilentExecute);
         private async void ToggleSilentExecute()
@@ -1815,9 +1817,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Report Spam
+#region Report Spam
 
         public RelayCommand HideReportSpamCommand => new RelayCommand(HideReportSpamExecute);
         private async void HideReportSpamExecute()
@@ -1842,9 +1844,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Stickers
+#region Stickers
 
         public RelayCommand OpenStickersCommand => new RelayCommand(OpenStickersExecute);
         private void OpenStickersExecute()
@@ -1864,7 +1866,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        #endregion
+#endregion
     }
 
     public class MessageCollection : ObservableCollection<TLMessageBase>
