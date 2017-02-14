@@ -56,12 +56,12 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 	if (!muted)
 	{
 		auto loc_key = data->GetNamedString("loc_key");
-		auto custom = data->GetNamedObject("custom");
 		auto loc_args = data->GetNamedArray("loc_args");
+		auto custom = data->GetNamedObject("custom", nullptr);
 
 		auto caption = GetCaption(loc_args, loc_key);
 		auto message = GetMessage(loc_args, loc_key);
-		auto sound = ref new String(L"Default"); // data->GetNamedString("sound");
+		auto sound = data->GetNamedString("sound", "Default");
 		auto launch = GetLaunch(custom, loc_key);
 		auto tag = GetTag(custom);
 		auto group = GetGroup(custom);
@@ -71,7 +71,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		UpdateToast(caption, message, sound, launch, tag, group, picture, date, loc_key);
 		UpdateBadge(data->GetNamedNumber("badge"));
 
-		if (loc_key != L"DC_UPDATE") 
+		if (loc_key != L"DC_UPDATE")
 		{
 			UpdateTile(caption, message);
 		}
@@ -172,22 +172,30 @@ String^ NotificationTask::GetLaunch(JsonObject^ custom, String^ loc_key)
 
 String^ NotificationTask::GetTag(JsonObject^ custom)
 {
-	return custom->GetNamedString("msg_id");
+	if (custom) 
+	{
+		return custom->GetNamedString("msg_id");
+	}
+
+	return nullptr;
 }
 
 String^ NotificationTask::GetGroup(JsonObject^ custom)
 {
-	if (custom->HasKey("chat_id"))
+	if (custom)
 	{
-		return String::Concat("c", custom->GetNamedString("chat_id"));
-	}
-	else if (custom->HasKey("channel_id"))
-	{
-		return String::Concat("c", custom->GetNamedString("channel_id"));
-	}
-	else if (custom->HasKey("from_id"))
-	{
-		return String::Concat("u", custom->GetNamedString("from_id"));
+		if (custom->HasKey("chat_id"))
+		{
+			return String::Concat("c", custom->GetNamedString("chat_id"));
+		}
+		else if (custom->HasKey("channel_id"))
+		{
+			return String::Concat("c", custom->GetNamedString("channel_id"));
+		}
+		else if (custom->HasKey("from_id"))
+		{
+			return String::Concat("u", custom->GetNamedString("from_id"));
+		}
 	}
 
 	return nullptr;
@@ -195,7 +203,7 @@ String^ NotificationTask::GetGroup(JsonObject^ custom)
 
 String^ NotificationTask::GetPicture(JsonObject^ custom)
 {
-	if (custom->HasKey("mtpeer"))
+	if (custom && custom->HasKey("mtpeer"))
 	{
 		auto mtpeer = custom->GetNamedObject("mtpeer");
 		if (mtpeer->HasKey("ph"))
@@ -213,8 +221,27 @@ String^ NotificationTask::GetPicture(JsonObject^ custom)
 			auto secretULL = wcstoull(secretSTR.c_str(), NULL, 0);
 			auto secretLL = static_cast<signed long long>(secretULL);
 
-			std::wstringstream almost;
-			almost << L"ms-appdata:///local/temp/"
+			auto temp = ApplicationData::Current->LocalFolder->Path;
+
+			std::wstringstream path;
+			path << temp->Data()
+				<< L"\\temp\\"
+				<< volumeLL
+				<< L"_"
+				<< local_id->Data()
+				<< L"_"
+				<< secretLL
+				<< L".jpg";
+
+			WIN32_FIND_DATA FindFileData;
+			HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
+			int found = handle != INVALID_HANDLE_VALUE;
+			if (found)
+			{
+				FindClose(handle);
+
+				std::wstringstream almost;
+				almost << L"ms-appdata:///local/temp/"
 					<< volumeLL
 					<< L"_"
 					<< local_id->Data()
@@ -222,27 +249,21 @@ String^ NotificationTask::GetPicture(JsonObject^ custom)
 					<< secretLL
 					<< L".jpg";
 
-			return ref new String(almost.str().c_str());
+				return ref new String(almost.str().c_str());
+			}
+			else
+			{
+				std::wstringstream almost;
+				almost << L"ms-appx:///Assets/Images/"
+					<< volumeLL
+					<< L"_"
+					<< local_id->Data()
+					<< L"_"
+					<< secretLL
+					<< L".jpg";
 
-			//auto temp = ApplicationData::Current->LocalFolder->Path;
-
-			//std::wstringstream wss;
-			//wss << temp->Data()
-			//	<< L"\\temp\\"
-			//	<< volume_id->Data()
-			//	<< L"_"
-			//	<< local_id->Data()
-			//	<< L"_"
-			//	<< secret->Data()
-			//	<< L".jpg";
-
-			//WIN32_FIND_DATA FindFileData;
-			//HANDLE handle = FindFirstFile(wss.str().c_str(), &FindFileData);
-			//int found = handle != INVALID_HANDLE_VALUE;
-			//if (found)
-			//{
-			//	FindClose(handle);
-			//}
+				return ref new String(almost.str().c_str());
+			}
 		}
 	}
 
@@ -277,7 +298,7 @@ void NotificationTask::UpdateBadge(int badgeNumber)
 
 void NotificationTask::UpdateTile(String^ caption, String^ message)
 {
-	std::wstring body =  L"<text hint-style='body'><![CDATA[";
+	std::wstring body = L"<text hint-style='body'><![CDATA[";
 	body += caption->Data();
 	body += L"]]></text>";
 	body += L"<text hint-style='captionSubtle' hint-wrap='true'><![CDATA[";

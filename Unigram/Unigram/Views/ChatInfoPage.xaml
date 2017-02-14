@@ -295,18 +295,24 @@
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
+                                <!-- Manually hidden -->
                                 <controls:HyperButton Content="Manage Administrators" 
+                                                      Visibility="Collapsed"
                                                       IsEnabled="False"
                                                       Style="{StaticResource HyperButtonStyle}"/>
 
+                                <!-- Manually hidden -->
                                 <controls:HyperButton Content="Convert to Supergroup"
+                                                      Visibility="Collapsed"
                                                       IsEnabled="False"
                                                       Style="{StaticResource HyperButtonStyle}"/>
 
+                                <!-- Manually hidden -->
                                 <controls:HyperButton Content="Revoke Invite Link"
                                                       Visibility="Collapsed"
                                                       Style="{StaticResource HyperButtonStyle}"/>
 
+                                <!-- Manually hidden -->
                                 <controls:HyperButton Content="http://www.batmantrolls.com/thisisnotagroup"  
                                                       Tag="Invite Link"
                                                       Visibility="Collapsed"
@@ -334,7 +340,9 @@
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24">
+                                <!-- Manually hidden -->
                                 <controls:HyperButton Content="Clear History" 
+                                                      Visibility="Collapsed"
                                                       IsEnabled="False"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <!--For Chats-->
@@ -344,7 +352,9 @@
                                                       Style="{StaticResource HyperButtonStyle}" 
                                                       Foreground="Red"/>
                                 <!--For Channels-->
+                                <!-- Manually hidden -->
                                 <controls:HyperButton Content="Leave Group" 
+                                                      Visibility="Collapsed"
                                                       IsEnabled="False"
                                                       Style="{StaticResource HyperButtonStyle}" 
                                                       Foreground="Red"/>

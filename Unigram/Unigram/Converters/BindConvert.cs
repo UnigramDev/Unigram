@@ -52,6 +52,8 @@ namespace Unigram.Converters
 
         private SolidColorBrush BubbleInternal(int? value)
         {
+            return Application.Current.Resources[$"Placeholder{Utils.GetColorIndex(value ?? 0)}Brush"] as SolidColorBrush;
+
             switch (Utils.GetColorIndex(value ?? 0))
             {
                 case 0:

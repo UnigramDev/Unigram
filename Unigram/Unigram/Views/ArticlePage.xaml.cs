@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
@@ -16,6 +17,7 @@ using Unigram.Core.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.System;
 using Windows.UI;
@@ -47,11 +49,11 @@ namespace Unigram.Views
             DataContext = UnigramContainer.Instance.ResolveType<ArticleViewModel>();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             LayoutRoot.Children.Clear();
             _containers.Clear();
-            _containers.Push(new StackPanel());
+            _containers.Push(LayoutRoot);
 
             var parameter = TLSerializationService.Current.Deserialize((string)e.Parameter);
 
@@ -64,34 +66,34 @@ namespace Unigram.Views
             var webpage = parameter as TLWebPage;
             if (webpage != null && webpage.HasCachedPage)
             {
-                var part = webpage.CachedPage as TLPagePart;
-                if (part != null)
-                {
-                    var protoService = (MTProtoService)MTProtoService.Current;
-                    protoService.SendInformativeMessageInternal<TLWebPage>("messages.getWebPage", new TLMessagesGetWebPage { Url = webpage.Url, Hash = webpage.Hash },
-                        result =>
-                        {
-                        },
-                        fault =>
-                        {
-                        });
-                }
-
-                var full = webpage.CachedPage as TLPageFull;
-
                 if (webpage.HasPhoto && !webpage.CachedPage.Photos.Any(x => x.Id == webpage.Photo.Id))
                 {
                     webpage.CachedPage.Photos.Insert(0, webpage.Photo);
                 }
 
+                var processed = 0;
                 foreach (var block in webpage.CachedPage.Blocks)
                 {
                     ProcessBlock(webpage.CachedPage, block);
+                    processed++;
                 }
 
-                if (_containers.Count > 0)
+                var part = webpage.CachedPage as TLPagePart;
+                if (part != null)
                 {
-                    LayoutRoot.Children.Add(_containers.Pop());
+                    var protoService = (MTProtoService)MTProtoService.Current;
+                    var response = await protoService.GetWebPageAsync(webpage.Url, webpage.Hash);
+                    if (response.IsSucceeded)
+                    {
+                        var newpage = response.Result as TLWebPage;
+                        if (newpage != null && newpage.HasCachedPage)
+                        {
+                            for (int i = processed; i < newpage.CachedPage.Blocks.Count; i++)
+                            {
+                                ProcessBlock(newpage.CachedPage, newpage.CachedPage.Blocks[i]);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -143,14 +145,80 @@ namespace Unigram.Views
                 case TLType.PageBlockCollage:
                     ProcessCollage(page, (TLPageBlockCollage)block);
                     break;
+                case TLType.PageBlockEmbed:
+                    ProcessEmbed(page, (TLPageBlockEmbed)block);
+                    break;
                 case TLType.PageBlockPreformatted:
                 case TLType.PageBlockPullquote:
-                case TLType.PageBlockEmbed:
                 case TLType.PageBlockUnsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
                     break;
                 case TLType.PageBlockAnchor:
                     break;
+            }
+        }
+
+        private void ProcessEmbed(TLPageBase page, TLPageBlockEmbed block)
+        {
+            if (block.Caption.TypeId != TLType.TextEmpty)
+            {
+                _containers.Push(new StackPanel { HorizontalAlignment = HorizontalAlignment.Center });
+            }
+
+            FrameworkElement child = null;
+
+            //if (block.HasPosterPhotoId)
+            //{
+            //    var photo = page.Photos.FirstOrDefault(x => x.Id == block.PosterPhotoId);
+            //    var image = new ImageView();
+            //    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, "thumbnail");
+            //    image.Constraint = photo;
+            //    child = image;
+            //}
+            if (block.HasHtml)
+            {
+                var view = new WebView();
+                view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
+
+                var ratio = new RatioControl();
+                ratio.MaxWidth = block.W;
+                ratio.MaxHeight = block.H;
+                ratio.Content = view;
+                ratio.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                ratio.VerticalContentAlignment = VerticalAlignment.Stretch;
+                child = ratio;
+            }
+            else if (block.HasUrl)
+            {
+                var view = new WebView();
+                view.Navigate(new Uri(block.Url));
+
+                var ratio = new RatioControl();
+                ratio.MaxWidth = block.W;
+                ratio.MaxHeight = block.H;
+                ratio.Content = view;
+                ratio.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                ratio.VerticalContentAlignment = VerticalAlignment.Stretch;
+                child = ratio;
+            }
+
+            _containers.Peek().Children.Add(child);
+
+            if (block.Caption.TypeId != TLType.TextEmpty)
+            {
+                ProcessTextBlock(page, block, true);
+
+                var panel = _containers.Pop();
+                _containers.Peek().Children.Add(panel);
+            }
+            else
+            {
+                child.Margin = new Thickness(0, 0, 0, 12);
+            }
+
+            if (_parents.Count > 0 && _parents.Peek().TypeId == TLType.PageBlockCover)
+            {
+                child.Margin = new Thickness(0, -12, 0, 12);
             }
         }
 
@@ -375,10 +443,10 @@ namespace Unigram.Views
                 par.TextIndent = -24;
                 par.Margin = new Thickness(24, 0, 0, 0);
 
-                var span = new Run();
+                var span = new Span();
                 par.Inlines.Add(new Run { Text = block.Ordered ? (i + 1) + ".\t" : "•\t" });
                 par.Inlines.Add(span);
-                ProcessText(text, par.Inlines, span);
+                ProcessText(text, span);
                 textBlock.Blocks.Add(par);
             }
 
@@ -443,6 +511,12 @@ namespace Unigram.Views
                 case TLType.PageBlockSlideshow:
                     text = ((TLPageBlockSlideshow)block).Caption;
                     break;
+                case TLType.PageBlockEmbed:
+                    text = ((TLPageBlockEmbed)block).Caption;
+                    break;
+                case TLType.PageBlockEmbedPost:
+                    text = ((TLPageBlockEmbedPost)block).Caption;
+                    break;
                 case TLType.PageBlockBlockquote:
                     text = caption ? ((TLPageBlockBlockquote)block).Caption : ((TLPageBlockBlockquote)block).Text;
                     break;
@@ -454,36 +528,35 @@ namespace Unigram.Views
             if (text != null && text.TypeId != TLType.TextEmpty)
             {
                 var textBlock = new TextBlock();
-                var span = new Run();
+                var span = new Span();
                 textBlock.Inlines.Add(span);
                 textBlock.TextWrapping = TextWrapping.Wrap;
                 textBlock.Margin = new Thickness(12, 0, 12, 12);
-
-                ProcessText(text, textBlock.Inlines, span);
+                ProcessText(text, span);
 
                 switch (block.TypeId)
                 {
                     case TLType.PageBlockTitle:
                         textBlock.FontSize = 24;
-                        //textBlock.FontFamily = new FontFamily("Times New Roman");
+                        textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubtitle:
                         textBlock.FontSize = 21;
-                        //textBlock.FontFamily = new FontFamily("Times New Roman");
+                        textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockHeader:
                         textBlock.FontSize = 21;
-                        //textBlock.FontFamily = new FontFamily("Times New Roman");
+                        textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubheader:
                         textBlock.FontSize = 18;
-                        //textBlock.FontFamily = new FontFamily("Times New Roman");
+                        textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.Margin = new Thickness(12, 0, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
@@ -491,16 +564,10 @@ namespace Unigram.Views
                         textBlock.FontSize = 14;
                         break;
                     case TLType.PageBlockPhoto:
-                        textBlock.FontSize = 14;
-                        textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                        textBlock.Margin = new Thickness(12, 4, 12, 12);
-                        break;
                     case TLType.PageBlockVideo:
-                        textBlock.FontSize = 14;
-                        textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                        textBlock.Margin = new Thickness(12, 4, 12, 12);
-                        break;
                     case TLType.PageBlockSlideshow:
+                    case TLType.PageBlockEmbed:
+                    case TLType.PageBlockEmbedPost:
                         textBlock.FontSize = 14;
                         textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
                         textBlock.Margin = new Thickness(12, 4, 12, 12);
@@ -565,78 +632,106 @@ namespace Unigram.Views
         private void ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block)
         {
             var textBlock = new TextBlock();
-            var span = new Run();
+            var span = new Span();
             textBlock.FontSize = 14;
             textBlock.Inlines.Add(new Run { Text = "By " });
             textBlock.Inlines.Add(span);
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.Margin = new Thickness(12, 0, 12, 12);
             textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-            ProcessText(block.Author, textBlock.Inlines, span);
+            ProcessText(block.Author, span);
 
-            textBlock.Inlines.Add(new Run { Text = " • " });
+            textBlock.Inlines.Add(new Run { Text = " — " });
             //textBlock.Inlines.Add(new Run { Text = DateTimeFormatter.LongDate.Format(BindConvert.Current.DateTime(block.PublishedDate)) });
             textBlock.Inlines.Add(new Run { Text = BindConvert.Current.DateTime(block.PublishedDate).ToString("dd MMMM yyyy") });
 
             _containers.Peek().Children.Add(textBlock);
         }
 
-        private void ProcessText(TLRichTextBase text, InlineCollection collection, Run span)
+        private void ProcessText(TLRichTextBase text, Span span)
         {
             switch (text.TypeId)
             {
                 case TLType.TextPlain:
                     var plainText = (TLTextPlain)text;
-                    span.Text = plainText.Text;
+
+                    // Strikethrough fallback
+                    if (GetIsStrikethrough(span))
+                    {
+                        span.Inlines.Add(new Run { Text = StrikethroughFallback(plainText.Text) });
+                    }
+                    else
+                    {
+                        span.Inlines.Add(new Run { Text = plainText.Text });
+                    }
                     break;
                 case TLType.TextConcat:
                     var concatText = (TLTextConcat)text;
                     foreach (var concat in concatText.Texts)
                     {
-                        var concatRun = new Run();
-                        collection.Add(concatRun);
-                        ProcessText(concat, collection, concatRun);
+                        var concatRun = new Span();
+                        span.Inlines.Add(concatRun);
+                        ProcessText(concat, concatRun);
                     }
                     break;
                 case TLType.TextBold:
                     var boldText = (TLTextBold)text;
                     span.FontWeight = FontWeights.SemiBold;
-                    ProcessText(boldText.Text, collection, span);
+                    ProcessText(boldText.Text, span);
                     break;
                 case TLType.TextEmail:
                     var emailText = (TLTextEmail)text;
-                    ProcessText(emailText.Text, collection, span);
+                    ProcessText(emailText.Text, span);
                     break;
                 case TLType.TextFixed:
                     var fixedText = (TLTextFixed)text;
-                    ProcessText(fixedText.Text, collection, span);
+                    span.FontFamily = new FontFamily("Consolas");
+                    ProcessText(fixedText.Text, span);
                     break;
                 case TLType.TextItalic:
                     var italicText = (TLTextItalic)text;
                     span.FontStyle = FontStyle.Italic;
-                    ProcessText(italicText.Text, collection, span);
+                    ProcessText(italicText.Text, span);
                     break;
                 case TLType.TextStrike:
                     var strikeText = (TLTextStrike)text;
-                    // TODO: not supported in xaml
-                    ProcessText(strikeText.Text, collection, span);
+                    // 10.0.15021 or higher
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
+                    {
+                        // TODO: uncomment when RTM SDK will be publicly available
+                        //span.TextDecorations = Windows.UI.Text.TextDecorations.Strikethrough;
+                        //ProcessText(underlineText.Text, collection, span);
+                    }
+                    else
+                    {
+                        // TODO: not supported in xaml
+                        SetIsStrikethrough(span, true);
+                        ProcessText(strikeText.Text, span);
+                    }
                     break;
                 case TLType.TextUnderline:
                     var underlineText = (TLTextUnderline)text;
-                    var underline = new Underline();
-                    var underlineSpan = new Run();
-                    underline.Inlines.Add(underlineSpan);
-                    collection.Add(underline);
-                    ProcessText(underlineText.Text, underline.Inlines, underlineSpan);
+
+                    // 10.0.15021 or higher
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
+                    {
+                        // TODO: uncomment when RTM SDK will be publicly available
+                        //span.TextDecorations = Windows.UI.Text.TextDecorations.Underline;
+                        //ProcessText(underlineText.Text, collection, span);
+                    }
+                    else
+                    {
+                        var underline = new Underline();
+                        span.Inlines.Add(underline);
+                        ProcessText(underlineText.Text, underline);
+                    }
                     break;
                 case TLType.TextUrl:
                     var urlText = (TLTextUrl)text;
                     var hyperlink = new Hyperlink();
-                    var hyperlinkSpan = new Run();
-                    hyperlink.Inlines.Add(hyperlinkSpan);
+                    span.Inlines.Add(hyperlink);
                     hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
-                    collection.Add(hyperlink);
-                    ProcessText(urlText.Text, hyperlink.Inlines, hyperlinkSpan);
+                    ProcessText(urlText.Text, hyperlink);
                     break;
                 case TLType.TextEmpty:
                     var emptyText = (TLTextEmpty)text;
@@ -649,7 +744,7 @@ namespace Unigram.Views
             if (urlText.WebpageId != 0)
             {
                 var protoService = (MTProtoService)MTProtoService.Current;
-                protoService.SendInformativeMessageInternal<TLWebPage>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
+                protoService.SendInformativeMessageInternal<TLWebPageBase>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
                     result =>
                     {
                         Execute.BeginOnUIThread(() =>
@@ -659,8 +754,8 @@ namespace Unigram.Views
                     },
                     fault =>
                     {
+                        Debugger.Break();
                     });
-
             }
             else
             {
@@ -678,5 +773,34 @@ namespace Unigram.Views
                 }
             }
         }
+
+        #region Strikethrough
+
+        private string StrikethroughFallback(string text)
+        {
+            var sb = new StringBuilder(text.Length * 2);
+            foreach (var ch in text)
+            {
+                sb.Append((char)0x0336);
+                sb.Append(ch);
+            }
+
+            return sb.ToString();
+        }
+
+        public static bool GetIsStrikethrough(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsStrikethroughProperty);
+        }
+
+        public static void SetIsStrikethrough(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsStrikethroughProperty, value);
+        }
+
+        public static readonly DependencyProperty IsStrikethroughProperty =
+            DependencyProperty.RegisterAttached("IsStrikethrough", typeof(bool), typeof(ArticlePage), new PropertyMetadata(false));
+
+        #endregion
     }
 }

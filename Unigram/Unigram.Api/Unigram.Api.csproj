@@ -126,7 +126,7 @@
     <Compile Include="Services\IMTProtoService.Async.cs" />
     <Compile Include="Services\MTProtoService.Async.cs" />
     <Compile Include="TLExtensions.cs" />
-    <Compile Include="Hash\CRC32\CRC32.cs" />
+    <Compile Include="Hash\CRC32.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Services\MTProtoResponse.cs" />
     <Compile Include="Services\MTProtoService.Channel.cs" />
@@ -391,9 +391,6 @@
     <Compile Include="Extensions\HttpWebRequestExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\TLObjectExtensions.cs" />
-    <Compile Include="Hash\MD5\MD5.cs" />
-    <Compile Include="Hash\MD5\MD5CryptoServiceProvider.cs" />
-    <Compile Include="Hash\MD5\MD5Managed.cs" />
     <Compile Include="Helpers\Execute.cs" />
     <Compile Include="Helpers\FileUtils.cs" />
     <Compile Include="Helpers\RequestHelper.cs" />
@@ -1121,6 +1118,7 @@
     <Compile Include="Transport\TransportService.cs" />
     <EmbeddedResource Include="Properties\Unigram.Api.rd.xml" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

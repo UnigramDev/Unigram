@@ -12,7 +12,7 @@ namespace Unigram.Behaviors
     /// <summary>
     /// An attached behavior used to highlight instances of the SearchString in a TextBlock.
     /// </summary>
-    public class UsernameHighlightBehavior : DependencyObject, IBehavior
+    public class UsernameHighlightBehavior : Behavior<TextBlock>
     {
         #region SearchString
         /// <summary>
@@ -245,18 +245,18 @@ namespace Unigram.Behaviors
         /// </summary>
         public void UpdateHighlight()
         {
-            if (AssociatedControl == null ||
-                string.IsNullOrEmpty(AssociatedControl.Text) ||
+            if (AssociatedObject == null ||
+                string.IsNullOrEmpty(AssociatedObject.Text) ||
                 string.IsNullOrEmpty(SearchString))
             {
                 ClearHighlight();
                 return;
             }
 
-            var txt = AssociatedControl.Text.StartsWith("@") ? AssociatedControl.Text : "@" + AssociatedControl.Text;
+            var txt = AssociatedObject.Text.StartsWith("@") ? AssociatedObject.Text : "@" + AssociatedObject.Text;
             var searchTxt = SearchString.StartsWith("@") ? SearchString : "@" + SearchString;
             var processedCharacters = 0;
-            AssociatedControl.Inlines.Clear();
+            AssociatedObject.Inlines.Clear();
 
             int pos;
 
@@ -272,7 +272,7 @@ namespace Unigram.Behaviors
                         Text = txt.Substring(processedCharacters, pos - processedCharacters)
                     };
 
-                    AssociatedControl.Inlines.Add(run);
+                    AssociatedObject.Inlines.Add(run);
                 }
 
                 Run highlight;
@@ -292,7 +292,7 @@ namespace Unigram.Behaviors
                     highlight.Text = highlightText;
                 }
 
-                AssociatedControl.Inlines.Add(highlight);
+                AssociatedObject.Inlines.Add(highlight);
                 processedCharacters = pos + searchTxt.Length;
             }
 
@@ -303,7 +303,7 @@ namespace Unigram.Behaviors
                     Text = txt.Substring(processedCharacters, txt.Length - processedCharacters)
                 };
 
-                AssociatedControl.Inlines.Add(run);
+                AssociatedObject.Inlines.Add(run);
             }
         }
 
@@ -312,35 +312,26 @@ namespace Unigram.Behaviors
         /// </summary>
         public void ClearHighlight()
         {
-            if (AssociatedControl == null)
+            if (AssociatedObject == null)
             {
                 return;
             }
 
-            var text = AssociatedControl.Text;
-            AssociatedControl.Inlines.Clear();
-            AssociatedControl.Inlines.Add(new Run { Text = text });
+            var text = AssociatedObject.Text;
+            AssociatedObject.Inlines.Clear();
+            AssociatedObject.Inlines.Add(new Run { Text = text });
         }
 
-        public DependencyObject AssociatedObject { get; private set; }
-        public TextBlock AssociatedControl
+        protected override void OnAttached()
         {
-            get
-            {
-                return (TextBlock)AssociatedObject;
-            }
-        }
-
-        public void Attach(DependencyObject associatedObject)
-        {
-            AssociatedObject = associatedObject;
-
+            base.OnAttached();
             UpdateHighlight();
             _textChangedToken = AssociatedObject.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnTextChanged);
         }
 
-        public void Detach()
+        protected override void OnDetaching()
         {
+            base.OnDetaching();
             ClearHighlight();
             AssociatedObject.UnregisterPropertyChangedCallback(TextBlock.TextProperty, _textChangedToken);
         }
@@ -349,7 +340,7 @@ namespace Unigram.Behaviors
     /// <summary>
     /// An attached behavior used to highlight instances of the SearchString in a TextBlock.
     /// </summary>
-    public class HighlightBehavior : DependencyObject, IBehavior
+    public class HighlightBehavior : Behavior<TextBlock>
     {
         #region SearchString
         /// <summary>
@@ -582,18 +573,18 @@ namespace Unigram.Behaviors
         /// </summary>
         public void UpdateHighlight()
         {
-            if (AssociatedControl == null ||
-                string.IsNullOrEmpty(AssociatedControl.Text) ||
+            if (AssociatedObject == null ||
+                string.IsNullOrEmpty(AssociatedObject.Text) ||
                 string.IsNullOrEmpty(SearchString))
             {
                 ClearHighlight();
                 return;
             }
 
-            var txt = AssociatedControl.Text;
+            var txt = AssociatedObject.Text;
             var searchTxt = SearchString;
             var processedCharacters = 0;
-            AssociatedControl.Inlines.Clear();
+            AssociatedObject.Inlines.Clear();
 
             int pos;
 
@@ -609,7 +600,7 @@ namespace Unigram.Behaviors
                         Text = txt.Substring(processedCharacters, pos - processedCharacters)
                     };
 
-                    AssociatedControl.Inlines.Add(run);
+                    AssociatedObject.Inlines.Add(run);
                 }
 
                 Run highlight;
@@ -629,7 +620,7 @@ namespace Unigram.Behaviors
                     highlight.Text = highlightText;
                 }
 
-                AssociatedControl.Inlines.Add(highlight);
+                AssociatedObject.Inlines.Add(highlight);
                 processedCharacters = pos + searchTxt.Length;
             }
 
@@ -640,7 +631,7 @@ namespace Unigram.Behaviors
                     Text = txt.Substring(processedCharacters, txt.Length - processedCharacters)
                 };
 
-                AssociatedControl.Inlines.Add(run);
+                AssociatedObject.Inlines.Add(run);
             }
         }
 
@@ -649,35 +640,26 @@ namespace Unigram.Behaviors
         /// </summary>
         public void ClearHighlight()
         {
-            if (AssociatedControl == null)
+            if (AssociatedObject == null)
             {
                 return;
             }
 
-            var text = AssociatedControl.Text;
-            AssociatedControl.Inlines.Clear();
-            AssociatedControl.Inlines.Add(new Run { Text = text });
+            var text = AssociatedObject.Text;
+            AssociatedObject.Inlines.Clear();
+            AssociatedObject.Inlines.Add(new Run { Text = text });
         }
 
-        public DependencyObject AssociatedObject { get; private set; }
-        public TextBlock AssociatedControl
+        protected override void OnAttached()
         {
-            get
-            {
-                return (TextBlock)AssociatedObject;
-            }
-        }
-
-        public void Attach(DependencyObject associatedObject)
-        {
-            AssociatedObject = associatedObject;
-
+            base.OnAttached();
             UpdateHighlight();
             _textChangedToken = AssociatedObject.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnTextChanged);
         }
 
-        public void Detach()
+        protected override void OnDetaching()
         {
+            base.OnDetaching();
             ClearHighlight();
             AssociatedObject.UnregisterPropertyChangedCallback(TextBlock.TextProperty, _textChangedToken);
         }

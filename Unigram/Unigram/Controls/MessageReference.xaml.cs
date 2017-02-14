@@ -618,8 +618,9 @@ namespace Unigram.Controls
         {
             Visibility = Visibility.Visible;
 
+            FindName(nameof(ThumbRoot));
             if (ThumbRoot != null)
-                ThumbRoot.Visibility = Visibility.Collapsed;
+                ThumbRoot.Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
             ServiceLabel.Text = "GIF";
@@ -633,6 +634,8 @@ namespace Unigram.Controls
                     ServiceLabel.Text += ", ";
                     MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
+
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, "thumbnail");
             }
 
             return true;

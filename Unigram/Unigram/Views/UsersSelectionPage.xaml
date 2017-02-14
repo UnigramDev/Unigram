@@ -1,0 +1,83 @@
+﻿<Page
+    x:Class="Unigram.Views.UsersSelectionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:tl="using:Telegram.Api.TL"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid x:Name="Header" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel VerticalAlignment="Center" Margin="12,0">
+                <TextBlock Text="{x:Bind ViewModel.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
+                    <Run Text="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"/><Run Text="/"/><Run Text="{x:Bind ViewModel.Maximum}"/>
+                </TextBlock>
+            </StackPanel>
+            <controls:GlyphButton Glyph="&#xE10B;" Grid.Column="1"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+        </Grid>
+
+        <Border Background="{ThemeResource CommandBarOverflowPresenterBackground}" MinHeight="48" Grid.Row="1">
+            <ScrollViewer x:Name="ScrollingHost"
+                          VerticalScrollBarVisibility="Auto"
+                          VerticalScrollMode="Auto" 
+                          MaxHeight="80">
+                <controls:TagsTextBox ItemsSource="{x:Bind ViewModel.SelectedItems}" VerticalAlignment="Stretch" PlaceholderText="Search" Margin="0,8" SizeChanged="TagsTextBox_SizeChanged"/>
+            </ScrollViewer>
+        </Border>
+
+        <ListView x:Name="List"
+                  ItemsSource="{x:Bind ViewModel.Items}" 
+                  SelectionMode="Multiple" 
+                  SelectionChanged="ListView_SelectionChanged"
+                  Grid.Row="2">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="tl:TLUser">
+                    <Grid Margin="0,6">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
+                            <TextBlock Foreground="White" Text="{x:Bind Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
+                            <Ellipse>
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
+                        </Grid>
+                        <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                        <TextBlock Text="{x:Bind Converter={StaticResource LastSeenConverter}}" 
+                                   VerticalAlignment="Top" 
+                                   Style="{StaticResource CaptionTextBlockStyle}" 
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   TextTrimming="CharacterEllipsis" 
+                                   TextWrapping="NoWrap" 
+                                   Grid.Column="1" 
+                                   Grid.Row="1"
+                                   MaxLines="1"
+                                   x:Phase="1"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

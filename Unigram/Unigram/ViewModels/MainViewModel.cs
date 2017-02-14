@@ -34,7 +34,7 @@ namespace Unigram.ViewModels
     {
         private readonly IPushService _pushService;
 
-        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService)
+        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService, IContactsService contactsService)
             : base(protoService, cacheService, aggregator)
         {
             _pushService = pushService;
@@ -43,7 +43,7 @@ namespace Unigram.ViewModels
             SearchResults = new ObservableCollection<SearchResult>();
             SearchDialogs = new ObservableCollection<TLDialog>();
             Dialogs = new DialogsViewModel(ProtoService, cacheService, aggregator);
-            Contacts = new ContactsViewModel(ProtoService, cacheService, aggregator);
+            Contacts = new ContactsViewModel(ProtoService, cacheService, aggregator, contactsService);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)

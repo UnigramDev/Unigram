@@ -39,5 +39,10 @@ namespace Unigram.Views.Settings
         {
             Frame.Navigate(typeof(SettingsSessionsPage));
         }
+
+        private void BlockedUsers_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsBlockedUsersPage));
+        }
     }
 }

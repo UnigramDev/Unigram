@@ -25,6 +25,8 @@ using Unigram.ViewModels.Login;
 using Unigram.Views.Login;
 using Unigram.ViewModels.Settings;
 using Unigram.Services;
+using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Chats;
 
 namespace Unigram
 {
@@ -60,6 +62,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadDocumentManager>().SingleInstance();
             container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadVideoManager>().SingleInstance();
 
+            container.ContainerBuilder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
             container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
             container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();
@@ -77,6 +80,11 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<UserInfoViewModel>();
             container.ContainerBuilder.RegisterType<ChatInfoViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
+            container.ContainerBuilder.RegisterType<UsersSelectionViewModel>(); //.SingleInstance();
+            container.ContainerBuilder.RegisterType<CreateChannelStep1ViewModel>(); //.SingleInstance();
+            container.ContainerBuilder.RegisterType<CreateChannelStep2ViewModel>(); //.SingleInstance();
+            container.ContainerBuilder.RegisterType<CreateChatStep1ViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<CreateChatStep2ViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<ArticleViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStorageViewModel>().SingleInstance();
@@ -84,6 +92,8 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsUsernameViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsEditNameViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsSessionsViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsBlockUserViewModel>();
             container.ContainerBuilder.RegisterType<SettingsFeaturedStickersViewModel>().SingleInstance();
 
             container.Build();

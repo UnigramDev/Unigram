@@ -948,6 +948,19 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        public Task<MTProtoResponse<TLWebPageBase>> GetWebPageAsync(string url, int hash)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLWebPageBase>>();
+            GetWebPageCallback(url, hash, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLWebPageBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLWebPageBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
         public Task<MTProtoResponse<TLUpdatesBase>> EditChatPhotoAsync(int chatId, TLInputChatPhotoBase photo)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1815,6 +1828,19 @@ namespace Telegram.Api.Services
             }, (faultCallback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLPong>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        public Task<MTProtoResponse<TLMessagesChatsBase>> GetAdminedPublicChannelsAsync()
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatsBase>>();
+            GetAdminedPublicChannelsCallback((callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesChatsBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesChatsBase>(faultCallback));
             });
             return tsc.Task;
         }

@@ -1,0 +1,41 @@
+﻿<Page
+    x:Class="Unigram.Views.Settings.SettingsLastSeenPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+            <TextBlock Text="Data and storage" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+        </Grid>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel Padding="12">
+                <ComboBox Header="Who can see my timestamp" SelectedIndex="0" HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="Everybody"/>
+                    <ComboBoxItem Content="My Contacts"/>
+                    <ComboBoxItem Content="Nobody"/>
+                </ComboBox>
+                <TextBlock Text="Important: you won't be able to see Last Seen times for people with whom you don't share your Last Seen time. Approximate last seen will be shown instead (recently, within a week, within a month)." Margin="0,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+
+
+                <StackPanel Margin="0,48">
+                    <TextBlock Text="Who can see my timestamp"/>
+                    <RadioButton Content="Everybody" IsChecked="True"/>
+                    <RadioButton Content="My Contacts"/>
+                    <RadioButton Content="Nobody"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

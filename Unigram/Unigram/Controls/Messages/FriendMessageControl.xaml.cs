@@ -125,7 +125,7 @@ namespace Unigram.Controls.Messages
                         caption = !string.IsNullOrWhiteSpace(((ITLMediaCaption)message.Media).Caption);
                     }
 
-                    MediaControl.Margin = new Thickness(0, 4, 0, 2);
+                    MediaControl.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);
                     StatusToDefault();
                     Grid.SetRow(StatusControl, caption ? 4 : 3);
                     Grid.SetRow(MessageControl, caption ? 4 : 2);

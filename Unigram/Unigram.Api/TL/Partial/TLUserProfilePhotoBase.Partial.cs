@@ -8,8 +8,6 @@ namespace Telegram.Api.TL
 {
     public abstract partial class TLUserProfilePhotoBase
     {
-        public virtual void Update(TLUserProfilePhotoBase photo)
-        {
-        }
+        public virtual void Update(TLUserProfilePhotoBase photo) { }
     }
 }

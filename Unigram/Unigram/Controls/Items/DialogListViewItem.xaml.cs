@@ -107,6 +107,8 @@ namespace Unigram.Controls.Items
 
         private void UpdatePicture()
         {
+            //Placeholder.Fill = Application.Current.Resources[$"Placeholder{Utils.GetColorIndex(ViewModel.WithId)}ImageBrush"] as ImageBrush;
+
             Placeholder.Fill = BindConvert.Current.Bubble(ViewModel.WithId);
         }
 
@@ -436,7 +438,6 @@ namespace Unigram.Controls.Items
         {
             UnreadBadge.Text = ViewModel?.UnreadCount.ToString() ?? string.Empty;
             UnreadLabel.Visibility = ViewModel?.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-            Highlight.Visibility = ViewModel?.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private Visibility UpdateUnreadBadgeBrush(TLPeerNotifySettingsBase settingsBase)

@@ -120,7 +120,7 @@ namespace Unigram.Common
                         }
                     }
                     else if (caption)
-                    { 
+                    {
                         var captionMedia = message.Media as ITLMediaCaption;
                         if (captionMedia != null && !string.IsNullOrWhiteSpace(captionMedia.Caption))
                         {
@@ -163,8 +163,12 @@ namespace Unigram.Common
                             }
                         }
 
-                        paragraph.Inlines.Add(new Run { Text = placeholder, Foreground = null });
+                        paragraph.Inlines.Add(new Run { Text = "\u200E" + placeholder, Foreground = null });
                     }
+                }
+                else
+                {
+                    paragraph.Inlines.Add(new Run { Text = " " });
                 }
 
                 sender.Blocks.Clear();
@@ -264,10 +268,10 @@ namespace Unigram.Common
 
         private static bool IsAnyCharacterRightToLeft(string s)
         {
-            if (s.Length > 2)
-            {
-                s = s.Substring(s.Length - 2);
-            }
+            //if (s.Length > 2)
+            //{
+            //    s = s.Substring(s.Length - 2);
+            //}
 
             for (int i = 0; i < s.Length; i += char.IsSurrogatePair(s, i) ? 2 : 1)
             {
@@ -277,7 +281,7 @@ namespace Unigram.Common
                     return true;
                 }
 
-                //return false;
+                return false;
             }
 
             return false;
@@ -548,7 +552,7 @@ namespace Unigram.Common
         //{
         //    WeakReference<BitmapImage> reference;
         //    BitmapImage bitmap;
-            
+
         //    if (_cachedEmoji.TryGetValue(emoji, out reference) && reference.TryGetTarget(out bitmap))
         //    {
         //        var uiContainer = new InlineUIContainer();
@@ -615,7 +619,7 @@ namespace Unigram.Common
                     }
                 }
             }
-            else if(type == TLType.MessageEntityMentionName)
+            else if (type == TLType.MessageEntityMentionName)
             {
                 var user = InMemoryCacheService.Current.GetUser((int)data);
                 if (user != null)

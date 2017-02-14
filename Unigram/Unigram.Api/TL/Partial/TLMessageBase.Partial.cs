@@ -630,13 +630,13 @@ namespace Telegram.Api.TL
             }
         }
 
-        private TLChatBase _fwdFromChannel;
-        public TLChatBase FwdFromChannel
+        private TLChannel _fwdFromChannel;
+        public TLChannel FwdFromChannel
         {
             get
             {
                 if (_fwdFromChannel == null && HasFwdFrom && FwdFrom != null && FwdFrom.HasChannelId)
-                    _fwdFromChannel = InMemoryCacheService.Current.GetChat(FwdFrom.ChannelId);
+                    _fwdFromChannel = InMemoryCacheService.Current.GetChat(FwdFrom.ChannelId) as TLChannel;
 
                 return _fwdFromChannel;
             }

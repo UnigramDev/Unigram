@@ -12,7 +12,6 @@
     <Grid Padding="12,6" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -22,17 +21,16 @@
 
         <!--<Border Visibility="{x:Bind (Visibility)ViewModel.IsPinned, Mode=OneWay}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Margin="-12,-6" Grid.ColumnSpan="3" Grid.RowSpan="2"/>-->
 
-        <Rectangle x:Name="Highlight" Margin="-20,-6,0,-6" Width="4" Fill="{ThemeResource TelegramDialogUnreadBadgeBrush}" Grid.RowSpan="2"/>
-        <Ellipse x:Name="Placeholder" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
-        <TextBlock Foreground="White" x:Name="InitialName" Text="{Binding With, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.RowSpan="2" Grid.Column="1"/>
-        <Ellipse Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1">
+        <Ellipse x:Name="Placeholder" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2"/>
+        <TextBlock Foreground="White" x:Name="InitialName" Text="{Binding With, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.RowSpan="2"/>
+        <Ellipse Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2">
             <Ellipse.Fill>
                 <ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
             </Ellipse.Fill>
         </Ellipse>
-        <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
+        <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2"/>
 
-        <Grid VerticalAlignment="Top" Margin="8,0,0,0" Grid.Column="2">
+        <Grid VerticalAlignment="Top" Margin="8,3,0,0" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
@@ -101,7 +99,7 @@
                        TextTrimming="CharacterEllipsis" 
                        TextWrapping="NoWrap" 
                        MaxLines="1">
-                <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}" FontWeight="SemiBold"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
             </TextBlock>
             <Border Visibility="{x:Bind UpdateIsPinned(ViewModel.IsPinned, ViewModel.UnreadCount), Mode=OneWay}"
                     Width="20"
@@ -118,7 +116,7 @@
                     CornerRadius="10" 
                     VerticalAlignment="Top" 
                     HorizontalAlignment="Right" 
-                    Margin="8,2,0,0"
+                    Margin="8,1,0,0"
                     Visibility="Collapsed"
                     Grid.Column="2">
                 <Border Visibility="{x:Bind UpdateUnreadBadgeBrush(ViewModel.NotifySettings)}" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"/>

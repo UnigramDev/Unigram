@@ -33,6 +33,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.ViewManagement;
+using Unigram.Views.Channels;
+using Unigram.ViewModels.Chats;
+using Unigram.Views.Chats;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -484,5 +487,15 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void NewChat_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(CreateChatStep1Page));
+        }
+
+        private void NewChannel_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(CreateChannelStep1Page));
+        }
     }
 }

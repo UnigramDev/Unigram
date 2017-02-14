@@ -9,6 +9,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.Views;
@@ -113,10 +114,10 @@ namespace Unigram.Controls.Messages
 
                     var name = string.Empty;
 
-                    var chat = message.FwdFromChannel;
-                    if (chat != null)
+                    var channel = message.FwdFromChannel;
+                    if (channel != null)
                     {
-                        name = chat.FullName;
+                        name = channel.FullName;
                     }
 
                     var user = message.FwdFromUser;
@@ -187,7 +188,7 @@ namespace Unigram.Controls.Messages
                 if (message.FwdFrom.HasChannelPost)
                 {
                     // TODO
-                    Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerChannel { ChannelId = message.FwdFromChannel.Id });
+                    Context.NavigationService.Navigate(typeof(DialogPage), new Tuple<TLPeerBase, int>(new TLPeerChannel { ChannelId = message.FwdFromChannel.Id }, message.FwdFrom.ChannelPost ?? int.MaxValue));
                 }
                 else
                 {
@@ -231,6 +232,24 @@ namespace Unigram.Controls.Messages
         protected void Reply_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Context.MessageOpenReplyCommand.Execute(ViewModel);
+        }
+
+        protected void MessageControl_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            Point point;
+            if (args.TryGetPosition(sender, out point))
+            {
+                var text = sender as RichTextBlock;
+                var hyperlink = text.GetHyperlinkFromPoint(point);
+                if (hyperlink != null)
+                {
+                    var flyout = new MenuFlyout();
+                    flyout.Items.Add(new MenuFlyoutItem { Text = "Open link" });
+                    flyout.Items.Add(new MenuFlyoutItem { Text = "Copy link" });
+                    flyout.ShowAt(sender, point);
+                    args.Handled = true;
+                }
+            }
         }
 
         /// <summary>

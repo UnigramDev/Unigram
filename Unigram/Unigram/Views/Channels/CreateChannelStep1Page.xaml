@@ -1,8 +1,8 @@
 ﻿<Page
-    x:Class="Unigram.Views.Chats.CreateChatPage"
+    x:Class="Unigram.Views.Channels.CreateChannelStep1Page"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Chats"
+    xmlns:local="using:Unigram.Views.Channels"
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -18,8 +18,8 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="New group" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-            <controls:GlyphButton Glyph="&#xE10B;" Grid.Column="1"/>
+            <TextBlock Text="New channel" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+            <controls:GlyphButton Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;" Grid.Column="1"/>
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
@@ -43,9 +43,12 @@
                     <controls:GlyphButton Glyph="&#xE114;" FontSize="16" CornerRadius="24"/>
                 </Grid>
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                    <TextBox PlaceholderText="Group name"/>
+                    <controls:UpdateTextBox Text="{Binding Title, Mode=TwoWay}" MaxLength="{StaticResource ChannelTitleMaxLength}" PlaceholderText="Channel name"/>
                 </Border>
             </Grid>
+
+            <TextBox Text="{x:Bind ViewModel.About, Mode=TwoWay}" MaxLength="{StaticResource ChannelAboutMaxLength}" Header="Description" AcceptsReturn="True" TextWrapping="Wrap" Margin="12,12,12,8" Grid.Row="1"/>
+            <TextBlock Text="You can provide an optional description for your channel." Margin="12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
         </Grid>
     </Grid>
 </Page>

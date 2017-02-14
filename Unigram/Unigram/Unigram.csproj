@@ -94,9 +94,42 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Compile Include="Common\RatioControl.cs" />
+    <Compile Include="Controls\TagsTextBox.cs" />
+    <Compile Include="Controls\TagsWrapPanel.cs" />
+    <Compile Include="Controls\TLListView.cs" />
+    <Compile Include="Controls\Views\UsersSelectionView.xaml.cs">
+      <DependentUpon>UsersSelectionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\WrapPanel.cs" />
-    <Compile Include="Views\UsersPickerPage.xaml.cs">
-      <DependentUpon>UsersPickerPage.xaml</DependentUpon>
+    <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
+    <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
+    <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
+    <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
+    <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
+    <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
+    <Compile Include="Views\Channels\CreateChannelStep2Page.xaml.cs">
+      <DependentUpon>CreateChannelStep2Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Channels\CreateChannelStep3Page.xaml.cs">
+      <DependentUpon>CreateChannelStep3Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
+      <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsBlockedUsersPage.xaml.cs">
+      <DependentUpon>SettingsBlockedUsersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsBlockUserPage.xaml.cs">
+      <DependentUpon>SettingsBlockUserPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsLastSeenPage.xaml.cs">
+      <DependentUpon>SettingsLastSeenPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UsersSelectionPage.xaml.cs">
+      <DependentUpon>UsersSelectionPage.xaml</DependentUpon>
     </Compile>
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <None Include="project.json" />
@@ -184,7 +217,7 @@
     <Compile Include="Common\FluidGridView.cs" />
     <Compile Include="Common\IncrementalCollection.cs" />
     <Compile Include="Common\LastSeenHelper.cs" />
-    <Compile Include="Common\LazyBitmapImage.cs" />
+    <Compile Include="Common\TLBitmapSource.cs" />
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\ListCollectionView.cs" />
     <Compile Include="Common\MessageHelper.cs" />
@@ -295,14 +328,14 @@
     <Compile Include="Views\BlankPage.xaml.cs">
       <DependentUpon>BlankPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Channels\CreateChannelPage.xaml.cs">
-      <DependentUpon>CreateChannelPage.xaml</DependentUpon>
+    <Compile Include="Views\Channels\CreateChannelStep1Page.xaml.cs">
+      <DependentUpon>CreateChannelStep1Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatInfoPage.xaml.cs">
       <DependentUpon>ChatInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Chats\CreateChatPage.xaml.cs">
-      <DependentUpon>CreateChatPage.xaml</DependentUpon>
+    <Compile Include="Views\Chats\CreateChatStep1Page.xaml.cs">
+      <DependentUpon>CreateChatStep1Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DialogInfoAdminsPage.xaml.cs">
       <DependentUpon>DialogInfoAdminsPage.xaml</DependentUpon>
@@ -321,12 +354,6 @@
     </Compile>
     <Compile Include="Views\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HomeNewChatPage.xaml.cs">
-      <DependentUpon>HomeNewChatPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HomeSearchPage.xaml.cs">
-      <DependentUpon>HomeSearchPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Login\LoginPasswordPage.xaml.cs">
       <DependentUpon>LoginPasswordPage.xaml</DependentUpon>
@@ -406,6 +433,12 @@
     <Content Include="Assets\Icons\userPos32.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-dark.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-light.png" />
+    <Content Include="Assets\Images\ProfilePlaceholder0.png" />
+    <Content Include="Assets\Images\ProfilePlaceholder1.png" />
+    <Content Include="Assets\Images\ProfilePlaceholder2.png" />
+    <Content Include="Assets\Images\ProfilePlaceholder3.png" />
+    <Content Include="Assets\Images\ProfilePlaceholder4.png" />
+    <Content Include="Assets\Images\ProfilePlaceholder5.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-100.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-125.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-150.png" />
@@ -551,6 +584,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\UsersSelectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Accent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -591,7 +628,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Channels\CreateChannelPage.xaml">
+    <Page Include="Views\Channels\CreateChannelStep1Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Channels\CreateChannelStep2Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Channels\CreateChannelStep3Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -599,7 +644,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Chats\CreateChatPage.xaml">
+    <Page Include="Views\Chats\CreateChatStep1Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\CreateChatStep2Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -620,14 +669,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\GamePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\HomeNewChatPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\HomeSearchPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -659,11 +700,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\SettingsBlockedUsersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsBlockUserPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsDataPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsFeaturedStickersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsLastSeenPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -703,7 +756,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\UsersPickerPage.xaml">
+    <Page Include="Views\UsersSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

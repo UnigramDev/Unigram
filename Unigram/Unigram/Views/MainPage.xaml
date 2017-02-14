@@ -160,11 +160,11 @@
                             <Button.Flyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                                                    IsEnabled="False"
+                                                    Click="NewChat_Click"
                                                     Tag="&#xE125;"
                                                     Text="New Group" />
                                     <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
-                                                    IsEnabled="False"
+                                                    Click="NewChannel_Click"
                                                     Tag="&#xE789;"
                                                     Text="New Channel" />
                                     <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
@@ -191,16 +191,14 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>                           
-                            <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                            <!--<Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8">
                                     <controls:SearchTextBox x:Name="SearchDialogs" 
                                                             PlaceholderText="Search chats and messages"
                                                             TextChanged="txtSearch_TextChanged"
                                                             Margin="0"/>
                                 </Border>
-
-                                <Border BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" BorderThickness="0,0,0,1"/>
-                            </Grid>
+                            </Grid>-->
                             
                             <controls:DialogsListView x:Name="DialogsListView"
                                                       ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
@@ -211,6 +209,16 @@
                                                       AllowDrop="True"
                                                       CanDragItems="True"                                                  
                                                       Grid.Row="1">
+                                <ListView.Header>
+                                    <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8">
+                                            <controls:SearchTextBox x:Name="SearchDialogs" 
+                                                            PlaceholderText="Search chats and messages"
+                                                            TextChanged="txtSearch_TextChanged"
+                                                            Margin="0"/>
+                                        </Border>
+                                    </Grid>
+                                </ListView.Header>
                                 <ListView.ItemContainerStyleSelector>
                                     <selectors:DialogStyleSelector>
                                         <selectors:DialogStyleSelector.DialogStyle>

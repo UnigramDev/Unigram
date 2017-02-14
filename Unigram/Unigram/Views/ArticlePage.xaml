@@ -30,9 +30,7 @@
                     <RowDefinition/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <StackPanel x:Name="LayoutRoot" Margin="0,0,12,0" Padding="0,12">
-                
-                </StackPanel>
+                <StackPanel x:Name="LayoutRoot" Padding="0,12"/>
 
                 <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Grid.Row="1">
                     <Button Content="Leave feedback about this preview" HorizontalContentAlignment="Center" VerticalAlignment="Center" Padding="8,6" Style="{StaticResource EmptyButtonStyle}"/>

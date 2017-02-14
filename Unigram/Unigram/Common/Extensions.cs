@@ -5,6 +5,9 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 
 namespace Unigram.Common
 {
@@ -77,6 +80,29 @@ namespace Unigram.Common
             }
 
             return result;
+        }
+
+        public static Hyperlink GetHyperlinkFromPoint(this RichTextBlock text, Point point)
+        {
+            var position = text.GetPositionFromPoint(point);
+            var hyperlink = GetHyperlink(position.Parent as TextElement);
+
+            return hyperlink;
+        }
+
+        private static Hyperlink GetHyperlink(TextElement parent)
+        {
+            if (parent == null)
+            {
+                return null;
+            }
+
+            if (parent is Hyperlink)
+            {
+                return parent as Hyperlink;
+            }
+
+            return GetHyperlink(parent.ElementStart.Parent as TextElement);
         }
     }
 }
