@@ -28,6 +28,8 @@ namespace Unigram.Converters
         private static readonly Dictionary<string, WeakReference> _cachedSources = new Dictionary<string, WeakReference>();
         private static readonly Dictionary<string, WeakReference<WriteableBitmap>> _cachedWebPImages = new Dictionary<string, WeakReference<WriteableBitmap>>();
 
+        private static readonly TLBitmapContext _bitmapContext = new TLBitmapContext();
+
         private static readonly AnimatedImageSourceRendererFactory _videoFactory = new AnimatedImageSourceRendererFactory();
 
         public bool CheckChatSettings
@@ -67,6 +69,8 @@ namespace Unigram.Converters
             var userProfilePhoto = value as TLUserProfilePhoto;
             if (userProfilePhoto != null)
             {
+                return _bitmapContext[userProfilePhoto];
+
                 var fileLocation = userProfilePhoto.PhotoSmall as TLFileLocation;
                 if (fileLocation != null)
                 {
@@ -77,6 +81,8 @@ namespace Unigram.Converters
             var chatPhoto = value as TLChatPhoto;
             if (chatPhoto != null)
             {
+                return _bitmapContext[chatPhoto];
+
                 var fileLocation = chatPhoto.PhotoSmall as TLFileLocation;
                 if (fileLocation != null)
                 {
@@ -170,7 +176,7 @@ namespace Unigram.Converters
             var photo = value as TLPhoto;
             if (photo != null)
             {
-                //return new TLBitmapImage(photo, true);
+                //return _bitmapContext[photo];
 
                 //double num = 400;
                 //double num2;
@@ -220,7 +226,7 @@ namespace Unigram.Converters
                     if (photoCachedSize != null)
                     {
                         var bitmap = new BitmapImage();
-                        bitmap.SetByteSource(photoCachedSize.Bytes);
+                        bitmap.SetSource(photoCachedSize.Bytes);
                         return bitmap;
                     }
                 }
@@ -345,7 +351,7 @@ namespace Unigram.Converters
                     if (photoCachedSize != null)
                     {
                         var bitmap = new BitmapImage();
-                        bitmap.SetByteSource(photoCachedSize.Bytes);
+                        bitmap.SetSource(photoCachedSize.Bytes);
                         return bitmap;
                     }
                 }
@@ -464,7 +470,7 @@ namespace Unigram.Converters
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var bitmap = new BitmapImage();
-                bitmap.SetUriSource(FileUtils.GetTempFileUri(fileName));
+                bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
                 return bitmap;
             }
 
@@ -563,7 +569,7 @@ namespace Unigram.Converters
                 if (photoCachedSize != null)
                 {
                     var bitmap = new BitmapImage();
-                    bitmap.SetByteSource(photoCachedSize.Bytes);
+                    bitmap.SetSource(photoCachedSize.Bytes);
                     return bitmap;
                 }
             }
@@ -708,7 +714,7 @@ namespace Unigram.Converters
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var bitmap = new BitmapImage();
-                bitmap.SetUriSource(FileUtils.GetTempFileUri(fileName));
+                bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
                 return bitmap;
             }
 
@@ -723,7 +729,7 @@ namespace Unigram.Converters
                     await manager.DownloadFileAsync(location, fileSize).AsTask(mediaPhoto?.Download());
                     Execute.BeginOnUIThread(() =>
                     {
-                        bitmap.SetUriSource(FileUtils.GetTempFileUri(fileName));
+                        bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
                     });
                 });
 
@@ -812,7 +818,7 @@ namespace Unigram.Converters
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var bitmap = new BitmapImage();
-                bitmap.SetUriSource(FileUtils.GetTempFileUri(fileName));
+                bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
                 _cachedSources[fileName] = new WeakReference(bitmap);
 
                 return bitmap;
@@ -829,7 +835,7 @@ namespace Unigram.Converters
                     await manager.DownloadFileAsync(location, fileSize);
                     Execute.BeginOnUIThread(() =>
                     {
-                        bitmap.SetUriSource(FileUtils.GetTempFileUri(fileName));
+                        bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
                     });
                 });
 

@@ -62,6 +62,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadDocumentManager>().SingleInstance();
             container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadVideoManager>().SingleInstance();
 
+            container.ContainerBuilder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
             container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
             container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();

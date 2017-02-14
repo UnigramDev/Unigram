@@ -70,6 +70,15 @@
             <SolidColorBrush x:Key="Placeholder3Brush" Color="#2a9ef1"/>
             <SolidColorBrush x:Key="Placeholder4Brush" Color="#665fff"/>
             <SolidColorBrush x:Key="Placeholder5Brush" Color="#d669ed"/>
+
+            <ImageBrush x:Key="Placeholder0ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder0.png"/>
+            <ImageBrush x:Key="Placeholder1ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder1.png"/>
+            <ImageBrush x:Key="Placeholder2ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder2.png"/>
+            <ImageBrush x:Key="Placeholder3ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder3.png"/>
+            <ImageBrush x:Key="Placeholder4ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder4.png"/>
+            <ImageBrush x:Key="Placeholder5ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder5.png"/>
+
+
             <!--<SolidColorBrush x:Key="PlaceholderBlueBrush" Color="#348cd4"/>
             <SolidColorBrush x:Key="PlaceholderCyanBrush" Color="#2996ad"/>
             <SolidColorBrush x:Key="PlaceholderGreenBrush" Color="#4fad2d"/>

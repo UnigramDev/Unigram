@@ -107,6 +107,8 @@ namespace Unigram.Controls.Items
 
         private void UpdatePicture()
         {
+            //Placeholder.Fill = Application.Current.Resources[$"Placeholder{Utils.GetColorIndex(ViewModel.WithId)}ImageBrush"] as ImageBrush;
+
             Placeholder.Fill = BindConvert.Current.Bubble(ViewModel.WithId);
         }
 

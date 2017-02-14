@@ -13,14 +13,19 @@ using Telegram.Api.TL;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Core.Services;
 
 namespace Unigram.ViewModels
 {
     public class ContactsViewModel : UnigramViewModelBase, IHandle, IHandle<TLUpdateUserStatus>
     {
-        public ContactsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        private IContactsService _contactsService;
+
+        public ContactsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IContactsService contactsService)
             : base(protoService, cacheService, aggregator)
         {
+            _contactsService = contactsService;
+
             Items = new SortedObservableCollection<TLUser>(new TLUserComparer(true));
             Search = new ObservableCollection<KeyedList<string, TLObject>>();
         }
@@ -59,7 +64,7 @@ namespace Unigram.ViewModels
             var hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
 
             var response = await ProtoService.GetContactsAsync(hex);
-            if (response.IsSucceeded && response.Result is TLContactsContacts)
+            if (response.IsSucceeded)
             {
                 var result = response.Result as TLContactsContacts;
                 if (result != null)
@@ -85,6 +90,8 @@ namespace Unigram.ViewModels
                             Items.Add(user);
                         }
                     });
+
+                    await _contactsService.SyncContactsAsync(response.Result);
                 }
             }
 
