@@ -162,18 +162,18 @@ namespace Unigram.Common
 
         public TLBitmapSource(TLUserProfilePhoto userProfilePhoto)
         {
-            var fileLocation = userProfilePhoto.PhotoSmall as TLFileLocation;
-            if (fileLocation != null)
+            if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_DEFINITIVE) == false)
             {
+                this.SetSource(new Uri("ms-appx:///Assets/Images/ProfilePlaceholder0.png"));
                 SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_DEFINITIVE);
             }
         }
 
         public TLBitmapSource(TLChatPhoto chatPhoto)
         {
-            var fileLocation = chatPhoto.PhotoSmall as TLFileLocation;
-            if (fileLocation != null)
+            if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_DEFINITIVE) == false)
             {
+                this.SetSource(new Uri("ms-appx:///Assets/Images/ProfilePlaceholder0.png"));
                 SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_DEFINITIVE);
             }
         }
@@ -183,8 +183,11 @@ namespace Unigram.Common
             var photo = photoBase as TLPhoto;
             if (photo != null)
             {
-                SetSource(photo.Thumb, PHASE_THUMBNAIL);
-                SetSource(photo.Full, PHASE_DEFINITIVE);
+                if (TrySetSource(photo.Full, PHASE_DEFINITIVE) == false)
+                {
+                    SetSource(photo.Thumb, PHASE_THUMBNAIL);
+                    SetSource(photo.Full, PHASE_DEFINITIVE);
+                }
             }
         }
 
@@ -193,12 +196,34 @@ namespace Unigram.Common
             SetSource(document.Thumb, PHASE_THUMBNAIL);
         }
 
+        public bool TrySetSource(TLPhotoSizeBase photoSizeBase, int phase)
+        {
+            var photoSize = photoSizeBase as TLPhotoSize;
+            if (photoSize != null)
+            {
+                return TrySetSource(photoSize.Location as TLFileLocation, phase);
+            }
+
+            var photoCachedSize = photoSizeBase as TLPhotoCachedSize;
+            if (photoCachedSize != null)
+            {
+                if (phase >= Phase)
+                {
+                    Phase = phase;
+                    this.SetSource(photoCachedSize.Bytes);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public void SetSource(TLPhotoSizeBase photoSizeBase, int phase)
         {
             var photoSize = photoSizeBase as TLPhotoSize;
             if (photoSize != null)
             {
-                SetSource(photoSize.Location as TLFileLocation, photoSize.Size, 1);
+                SetSource(photoSize.Location as TLFileLocation, photoSize.Size, phase);
             }
 
             var photoCachedSize = photoSizeBase as TLPhotoCachedSize;
@@ -210,6 +235,23 @@ namespace Unigram.Common
                     this.SetSource(photoCachedSize.Bytes);
                 }
             }
+        }
+
+        public bool TrySetSource(TLFileLocation location, int phase)
+        {
+            if (phase >= Phase && location != null)
+            {
+                Phase = phase;
+
+                var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                {
+                    this.SetSource(FileUtils.GetTempFileUri(fileName));
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void SetSource(TLFileLocation location, int fileSize, int phase)

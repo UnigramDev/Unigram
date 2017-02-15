@@ -184,8 +184,8 @@
     <Compile Include="Controls\ProgressBarRingSlice.cs" />
     <Compile Include="Controls\ReplyMarkupPanel.cs" />
     <Compile Include="Controls\SimpleButton.cs" />
-    <Compile Include="Controls\UnigramMessageDialog.xaml.cs">
-      <DependentUpon>UnigramMessageDialog.xaml</DependentUpon>
+    <Compile Include="Controls\TLMessageDialog.xaml.cs">
+      <DependentUpon>TLMessageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\EditYourNameView.xaml.cs">
       <DependentUpon>EditYourNameView.xaml</DependentUpon>
@@ -544,7 +544,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\UnigramMessageDialog.xaml">
+    <Page Include="Controls\TLMessageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

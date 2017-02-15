@@ -694,7 +694,7 @@ namespace Unigram.Common
                     {
                         if (type == TLType.MessageEntityTextUrl)
                         {
-                            var dialog = new UnigramMessageDialog(navigation, "Open this link?");
+                            var dialog = new TLMessageDialog(navigation, "Open this link?");
                             dialog.Title = "Open this link?";
                             dialog.Message = navigation;
                             dialog.PrimaryButtonText = "Open";
@@ -892,7 +892,7 @@ namespace Unigram.Common
                         content = "AppResources.JoinChannelConfirmation";
                     }
 
-                    var dialog = new UnigramMessageDialog(content, invite.Title);
+                    var dialog = new TLMessageDialog(content, invite.Title);
                     dialog.Title = invite.Title;
                     dialog.Content = content;
                     dialog.PrimaryButtonText = "OK";

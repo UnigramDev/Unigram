@@ -105,7 +105,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<TLUser> UnblockCommand => new RelayCommand<TLUser>(UnblockExecute);
         private async void UnblockExecute(TLUser user)
         {
-            var dialog = new UnigramMessageDialog();
+            var dialog = new TLMessageDialog();
             dialog.Title = "Unblock";
             dialog.Message = "You sure?";
             dialog.PrimaryButtonText = "Yes";

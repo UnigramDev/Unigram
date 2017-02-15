@@ -74,7 +74,7 @@
                         FontFamily="{ThemeResource TelegramThemeFontFamily}" 
                         HorizontalAlignment="Right" 
                         VerticalAlignment="Bottom" 
-                        Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" 
+                        Foreground="{ThemeResource TelegramDialogGlyphStateBrush}" 
                         FontSize="10" 
                         Height="10"
                         Width="18" 

@@ -52,7 +52,7 @@ namespace Unigram.Views.Settings
 
             Clipboard.SetContent(package);
 
-            await new UnigramMessageDialog("Link copied to clipboard").ShowAsync();
+            await new TLMessageDialog("Link copied to clipboard").ShowAsync();
         }
     }
 }

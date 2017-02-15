@@ -451,7 +451,7 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(async () =>
                 {
-                    await UnigramMessageDialog.ShowAsync(serviceNotification.Message, "Telegram", "OK");
+                    await TLMessageDialog.ShowAsync(serviceNotification.Message, "Telegram", "OK");
                 });
             }
             else
@@ -951,7 +951,7 @@ namespace Unigram.ViewModels
         {
             if (Items.Where(x => x.IsPinned).Count() == PinnedDialogsCountMax && !dialog.IsPinned)
             {
-                var question = new UnigramMessageDialog();
+                var question = new TLMessageDialog();
                 question.Title = "Warning";
                 question.Message = string.Format("Sorry, you can pin no more than {0} chats to the top.", PinnedDialogsCountMax);
                 question.PrimaryButtonText = "OK";
@@ -1036,13 +1036,13 @@ namespace Unigram.ViewModels
                 which = 4;
             }
 
-            var question = new UnigramMessageDialog();
+            var question = new TLMessageDialog();
             question.Title = "Delete";
             question.Message = message;
             question.PrimaryButtonText = "Yes";
             question.SecondaryButtonText = "No";
 
-            var failNotification = new UnigramMessageDialog();
+            var failNotification = new TLMessageDialog();
             failNotification.Title = "Error";
             failNotification.Message = "Chat could not be deleted!";
             failNotification.PrimaryButtonText = "Okay";
@@ -1092,7 +1092,7 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogClearCommand => new RelayCommand<TLDialog>(DialogClearExecute);
         private async void DialogClearExecute(TLDialog dialog)
         {
-            var clear = await UnigramMessageDialog.ShowAsync("Do you really want to clear the chat?", "Delete", "Yes", "No");
+            var clear = await TLMessageDialog.ShowAsync("Do you really want to clear the chat?", "Delete", "Yes", "No");
             if (clear == ContentDialogResult.Primary)
             {
                 var peer = dialog.ToInputPeer();
@@ -1104,7 +1104,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    await UnigramMessageDialog.ShowAsync("Clearing the chat failed!", "Error", "Okay");
+                    await TLMessageDialog.ShowAsync("Clearing the chat failed!", "Error", "Okay");
                 }
             }
         }

@@ -122,7 +122,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var dialog = new UnigramMessageDialog();
+                var dialog = new TLMessageDialog();
                 dialog.Title = "Delete";
                 dialog.Message = "Do you want to delete this message?";
                 dialog.PrimaryButtonText = "Yes";
@@ -539,7 +539,7 @@ namespace Unigram.ViewModels
         {
             if (PinnedMessage?.Id == message.Id)
             {
-                var dialog = new UnigramMessageDialog();
+                var dialog = new TLMessageDialog();
                 dialog.Title = "Unpin message";
                 dialog.Message = "Would you like to unpin this message?";
                 dialog.PrimaryButtonText = "Yes";
@@ -560,7 +560,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var dialog = new UnigramMessageDialog();
+                var dialog = new TLMessageDialog();
                 dialog.Title = "Pin message";
                 dialog.Message = "Would you like to pin this message?";
                 dialog.CheckBoxLabel = "Notify all members";

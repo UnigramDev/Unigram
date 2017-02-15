@@ -104,7 +104,7 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand<TLChannel> RevokeLinkCommand => new RelayCommand<TLChannel>(RevokeLinkExecute);
         private async void RevokeLinkExecute(TLChannel channel)
         {
-            var dialog = new UnigramMessageDialog();
+            var dialog = new TLMessageDialog();
             dialog.Title = "Revoke link";
             dialog.Message = string.Format("Are you sure you want to revoke the link t.me/{0}?\r\n\r\nThe channel \"{1}\" will become private.", channel.Username, channel.FullName);
             dialog.PrimaryButtonText = "Revoke";
