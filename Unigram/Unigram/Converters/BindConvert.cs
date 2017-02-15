@@ -8,6 +8,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Windows.Globalization.DateTimeFormatting;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -32,7 +33,12 @@ namespace Unigram.Converters
 
         private BindConvert()
         {
+            PlaceholderColors = new List<Color>();
 
+            for (int i = 0; i < 6; i++)
+            {
+                PlaceholderColors.Add(((SolidColorBrush)Application.Current.Resources[$"Placeholder{i}Brush"]).Color);
+            }
         }
 
         private Dictionary<int, SolidColorBrush> _cacheBrushes = new Dictionary<int, SolidColorBrush>();
@@ -49,6 +55,8 @@ namespace Unigram.Converters
 
             return brush;
         }
+
+        public List<Color> PlaceholderColors { get; private set; }
 
         private SolidColorBrush BubbleInternal(int? value)
         {

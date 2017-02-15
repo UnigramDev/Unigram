@@ -66,6 +66,24 @@ namespace Unigram.Converters
             //    return DefaultPhotoConverter.ReturnOrEnqueueImage(timer, this.CheckChatSettings, encryptedFile, encryptedFile, null);
             //}
 
+            var user = value as TLUser;
+            if (user != null)
+            {
+                return _bitmapContext[user];
+            }
+
+            var chat = value as TLChat;
+            if (chat != null)
+            {
+                return _bitmapContext[chat];
+            }
+
+            var channel = value as TLChannel;
+            if (channel != null)
+            {
+                return _bitmapContext[channel];
+            }
+
             var userProfilePhoto = value as TLUserProfilePhoto;
             if (userProfilePhoto != null)
             {

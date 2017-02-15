@@ -9,9 +9,12 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Core.Dependency;
+using Unigram.Native.Tasks;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -75,11 +78,6 @@ namespace Unigram.Common
                 this[(object)photo] = new WeakReference<TLBitmapSource>(target);
                 return target;
             }
-
-            set
-            {
-                base[(object)photo] = new WeakReference<TLBitmapSource>(value);
-            }
         }
 
         public TLBitmapSource this[TLDocument document]
@@ -97,11 +95,6 @@ namespace Unigram.Common
                 this[(object)document] = new WeakReference<TLBitmapSource>(target);
                 return target;
             }
-
-            set
-            {
-                base[(object)document] = new WeakReference<TLBitmapSource>(value);
-            }
         }
 
         public TLBitmapSource this[TLUserProfilePhoto userProfilePhoto]
@@ -118,11 +111,6 @@ namespace Unigram.Common
                 target = new TLBitmapSource(userProfilePhoto);
                 this[(object)userProfilePhoto] = new WeakReference<TLBitmapSource>(target);
                 return target;
-            }
-
-            set
-            {
-                base[(object)userProfilePhoto] = new WeakReference<TLBitmapSource>(value);
             }
         }
 
@@ -142,10 +130,61 @@ namespace Unigram.Common
                 this[(object)chatPhoto] = new WeakReference<TLBitmapSource>(target);
                 return target;
             }
+        }
 
-            set
+        public TLBitmapSource this[TLUser user]
+        {
+            get
             {
-                base[(object)chatPhoto] = new WeakReference<TLBitmapSource>(value);
+                if (user.Photo == null)
+                {
+                    user.Photo = new TLUserProfilePhotoEmpty();
+                }
+
+                TLBitmapSource target;
+                WeakReference<TLBitmapSource> reference;
+                if (TryGetValue(user.Photo, out reference) && reference.TryGetTarget(out target))
+                {
+                    return target;
+                }
+
+                target = new TLBitmapSource(user);
+                this[(object)user.Photo] = new WeakReference<TLBitmapSource>(target);
+                return target;
+            }
+        }
+
+        public TLBitmapSource this[TLChat chat]
+        {
+            get
+            {
+                TLBitmapSource target;
+                WeakReference<TLBitmapSource> reference;
+                if (TryGetValue(chat.Photo, out reference) && reference.TryGetTarget(out target))
+                {
+                    return target;
+                }
+
+                target = new TLBitmapSource(chat);
+                this[(object)chat.Photo] = new WeakReference<TLBitmapSource>(target);
+                return target;
+            }
+        }
+
+        public TLBitmapSource this[TLChannel channel]
+        {
+            get
+            {
+                TLBitmapSource target;
+                WeakReference<TLBitmapSource> reference;
+                if (TryGetValue(channel.Photo, out reference) && reference.TryGetTarget(out target))
+                {
+                    return target;
+                }
+
+                target = new TLBitmapSource(channel);
+                this[(object)channel.Photo] = new WeakReference<TLBitmapSource>(target);
+                return target;
             }
         }
     }
@@ -154,27 +193,75 @@ namespace Unigram.Common
     {
         public const int PHASE_PLACEHOLDER = 0;
         public const int PHASE_THUMBNAIL = 1;
-        public const int PHASE_DEFINITIVE = 2;
+        public const int PHASE_FULL = 2;
 
         public int Phase { get; private set; }
 
         public TLBitmapSource() { }
 
+        public TLBitmapSource(TLUser user)
+        {
+            var userProfilePhoto = user.Photo as TLUserProfilePhoto;
+            if (userProfilePhoto != null)
+            {
+                if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
+                {
+                    SetProfilePlaceholder(user, "u" + user.Id, user.Id);
+                    SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
+                }
+            }
+            else
+            {
+                SetProfilePlaceholder(user, "u" + user.Id, user.Id);
+            }
+        }
+
+        public TLBitmapSource(TLChatBase chatBase)
+        {
+            TLChatPhotoBase chatPhotoBase = null;
+
+            var channel = chatBase as TLChannel;
+            if (channel != null)
+            {
+                chatPhotoBase = channel.Photo;
+            }
+
+            var chat = chatBase as TLChat;
+            if (chat != null)
+            {
+                chatPhotoBase = chat.Photo;
+            }
+
+            var chatPhoto = chatPhotoBase as TLChatPhoto;
+            if (chatPhoto != null)
+            {
+                if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
+                {
+                    SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id);
+                    SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
+                }
+            }
+            else
+            {
+                SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id);
+            }
+        }
+
         public TLBitmapSource(TLUserProfilePhoto userProfilePhoto)
         {
-            if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_DEFINITIVE) == false)
+            if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
             {
                 this.SetSource(new Uri("ms-appx:///Assets/Images/ProfilePlaceholder0.png"));
-                SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_DEFINITIVE);
+                SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
             }
         }
 
         public TLBitmapSource(TLChatPhoto chatPhoto)
         {
-            if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_DEFINITIVE) == false)
+            if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
             {
                 this.SetSource(new Uri("ms-appx:///Assets/Images/ProfilePlaceholder0.png"));
-                SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_DEFINITIVE);
+                SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
             }
         }
 
@@ -183,10 +270,10 @@ namespace Unigram.Common
             var photo = photoBase as TLPhoto;
             if (photo != null)
             {
-                if (TrySetSource(photo.Full, PHASE_DEFINITIVE) == false)
+                if (TrySetSource(photo.Full, PHASE_FULL) == false)
                 {
                     SetSource(photo.Thumb, PHASE_THUMBNAIL);
-                    SetSource(photo.Full, PHASE_DEFINITIVE);
+                    SetSource(photo.Full, PHASE_FULL);
                 }
             }
         }
@@ -194,6 +281,26 @@ namespace Unigram.Common
         public TLBitmapSource(TLDocument document)
         {
             SetSource(document.Thumb, PHASE_THUMBNAIL);
+        }
+
+        public async void SetProfilePlaceholder(object value, string group, int id)
+        {
+            if (PHASE_PLACEHOLDER >= Phase)
+            {
+                Phase = PHASE_PLACEHOLDER;
+
+                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
+                using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    if (stream.Size == 0)
+                    {
+                        PlaceholderImageSource.Draw(BindConvert.Current.PlaceholderColors[id % 6], InitialNameStringConverter.Convert(value), stream);
+                        stream.Seek(0);
+                    }
+
+                    SetSource(stream);
+                }
+            }
         }
 
         public bool TrySetSource(TLPhotoSizeBase photoSizeBase, int phase)

@@ -109,7 +109,7 @@ namespace Unigram.Controls.Items
         {
             //Placeholder.Fill = Application.Current.Resources[$"Placeholder{Utils.GetColorIndex(ViewModel.WithId)}ImageBrush"] as ImageBrush;
 
-            Placeholder.Fill = BindConvert.Current.Bubble(ViewModel.WithId);
+            //Placeholder.Fill = BindConvert.Current.Bubble(ViewModel.WithId);
         }
 
         private string UpdateBriefLabel(TLDialog dialog)

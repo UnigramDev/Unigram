@@ -258,7 +258,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <HyperlinkButton Click="ProfileBubble_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" Margin="12,12,0,0" Padding="0" Width="36" Height="36">
-                    <Grid Width="36" Height="36">
+                    <!--<Grid Width="36" Height="36">
                         <Ellipse Fill="{Binding FromId, Converter={StaticResource BubblePlaceholderConverter}}"/>
                         <Ellipse Width="36" Height="36">
                             <Ellipse.Fill>
@@ -266,7 +266,12 @@
                             </Ellipse.Fill>
                         </Ellipse>
                         <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
-                    </Grid>
+                    </Grid>-->
+                    <Ellipse Width="36" Height="36">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{Binding From, Converter={StaticResource DefaultPhotoConverter}}"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
                 </HyperlinkButton>
                 <Grid Margin="0,2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -375,7 +380,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <HyperlinkButton Click="ProfileBubble_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" Margin="12,12,0,0" Padding="0" Width="36" Height="36">
-                    <Grid Width="36" Height="36">
+                    <!--<Grid Width="36" Height="36">
                         <Ellipse Fill="{Binding FromId, Converter={StaticResource BubblePlaceholderConverter}}"/>
                         <Ellipse Width="36" Height="36">
                             <Ellipse.Fill>
@@ -383,7 +388,12 @@
                             </Ellipse.Fill>
                         </Ellipse>
                         <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
-                    </Grid>
+                    </Grid>-->
+                    <Ellipse Width="36" Height="36">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{Binding From, Converter={StaticResource DefaultPhotoConverter}}"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
                 </HyperlinkButton>
                 <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
             </Grid>
@@ -565,7 +575,7 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <!--User icon-->
-                        <Grid Width="36" Height="36" Margin="12,0">
+                        <!--<Grid Width="36" Height="36" Margin="12,0">
                             <Ellipse Fill="{Binding With.Id, Converter={StaticResource BubblePlaceholderConverter}}"/>
                             <TextBlock Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.With, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <Ellipse x:Name="elpDialogIcon">
@@ -574,7 +584,16 @@
                                 </Ellipse.Fill>
                             </Ellipse>
                             <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
-                        </Grid>
+                        </Grid>-->
+
+                        <Ellipse Width="36" Height="36" Margin="12,0">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="{Binding With, Converter={StaticResource DefaultPhotoConverter}}" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+
+
+
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                             <TextBlock x:Name="tblDialogName"
                                        Text="{Binding With.FullName}"

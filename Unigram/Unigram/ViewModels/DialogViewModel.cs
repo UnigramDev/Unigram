@@ -648,7 +648,7 @@ namespace Unigram.ViewModels
 
             LastSeen = await GetSubtitle();
 
-#if !DEBUG
+//#if !DEBUG
             if (dialog != null && Messages.Count > 0)
             {
                 var unread = dialog.UnreadCount;
@@ -667,7 +667,7 @@ namespace Unigram.ViewModels
                 dialog.UnreadCount = dialog.UnreadCount - unread;
                 dialog.RaisePropertyChanged(() => dialog.UnreadCount);
             }
-#endif
+//#endif
 
             Aggregator.Subscribe(this);
             //Aggregator.Publish("PORCODIO");
