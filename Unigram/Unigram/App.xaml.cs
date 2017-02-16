@@ -203,7 +203,7 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            DefaultPhotoConverter.BitmapContext.Clear();
+            //DefaultPhotoConverter.BitmapContext.Clear();
 
             var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
             cacheService.TryCommit();
