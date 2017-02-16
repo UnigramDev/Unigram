@@ -99,41 +99,6 @@ namespace Unigram.Common
             }
         }
 
-        public BitmapImage this[TLUserProfilePhoto userProfilePhoto]
-        {
-            get
-            {
-                TLBitmapSource target;
-                WeakReference<TLBitmapSource> reference;
-                if (_context.TryGetValue(userProfilePhoto, out reference) && reference.TryGetTarget(out target))
-                {
-                    return target.Image;
-                }
-
-                target = new TLBitmapSource(userProfilePhoto);
-                _context[userProfilePhoto] = new WeakReference<TLBitmapSource>(target);
-                return target.Image;
-            }
-        }
-
-
-        public BitmapImage this[TLChatPhoto chatPhoto]
-        {
-            get
-            {
-                TLBitmapSource target;
-                WeakReference<TLBitmapSource> reference;
-                if (_context.TryGetValue(chatPhoto, out reference) && reference.TryGetTarget(out target))
-                {
-                    return target.Image;
-                }
-
-                target = new TLBitmapSource(chatPhoto);
-                _context[chatPhoto] = new WeakReference<TLBitmapSource>(target);
-                return target.Image;
-            }
-        }
-
         public BitmapImage this[TLUser user]
         {
             get
@@ -253,24 +218,6 @@ namespace Unigram.Common
             else
             {
                 SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id);
-            }
-        }
-
-        public TLBitmapSource(TLUserProfilePhoto userProfilePhoto)
-        {
-            if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
-            {
-                Image.SetSource(new Uri("ms-appx:///Assets/Images/ProfilePlaceholder0.png"));
-                SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
-            }
-        }
-
-        public TLBitmapSource(TLChatPhoto chatPhoto)
-        {
-            if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
-            {
-                Image.SetSource(new Uri("ms-appx:///Assets/Images/ProfilePlaceholder0.png"));
-                SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
             }
         }
 

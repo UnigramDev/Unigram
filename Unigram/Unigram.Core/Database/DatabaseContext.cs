@@ -29,6 +29,8 @@ namespace Unigram.Core
 
         #region Queries
 
+        private const string COUNT_TABLE = "SELECT COUNT(*) FROM `{0}`";
+
         private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE `{0}`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'Thumb' string, 'DCId' int, 'Version' int, 'Attributes' string)";
         private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes) VALUES({1},{2},{3},'{4}',{5},'{6}',{7},{8},'{9}');";
         private const string SELECT_TABLE_DCOUMENT = "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes FROM `{0}`";
@@ -48,9 +50,32 @@ namespace Unigram.Core
             Sqlite3.sqlite3_finalize(statement);
         }
 
+        private int ExecuteWithResult(Database database, string query)
+        {
+            Statement statement = null;
+            Sqlite3.sqlite3_prepare_v2(database, query, out statement);
+            Sqlite3.sqlite3_step(statement);
+            var result = Sqlite3.sqlite3_column_int(statement, 0);
+            Sqlite3.sqlite3_finalize(statement);
+
+            return result;
+        }
+
         private string Escape(string str)
         {
             return str.Replace("'", "''");
+        }
+
+        public int Count(string table)
+        {
+            Database database;
+            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+
+            Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
+            var result = ExecuteWithResult(database, string.Format(COUNT_TABLE, table));
+            Sqlite3.sqlite3_close(database);
+
+            return result;
         }
 
         public void InsertDocuments(string table, IEnumerable<TLDocument> documents, bool delete)

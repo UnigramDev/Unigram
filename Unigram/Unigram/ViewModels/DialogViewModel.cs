@@ -1867,6 +1867,7 @@ namespace Unigram.ViewModels
         }
 
 #endregion
+
     }
 
     public class MessageCollection : ObservableCollection<TLMessageBase>

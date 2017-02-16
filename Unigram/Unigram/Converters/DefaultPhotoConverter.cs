@@ -87,8 +87,6 @@ namespace Unigram.Converters
             var userProfilePhoto = value as TLUserProfilePhoto;
             if (userProfilePhoto != null)
             {
-                return BitmapContext[userProfilePhoto];
-
                 var fileLocation = userProfilePhoto.PhotoSmall as TLFileLocation;
                 if (fileLocation != null)
                 {
@@ -99,8 +97,6 @@ namespace Unigram.Converters
             var chatPhoto = value as TLChatPhoto;
             if (chatPhoto != null)
             {
-                return BitmapContext[chatPhoto];
-
                 var fileLocation = chatPhoto.PhotoSmall as TLFileLocation;
                 if (fileLocation != null)
                 {
@@ -194,7 +190,7 @@ namespace Unigram.Converters
             var photo = value as TLPhoto;
             if (photo != null)
             {
-                //return _bitmapContext[photo];
+                return BitmapContext[photo];
 
                 //double num = 400;
                 //double num2;
