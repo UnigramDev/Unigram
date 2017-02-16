@@ -65,7 +65,7 @@ namespace Unigram.Common
     {
         private Dictionary<object, WeakReference<TLBitmapSource>> _context = new Dictionary<object, WeakReference<TLBitmapSource>>();
 
-        public TLBitmapSource this[TLPhoto photo]
+        public BitmapImage this[TLPhoto photo]
         {
             get
             {
@@ -73,16 +73,16 @@ namespace Unigram.Common
                 WeakReference<TLBitmapSource> reference;
                 if (_context.TryGetValue(photo, out reference) && reference.TryGetTarget(out target))
                 {
-                    return target;
+                    return target.Image;
                 }
 
                 target = new TLBitmapSource(photo);
                 _context[photo] = new WeakReference<TLBitmapSource>(target);
-                return target;
+                return target.Image;
             }
         }
 
-        public TLBitmapSource this[TLDocument document]
+        public BitmapImage this[TLDocument document]
         {
             get
             {
@@ -90,16 +90,16 @@ namespace Unigram.Common
                 WeakReference<TLBitmapSource> reference;
                 if (_context.TryGetValue(document, out reference) && reference.TryGetTarget(out target))
                 {
-                    return target;
+                    return target.Image;
                 }
 
                 target = new TLBitmapSource(document);
                 _context[document] = new WeakReference<TLBitmapSource>(target);
-                return target;
+                return target.Image;
             }
         }
 
-        public TLBitmapSource this[TLUserProfilePhoto userProfilePhoto]
+        public BitmapImage this[TLUserProfilePhoto userProfilePhoto]
         {
             get
             {
@@ -107,17 +107,17 @@ namespace Unigram.Common
                 WeakReference<TLBitmapSource> reference;
                 if (_context.TryGetValue(userProfilePhoto, out reference) && reference.TryGetTarget(out target))
                 {
-                    return target;
+                    return target.Image;
                 }
 
                 target = new TLBitmapSource(userProfilePhoto);
                 _context[userProfilePhoto] = new WeakReference<TLBitmapSource>(target);
-                return target;
+                return target.Image;
             }
         }
 
 
-        public TLBitmapSource this[TLChatPhoto chatPhoto]
+        public BitmapImage this[TLChatPhoto chatPhoto]
         {
             get
             {
@@ -125,16 +125,16 @@ namespace Unigram.Common
                 WeakReference<TLBitmapSource> reference;
                 if (_context.TryGetValue(chatPhoto, out reference) && reference.TryGetTarget(out target))
                 {
-                    return target;
+                    return target.Image;
                 }
 
                 target = new TLBitmapSource(chatPhoto);
                 _context[chatPhoto] = new WeakReference<TLBitmapSource>(target);
-                return target;
+                return target.Image;
             }
         }
 
-        public TLBitmapSource this[TLUser user]
+        public BitmapImage this[TLUser user]
         {
             get
             {
@@ -147,16 +147,16 @@ namespace Unigram.Common
                 WeakReference<TLBitmapSource> reference;
                 if (_context.TryGetValue(user.Photo, out reference) && reference.TryGetTarget(out target))
                 {
-                    return target;
+                    return target.Image;
                 }
 
                 target = new TLBitmapSource(user);
                 _context[user.Photo] = new WeakReference<TLBitmapSource>(target);
-                return target;
+                return target.Image;
             }
         }
 
-        public TLBitmapSource this[TLChat chat]
+        public BitmapImage this[TLChat chat]
         {
             get
             {
@@ -164,16 +164,16 @@ namespace Unigram.Common
                 WeakReference<TLBitmapSource> reference;
                 if (_context.TryGetValue(chat.Photo, out reference) && reference.TryGetTarget(out target))
                 {
-                    return target;
+                    return target.Image;
                 }
 
                 target = new TLBitmapSource(chat);
                 _context[chat.Photo] = new WeakReference<TLBitmapSource>(target);
-                return target;
+                return target.Image;
             }
         }
 
-        public TLBitmapSource this[TLChannel channel]
+        public BitmapImage this[TLChannel channel]
         {
             get
             {
@@ -181,12 +181,12 @@ namespace Unigram.Common
                 WeakReference<TLBitmapSource> reference;
                 if (_context.TryGetValue(channel.Photo, out reference) && reference.TryGetTarget(out target))
                 {
-                    return target;
+                    return target.Image;
                 }
 
                 target = new TLBitmapSource(channel);
                 _context[channel.Photo] = new WeakReference<TLBitmapSource>(target);
-                return target;
+                return target.Image;
             }
         }
 
@@ -196,13 +196,15 @@ namespace Unigram.Common
         }
     }
 
-    public class TLBitmapSource : BitmapSource
+    public class TLBitmapSource
     {
         public const int PHASE_PLACEHOLDER = 0;
         public const int PHASE_THUMBNAIL = 1;
         public const int PHASE_FULL = 2;
 
         public int Phase { get; private set; }
+
+        public BitmapImage Image { get; private set; } = new BitmapImage();
 
         public TLBitmapSource() { }
 
@@ -258,7 +260,7 @@ namespace Unigram.Common
         {
             if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
             {
-                this.SetSource(new Uri("ms-appx:///Assets/Images/ProfilePlaceholder0.png"));
+                Image.SetSource(new Uri("ms-appx:///Assets/Images/ProfilePlaceholder0.png"));
                 SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
             }
         }
@@ -267,7 +269,7 @@ namespace Unigram.Common
         {
             if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
             {
-                this.SetSource(new Uri("ms-appx:///Assets/Images/ProfilePlaceholder0.png"));
+                Image.SetSource(new Uri("ms-appx:///Assets/Images/ProfilePlaceholder0.png"));
                 SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
             }
         }
@@ -305,7 +307,7 @@ namespace Unigram.Common
                         stream.Seek(0);
                     }
 
-                    SetSource(stream);
+                    Image.SetSource(stream);
                 }
             }
         }
@@ -324,7 +326,7 @@ namespace Unigram.Common
                 if (phase >= Phase)
                 {
                     Phase = phase;
-                    this.SetSource(photoCachedSize.Bytes);
+                    Image.SetSource(photoCachedSize.Bytes);
                     return true;
                 }
             }
@@ -346,7 +348,7 @@ namespace Unigram.Common
                 if (phase >= Phase)
                 {
                     Phase = phase;
-                    this.SetSource(photoCachedSize.Bytes);
+                    Image.SetSource(photoCachedSize.Bytes);
                 }
             }
         }
@@ -360,7 +362,7 @@ namespace Unigram.Common
                 var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    this.SetSource(FileUtils.GetTempFileUri(fileName));
+                    Image.SetSource(FileUtils.GetTempFileUri(fileName));
                     return true;
                 }
             }
@@ -377,7 +379,7 @@ namespace Unigram.Common
                 var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    this.SetSource(FileUtils.GetTempFileUri(fileName));
+                    Image.SetSource(FileUtils.GetTempFileUri(fileName));
                 }
                 else
                 {
@@ -388,7 +390,7 @@ namespace Unigram.Common
 
                         Execute.BeginOnUIThread(() =>
                         {
-                            this.SetSource(FileUtils.GetTempFileUri(fileName));
+                            Image.SetSource(FileUtils.GetTempFileUri(fileName));
                         });
                     });
                 }
