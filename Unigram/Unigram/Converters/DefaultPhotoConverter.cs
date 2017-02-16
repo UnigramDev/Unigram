@@ -28,7 +28,7 @@ namespace Unigram.Converters
         private static readonly Dictionary<string, WeakReference> _cachedSources = new Dictionary<string, WeakReference>();
         private static readonly Dictionary<string, WeakReference<WriteableBitmap>> _cachedWebPImages = new Dictionary<string, WeakReference<WriteableBitmap>>();
 
-        private static readonly TLBitmapContext _bitmapContext = new TLBitmapContext();
+        public static readonly TLBitmapContext BitmapContext = new TLBitmapContext();
 
         private static readonly AnimatedImageSourceRendererFactory _videoFactory = new AnimatedImageSourceRendererFactory();
 
@@ -69,25 +69,25 @@ namespace Unigram.Converters
             var user = value as TLUser;
             if (user != null)
             {
-                return _bitmapContext[user];
+                return BitmapContext[user];
             }
 
             var chat = value as TLChat;
             if (chat != null)
             {
-                return _bitmapContext[chat];
+                return BitmapContext[chat];
             }
 
             var channel = value as TLChannel;
             if (channel != null)
             {
-                return _bitmapContext[channel];
+                return BitmapContext[channel];
             }
 
             var userProfilePhoto = value as TLUserProfilePhoto;
             if (userProfilePhoto != null)
             {
-                return _bitmapContext[userProfilePhoto];
+                return BitmapContext[userProfilePhoto];
 
                 var fileLocation = userProfilePhoto.PhotoSmall as TLFileLocation;
                 if (fileLocation != null)
@@ -99,7 +99,7 @@ namespace Unigram.Converters
             var chatPhoto = value as TLChatPhoto;
             if (chatPhoto != null)
             {
-                return _bitmapContext[chatPhoto];
+                return BitmapContext[chatPhoto];
 
                 var fileLocation = chatPhoto.PhotoSmall as TLFileLocation;
                 if (fileLocation != null)

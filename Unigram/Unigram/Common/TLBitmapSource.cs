@@ -61,21 +61,23 @@ namespace Unigram.Common
         }
     }
 
-    public class TLBitmapContext : Dictionary<object, WeakReference<TLBitmapSource>>
+    public class TLBitmapContext
     {
+        private Dictionary<object, WeakReference<TLBitmapSource>> _context = new Dictionary<object, WeakReference<TLBitmapSource>>();
+
         public TLBitmapSource this[TLPhoto photo]
         {
             get
             {
                 TLBitmapSource target;
                 WeakReference<TLBitmapSource> reference;
-                if (TryGetValue(photo, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(photo, out reference) && reference.TryGetTarget(out target))
                 {
                     return target;
                 }
 
                 target = new TLBitmapSource(photo);
-                this[(object)photo] = new WeakReference<TLBitmapSource>(target);
+                _context[photo] = new WeakReference<TLBitmapSource>(target);
                 return target;
             }
         }
@@ -86,13 +88,13 @@ namespace Unigram.Common
             {
                 TLBitmapSource target;
                 WeakReference<TLBitmapSource> reference;
-                if (TryGetValue(document, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(document, out reference) && reference.TryGetTarget(out target))
                 {
                     return target;
                 }
 
                 target = new TLBitmapSource(document);
-                this[(object)document] = new WeakReference<TLBitmapSource>(target);
+                _context[document] = new WeakReference<TLBitmapSource>(target);
                 return target;
             }
         }
@@ -103,13 +105,13 @@ namespace Unigram.Common
             {
                 TLBitmapSource target;
                 WeakReference<TLBitmapSource> reference;
-                if (TryGetValue(userProfilePhoto, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(userProfilePhoto, out reference) && reference.TryGetTarget(out target))
                 {
                     return target;
                 }
 
                 target = new TLBitmapSource(userProfilePhoto);
-                this[(object)userProfilePhoto] = new WeakReference<TLBitmapSource>(target);
+                _context[userProfilePhoto] = new WeakReference<TLBitmapSource>(target);
                 return target;
             }
         }
@@ -121,13 +123,13 @@ namespace Unigram.Common
             {
                 TLBitmapSource target;
                 WeakReference<TLBitmapSource> reference;
-                if (TryGetValue(chatPhoto, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(chatPhoto, out reference) && reference.TryGetTarget(out target))
                 {
                     return target;
                 }
 
                 target = new TLBitmapSource(chatPhoto);
-                this[(object)chatPhoto] = new WeakReference<TLBitmapSource>(target);
+                _context[chatPhoto] = new WeakReference<TLBitmapSource>(target);
                 return target;
             }
         }
@@ -143,13 +145,13 @@ namespace Unigram.Common
 
                 TLBitmapSource target;
                 WeakReference<TLBitmapSource> reference;
-                if (TryGetValue(user.Photo, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(user.Photo, out reference) && reference.TryGetTarget(out target))
                 {
                     return target;
                 }
 
                 target = new TLBitmapSource(user);
-                this[(object)user.Photo] = new WeakReference<TLBitmapSource>(target);
+                _context[user.Photo] = new WeakReference<TLBitmapSource>(target);
                 return target;
             }
         }
@@ -160,13 +162,13 @@ namespace Unigram.Common
             {
                 TLBitmapSource target;
                 WeakReference<TLBitmapSource> reference;
-                if (TryGetValue(chat.Photo, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(chat.Photo, out reference) && reference.TryGetTarget(out target))
                 {
                     return target;
                 }
 
                 target = new TLBitmapSource(chat);
-                this[(object)chat.Photo] = new WeakReference<TLBitmapSource>(target);
+                _context[chat.Photo] = new WeakReference<TLBitmapSource>(target);
                 return target;
             }
         }
@@ -177,15 +179,20 @@ namespace Unigram.Common
             {
                 TLBitmapSource target;
                 WeakReference<TLBitmapSource> reference;
-                if (TryGetValue(channel.Photo, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(channel.Photo, out reference) && reference.TryGetTarget(out target))
                 {
                     return target;
                 }
 
                 target = new TLBitmapSource(channel);
-                this[(object)channel.Photo] = new WeakReference<TLBitmapSource>(target);
+                _context[channel.Photo] = new WeakReference<TLBitmapSource>(target);
                 return target;
             }
+        }
+
+        public void Clear()
+        {
+            _context.Clear();
         }
     }
 

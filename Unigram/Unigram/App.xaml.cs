@@ -33,6 +33,7 @@ using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Views.Login;
 using Windows.UI.Core;
+using Unigram.Converters;
 
 namespace Unigram
 {
@@ -202,6 +203,8 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
+            DefaultPhotoConverter.BitmapContext.Clear();
+
             var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
             cacheService.TryCommit();
 
