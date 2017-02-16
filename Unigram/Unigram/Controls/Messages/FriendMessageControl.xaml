@@ -15,7 +15,7 @@
     MaxWidth="430">
 
     <!-- TODO: not the right way -->
-    <Border Height="10" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
+    <Border Height="8" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <UserControl x:Name="LayoutRoot">
         <Grid Margin="{ThemeResource MessageContentMargin}" 

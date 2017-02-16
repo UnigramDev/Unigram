@@ -180,13 +180,13 @@ namespace Unigram.Common
             {
                 if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
                 {
-                    SetProfilePlaceholder(user, "u" + user.Id, user.Id);
+                    SetProfilePlaceholder(user, "u" + user.Id, user.Id, user.FullName);
                     SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
                 }
             }
             else
             {
-                SetProfilePlaceholder(user, "u" + user.Id, user.Id);
+                SetProfilePlaceholder(user, "u" + user.Id, user.Id, user.FullName);
             }
         }
 
@@ -211,13 +211,13 @@ namespace Unigram.Common
             {
                 if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
                 {
-                    SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id);
+                    SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.FullName);
                     SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
                 }
             }
             else
             {
-                SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id);
+                SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.FullName);
             }
         }
 
@@ -239,13 +239,13 @@ namespace Unigram.Common
             SetSource(document.Thumb, PHASE_THUMBNAIL);
         }
 
-        public async void SetProfilePlaceholder(object value, string group, int id)
+        public async void SetProfilePlaceholder(object value, string group, int id, string name)
         {
             if (PHASE_PLACEHOLDER >= Phase)
             {
                 Phase = PHASE_PLACEHOLDER;
 
-                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
+                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\placeholders\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
                 using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                 {
                     if (stream.Size == 0)
@@ -304,11 +304,11 @@ namespace Unigram.Common
         {
             if (phase >= Phase && location != null)
             {
-                Phase = phase;
-
                 var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
+                    Phase = phase;
+
                     Image.SetSource(FileUtils.GetTempFileUri(fileName));
                     return true;
                 }

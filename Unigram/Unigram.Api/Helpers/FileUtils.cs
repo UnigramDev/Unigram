@@ -38,6 +38,7 @@ namespace Telegram.Api.Helpers
             if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp")) == false)
             {
                 Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp"));
+                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\placeholders"));
             }
         }
 
