@@ -636,8 +636,8 @@ namespace Unigram.Common
                 var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                 if (service != null)
                 {
-                    var user = InMemoryCacheService.Current.GetUser((string)data);
-                    if (user != null)
+                    var user = InMemoryCacheService.Current.GetUser((string)data) as TLUser;
+                    if (user != null && user.HasAccessHash)
                     {
                         service.Navigate(typeof(UserInfoPage), user);
                         return;
@@ -668,9 +668,20 @@ namespace Unigram.Common
                         var peerChannel = response.Result.Peer as TLPeerChannel;
                         if (peerChannel != null || peerChat != null)
                         {
-                            // TODO
+                            service.Navigate(typeof(DialogPage), (object)peerChannel ?? peerChat);
                             return;
                         }
+
+                        //var peerChannel = response.Result.Peer as TLPeerChannel;
+                        //if (peerChannel != null)
+                        //{
+                        //    var chatBase = response.Result.Chats.FirstOrDefault();
+                        //    if (chatBase != null)
+                        //    {
+                        //        service.Navigate(typeof(ChatInfoPage), chatBase);
+                        //        return;
+                        //    }
+                        //}
 
                         await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
                     }
