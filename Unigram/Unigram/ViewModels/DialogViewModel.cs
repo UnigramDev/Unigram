@@ -192,19 +192,31 @@ namespace Unigram.ViewModels
                 }
             }
 
+            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
+
+            //return;
+
             var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, maxId, 15);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
 
-                foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
+                Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Replies processed");
+
+                //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
+                for (int i = 0; i < result.Result.Messages.Count; i++)
                 {
+                    var item = result.Result.Messages[i];
                     Messages.Insert(0, item);
                     //InsertMessage(item as TLMessageCommonBase);
                 }
 
-                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Items added");
+
+                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                for (int i = result.Result.Messages.Count - 1; i >= 0; i--)
                 {
+                    var item = result.Result.Messages[i];
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
                     {
@@ -244,8 +256,10 @@ namespace Unigram.ViewModels
             {
                 ProcessReplies(result.Result.Messages);
 
-                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                for (int i = result.Result.Messages.Count - 1; i >= 0; i--)
                 {
+                    var item = result.Result.Messages[i];
                     if (item.Id > maxId)
                     {
                         Messages.Add(item);
@@ -290,7 +304,7 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
 
-            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
+            Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
 
             if (previousId.HasValue)
             {
@@ -304,14 +318,18 @@ namespace Unigram.ViewModels
             {
                 ProcessReplies(result.Result.Messages);
 
-                foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
+                //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
+                for (int i = 0; i < result.Result.Messages.Count; i++)
                 {
+                    var item = result.Result.Messages[i];
                     Messages.Insert(0, item);
                     //InsertMessage(item as TLMessageCommonBase);
                 }
 
-                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                for (int i = result.Result.Messages.Count - 1; i >= 0; i--)
                 {
+                    var item = result.Result.Messages[i];
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
                     {
@@ -336,7 +354,7 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
 
-            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
+            Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
 
             var maxId = _currentDialog?.ReadInboxMaxId ?? int.MaxValue;
             var lastRead = true;
@@ -346,9 +364,13 @@ namespace Unigram.ViewModels
             {
                 ProcessReplies(result.Result.Messages);
 
-                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                for (int i = result.Result.Messages.Count - 1; i >= 0; i--)
                 {
-                    if (item.Id > maxId && lastRead)
+                    var item = result.Result.Messages[i];
+                    var message = item as TLMessageCommonBase;
+
+                    if (item.Id > maxId && lastRead && message != null && !message.IsOut)
                     {
                         var serviceMessage = new TLMessageService
                         {
@@ -617,15 +639,6 @@ namespace Unigram.ViewModels
 
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
 
-            if (tuple != null)
-            {
-                await LoadMessageSliceAsync(null, tuple.Item2);
-            }
-            else
-            {
-                await LoadFirstSliceAsync();
-            }
-
             var dialog = _currentDialog;
             if (dialog != null && dialog.HasDraft)
             {
@@ -667,6 +680,15 @@ namespace Unigram.ViewModels
 //#endif
 
             Aggregator.Subscribe(this);
+
+            if (tuple != null)
+            {
+                await LoadMessageSliceAsync(null, tuple.Item2);
+            }
+            else
+            {
+                await LoadFirstSliceAsync();
+            }
             //Aggregator.Publish("PORCODIO");
 
             //StickersRecent();

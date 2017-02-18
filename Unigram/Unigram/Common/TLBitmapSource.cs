@@ -163,6 +163,13 @@ namespace Unigram.Common
 
     public class TLBitmapSource
     {
+        private static readonly IDownloadFileManager _downloadFileManager;
+
+        static TLBitmapSource()
+        {
+            _downloadFileManager = UnigramContainer.Instance.ResolveType<IDownloadFileManager>();
+        }
+
         public const int PHASE_PLACEHOLDER = 0;
         public const int PHASE_THUMBNAIL = 1;
         public const int PHASE_FULL = 2;
@@ -330,15 +337,27 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    Execute.BeginOnThreadPool(async () =>
-                    {
-                        var manager = UnigramContainer.Instance.ResolveType<IDownloadFileManager>();
-                        await manager.DownloadFileAsync(location, fileSize);
+                    //Execute.BeginOnThreadPool(async () =>
+                    //{
+                    //    var result = await _downloadFileManager.DownloadFileAsync(location, fileSize);
+                    //    if (result != null && Phase <= phase)
+                    //    {
+                    //        Execute.BeginOnUIThread(() =>
+                    //        {
+                    //            Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    //        });
+                    //    }
+                    //});
 
-                        Execute.BeginOnUIThread(() =>
+                    _downloadFileManager.DownloadFile(location, fileSize, result =>
+                    {
+                        if (result != null && Phase <= phase)
                         {
-                            Image.SetSource(FileUtils.GetTempFileUri(fileName));
-                        });
+                            Execute.BeginOnUIThread(() =>
+                            {
+                                Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                            });
+                        }
                     });
                 }
             }
