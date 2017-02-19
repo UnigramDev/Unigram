@@ -38,6 +38,7 @@ using Unigram.Core.Helpers;
 using Org.BouncyCastle.Security;
 using Unigram.Core;
 using Unigram.Services;
+using Windows.Storage.FileProperties;
 
 namespace Unigram.ViewModels
 {
@@ -658,7 +659,7 @@ namespace Unigram.ViewModels
 
             LastSeen = await GetSubtitle();
 
-//#if !DEBUG
+            //#if !DEBUG
             if (dialog != null && Messages.Count > 0)
             {
                 var unread = dialog.UnreadCount;
@@ -677,7 +678,7 @@ namespace Unigram.ViewModels
                 dialog.UnreadCount = dialog.UnreadCount - unread;
                 dialog.RaisePropertyChanged(() => dialog.UnreadCount);
             }
-//#endif
+            //#endif
 
             Aggregator.Subscribe(this);
 
@@ -947,7 +948,7 @@ namespace Unigram.ViewModels
             }
         }
 
-#region Reply 
+        #region Reply 
 
         private TLMessageBase _reply;
         public TLMessageBase Reply
@@ -986,7 +987,7 @@ namespace Unigram.ViewModels
 
         public RelayCommand ClearReplyCommand => new RelayCommand(() => { Reply = null; });
 
-#endregion
+        #endregion
 
         public RelayCommand PinnedCommand => new RelayCommand(PinnedExecute);
         private async void PinnedExecute()
@@ -1216,6 +1217,100 @@ namespace Unigram.ViewModels
             await file.CopyAndReplaceAsync(fileCache);
 
             var basicProps = await fileCache.GetBasicPropertiesAsync();
+            var thumbnail = await FileUtils.GetFileThumbnailAsync(file);
+            if (thumbnail as TLPhotoSize != null)
+            {
+                await SendThumbnailFileAsync(file, fileLocation, fileName, basicProps, thumbnail as TLPhotoSize, fileCache, caption);
+            }
+            else
+            {
+                var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+                var document = new TLDocument
+                {
+                    Id = 0,
+                    AccessHash = 0,
+                    Date = date,
+                    Size = (int)basicProps.Size,
+                    MimeType = fileCache.ContentType,
+                    Attributes = new TLVector<TLDocumentAttributeBase>
+                {
+                    new TLDocumentAttributeFilename
+                    {
+                        FileName = file.Name
+                    }
+                }
+                };
+
+                var media = new TLMessageMediaDocument
+                {
+                    Document = document,
+                    Caption = caption
+                };
+
+                var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+                if (Reply != null)
+                {
+                    message.HasReplyToMsgId = true;
+                    message.ReplyToMsgId = Reply.Id;
+                    message.Reply = Reply;
+                    Reply = null;
+                }
+
+                var previousMessage = InsertSendingMessage(message);
+                CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+                {
+                    var fileId = TLLong.Random();
+                    var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
+                    if (upload != null)
+                    {
+                        var inputMedia = new TLInputMediaUploadedDocument
+                        {
+                            File = new TLInputFile
+                            {
+                                Id = upload.FileId,
+                                Md5Checksum = string.Empty,
+                                Name = fileName,
+                                Parts = upload.Parts.Count,
+                            },
+                            MimeType = document.MimeType,
+                            Caption = media.Caption,
+                            Attributes = new TLVector<TLDocumentAttributeBase>
+                            {
+                                new TLDocumentAttributeFilename
+                                {
+                                    FileName = file.Name
+                                }
+                            }
+                        };
+
+                        var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                        //if (result.IsSucceeded)
+                        //{
+                        //    var update = result.Result as TLUpdates;
+                        //    if (update != null)
+                        //    {
+                        //        var newMessage = update.Updates.OfType<TLUpdateNewMessage>().FirstOrDefault();
+                        //        if (newMessage != null)
+                        //        {
+                        //            var newM = newMessage.Message as TLMessage;
+                        //            if (newM != null)
+                        //            {
+                        //                message.Media = newM.Media;
+                        //                message.RaisePropertyChanged(() => message.Media);
+                        //            }
+                        //        }
+                        //    }
+                        //}
+                    }
+                });
+            }
+        }
+
+        private async Task SendThumbnailFileAsync(StorageFile file, TLFileLocation fileLocation, string fileName, BasicProperties basicProps, TLPhotoSize thumbnail, StorageFile fileCache, string caption)
+        {
+            var desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
 
@@ -1226,6 +1321,7 @@ namespace Unigram.ViewModels
                 Date = date,
                 Size = (int)basicProps.Size,
                 MimeType = fileCache.ContentType,
+                Thumb = thumbnail,
                 Attributes = new TLVector<TLDocumentAttributeBase>
                 {
                     new TLDocumentAttributeFilename
@@ -1258,27 +1354,39 @@ namespace Unigram.ViewModels
                 var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
                 if (upload != null)
                 {
-                    var inputMedia = new TLInputMediaUploadedDocument
+                    var thumbFileId = TLLong.Random();
+                    var thumbUpload = await _uploadDocumentManager.UploadFileAsync(thumbFileId, desiredName);
+                    if (thumbUpload != null)
                     {
-                        File = new TLInputFile
+                        var inputMedia = new TLInputMediaUploadedThumbDocument
                         {
-                            Id = upload.FileId,
-                            Md5Checksum = string.Empty,
-                            Name = fileName,
-                            Parts = upload.Parts.Count,
-                        },
-                        MimeType = document.MimeType,
-                        Caption = media.Caption,
-                        Attributes = new TLVector<TLDocumentAttributeBase>
-                        {
-                            new TLDocumentAttributeFilename
+                            File = new TLInputFile
                             {
-                                FileName = file.Name
+                                Id = upload.FileId,
+                                Md5Checksum = string.Empty,
+                                Name = fileName,
+                                Parts = upload.Parts.Count,
+                            },
+                            Thumb = new TLInputFile
+                            {
+                                Id = thumbUpload.FileId,
+                                Md5Checksum = string.Empty,
+                                Name = desiredName,
+                                Parts = thumbUpload.Parts.Count
+                            },
+                            MimeType = document.MimeType,
+                            Caption = media.Caption,
+                            Attributes = new TLVector<TLDocumentAttributeBase>
+                            {
+                                new TLDocumentAttributeFilename
+                                {
+                                    FileName = file.Name
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                        var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                    }
                     //if (result.IsSucceeded)
                     //{
                     //    var update = result.Result as TLUpdates;
@@ -1740,7 +1848,7 @@ namespace Unigram.ViewModels
             return result;
         }
 
-#region Toggle mute
+        #region Toggle mute
 
         public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
         private async void ToggleMuteExecute()
@@ -1787,9 +1895,9 @@ namespace Unigram.ViewModels
             }
         }
 
-#endregion
+        #endregion
 
-#region Toggle silent
+        #region Toggle silent
 
         public RelayCommand ToggleSilentCommand => new RelayCommand(ToggleSilentExecute);
         private async void ToggleSilentExecute()
@@ -1836,9 +1944,9 @@ namespace Unigram.ViewModels
             }
         }
 
-#endregion
+        #endregion
 
-#region Report Spam
+        #region Report Spam
 
         public RelayCommand HideReportSpamCommand => new RelayCommand(HideReportSpamExecute);
         private async void HideReportSpamExecute()
@@ -1863,9 +1971,9 @@ namespace Unigram.ViewModels
             }
         }
 
-#endregion
+        #endregion
 
-#region Stickers
+        #region Stickers
 
         public RelayCommand OpenStickersCommand => new RelayCommand(OpenStickersExecute);
         private void OpenStickersExecute()
@@ -1885,7 +1993,7 @@ namespace Unigram.ViewModels
             });
         }
 
-#endregion
+        #endregion
 
     }
 
