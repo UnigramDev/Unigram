@@ -50,6 +50,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
             DataContext = UnigramContainer.Instance.ResolveType<ArticleViewModel>();
+
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = File.ReadAllText(jsPath);
         }
@@ -184,7 +185,6 @@ namespace Unigram.Views
             {
                 var view = new WebView();
                 view.NavigationCompleted += OnWebViewNavigationCompleted;
-                
                 view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
 
                 var ratio = new RatioControl();
@@ -199,7 +199,6 @@ namespace Unigram.Views
             {
                 var view = new WebView();
                 view.NavigationCompleted += OnWebViewNavigationCompleted;
-                
                 view.Navigate(new Uri(block.Url));
 
                 var ratio = new RatioControl();
