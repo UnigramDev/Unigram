@@ -257,6 +257,8 @@ namespace Unigram.Controls.Messages
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
 
+        private StackPanel _statusControl;
+
         protected override Size MeasureOverride(Size availableSize)
         {
             if (ViewModel?.Media == null || !IsFullMedia(ViewModel?.Media))
@@ -322,6 +324,14 @@ namespace Unigram.Controls.Messages
             }
 
             Calculate:
+
+            if (_statusControl == null)
+                _statusControl = FindName("StatusControl") as StackPanel;
+            if (_statusControl.DesiredSize.IsEmpty)
+                _statusControl.Measure(availableSize);
+
+            width = Math.Max(_statusControl.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, width);
+
             if (width > availableWidth || height > availableHeight)
             {
                 var ratioX = availableWidth / width;
