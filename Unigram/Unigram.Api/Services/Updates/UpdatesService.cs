@@ -1974,6 +1974,10 @@ namespace Telegram.Api.Services.Updates
                         Helpers.Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateNotifySettings));
                     }
                 }
+                else
+                {
+                    Helpers.Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateNotifySettings));
+                }
 
                 return true;
             }

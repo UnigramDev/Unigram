@@ -3,21 +3,60 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
+    xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style TargetType="ComboBox">
+            <Setter Property="MinWidth" Value="192" />
+        </Style>
+    </Page.Resources>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
-              Height="{ThemeResource AppBarThemeCompactHeight}">
-            <TextBlock Text="Notifications and sounds"
-                       Style="{StaticResource BaseTextBlockStyle}"
-                       VerticalAlignment="Center"
-                       Margin="12,0"/>
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+            <TextBlock Text="Notifications and Sounds" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
+
+        <ScrollViewer Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>
+                <StackPanel BorderThickness="0,0,0,1" Padding="12,8,12,12" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                    <TextBlock Text="MESSAGE NOTIFICATIONS" Margin="0,8" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.PrivateAlert, Mode=TwoWay}" Content="Alert"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.PrivatePreview, Mode=TwoWay}" Content="Message Preview" Margin="0,8"/>
+                    <ComboBox Header="Sound" SelectedIndex="0">
+                        <ComboBoxItem Content="None"/>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel BorderThickness="0,0,0,1" Padding="12,8,12,12" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                    <TextBlock Text="GROUP NOTIFICATIONS" Margin="0,8" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.GroupAlert, Mode=TwoWay}" Content="Alert"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.GroupPreview, Mode=TwoWay}" Content="Message Preview" Margin="0,8"/>
+                    <ComboBox Header="Sound" SelectedIndex="0">
+                        <ComboBoxItem Content="None"/>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel BorderThickness="0,0,0,1" Padding="12,8" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                    <TextBlock Text="IN-APP NOTIFICATIONS" Margin="0,8" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.InAppSounds, Mode=TwoWay}" Content="In-App Sounds"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.InAppVibrate, Mode=TwoWay}" Visibility="{x:Bind (Visibility)ViewModel.IsVibrationAvailable}" Content="In-App Vibrate" Margin="0,8"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.InAppPreview, Mode=TwoWay}" Content="In-App Preview"/>
+                </StackPanel>
+
+                <StackPanel Padding="12,8">
+                    <HyperlinkButton Content="Reset All Notifications" Foreground="Red"/>
+                    <TextBlock Text="Undo all custom notification settings for all your contacts and groups." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

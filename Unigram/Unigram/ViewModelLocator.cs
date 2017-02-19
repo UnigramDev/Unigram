@@ -39,8 +39,6 @@ namespace Unigram
             container = UnigramContainer.Instance;
         }
 
-        public IHardwareService HardwareService => UnigramContainer.Instance.ResolveType<IHardwareService>();
-
         public void Configure()
         {
             InitializeLayer();
@@ -95,10 +93,11 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsBlockUserViewModel>();
             container.ContainerBuilder.RegisterType<SettingsFeaturedStickersViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
 
             container.Build();
 
-            Task.Run(() => Initialize());
+            Task.Run(() => LoadStateAndUpdate());
         }
 
         private void InitializeLayer()
@@ -136,7 +135,7 @@ namespace Unigram
             }
         }
 
-        private void Initialize()
+        public void LoadStateAndUpdate()
         {
             var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
             var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>();
@@ -149,10 +148,11 @@ namespace Unigram
             //updatesService.AcceptEncryptionAsync = protoService.AcceptEncryptionCallback;
             //updatesService.SendEncryptedServiceAsync = protoService.SendEncryptedServiceCallback;
             updatesService.SetMessageOnTimeAsync = protoService.SetMessageOnTime;
-            //updatesService.RemoveFromQueue = protoService.RemoveFromQueue;
             updatesService.UpdateChannelAsync = protoService.UpdateChannelCallback;
             updatesService.GetParticipantAsync = protoService.GetParticipantCallback;
+            updatesService.GetFullUserAsync = protoService.GetFullUserCallback;
             updatesService.GetFullChatAsync = protoService.GetFullChatCallback;
+            updatesService.GetChannelMessagesAsync = protoService.GetMessagesCallback;
             updatesService.LoadStateAndUpdate(() => { });
 
             protoService.AuthorizationRequired += (s, e) =>

@@ -96,5 +96,10 @@ namespace Unigram.Views
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsDataPage));
         }
+
+        private void Notifications_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage));
+        }
     }
 }

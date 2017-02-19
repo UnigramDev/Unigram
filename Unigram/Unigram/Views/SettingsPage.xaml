@@ -260,8 +260,7 @@
                                                    Margin="0,24,0,0">
                                 <!-- Manually hidden -->
                                 <controls:HyperButton Content="Notifications and sounds" 
-                                                      Visibility="Collapsed"
-                                                      Command="{x:Bind NotifcationPageCommand}"
+                                                      Click="Notifications_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <controls:HyperButton Content="Privacy and security" 
                                                       Click="Privacy_Click"

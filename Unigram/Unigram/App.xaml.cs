@@ -34,6 +34,7 @@ using Unigram.Common;
 using Unigram.Views.Login;
 using Windows.UI.Core;
 using Unigram.Converters;
+using Windows.Foundation.Metadata;
 
 namespace Unigram
 {
@@ -44,6 +45,14 @@ namespace Unigram
     {
         public static ShareOperation ShareOperation { get; private set; }
         public static AppServiceConnection Connection { get; private set; }
+
+        public ViewModelLocator Locator
+        {
+            get
+            {
+                return Resources["Locator"] as ViewModelLocator;
+            }
+        }
 
         private BackgroundTaskDeferral appServiceDeferral = null;
 
@@ -114,9 +123,7 @@ namespace Unigram
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             Execute.Initialize();
-            var timer = Stopwatch.StartNew();
-            ((ViewModelLocator)Resources["Locator"]).Configure();
-            Debug.WriteLine($"INITIALIZE TIME: {timer.Elapsed}");
+            Locator.Configure();
             return base.OnInitializeAsync(args);
         }
 
@@ -204,6 +211,13 @@ namespace Unigram
             catch { }
         }
 
+        public override void OnResuming(object s, object e, AppExecutionState previousExecutionState)
+        {
+            Locator.LoadStateAndUpdate();
+
+            base.OnResuming(s, e, previousExecutionState);
+        }
+
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
             //DefaultPhotoConverter.BitmapContext.Clear();
@@ -222,7 +236,7 @@ namespace Unigram
         private void ShowStatusBar()
         {
             // Show StatusBar on Win10 Mobile, in theme of the pass
-            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
                 var statusBar = StatusBar.GetForCurrentView();
 
