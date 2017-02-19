@@ -496,6 +496,9 @@
     <Content Include="Assets\Mockups\UserIcons\user_batman.png" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\Noise.jpg" />
+    <Content Include="Assets\Webviews\injected.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
