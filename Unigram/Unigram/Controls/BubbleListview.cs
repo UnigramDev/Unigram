@@ -39,6 +39,7 @@ namespace Unigram.Controls
             if (panel != null)
             {
                 ItemsStack = panel;
+                ItemsStack.ItemsUpdatingScrollMode = UpdatingScrollMode;
                 ItemsStack.SizeChanged += Panel_SizeChanged;
             }
         }
@@ -68,11 +69,9 @@ namespace Unigram.Controls
             {
                 if (!ViewModel.IsFirstSliceLoaded)
                 {
-                    ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
                     await ViewModel.LoadPreviousSliceAsync();
                 }
 
-                ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
                 await ViewModel.LoadNextSliceAsync();
             }
         }
@@ -81,18 +80,38 @@ namespace Unigram.Controls
         {
             if (ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
             {
-                ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
                 await ViewModel.LoadNextSliceAsync();
             }
             else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
             {
                 if (ViewModel.IsFirstSliceLoaded == false)
                 {
-                    ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
                     await ViewModel.LoadPreviousSliceAsync();
                 }
             }
         }
+
+        #region UpdatingScrollMode
+
+        public ItemsUpdatingScrollMode UpdatingScrollMode
+        {
+            get { return (ItemsUpdatingScrollMode)GetValue(UpdatingScrollModeProperty); }
+            set { SetValue(UpdatingScrollModeProperty, value); }
+        }
+
+        public static readonly DependencyProperty UpdatingScrollModeProperty =
+            DependencyProperty.Register("UpdatingScrollMode", typeof(ItemsUpdatingScrollMode), typeof(BubbleListView), new PropertyMetadata(ItemsUpdatingScrollMode.KeepItemsInView, OnUpdatingScrollModeChanged));
+
+        private static void OnUpdatingScrollModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as BubbleListView;
+            if (sender.ItemsStack != null)
+            {
+                sender.ItemsStack.ItemsUpdatingScrollMode = (ItemsUpdatingScrollMode)e.NewValue;
+            }
+        }
+
+        #endregion
 
         private int count;
         protected override DependencyObject GetContainerForItemOverride()

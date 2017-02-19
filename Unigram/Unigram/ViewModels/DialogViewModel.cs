@@ -39,6 +39,8 @@ using Org.BouncyCastle.Security;
 using Unigram.Core;
 using Unigram.Services;
 using Windows.Storage.FileProperties;
+using Windows.System;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
 {
@@ -170,6 +172,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private ItemsUpdatingScrollMode _updatingScrollMode;
+        public ItemsUpdatingScrollMode UpdatingScrollMode
+        {
+            get
+            {
+                return _updatingScrollMode;
+            }
+            set
+            {
+                Set(ref _updatingScrollMode, value);
+            }
+        }
+
         public bool IsFirstSliceLoaded { get; set; }
 
         private bool _isLoadingNextSlice;
@@ -180,6 +195,8 @@ namespace Unigram.ViewModels
         {
             if (_isLoadingNextSlice) return;
             _isLoadingNextSlice = true;
+
+            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
@@ -197,7 +214,7 @@ namespace Unigram.ViewModels
 
             //return;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, maxId, 15);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, maxId, 50);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -238,6 +255,8 @@ namespace Unigram.ViewModels
             if (_isLoadingPreviousSlice) return;
             _isLoadingPreviousSlice = true;
 
+            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
             var maxId = int.MaxValue;
@@ -252,7 +271,7 @@ namespace Unigram.ViewModels
 
             maxId = Messages.LastOrDefault()?.Id ?? 1;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -15, maxId, 15);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -50, maxId, 50);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -305,6 +324,8 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
 
+            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+
             Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
 
             if (previousId.HasValue)
@@ -314,23 +335,20 @@ namespace Unigram.ViewModels
 
             Messages.Clear();
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -1, maxId, 20);
+            var offset = -50;
+            var limit = 50;
+
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, maxId, limit);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
 
                 //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
-                for (int i = 0; i < result.Result.Messages.Count; i++)
-                {
-                    var item = result.Result.Messages[i];
-                    Messages.Insert(0, item);
-                    //InsertMessage(item as TLMessageCommonBase);
-                }
-
-                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
                 for (int i = result.Result.Messages.Count - 1; i >= 0; i--)
                 {
                     var item = result.Result.Messages[i];
+                    Messages.Add(item);
+
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
                     {
@@ -342,7 +360,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                IsFirstSliceLoaded = result.Result.Messages.Count < 20;
+                IsFirstSliceLoaded = result.Result.Messages.Count < limit;
             }
 
             _isLoadingNextSlice = false;
@@ -355,12 +373,17 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
 
+            UpdatingScrollMode = _currentDialog?.UnreadCount > 0 ? ItemsUpdatingScrollMode.KeepItemsInView : ItemsUpdatingScrollMode.KeepLastItemInView;
+
             Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
 
-            var maxId = _currentDialog?.ReadInboxMaxId ?? int.MaxValue;
             var lastRead = true;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -19, maxId, 20);
+            var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
+            var offset = _currentDialog?.UnreadCount > 0 ? -51 : 0;
+            var limit = 50;
+
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, maxId, limit);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -392,7 +415,7 @@ namespace Unigram.ViewModels
                     Messages.Add(item);
                 }
 
-                IsFirstSliceLoaded = result.Result.Messages.Count < 20;
+                IsFirstSliceLoaded = result.Result.Messages.Count < limit;
             }
 
             _isLoadingNextSlice = false;
@@ -660,24 +683,21 @@ namespace Unigram.ViewModels
             LastSeen = await GetSubtitle();
 
             //#if !DEBUG
-            if (dialog != null && Messages.Count > 0)
-            {
-                var unread = dialog.UnreadCount;
-                if (Peer is TLInputPeerChannel)
-                {
-                    if (channel != null)
-                    {
-                        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
-                    }
-                }
-                else
-                {
-                    await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
-                }
+            //if (dialog != null && Messages.Count > 0)
+            //{
+            //    var unread = dialog.UnreadCount;
+            //    if (Peer is TLInputPeerChannel && channel != null)
+            //    {
+            //        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+            //    }
+            //    else
+            //    {
+            //        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+            //    }
 
-                dialog.UnreadCount = dialog.UnreadCount - unread;
-                dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-            }
+            //    dialog.UnreadCount = dialog.UnreadCount - unread;
+            //    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            //}
             //#endif
 
             Aggregator.Subscribe(this);

@@ -216,56 +216,6 @@ namespace Unigram.Common
         }
         #endregion
 
-        #region Caption
-        public static string GetCaption(DependencyObject obj)
-        {
-            return (string)obj.GetValue(CaptionProperty);
-        }
-
-        public static void SetCaption(DependencyObject obj, string value)
-        {
-            obj.SetValue(CaptionProperty, value);
-        }
-
-        public static readonly DependencyProperty CaptionProperty =
-            DependencyProperty.RegisterAttached("Caption", typeof(string), typeof(MessageHelper), new PropertyMetadata(null, OnCaptionChanged));
-
-        private static void OnCaptionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as RichTextBlock;
-            var newValue = e.NewValue as string;
-            var oldValue = e.OldValue as string;
-
-            sender.IsTextSelectionEnabled = false;
-            sender.Visibility = string.IsNullOrWhiteSpace(newValue) ? Visibility.Collapsed : Visibility.Visible;
-
-            if (oldValue == newValue) return;
-            if (newValue != null)
-            {
-                var foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x0f, 0x7d, 0xc7));
-                var paragraph = new Paragraph();
-                ReplaceAll(null, newValue, paragraph, sender.Foreground, true);
-
-                var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
-                var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
-                var date = new DateTime(2015, 09, 05, 12, 59, 59, DateTimeKind.Local).ToString(shortTimePattern, cultureInfo);
-
-                if (IsAnyCharacterRightToLeft(newValue))
-                {
-                    paragraph.Inlines.Add(new LineBreak());
-                }
-                else
-                {
-                    //paragraph.Inlines.Add(new Run { Text = "\t" + new string('\u00a0', date.Length + (message.IsOut ? 12 : 8)) });
-                    paragraph.Inlines.Add(new Run { Text = $"  {date}  ", Foreground = null });
-                }
-
-                sender.Blocks.Clear();
-                sender.Blocks.Add(paragraph);
-            }
-        }
-        #endregion
-
         private static bool IsAnyCharacterRightToLeft(string s)
         {
             //if (s.Length > 2)

@@ -55,15 +55,7 @@
             <converters:EditToVisibilityConverter x:Key="EditToVisibilityConverter"/>
             <converters:FileSizeConverter x:Key="FileSizeConverter"/>
             <converters:LastSeenConverter x:Key="LastSeenConverter"/>
-
-            <!--<SolidColorBrush x:Key="PlaceholderBlueBrush" Color="LightBlue"/>
-            <SolidColorBrush x:Key="PlaceholderCyanBrush" Color="LightCyan"/>
-            <SolidColorBrush x:Key="PlaceholderGreenBrush" Color="LightGreen"/>
-            <SolidColorBrush x:Key="PlaceholderOrangeBrush" Color="#ffa500"/>
-            <SolidColorBrush x:Key="PlaceholderPinkBrush" Color="LightPink"/>
-            <SolidColorBrush x:Key="PlaceholderPurpleBrush" Color="#ee82ee"/>
-            <SolidColorBrush x:Key="PlaceholderRedBrush" Color="#ff7f50"/>
-            <SolidColorBrush x:Key="PlaceholderYellowBrush" Color="LightYellow"/>-->
+            
             <SolidColorBrush x:Key="Placeholder0Brush" Color="#ff516a"/>
             <SolidColorBrush x:Key="Placeholder1Brush" Color="#ffa85c"/>
             <SolidColorBrush x:Key="Placeholder2Brush" Color="#54cb68"/>
@@ -71,22 +63,30 @@
             <SolidColorBrush x:Key="Placeholder4Brush" Color="#665fff"/>
             <SolidColorBrush x:Key="Placeholder5Brush" Color="#d669ed"/>
 
-            <ImageBrush x:Key="Placeholder0ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder0.png"/>
-            <ImageBrush x:Key="Placeholder1ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder1.png"/>
-            <ImageBrush x:Key="Placeholder2ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder2.png"/>
-            <ImageBrush x:Key="Placeholder3ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder3.png"/>
-            <ImageBrush x:Key="Placeholder4ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder4.png"/>
-            <ImageBrush x:Key="Placeholder5ImageBrush" ImageSource="ms-appx:///Assets/Images/ProfilePlaceholder5.png"/>
-
-
-            <!--<SolidColorBrush x:Key="PlaceholderBlueBrush" Color="#348cd4"/>
-            <SolidColorBrush x:Key="PlaceholderCyanBrush" Color="#2996ad"/>
-            <SolidColorBrush x:Key="PlaceholderGreenBrush" Color="#4fad2d"/>
-            <SolidColorBrush x:Key="PlaceholderOrangeBrush" Color="#ce671b"/>
-            <SolidColorBrush x:Key="PlaceholderPinkBrush" Color="#cd4073"/>
-            <SolidColorBrush x:Key="PlaceholderPurpleBrush" Color="#8544d6"/>
-            <SolidColorBrush x:Key="PlaceholderRedBrush" Color="#c03d33"/>
-            <SolidColorBrush x:Key="PlaceholderYellowBrush" Color="#d09306"/>-->
+            <!--<LinearGradientBrush x:Key="Placeholder0Brush" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#ff516a" Offset="0"/>
+                <GradientStop Color="#ff885e" Offset="1"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="Placeholder1Brush" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#ffa85c" Offset="0"/>
+                <GradientStop Color="#ffcd6a" Offset="1"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="Placeholder2Brush" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#54cb68" Offset="0"/>
+                <GradientStop Color="#a0de7e" Offset="1"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="Placeholder3Brush" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#2a9ef1" Offset="0"/>
+                <GradientStop Color="#72d5fd" Offset="1"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="Placeholder4Brush" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#665fff" Offset="0"/>
+                <GradientStop Color="#82b1ff" Offset="1"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="Placeholder5Brush" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#d669ed" Offset="0"/>
+                <GradientStop Color="#e0a2f3" Offset="1"/>
+            </LinearGradientBrush>-->
 
             <Style x:Key="ReplyBaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                 <Setter Property="TextWrapping" Value="NoWrap"/>

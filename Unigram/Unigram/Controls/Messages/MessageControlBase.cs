@@ -87,7 +87,7 @@ namespace Unigram.Controls.Messages
                 if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
                 {
                     var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId) });
+                    hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId ?? 0) });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
                     hyperlink.Foreground = paragraph.Foreground;
                     hyperlink.Click += (s, args) => From_Click(message);

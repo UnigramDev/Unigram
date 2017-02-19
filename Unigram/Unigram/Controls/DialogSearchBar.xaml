@@ -1,0 +1,28 @@
+﻿<UserControl
+    x:Class="Unigram.Controls.DialogSearchBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="48"
+    d:DesignWidth="400">
+
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <controls:GlyphButton Glyph="&#xE0A0;"/>
+        <controls:GlyphButton Glyph="&#xE0A1;" Grid.Column="1"/>
+        <controls:GlyphButton Glyph="&#xE163;" Grid.Column="3">
+            <Button.Flyout>
+                <DatePickerFlyout Placement="Top"/>
+            </Button.Flyout>
+        </controls:GlyphButton>
+    </Grid>
+</UserControl>

@@ -17,6 +17,32 @@ void PlaceholderImageSource::Draw(Color clear, Platform::String^ text, IRandomAc
 
 	m_instance->BeginDraw(clear);
 
+	//ID2D1LinearGradientBrush *m_pLinearGradientBrush;
+	//ID2D1GradientStopCollection *pGradientStops = NULL;
+
+	//D2D1_GRADIENT_STOP gradientStops[2];
+	//gradientStops[0].color = D2D1::ColorF(clear.R / 255.0f, clear.G / 255.0f, clear.B / 255.0f, clear.A / 255.0f);
+	//gradientStops[0].position = 0.0f;
+	//gradientStops[1].color = D2D1::ColorF(end.R / 255.0f, end.G / 255.0f, end.B / 255.0f, end.A / 255.0f);
+	//gradientStops[1].position = 1.0f;
+	//DX::ThrowIfFailed(m_instance->m_d2dContext->CreateGradientStopCollection(
+	//	gradientStops,
+	//	2,
+	//	D2D1_GAMMA_2_2,
+	//	D2D1_EXTEND_MODE_CLAMP,
+	//	&pGradientStops)
+	//);
+
+	//DX::ThrowIfFailed(m_instance->m_d2dContext->CreateLinearGradientBrush(
+	//	D2D1::LinearGradientBrushProperties(
+	//		D2D1::Point2F(0, 0),
+	//		D2D1::Point2F(0, 192)),
+	//	pGradientStops,
+	//	&m_pLinearGradientBrush)
+	//);
+
+	//m_instance->m_d2dContext->FillRectangle(D2D1::RectF(0, 0, 192, 192), m_pLinearGradientBrush);
+
 	DWRITE_TEXT_METRICS textMetrics = { 0 };
 	m_instance->MeasureText(text, L"Segoe UI", 82, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_WEIGHT_NORMAL, &textMetrics);
 	m_instance->DrawText(text, (192 - textMetrics.width) / 2, (180 - textMetrics.height) / 2, L"Segoe UI", D2D1::ColorF(D2D1::ColorF::White), 82, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_WEIGHT_NORMAL);
@@ -34,11 +60,11 @@ PlaceholderImageSource::PlaceholderImageSource(int width, int height)
 
 	DX::ThrowIfFailed(
 		m_d2dContext->CreateBitmap(
-		size, (const void *)0, 0,
-		&properties,
-		&m_targetBitmap
+			size, (const void *)0, 0,
+			&properties,
+			&m_targetBitmap
 		)
-		);
+	);
 
 	m_d2dContext->SetTarget(m_targetBitmap.Get());
 
@@ -62,26 +88,26 @@ void PlaceholderImageSource::CreateDeviceIndependentResources()
 
 	DX::ThrowIfFailed(
 		D2D1CreateFactory(
-		D2D1_FACTORY_TYPE_SINGLE_THREADED,
-		__uuidof(ID2D1Factory1),
-		&options,
-		&m_d2dFactory)
-		);
+			D2D1_FACTORY_TYPE_SINGLE_THREADED,
+			__uuidof(ID2D1Factory1),
+			&options,
+			&m_d2dFactory)
+	);
 
 	DX::ThrowIfFailed(
 		CoCreateInstance(
-		CLSID_WICImagingFactory,
-		nullptr,
-		CLSCTX_INPROC_SERVER,
-		IID_PPV_ARGS(&m_wicFactory))
-		);
+			CLSID_WICImagingFactory,
+			nullptr,
+			CLSCTX_INPROC_SERVER,
+			IID_PPV_ARGS(&m_wicFactory))
+	);
 
 	DX::ThrowIfFailed(
 		DWriteCreateFactory(
-		DWRITE_FACTORY_TYPE_SHARED,
-		__uuidof(IDWriteFactory),
-		&m_dwriteFactory)
-		);
+			DWRITE_FACTORY_TYPE_SHARED,
+			__uuidof(IDWriteFactory),
+			&m_dwriteFactory)
+	);
 }
 
 void PlaceholderImageSource::CreateDeviceResources()
@@ -104,34 +130,34 @@ void PlaceholderImageSource::CreateDeviceResources()
 
 	DX::ThrowIfFailed(
 		D3D11CreateDevice(
-		nullptr,                    // specify null to use the default adapter
-		D3D_DRIVER_TYPE_HARDWARE,
-		0,
-		creationFlags,              // optionally set debug and Direct2D compatibility flags
-		featureLevels,              // list of feature levels this app can support
-		ARRAYSIZE(featureLevels),   // number of possible feature levels
-		D3D11_SDK_VERSION,
-		&device,                    // returns the Direct3D device created
-		&m_featureLevel,            // returns feature level of device created
-		&context                    // returns the device immediate context
+			nullptr,                    // specify null to use the default adapter
+			D3D_DRIVER_TYPE_HARDWARE,
+			0,
+			creationFlags,              // optionally set debug and Direct2D compatibility flags
+			featureLevels,              // list of feature levels this app can support
+			ARRAYSIZE(featureLevels),   // number of possible feature levels
+			D3D11_SDK_VERSION,
+			&device,                    // returns the Direct3D device created
+			&m_featureLevel,            // returns feature level of device created
+			&context                    // returns the device immediate context
 		)
-		);
+	);
 
 	ComPtr<IDXGIDevice> dxgiDevice;
 
 	DX::ThrowIfFailed(
 		device.As(&dxgiDevice)
-		);
+	);
 
 	DX::ThrowIfFailed(
 		m_d2dFactory->CreateDevice(dxgiDevice.Get(), &m_d2dDevice)
-		);
+	);
 
 	DX::ThrowIfFailed(
 		m_d2dDevice->CreateDeviceContext(
-		D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-		&m_d2dContext)
-		);
+			D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+			&m_d2dContext)
+	);
 }
 
 void PlaceholderImageSource::BeginDraw(Color clear)
@@ -145,7 +171,7 @@ void PlaceholderImageSource::EndDraw()
 {
 	DX::ThrowIfFailed(
 		m_d2dContext->EndDraw()
-		);
+	);
 
 	//if (needPreview)
 	//{
@@ -171,35 +197,35 @@ void PlaceholderImageSource::DrawText(Platform::String^ text, int x, int y, Plat
 {
 	DX::ThrowIfFailed(
 		m_dwriteFactory->CreateTextFormat(
-		fontFamilyName->Data(),				 // font family name
-		nullptr,							 // system font collection
-		fontWeight,							 // font weight 
-		fontStyle,							 // font style
-		DWRITE_FONT_STRETCH_NORMAL,			 // default font stretch
-		fontSize,						     // font size
-		L"",								 // locale name
-		&m_textFormat
+			fontFamilyName->Data(),				 // font family name
+			nullptr,							 // system font collection
+			fontWeight,							 // font weight 
+			fontStyle,							 // font style
+			DWRITE_FONT_STRETCH_NORMAL,			 // default font stretch
+			fontSize,						     // font size
+			L"",								 // locale name
+			&m_textFormat
 		)
-		);
+	);
 
 	// Set text alignment.
 	DX::ThrowIfFailed(
 		m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING)
-		);
+	);
 
 	// Set paragraph alignment.
 	DX::ThrowIfFailed(
 		m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
-		);
+	);
 
 	D2D1_RECT_F layoutRect = { x, y, m_renderTargetSize.width, m_renderTargetSize.height };
 
 	DX::ThrowIfFailed(
 		m_d2dContext->CreateSolidColorBrush(
-		textColor,
-		&m_textBrush
+			textColor,
+			&m_textBrush
 		)
-		);
+	);
 
 	m_d2dContext->DrawText(text->Data(), text->Length(), m_textFormat.Get(), &layoutRect, m_textBrush.Get());
 }
@@ -208,24 +234,24 @@ void PlaceholderImageSource::MeasureText(Platform::String^ text, Platform::Strin
 {
 	DX::ThrowIfFailed(
 		m_dwriteFactory->CreateTextFormat(
-		fontFamilyName->Data(),				 // font family name
-		nullptr,							 // system font collection
-		fontWeight,							 // font weight 
-		fontStyle,							 // font style
-		DWRITE_FONT_STRETCH_NORMAL,			 // default font stretch
-		fontSize,						     // font size
-		L"",								 // locale name
-		&m_textFormat
+			fontFamilyName->Data(),				 // font family name
+			nullptr,							 // system font collection
+			fontWeight,							 // font weight 
+			fontStyle,							 // font style
+			DWRITE_FONT_STRETCH_NORMAL,			 // default font stretch
+			fontSize,						     // font size
+			L"",								 // locale name
+			&m_textFormat
 		)
-		);
+	);
 
 	DX::ThrowIfFailed(
 		m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING)
-		);
+	);
 
 	DX::ThrowIfFailed(
 		m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
-		);
+	);
 
 	ComPtr<IDWriteTextLayout> pTextLayout_;
 	m_dwriteFactory->CreateTextLayout(
@@ -235,11 +261,11 @@ void PlaceholderImageSource::MeasureText(Platform::String^ text, Platform::Strin
 		m_renderTargetSize.width,         // The width of the layout box.
 		m_renderTargetSize.height,        // The height of the layout box.
 		&pTextLayout_  // The IDWriteTextLayout interface pointer.
-		);
+	);
 
 	DX::ThrowIfFailed(
 		pTextLayout_->GetMetrics(textMetrics)
-		);
+	);
 }
 
 void PlaceholderImageSource::SaveBitmapToFile(Streams::IRandomAccessStream^ randomAccessStream)
@@ -282,12 +308,12 @@ void PlaceholderImageSource::SaveBitmapToFile(Streams::IRandomAccessStream^ rand
 	//}).then([=](Streams::IRandomAccessStream^ randomAccessStream)
 	//{
 		// Convert the RandomAccessStream to an IStream.
-		ComPtr<IStream> stream;
-		DX::ThrowIfFailed(
-			CreateStreamOverRandomAccessStream(randomAccessStream, IID_PPV_ARGS(&stream))
-			);
+	ComPtr<IStream> stream;
+	DX::ThrowIfFailed(
+		CreateStreamOverRandomAccessStream(randomAccessStream, IID_PPV_ARGS(&stream))
+	);
 
-		SaveBitmapToStream(m_targetBitmap, m_wicFactory, m_d2dContext, GUID_ContainerFormatPng, stream.Get());
+	SaveBitmapToStream(m_targetBitmap, m_wicFactory, m_d2dContext, GUID_ContainerFormatPng, stream.Get());
 	//});
 }
 
@@ -297,35 +323,35 @@ void PlaceholderImageSource::SaveBitmapToStream(
 	_In_ ComPtr<ID2D1DeviceContext> d2dContext,
 	_In_ REFGUID wicFormat,
 	_In_ IStream* stream
-	)
+)
 {
 	ComPtr<IWICBitmapEncoder> wicBitmapEncoder;
 	DX::ThrowIfFailed(
 		wicFactory2->CreateEncoder(
-		wicFormat,
-		nullptr,    // No preferred codec vendor.
-		&wicBitmapEncoder
+			wicFormat,
+			nullptr,    // No preferred codec vendor.
+			&wicBitmapEncoder
 		)
-		);
+	);
 
 	DX::ThrowIfFailed(
 		wicBitmapEncoder->Initialize(
-		stream,
-		WICBitmapEncoderNoCache
+			stream,
+			WICBitmapEncoderNoCache
 		)
-		);
+	);
 
 	ComPtr<IWICBitmapFrameEncode> wicFrameEncode;
 	DX::ThrowIfFailed(
 		wicBitmapEncoder->CreateNewFrame(
-		&wicFrameEncode,
-		nullptr     // No encoder options.
+			&wicFrameEncode,
+			nullptr     // No encoder options.
 		)
-		);
+	);
 
 	DX::ThrowIfFailed(
 		wicFrameEncode->Initialize(nullptr)
-		);
+	);
 
 	ComPtr<ID2D1Device> d2dDevice;
 	d2dContext->GetDevice(&d2dDevice);
@@ -333,10 +359,10 @@ void PlaceholderImageSource::SaveBitmapToStream(
 	ComPtr<IWICImageEncoder> imageEncoder;
 	DX::ThrowIfFailed(
 		wicFactory2->CreateImageEncoder(
-		d2dDevice.Get(),
-		&imageEncoder
+			d2dDevice.Get(),
+			&imageEncoder
 		)
-		);
+	);
 
 	D2D1_SIZE_F imageSize = d2dBitmap->GetSize();
 	WICImageParameters *parames = new WICImageParameters();
@@ -350,22 +376,22 @@ void PlaceholderImageSource::SaveBitmapToStream(
 
 	DX::ThrowIfFailed(
 		imageEncoder->WriteFrame(
-		d2dBitmap.Get(),
-		wicFrameEncode.Get(),
-		parames
-		//nullptr     // Use default WICImageParameter options.
+			d2dBitmap.Get(),
+			wicFrameEncode.Get(),
+			parames
+			//nullptr     // Use default WICImageParameter options.
 		)
-		);
+	);
 
 	DX::ThrowIfFailed(
 		wicFrameEncode->Commit()
-		);
+	);
 
 	DX::ThrowIfFailed(
 		wicBitmapEncoder->Commit()
-		);
+	);
 
 	DX::ThrowIfFailed(
 		stream->Commit(STGC_DEFAULT)
-		);
+	);
 }

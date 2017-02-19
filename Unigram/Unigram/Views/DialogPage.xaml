@@ -730,6 +730,7 @@
 
         <Grid x:Name="Messages" Grid.Row="2">
             <controls:BubbleListView x:Name="lvDialogs" 
+                                     UpdatingScrollMode="{Binding UpdatingScrollMode, Mode=TwoWay}"
                                      ItemsSource="{Binding Messages}"
                                      ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                                      ItemContainerTransitions="{x:Null}"
@@ -739,7 +740,7 @@
                                      Grid.ColumnSpan="2">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"
+                        <ItemsStackPanel ItemsUpdatingScrollMode="KeepItemsInView"
                                          VerticalAlignment="Bottom" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
@@ -838,7 +839,7 @@
                     </selectors:MessageStyleSelector>
                 </ListView.ItemContainerStyleSelector>
                 <ListView.Header>
-                    <Border Height="10"/>
+                    <Border Height="4"/>
                 </ListView.Header>
                 <ListView.Footer>
                     <Border Height="10"/>
@@ -1111,6 +1112,8 @@
                     </MenuFlyout>
                 </FlyoutBase.AttachedFlyout>
             </controls:GlyphButton>
+
+            <!--<controls:DialogSearchBar Grid.ColumnSpan="4" Grid.Row="1"/>-->
 
             <controls:BubbleActionButton
                 With="{x:Bind ViewModel.With, Mode=OneWay}" 
