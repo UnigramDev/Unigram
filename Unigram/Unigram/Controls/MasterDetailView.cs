@@ -246,7 +246,7 @@ namespace Unigram.Controls
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId(key) as NavigationService;
             if (service == null)
             {
-                service = Template10.Common.BootStrapper.Current.NavigationServiceFactory(Template10.Common.BootStrapper.BackButton.Ignore, Template10.Common.BootStrapper.ExistingContent.Exclude) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude) as NavigationService;
                 service.SerializationService = TLSerializationService.Current;
                 service.FrameFacade.FrameId = key;
                 service.FrameFacade.BackRequested += (s, args) =>
