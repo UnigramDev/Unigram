@@ -48,6 +48,14 @@ namespace Telegram.Api.TL
                 {
                     NotifySettings = user.NotifySettings;
                 }
+                if (user.ReadInboxMaxId != 0 && (ReadInboxMaxId == 0 || ReadInboxMaxId < user.ReadInboxMaxId))
+                {
+                    ReadInboxMaxId = user.ReadInboxMaxId;
+                }
+                if (user.ReadOutboxMaxId != 0 && (ReadOutboxMaxId == 0 || ReadOutboxMaxId < user.ReadOutboxMaxId))
+                {
+                    ReadOutboxMaxId = user.ReadOutboxMaxId;
+                }
 
                 //if (user.ExtendedInfo != null)
                 //{
@@ -120,9 +128,17 @@ namespace Telegram.Api.TL
 
         #endregion
 
-        public int ReadInboxMaxId { get; set; }
+        public int ReadInboxMaxId
+        {
+            get;
+            set;
+        }
 
-        public int ReadOutboxMaxId { get; set; }
+        public int ReadOutboxMaxId
+        {
+            get;
+            set;
+        }
 
         //public override void ReadFromCache(TLBinaryReader from)
         //{

@@ -500,6 +500,11 @@
             <ProgressRing IsActive="True" Style="{StaticResource TypingProgressRingStyle}" Margin="20,0"/>
 
             <ProgressBar Style="{StaticResource Yolo}" Value="50"/>
+
+            <TextBlock Text="👁" HorizontalAlignment="Center" IsColorFontEnabled="False">
+                <Run Text="👁"/>
+                <Run Text="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
+            </TextBlock>
         </StackPanel>
 
 

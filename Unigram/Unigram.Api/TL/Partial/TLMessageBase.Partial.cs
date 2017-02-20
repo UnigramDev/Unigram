@@ -14,7 +14,11 @@ namespace Telegram.Api.TL
     public abstract partial class TLMessageBase : ITLRandomId, INotifyPropertyChanged
     {
         // TODO:
-        public bool IsUnread { get; set; } = false;
+        public bool IsUnread
+        {
+            get;
+            set;
+        } = false;
 
         public TLMessageBase Reply { get; set; }
 

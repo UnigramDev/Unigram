@@ -16,28 +16,38 @@ namespace Telegram.Api.TL
             Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
-        public override void Update(TLChatBase chat)
+        public override void Update(TLChatBase chatBase)
         {
-            base.Update(chat);
+            base.Update(chatBase);
 
-            var c = chat as TLChat;
-            if (c != null)
+            var chat = chatBase as TLChat;
+            if (chat != null)
             {
-                Title = c.Title;
-                if (Photo.GetType() != c.Photo.GetType())
+                Title = chat.Title;
+                if (Photo.GetType() != chat.Photo.GetType())
                 {
-                    Photo = c.Photo;    // при удалении фото чата не обновляется UI при _photo = c.Photo
+                    Photo = chat.Photo;    // при удалении фото чата не обновляется UI при _photo = c.Photo
                 }
                 else
                 {
-                    Photo.Update(c.Photo);
+                    Photo.Update(chat.Photo);
                 }
-                ParticipantsCount = c.ParticipantsCount;
-                Date = c.Date;
-                IsLeft = c.IsLeft;
-                Version = c.Version;
+                ParticipantsCount = chat.ParticipantsCount;
+                Date = chat.Date;
+                IsLeft = chat.IsLeft;
+                Version = chat.Version;
 
-                Flags = c.Flags;
+                Flags = chat.Flags;
+
+                if (chat.ReadInboxMaxId != 0 && (ReadInboxMaxId == 0 || ReadInboxMaxId < chat.ReadInboxMaxId))
+                {
+                    ReadInboxMaxId = chat.ReadInboxMaxId;
+                }
+                if (chat.ReadOutboxMaxId != 0 && (ReadOutboxMaxId == 0 || ReadOutboxMaxId < chat.ReadOutboxMaxId))
+                {
+                    ReadOutboxMaxId = chat.ReadOutboxMaxId;
+                }
+
                 //if (c.CustomFlags != null)
                 //{
                 //    CustomFlags = c.CustomFlags;
