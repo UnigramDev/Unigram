@@ -134,6 +134,7 @@ namespace Unigram
 
             BadgeUpdateManager.CreateBadgeUpdaterForApplication().Clear();
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+            ToastNotificationManager.History.Clear();
 
             ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
             ModalDialog.ModalBackground = new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
