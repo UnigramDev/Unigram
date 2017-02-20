@@ -25,6 +25,8 @@ using Unigram.Core.Dependency;
 using Unigram.Views;
 using Telegram.Api.Helpers;
 using Unigram.Controls;
+using System.Diagnostics;
+using Windows.UI.Popups;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -99,14 +101,14 @@ namespace Unigram.Themes
                     }
                     else
                     {
-                        if (documentMedia.DownloadingProgress > 0)
+                        if (documentMedia.DownloadingProgress > 0 && documentMedia.DownloadingProgress < 1)
                         {
                             var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                             manager.CancelDownloadFile(document);
 
                             border.Update();
                         }
-                        else if (documentMedia.UploadingProgress > 0)
+                        else if (documentMedia.UploadingProgress > 0 && documentMedia.UploadingProgress < 1)
                         {
                             var manager = UnigramContainer.Instance.ResolveType<IUploadDocumentManager>();
                             manager.CancelUploadFile(document.Id);
@@ -115,11 +117,16 @@ namespace Unigram.Themes
                         }
                         else
                         {
+                            var watch = Stopwatch.StartNew();
+
                             var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
                             var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
                             if (download != null)
                             {
                                 border.Update();
+
+                                await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
+                                return;
 
                                 var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
                                 await Launcher.LaunchFileAsync(file);

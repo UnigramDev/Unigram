@@ -55,7 +55,13 @@ namespace Unigram.Controls.Messages
         private void OnMediaChanged()
         {
             var message = DataContext as TLMessage;
-            if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty)
+            var empty = false;
+            if (message.Media is TLMessageMediaWebPage)
+            {
+                empty = ((TLMessageMediaWebPage)message.Media).Webpage is TLWebPageEmpty;
+            }
+
+            if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty || empty)
             {
                 MediaControl.Margin = new Thickness(0);
                 StatusToDefault();

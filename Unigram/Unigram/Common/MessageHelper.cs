@@ -84,6 +84,12 @@ namespace Unigram.Common
                     game = sender.Tag != null;
                 }
 
+                var empty = false;
+                if (message.Media is TLMessageMediaWebPage)
+                {
+                    empty = ((TLMessageMediaWebPage)message.Media).Webpage is TLWebPageEmpty;
+                }
+
                 sender.Visibility = (message.Media == null || message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage || game || caption ? Visibility.Visible : Visibility.Collapsed);
                 if (sender.Visibility == Visibility.Collapsed)
                 {
@@ -139,7 +145,7 @@ namespace Unigram.Common
                     //ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
-                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMediaCaption || message?.Media == null)
+                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMediaCaption || empty || message?.Media == null)
                 {
                     if (IsAnyCharacterRightToLeft(message.Message))
                     {

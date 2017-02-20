@@ -339,7 +339,7 @@ namespace Telegram.Api.Services.FileManager
 
         private List<DownloadablePart> GetItemParts(int size, DownloadableItem item)
         {
-            var chunkSize = Constants.DownloadedChunkSize;
+            var chunkSize = Constants.DownloadChunkSize;
             var parts = new List<DownloadablePart>();
             var partsCount = size / chunkSize + 1;
             for (var i = 0; i < partsCount; i++)

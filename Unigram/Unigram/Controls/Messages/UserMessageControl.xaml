@@ -100,7 +100,7 @@
                         <ToolTip Opened="ToolTip_Opened"/>
                     </ToolTipService.ToolTip>
                 </TextBlock>
-                <FontIcon x:Name="StatusGlyph" Visibility="{x:Bind (Visibility)ViewModel.IsOut}" Glyph="{x:Bind Convert.State(ViewModel.State), Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
+                <FontIcon x:Name="StatusGlyph" Visibility="{x:Bind (Visibility)ViewModel.IsOut}" Glyph="{x:Bind Convert.State(ViewModel.State), Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="4,0,0,2" VerticalAlignment="Bottom"/>
             </StackPanel>
         </Grid>
     </UserControl>

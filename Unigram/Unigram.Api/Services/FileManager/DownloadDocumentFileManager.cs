@@ -98,12 +98,13 @@ namespace Telegram.Api.Services.FileManager
             }
 
             var partName = part.ParentItem.InputDocumentLocation.GetPartFileName(part.Number);//string.Format("document{0}_{1}_{2}.dat", part.ParentItem.InputDocumentLocation.Id, part.ParentItem.InputDocumentLocation.AccessHash, part.Number);
-            
             part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputDocumentLocation, part.Offset, part.Limit);
+
             while (part.File == null)
             {
                 part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputDocumentLocation, part.Offset, part.Limit);
             }
+            
 
             // indicate progress
             // indicate complete
@@ -396,7 +397,7 @@ namespace Telegram.Api.Services.FileManager
 
         private List<DownloadablePart> GetItemParts(int size, DownloadableItem item)
         {
-            var chunkSize = Constants.DownloadedChunkSize;
+            var chunkSize = Constants.DocumentDownloadChunkSize;
             var parts = new List<DownloadablePart>();
             var partsCount = size / chunkSize + (size % chunkSize > 0 ? 1 : 0);
 
