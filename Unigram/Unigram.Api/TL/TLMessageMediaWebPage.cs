@@ -5,7 +5,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLMessageMediaWebPage : TLMessageMediaBase 
 	{
-		public TLWebPageBase Webpage { get; set; }
+		public TLWebPageBase WebPage { get; set; }
 
 		public TLMessageMediaWebPage() { }
 		public TLMessageMediaWebPage(TLBinaryReader from)
@@ -17,13 +17,13 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from)
 		{
-			Webpage = TLFactory.Read<TLWebPageBase>(from);
+			WebPage = TLFactory.Read<TLWebPageBase>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			to.Write(0xA32DD600);
-			to.WriteObject(Webpage);
+			to.WriteObject(WebPage);
 		}
 	}
 }

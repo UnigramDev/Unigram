@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLPageBlockEmbedPost : TLPageBlockBase 
 	{
 		public String Url { get; set; }
-		public Int64 WebpageId { get; set; }
+		public Int64 WebPageId { get; set; }
 		public Int64 AuthorPhotoId { get; set; }
 		public String Author { get; set; }
 		public Int32 Date { get; set; }
@@ -24,7 +24,7 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from)
 		{
 			Url = from.ReadString();
-			WebpageId = from.ReadInt64();
+			WebPageId = from.ReadInt64();
 			AuthorPhotoId = from.ReadInt64();
 			Author = from.ReadString();
 			Date = from.ReadInt32();
@@ -36,7 +36,7 @@ namespace Telegram.Api.TL
 		{
 			to.Write(0x292C7BE9);
 			to.Write(Url);
-			to.Write(WebpageId);
+			to.Write(WebPageId);
 			to.Write(AuthorPhotoId);
 			to.Write(Author);
 			to.Write(Date);

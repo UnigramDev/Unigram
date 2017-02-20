@@ -87,7 +87,7 @@ namespace Unigram.Common
                 var empty = false;
                 if (message.Media is TLMessageMediaWebPage)
                 {
-                    empty = ((TLMessageMediaWebPage)message.Media).Webpage is TLWebPageEmpty;
+                    empty = ((TLMessageMediaWebPage)message.Media).WebPage is TLWebPageEmpty;
                 }
 
                 sender.Visibility = (message.Media == null || message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage || game || caption ? Visibility.Visible : Visibility.Collapsed);

@@ -58,7 +58,7 @@ namespace Unigram.Controls.Messages
             var empty = false;
             if (message.Media is TLMessageMediaWebPage)
             {
-                empty = ((TLMessageMediaWebPage)message.Media).Webpage is TLWebPageEmpty;
+                empty = ((TLMessageMediaWebPage)message.Media).WebPage is TLWebPageEmpty;
             }
 
             if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty || empty)

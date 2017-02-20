@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public partial class TLUpdateChannelWebPage : TLUpdateBase, ITLMultiPts 
 	{
 		public Int32 ChannelId { get; set; }
-		public TLWebPageBase Webpage { get; set; }
+		public TLWebPageBase WebPage { get; set; }
 		public Int32 Pts { get; set; }
 		public Int32 PtsCount { get; set; }
 
@@ -21,7 +21,7 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from)
 		{
 			ChannelId = from.ReadInt32();
-			Webpage = TLFactory.Read<TLWebPageBase>(from);
+			WebPage = TLFactory.Read<TLWebPageBase>(from);
 			Pts = from.ReadInt32();
 			PtsCount = from.ReadInt32();
 		}
@@ -30,7 +30,7 @@ namespace Telegram.Api.TL
 		{
 			to.Write(0x40771900);
 			to.Write(ChannelId);
-			to.WriteObject(Webpage);
+			to.WriteObject(WebPage);
 			to.Write(Pts);
 			to.Write(PtsCount);
 		}

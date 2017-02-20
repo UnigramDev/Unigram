@@ -8,12 +8,12 @@ namespace Telegram.Api.TL
 		[Flags]
 		public enum Flag : Int32
 		{
-			NoWebpage = (1 << 0),
+			NoWebPage = (1 << 0),
 			Entities = (1 << 1),
 			ReplyMarkup = (1 << 2),
 		}
 
-		public bool IsNoWebpage { get { return Flags.HasFlag(Flag.NoWebpage); } set { Flags = value ? (Flags | Flag.NoWebpage) : (Flags & ~Flag.NoWebpage); } }
+		public bool IsNoWebPage { get { return Flags.HasFlag(Flag.NoWebPage); } set { Flags = value ? (Flags | Flag.NoWebPage) : (Flags & ~Flag.NoWebPage); } }
 		public bool HasEntities { get { return Flags.HasFlag(Flag.Entities); } set { Flags = value ? (Flags | Flag.Entities) : (Flags & ~Flag.Entities); } }
 		public bool HasReplyMarkup { get { return Flags.HasFlag(Flag.ReplyMarkup); } set { Flags = value ? (Flags | Flag.ReplyMarkup) : (Flags & ~Flag.ReplyMarkup); } }
 

@@ -401,7 +401,7 @@ namespace Unigram.Converters
             var webpageMedia = value as TLMessageMediaWebPage;
             if (webpageMedia != null)
             {
-                value = webpageMedia.Webpage;
+                value = webpageMedia.WebPage;
             }
 
             //var decryptedWebpageMedia = value as TLDecryptedMessageMediaWebPage;

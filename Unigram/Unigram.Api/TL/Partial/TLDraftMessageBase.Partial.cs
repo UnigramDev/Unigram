@@ -36,9 +36,9 @@ namespace Telegram.Api.TL
                 Entities = Entities,
             };
 
-            if (IsNoWebpage)
+            if (IsNoWebPage)
             {
-                obj.IsNoWebpage = true;
+                obj.IsNoWebPage = true;
             }
 
             return obj;

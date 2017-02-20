@@ -534,7 +534,7 @@ namespace Telegram.Api.Services
 
         public void EditMessageCallback(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesEditMessage { Flags=0, Peer = peer, Id = id, Message = message, IsNoWebpage = noWebPage, Entities = entities, ReplyMarkup = replyMarkup };
+            var obj = new TLMessagesEditMessage { Flags=0, Peer = peer, Id = id, Message = message, IsNoWebPage = noWebPage, Entities = entities, ReplyMarkup = replyMarkup };
 
             const string caption = "messages.editMessage";
             SendInformativeMessage<TLUpdatesBase>(caption, obj,

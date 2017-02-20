@@ -66,7 +66,7 @@ namespace Unigram.Views
             var webpageMedia = parameter as TLMessageMediaWebPage;
             if (webpageMedia != null)
             {
-                parameter = webpageMedia.Webpage as TLWebPage;
+                parameter = webpageMedia.WebPage as TLWebPage;
             }
 
             var webpage = parameter as TLWebPage;
@@ -755,7 +755,7 @@ namespace Unigram.Views
 
         private async void Hyperlink_Click(TLTextUrl urlText)
         {
-            if (urlText.WebpageId != 0)
+            if (urlText.WebPageId != 0)
             {
                 var protoService = (MTProtoService)MTProtoService.Current;
                 protoService.SendInformativeMessageInternal<TLWebPageBase>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
