@@ -17,6 +17,7 @@ using Telegram.Logs;
 using Template10.Utils;
 using Unigram.Common;
 using Unigram.Controls;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -617,6 +618,18 @@ namespace Unigram.ViewModels
                     // TODO: e.Dialog.TypingString = null;
 
                     var currentPosition = Items.IndexOf(e.Dialog);
+                    if (currentPosition == -1)
+                    {
+                        var already = Items.FirstOrDefault(x => x.Index == e.Dialog.Index);
+                        if (already != null)
+                        {
+                            Execute.BeginOnUIThread(async () => await new MessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowAsync());
+
+                            e.Dialog = already;
+                            currentPosition = Items.IndexOf(already);
+                        }
+                    }
+
                     var position = currentPosition;
                     for (int i = 0; i < Items.Count; i++)
                     {
