@@ -37,9 +37,10 @@ namespace Telegram.Api.Helpers
         
         public static void CreateTemporaryFolder()
         {
-            if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp")) == false)
+            if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\parts")) == false)
             {
                 Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp"));
+                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\parts"));
                 Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\placeholders"));
             }
         }
@@ -117,7 +118,7 @@ namespace Telegram.Api.Helpers
                     {
                         DownloadablePart current = enumerator.Current;
                         string text = getPartName.Invoke(current);
-                        using (var part2 = File.Open(GetTempFileName(text), FileMode.OpenOrCreate, FileAccess.Read))
+                        using (var part2 = File.Open(GetTempFileName("parts\\" + text), FileMode.OpenOrCreate, FileAccess.Read))
                         {
                             byte[] array = new byte[part2.Length];
                             part2.Read(array, 0, array.Length);
@@ -125,7 +126,7 @@ namespace Telegram.Api.Helpers
                             part1.Write(array, 0, array.Length);
                         }
 
-                        File.Delete(GetTempFileName(text));
+                        File.Delete(GetTempFileName("parts\\" + text));
                     }
                 }
             }
@@ -304,18 +305,18 @@ namespace Telegram.Api.Helpers
         {
             if (part.Offset == 0)
             {
-                if (File.Exists(GetTempFileName(partName)))
+                if (File.Exists(GetTempFileName("parts\\" + partName)))
                 {
-                    File.Delete(GetTempFileName(partName));
+                    File.Delete(GetTempFileName("parts\\" + partName));
                 }
             }
 
-            if (File.Exists(GetTempFileName(partName)))
+            if (File.Exists(GetTempFileName("parts\\" + partName)))
             {
-                File.Delete(GetTempFileName(partName));
+                File.Delete(GetTempFileName("parts\\" + partName));
             }
 
-            using (var file = File.Open(GetTempFileName(partName), FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            using (var file = File.Open(GetTempFileName("parts\\" + partName), FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
                 byte[] data = part.File.Bytes;
                 part.File.Bytes = new byte[0];
