@@ -118,7 +118,7 @@ namespace Unigram.Controls.Messages
                     Grid.SetRow(StatusControl, caption ? 4 : 3);
                     Grid.SetRow(MessageControl, caption ? 4 : 2);
                 }
-                else if (IsInlineMedia(message.Media))
+                else /*if (IsInlineMedia(message.Media))*/
                 {
                     var caption = false;
                     if (message.Media is ITLMediaCaption)
@@ -131,13 +131,14 @@ namespace Unigram.Controls.Messages
                     Grid.SetRow(StatusControl, caption ? 4 : 3);
                     Grid.SetRow(MessageControl, caption ? 4 : 2);
                 }
-                else
-                {
-                    MediaControl.Margin = new Thickness(0);
-                    StatusToDefault();
-                    Grid.SetRow(StatusControl, 4);
-                    Grid.SetRow(MessageControl, 2);
-                }
+                //else
+                //{
+                //    Debug.WriteLine("NE UNO NE L'ALTRO");
+                //    MediaControl.Margin = new Thickness(0);
+                //    StatusToDefault();
+                //    Grid.SetRow(StatusControl, 4);
+                //    Grid.SetRow(MessageControl, 2);
+                //}
             }
         }
 
