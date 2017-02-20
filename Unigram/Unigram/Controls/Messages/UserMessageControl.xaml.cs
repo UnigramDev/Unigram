@@ -118,7 +118,7 @@ namespace Unigram.Controls.Messages
                     Grid.SetRow(StatusControl, caption ? 4 : 3);
                     Grid.SetRow(MessageControl, caption ? 4 : 2);
                 }
-                else if (message.Media is TLMessageMediaWebPage)
+                else if (message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaGame)
                 {
                     MediaControl.Margin = new Thickness(0);
                     StatusToDefault();
