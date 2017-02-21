@@ -136,7 +136,7 @@
                 </Ellipse.Fill>
             </Ellipse>
             
-            <TextBlock Text="{Binding Media.User.FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+            <TextBlock Text="{Binding Media.FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
             <TextBlock Text="{Binding Media.PhoneNumber, Converter={StaticResource PhoneNumberFormatConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
         </Grid>
     </DataTemplate>
