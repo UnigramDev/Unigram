@@ -11,6 +11,7 @@ using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Users;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -24,20 +25,20 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Unigram.Views
+namespace Unigram.Views.Users
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class UserInfoPage : Page
+    public sealed partial class UserDetailsPage : Page
     {
-        public UserInfoViewModel ViewModel => DataContext as UserInfoViewModel;
+        public UserDetailsViewModel ViewModel => DataContext as UserDetailsViewModel;
 
-        public UserInfoPage()
+        public UserDetailsPage()
         {
             InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Required;
-            DataContext = UnigramContainer.Instance.ResolveType<UserInfoViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<UserDetailsViewModel>();
 
             SizeChanged += OnSizeChanged;
         }
@@ -74,63 +75,5 @@ namespace Unigram.Views
                 }
             }
         }
-    }
-
-    // Experiment
-    public class TableStackPanel : StackPanel
-    {
-        //protected override Size ArrangeOverride(Size finalSize)
-        //{
-        //    if (finalSize.Width >= 500)
-        //    {
-        //        //Margin = new Thickness(12, 0, 12, 0);
-        //        //CornerRadius = new CornerRadius(8);
-        //        //BorderThickness = new Thickness(0);
-
-        //        HyperButton first = null;
-        //        HyperButton last = null;
-
-        //        foreach (var item in Children)
-        //        {
-        //            if (item.Visibility == Visibility.Visible)
-        //            {
-        //                if (first == null)
-        //                {
-        //                    first = item as HyperButton;
-        //                }
-
-        //                last = item as HyperButton;
-
-        //                if (last != null)
-        //                {
-        //                    last.BorderBrush = Application.Current.Resources["SystemControlForegroundBaseLowBrush"] as SolidColorBrush;
-        //                }
-        //            }
-        //        }
-
-        //        var lastRadius = new CornerRadius(0, 0, 8, 8);
-
-        //        if (first != null)
-        //        {
-        //            if (first == last)
-        //            {
-        //                last.CornerRadius = new CornerRadius(8, 8, 8, 8);
-        //                last.BorderBrush = null;
-        //            }
-        //            else
-        //            {
-        //                first.CornerRadius = new CornerRadius(8, 8, 0, 0);
-
-        //                if (last != null)
-        //                {
-        //                    last.CornerRadius = new CornerRadius(0, 0, 8, 8);
-        //                    last.BorderBrush = null;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return base.ArrangeOverride(finalSize);
-        //}
     }
 }

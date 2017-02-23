@@ -6,6 +6,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Chats;
+using Unigram.Views.Users;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -16,17 +18,17 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views
+namespace Unigram.Views.Chats
 {
-    public sealed partial class ChatInfoPage : Page
+    public sealed partial class ChatDetailsPage : Page
     {
-        public ChatInfoViewModel ViewModel => DataContext as ChatInfoViewModel;
+        public ChatDetailsViewModel ViewModel => DataContext as ChatDetailsViewModel;
 
-        public ChatInfoPage()
+        public ChatDetailsPage()
         {
             this.InitializeComponent();
 
-            DataContext = UnigramContainer.Instance.ResolveType<ChatInfoViewModel>();
+            DataContext = UnigramContainer.Instance.ResolveType<ChatDetailsViewModel>();
 
             SizeChanged += OnSizeChanged;
         }
@@ -38,7 +40,7 @@ namespace Unigram.Views
 
         private void UsersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = ((TLUser)UsersListView.SelectedItem).Id });
+            ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = ((TLUser)UsersListView.SelectedItem).Id });
         }
     }
 }

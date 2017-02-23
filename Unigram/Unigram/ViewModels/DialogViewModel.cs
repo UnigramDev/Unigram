@@ -683,21 +683,6 @@ namespace Unigram.ViewModels
             LastSeen = await GetSubtitle();
 
             //#if !DEBUG
-            //if (dialog != null && Messages.Count > 0)
-            //{
-            //    var unread = dialog.UnreadCount;
-            //    if (Peer is TLInputPeerChannel && channel != null)
-            //    {
-            //        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
-            //    }
-            //    else
-            //    {
-            //        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
-            //    }
-
-            //    dialog.UnreadCount = dialog.UnreadCount - unread;
-            //    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-            //}
             //#endif
 
             Aggregator.Subscribe(this);
@@ -710,6 +695,23 @@ namespace Unigram.ViewModels
             {
                 await LoadFirstSliceAsync();
             }
+
+            if (dialog != null && Messages.Count > 0)
+            {
+                var unread = dialog.UnreadCount;
+                if (Peer is TLInputPeerChannel && channel != null)
+                {
+                    await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+                }
+                else
+                {
+                    await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+                }
+
+                dialog.UnreadCount = dialog.UnreadCount - unread;
+                dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            }
+
             //Aggregator.Publish("PORCODIO");
 
             //StickersRecent();

@@ -24,16 +24,16 @@ using Unigram.Common;
 using System.Linq;
 using Unigram.Controls.Views;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Users
 {
-    public class UserInfoViewModel : UnigramViewModelBase,
+    public class UserDetailsViewModel : UnigramViewModelBase,
         IHandle<TLUpdateUserBlocked>,
         IHandle<TLUpdateNotifySettings>,
         IHandle
     {
         public string LastSeen { get; internal set; }
 
-        public UserInfoViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public UserDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }

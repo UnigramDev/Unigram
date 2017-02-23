@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Unigram.Strings;
 using static Unigram.ViewModels.DialogViewModel;
+using Unigram.Views.Users;
 
 namespace Unigram.Common
 {
@@ -464,7 +465,7 @@ namespace Unigram.Common
                 var navigationService = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                 if (navigationService != null)
                 {
-                    navigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = int.Parse(userId.Replace("tg-user://", string.Empty)) });
+                    navigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = int.Parse(userId.Replace("tg-user://", string.Empty)) });
                 }
             }
         }

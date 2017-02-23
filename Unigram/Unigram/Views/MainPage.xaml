@@ -211,8 +211,6 @@
                                                       SelectionMode="None"
                                                       ItemClick="ListView_ItemClick"
                                                       SelectionChanged="ListView_SelectionChanged"                                                  
-                                                      AllowDrop="True"
-                                                      CanDragItems="True"                                                  
                                                       Grid.Row="1">
                                 <ListView.Header>
                                     <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">

@@ -17,6 +17,8 @@ using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Core.Models;
 using Unigram.ViewModels;
+using Unigram.Views.Chats;
+using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -151,15 +153,15 @@ namespace Unigram.Views
         {
             if (ViewModel.With is TLUserBase)
             {
-                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), ViewModel.Peer.ToPeer());
+                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), ViewModel.Peer.ToPeer());
             }
             else if (ViewModel.With is TLChannel)
             {
-                ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
+                ViewModel.NavigationService.Navigate(typeof(ChatDetailsPage), ViewModel.Peer.ToPeer());
             }
             else if (ViewModel.With is TLChat)
             {
-                ViewModel.NavigationService.Navigate(typeof(ChatInfoPage), ViewModel.Peer);
+                ViewModel.NavigationService.Navigate(typeof(ChatDetailsPage), ViewModel.Peer.ToPeer());
             }
         }
 
@@ -321,7 +323,7 @@ namespace Unigram.Views
             var message = control.DataContext as TLMessage;
             if (message != null && message.HasFromId)
             {
-                ViewModel.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.FromId.Value });
+                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FromId.Value });
             }
         }
 

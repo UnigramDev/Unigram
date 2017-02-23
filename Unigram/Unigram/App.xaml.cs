@@ -214,7 +214,8 @@ namespace Unigram
 
         public override void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
-            Locator.LoadStateAndUpdate();
+            var updatesService = UnigramContainer.Instance.ResolveType<IUpdatesService>();
+            updatesService.LoadStateAndUpdate(() => { });
 
             base.OnResuming(s, e, previousExecutionState);
         }

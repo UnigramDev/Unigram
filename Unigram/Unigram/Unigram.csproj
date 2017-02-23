@@ -297,7 +297,7 @@
     <Compile Include="Themes\Messages.xaml.cs">
       <DependentUpon>Messages.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\ChatInfoViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatDetailsViewModel.cs" />
     <Compile Include="ViewModels\ContactsViewModel.cs" />
     <Compile Include="ViewModels\DialogPhotosViewModel.cs" />
     <Compile Include="ViewModels\DialogsViewModel.cs" />
@@ -322,7 +322,7 @@
     <Compile Include="ViewModels\Settings\SettingsStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsUsernameViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
-    <Compile Include="ViewModels\UserInfoViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserDetailsViewModel.cs" />
     <Compile Include="ViewModels\UserPhotosViewModel.cs" />
     <Compile Include="Views\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
@@ -336,8 +336,8 @@
     <Compile Include="Views\Channels\CreateChannelStep1Page.xaml.cs">
       <DependentUpon>CreateChannelStep1Page.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ChatInfoPage.xaml.cs">
-      <DependentUpon>ChatInfoPage.xaml</DependentUpon>
+    <Compile Include="Views\Chats\ChatDetailsPage.xaml.cs">
+      <DependentUpon>ChatDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\CreateChatStep1Page.xaml.cs">
       <DependentUpon>CreateChatStep1Page.xaml</DependentUpon>
@@ -411,8 +411,8 @@
     <Compile Include="Views\ShareTargetPage.xaml.cs">
       <DependentUpon>ShareTargetPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\UserInfoPage.xaml.cs">
-      <DependentUpon>UserInfoPage.xaml</DependentUpon>
+    <Compile Include="Views\Users\UserDetailsPage.xaml.cs">
+      <DependentUpon>UserDetailsPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -646,7 +646,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ChatInfoPage.xaml">
+    <Page Include="Views\Chats\ChatDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -758,7 +758,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\UserInfoPage.xaml">
+    <Page Include="Views\Users\UserDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

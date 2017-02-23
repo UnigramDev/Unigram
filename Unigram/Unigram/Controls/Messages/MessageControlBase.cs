@@ -13,6 +13,8 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.Views;
+using Unigram.Views.Chats;
+using Unigram.Views.Users;
 using Windows.Foundation;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.UI;
@@ -171,13 +173,13 @@ namespace Unigram.Controls.Messages
 
         private void From_Click(TLMessage message)
         {
-            if (message.From != null)
+            if (message.IsPost)
             {
-                Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.From.Id });
+                Context.NavigationService.Navigate(typeof(ChatDetailsPage), new TLPeerChannel { ChannelId = message.ToId.Id });
             }
-            else if (message.IsPost)
+            else if (message.From != null)
             {
-                Context.NavigationService.Navigate(typeof(ChatInfoPage), new TLPeerChannel { ChannelId = message.ToId.Id });
+                Context.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.From.Id });
             }
         }
 
@@ -197,7 +199,7 @@ namespace Unigram.Controls.Messages
             }
             else if (message.FwdFromUser != null)
             {
-                Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.FwdFromUser.Id });
+                Context.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFromUser.Id });
             }
         }
 

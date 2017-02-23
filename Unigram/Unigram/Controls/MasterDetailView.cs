@@ -10,6 +10,7 @@ using Unigram.Views;
 using Template10.Common;
 using Windows.UI.Xaml.Media;
 using Unigram.Core.Services;
+using Unigram.Views.Users;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -227,7 +228,7 @@ namespace Unigram.Controls
                         UpdateVisualState();
                     }
                     // When the new page is user info show the back button in titlebar.
-                    else if (e.SourcePageType == typeof(UserInfoPage))
+                    else if (e.SourcePageType == typeof(UserDetailsPage))
                     {
                         UpdateVisualState();
                     }

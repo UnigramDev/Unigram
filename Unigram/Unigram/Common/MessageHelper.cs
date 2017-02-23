@@ -18,6 +18,7 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Views;
+using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Email;
 using Windows.Storage.Streams;
@@ -570,7 +571,7 @@ namespace Unigram.Common
                         var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                         if (service != null)
                         {
-                            service.Navigate(typeof(UserInfoPage), user);
+                            service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
                         }
                     }
                 }
@@ -583,7 +584,7 @@ namespace Unigram.Common
                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                     if (service != null)
                     {
-                        service.Navigate(typeof(UserInfoPage), user);
+                        service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
                     }
                 }
             }
@@ -595,14 +596,14 @@ namespace Unigram.Common
                     var user = InMemoryCacheService.Current.GetUser((string)data) as TLUser;
                     if (user != null && user.HasAccessHash)
                     {
-                        service.Navigate(typeof(UserInfoPage), user);
+                        service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
                         return;
                     }
 
                     var channel = InMemoryCacheService.Current.GetChannel((string)data);
                     if (channel != null && channel.HasAccessHash)
                     {
-                        service.Navigate(typeof(ChatInfoPage), new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 });
+                        service.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
                         return;
                     }
 
@@ -612,7 +613,7 @@ namespace Unigram.Common
                         var peerUser = response.Result.Peer as TLPeerUser;
                         if (peerUser != null)
                         {
-                            service.Navigate(typeof(UserInfoPage), peerUser);
+                            service.Navigate(typeof(UserDetailsPage), peerUser);
                             return;
                         }
 
@@ -826,7 +827,7 @@ namespace Unigram.Common
                     //}
                     //TelegramViewBase.NavigateToUser(user, accessToken, pageKind);
 
-                    service.Navigate(typeof(UserInfoPage), user);
+                    service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
 
                     return;
                 }
@@ -853,7 +854,7 @@ namespace Unigram.Common
                         var peerUser = response.Result.Peer as TLPeerUser;
                         if (peerUser != null)
                         {
-                            service.Navigate(typeof(UserInfoPage), peerUser);
+                            service.Navigate(typeof(UserDetailsPage), peerUser);
                             return;
                         }
 
