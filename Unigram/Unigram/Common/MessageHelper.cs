@@ -17,6 +17,7 @@ using Template10.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
+using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
@@ -632,6 +633,11 @@ namespace Unigram.Common
                         await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
                     }
                 }
+            }
+            else if (type == TLType.MessageEntityHashtag)
+            {
+                //await UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchAsync((string)data);
+                UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
             }
             else
             {

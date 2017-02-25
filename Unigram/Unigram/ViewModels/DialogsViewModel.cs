@@ -793,6 +793,7 @@ namespace Unigram.ViewModels
         public async Task SearchAsync(string query)
         {
             // TODO: dialogs search
+            SearchQuery = query;
             query = query.TrimStart('@');
 
             var local = await SearchLocalAsync(query);
