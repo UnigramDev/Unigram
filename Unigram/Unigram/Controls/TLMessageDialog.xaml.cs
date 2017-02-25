@@ -17,20 +17,20 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls
 {
-    public sealed partial class UnigramMessageDialog : ContentDialog
+    public sealed partial class TLMessageDialog : ContentDialog
     {
-        public UnigramMessageDialog()
+        public TLMessageDialog()
         {
             this.InitializeComponent();
         }
 
-        public UnigramMessageDialog(string message)
+        public TLMessageDialog(string message)
             : this(message, null)
         {
 
         }
 
-        public UnigramMessageDialog(string message, string title)
+        public TLMessageDialog(string message, string title)
         {
             InitializeComponent();
 
@@ -78,7 +78,7 @@ namespace Unigram.Controls
 
         public static IAsyncOperation<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null)
         {
-            var dialog = new UnigramMessageDialog();
+            var dialog = new TLMessageDialog();
             dialog.Title = title;
             dialog.Message = message;
             dialog.PrimaryButtonText = primary ?? string.Empty;

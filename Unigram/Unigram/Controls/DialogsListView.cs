@@ -55,6 +55,8 @@ namespace Unigram.Controls
                 }
             }
 
+            if (_currentContainer == null) return;
+
             //var position = e.GetPosition(this);
 
             //var indexFloat = (position.Y - 48) / _currentContainer.ActualHeight;
@@ -96,6 +98,8 @@ namespace Unigram.Controls
 
         private void OnDragOver(object sender, DragEventArgs e)
         {
+            if (_currentContainer == null) return;
+
             var position = e.GetPosition(this);
 
             var indexFloat = (position.Y - 48) / _currentContainer.ActualHeight;
@@ -138,6 +142,8 @@ namespace Unigram.Controls
 
         private void OnDragEnter(object sender, DragEventArgs e)
         {
+            if (_currentContainer == null) return;
+
             _drag = e.GetPosition(this).Y;
 
             e.DragUIOverride.IsCaptionVisible = false;

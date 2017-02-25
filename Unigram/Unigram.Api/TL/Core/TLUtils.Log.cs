@@ -8,6 +8,7 @@ using Windows.UI.Core;
 #endif
 using Telegram.Api.Aggregator;
 using Telegram.Api.Services.Cache;
+using System.Diagnostics;
 #if WINDOWS_PHONE
 using System.Threading;
 using System.Windows;
@@ -107,7 +108,7 @@ namespace Telegram.Api.TL
 
         public static void WriteLineAtBegin(string str, LogSeverity severity = LogSeverity.Info)
         {
-            if (!IsDebugEnabled && severity != LogSeverity.Error) return;
+            //if (!IsDebugEnabled && severity != LogSeverity.Error) return;
 
             Execute.BeginOnUIThread(() => DebugItems.Insert(0, str));
         }
@@ -140,13 +141,6 @@ namespace Telegram.Api.TL
 
             Execute.BeginOnUIThread(() => DebugItems.Add(str));
 #endif
-        }
-
-        public static void WriteLine<T>(string fieldName, T fieldValue, LogSeverity severity = LogSeverity.Info)
-        {
-            if (!IsDebugEnabled && severity != LogSeverity.Error) return;
-
-            Execute.BeginOnUIThread(() => DebugItems.Add(String.Format("{0}: {1}", fieldName, fieldValue)));
         }
 
         public static string WriteThreadInfo()

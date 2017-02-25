@@ -13,6 +13,8 @@ using Telegram.Api.Services.FileManager;
 using Windows.Foundation;
 using Telegram.Api.TL;
 using Telegram.Api.Services.FileManager.EventArgs;
+using Windows.Storage.FileProperties;
+using Windows.Graphics.Imaging;
 
 namespace Telegram.Api.Helpers
 {
@@ -35,10 +37,75 @@ namespace Telegram.Api.Helpers
         
         public static void CreateTemporaryFolder()
         {
-            if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp")) == false)
+            if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\parts")) == false)
             {
                 Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp"));
+                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\parts"));
+                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\placeholders"));
             }
+        }
+
+        public static async Task<TLPhotoSizeBase> GetFileThumbnailAsync(StorageFile file)
+        {
+            var imageProps = await file.Properties.GetImagePropertiesAsync();
+            var videoProps = await file.Properties.GetVideoPropertiesAsync();
+
+            if (imageProps.Width > 0 || videoProps.Width > 0)
+            {
+                using (var thumb = await file.GetThumbnailAsync(ThumbnailMode.SingleItem, 96, ThumbnailOptions.ResizeThumbnail))
+                {
+                    if (thumb != null)
+                    {
+                        var randomStream = thumb as IRandomAccessStream;
+
+                        var originalWidth = (int)thumb.OriginalWidth;
+                        var originalHeight = (int)thumb.OriginalHeight;
+
+                        if (thumb.ContentType != "image/jpeg")
+                        {
+                            var memoryStream = new InMemoryRandomAccessStream();
+                            var bitmapDecoder = await BitmapDecoder.CreateAsync(thumb);
+                            var pixelDataProvider = await bitmapDecoder.GetPixelDataAsync();
+                            var bitmapEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, memoryStream);
+                            bitmapEncoder.SetPixelData(bitmapDecoder.BitmapPixelFormat, BitmapAlphaMode.Ignore, bitmapDecoder.PixelWidth, bitmapDecoder.PixelHeight, bitmapDecoder.DpiX, bitmapDecoder.DpiY, pixelDataProvider.DetachPixelData());
+                            await bitmapEncoder.FlushAsync();
+                            randomStream = memoryStream;
+                        }
+
+                        var fileLocation = new TLFileLocation
+                        {
+                            VolumeId = TLLong.Random(),
+                            LocalId = TLInt.Random(),
+                            Secret = TLLong.Random(),
+                            DCId = 0
+                        };
+
+                        var desiredName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+                        var desiredFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\" + desiredName);
+
+                        var buffer = new Windows.Storage.Streams.Buffer(Convert.ToUInt32(randomStream.Size));
+                        var buffer2 = await randomStream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None);
+                        using (var stream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
+                        {
+                            await stream.WriteAsync(buffer2);
+                        }
+
+                        var result = new TLPhotoSize
+                        {
+                            W = originalWidth,
+                            H = originalHeight,
+                            Size = (int)randomStream.Size,
+                            Type = string.Empty,
+                            Location = fileLocation
+                        };
+
+                        randomStream.Dispose();
+                        return result;
+                    }
+                }
+            }
+
+            return null;
         }
 
         public static void MergePartsToFile(Func<DownloadablePart, string> getPartName, IEnumerable<DownloadablePart> parts, string fileName)
@@ -51,7 +118,7 @@ namespace Telegram.Api.Helpers
                     {
                         DownloadablePart current = enumerator.Current;
                         string text = getPartName.Invoke(current);
-                        using (var part2 = File.Open(GetTempFileName(text), FileMode.OpenOrCreate, FileAccess.Read))
+                        using (var part2 = File.Open(GetTempFileName("parts\\" + text), FileMode.OpenOrCreate, FileAccess.Read))
                         {
                             byte[] array = new byte[part2.Length];
                             part2.Read(array, 0, array.Length);
@@ -59,7 +126,7 @@ namespace Telegram.Api.Helpers
                             part1.Write(array, 0, array.Length);
                         }
 
-                        File.Delete(GetTempFileName(text));
+                        File.Delete(GetTempFileName("parts\\" + text));
                     }
                 }
             }
@@ -238,18 +305,18 @@ namespace Telegram.Api.Helpers
         {
             if (part.Offset == 0)
             {
-                if (File.Exists(GetTempFileName(partName)))
+                if (File.Exists(GetTempFileName("parts\\" + partName)))
                 {
-                    File.Delete(GetTempFileName(partName));
+                    File.Delete(GetTempFileName("parts\\" + partName));
                 }
             }
 
-            if (File.Exists(GetTempFileName(partName)))
+            if (File.Exists(GetTempFileName("parts\\" + partName)))
             {
-                File.Delete(GetTempFileName(partName));
+                File.Delete(GetTempFileName("parts\\" + partName));
             }
 
-            using (var file = File.Open(GetTempFileName(partName), FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            using (var file = File.Open(GetTempFileName("parts\\" + partName), FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
                 byte[] data = part.File.Bytes;
                 part.File.Bytes = new byte[0];

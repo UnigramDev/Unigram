@@ -563,7 +563,7 @@ namespace Unigram.Controls
             var webPageMedia = message.Media as TLMessageMediaWebPage;
             if (webPageMedia != null)
             {
-                var webPage = webPageMedia.Webpage as TLWebPage;
+                var webPage = webPageMedia.WebPage as TLWebPage;
                 if (webPage != null && webPage.Photo != null && webPage.Type != null)
                 {
                     Visibility = Visibility.Visible;

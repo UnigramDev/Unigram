@@ -24,16 +24,16 @@ using Unigram.Common;
 using System.Linq;
 using Unigram.Controls.Views;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Users
 {
-    public class UserInfoViewModel : UnigramViewModelBase,
+    public class UserDetailsViewModel : UnigramViewModelBase,
         IHandle<TLUpdateUserBlocked>,
         IHandle<TLUpdateNotifySettings>,
         IHandle
     {
         public string LastSeen { get; internal set; }
 
-        public UserInfoViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public UserDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
@@ -81,6 +81,7 @@ namespace Unigram.ViewModels
                 RaisePropertyChanged(() => AddToGroupVisibility);
                 RaisePropertyChanged(() => HelpVisibility);
                 RaisePropertyChanged(() => ReportVisibility);
+                RaisePropertyChanged(() => AddContactVisibility);
 
                 var result = await ProtoService.GetFullUserAsync(user.ToInputUser());
                 if (result.IsSucceeded)
@@ -91,6 +92,7 @@ namespace Unigram.ViewModels
                     RaisePropertyChanged(() => UnblockVisibility);
                     RaisePropertyChanged(() => StopVisibility);
                     RaisePropertyChanged(() => UnstopVisibility);
+                    RaisePropertyChanged(() => AddContactVisibility);
                 }
 
                 LastSeen = LastSeenHelper.GetLastSeenTime(user);
@@ -108,7 +110,7 @@ namespace Unigram.ViewModels
         {
             if (Item != null && Full != null && Item.Id == message.UserId)
             {
-                Item.Blocked = message.Blocked;
+                Item.IsBlocked = message.Blocked;
                 Full.IsBlocked = message.Blocked;
                 Execute.BeginOnUIThread(() =>
                 {
@@ -240,6 +242,14 @@ namespace Unigram.ViewModels
 
                 // Show the card
                 ContactManager.ShowFullContactCard(userContact, options);
+            }
+        }
+
+        public Visibility AddContactVisibility
+        {
+            get
+            {
+                return Item != null && Item.HasPhone && !Item.IsSelf && !Item.IsContact && !Item.IsMutualContact ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

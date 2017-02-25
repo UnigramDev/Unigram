@@ -17,7 +17,9 @@ using Template10.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
+using Unigram.ViewModels;
 using Unigram.Views;
+using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Email;
 using Windows.Storage.Streams;
@@ -84,6 +86,12 @@ namespace Unigram.Common
                     game = sender.Tag != null;
                 }
 
+                var empty = false;
+                if (message.Media is TLMessageMediaWebPage)
+                {
+                    empty = ((TLMessageMediaWebPage)message.Media).WebPage is TLWebPageEmpty;
+                }
+
                 sender.Visibility = (message.Media == null || message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage || game || caption ? Visibility.Visible : Visibility.Collapsed);
                 if (sender.Visibility == Visibility.Collapsed)
                 {
@@ -139,7 +147,7 @@ namespace Unigram.Common
                     //ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
-                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMediaCaption || message?.Media == null)
+                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMediaCaption || empty || message?.Media == null)
                 {
                     if (IsAnyCharacterRightToLeft(message.Message))
                     {
@@ -213,56 +221,6 @@ namespace Unigram.Common
 
             sender.Blocks.Clear();
             sender.Blocks.Add(paragraph);
-        }
-        #endregion
-
-        #region Caption
-        public static string GetCaption(DependencyObject obj)
-        {
-            return (string)obj.GetValue(CaptionProperty);
-        }
-
-        public static void SetCaption(DependencyObject obj, string value)
-        {
-            obj.SetValue(CaptionProperty, value);
-        }
-
-        public static readonly DependencyProperty CaptionProperty =
-            DependencyProperty.RegisterAttached("Caption", typeof(string), typeof(MessageHelper), new PropertyMetadata(null, OnCaptionChanged));
-
-        private static void OnCaptionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as RichTextBlock;
-            var newValue = e.NewValue as string;
-            var oldValue = e.OldValue as string;
-
-            sender.IsTextSelectionEnabled = false;
-            sender.Visibility = string.IsNullOrWhiteSpace(newValue) ? Visibility.Collapsed : Visibility.Visible;
-
-            if (oldValue == newValue) return;
-            if (newValue != null)
-            {
-                var foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x0f, 0x7d, 0xc7));
-                var paragraph = new Paragraph();
-                ReplaceAll(null, newValue, paragraph, sender.Foreground, true);
-
-                var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
-                var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
-                var date = new DateTime(2015, 09, 05, 12, 59, 59, DateTimeKind.Local).ToString(shortTimePattern, cultureInfo);
-
-                if (IsAnyCharacterRightToLeft(newValue))
-                {
-                    paragraph.Inlines.Add(new LineBreak());
-                }
-                else
-                {
-                    //paragraph.Inlines.Add(new Run { Text = "\t" + new string('\u00a0', date.Length + (message.IsOut ? 12 : 8)) });
-                    paragraph.Inlines.Add(new Run { Text = $"  {date}  ", Foreground = null });
-                }
-
-                sender.Blocks.Clear();
-                sender.Blocks.Add(paragraph);
-            }
         }
         #endregion
 
@@ -614,7 +572,7 @@ namespace Unigram.Common
                         var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                         if (service != null)
                         {
-                            service.Navigate(typeof(UserInfoPage), user);
+                            service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
                         }
                     }
                 }
@@ -627,7 +585,7 @@ namespace Unigram.Common
                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                     if (service != null)
                     {
-                        service.Navigate(typeof(UserInfoPage), user);
+                        service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
                     }
                 }
             }
@@ -636,17 +594,17 @@ namespace Unigram.Common
                 var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                 if (service != null)
                 {
-                    var user = InMemoryCacheService.Current.GetUser((string)data);
-                    if (user != null)
+                    var user = InMemoryCacheService.Current.GetUser((string)data) as TLUser;
+                    if (user != null && user.HasAccessHash)
                     {
-                        service.Navigate(typeof(UserInfoPage), user);
+                        service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
                         return;
                     }
 
                     var channel = InMemoryCacheService.Current.GetChannel((string)data);
-                    if (channel != null)
+                    if (channel != null && channel.HasAccessHash)
                     {
-                        service.Navigate(typeof(ChatInfoPage), new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 });
+                        service.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
                         return;
                     }
 
@@ -656,19 +614,14 @@ namespace Unigram.Common
                         var peerUser = response.Result.Peer as TLPeerUser;
                         if (peerUser != null)
                         {
-                            var userBase = response.Result.Users.FirstOrDefault();
-                            if (userBase != null)
-                            {
-                                service.Navigate(typeof(UserInfoPage), userBase);
-                                return;
-                            }
+                            service.Navigate(typeof(UserDetailsPage), peerUser);
+                            return;
                         }
 
-                        var peerChat = response.Result.Peer as TLPeerChat;
                         var peerChannel = response.Result.Peer as TLPeerChannel;
-                        if (peerChannel != null || peerChat != null)
+                        if (peerChannel != null)
                         {
-                            // TODO
+                            service.Navigate(typeof(DialogPage), peerChannel);
                             return;
                         }
 
@@ -680,6 +633,11 @@ namespace Unigram.Common
                         await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
                     }
                 }
+            }
+            else if (type == TLType.MessageEntityHashtag)
+            {
+                //await UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchAsync((string)data);
+                UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
             }
             else
             {
@@ -694,7 +652,7 @@ namespace Unigram.Common
                     {
                         if (type == TLType.MessageEntityTextUrl)
                         {
-                            var dialog = new UnigramMessageDialog(navigation, "Open this link?");
+                            var dialog = new TLMessageDialog(navigation, "Open this link?");
                             dialog.Title = "Open this link?";
                             dialog.Message = navigation;
                             dialog.PrimaryButtonText = "Open";
@@ -853,9 +811,134 @@ namespace Unigram.Common
                         }
                         if (!string.IsNullOrEmpty(username))
                         {
-                            //NavigateToUsername(username, accessToken, post, pageKind);
+                            NavigateToUsername(MTProtoService.Current, username, accessToken, post, null);
                         }
                     }
+                }
+            }
+        }
+
+        private static async void NavigateToUsername(IMTProtoService mtProtoService, string username, string accessToken, string post, string game)
+        {
+            var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+            if (service != null && mtProtoService != null)
+            {
+                var user = InMemoryCacheService.Current.GetUser(username) as TLUser;
+                if (user != null && user.HasAccessHash)
+                {
+                    //if (!string.IsNullOrEmpty(game))
+                    //{
+                    //    TelegramViewBase.NavigateToGame(user, game);
+                    //    return;
+                    //}
+                    //TelegramViewBase.NavigateToUser(user, accessToken, pageKind);
+
+                    service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
+
+                    return;
+                }
+                else
+                {
+                    var channel = InMemoryCacheService.Current.GetChannel(username) as TLChannel;
+                    if (channel != null && channel.HasAccessHash)
+                    {
+                        int postId;
+                        if (int.TryParse(post, out postId))
+                        {
+                            service.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)new TLPeerChannel { ChannelId = channel.Id }, postId));
+                        }
+                        else
+                        {
+                            service.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
+                        }
+                        return;
+                    }
+
+                    var response = await mtProtoService.ResolveUsernameAsync(username);
+                    if (response.IsSucceeded)
+                    {
+                        var peerUser = response.Result.Peer as TLPeerUser;
+                        if (peerUser != null)
+                        {
+                            service.Navigate(typeof(UserDetailsPage), peerUser);
+                            return;
+                        }
+
+                        var peerChannel = response.Result.Peer as TLPeerChannel;
+                        if (peerChannel != null)
+                        {
+                            int postId;
+                            if (int.TryParse(post, out postId))
+                            {
+                                service.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)peerChannel, postId));
+                            }
+                            else
+                            {
+                                service.Navigate(typeof(DialogPage), peerChannel);
+                            }
+                            return;
+                        }
+
+                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                    }
+                    else
+                    {
+                        // TODO
+                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                    }
+
+                    //mtProtoService.ResolveUsernameAsync(new TLString(username), delegate (TLResolvedPeer result)
+                    //{
+                    //    Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                    //    {
+                    //        if (frame != null)
+                    //        {
+                    //            frame.CloseBlockingProgress();
+                    //        }
+                    //        TLPeerUser tLPeerUser = result.Peer as TLPeerUser;
+                    //        if (tLPeerUser != null)
+                    //        {
+                    //            TLUserBase tLUserBase = Enumerable.FirstOrDefault<TLUserBase>(result.Users);
+                    //            if (tLUserBase != null)
+                    //            {
+                    //                if (!string.IsNullOrEmpty(game))
+                    //                {
+                    //                    TelegramViewBase.NavigateToGame(tLUserBase, game);
+                    //                    return;
+                    //                }
+                    //                TelegramViewBase.NavigateToUser(tLUserBase, accessToken, pageKind);
+                    //                return;
+                    //            }
+                    //        }
+                    //        TLPeerChannel tLPeerChannel = result.Peer as TLPeerChannel;
+                    //        TLPeerChat tLPeerChat = result.Peer as TLPeerChat;
+                    //        if (tLPeerChannel != null || tLPeerChat != null)
+                    //        {
+                    //            TLChatBase tLChatBase = Enumerable.FirstOrDefault<TLChatBase>(result.Chats);
+                    //            if (tLChatBase != null)
+                    //            {
+                    //                TelegramViewBase.NavigateToChat(tLChatBase, post);
+                    //                return;
+                    //            }
+                    //        }
+                    //        MessageBox.Show(string.Format(AppResources.CantFindContactWithUsername, username), AppResources.Error, 0);
+                    //    });
+                    //}, delegate (TLRPCError error)
+                    //{
+                    //    Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                    //    {
+                    //        if (frame != null)
+                    //        {
+                    //            frame.CloseBlockingProgress();
+                    //        }
+                    //        if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
+                    //        {
+                    //            MessageBox.Show(string.Format(AppResources.CantFindContactWithUsername, username), AppResources.Error, 0);
+                    //            return;
+                    //        }
+                    //        Telegram.Api.Helpers.Execute.ShowDebugMessage(string.Format("contacts.resolveUsername {0} error {1}", username, error));
+                    //    });
+                    //});
                 }
             }
         }
@@ -892,7 +975,7 @@ namespace Unigram.Common
                         content = "AppResources.JoinChannelConfirmation";
                     }
 
-                    var dialog = new UnigramMessageDialog(content, invite.Title);
+                    var dialog = new TLMessageDialog(content, invite.Title);
                     dialog.Title = invite.Title;
                     dialog.Content = content;
                     dialog.PrimaryButtonText = "OK";

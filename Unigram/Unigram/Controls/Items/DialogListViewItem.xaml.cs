@@ -109,7 +109,7 @@ namespace Unigram.Controls.Items
         {
             //Placeholder.Fill = Application.Current.Resources[$"Placeholder{Utils.GetColorIndex(ViewModel.WithId)}ImageBrush"] as ImageBrush;
 
-            Placeholder.Fill = BindConvert.Current.Bubble(ViewModel.WithId);
+            //Placeholder.Fill = BindConvert.Current.Bubble(ViewModel.WithId);
         }
 
         private string UpdateBriefLabel(TLDialog dialog)
@@ -193,12 +193,35 @@ namespace Unigram.Controls.Items
                                 if (attribute != null)
                                 {
                                     //return $"{text}{attribute.Alt} ({Resources.Sticker.ToLower()})";
-                                    return $"{text}{attribute.Alt} Sticker" + caption;
+                                    return $"{text}{attribute.Alt} Sticker";
                                 }
                             }
 
                             //return text + Resources.Sticker;
-                            return text + "Sticker" + caption;
+                            return text + "Sticker";
+                        }
+                        else if (message.IsAudio())
+                        {
+                            var documentAudio = (message.Media as TLMessageMediaDocument).Document as TLDocument;
+                            if (documentAudio != null)
+                            {
+                                var audioAttribute = documentAudio.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+                                if (audioAttribute != null)
+                                {
+                                    if (audioAttribute.HasPerformer && audioAttribute.HasTitle)
+                                    {
+                                        return $"{text}{audioAttribute.Performer} - {audioAttribute.Title}";
+                                    }
+                                    else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
+                                    {
+                                        return $"{text}{audioAttribute.Performer} - Unknown Track";
+                                    }
+                                    else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
+                                    {
+                                        return $"{text}{audioAttribute.Title}";
+                                    }
+                                }
+                            }
                         }
 
                         var document = ((TLMessageMediaDocument)message.Media).Document as TLDocument;

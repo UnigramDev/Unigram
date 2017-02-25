@@ -14,41 +14,41 @@ using Unigram.Views;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Chats
 {
-    public class ChatInfoViewModel : UnigramViewModelBase
+    public class ChatDetailsViewModel : UnigramViewModelBase
     {
         public ObservableCollection<TLUser> UsersList = new ObservableCollection<TLUser>();
         public ObservableCollection<TLUser> TempList = new ObservableCollection<TLUser>();
         public object photo;
         public string Status { get; internal set; }
-        public ChatInfoViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) : base(protoService, cacheService, aggregator)
+        public ChatDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) : base(protoService, cacheService, aggregator)
         {
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var channel = parameter as TLInputPeerChannel;
-            var chat = parameter as TLInputPeerChat;
+            var channel = parameter as TLPeerChannel;
+            var chat = parameter as TLPeerChat;
 
             Item = CacheService.GetChat(chat?.ChatId ?? channel?.ChannelId);
 
-            if (channel != null)
-            {
-                TLInputChannel x = new TLInputChannel();                
-                x.ChannelId = channel.ChannelId;
-                x.AccessHash = channel.AccessHash;
-                var channelDetails = await ProtoService.GetFullChannelAsync(x);
-                Status = ((TLChannelFull)channelDetails.Result.FullChat).About;
-                // TODO: photo = channelDetails.Value.Chats[0].Photo;
-            }
-            if (chat != null)
-            {
-                var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
-            }
-            TempList.Clear();
-            UsersList.Clear();
-            getMembers(channel, chat);
+            //if (channel != null)
+            //{
+            //    TLInputChannel x = new TLInputChannel();                
+            //    x.ChannelId = channel.ChannelId;
+            //    x.AccessHash = channel.AccessHash;
+            //    var channelDetails = await ProtoService.GetFullChannelAsync(x);
+            //    Status = ((TLChannelFull)channelDetails.Result.FullChat).About;
+            //    // TODO: photo = channelDetails.Value.Chats[0].Photo;
+            //}
+            //if (chat != null)
+            //{
+            //    var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
+            //}
+            //TempList.Clear();
+            //UsersList.Clear();
+            //getMembers(channel, chat);
         }
 
         private TLChatBase _item;

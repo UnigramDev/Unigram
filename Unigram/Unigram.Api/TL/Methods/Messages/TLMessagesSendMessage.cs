@@ -11,7 +11,7 @@ namespace Telegram.Api.TL.Methods.Messages
 		[Flags]
 		public enum Flag : Int32
 		{
-			NoWebpage = (1 << 1),
+			NoWebPage = (1 << 1),
 			Silent = (1 << 5),
 			Background = (1 << 6),
 			ClearDraft = (1 << 7),
@@ -20,7 +20,7 @@ namespace Telegram.Api.TL.Methods.Messages
 			Entities = (1 << 3),
 		}
 
-		public bool IsNoWebpage { get { return Flags.HasFlag(Flag.NoWebpage); } set { Flags = value ? (Flags | Flag.NoWebpage) : (Flags & ~Flag.NoWebpage); } }
+		public bool IsNoWebPage { get { return Flags.HasFlag(Flag.NoWebPage); } set { Flags = value ? (Flags | Flag.NoWebPage) : (Flags & ~Flag.NoWebPage); } }
 		public bool IsSilent { get { return Flags.HasFlag(Flag.Silent); } set { Flags = value ? (Flags | Flag.Silent) : (Flags & ~Flag.Silent); } }
 		public bool IsBackground { get { return Flags.HasFlag(Flag.Background); } set { Flags = value ? (Flags | Flag.Background) : (Flags & ~Flag.Background); } }
 		public bool IsClearDraft { get { return Flags.HasFlag(Flag.ClearDraft); } set { Flags = value ? (Flags | Flag.ClearDraft) : (Flags & ~Flag.ClearDraft); } }

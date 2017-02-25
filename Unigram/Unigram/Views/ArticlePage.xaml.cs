@@ -15,12 +15,14 @@ using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
+using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.System;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -42,11 +44,15 @@ namespace Unigram.Views
     public sealed partial class ArticlePage : Page
     {
         public ArticleViewModel ViewModel => DataContext as ArticleViewModel;
+        private readonly string _injectedJs;
 
         public ArticlePage()
         {
             InitializeComponent();
             DataContext = UnigramContainer.Instance.ResolveType<ArticleViewModel>();
+
+            var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
+            _injectedJs = File.ReadAllText(jsPath);
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -60,7 +66,7 @@ namespace Unigram.Views
             var webpageMedia = parameter as TLMessageMediaWebPage;
             if (webpageMedia != null)
             {
-                parameter = webpageMedia.Webpage as TLWebPage;
+                parameter = webpageMedia.WebPage as TLWebPage;
             }
 
             var webpage = parameter as TLWebPage;
@@ -178,6 +184,7 @@ namespace Unigram.Views
             if (block.HasHtml)
             {
                 var view = new WebView();
+                view.NavigationCompleted += OnWebViewNavigationCompleted;
                 view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
 
                 var ratio = new RatioControl();
@@ -191,6 +198,7 @@ namespace Unigram.Views
             else if (block.HasUrl)
             {
                 var view = new WebView();
+                view.NavigationCompleted += OnWebViewNavigationCompleted;
                 view.Navigate(new Uri(block.Url));
 
                 var ratio = new RatioControl();
@@ -220,6 +228,12 @@ namespace Unigram.Views
             {
                 child.Margin = new Thickness(0, -12, 0, 12);
             }
+        }
+
+        private async void OnWebViewNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        {
+            var jss = _injectedJs;
+            await sender.InvokeScriptAsync("eval", new[] { jss });
         }
 
         private void ProcessCollage(TLPageBase page, TLPageBlockCollage block)
@@ -741,7 +755,7 @@ namespace Unigram.Views
 
         private async void Hyperlink_Click(TLTextUrl urlText)
         {
-            if (urlText.WebpageId != 0)
+            if (urlText.WebPageId != 0)
             {
                 var protoService = (MTProtoService)MTProtoService.Current;
                 protoService.SendInformativeMessageInternal<TLWebPageBase>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },

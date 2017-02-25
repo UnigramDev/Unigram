@@ -67,7 +67,7 @@ namespace Unigram.ViewModels
                 user.Link = userFull.Link;
                 user.ProfilePhoto = userFull.ProfilePhoto;
                 user.NotifySettings = userFull.NotifySettings;
-                user.Blocked = userFull.IsBlocked;
+                user.IsBlocked = userFull.IsBlocked;
                 user.BotInfo = userFull.BotInfo;
                 //user.About = userFull.About;
 

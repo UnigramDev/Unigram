@@ -9,9 +9,12 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Core.Dependency;
+using Unigram.Native.Tasks;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -58,123 +61,70 @@ namespace Unigram.Common
         }
     }
 
-    public class TLBitmapContext : Dictionary<object, WeakReference<TLBitmapSource>>
+    public class TLBitmapSource
     {
-        public TLBitmapSource this[TLPhoto photo]
+        private static readonly IDownloadFileManager _downloadFileManager;
+
+        static TLBitmapSource()
         {
-            get
-            {
-                TLBitmapSource target;
-                WeakReference<TLBitmapSource> reference;
-                if (TryGetValue(photo, out reference) && reference.TryGetTarget(out target))
-                {
-                    return target;
-                }
-
-                target = new TLBitmapSource(photo);
-                this[(object)photo] = new WeakReference<TLBitmapSource>(target);
-                return target;
-            }
-
-            set
-            {
-                base[(object)photo] = new WeakReference<TLBitmapSource>(value);
-            }
+            _downloadFileManager = UnigramContainer.Instance.ResolveType<IDownloadFileManager>();
         }
 
-        public TLBitmapSource this[TLDocument document]
-        {
-            get
-            {
-                TLBitmapSource target;
-                WeakReference<TLBitmapSource> reference;
-                if (TryGetValue(document, out reference) && reference.TryGetTarget(out target))
-                {
-                    return target;
-                }
-
-                target = new TLBitmapSource(document);
-                this[(object)document] = new WeakReference<TLBitmapSource>(target);
-                return target;
-            }
-
-            set
-            {
-                base[(object)document] = new WeakReference<TLBitmapSource>(value);
-            }
-        }
-
-        public TLBitmapSource this[TLUserProfilePhoto userProfilePhoto]
-        {
-            get
-            {
-                TLBitmapSource target;
-                WeakReference<TLBitmapSource> reference;
-                if (TryGetValue(userProfilePhoto, out reference) && reference.TryGetTarget(out target))
-                {
-                    return target;
-                }
-
-                target = new TLBitmapSource(userProfilePhoto);
-                this[(object)userProfilePhoto] = new WeakReference<TLBitmapSource>(target);
-                return target;
-            }
-
-            set
-            {
-                base[(object)userProfilePhoto] = new WeakReference<TLBitmapSource>(value);
-            }
-        }
-
-
-        public TLBitmapSource this[TLChatPhoto chatPhoto]
-        {
-            get
-            {
-                TLBitmapSource target;
-                WeakReference<TLBitmapSource> reference;
-                if (TryGetValue(chatPhoto, out reference) && reference.TryGetTarget(out target))
-                {
-                    return target;
-                }
-
-                target = new TLBitmapSource(chatPhoto);
-                this[(object)chatPhoto] = new WeakReference<TLBitmapSource>(target);
-                return target;
-            }
-
-            set
-            {
-                base[(object)chatPhoto] = new WeakReference<TLBitmapSource>(value);
-            }
-        }
-    }
-
-    public class TLBitmapSource : BitmapSource
-    {
         public const int PHASE_PLACEHOLDER = 0;
         public const int PHASE_THUMBNAIL = 1;
-        public const int PHASE_DEFINITIVE = 2;
+        public const int PHASE_FULL = 2;
 
         public int Phase { get; private set; }
 
+        public BitmapImage Image { get; private set; } = new BitmapImage();
+
         public TLBitmapSource() { }
 
-        public TLBitmapSource(TLUserProfilePhoto userProfilePhoto)
+        public TLBitmapSource(TLUser user)
         {
-            var fileLocation = userProfilePhoto.PhotoSmall as TLFileLocation;
-            if (fileLocation != null)
+            var userProfilePhoto = user.Photo as TLUserProfilePhoto;
+            if (userProfilePhoto != null)
             {
-                SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_DEFINITIVE);
+                if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
+                {
+                    SetProfilePlaceholder(user, "u" + user.Id, user.Id, user.FullName);
+                    SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
+                }
+            }
+            else
+            {
+                SetProfilePlaceholder(user, "u" + user.Id, user.Id, user.FullName);
             }
         }
 
-        public TLBitmapSource(TLChatPhoto chatPhoto)
+        public TLBitmapSource(TLChatBase chatBase)
         {
-            var fileLocation = chatPhoto.PhotoSmall as TLFileLocation;
-            if (fileLocation != null)
+            TLChatPhotoBase chatPhotoBase = null;
+
+            var channel = chatBase as TLChannel;
+            if (channel != null)
             {
-                SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_DEFINITIVE);
+                chatPhotoBase = channel.Photo;
+            }
+
+            var chat = chatBase as TLChat;
+            if (chat != null)
+            {
+                chatPhotoBase = chat.Photo;
+            }
+
+            var chatPhoto = chatPhotoBase as TLChatPhoto;
+            if (chatPhoto != null)
+            {
+                if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
+                {
+                    SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.FullName);
+                    SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
+                }
+            }
+            else
+            {
+                SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.FullName);
             }
         }
 
@@ -183,8 +133,11 @@ namespace Unigram.Common
             var photo = photoBase as TLPhoto;
             if (photo != null)
             {
-                SetSource(photo.Thumb, PHASE_THUMBNAIL);
-                SetSource(photo.Full, PHASE_DEFINITIVE);
+                if (TrySetSource(photo.Full, PHASE_FULL) == false)
+                {
+                    SetSource(photo.Thumb, PHASE_THUMBNAIL);
+                    SetSource(photo.Full, PHASE_FULL);
+                }
             }
         }
 
@@ -193,12 +146,32 @@ namespace Unigram.Common
             SetSource(document.Thumb, PHASE_THUMBNAIL);
         }
 
-        public void SetSource(TLPhotoSizeBase photoSizeBase, int phase)
+        public async void SetProfilePlaceholder(object value, string group, int id, string name)
+        {
+            if (PHASE_PLACEHOLDER >= Phase)
+            {
+                Phase = PHASE_PLACEHOLDER;
+
+                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\placeholders\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
+                using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    if (stream.Size == 0)
+                    {
+                        PlaceholderImageSource.Draw(BindConvert.Current.Bubble(id).Color, InitialNameStringConverter.Convert(value), stream);
+                        stream.Seek(0);
+                    }
+
+                    Image.SetSource(stream);
+                }
+            }
+        }
+
+        public bool TrySetSource(TLPhotoSizeBase photoSizeBase, int phase)
         {
             var photoSize = photoSizeBase as TLPhotoSize;
             if (photoSize != null)
             {
-                SetSource(photoSize.Location as TLFileLocation, photoSize.Size, 1);
+                return TrySetSource(photoSize.Location as TLFileLocation, phase);
             }
 
             var photoCachedSize = photoSizeBase as TLPhotoCachedSize;
@@ -207,9 +180,48 @@ namespace Unigram.Common
                 if (phase >= Phase)
                 {
                     Phase = phase;
-                    this.SetSource(photoCachedSize.Bytes);
+                    Image.SetSource(photoCachedSize.Bytes);
+                    return true;
                 }
             }
+
+            return false;
+        }
+
+        public void SetSource(TLPhotoSizeBase photoSizeBase, int phase)
+        {
+            var photoSize = photoSizeBase as TLPhotoSize;
+            if (photoSize != null)
+            {
+                SetSource(photoSize.Location as TLFileLocation, photoSize.Size, phase);
+            }
+
+            var photoCachedSize = photoSizeBase as TLPhotoCachedSize;
+            if (photoCachedSize != null)
+            {
+                if (phase >= Phase)
+                {
+                    Phase = phase;
+                    Image.SetSource(photoCachedSize.Bytes);
+                }
+            }
+        }
+
+        public bool TrySetSource(TLFileLocation location, int phase)
+        {
+            if (phase >= Phase && location != null)
+            {
+                var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                {
+                    Phase = phase;
+
+                    Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void SetSource(TLFileLocation location, int fileSize, int phase)
@@ -221,19 +233,31 @@ namespace Unigram.Common
                 var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    this.SetSource(FileUtils.GetTempFileUri(fileName));
+                    Image.SetSource(FileUtils.GetTempFileUri(fileName));
                 }
                 else
                 {
-                    Execute.BeginOnThreadPool(async () =>
-                    {
-                        var manager = UnigramContainer.Instance.ResolveType<IDownloadFileManager>();
-                        await manager.DownloadFileAsync(location, fileSize);
+                    //Execute.BeginOnThreadPool(async () =>
+                    //{
+                    //    var result = await _downloadFileManager.DownloadFileAsync(location, fileSize);
+                    //    if (result != null && Phase <= phase)
+                    //    {
+                    //        Execute.BeginOnUIThread(() =>
+                    //        {
+                    //            Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    //        });
+                    //    }
+                    //});
 
-                        Execute.BeginOnUIThread(() =>
+                    _downloadFileManager.DownloadFile(location, fileSize, result =>
+                    {
+                        if (result != null && Phase <= phase)
                         {
-                            this.SetSource(FileUtils.GetTempFileUri(fileName));
-                        });
+                            Execute.BeginOnUIThread(() =>
+                            {
+                                Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                            });
+                        }
                     });
                 }
             }

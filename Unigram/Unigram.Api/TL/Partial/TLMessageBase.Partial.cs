@@ -14,7 +14,11 @@ namespace Telegram.Api.TL
     public abstract partial class TLMessageBase : ITLRandomId, INotifyPropertyChanged
     {
         // TODO:
-        public bool IsUnread { get; set; } = false;
+        public bool IsUnread
+        {
+            get;
+            set;
+        } = false;
 
         public TLMessageBase Reply { get; set; }
 
@@ -400,7 +404,7 @@ namespace Telegram.Api.TL
                 ReplyMarkup = message.ReplyMarkup;
                 var webpageOld = Media as TLMessageMediaWebPage;
                 var webpageNew = message.Media as TLMessageMediaWebPage;
-                if ((webpageOld == null && webpageNew != null) || (webpageOld != null && webpageNew == null) || (webpageOld != null && webpageNew != null && webpageOld.Webpage.Id != webpageNew.Webpage.Id))
+                if ((webpageOld == null && webpageNew != null) || (webpageOld != null && webpageNew == null) || (webpageOld != null && webpageNew != null && webpageOld.WebPage.Id != webpageNew.WebPage.Id))
                 {
                     Media = (TLMessageMediaBase)webpageNew ?? new TLMessageMediaEmpty();
                 }

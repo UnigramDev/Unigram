@@ -29,9 +29,15 @@ namespace Unigram.Core
 
         #region Queries
 
+        private const string COUNT_TABLE = "SELECT COUNT(*) FROM `{0}`";
+
         private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE `{0}`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'Thumb' string, 'DCId' int, 'Version' int, 'Attributes' string)";
         private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes) VALUES({1},{2},{3},'{4}',{5},'{6}',{7},{8},'{9}');";
-        private const string SELECT_TABLE_DCOUMENT = "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes FROM `{0}`";
+        private const string SELECT_TABLE_DOCUMENT = "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes FROM `{0}`";
+
+        private const string CREATE_TABLE_STORAGEFILE_MAPPING = "CREATE TABLE `{0}`('Path' text primary key not null, 'DateModified' datetime, 'Id' bigint, 'AccessHash' bigint)";
+        private const string INSERT_TABLE_STORAGEFILE_MAPPING = "INSERT OR REPLACE INTO `{0}` (Path,DateModified,Id,AccessHash) VALUES('{1}','{2}',{3},{4});";
+        private const string SELECT_TABLE_STORAGEFILE_MAPPING = "SELECT Path,DateModified,Id,AccessHash FROM `{0}` WHERE Path = '{1}'";
 
         #endregion
 
@@ -48,9 +54,32 @@ namespace Unigram.Core
             Sqlite3.sqlite3_finalize(statement);
         }
 
+        private int ExecuteWithResult(Database database, string query)
+        {
+            Statement statement = null;
+            Sqlite3.sqlite3_prepare_v2(database, query, out statement);
+            Sqlite3.sqlite3_step(statement);
+            var result = Sqlite3.sqlite3_column_int(statement, 0);
+            Sqlite3.sqlite3_finalize(statement);
+
+            return result;
+        }
+
         private string Escape(string str)
         {
             return str.Replace("'", "''");
+        }
+
+        public int Count(string table)
+        {
+            Database database;
+            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+
+            Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
+            var result = ExecuteWithResult(database, string.Format(COUNT_TABLE, table));
+            Sqlite3.sqlite3_close(database);
+
+            return result;
         }
 
         public void InsertDocuments(string table, IEnumerable<TLDocument> documents, bool delete)
@@ -87,7 +116,7 @@ namespace Unigram.Core
 
             Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
 
-            Sqlite3.sqlite3_prepare_v2(database, string.Format(SELECT_TABLE_DCOUMENT, table), out statement);
+            Sqlite3.sqlite3_prepare_v2(database, string.Format(SELECT_TABLE_DOCUMENT, table), out statement);
 
             var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
             var result = new List<TLDocument>();
@@ -105,6 +134,52 @@ namespace Unigram.Core
                     Version = Sqlite3.sqlite3_column_int(statement, 7),
                     Attributes = JsonConvert.DeserializeObject<TLVector<TLDocumentAttributeBase>>(Sqlite3.sqlite3_column_text(statement, 8), settings)
                 });
+            }
+
+            Sqlite3.sqlite3_finalize(statement);
+            Sqlite3.sqlite3_close(database);
+
+            return result;
+        }
+
+        public void InsertStorageFileMapping(string table, string fileName, DateTime dateModified, int id, long accessHash)
+        {
+            Database database;
+            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+
+            Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
+
+            var fileNameEscaped = Escape(fileName);
+            var dateModifiedEscaped = dateModified.ToString("yyyy-MM-dd HH:mm:ss");
+
+            Execute(database, string.Format(INSERT_TABLE_STORAGEFILE_MAPPING, table, fileNameEscaped, dateModifiedEscaped, id, accessHash));
+
+            Sqlite3.sqlite3_close(database);
+        }
+
+        public bool SelectStorageFileMapping(string table, string fileName, out DateTime dateModified, out int id, out long accessHash)
+        {
+            Database database;
+            Statement statement;
+            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+
+            Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
+
+            Sqlite3.sqlite3_prepare_v2(database, string.Format(SELECT_TABLE_DOCUMENT, table, Escape(fileName)), out statement);
+
+            var result = false;
+            if (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
+            {
+                dateModified = DateTime.Parse(Sqlite3.sqlite3_column_text(statement, 1));
+                id = Sqlite3.sqlite3_column_int(statement, 2);
+                accessHash = Sqlite3.sqlite3_column_int64(statement, 3);
+                result = true;
+            }
+            else
+            {
+                dateModified = DateTime.MinValue;
+                id = -1;
+                accessHash = -1;
             }
 
             Sqlite3.sqlite3_finalize(statement);

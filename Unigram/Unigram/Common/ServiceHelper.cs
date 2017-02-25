@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Unigram.Strings;
 using static Unigram.ViewModels.DialogViewModel;
+using Unigram.Views.Users;
 
 namespace Unigram.Common
 {
@@ -49,10 +50,10 @@ namespace Unigram.Common
 
                         if (fromUserId == SettingsHelper.UserId)
                         {
-                            return ReplaceLinks(won ? Resources.YourScoredAtGamePlural : Resources.YourScoredAtGame, new[] { value.ToString(), text }, new[] { "tg-bold://", "tg-game://" }, useActiveLinks);
+                            return ReplaceLinks(won ? Resources.YourScoredAtGamePlural : Resources.YourScoredAtGame, new[] { value.ToString(), game.Title }, new[] { "tg-bold://", "tg-game://" }, useActiveLinks);
                         }
 
-                        return ReplaceLinks(won ? Resources.UserScoredAtGamePlural : Resources.UserScoredAtGame, new[] { fromUserFullName, value.ToString(), text }, new[] { "tg-user://" + fromUserId, "tg-bold://", "tg-game://" }, useActiveLinks);
+                        return ReplaceLinks(won ? Resources.UserScoredAtGamePlural : Resources.UserScoredAtGame, new[] { fromUserFullName, value.ToString(), game.Title }, new[] { "tg-user://" + fromUserId, "tg-bold://", "tg-game://" }, useActiveLinks);
                     }
 
                     if (fromUserId == SettingsHelper.UserId)
@@ -323,7 +324,7 @@ namespace Unigram.Common
                                     return ReplaceLinks(Resources.MessageActionPinText, new[] { userFullName, repliedMessage.Message.Substring(0, 20).Replace("\r\n", "\n").Replace("\n", " ") + "..." }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
                                 }
 
-                                return ReplaceLinks(Resources.MessageActionPinText, new[] { userFullName, repliedMessage.Message.Replace("\r\n", "\n").Replace("\n", " ") }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
+                                return ReplaceLinks(Resources.MessageActionPinText, new[] { userFullName, repliedMessage.Message.Replace("\r\n", "\n").Replace("\n", " ") }, new[] { "tg-user://" + fromId.Value, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                             }
 
                             return ReplaceLinks(Resources.MessageActionPinMessage, new[] { userFullName }, new[] { "tg-user://" + fromId.Value }, useActiveLinks);
@@ -464,7 +465,7 @@ namespace Unigram.Common
                 var navigationService = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                 if (navigationService != null)
                 {
-                    navigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = int.Parse(userId.Replace("tg-user://", string.Empty)) });
+                    navigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = int.Parse(userId.Replace("tg-user://", string.Empty)) });
                 }
             }
         }
@@ -480,6 +481,7 @@ namespace Unigram.Common
                     return gameMedia.Game;
                 }
             }
+
             return null;
         }
     }

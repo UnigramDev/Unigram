@@ -27,6 +27,7 @@ using Unigram.ViewModels.Settings;
 using Unigram.Services;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Users;
 
 namespace Unigram
 {
@@ -38,8 +39,6 @@ namespace Unigram
         {
             container = UnigramContainer.Instance;
         }
-
-        public IHardwareService HardwareService => UnigramContainer.Instance.ResolveType<IHardwareService>();
 
         public void Configure()
         {
@@ -77,8 +76,8 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogViewModel>();
-            container.ContainerBuilder.RegisterType<UserInfoViewModel>();
-            container.ContainerBuilder.RegisterType<ChatInfoViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
+            container.ContainerBuilder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
             container.ContainerBuilder.RegisterType<UsersSelectionViewModel>(); //.SingleInstance();
             container.ContainerBuilder.RegisterType<CreateChannelStep1ViewModel>(); //.SingleInstance();
@@ -95,10 +94,11 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsBlockUserViewModel>();
             container.ContainerBuilder.RegisterType<SettingsFeaturedStickersViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
 
             container.Build();
 
-            Task.Run(() => Initialize());
+            Task.Run(() => LoadStateAndUpdate());
         }
 
         private void InitializeLayer()
@@ -136,7 +136,7 @@ namespace Unigram
             }
         }
 
-        private void Initialize()
+        public void LoadStateAndUpdate()
         {
             var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
             var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>();
@@ -149,10 +149,11 @@ namespace Unigram
             //updatesService.AcceptEncryptionAsync = protoService.AcceptEncryptionCallback;
             //updatesService.SendEncryptedServiceAsync = protoService.SendEncryptedServiceCallback;
             updatesService.SetMessageOnTimeAsync = protoService.SetMessageOnTime;
-            //updatesService.RemoveFromQueue = protoService.RemoveFromQueue;
             updatesService.UpdateChannelAsync = protoService.UpdateChannelCallback;
             updatesService.GetParticipantAsync = protoService.GetParticipantCallback;
+            updatesService.GetFullUserAsync = protoService.GetFullUserCallback;
             updatesService.GetFullChatAsync = protoService.GetFullChatCallback;
+            updatesService.GetChannelMessagesAsync = protoService.GetMessagesCallback;
             updatesService.LoadStateAndUpdate(() => { });
 
             protoService.AuthorizationRequired += (s, e) =>

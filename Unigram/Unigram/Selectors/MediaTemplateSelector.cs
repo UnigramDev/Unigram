@@ -128,19 +128,19 @@ namespace Unigram.Selectors
                     return UnsupportedTemplate;
                 }
 
-                var emptyWebpage = webpageMedia.Webpage as TLWebPageEmpty;
+                var emptyWebpage = webpageMedia.WebPage as TLWebPageEmpty;
                 if (emptyWebpage != null)
                 {
                     return EmptyTemplate;
                 }
 
-                var pendingWebpage = webpageMedia.Webpage as TLWebPagePending;
+                var pendingWebpage = webpageMedia.WebPage as TLWebPagePending;
                 if (pendingWebpage != null)
                 {
                     return EmptyTemplate;
                 }
 
-                var webpage = webpageMedia.Webpage as TLWebPage;
+                var webpage = webpageMedia.WebPage as TLWebPage;
                 if (webpage != null)
                 {
                     if (TLMessage.IsGif(webpage.Document))

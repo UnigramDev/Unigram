@@ -54,12 +54,10 @@ namespace Unigram.Views
         public MainPage()
         {
             InitializeComponent();
+            NavigationCacheMode = NavigationCacheMode.Required;
+            DataContext = UnigramContainer.Instance.ResolveType<MainViewModel>();
 
             _logicalDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-
-            NavigationCacheMode = NavigationCacheMode.Required;
-
-            DataContext = UnigramContainer.Instance.ResolveType<MainViewModel>();
 
             Loaded += OnLoaded;
 
@@ -93,6 +91,7 @@ namespace Unigram.Views
             if (MasterDetail.NavigationService == null)
             {
                 MasterDetail.Initialize("Main");
+                MasterDetail.NavigationService.Frame.Navigated += OnNavigated;
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
@@ -129,6 +128,46 @@ namespace Unigram.Views
                             ClearNavigation();
                             MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = chat.Id });
                         }
+                    }
+                }
+            }
+        }
+
+        private void OnNavigated(object sender, NavigationEventArgs e)
+        {
+            if (e.SourcePageType == typeof(DialogPage))
+            {
+                var parameter = MasterDetail.NavigationService.SerializationService.Deserialize((string)e.Parameter);
+                var tuple = parameter as Tuple<TLPeerBase, int>;
+                if (tuple != null)
+                {
+                    parameter = tuple.Item1;
+                }
+
+                var dialog = ViewModel.Dialogs.Items.FirstOrDefault(x => x.Peer.Equals(parameter));
+                if (dialog != null)
+                {
+                    _lastSelected = dialog;
+                    DialogsListView.SelectedItem = dialog;
+                }
+                else
+                {
+                    _lastSelected = null;
+                    DialogsListView.SelectedItem = null;
+                }
+
+                if (parameter is TLPeerUser)
+                {
+                    var user = ViewModel.Contacts.Items.FirstOrDefault(x => x.Id == ((TLPeerUser)parameter).UserId);
+                    if (user != null)
+                    {
+                        _lastSelectedContact = user;
+                        UsersListView.SelectedItem = user;
+                    }
+                    else
+                    {
+                        _lastSelected = null;
+                        UsersListView.SelectedItem = null;
                     }
                 }
             }
@@ -207,7 +246,12 @@ namespace Unigram.Views
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listView = sender as ListView;
-            if (listView.SelectedItem != null && _lastSelected != listView.SelectedItem && listView.SelectionMode != ListViewSelectionMode.Multiple)
+            if (listView.SelectedItem != null)
+            {
+                listView.ScrollIntoView(listView.SelectedItem);
+            }
+
+            if (listView.SelectedItem != null && _lastSelected != listView.SelectedItem)
             {
                 _lastSelected = listView.SelectedItem;
 
@@ -463,7 +507,7 @@ namespace Unigram.Views
                     var user = dialog.With as TLUser;
                     if (user != null)
                     {
-                        element.Visibility = user.IsBot && !user.Blocked ? Visibility.Visible : Visibility.Collapsed;
+                        element.Visibility = user.IsBot && !user.IsBlocked ? Visibility.Visible : Visibility.Collapsed;
                     }
                     else
                     {

@@ -50,6 +50,24 @@ namespace Telegram.Api.TL
             }
         }
 
+        public override void Update(TLChatBase chatBase)
+        {
+            base.Update(chatBase);
+
+            var channel = chatBase as TLChannel;
+            if (channel != null)
+            {
+                if (channel.ReadInboxMaxId != 0 && (ReadInboxMaxId == 0 || ReadInboxMaxId < channel.ReadInboxMaxId))
+                {
+                    ReadInboxMaxId = channel.ReadInboxMaxId;
+                }
+                if (channel.ReadOutboxMaxId != 0 && (ReadOutboxMaxId == 0 || ReadOutboxMaxId < channel.ReadOutboxMaxId))
+                {
+                    ReadOutboxMaxId = channel.ReadOutboxMaxId;
+                }
+            }
+        }
+
         //public override void ReadFromCache(TLBinaryReader from)
         //{
         //    ((ITLReadMaxId)this).ReadInboxMaxId = from.ReadInt32();

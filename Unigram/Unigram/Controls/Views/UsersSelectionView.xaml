@@ -22,7 +22,7 @@
         </Grid.ColumnDefinitions>
         <StackPanel VerticalAlignment="Center" Margin="12,0">
             <TextBlock Text="{x:Bind ViewModel.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
-            <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
+            <TextBlock Visibility="{x:Bind ConvertMaximum(ViewModel.Maximum)}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
                 <Run Text="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"/><Run Text="/"/><Run Text="{x:Bind ViewModel.Maximum}"/>
             </TextBlock>
         </StackPanel>
@@ -34,7 +34,7 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto" 
-                      MaxHeight="80">
+                      MaxHeight="76">
             <controls:TagsTextBox ItemsSource="{x:Bind ViewModel.SelectedItems}" VerticalAlignment="Stretch" PlaceholderText="Search" Margin="0,8" SizeChanged="TagsTextBox_SizeChanged"/>
         </ScrollViewer>
     </Border>
@@ -55,7 +55,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
+                    <!--<Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
                         <TextBlock Foreground="White" Text="{x:Bind Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
                         <Ellipse>
                             <Ellipse.Fill>
@@ -63,7 +63,14 @@
                             </Ellipse.Fill>
                         </Ellipse>
                         <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
-                    </Grid>
+                    </Grid>-->
+
+                    <Ellipse Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+
                     <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                     <TextBlock Text="{x:Bind Converter={StaticResource LastSeenConverter}}" 
                                VerticalAlignment="Top" 

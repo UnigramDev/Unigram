@@ -457,7 +457,7 @@ namespace Telegram.Api.Services.Cache
                     var webPageMedia = message.Media as TLMessageMediaWebPage;
                     if (webPageMedia != null)
                     {
-                        var currentWebPage = webPageMedia.Webpage;
+                        var currentWebPage = webPageMedia.WebPage;
                         if (currentWebPage != null && currentWebPage.Id == webPageBase.Id)
                         {
                             return true;
@@ -480,7 +480,7 @@ namespace Telegram.Api.Services.Cache
                         var webPageMedia = message.Media as TLMessageMediaWebPage;
                         if (webPageMedia != null)
                         {
-                            var currentWebPage = webPageMedia.Webpage;
+                            var currentWebPage = webPageMedia.WebPage;
                             if (currentWebPage != null && currentWebPage.Id == webPageBase.Id)
                             {
                                 m = message;
@@ -501,7 +501,7 @@ namespace Telegram.Api.Services.Cache
                     var webPageMedia = message.Media as TLMessageMediaWebPage;
                     if (webPageMedia != null)
                     {
-                        var currentWebPage = webPageMedia.Webpage;
+                        var currentWebPage = webPageMedia.WebPage;
                         if (currentWebPage != null && currentWebPage.Id == webPageBase.Id)
                         {
                             return true;

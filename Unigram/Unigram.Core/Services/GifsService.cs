@@ -8,6 +8,7 @@ using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core;
+using Windows.UI.Popups;
 
 namespace Unigram.Services
 {
@@ -27,7 +28,10 @@ namespace Unigram.Services
 
         public async Task<KeyedList<int, TLDocument>> GetSavedGifs()
         {
-            var response = await _protoService.GetSavedGifsAsync(SettingsHelper.GifsHash);
+            var count = DatabaseContext.Current.Count("Gifs");
+            var hash = count > 0 ? SettingsHelper.GifsHash : 0;
+
+            var response = await _protoService.GetSavedGifsAsync(hash);
             if (response.IsSucceeded)
             {
                 var result = response.Result as TLMessagesSavedGifs;

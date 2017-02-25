@@ -38,6 +38,9 @@ using Unigram.Core.Helpers;
 using Org.BouncyCastle.Security;
 using Unigram.Core;
 using Unigram.Services;
+using Windows.Storage.FileProperties;
+using Windows.System;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
 {
@@ -169,6 +172,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private ItemsUpdatingScrollMode _updatingScrollMode;
+        public ItemsUpdatingScrollMode UpdatingScrollMode
+        {
+            get
+            {
+                return _updatingScrollMode;
+            }
+            set
+            {
+                Set(ref _updatingScrollMode, value);
+            }
+        }
+
         public bool IsFirstSliceLoaded { get; set; }
 
         private bool _isLoadingNextSlice;
@@ -179,6 +195,8 @@ namespace Unigram.ViewModels
         {
             if (_isLoadingNextSlice) return;
             _isLoadingNextSlice = true;
+
+            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
@@ -192,19 +210,31 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, maxId, 15);
+            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
+
+            //return;
+
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, maxId, 50);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
 
-                foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
+                Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Replies processed");
+
+                //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
+                for (int i = 0; i < result.Result.Messages.Count; i++)
                 {
+                    var item = result.Result.Messages[i];
                     Messages.Insert(0, item);
                     //InsertMessage(item as TLMessageCommonBase);
                 }
 
-                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Items added");
+
+                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                for (int i = result.Result.Messages.Count - 1; i >= 0; i--)
                 {
+                    var item = result.Result.Messages[i];
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
                     {
@@ -225,6 +255,8 @@ namespace Unigram.ViewModels
             if (_isLoadingPreviousSlice) return;
             _isLoadingPreviousSlice = true;
 
+            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
             var maxId = int.MaxValue;
@@ -239,13 +271,15 @@ namespace Unigram.ViewModels
 
             maxId = Messages.LastOrDefault()?.Id ?? 1;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -15, maxId, 15);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -50, maxId, 50);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
 
-                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                for (int i = result.Result.Messages.Count - 1; i >= 0; i--)
                 {
+                    var item = result.Result.Messages[i];
                     if (item.Id > maxId)
                     {
                         Messages.Add(item);
@@ -290,7 +324,9 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
 
-            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
+            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+
+            Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
 
             if (previousId.HasValue)
             {
@@ -299,19 +335,20 @@ namespace Unigram.ViewModels
 
             Messages.Clear();
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -1, maxId, 20);
+            var offset = -50;
+            var limit = 50;
+
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, maxId, limit);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
 
-                foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
+                //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
+                for (int i = result.Result.Messages.Count - 1; i >= 0; i--)
                 {
-                    Messages.Insert(0, item);
-                    //InsertMessage(item as TLMessageCommonBase);
-                }
+                    var item = result.Result.Messages[i];
+                    Messages.Add(item);
 
-                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
-                {
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
                     {
@@ -323,7 +360,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                IsFirstSliceLoaded = result.Result.Messages.Count < 20;
+                IsFirstSliceLoaded = result.Result.Messages.Count < limit;
             }
 
             _isLoadingNextSlice = false;
@@ -336,19 +373,28 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
 
-            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
+            UpdatingScrollMode = _currentDialog?.UnreadCount > 0 ? ItemsUpdatingScrollMode.KeepItemsInView : ItemsUpdatingScrollMode.KeepLastItemInView;
 
-            var maxId = _currentDialog?.ReadInboxMaxId ?? int.MaxValue;
+            Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
+
             var lastRead = true;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -19, maxId, 20);
+            var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
+            var offset = _currentDialog?.UnreadCount > 0 ? -51 : 0;
+            var limit = 50;
+
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, maxId, limit);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
 
-                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                for (int i = result.Result.Messages.Count - 1; i >= 0; i--)
                 {
-                    if (item.Id > maxId && lastRead)
+                    var item = result.Result.Messages[i];
+                    var message = item as TLMessageCommonBase;
+
+                    if (item.Id > maxId && lastRead && message != null && !message.IsOut)
                     {
                         var serviceMessage = new TLMessageService
                         {
@@ -369,7 +415,7 @@ namespace Unigram.ViewModels
                     Messages.Add(item);
                 }
 
-                IsFirstSliceLoaded = result.Result.Messages.Count < 20;
+                IsFirstSliceLoaded = result.Result.Messages.Count < limit;
             }
 
             _isLoadingNextSlice = false;
@@ -496,12 +542,9 @@ namespace Unigram.ViewModels
 
             if (user != null)
             {
-                var full = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
+                var full = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
 
                 With = user;
-                Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
-
-                Messages.Clear();
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
 
                 // test calls
@@ -620,15 +663,6 @@ namespace Unigram.ViewModels
 
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
 
-            if (tuple != null)
-            {
-                await LoadMessageSliceAsync(null, tuple.Item2);
-            }
-            else
-            {
-                await LoadFirstSliceAsync();
-            }
-
             var dialog = _currentDialog;
             if (dialog != null && dialog.HasDraft)
             {
@@ -648,16 +682,26 @@ namespace Unigram.ViewModels
 
             LastSeen = await GetSubtitle();
 
-#if !DEBUG
+            //#if !DEBUG
+            //#endif
+
+            Aggregator.Subscribe(this);
+
+            if (tuple != null)
+            {
+                await LoadMessageSliceAsync(null, tuple.Item2);
+            }
+            else
+            {
+                await LoadFirstSliceAsync();
+            }
+
             if (dialog != null && Messages.Count > 0)
             {
                 var unread = dialog.UnreadCount;
-                if (Peer is TLInputPeerChannel)
+                if (Peer is TLInputPeerChannel && channel != null)
                 {
-                    if (channel != null)
-                    {
-                        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
-                    }
+                    await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
                 }
                 else
                 {
@@ -667,9 +711,7 @@ namespace Unigram.ViewModels
                 dialog.UnreadCount = dialog.UnreadCount - unread;
                 dialog.RaisePropertyChanged(() => dialog.UnreadCount);
             }
-#endif
 
-            Aggregator.Subscribe(this);
             //Aggregator.Publish("PORCODIO");
 
             //StickersRecent();
@@ -928,7 +970,7 @@ namespace Unigram.ViewModels
             }
         }
 
-#region Reply 
+        #region Reply 
 
         private TLMessageBase _reply;
         public TLMessageBase Reply
@@ -967,7 +1009,7 @@ namespace Unigram.ViewModels
 
         public RelayCommand ClearReplyCommand => new RelayCommand(() => { Reply = null; });
 
-#endregion
+        #endregion
 
         public RelayCommand PinnedCommand => new RelayCommand(PinnedExecute);
         private async void PinnedExecute()
@@ -1197,6 +1239,100 @@ namespace Unigram.ViewModels
             await file.CopyAndReplaceAsync(fileCache);
 
             var basicProps = await fileCache.GetBasicPropertiesAsync();
+            var thumbnail = await FileUtils.GetFileThumbnailAsync(file);
+            if (thumbnail as TLPhotoSize != null)
+            {
+                await SendThumbnailFileAsync(file, fileLocation, fileName, basicProps, thumbnail as TLPhotoSize, fileCache, caption);
+            }
+            else
+            {
+                var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+                var document = new TLDocument
+                {
+                    Id = 0,
+                    AccessHash = 0,
+                    Date = date,
+                    Size = (int)basicProps.Size,
+                    MimeType = fileCache.ContentType,
+                    Attributes = new TLVector<TLDocumentAttributeBase>
+                {
+                    new TLDocumentAttributeFilename
+                    {
+                        FileName = file.Name
+                    }
+                }
+                };
+
+                var media = new TLMessageMediaDocument
+                {
+                    Document = document,
+                    Caption = caption
+                };
+
+                var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+                if (Reply != null)
+                {
+                    message.HasReplyToMsgId = true;
+                    message.ReplyToMsgId = Reply.Id;
+                    message.Reply = Reply;
+                    Reply = null;
+                }
+
+                var previousMessage = InsertSendingMessage(message);
+                CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+                {
+                    var fileId = TLLong.Random();
+                    var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
+                    if (upload != null)
+                    {
+                        var inputMedia = new TLInputMediaUploadedDocument
+                        {
+                            File = new TLInputFile
+                            {
+                                Id = upload.FileId,
+                                Md5Checksum = string.Empty,
+                                Name = fileName,
+                                Parts = upload.Parts.Count,
+                            },
+                            MimeType = document.MimeType,
+                            Caption = media.Caption,
+                            Attributes = new TLVector<TLDocumentAttributeBase>
+                            {
+                                new TLDocumentAttributeFilename
+                                {
+                                    FileName = file.Name
+                                }
+                            }
+                        };
+
+                        var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                        //if (result.IsSucceeded)
+                        //{
+                        //    var update = result.Result as TLUpdates;
+                        //    if (update != null)
+                        //    {
+                        //        var newMessage = update.Updates.OfType<TLUpdateNewMessage>().FirstOrDefault();
+                        //        if (newMessage != null)
+                        //        {
+                        //            var newM = newMessage.Message as TLMessage;
+                        //            if (newM != null)
+                        //            {
+                        //                message.Media = newM.Media;
+                        //                message.RaisePropertyChanged(() => message.Media);
+                        //            }
+                        //        }
+                        //    }
+                        //}
+                    }
+                });
+            }
+        }
+
+        private async Task SendThumbnailFileAsync(StorageFile file, TLFileLocation fileLocation, string fileName, BasicProperties basicProps, TLPhotoSize thumbnail, StorageFile fileCache, string caption)
+        {
+            var desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
 
@@ -1207,6 +1343,7 @@ namespace Unigram.ViewModels
                 Date = date,
                 Size = (int)basicProps.Size,
                 MimeType = fileCache.ContentType,
+                Thumb = thumbnail,
                 Attributes = new TLVector<TLDocumentAttributeBase>
                 {
                     new TLDocumentAttributeFilename
@@ -1239,27 +1376,39 @@ namespace Unigram.ViewModels
                 var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
                 if (upload != null)
                 {
-                    var inputMedia = new TLInputMediaUploadedDocument
+                    var thumbFileId = TLLong.Random();
+                    var thumbUpload = await _uploadDocumentManager.UploadFileAsync(thumbFileId, desiredName);
+                    if (thumbUpload != null)
                     {
-                        File = new TLInputFile
+                        var inputMedia = new TLInputMediaUploadedThumbDocument
                         {
-                            Id = upload.FileId,
-                            Md5Checksum = string.Empty,
-                            Name = fileName,
-                            Parts = upload.Parts.Count,
-                        },
-                        MimeType = document.MimeType,
-                        Caption = media.Caption,
-                        Attributes = new TLVector<TLDocumentAttributeBase>
-                        {
-                            new TLDocumentAttributeFilename
+                            File = new TLInputFile
                             {
-                                FileName = file.Name
+                                Id = upload.FileId,
+                                Md5Checksum = string.Empty,
+                                Name = fileName,
+                                Parts = upload.Parts.Count,
+                            },
+                            Thumb = new TLInputFile
+                            {
+                                Id = thumbUpload.FileId,
+                                Md5Checksum = string.Empty,
+                                Name = desiredName,
+                                Parts = thumbUpload.Parts.Count
+                            },
+                            MimeType = document.MimeType,
+                            Caption = media.Caption,
+                            Attributes = new TLVector<TLDocumentAttributeBase>
+                            {
+                                new TLDocumentAttributeFilename
+                                {
+                                    FileName = file.Name
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                        var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                    }
                     //if (result.IsSucceeded)
                     //{
                     //    var update = result.Result as TLUpdates;
@@ -1721,7 +1870,7 @@ namespace Unigram.ViewModels
             return result;
         }
 
-#region Toggle mute
+        #region Toggle mute
 
         public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
         private async void ToggleMuteExecute()
@@ -1768,9 +1917,9 @@ namespace Unigram.ViewModels
             }
         }
 
-#endregion
+        #endregion
 
-#region Toggle silent
+        #region Toggle silent
 
         public RelayCommand ToggleSilentCommand => new RelayCommand(ToggleSilentExecute);
         private async void ToggleSilentExecute()
@@ -1817,9 +1966,9 @@ namespace Unigram.ViewModels
             }
         }
 
-#endregion
+        #endregion
 
-#region Report Spam
+        #region Report Spam
 
         public RelayCommand HideReportSpamCommand => new RelayCommand(HideReportSpamExecute);
         private async void HideReportSpamExecute()
@@ -1844,9 +1993,9 @@ namespace Unigram.ViewModels
             }
         }
 
-#endregion
+        #endregion
 
-#region Stickers
+        #region Stickers
 
         public RelayCommand OpenStickersCommand => new RelayCommand(OpenStickersExecute);
         private void OpenStickersExecute()
@@ -1866,7 +2015,8 @@ namespace Unigram.ViewModels
             });
         }
 
-#endregion
+        #endregion
+
     }
 
     public class MessageCollection : ObservableCollection<TLMessageBase>

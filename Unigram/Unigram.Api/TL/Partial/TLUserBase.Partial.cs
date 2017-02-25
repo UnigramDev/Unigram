@@ -20,7 +20,7 @@ namespace Telegram.Api.TL
 
         public TLPeerNotifySettingsBase NotifySettings { get; set; }
 
-        public virtual bool Blocked { get; set; }
+        public virtual bool IsBlocked { get; set; }
 
         public TLBotInfo BotInfo { get; set; }
         #endregion
@@ -48,15 +48,23 @@ namespace Telegram.Api.TL
                 {
                     NotifySettings = user.NotifySettings;
                 }
+                if (user.ReadInboxMaxId != 0 && (ReadInboxMaxId == 0 || ReadInboxMaxId < user.ReadInboxMaxId))
+                {
+                    ReadInboxMaxId = user.ReadInboxMaxId;
+                }
+                if (user.ReadOutboxMaxId != 0 && (ReadOutboxMaxId == 0 || ReadOutboxMaxId < user.ReadOutboxMaxId))
+                {
+                    ReadOutboxMaxId = user.ReadOutboxMaxId;
+                }
 
                 //if (user.ExtendedInfo != null)
                 //{
                 //    ExtendedInfo = user.ExtendedInfo;
                 //}
 
-                if (user.Blocked != null)
+                if (user.IsBlocked != null)
                 {
-                    Blocked = user.Blocked;
+                    IsBlocked = user.IsBlocked;
                 }
             }
             catch (Exception e)
@@ -120,9 +128,17 @@ namespace Telegram.Api.TL
 
         #endregion
 
-        public int ReadInboxMaxId { get; set; }
+        public int ReadInboxMaxId
+        {
+            get;
+            set;
+        }
 
-        public int ReadOutboxMaxId { get; set; }
+        public int ReadOutboxMaxId
+        {
+            get;
+            set;
+        }
 
         //public override void ReadFromCache(TLBinaryReader from)
         //{

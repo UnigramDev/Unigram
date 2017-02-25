@@ -17,6 +17,8 @@ namespace Unigram.ViewModels.Settings
         {
         }
 
+        public override int Maximum { get  { return int.MaxValue; } }
+
         protected override async void SendExecute()
         {
             foreach (var item in SelectedItems)

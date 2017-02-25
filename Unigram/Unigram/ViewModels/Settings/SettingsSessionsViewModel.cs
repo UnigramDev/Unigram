@@ -112,7 +112,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<TLAuthorization> TerminateCommand => new RelayCommand<TLAuthorization>(TerminateExecute);
         private async void TerminateExecute(TLAuthorization session)
         {
-            var terminate = await UnigramMessageDialog.ShowAsync("Terminate this session?", "Telegram", "Yes", "No");
+            var terminate = await TLMessageDialog.ShowAsync("Terminate this session?", "Telegram", "Yes", "No");
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.ResetAuthorizationAsync(session.Hash);
@@ -130,7 +130,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand TerminateOthersCommand => new RelayCommand(TerminateOtherExecute);
         private async void TerminateOtherExecute()
         {
-            var terminate = await UnigramMessageDialog.ShowAsync("Are you sure you want to terminate all other sessions?", "Telegram", "Yes", "No");
+            var terminate = await TLMessageDialog.ShowAsync("Are you sure you want to terminate all other sessions?", "Telegram", "Yes", "No");
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.ResetAuthorizationsAsync();

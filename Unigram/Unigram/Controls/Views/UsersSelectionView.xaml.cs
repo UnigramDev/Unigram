@@ -74,5 +74,14 @@ namespace Unigram.Controls.Views
         {
             ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight, null);
         }
+
+        #region Binding
+
+        private Visibility ConvertMaximum(int maximum)
+        {
+            return maximum == int.MaxValue ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        #endregion
     }
 }

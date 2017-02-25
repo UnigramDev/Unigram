@@ -55,7 +55,13 @@ namespace Unigram.Controls.Messages
         private void OnMediaChanged()
         {
             var message = DataContext as TLMessage;
-            if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty)
+            var empty = false;
+            if (message.Media is TLMessageMediaWebPage)
+            {
+                empty = ((TLMessageMediaWebPage)message.Media).WebPage is TLWebPageEmpty;
+            }
+
+            if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty || empty)
             {
                 MediaControl.Margin = new Thickness(0);
                 StatusToDefault();
@@ -112,7 +118,14 @@ namespace Unigram.Controls.Messages
                     Grid.SetRow(StatusControl, caption ? 4 : 3);
                     Grid.SetRow(MessageControl, caption ? 4 : 2);
                 }
-                else if (IsInlineMedia(message.Media))
+                else if (message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaGame)
+                {
+                    MediaControl.Margin = new Thickness(0);
+                    StatusToDefault();
+                    Grid.SetRow(StatusControl, 4);
+                    Grid.SetRow(MessageControl, 2);
+                }
+                else /*if (IsInlineMedia(message.Media))*/
                 {
                     var caption = false;
                     if (message.Media is ITLMediaCaption)
@@ -125,13 +138,14 @@ namespace Unigram.Controls.Messages
                     Grid.SetRow(StatusControl, caption ? 4 : 3);
                     Grid.SetRow(MessageControl, caption ? 4 : 2);
                 }
-                else
-                {
-                    MediaControl.Margin = new Thickness(0);
-                    StatusToDefault();
-                    Grid.SetRow(StatusControl, 4);
-                    Grid.SetRow(MessageControl, 2);
-                }
+                //else
+                //{
+                //    Debug.WriteLine("NE UNO NE L'ALTRO");
+                //    MediaControl.Margin = new Thickness(0);
+                //    StatusToDefault();
+                //    Grid.SetRow(StatusControl, 4);
+                //    Grid.SetRow(MessageControl, 2);
+                //}
             }
         }
 

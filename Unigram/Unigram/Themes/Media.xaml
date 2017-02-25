@@ -120,7 +120,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Grid Background="{Binding Media.UserId, Converter={StaticResource BubblePlaceholderConverter}}" Width="48" Height="48" CornerRadius="24" Margin="0,0,12,0" Grid.RowSpan="2">
+            <!--<Grid Background="{Binding Media.UserId, Converter={StaticResource BubblePlaceholderConverter}}" Width="48" Height="48" CornerRadius="24" Margin="0,0,12,0" Grid.RowSpan="2">
                 <TextBlock Foreground="White" Text="{Binding Media.User, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
                 <Ellipse>
                     <Ellipse.Fill>
@@ -128,8 +128,15 @@
                     </Ellipse.Fill>
                 </Ellipse>
                 <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
-            </Grid>
-            <TextBlock Text="{Binding Media.User.FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+            </Grid>-->
+
+            <Ellipse Width="48" Height="48" Margin="0,0,12,0" Grid.RowSpan="2">
+                <Ellipse.Fill>
+                    <ImageBrush ImageSource="{Binding Media.User, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                </Ellipse.Fill>
+            </Ellipse>
+            
+            <TextBlock Text="{Binding Media.FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
             <TextBlock Text="{Binding Media.PhoneNumber, Converter={StaticResource PhoneNumberFormatConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
         </Grid>
     </DataTemplate>
@@ -178,10 +185,10 @@
 
             <StackPanel Grid.Column="1">
                 <StackPanel Margin="0,0,0,2">
-                    <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
                 </StackPanel>
                 
                 <Button Click="InstantView_Click" 
@@ -190,7 +197,7 @@
                         BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
                         Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                         RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                        Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE945;"/>
                         <TextBlock Text="INSTANT VIEW" Margin="12,0,0,0"/>
@@ -215,10 +222,10 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Margin="0,0,0,2">
-                        <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                        <TextBlock Text="{Binding Media.WebPage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{Binding Media.WebPage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{Binding Media.WebPage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{Binding Media.WebPage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
                     </StackPanel>
 
                     <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" MaxWidth="88" MaxHeight="88" Margin="12,0,0,0" VerticalAlignment="Bottom" Grid.Column="1"/>
@@ -230,7 +237,7 @@
                         BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
                         Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                         RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                        Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE945;"/>
                         <TextBlock Text="INSTANT VIEW" Margin="12,0,0,0"/>
@@ -249,11 +256,11 @@
             <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>
 
             <StackPanel Grid.Column="1">
-                <StackPanel Margin="0,0,0,8" Visibility="{Binding Media.Webpage.SummaryVisibility}">
-                    <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                <StackPanel Margin="0,0,0,8" Visibility="{Binding Media.WebPage.SummaryVisibility}">
+                    <TextBlock Text="{Binding Media.WebPage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
                 </StackPanel>
 
                 <!-- TODO: video timing -->
@@ -261,8 +268,8 @@
                       MinWidth="{ThemeResource TelegramMediaMinWidth}" 
                       MinHeight="{ThemeResource TelegramMediaMinHeight}"
                       HorizontalAlignment="Left">
-                    <controls:ImageView Source="{Binding Media.Webpage.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
-                                        Constraint="{Binding Media.Webpage.Photo}" 
+                    <controls:ImageView Source="{Binding Media.WebPage.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
+                                        Constraint="{Binding Media.WebPage.Photo}" 
                                         MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
                 </Grid>
@@ -273,7 +280,7 @@
                         BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
                         Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                         RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                        Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE945;"/>
                         <TextBlock Text="INSTANT VIEW" Margin="12,0,0,0"/>
@@ -292,11 +299,11 @@
             <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>
 
             <StackPanel Grid.Column="1">
-                <StackPanel Margin="0,0,0,8" Visibility="{Binding Media.Webpage.SummaryVisibility}">
-                    <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                <StackPanel Margin="0,0,0,8" Visibility="{Binding Media.WebPage.SummaryVisibility}">
+                    <TextBlock Text="{Binding Media.WebPage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
                 </StackPanel>
 
                 <!-- TODO: video timing -->
@@ -304,8 +311,8 @@
                       MinWidth="{ThemeResource TelegramMediaMinWidth}" 
                       MinHeight="{ThemeResource TelegramMediaMinHeight}"
                       HorizontalAlignment="Left">
-                    <controls:ImageView Source="{Binding Media.Webpage.Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                        Constraint="{Binding Media.Webpage.Document}" 
+                    <controls:ImageView Source="{Binding Media.WebPage.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                        Constraint="{Binding Media.WebPage.Document}" 
                                         MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
                 </Grid>
@@ -316,7 +323,7 @@
                         BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
                         Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                         RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                        Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE945;"/>
                         <TextBlock Text="INSTANT VIEW" Margin="12,0,0,0"/>
@@ -335,11 +342,11 @@
             <Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>
 
             <StackPanel Grid.Column="1">
-                <StackPanel Margin="0,0,0,8" Visibility="{Binding Media.Webpage.SummaryVisibility}">
-                    <TextBlock Text="{Binding Media.Webpage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Webpage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.Webpage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
+                <StackPanel Margin="0,0,0,8" Visibility="{Binding Media.WebPage.SummaryVisibility}">
+                    <TextBlock Text="{Binding Media.WebPage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Media.WebPage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
                 </StackPanel>
 
                 <!-- TODO: video timing -->
@@ -353,8 +360,8 @@
                         <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
                     </Grid>
                     <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-                        <TextBlock Text="{Binding Media.Webpage.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{Binding Media.Webpage.Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                        <TextBlock Text="{Binding Media.WebPage.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{Binding Media.WebPage.Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
                     </StackPanel>
                 </Grid>
 
@@ -364,7 +371,7 @@
                         BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
                         Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                         RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                        Visibility="{Binding Media.Webpage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE945;"/>
                         <TextBlock Text="INSTANT VIEW" Margin="12,0,0,0"/>

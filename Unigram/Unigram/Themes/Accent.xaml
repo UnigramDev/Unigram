@@ -27,7 +27,18 @@
 
             <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
 
+            
+            
+            
+            
+            
+            
+            
+            
+            
             <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
+
+            <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
@@ -53,7 +64,17 @@
 
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
             
+            
+            
+            
+            
+            
+            
+            
+            
             <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
+
+            <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

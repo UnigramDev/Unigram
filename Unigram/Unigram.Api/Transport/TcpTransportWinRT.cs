@@ -12,6 +12,7 @@ using Org.BouncyCastle.Utilities.Net;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Logs;
+using System.Diagnostics;
 
 namespace Telegram.Api.Transport
 {

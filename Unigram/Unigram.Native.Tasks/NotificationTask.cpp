@@ -65,7 +65,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		auto launch = GetLaunch(custom, loc_key);
 		auto tag = GetTag(custom);
 		auto group = GetGroup(custom);
-		auto picture = GetPicture(custom);
+		auto picture = GetPicture(custom, group);
 		auto date = GetDate(notification);
 
 		UpdateToast(caption, message, sound, launch, tag, group, picture, date, loc_key);
@@ -129,38 +129,41 @@ String^ NotificationTask::GetMessage(JsonArray^ loc_args, String^ loc_key)
 String^ NotificationTask::GetLaunch(JsonObject^ custom, String^ loc_key)
 {
 	std::wstring launch = L"";
-	if (custom->HasKey("msg_id"))
+	if (custom)
 	{
-		launch += L"msg_id=";
-		launch += custom->GetNamedString("msg_id")->Data();
-		launch += L"&amp;";
-	}
-	if (custom->HasKey("chat_id"))
-	{
-		launch += L"chat_id=";
-		launch += custom->GetNamedString("chat_id")->Data();
-		launch += L"&amp;";
-	}
-	if (custom->HasKey("channel_id"))
-	{
-		launch += L"channel_id=";
-		launch += custom->GetNamedString("channel_id")->Data();
-		launch += L"&amp;";
-	}
-	if (custom->HasKey("from_id"))
-	{
-		launch += L"from_id=";
-		launch += custom->GetNamedString("from_id")->Data();
-		launch += L"&amp;";
-	}
-	if (custom->HasKey("mtpeer"))
-	{
-		auto mtpeer = custom->GetNamedObject("mtpeer");
-		if (mtpeer->HasKey("ah"))
+		if (custom->HasKey("msg_id"))
 		{
-			launch += L"access_hash=";
-			launch += mtpeer->GetNamedString("ah")->Data();
+			launch += L"msg_id=";
+			launch += custom->GetNamedString("msg_id")->Data();
 			launch += L"&amp;";
+		}
+		if (custom->HasKey("chat_id"))
+		{
+			launch += L"chat_id=";
+			launch += custom->GetNamedString("chat_id")->Data();
+			launch += L"&amp;";
+		}
+		if (custom->HasKey("channel_id"))
+		{
+			launch += L"channel_id=";
+			launch += custom->GetNamedString("channel_id")->Data();
+			launch += L"&amp;";
+		}
+		if (custom->HasKey("from_id"))
+		{
+			launch += L"from_id=";
+			launch += custom->GetNamedString("from_id")->Data();
+			launch += L"&amp;";
+		}
+		if (custom->HasKey("mtpeer"))
+		{
+			auto mtpeer = custom->GetNamedObject("mtpeer");
+			if (mtpeer->HasKey("ah"))
+			{
+				launch += L"access_hash=";
+				launch += mtpeer->GetNamedString("ah")->Data();
+				launch += L"&amp;";
+			}
 		}
 	}
 
@@ -201,7 +204,7 @@ String^ NotificationTask::GetGroup(JsonObject^ custom)
 	return nullptr;
 }
 
-String^ NotificationTask::GetPicture(JsonObject^ custom)
+String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
 {
 	if (custom && custom->HasKey("mtpeer"))
 	{
@@ -251,23 +254,15 @@ String^ NotificationTask::GetPicture(JsonObject^ custom)
 
 				return ref new String(almost.str().c_str());
 			}
-			else
-			{
-				std::wstringstream almost;
-				almost << L"ms-appx:///Assets/Images/"
-					<< volumeLL
-					<< L"_"
-					<< local_id->Data()
-					<< L"_"
-					<< secretLL
-					<< L".jpg";
-
-				return ref new String(almost.str().c_str());
-			}
 		}
 	}
 
-	return nullptr;
+	std::wstringstream almost;
+	almost << L"ms-appdata:///local/temp/placeholders/"
+		<< group->Data()
+		<< L"_placeholder.png";
+
+	return ref new String(almost.str().c_str());
 }
 
 String^ NotificationTask::GetDate(JsonObject^ notification)

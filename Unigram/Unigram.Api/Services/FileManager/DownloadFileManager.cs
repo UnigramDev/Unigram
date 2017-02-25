@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
@@ -17,7 +18,7 @@ namespace Telegram.Api.Services.FileManager
     {
         IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLFileLocation file, int fileSize);
 
-        void DownloadFile(TLFileLocation file, TLObject owner, int fileSize);
+        void DownloadFile(TLFileLocation file, int fileSize, Action<DownloadableItem> callback);
 
         void CancelDownloadFile(TLObject owner);
     }
@@ -187,6 +188,7 @@ namespace Telegram.Api.Services.FileManager
                     }
                     else
                     {
+                        part.ParentItem.Action.SafeInvoke(part.ParentItem);
                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
                     }
                 }
@@ -286,20 +288,18 @@ namespace Telegram.Api.Services.FileManager
             });
         }
 
-        public void DownloadFile(TLFileLocation file, TLObject owner, int fileSize)
+        public void DownloadFile(TLFileLocation file, int fileSize, Action<DownloadableItem> callback)
         {
-            //return;
-
-            var downloadableItem = GetDownloadableItem(file, owner, fileSize);
+            var downloadableItem = GetDownloadableItem(file, null, fileSize);
+            downloadableItem.Action = callback;
 
             lock (_itemsSyncRoot)
             {
                 bool addFile = true;
                 foreach (var item in _items)
                 {
-                    if (item.Location.VolumeId == file.VolumeId
-                        && item.Location.LocalId == file.LocalId
-                        && item.Owner == owner)
+                    if (item.Location.VolumeId == file.VolumeId &&
+                        item.Location.LocalId == file.LocalId)
                     {
                         addFile = false;
                         break;
@@ -339,7 +339,7 @@ namespace Telegram.Api.Services.FileManager
 
         private List<DownloadablePart> GetItemParts(int size, DownloadableItem item)
         {
-            var chunkSize = Constants.DownloadedChunkSize;
+            var chunkSize = Constants.DownloadChunkSize;
             var parts = new List<DownloadablePart>();
             var partsCount = size / chunkSize + 1;
             for (var i = 0; i < partsCount; i++)

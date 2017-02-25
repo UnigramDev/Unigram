@@ -6,7 +6,7 @@ namespace Telegram.Api.Services.Cache.EventArgs
     {
         public TLPeerBase Peer { get; protected set; }
 
-        public TLDialog Dialog { get; protected set; }
+        public TLDialog Dialog { get; set; }
 
         public TLMessageBase Message { get; protected set; }
 

@@ -15,7 +15,7 @@
     MaxWidth="430">
 
     <!-- TODO: not the right way -->
-    <Border Height="10" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
+    <Border Height="8" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <UserControl x:Name="LayoutRoot">
         <Grid Margin="{ThemeResource MessageContentMargin}" 
@@ -51,7 +51,8 @@
                        Margin="0,0,0,2"
                        Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
                        RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                       Style="{ThemeResource BaseTextBlockStyle}"
+                       Style="{ThemeResource CaptionTextBlockStyle}"
+                       FontWeight="SemiBold"
                        Visibility="Collapsed"
                        Grid.Row="0"/>
 
@@ -87,7 +88,7 @@
                         VerticalAlignment="Bottom" 
                         HorizontalAlignment="Right" 
                         Padding="0,0,6,0" 
-                        Margin="0,0,-6,0"
+                        Margin="0,0,-6,-2"
                         Grid.Row="4">
                 <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.HasViews}">
                     <FontIcon x:Name="ViewsGlyph" Glyph="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}" FontSize="11" Foreground="{ThemeResource MessageSubtleGlyphBrush}" Margin="0,0,4,2" VerticalAlignment="Bottom"/>

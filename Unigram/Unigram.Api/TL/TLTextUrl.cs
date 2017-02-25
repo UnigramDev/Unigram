@@ -7,7 +7,7 @@ namespace Telegram.Api.TL
 	{
 		public TLRichTextBase Text { get; set; }
 		public String Url { get; set; }
-		public Int64 WebpageId { get; set; }
+		public Int64 WebPageId { get; set; }
 
 		public TLTextUrl() { }
 		public TLTextUrl(TLBinaryReader from)
@@ -21,7 +21,7 @@ namespace Telegram.Api.TL
 		{
 			Text = TLFactory.Read<TLRichTextBase>(from);
 			Url = from.ReadString();
-			WebpageId = from.ReadInt64();
+			WebPageId = from.ReadInt64();
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -29,7 +29,7 @@ namespace Telegram.Api.TL
 			to.Write(0x3C2884C1);
 			to.WriteObject(Text);
 			to.Write(Url);
-			to.Write(WebpageId);
+			to.Write(WebPageId);
 		}
 	}
 }

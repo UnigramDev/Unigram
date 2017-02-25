@@ -45,6 +45,8 @@ namespace Telegram.Api.Services.FileManager
 
         public string DestFileName { get; set; }
 
+        public Action<DownloadableItem> Action { get; set; }
+
         public System.Action<DownloadableItem> FaultCallback { get; set; }
 
         public IList<System.Action<DownloadableItem>> FaultCallbacks { get; set; }

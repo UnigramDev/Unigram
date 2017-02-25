@@ -8,6 +8,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Windows.Globalization.DateTimeFormatting;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -30,52 +31,50 @@ namespace Unigram.Converters
         public DateTimeFormatter ShortDate { get; } = new DateTimeFormatter("shortdate", Windows.System.UserProfile.GlobalizationPreferences.Languages);
         public DateTimeFormatter ShortTime { get; } = new DateTimeFormatter("shorttime", Windows.System.UserProfile.GlobalizationPreferences.Languages);
 
+        public List<SolidColorBrush> PlaceholderColors { get; private set; }
+
         private BindConvert()
         {
+            PlaceholderColors = new List<SolidColorBrush>();
 
-        }
-
-        private Dictionary<int, SolidColorBrush> _cacheBrushes = new Dictionary<int, SolidColorBrush>();
-
-        public SolidColorBrush Bubble(int? value)
-        {
-            if (_cacheBrushes.ContainsKey(value ?? 0))
+            for (int i = 0; i < 6; i++)
             {
-                return _cacheBrushes[value ?? 0];
-            }
-
-            var brush = BubbleInternal(value);
-            _cacheBrushes[value ?? 0] = brush;
-
-            return brush;
-        }
-
-        private SolidColorBrush BubbleInternal(int? value)
-        {
-            return Application.Current.Resources[$"Placeholder{Utils.GetColorIndex(value ?? 0)}Brush"] as SolidColorBrush;
-
-            switch (Utils.GetColorIndex(value ?? 0))
-            {
-                case 0:
-                    return Application.Current.Resources["PlaceholderRedBrush"] as SolidColorBrush;
-                case 1:
-                    return Application.Current.Resources["PlaceholderGreenBrush"] as SolidColorBrush;
-                case 2:
-                    return Application.Current.Resources["PlaceholderYellowBrush"] as SolidColorBrush;
-                case 3:
-                    return Application.Current.Resources["PlaceholderBlueBrush"] as SolidColorBrush;
-                case 4:
-                    return Application.Current.Resources["PlaceholderPurpleBrush"] as SolidColorBrush;
-                case 5:
-                    return Application.Current.Resources["PlaceholderPinkBrush"] as SolidColorBrush;
-                case 6:
-                    return Application.Current.Resources["PlaceholderCyanBrush"] as SolidColorBrush;
-                case 7:
-                    return Application.Current.Resources["PlaceholderOrangeBrush"] as SolidColorBrush;
-                default:
-                    return Application.Current.Resources["ListViewItemPlaceholderBackgroundThemeBrush"] as SolidColorBrush;
+                PlaceholderColors.Add((SolidColorBrush)Application.Current.Resources[$"Placeholder{i}Brush"]);
             }
         }
+
+        public SolidColorBrush Bubble(int uid)
+        {
+            return PlaceholderColors[(uid + SettingsHelper.UserId) % PlaceholderColors.Count];
+        }
+
+
+        //private SolidColorBrush BubbleInternal(int? value)
+        //{
+        //    return Application.Current.Resources[$"Placeholder{Utils.GetColorIndex(value ?? 0)}Brush"] as SolidColorBrush;
+
+        //    switch (Utils.GetColorIndex(value ?? 0))
+        //    {
+        //        case 0:
+        //            return Application.Current.Resources["PlaceholderRedBrush"] as SolidColorBrush;
+        //        case 1:
+        //            return Application.Current.Resources["PlaceholderGreenBrush"] as SolidColorBrush;
+        //        case 2:
+        //            return Application.Current.Resources["PlaceholderYellowBrush"] as SolidColorBrush;
+        //        case 3:
+        //            return Application.Current.Resources["PlaceholderBlueBrush"] as SolidColorBrush;
+        //        case 4:
+        //            return Application.Current.Resources["PlaceholderPurpleBrush"] as SolidColorBrush;
+        //        case 5:
+        //            return Application.Current.Resources["PlaceholderPinkBrush"] as SolidColorBrush;
+        //        case 6:
+        //            return Application.Current.Resources["PlaceholderCyanBrush"] as SolidColorBrush;
+        //        case 7:
+        //            return Application.Current.Resources["PlaceholderOrangeBrush"] as SolidColorBrush;
+        //        default:
+        //            return Application.Current.Resources["ListViewItemPlaceholderBackgroundThemeBrush"] as SolidColorBrush;
+        //    }
+        //}
 
         public string Date(int value)
         {

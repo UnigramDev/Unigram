@@ -153,6 +153,7 @@ namespace Unigram.Controls
                         if (row.Buttons[i] is TLKeyboardButtonUrl)
                         {
                             button.Glyph = "\uE12B";
+                            button.Glyph = "\uE143";
                         }
                         else if (row.Buttons[i] is TLKeyboardButtonSwitchInline)
                         {

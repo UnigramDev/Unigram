@@ -10,6 +10,7 @@ using Unigram.Views;
 using Template10.Common;
 using Windows.UI.Xaml.Media;
 using Unigram.Core.Services;
+using Unigram.Views.Users;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -227,7 +228,7 @@ namespace Unigram.Controls
                         UpdateVisualState();
                     }
                     // When the new page is user info show the back button in titlebar.
-                    else if (e.SourcePageType == typeof(UserInfoPage))
+                    else if (e.SourcePageType == typeof(UserDetailsPage))
                     {
                         UpdateVisualState();
                     }
@@ -246,7 +247,7 @@ namespace Unigram.Controls
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId(key) as NavigationService;
             if (service == null)
             {
-                service = Template10.Common.BootStrapper.Current.NavigationServiceFactory(Template10.Common.BootStrapper.BackButton.Ignore, Template10.Common.BootStrapper.ExistingContent.Exclude) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude) as NavigationService;
                 service.SerializationService = TLSerializationService.Current;
                 service.FrameFacade.FrameId = key;
                 service.FrameFacade.BackRequested += (s, args) =>

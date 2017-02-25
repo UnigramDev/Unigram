@@ -28,7 +28,7 @@ namespace Unigram.Converters
         private static readonly Dictionary<string, WeakReference> _cachedSources = new Dictionary<string, WeakReference>();
         private static readonly Dictionary<string, WeakReference<WriteableBitmap>> _cachedWebPImages = new Dictionary<string, WeakReference<WriteableBitmap>>();
 
-        private static readonly TLBitmapContext _bitmapContext = new TLBitmapContext();
+        public static readonly TLBitmapContext BitmapContext = new TLBitmapContext();
 
         private static readonly AnimatedImageSourceRendererFactory _videoFactory = new AnimatedImageSourceRendererFactory();
 
@@ -66,11 +66,27 @@ namespace Unigram.Converters
             //    return DefaultPhotoConverter.ReturnOrEnqueueImage(timer, this.CheckChatSettings, encryptedFile, encryptedFile, null);
             //}
 
+            var user = value as TLUser;
+            if (user != null)
+            {
+                return BitmapContext[user];
+            }
+
+            var chat = value as TLChat;
+            if (chat != null)
+            {
+                return BitmapContext[chat];
+            }
+
+            var channel = value as TLChannel;
+            if (channel != null)
+            {
+                return BitmapContext[channel];
+            }
+
             var userProfilePhoto = value as TLUserProfilePhoto;
             if (userProfilePhoto != null)
             {
-                return _bitmapContext[userProfilePhoto];
-
                 var fileLocation = userProfilePhoto.PhotoSmall as TLFileLocation;
                 if (fileLocation != null)
                 {
@@ -81,8 +97,6 @@ namespace Unigram.Converters
             var chatPhoto = value as TLChatPhoto;
             if (chatPhoto != null)
             {
-                return _bitmapContext[chatPhoto];
-
                 var fileLocation = chatPhoto.PhotoSmall as TLFileLocation;
                 if (fileLocation != null)
                 {
@@ -176,7 +190,7 @@ namespace Unigram.Converters
             var photo = value as TLPhoto;
             if (photo != null)
             {
-                //return _bitmapContext[photo];
+                return BitmapContext[photo];
 
                 //double num = 400;
                 //double num2;
@@ -387,7 +401,7 @@ namespace Unigram.Converters
             var webpageMedia = value as TLMessageMediaWebPage;
             if (webpageMedia != null)
             {
-                value = webpageMedia.Webpage;
+                value = webpageMedia.WebPage;
             }
 
             //var decryptedWebpageMedia = value as TLDecryptedMessageMediaWebPage;

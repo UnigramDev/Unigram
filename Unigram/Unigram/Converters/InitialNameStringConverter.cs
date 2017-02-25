@@ -13,6 +13,11 @@ namespace Unigram.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            return Convert(value);
+        }
+
+        public static string Convert(object value)
+        {
             if (value == null)
             {
                 return null;

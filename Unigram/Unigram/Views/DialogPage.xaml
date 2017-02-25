@@ -168,7 +168,7 @@
                             Padding="8,0,8,6"
                             Margin="0,0,6,0"
                             Grid.Row="1">
-                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0">
+                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
                         <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
                             <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
                         </Hyperlink>
@@ -233,7 +233,7 @@
                             Margin="6,0,0,0"
                             Grid.Column="1"
                             Grid.Row="1">
-                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0">
+                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
                         <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
                             <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
                         </Hyperlink>
@@ -257,17 +257,16 @@
                     <ColumnDefinition Width="56"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <HyperlinkButton Click="ProfileBubble_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" Margin="12,12,0,0" Padding="0" Width="36" Height="36">
-                    <Grid Width="36" Height="36">
-                        <Ellipse Fill="{Binding FromId, Converter={StaticResource BubblePlaceholderConverter}}"/>
-                        <Ellipse Width="36" Height="36">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="{Binding From.Photo, Converter={StaticResource DefaultPhotoConverter}}" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
-                    </Grid>
-                </HyperlinkButton>
+                <controls:ProfilePictureView x:Phase="2"
+                                             Source="{x:Bind From, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" 
+                                             Click="ProfileBubble_Click"
+                                             HorizontalAlignment="Left" 
+                                             VerticalAlignment="Top"  
+                                             Margin="12,12,0,0"
+                                             Width="36"
+                                             Height="36"/>
+
                 <Grid Margin="0,2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -300,7 +299,7 @@
                                 Margin="6,0,0,0"
                                 Grid.Column="1"
                                 Grid.Row="1">
-                        <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0">
+                        <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
                             <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
                                 <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
                             </Hyperlink>
@@ -321,13 +320,13 @@
 
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,12,0,2">
+            <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,10,0,2">
                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
-            <StackPanel Margin="0,12,0,2">
+            <StackPanel Margin="0,10,0,2">
                 <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6">
                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
                 </Border>
@@ -374,17 +373,15 @@
                     <ColumnDefinition Width="56"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <HyperlinkButton Click="ProfileBubble_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" Margin="12,12,0,0" Padding="0" Width="36" Height="36">
-                    <Grid Width="36" Height="36">
-                        <Ellipse Fill="{Binding FromId, Converter={StaticResource BubblePlaceholderConverter}}"/>
-                        <Ellipse Width="36" Height="36">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="{Binding From.Photo, Converter={StaticResource DefaultPhotoConverter}}" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
-                    </Grid>
-                </HyperlinkButton>
+                <controls:ProfilePictureView x:Phase="2"
+                                             Source="{x:Bind From, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" 
+                                             Click="ProfileBubble_Click"
+                                             HorizontalAlignment="Left" 
+                                             VerticalAlignment="Top"  
+                                             Margin="12,12,0,0"
+                                             Width="36"
+                                             Height="36"/>
                 <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
             </Grid>
         </DataTemplate>
@@ -565,7 +562,7 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <!--User icon-->
-                        <Grid Width="36" Height="36" Margin="12,0">
+                        <!--<Grid Width="36" Height="36" Margin="12,0">
                             <Ellipse Fill="{Binding With.Id, Converter={StaticResource BubblePlaceholderConverter}}"/>
                             <TextBlock Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.With, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <Ellipse x:Name="elpDialogIcon">
@@ -574,7 +571,16 @@
                                 </Ellipse.Fill>
                             </Ellipse>
                             <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
-                        </Grid>
+                        </Grid>-->
+
+                        <Ellipse Width="36" Height="36" Margin="12,0">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="{Binding With, Converter={StaticResource DefaultPhotoConverter}}" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+
+
+
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                             <TextBlock x:Name="tblDialogName"
                                        Text="{Binding With.FullName}"
@@ -711,6 +717,7 @@
 
         <Grid x:Name="Messages" Grid.Row="2">
             <controls:BubbleListView x:Name="lvDialogs" 
+                                     UpdatingScrollMode="{Binding UpdatingScrollMode, Mode=TwoWay}"
                                      ItemsSource="{Binding Messages}"
                                      ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                                      ItemContainerTransitions="{x:Null}"
@@ -720,7 +727,7 @@
                                      Grid.ColumnSpan="2">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"
+                        <ItemsStackPanel ItemsUpdatingScrollMode="KeepItemsInView"
                                          VerticalAlignment="Bottom" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
@@ -819,7 +826,7 @@
                     </selectors:MessageStyleSelector>
                 </ListView.ItemContainerStyleSelector>
                 <ListView.Header>
-                    <Border Height="10"/>
+                    <Border Height="4"/>
                 </ListView.Header>
                 <ListView.Footer>
                     <Border Height="10"/>
@@ -1092,6 +1099,8 @@
                     </MenuFlyout>
                 </FlyoutBase.AttachedFlyout>
             </controls:GlyphButton>
+
+            <!--<controls:DialogSearchBar Grid.ColumnSpan="4" Grid.Row="1"/>-->
 
             <controls:BubbleActionButton
                 With="{x:Bind ViewModel.With, Mode=OneWay}" 

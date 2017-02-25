@@ -13,6 +13,8 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.Views;
+using Unigram.Views.Chats;
+using Unigram.Views.Users;
 using Windows.Foundation;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.UI;
@@ -87,7 +89,7 @@ namespace Unigram.Controls.Messages
                 if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
                 {
                     var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId) });
+                    hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId ?? 0) });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
                     hyperlink.Foreground = paragraph.Foreground;
                     hyperlink.Click += (s, args) => From_Click(message);
@@ -171,13 +173,13 @@ namespace Unigram.Controls.Messages
 
         private void From_Click(TLMessage message)
         {
-            if (message.From != null)
+            if (message.IsPost)
             {
-                Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.From.Id });
+                Context.NavigationService.Navigate(typeof(ChatDetailsPage), new TLPeerChannel { ChannelId = message.ToId.Id });
             }
-            else if (message.IsPost)
+            else if (message.From != null)
             {
-                Context.NavigationService.Navigate(typeof(ChatInfoPage), new TLPeerChannel { ChannelId = message.ToId.Id });
+                Context.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.From.Id });
             }
         }
 
@@ -188,16 +190,16 @@ namespace Unigram.Controls.Messages
                 if (message.FwdFrom.HasChannelPost)
                 {
                     // TODO
-                    Context.NavigationService.Navigate(typeof(DialogPage), new Tuple<TLPeerBase, int>(new TLPeerChannel { ChannelId = message.FwdFromChannel.Id }, message.FwdFrom.ChannelPost ?? int.MaxValue));
+                    Context.NavigationService.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)new TLPeerChannel { ChannelId = message.FwdFromChannel.Id }, message.FwdFrom.ChannelPost ?? int.MaxValue));
                 }
                 else
                 {
-                    Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerChannel { ChannelId = message.FwdFromChannel.Id });
+                    Context.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = message.FwdFromChannel.Id });
                 }
             }
             else if (message.FwdFromUser != null)
             {
-                Context.NavigationService.Navigate(typeof(UserInfoPage), new TLPeerUser { UserId = message.FwdFromUser.Id });
+                Context.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFromUser.Id });
             }
         }
 
@@ -256,6 +258,8 @@ namespace Unigram.Controls.Messages
         /// x:Bind hack
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
+
+        private StackPanel _statusControl;
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -322,6 +326,14 @@ namespace Unigram.Controls.Messages
             }
 
             Calculate:
+
+            if (_statusControl == null)
+                _statusControl = FindName("StatusControl") as StackPanel;
+            if (_statusControl.DesiredSize.IsEmpty)
+                _statusControl.Measure(availableSize);
+
+            width = Math.Max(_statusControl.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, width);
+
             if (width > availableWidth || height > availableHeight)
             {
                 var ratioX = availableWidth / width;
