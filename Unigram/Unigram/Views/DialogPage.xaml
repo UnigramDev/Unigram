@@ -257,22 +257,16 @@
                     <ColumnDefinition Width="56"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <HyperlinkButton Click="ProfileBubble_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" Margin="12,12,0,0" Padding="0" Width="36" Height="36">
-                    <!--<Grid Width="36" Height="36">
-                        <Ellipse Fill="{Binding FromId, Converter={StaticResource BubblePlaceholderConverter}}"/>
-                        <Ellipse Width="36" Height="36">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="{Binding From.Photo, Converter={StaticResource DefaultPhotoConverter}}" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
-                    </Grid>-->
-                    <Ellipse Width="36" Height="36">
-                        <Ellipse.Fill>
-                            <ImageBrush ImageSource="{Binding From, Converter={StaticResource DefaultPhotoConverter}}"/>
-                        </Ellipse.Fill>
-                    </Ellipse>
-                </HyperlinkButton>
+                <controls:ProfilePictureView x:Phase="2"
+                                             Source="{x:Bind From, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" 
+                                             Click="ProfileBubble_Click"
+                                             HorizontalAlignment="Left" 
+                                             VerticalAlignment="Top"  
+                                             Margin="12,12,0,0"
+                                             Width="36"
+                                             Height="36"/>
+
                 <Grid Margin="0,2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -379,22 +373,15 @@
                     <ColumnDefinition Width="56"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <HyperlinkButton Click="ProfileBubble_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" Margin="12,12,0,0" Padding="0" Width="36" Height="36">
-                    <!--<Grid Width="36" Height="36">
-                        <Ellipse Fill="{Binding FromId, Converter={StaticResource BubblePlaceholderConverter}}"/>
-                        <Ellipse Width="36" Height="36">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="{Binding From.Photo, Converter={StaticResource DefaultPhotoConverter}}" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
-                    </Grid>-->
-                    <Ellipse Width="36" Height="36">
-                        <Ellipse.Fill>
-                            <ImageBrush ImageSource="{Binding From, Converter={StaticResource DefaultPhotoConverter}}"/>
-                        </Ellipse.Fill>
-                    </Ellipse>
-                </HyperlinkButton>
+                <controls:ProfilePictureView x:Phase="2"
+                                             Source="{x:Bind From, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" 
+                                             Click="ProfileBubble_Click"
+                                             HorizontalAlignment="Left" 
+                                             VerticalAlignment="Top"  
+                                             Margin="12,12,0,0"
+                                             Width="36"
+                                             Height="36"/>
                 <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
             </Grid>
         </DataTemplate>
