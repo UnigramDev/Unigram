@@ -20,7 +20,7 @@ namespace Telegram.Api.TL
 
         public TLPeerNotifySettingsBase NotifySettings { get; set; }
 
-        public virtual bool Blocked { get; set; }
+        public virtual bool IsBlocked { get; set; }
 
         public TLBotInfo BotInfo { get; set; }
         #endregion
@@ -62,9 +62,9 @@ namespace Telegram.Api.TL
                 //    ExtendedInfo = user.ExtendedInfo;
                 //}
 
-                if (user.Blocked != null)
+                if (user.IsBlocked != null)
                 {
-                    Blocked = user.Blocked;
+                    IsBlocked = user.IsBlocked;
                 }
             }
             catch (Exception e)

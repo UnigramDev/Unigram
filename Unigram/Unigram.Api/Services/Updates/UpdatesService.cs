@@ -922,7 +922,7 @@ namespace Telegram.Api.Services.Updates
                 var user = _cacheService.GetUser(updateUserBlocked.UserId);
                 if (user != null)
                 {
-                    user.Blocked = updateUserBlocked.Blocked;
+                    user.IsBlocked = updateUserBlocked.Blocked;
                     _cacheService.Commit();
                 }
                 Helpers.Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateUserBlocked));

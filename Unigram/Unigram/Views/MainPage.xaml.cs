@@ -509,7 +509,7 @@ namespace Unigram.Views
                     var user = dialog.With as TLUser;
                     if (user != null)
                     {
-                        element.Visibility = user.IsBot && !user.Blocked ? Visibility.Visible : Visibility.Collapsed;
+                        element.Visibility = user.IsBot && !user.IsBlocked ? Visibility.Visible : Visibility.Collapsed;
                     }
                     else
                     {

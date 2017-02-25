@@ -50,7 +50,7 @@ namespace Unigram.Views.Users
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
-            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", grdProfile);
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Picture);
 
             var user = ViewModel.Item as TLUser;
             if (user.HasPhoto)
@@ -67,7 +67,7 @@ namespace Unigram.Views.Users
                         var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
                         if (animation != null)
                         {
-                            animation.TryStart(grdProfile);
+                            animation.TryStart(Picture);
                         }
                     };
 

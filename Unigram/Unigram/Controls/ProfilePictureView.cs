@@ -9,8 +9,13 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-    public class ProfilePictureView : Control
+    public class ProfilePictureView : HyperlinkButton
     {
+        public ProfilePictureView()
+        {
+            DefaultStyleKey = typeof(ProfilePictureView);
+        }
+
         #region Source
 
         public ImageSource Source
@@ -21,19 +26,6 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty SourceProperty =
             DependencyProperty.Register("Source", typeof(ImageSource), typeof(ProfilePictureView), new PropertyMetadata(null));
-
-        #endregion
-
-        #region Text
-
-        public string Text
-        {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
-        }
-
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(ProfilePictureView), new PropertyMetadata(string.Empty));
 
         #endregion
     }

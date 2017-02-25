@@ -13,7 +13,7 @@ namespace Telegram.Api.TL
             User.Link = Link;
             User.ProfilePhoto = ProfilePhoto;
             User.NotifySettings = NotifySettings;
-            User.Blocked = IsBlocked;
+            User.IsBlocked = IsBlocked;
             User.BotInfo = BotInfo;
 
             return User;
