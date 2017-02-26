@@ -1800,6 +1800,7 @@ namespace Telegram.Api.Services.Updates
                 }
 
                 user.Photo = userPhoto.Photo;
+                user.PhotoSelf = user;
                 Helpers.Execute.BeginOnThreadPool(() => _eventAggregator.Publish(userPhoto));
                 //_cacheService.SyncUser(user, result => _eventAggregator.Publish(result));
 

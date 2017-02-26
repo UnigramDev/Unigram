@@ -237,7 +237,7 @@ namespace Unigram.ViewModels
         public void Handle(UpdateCompletedEventArgs args)
         {
             var dialogs = CacheService.GetDialogs();
-            ReorderDrafts(dialogs);
+            dialogs = ReorderDrafts(dialogs);
             Execute.BeginOnUIThread(() =>
             {
                 Items.Clear();
@@ -744,10 +744,9 @@ namespace Unigram.ViewModels
             });
         }
 
-        private static void ReorderDrafts(IList<TLDialog> dialogs)
+        private static IList<TLDialog> ReorderDrafts(IList<TLDialog> dialogs)
         {
-            dialogs = dialogs.OrderByDescending(x => x.GetDateIndexWithDraft()).ToList();
-            return;
+            return dialogs.OrderByDescending(x => x.GetDateIndexWithDraft()).ToList();
 
             for (int i = 0; i < dialogs.Count; i++)
             {
@@ -773,6 +772,8 @@ namespace Unigram.ViewModels
 
         public ObservableCollection<TLDialog> Items { get; private set; }
 
+        #region Search
+
         public ObservableCollection<KeyedList<string, TLObject>> Search { get; private set; }
 
         public Dictionary<string, CancellationTokenSource> SearchTokens { get; private set; }
@@ -787,25 +788,39 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _searchQuery, value);
+                SearchSync(value);
+            }
+        }
+
+        public async void SearchSync(string query)
+        {
+            query = query.TrimStart('@');
+
+            var local = await SearchLocalAsync(query);
+
+            if (query.Equals(_searchQuery.TrimStart('@')))
+            {
+                Search.Clear();
+                if (local != null) Search.Insert(0, local);
             }
         }
 
         public async Task SearchAsync(string query)
         {
-            // TODO: dialogs search
-            SearchQuery = query;
             query = query.TrimStart('@');
 
-            var local = await SearchLocalAsync(query);
             var global = await SearchGlobalAsync(query);
             var messages = await SearchMessagesAsync(query);
 
-            Search.Clear();
-            if (local != null) Search.Add(local);
-            if (global != null) Search.Add(global);
-            if (messages != null) Search.Add(messages);
+            if (query.Equals(_searchQuery.TrimStart('@')))
+            {
+                if (Search.Count > 2) Search.RemoveAt(2);
+                if (Search.Count > 1) Search.RemoveAt(1);
+                if (global != null) Search.Add(global);
+                if (messages != null) Search.Add(messages);
+            }
 
-            SearchQuery = query;
+            //SearchQuery = query;
         }
 
         private async Task<KeyedList<string, TLObject>> SearchLocalAsync(string query)
@@ -957,6 +972,8 @@ namespace Unigram.ViewModels
 
             return null;
         }
+
+        #endregion
 
         #region Commands
 

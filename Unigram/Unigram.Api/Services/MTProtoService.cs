@@ -262,8 +262,7 @@ namespace Telegram.Api.Services
 
         protected virtual void RaiseTransportChecked(TransportCheckedEventArgs e)
         {
-            var handler = TransportChecked;
-            if (handler != null) handler(this, e);
+            TransportChecked?.Invoke(this, e);
         }
 
         private void CheckTransport(object state)

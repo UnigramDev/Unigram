@@ -96,6 +96,9 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Compile Include="Common\RatioControl.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
+    <Compile Include="Controls\DebugToolbar.xaml.cs">
+      <DependentUpon>DebugToolbar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DialogSearchBar.xaml.cs">
       <DependentUpon>DialogSearchBar.xaml</DependentUpon>
     </Compile>
@@ -511,6 +514,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Page Include="Controls\AttachPickerFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DebugToolbar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

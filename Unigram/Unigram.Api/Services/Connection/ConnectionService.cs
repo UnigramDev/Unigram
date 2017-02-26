@@ -27,8 +27,7 @@ namespace Telegram.Api.Services.Connection
 
         protected virtual void RaiseConnectionFailed()
         {
-            var handler = ConnectionLost;
-            if (handler != null) handler(this, EventArgs.Empty);
+            ConnectionLost?.Invoke(this, EventArgs.Empty);
         }
 
         private IMTProtoService _mtProtoService;

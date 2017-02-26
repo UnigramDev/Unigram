@@ -36,6 +36,8 @@ using Windows.UI.ViewManagement;
 using Unigram.Views.Channels;
 using Unigram.ViewModels.Chats;
 using Unigram.Views.Chats;
+using Windows.System.Profile;
+using Windows.ApplicationModel.Core;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -66,6 +68,14 @@ namespace Unigram.Views
             searchInit();
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
+
+#if DEBUG
+            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Desktop"))
+            {
+                FindName("Toolbar");
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+            }
+#endif
         }
 
         private async void OnThemeChanged(DependencyObject sender, DependencyProperty dp)

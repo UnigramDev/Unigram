@@ -575,7 +575,7 @@
 
                         <Ellipse Width="36" Height="36" Margin="12,0">
                             <Ellipse.Fill>
-                                <ImageBrush ImageSource="{Binding With, Converter={StaticResource DefaultPhotoConverter}}" />
+                                <ImageBrush ImageSource="{Binding With.PhotoSelf, Converter={StaticResource DefaultPhotoConverter}}" />
                             </Ellipse.Fill>
                         </Ellipse>
 
