@@ -73,15 +73,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
-                                    <TextBlock Foreground="White" Text="{x:Bind Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <ImageBrush ImageSource="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                                        </Ellipse.Fill>
-                                    </Ellipse>
-                                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
-                                </Grid>
+                                <controls:ProfilePictureView x:Phase="2" Source="{x:Bind PhotoSelf, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
                                 <TextBlock Text="{x:Bind DisplayName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                 <TextBlock VerticalAlignment="Top" 
                                            Style="{StaticResource CaptionTextBlockStyle}" 
