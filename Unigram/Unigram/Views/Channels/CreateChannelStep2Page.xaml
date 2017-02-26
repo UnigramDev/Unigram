@@ -82,7 +82,7 @@
                                     </Ellipse>
                                     <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
                                 </Grid>
-                                <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                <TextBlock Text="{x:Bind DisplayName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                 <TextBlock VerticalAlignment="Top" 
                                            Style="{StaticResource CaptionTextBlockStyle}" 
                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"

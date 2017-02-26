@@ -32,9 +32,13 @@ namespace Unigram.Core
 
         private const string COUNT_TABLE = "SELECT COUNT(*) FROM `{0}`";
 
-        private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE IF NOT EXISTS `{0}`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'Thumb' string, 'DCId' int, 'Version' int, 'Attributes' string)";
-        private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes) VALUES({1},{2},{3},'{4}',{5},'{6}',{7},{8},'{9}');";
-        private const string SELECT_TABLE_DOCUMENT = "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes FROM `{0}`";
+        private const string CREATE_TABLE_STICKERSET = "CREATE TABLE IF NOT EXISTS `StickerSet`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'Thumb' string, 'DCId' int, 'Version' int, 'Attributes' string, 'Tag' bigint)";
+        private const string INSERT_TABLE_STICKERSET = "INSERT OR REPLACE INTO `StickerSet` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag) VALUES({1},{2},{3},'{4}',{5},'{6}',{7},{8},'{9}'.{10});";
+        private const string SELECT_TABLE_STICKERSET = "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag FROM `StickerSet`";
+
+        private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE IF NOT EXISTS `{0}`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'Thumb' string, 'DCId' int, 'Version' int, 'Attributes' string, 'Tag' bigint)";
+        private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag) VALUES({1},{2},{3},'{4}',{5},'{6}',{7},{8},'{9}'.{10});";
+        private const string SELECT_TABLE_DOCUMENT = "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag FROM `{0}`";
 
         private const string CREATE_TABLE_STORAGEFILE_MAPPING = "CREATE TABLE IF NOT EXISTS `{0}`('Path' text primary key not null, 'DateModified' datetime, 'Id' bigint, 'AccessHash' bigint)";
         private const string INSERT_TABLE_STORAGEFILE_MAPPING = "INSERT OR REPLACE INTO `{0}` (Path,DateModified,Id,AccessHash) VALUES('{1}','{2}',{3},{4});";
