@@ -22,26 +22,26 @@ namespace Telegram.Api.Helpers
     {
         public static string GetFileName(string fileName)
         {
-            return Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName);
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, fileName);
         }
 
         public static string GetTempFileName(string fileName)
         {
-            return Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp", fileName);
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp", fileName);
         }
 
         public static Uri GetTempFileUri(string fileName)
         {
-            return new Uri($"ms-appdata:///local/temp/{fileName}");
+            return new Uri($"ms-appdata:///local/{SettingsHelper.SessionGuid}/temp/{fileName}");
         }
         
         public static void CreateTemporaryFolder()
         {
-            if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\parts")) == false)
+            if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp\\parts")) == false)
             {
-                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp"));
-                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\parts"));
-                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\placeholders"));
+                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp"));
+                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp\\parts"));
+                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp\\placeholders"));
             }
         }
 
@@ -588,26 +588,26 @@ namespace Telegram.Api.Helpers
 
         public static Stream GetLocalFileStreamForRead(string fileName)
         {
-            return File.Open(Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName), FileMode.OpenOrCreate);
+            return File.Open(GetFileName(fileName), FileMode.OpenOrCreate);
         }
 
         public static Stream GetLocalFileStreamForWrite(string fileName)
         {
             string text = fileName + ".temp";
-            return File.Open(Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName), FileMode.Create);
+            return File.Open(GetFileName(fileName), FileMode.Create);
         }
 
         public static void SaveWithTempFile<T>(string fileName, T data) where T : TLObject
         {
             string text = fileName + ".temp";
-            using (var file = File.Open(Path.Combine(ApplicationData.Current.LocalFolder.Path, text), FileMode.Create))
+            using (var file = File.Open(GetFileName(text), FileMode.Create))
             {
                 using (var to = new TLBinaryWriter(file))
                 {
                     data.Write(to);
                 }
             }
-            File.Copy(Path.Combine(ApplicationData.Current.LocalFolder.Path, text), Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName), true);
+            File.Copy(GetFileName(text), GetFileName(fileName), true);
         }
     }
 

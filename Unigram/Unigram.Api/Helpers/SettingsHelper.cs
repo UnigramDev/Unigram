@@ -19,7 +19,7 @@ namespace Telegram.Api.Helpers
         {
             lock (SyncLock)
             {
-                var path = Path.Combine(ApplicationData.Current.LocalFolder.Path, key);
+                var path = FileUtils.GetFileName(key);
                 if (File.Exists(path))
                 {
                     using (var file = File.OpenText(path))
@@ -40,7 +40,7 @@ namespace Telegram.Api.Helpers
         {
             lock (SyncLock)
             {
-                var path = Path.Combine(ApplicationData.Current.LocalFolder.Path, key);
+                var path = FileUtils.GetFileName(key);
                 if (File.Exists(path))
                 {
                     File.Delete(path);
@@ -84,6 +84,26 @@ namespace Telegram.Api.Helpers
             set
             {
                 ApplicationData.Current.LocalSettings.Values["UserId"] = value;
+            }
+        }
+
+        public static string SessionGuid
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SessionGuid"))
+                {
+                    return (string)ApplicationData.Current.LocalSettings.Values["SessionGuid"];
+                }
+                else
+                {
+                    SessionGuid = Guid.NewGuid().ToString();
+                    return SessionGuid;
+                }
+            }
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values["SessionGuid"] = value;
             }
         }
 

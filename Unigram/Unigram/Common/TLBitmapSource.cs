@@ -152,7 +152,7 @@ namespace Unigram.Common
             {
                 Phase = PHASE_PLACEHOLDER;
 
-                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\placeholders\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
+                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(SettingsHelper.SessionGuid + "\\temp\\placeholders\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
                 using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                 {
                     if (stream.Size == 0)

@@ -105,9 +105,9 @@ namespace Unigram
         {
             var deleteIfExists = new Action<string>((path) =>
             {
-                if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, path)))
+                if (File.Exists(FileUtils.GetFileName(path)))
                 {
-                    File.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, path));
+                    File.Delete(FileUtils.GetFileName(path));
                 }
             });
 

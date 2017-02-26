@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Universal.WinSQLite;
 using Windows.Storage;
@@ -31,11 +32,11 @@ namespace Unigram.Core
 
         private const string COUNT_TABLE = "SELECT COUNT(*) FROM `{0}`";
 
-        private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE `{0}`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'Thumb' string, 'DCId' int, 'Version' int, 'Attributes' string)";
+        private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE IF NOT EXISTS `{0}`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'Thumb' string, 'DCId' int, 'Version' int, 'Attributes' string)";
         private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes) VALUES({1},{2},{3},'{4}',{5},'{6}',{7},{8},'{9}');";
         private const string SELECT_TABLE_DOCUMENT = "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes FROM `{0}`";
 
-        private const string CREATE_TABLE_STORAGEFILE_MAPPING = "CREATE TABLE `{0}`('Path' text primary key not null, 'DateModified' datetime, 'Id' bigint, 'AccessHash' bigint)";
+        private const string CREATE_TABLE_STORAGEFILE_MAPPING = "CREATE TABLE IF NOT EXISTS `{0}`('Path' text primary key not null, 'DateModified' datetime, 'Id' bigint, 'AccessHash' bigint)";
         private const string INSERT_TABLE_STORAGEFILE_MAPPING = "INSERT OR REPLACE INTO `{0}` (Path,DateModified,Id,AccessHash) VALUES('{1}','{2}',{3},{4});";
         private const string SELECT_TABLE_STORAGEFILE_MAPPING = "SELECT Path,DateModified,Id,AccessHash FROM `{0}` WHERE Path = '{1}'";
 
@@ -43,7 +44,7 @@ namespace Unigram.Core
 
         private DatabaseContext()
         {
-            _path = Path.Combine(ApplicationData.Current.LocalFolder.Path, "database.sqlite");
+            _path = FileUtils.GetFileName("database.sqlite");
         }
 
         private void Execute(Database database, string query)
