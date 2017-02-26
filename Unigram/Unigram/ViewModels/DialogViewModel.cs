@@ -2003,13 +2003,46 @@ namespace Unigram.ViewModels
             Execute.BeginOnThreadPool(async () =>
             {
                 var gifs = await _gifsService.GetSavedGifs();
-                if (gifs.Key != SavedGifsHash)
+                if (gifs.Key != SavedGifsHash || SavedGifs.Count == 0)
                 {
                     Execute.BeginOnUIThread(() =>
                     {
                         SavedGifsHash = gifs.Key;
-                        SavedGifs.Clear();
-                        SavedGifs.AddRange(gifs);
+                        //SavedGifs.Clear();
+                        //SavedGifs.AddRange(gifs);
+
+                        var old = SavedGifs.ToArray();
+                        if (old.Length > 0)
+                        {
+                            var order = new Dictionary<int, int>();
+                            for (int i = 0; i < old.Length; i++)
+                            {
+                                order[i] = -1;
+
+                                for (int j = 0; j < gifs.Count; j++)
+                                {
+                                    if (old[i].Id == gifs[j].Id)
+                                    {
+                                        order[i] = j;
+                                    }
+                                }
+                            }
+
+                            for (int j = 0; j < gifs.Count; j++)
+                            {
+                                if (order.ContainsKey(j) == false)
+                                {
+                                    order[j] = j;
+                                }
+                            }
+
+                            Debugger.Break();
+                        }
+                        else
+                        {
+                            SavedGifs.Clear();
+                            SavedGifs.AddRange(gifs);
+                        }
                     });
                 }
             });

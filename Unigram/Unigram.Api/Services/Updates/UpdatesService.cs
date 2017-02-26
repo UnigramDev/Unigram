@@ -1203,6 +1203,8 @@ namespace Telegram.Api.Services.Updates
                                 commonMessage.SetUnreadSilent(true);
                             }
                         }
+
+                        ProcessNewChannelMessageUpdate(channel, updateNewChannelMessage);
                     }
 
                     _cacheService.SyncMessage(updateNewChannelMessage.Message, notifyNewMessage, notifyNewMessage,
@@ -2149,6 +2151,35 @@ namespace Telegram.Api.Services.Updates
                 if (readMaxId.ReadInboxMaxId == null || readMaxId.ReadInboxMaxId < maxId)
                 {
                     readMaxId.ReadInboxMaxId = maxId;
+                }
+            }
+        }
+
+        private void ProcessNewChannelMessageUpdate(TLChannel channel, TLUpdateNewChannelMessage updateNewChannelMessage)
+        {
+            var serviceMessage = updateNewChannelMessage.Message as TLMessageService;
+            if (serviceMessage != null)
+            {
+                var chatEditPhotoAction = serviceMessage.Action as TLMessageActionChatEditPhoto;
+                if (chatEditPhotoAction != null)
+                {
+                    //channel.Photo = chatEditPhotoAction.Photo;
+                    var photo = chatEditPhotoAction.Photo as TLPhoto;
+                    if (photo != null)
+                    {
+                        var small = photo.Thumb as TLPhotoSize;
+                        var big = photo.Full as TLPhotoSize;
+
+                        channel.Photo = new TLChatPhoto { PhotoSmall = small.Location, PhotoBig = big.Location };
+                        channel.PhotoSelf = channel;
+                    }
+                }
+
+                var chatDeletePhotoAction = serviceMessage.Action as TLMessageActionChatDeletePhoto;
+                if (chatDeletePhotoAction != null)
+                {
+                    channel.Photo = new TLChatPhotoEmpty();
+                    channel.PhotoSelf = channel;
                 }
             }
         }
