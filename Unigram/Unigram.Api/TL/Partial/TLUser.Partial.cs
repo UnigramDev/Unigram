@@ -16,15 +16,11 @@ namespace Telegram.Api.TL
             Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
-        public TLUser PhotoSelf
+        public object PhotoSelf
         {
             get
             {
                 return this;
-            }
-            set
-            {
-                RaisePropertyChanged(() => PhotoSelf);
             }
         }
 

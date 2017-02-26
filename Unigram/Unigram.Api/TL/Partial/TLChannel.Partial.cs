@@ -50,15 +50,11 @@ namespace Telegram.Api.TL
             }
         }
 
-        public TLChannel PhotoSelf
+        public object PhotoSelf
         {
             get
             {
                 return this;
-            }
-            set
-            {
-                RaisePropertyChanged(() => PhotoSelf);
             }
         }
 
