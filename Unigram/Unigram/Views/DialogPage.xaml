@@ -583,7 +583,7 @@
 
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                             <TextBlock x:Name="tblDialogName"
-                                       Text="{Binding With.FullName}"
+                                       Text="{Binding With.DisplayName}"
                                        Style="{StaticResource BaseTextBlockStyle}"
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"

@@ -194,19 +194,6 @@ namespace Unigram.Views
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (txtSearch.Text != "")
-            {
-                if (lvDialogs.ItemsSource != ViewModel.SearchDialogs)
-                {
-                    lvDialogs.ItemsSource = ViewModel.SearchDialogs;
-                }
-                ViewModel.GetSearchDialogs(txtSearch.Text);
-            }
-            else
-            {
-                lvDialogs.ItemsSource = ViewModel.Dialogs;
-            }
-            txtSearch.Focus(FocusState.Programmatic);
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)

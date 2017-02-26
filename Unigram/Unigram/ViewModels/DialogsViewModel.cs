@@ -875,7 +875,7 @@ namespace Unigram.ViewModels
 
                 if (parent.Count > 0 || simple.Count > 0)
                 {
-                    return new KeyedList<string, TLObject>(null, parent.OrderByDescending(x => x.GetDateIndexWithDraft()).Union(simple.OrderBy(x => x.FullName)));
+                    return new KeyedList<string, TLObject>(null, parent.OrderByDescending(x => x.GetDateIndexWithDraft()).Union(simple.OrderBy(x => x.With.DisplayName)));
                 }
             }
 
@@ -952,7 +952,7 @@ namespace Unigram.ViewModels
                         foreach (var message in result.Result.Messages.OfType<TLMessageCommonBase>())
                         {
                             var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
-                            var with = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (TLObject)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                            var with = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (ITLDialogWith)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
                             var item = new TLDialog
                             {
                                 TopMessage = message.Id,

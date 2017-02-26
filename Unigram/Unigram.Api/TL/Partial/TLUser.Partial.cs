@@ -16,14 +16,6 @@ namespace Telegram.Api.TL
             Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
-        public object PhotoSelf
-        {
-            get
-            {
-                return this;
-            }
-        }
-
         public override string FullName
         {
             get

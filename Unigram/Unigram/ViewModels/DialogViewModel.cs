@@ -2008,41 +2008,51 @@ namespace Unigram.ViewModels
                     Execute.BeginOnUIThread(() =>
                     {
                         SavedGifsHash = gifs.Key;
-                        //SavedGifs.Clear();
-                        //SavedGifs.AddRange(gifs);
+                        SavedGifs.Clear();
+                        SavedGifs.AddRange(gifs);
 
-                        var old = SavedGifs.ToArray();
-                        if (old.Length > 0)
-                        {
-                            var order = new Dictionary<int, int>();
-                            for (int i = 0; i < old.Length; i++)
-                            {
-                                order[i] = -1;
+                        //var old = SavedGifs.ToArray();
+                        //if (old.Length > 0)
+                        //{
+                        //    var order = new Dictionary<int, int>();
+                        //    for (int i = 0; i < old.Length; i++)
+                        //    {
+                        //        order[i] = -1;
 
-                                for (int j = 0; j < gifs.Count; j++)
-                                {
-                                    if (old[i].Id == gifs[j].Id)
-                                    {
-                                        order[i] = j;
-                                    }
-                                }
-                            }
+                        //        for (int j = 0; j < gifs.Count; j++)
+                        //        {
+                        //            if (old[i].Id == gifs[j].Id)
+                        //            {
+                        //                order[i] = j;
+                        //                break;
+                        //            }
+                        //        }
+                        //    }
 
-                            for (int j = 0; j < gifs.Count; j++)
-                            {
-                                if (order.ContainsKey(j) == false)
-                                {
-                                    order[j] = j;
-                                }
-                            }
+                        //    //for (int j = 0; j < order.First().Value; j++)
+                        //    //{
+                        //    //    if (order.ContainsKey(j) == false)
+                        //    //    {
+                        //    //        order[j] = j;
+                        //    //    }
+                        //    //}
 
-                            Debugger.Break();
-                        }
-                        else
-                        {
-                            SavedGifs.Clear();
-                            SavedGifs.AddRange(gifs);
-                        }
+                        //    foreach (var item in order)
+                        //    {
+                        //        if (item.Key != item.Value)
+                        //        {
+                        //            SavedGifs.RemoveAt(item.Key);
+                        //            SavedGifs.Insert(item.Value, gifs[item.Value]);
+                        //        }
+                        //    }
+
+                        //    //Debugger.Break();
+                        //}
+                        //else
+                        //{
+                        //    SavedGifs.Clear();
+                        //    SavedGifs.AddRange(gifs);
+                        //}
                     });
                 }
             });

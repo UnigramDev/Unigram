@@ -535,7 +535,7 @@ namespace Telegram.Api.Services.Cache
                     }
                     else
                     {
-                        TLObject with;
+                        ITLDialogWith with;
 
                         TLPeerBase peer;
 

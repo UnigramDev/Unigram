@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public abstract partial class TLUserBase : ITLReadMaxId
+    public abstract partial class TLUserBase : ITLReadMaxId, ITLDialogWith
     {
         public TLContact Contact { get; set; }
 
@@ -123,6 +124,91 @@ namespace Telegram.Api.TL
                 }
 
                 return Id.ToString();
+            }
+        }
+
+        public virtual object PhotoSelf
+        {
+            get
+            {
+                return this;
+            }
+        }
+
+        public string DisplayName
+        {
+            get
+            {
+                var userBase = this as TLUserBase;
+                if (userBase != null)
+                {
+                    var user = this as TLUser;
+                    if (user != null && user.IsSelf)
+                    {
+                        return "You";
+                    }
+
+                    if (userBase.Id == 333000)
+                    {
+                        //return AppResources.AppName;
+                        return "Telegram";
+                    }
+
+                    if (userBase.Id == 777000)
+                    {
+                        //return AppResources.TelegramNotifications;
+                        return "Telegram";
+                    }
+
+                    if (user != null && user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact)
+                    {
+                        return PhoneNumber.Format(user.Phone);
+                    }
+
+                    //                    var userRequest = user as TLUserRequest;
+                    //                    if (userRequest != null)
+                    //                    {
+                    //#if WP8
+                    //                    //var phoneUtil = PhoneNumberUtil.GetInstance();
+                    //                    //try
+                    //                    //{
+                    //                    //    return phoneUtil.Format(phoneUtil.Parse("+" + user.Phone.Value, ""), PhoneNumberFormat.INTERNATIONAL);
+                    //                    //}
+                    //                    //catch (Exception e)
+                    //                    {
+                    //                        return "+" + user.Phone.Value;
+                    //                    }
+                    //#else
+                    //                        return "+" + user.Phone.Value;
+                    //#endif
+
+                    //                    }
+
+                    if (userBase is TLUserEmpty /*|| user is TLUserDeleted*/)
+                    {
+
+                    }
+
+                    return userBase.FullName.Trim();
+                }
+
+                //var encryptedChat = With as TLEncryptedChatCommon;
+                //if (encryptedChat != null)
+                //{
+                //    var currentUserId = IoC.Get<IMTProtoService>().CurrentUserId;
+                //    var cache = IoC.Get<ICacheService>();
+
+                //    if (currentUserId.Value == encryptedChat.AdminId.Value)
+                //    {
+                //        var cachedParticipant = cache.GetUser(encryptedChat.ParticipantId);
+                //        return cachedParticipant != null ? cachedParticipant.FullName.Trim() : string.Empty;
+                //    }
+
+                //    var cachedAdmin = cache.GetUser(encryptedChat.AdminId);
+                //    return cachedAdmin != null ? cachedAdmin.FullName.Trim() : string.Empty;
+                //}
+
+                return ToString();
             }
         }
 

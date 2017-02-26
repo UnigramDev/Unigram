@@ -26,7 +26,7 @@
         <Ellipse Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2">
             <Ellipse.Fill>
                 <!--<ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>-->
-                <ImageBrush ImageSource="{Binding With.PhotoSelf, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                <ImageBrush ImageSource="{x:Bind ViewModel.With.PhotoSelf, Converter={StaticResource DefaultPhotoConverter}, Mode=OneWay}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
             </Ellipse.Fill>
         </Ellipse>
         <!--<Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2"/>-->
@@ -52,7 +52,7 @@
                           FontSize="16"
                           Margin="0,0,4,1"
                           Grid.Column="0"/>
-                <TextBlock Text="{Binding FullName}" 
+                <TextBlock Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}" 
                            Grid.Column="1"
                            MaxLines="1"
                            TextWrapping="NoWrap"

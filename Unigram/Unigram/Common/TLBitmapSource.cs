@@ -118,13 +118,13 @@ namespace Unigram.Common
             {
                 if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
                 {
-                    SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.FullName);
+                    SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.DisplayName);
                     SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
                 }
             }
             else
             {
-                SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.FullName);
+                SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.DisplayName);
             }
         }
 

@@ -99,7 +99,7 @@ namespace Unigram.Controls.Messages
                 else if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
                 {
                     var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = InMemoryCacheService.Current.GetChat(message.ToId.Id).FullName, Foreground = Convert.Bubble(message.ToId.Id) });
+                    hyperlink.Inlines.Add(new Run { Text = InMemoryCacheService.Current.GetChat(message.ToId.Id).DisplayName, Foreground = Convert.Bubble(message.ToId.Id) });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
                     hyperlink.Foreground = paragraph.Foreground;
                     hyperlink.Click += (s, args) => From_Click(message);
@@ -119,7 +119,7 @@ namespace Unigram.Controls.Messages
                     var channel = message.FwdFromChannel;
                     if (channel != null)
                     {
-                        name = channel.FullName;
+                        name = channel.DisplayName;
                     }
 
                     var user = message.FwdFromUser;

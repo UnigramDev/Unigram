@@ -131,6 +131,7 @@
     <Compile Include="Services\MTProtoResponse.cs" />
     <Compile Include="Services\MTProtoService.Channel.cs" />
     <Compile Include="TL\Core\ITLChannelInviter.cs" />
+    <Compile Include="TL\Core\ITLDialogWith.cs" />
     <Compile Include="TL\Core\ITLInputPeer.cs" />
     <Compile Include="TL\Core\ITLMediaCaption.cs" />
     <Compile Include="TL\Core\ITLMultiChannelPts.cs" />

@@ -337,7 +337,7 @@
                                                         </Ellipse.Fill>
                                                     </Ellipse>
 
-                                                    <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                                    <TextBlock Text="{x:Bind DisplayName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                                     <TextBlock Text="{x:Bind Username}"
                                                                VerticalAlignment="Top" 
                                                                Style="{StaticResource CaptionTextBlockStyle}" 
@@ -368,7 +368,7 @@
                                                     <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
                                                         <TextBlock Foreground="White" Text="{x:Bind Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
                                                     </Grid>
-                                                    <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                                    <TextBlock Text="{x:Bind DisplayName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                                     <TextBlock Text="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}"
                                                                VerticalAlignment="Top" 
                                                                Style="{StaticResource CaptionTextBlockStyle}" 

@@ -1776,7 +1776,13 @@ namespace Telegram.Api.Services.Updates
 
                 user.FirstName = userName.FirstName;
                 user.LastName = userName.LastName;
-                userName.Username = userName.Username;
+                user.Username = userName.Username;
+
+                user.RaisePropertyChanged(() => user.FirstName);
+                user.RaisePropertyChanged(() => user.LastName);
+                user.RaisePropertyChanged(() => user.Username);
+                user.RaisePropertyChanged(() => user.FullName);
+                user.RaisePropertyChanged(() => user.DisplayName);
 
                 // TODO
                 //var userWithUserName = user as IUserName;
@@ -1805,7 +1811,8 @@ namespace Telegram.Api.Services.Updates
 
                 user.Photo = userPhoto.Photo;
                 user.RaisePropertyChanged(() => user.PhotoSelf);
-                Helpers.Execute.BeginOnThreadPool(() => _eventAggregator.Publish(userPhoto));
+
+                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(userPhoto));
                 //_cacheService.SyncUser(user, result => _eventAggregator.Publish(result));
 
                 return true;
@@ -2159,13 +2166,40 @@ namespace Telegram.Api.Services.Updates
 
         private void ProcessNewMessageUpdate(TLMessageBase messageBase)
         {
+            var message = messageBase as TLMessage;
+            if (message != null && message.IsOut)
+            {
+
+            }
+
             var serviceMessage = messageBase as TLMessageService;
             if (serviceMessage != null)
             {
+                var chatEditTitleAction = serviceMessage.Action as TLMessageActionChatEditTitle;
+                if (chatEditTitleAction != null)
+                {
+                    var chatBase = _cacheService.GetChat(serviceMessage.ToId.Id);
+
+                    var channel = chatBase as TLChannel;
+                    if (channel != null)
+                    {
+                        channel.Title = chatEditTitleAction.Title;
+                        channel.RaisePropertyChanged(() => channel.Title);
+                        channel.RaisePropertyChanged(() => channel.DisplayName);
+                    }
+
+                    var chat = chatBase as TLChat;
+                    if (chat != null)
+                    {
+                        chat.Title = chatEditTitleAction.Title;
+                        chat.RaisePropertyChanged(() => chat.Title);
+                        chat.RaisePropertyChanged(() => chat.DisplayName);
+                    }
+                }
+
                 var chatEditPhotoAction = serviceMessage.Action as TLMessageActionChatEditPhoto;
                 if (chatEditPhotoAction != null)
                 {
-                    //channel.Photo = chatEditPhotoAction.Photo;
                     var photo = chatEditPhotoAction.Photo as TLPhoto;
                     if (photo != null)
                     {

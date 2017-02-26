@@ -141,7 +141,7 @@ namespace Unigram.Common
             {
                 var channelId = ((TLMessageActionChatMigrateTo)action).ChannelId;
                 var channel = InMemoryCacheService.Current.GetChat(channelId) as TLChannel;
-                var fullName = channel != null ? channel.FullName : string.Empty;
+                var fullName = channel != null ? channel.DisplayName : string.Empty;
 
                 return ReplaceLinks(Resources.MessageActionChatMigrateTo, new[] { fullName }, new[] { "tg-channel://" + channelId }, useActiveLinks);
             });
