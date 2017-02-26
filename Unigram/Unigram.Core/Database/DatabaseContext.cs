@@ -34,16 +34,16 @@ namespace Unigram.Core
         private const string COUNT_TABLE = "SELECT COUNT(*) FROM `{0}`";
 
         private const string CREATE_TABLE_STICKERSET = "CREATE TABLE IF NOT EXISTS `StickerSet`('Id' bigint primary key not null, 'AccessHash' bigint, 'Title' text, 'ShortName' text, 'Count' int, 'Hash' int, 'Flags' int)";
-        private const string INSERT_TABLE_STICKERSET = "INSERT OR REPLACE INTO `StickerSet` (Id,AccessHash,Title,ShortName,Count,Hash,Flags) VALUES({0},{1},'{2}','{3}',{4},{5},{6});";
+        private const string INSERT_TABLE_STICKERSET = "INSERT OR REPLACE INTO `StickerSet` (Id,AccessHash,Title,ShortName,Count,Hash,Flags) VALUES(?,?,?,?,?,?,?);";
         private const string SELECT_TABLE_STICKERSET = "SELECT Id,AccessHash,Title,ShortName,Count,Hash,Flags FROM `StickerSet`";
 
         private const string CREATE_TABLE_STICKERPACK = "CREATE TABLE `StickerPack` (`Id` INTEGER PRIMARY KEY AUTOINCREMENT, `DocumentId` BIGINT NOT NULL, `Emoticon` TEXT NOT NULL)";
         private const string CREATE_INDEX_STICKERPACK = "CREATE INDEX `EmoticonIndex` ON `StickerPack` (`Emoticon`)";
-        private const string INSERT_TABLE_STICKERPACK = "INSERT OR REPLACE INTO `StickerPack` (DocumentId,Emoticon) VALUES({0},'{1}');";
+        private const string INSERT_TABLE_STICKERPACK = "INSERT OR REPLACE INTO `StickerPack` (DocumentId,Emoticon) VALUES(?,?);";
         private const string SELECT_TABLE_STICKERPACK = "SELECT Stickers.Id,Stickers.AccessHash,Stickers.Date,Stickers.MimeType,Stickers.Size,Stickers.Thumb,Stickers.DCId,Stickers.Version,Stickers.Attributes,Stickers.Tag FROM `Stickers` INNER JOIN `StickerPack` ON Stickers.Id = StickerPack.DocumentId WHERE StickerPack.Emoticon = '{0}'";
 
         private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE IF NOT EXISTS `{0}`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'Thumb' string, 'DCId' int, 'Version' int, 'Attributes' string, 'Tag' bigint)";
-        private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag) VALUES({1},{2},{3},'{4}',{5},'{6}',{7},{8},'{9}',{10});";
+        private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag) VALUES(?,?,?,?,?,?,?,?,?,?);";
         private const string SELECT_TABLE_DOCUMENT = "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag FROM `{0}`";
 
         private const string CREATE_TABLE_STORAGEFILE_MAPPING = "CREATE TABLE IF NOT EXISTS `{0}`('Path' text primary key not null, 'DateModified' datetime, 'Id' bigint, 'AccessHash' bigint)";
@@ -59,7 +59,7 @@ namespace Unigram.Core
 
         private void Execute(Database database, string query)
         {
-            Statement statement = null;
+            Statement statement;
             Sqlite3.sqlite3_prepare_v2(database, query, out statement);
             Sqlite3.sqlite3_step(statement);
             Sqlite3.sqlite3_finalize(statement);
@@ -67,7 +67,7 @@ namespace Unigram.Core
 
         private int ExecuteWithResult(Database database, string query)
         {
-            Statement statement = null;
+            Statement statement;
             Sqlite3.sqlite3_prepare_v2(database, query, out statement);
             Sqlite3.sqlite3_step(statement);
             var result = Sqlite3.sqlite3_column_int(statement, 0);
@@ -96,6 +96,7 @@ namespace Unigram.Core
         public void InsertDocuments(string table, IEnumerable<TLDocument> documents, bool delete, long tag = 0)
         {
             Database database;
+            Statement statement;
             Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
 
             Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
@@ -106,14 +107,30 @@ namespace Unigram.Core
                 Execute(database, string.Format("DELETE FROM `{0}`", table));
             }
 
+            Sqlite3.sqlite3_prepare_v2(database, string.Format(INSERT_TABLE_DOCUMENT, table), out statement);
+
             var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
             foreach (var item in documents)
             {
                 var thumb = JsonConvert.SerializeObject(item.Thumb, settings);
                 var attributes = JsonConvert.SerializeObject(item.Attributes, settings);
 
-                Execute(database, string.Format(INSERT_TABLE_DOCUMENT, table, item.Id, item.AccessHash, item.Date, Escape(item.MimeType), item.Size, Escape(thumb), item.DCId, item.Version, Escape(attributes), tag));
+                Sqlite3.sqlite3_bind_int64(statement, 1, item.Id);
+                Sqlite3.sqlite3_bind_int64(statement, 2, item.AccessHash);
+                Sqlite3.sqlite3_bind_int(statement, 3, item.Date);
+                Sqlite3.sqlite3_bind_text(statement, 4, item.MimeType, -1);
+                Sqlite3.sqlite3_bind_int(statement, 5, item.Size);
+                Sqlite3.sqlite3_bind_text(statement, 6, thumb, -1);
+                Sqlite3.sqlite3_bind_int(statement, 7, item.DCId);
+                Sqlite3.sqlite3_bind_int(statement, 8, item.Version);
+                Sqlite3.sqlite3_bind_text(statement, 9, attributes, -1);
+                Sqlite3.sqlite3_bind_int64(statement, 10, tag);
+
+                Sqlite3.sqlite3_step(statement);
+                Sqlite3.sqlite3_reset(statement);
             }
+
+            Sqlite3.sqlite3_finalize(statement);
 
             Execute(database, "COMMIT TRANSACTION");
             Sqlite3.sqlite3_close(database);
@@ -164,26 +181,10 @@ namespace Unigram.Core
             return result;
         }
 
-        public void InsertStickerSets(IEnumerable<TLStickerSet> stickerSets)
+        public void InsertStickerSets(IEnumerable<TLMessagesStickerSet> stickerSets)
         {
             Database database;
-            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
-
-            Execute(database, CREATE_TABLE_STICKERSET);
-            Execute(database, "BEGIN IMMEDIATE TRANSACTION");
-
-            foreach (var item in stickerSets)
-            {
-                Execute(database, string.Format(INSERT_TABLE_STICKERSET, item.Id, item.AccessHash, Escape(item.Title), Escape(item.ShortName), item.Count, item.Hash, (int)item.Flags));
-            }
-
-            Execute(database, "COMMIT TRANSACTION");
-            Sqlite3.sqlite3_close(database);
-        }
-
-        public void InsertStickerSet(IEnumerable<TLMessagesStickerSet> stickerSets)
-        {
-            Database database;
+            Statement statement;
             Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
 
             Execute(database, CREATE_TABLE_STICKERSET);
@@ -192,13 +193,28 @@ namespace Unigram.Core
             Execute(database, string.Format(CREATE_TABLE_DOCUMENT, "Stickers"));
             Execute(database, "BEGIN IMMEDIATE TRANSACTION");
 
+            Sqlite3.sqlite3_prepare_v2(database, INSERT_TABLE_STICKERSET, out statement);
+
             foreach (var stickerSet in stickerSets)
             {
-                Execute(database, string.Format(INSERT_TABLE_STICKERSET, stickerSet.Set.Id, stickerSet.Set.AccessHash, Escape(stickerSet.Set.Title), Escape(stickerSet.Set.ShortName), stickerSet.Set.Count, stickerSet.Set.Hash, (int)stickerSet.Set.Flags));
+                Sqlite3.sqlite3_bind_int64(statement, 1, stickerSet.Set.Id);
+                Sqlite3.sqlite3_bind_int64(statement, 2, stickerSet.Set.AccessHash);
+                Sqlite3.sqlite3_bind_text(statement, 3, stickerSet.Set.Title, -1);
+                Sqlite3.sqlite3_bind_text(statement, 4, stickerSet.Set.ShortName, -1);
+                Sqlite3.sqlite3_bind_int(statement, 5, stickerSet.Set.Count);
+                Sqlite3.sqlite3_bind_int(statement, 6, stickerSet.Set.Hash);
+                Sqlite3.sqlite3_bind_int(statement, 7, (int)stickerSet.Set.Flags);
+
+                Sqlite3.sqlite3_step(statement);
+                Sqlite3.sqlite3_reset(statement);
             }
+
+            Sqlite3.sqlite3_finalize(statement);
 
             Execute(database, "COMMIT TRANSACTION");
             Execute(database, "BEGIN IMMEDIATE TRANSACTION");
+
+            Sqlite3.sqlite3_prepare_v2(database, INSERT_TABLE_STICKERPACK, out statement);
 
             foreach (var stickerSet in stickerSets)
             {
@@ -206,25 +222,48 @@ namespace Unigram.Core
                 {
                     foreach (var document in item.Documents)
                     {
-                        Execute(database, string.Format(INSERT_TABLE_STICKERPACK, document, Escape(item.Emoticon)));
+                        Sqlite3.sqlite3_bind_int64(statement, 1, document);
+                        Sqlite3.sqlite3_bind_text(statement, 2, item.Emoticon, -1);
+
+                        Sqlite3.sqlite3_step(statement);
+                        Sqlite3.sqlite3_reset(statement);
                     }
                 }
             }
 
+            Sqlite3.sqlite3_finalize(statement);
+
             Execute(database, "COMMIT TRANSACTION");
             Execute(database, "BEGIN IMMEDIATE TRANSACTION");
 
+            Sqlite3.sqlite3_prepare_v2(database, string.Format(INSERT_TABLE_DOCUMENT, "Stickers"), out statement);
+
             foreach (var stickerSet in stickerSets)
             {
+
                 var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
                 foreach (var item in stickerSet.Documents.OfType<TLDocument>())
                 {
                     var thumb = JsonConvert.SerializeObject(item.Thumb, settings);
                     var attributes = JsonConvert.SerializeObject(item.Attributes, settings);
 
-                    Execute(database, string.Format(INSERT_TABLE_DOCUMENT, "Stickers", item.Id, item.AccessHash, item.Date, Escape(item.MimeType), item.Size, Escape(thumb), item.DCId, item.Version, Escape(attributes), stickerSet.Set.Id));
+                    Sqlite3.sqlite3_bind_int64(statement, 1, item.Id);
+                    Sqlite3.sqlite3_bind_int64(statement, 2, item.AccessHash);
+                    Sqlite3.sqlite3_bind_int(statement, 3, item.Date);
+                    Sqlite3.sqlite3_bind_text(statement, 4, item.MimeType, -1);
+                    Sqlite3.sqlite3_bind_int(statement, 5, item.Size);
+                    Sqlite3.sqlite3_bind_text(statement, 6, thumb, -1);
+                    Sqlite3.sqlite3_bind_int(statement, 7, item.DCId);
+                    Sqlite3.sqlite3_bind_int(statement, 8, item.Version);
+                    Sqlite3.sqlite3_bind_text(statement, 9, attributes, -1);
+                    Sqlite3.sqlite3_bind_int64(statement, 10, stickerSet.Set.Id);
+
+                    Sqlite3.sqlite3_step(statement);
+                    Sqlite3.sqlite3_reset(statement);
                 }
             }
+
+            Sqlite3.sqlite3_finalize(statement);
 
             Execute(database, "COMMIT TRANSACTION");
 

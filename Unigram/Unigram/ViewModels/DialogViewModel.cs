@@ -2088,7 +2088,7 @@ namespace Unigram.ViewModels
 
                                         if (processStickerSets)
                                         {
-                                            DatabaseContext.Current.InsertStickerSet(results);
+                                            DatabaseContext.Current.InsertStickerSets(results);
 
                                             //foreach (var item in ready)
                                             //{
