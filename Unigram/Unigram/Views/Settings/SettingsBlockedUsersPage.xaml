@@ -31,20 +31,13 @@
                   Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="tl:TLUser">
-                    <Grid Margin="0,4,0,8">
+                    <Grid Margin="0,6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0">
-                            <TextBlock Foreground="White" Text="{x:Bind Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
-                            <Ellipse>
-                                <Ellipse.Fill>
-                                    <ImageBrush ImageSource="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                                </Ellipse.Fill>
-                            </Ellipse>
-                            <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
-                        </Grid>
+                        <controls:ProfilePictureView x:Phase="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" IsEnabled="False" Grid.RowSpan="2"/>
+
                         <StackPanel VerticalAlignment="Center" Grid.Column="1">
                             <TextBlock Text="{x:Bind FullName}"/>
                             <TextBlock Visibility="{x:Bind (Visibility)HasUsername}" 

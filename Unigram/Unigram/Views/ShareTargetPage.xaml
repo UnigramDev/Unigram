@@ -175,7 +175,7 @@
         </Grid>
         
         <ListView x:Name="lvDialogs"
-                  ItemsSource="{x:Bind ViewModel.Dialogs}"
+                  ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ItemClick="lvMasterChats_ItemClick"
