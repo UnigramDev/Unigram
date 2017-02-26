@@ -106,7 +106,7 @@ namespace Unigram.Core
                 var thumb = JsonConvert.SerializeObject(item.Thumb, settings);
                 var attributes = JsonConvert.SerializeObject(item.Attributes, settings);
 
-                Execute(database, string.Format(INSERT_TABLE_DOCUMENT, table, item.Id, item.AccessHash, item.Date, Escape(item.MimeType), item.Size, Escape(thumb), item.DCId, item.Version, Escape(attributes)));
+                Execute(database, string.Format(INSERT_TABLE_DOCUMENT, table, item.Id, item.AccessHash, item.Date, Escape(item.MimeType), item.Size, Escape(thumb), item.DCId, item.Version, Escape(attributes), 0));
             }
 
             Execute(database, "COMMIT TRANSACTION");
