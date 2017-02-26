@@ -34,6 +34,11 @@ namespace Telegram.Api.Helpers
         {
             return new Uri($"ms-appdata:///local/{SettingsHelper.SessionGuid}/temp/{fileName}");
         }
+
+        public static IAsyncOperation<StorageFile> CreateTempFileAsync(string fileName)
+        {
+            return ApplicationData.Current.LocalFolder.CreateFileAsync($"{SettingsHelper.SessionGuid}\\temp\\{fileName}", CreationCollisionOption.ReplaceExisting);
+        }
         
         public static void CreateTemporaryFolder()
         {
