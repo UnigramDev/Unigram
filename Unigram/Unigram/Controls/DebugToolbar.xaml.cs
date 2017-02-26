@@ -174,7 +174,7 @@ namespace Unigram.Controls
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            var updatesService = UnigramContainer.Instance.ResolveType<IUpdatesService>();
+            var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             updatesService.LoadStateAndUpdate(() => { });
 
             Play.Visibility = Visibility.Collapsed;
@@ -183,7 +183,7 @@ namespace Unigram.Controls
 
         private void Pause_Click(object sender, RoutedEventArgs e)
         {
-            var updatesService = UnigramContainer.Instance.ResolveType<IUpdatesService>();
+            var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             updatesService.SaveState();
             updatesService.CancelUpdating();
 

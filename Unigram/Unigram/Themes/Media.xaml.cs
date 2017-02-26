@@ -103,14 +103,14 @@ namespace Unigram.Themes
                     {
                         if (documentMedia.DownloadingProgress > 0 && documentMedia.DownloadingProgress < 1)
                         {
-                            var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
+                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                             manager.CancelDownloadFile(document);
 
                             border.Update();
                         }
                         else if (documentMedia.UploadingProgress > 0 && documentMedia.UploadingProgress < 1)
                         {
-                            var manager = UnigramContainer.Instance.ResolveType<IUploadDocumentManager>();
+                            var manager = UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
                             manager.CancelUploadFile(document.Id);
 
                             border.Update();
@@ -119,7 +119,7 @@ namespace Unigram.Themes
                         {
                             //var watch = Stopwatch.StartNew();
 
-                            var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
+                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                             var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
                             if (download != null)
                             {

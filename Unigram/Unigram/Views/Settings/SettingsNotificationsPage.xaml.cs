@@ -29,7 +29,7 @@ namespace Unigram.Views.Settings
         public SettingsNotificationsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<SettingsNotificationsViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsNotificationsViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

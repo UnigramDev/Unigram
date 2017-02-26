@@ -37,12 +37,14 @@ namespace Unigram
 
         public ViewModelLocator()
         {
-            container = UnigramContainer.Instance;
+            container = UnigramContainer.Current;
         }
 
         public void Configure()
         {
             InitializeLayer();
+
+            container.Reset();
 
             // .SingleIstance() is required to register a singleton service.
             container.ContainerBuilder.RegisterType<MTProtoService>().As<IMTProtoService>().SingleInstance();
@@ -95,6 +97,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsBlockUserViewModel>();
             container.ContainerBuilder.RegisterType<SettingsFeaturedStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsAccountsViewModel>().SingleInstance();
 
             container.Build();
 
@@ -138,9 +141,9 @@ namespace Unigram
 
         public void LoadStateAndUpdate()
         {
-            var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
-            var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>();
-            var updatesService = UnigramContainer.Instance.ResolveType<IUpdatesService>();
+            var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
+            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             cacheService.Init();
             updatesService.GetCurrentUserId = () => protoService.CurrentUserId;
             updatesService.GetStateAsync = protoService.GetStateCallback;

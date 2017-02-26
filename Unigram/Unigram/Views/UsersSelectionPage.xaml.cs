@@ -32,7 +32,7 @@ namespace Unigram.Views
         public UsersSelectionPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType(UnigramNavigationService.ViewModels.Dequeue());
+            DataContext = UnigramContainer.Current.ResolveType(UnigramNavigationService.ViewModels.Dequeue());
 
             ViewModel.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
         }

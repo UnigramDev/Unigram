@@ -2002,6 +2002,22 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnThreadPool(async () =>
             {
+                var response = await ProtoService.GetAllStickersAsync(0);
+                if (response.IsSucceeded)
+                {
+                    var allStickers = response.Result as TLMessagesAllStickers;
+                    if (allStickers != null)
+                    {
+                        foreach (var set in allStickers.Sets)
+                        {
+
+                        }
+                    }
+                }
+            });
+
+            Execute.BeginOnThreadPool(async () =>
+            {
                 var gifs = await _gifsService.GetSavedGifs();
                 if (gifs.Key != SavedGifsHash || SavedGifs.Count == 0)
                 {

@@ -114,6 +114,7 @@
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
@@ -127,6 +128,9 @@
     <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
       <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsAccountsPage.xaml.cs">
+      <DependentUpon>SettingsAccountsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsBlockedUsersPage.xaml.cs">
       <DependentUpon>SettingsBlockedUsersPage.xaml</DependentUpon>
     </Compile>
@@ -135,6 +139,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsLastSeenPage.xaml.cs">
       <DependentUpon>SettingsLastSeenPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SwitchAccountPage.xaml.cs">
+      <DependentUpon>SwitchAccountPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UsersSelectionPage.xaml.cs">
       <DependentUpon>UsersSelectionPage.xaml</DependentUpon>
@@ -713,6 +720,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\SettingsAccountsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsBlockedUsersPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -762,6 +773,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ShareTargetPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SwitchAccountPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

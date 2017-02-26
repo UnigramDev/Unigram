@@ -29,7 +29,7 @@ namespace Unigram.Views.Settings
         public SettingsFeaturedStickersPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<SettingsFeaturedStickersViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsFeaturedStickersViewModel>();
         }
     }
 }

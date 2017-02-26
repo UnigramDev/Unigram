@@ -93,12 +93,12 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            UnigramContainer.Instance.ResolveType<ITelegramEventAggregator>().Subscribe(this);
+            UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Subscribe(this);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            UnigramContainer.Instance.ResolveType<ITelegramEventAggregator>().Unsubscribe(this);
+            UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Unsubscribe(this);
         }
 
         protected override void OnApplyTemplate()

@@ -390,7 +390,52 @@ namespace Telegram.Api.Services
                 });
         }
 
-	    public void GetAllStickersCallback(byte[] hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetAllStickersCallback(int hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetAllStickers { Hash = hash };
+
+            const string caption = "messages.getAllStickers";
+            SendInformativeMessage<TLMessagesAllStickersBase>(caption, obj, callback, faultCallback);
+
+            //var results = new List<TLMessagesStickerSet>();
+            //var resultsSyncRoot = new object();
+            //SendInformativeMessage<TLMessagesAllStickersBase>(caption, obj,
+            //    result =>
+            //    {
+            //        var allStickers32 = result as TLMessagesAllStickers;
+            //        if (allStickers32 != null)
+            //        {
+            //            GetStickerSetsAsync(allStickers32, r => callback(r as TLMessagesAllStickersBase),
+            //                stickerSetResult =>
+            //                {
+            //                    var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
+            //                    if (messagesStickerSet != null)
+            //                    {
+            //                        bool processStickerSets;
+            //                        lock (resultsSyncRoot)
+            //                        {
+            //                            results.Add(messagesStickerSet);
+            //                            processStickerSets = results.Count == allStickers32.Sets.Count;
+            //                        }
+
+            //                        if (processStickerSets)
+            //                        {
+            //                            ProcessStickerSets(allStickers32, results);
+
+            //                            callback.SafeInvoke(allStickers32);
+            //                        }
+            //                    }
+            //                },
+            //                faultCallback);
+            //        }
+            //        else
+            //        {
+            //            callback.SafeInvoke(result);
+            //        }
+            //    });
+        }
+
+        public void GetAllStickersCallback(byte[] hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLMessagesGetAllStickers { Hash = TLUtils.ToTLInt(hash) ?? 0 };
 

@@ -637,7 +637,7 @@ namespace Unigram.Common
             else if (type == TLType.MessageEntityHashtag)
             {
                 //await UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchAsync((string)data);
-                UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
+                UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
             }
             else
             {
@@ -945,7 +945,7 @@ namespace Unigram.Common
 
         private static async void NavigateToInviteLink(string link)
         {
-            var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>();
+            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
             var response = await protoService.CheckChatInviteAsync(link);
             if (response.IsSucceeded)
             {

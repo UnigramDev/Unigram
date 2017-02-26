@@ -27,7 +27,7 @@ namespace Unigram.Views.Chats
         public CreateChatStep2Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<CreateChatStep2ViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<CreateChatStep2ViewModel>();
             View.Attach();
         }
     }

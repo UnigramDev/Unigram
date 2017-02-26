@@ -67,7 +67,7 @@ namespace Unigram.Common
 
         static TLBitmapSource()
         {
-            _downloadFileManager = UnigramContainer.Instance.ResolveType<IDownloadFileManager>();
+            _downloadFileManager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
         }
 
         public const int PHASE_PLACEHOLDER = 0;

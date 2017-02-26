@@ -49,7 +49,7 @@ namespace Unigram.Views
         public ArticlePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<ArticleViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<ArticleViewModel>();
 
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = File.ReadAllText(jsPath);

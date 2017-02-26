@@ -603,7 +603,7 @@ namespace Unigram.Converters
             if (!File.Exists(FileUtils.GetTempFileName(filename)))
             {
                 var renderer = _videoFactory.CreateRenderer(320, 320);
-                var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
+                var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
                     await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
@@ -734,7 +734,7 @@ namespace Unigram.Converters
 
             if (fileSize >= 0)
             {
-                var manager = UnigramContainer.Instance.ResolveType<IDownloadFileManager>();
+                var manager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
                 var bitmap = new BitmapImage();
 
                 //Execute.BeginOnThreadPool(() => manager.DownloadFile(location, owner, fileSize));
@@ -840,7 +840,7 @@ namespace Unigram.Converters
 
             if (fileSize >= 0)
             {
-                var manager = UnigramContainer.Instance.ResolveType<IDownloadFileManager>();
+                var manager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
                 var bitmap = new BitmapImage();
                 _cachedSources[fileName] = new WeakReference(bitmap);
 
@@ -940,7 +940,7 @@ namespace Unigram.Converters
 
             if (photoSize != null)
             {
-                var manager = UnigramContainer.Instance.ResolveType<IDownloadFileManager>();
+                var manager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
                     await manager.DownloadFileAsync(location, photoSize.Size);
@@ -978,7 +978,7 @@ namespace Unigram.Converters
                 }
 
                 var bitmap = new StickerBitmapSource();
-                var manager = UnigramContainer.Instance.ResolveType<IDownloadDocumentFileManager>();
+                var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
                     await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);

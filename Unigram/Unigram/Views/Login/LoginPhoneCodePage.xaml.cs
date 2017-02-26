@@ -28,7 +28,7 @@ namespace Unigram.Views.Login
         {
             InitializeComponent();
 
-            DataContext = UnigramContainer.Instance.ResolveType<LoginPhoneCodeViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<LoginPhoneCodeViewModel>();
 
             // Used to hide the app gray bar on desktop.
             // Currently this is always hidden on both family devices.

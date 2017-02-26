@@ -23,7 +23,7 @@ namespace Unigram.Views
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            DataContext = UnigramContainer.Instance.ResolveType<SettingsViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsViewModel>();
 
             Loaded += OnLoaded;
         }
@@ -100,6 +100,11 @@ namespace Unigram.Views
         private void Notifications_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage));
+        }
+
+        private void Accounts_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsAccountsPage));
         }
     }
 

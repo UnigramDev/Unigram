@@ -35,6 +35,7 @@ using Unigram.Views.Login;
 using Windows.UI.Core;
 using Unigram.Converters;
 using Windows.Foundation.Metadata;
+using Windows.ApplicationModel.Core;
 
 namespace Unigram
 {
@@ -214,7 +215,7 @@ namespace Unigram
 
         public override void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
-            var updatesService = UnigramContainer.Instance.ResolveType<IUpdatesService>();
+            var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             updatesService.LoadStateAndUpdate(() => { });
 
             base.OnResuming(s, e, previousExecutionState);
@@ -224,10 +225,10 @@ namespace Unigram
         {
             //DefaultPhotoConverter.BitmapContext.Clear();
 
-            var cacheService = UnigramContainer.Instance.ResolveType<ICacheService>();
+            var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
             cacheService.TryCommit();
 
-            var updatesService = UnigramContainer.Instance.ResolveType<IUpdatesService>();
+            var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             updatesService.SaveState();
             updatesService.CancelUpdating();
 
@@ -261,6 +262,7 @@ namespace Unigram
             {
                 // Changes to the titlebar (colour, and such)
                 ApplicationViewTitleBar titlebar = ApplicationView.GetForCurrentView().TitleBar;
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
 
                 // Accent Color
                 var accentBrush = Application.Current.Resources["SystemControlHighlightAccentBrush"] as SolidColorBrush;

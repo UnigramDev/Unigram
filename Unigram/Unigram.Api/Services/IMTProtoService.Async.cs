@@ -147,6 +147,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<bool>> SetInlineBotResultsAsync(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM);
         Task<MTProtoResponse<bool>> ReadFeaturedStickersAsync(TLVector<long> id);
         Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickersAsync(byte[] hash);
+        Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickersAsync(int hash);
         Task<MTProtoResponse<TLVector<TLWallPaperBase>>> GetWallpapersAsync();
         Task<MTProtoResponse<TLContactsResolvedPeer>> ResolveUsernameAsync(string username);
         Task<MTProtoResponse<TLAccountDaysTTL>> GetAccountTTLAsync();

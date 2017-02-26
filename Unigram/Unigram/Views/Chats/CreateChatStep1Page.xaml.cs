@@ -29,7 +29,7 @@ namespace Unigram.Views.Chats
         public CreateChatStep1Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<CreateChatStep1ViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<CreateChatStep1ViewModel>();
         }
     }
 }

@@ -364,6 +364,20 @@
                                                       Click="Username_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                             </local:TableStackPanel>
+                            <local:TableStackPanel x:Name="OptionsGroup3" 
+                                                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                                   Margin="0,24,0,0">
+                                <controls:HyperButton Content="Accounts management"
+                                                      Visibility="Collapsed"
+                                                      Click="Accounts_Click"
+                                                      Style="{StaticResource HyperButtonStyle}"/>
+                            </local:TableStackPanel>
+                            <local:TableStackPanel x:Name="OptionsGroup4" 
+                                                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                                   Margin="0,24,0,0">
+                            </local:TableStackPanel>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>

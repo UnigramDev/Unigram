@@ -53,7 +53,7 @@ namespace Unigram.Views
         public DialogPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<DialogViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
 
             CheckMessageBoxEmpty();
 
