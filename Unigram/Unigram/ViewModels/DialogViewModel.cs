@@ -41,6 +41,7 @@ using Unigram.Services;
 using Windows.Storage.FileProperties;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Popups;
 
 namespace Unigram.ViewModels
 {
@@ -836,6 +837,19 @@ namespace Unigram.ViewModels
 
                     //var boh = result.Documents.OfType<TLDocument>().GroupBy(x => ((TLInputStickerSetID)x.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().Stickerset).Id).ToList();
                 }
+            }
+        }
+
+        private List<TLDocument> _stickerPack;
+        public List<TLDocument> StickerPack
+        {
+            get
+            {
+                return _stickerPack;
+            }
+            set
+            {
+                Set(ref _stickerPack, value);
             }
         }
 
@@ -2005,12 +2019,86 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.GetAllStickersAsync(0);
                 if (response.IsSucceeded)
                 {
+                    var old = DatabaseContext.Current.SelectStickerSets();
+
                     var allStickers = response.Result as TLMessagesAllStickers;
                     if (allStickers != null)
                     {
+                        var needData = new Dictionary<long, TLStickerSet>();
+                        var ready = new Dictionary<long, TLStickerSet>();
+                        var removed = new List<TLStickerSet>();
+
                         foreach (var set in allStickers.Sets)
                         {
+                            var cached = old.FirstOrDefault(x => x.Id == set.Id);
+                            if (cached != null)
+                            {
+                                if (cached.Hash == set.Hash)
+                                {
+                                    ready[set.Id] = cached;
+                                }
+                                else
+                                {
+                                    needData[set.Id] = set;
+                                }
+                            }
+                            else
+                            {
+                                needData[set.Id] = set;
+                            }
+                        }
 
+                        foreach (var set in old)
+                        {
+                            if (needData.ContainsKey(set.Id) || ready.ContainsKey(set.Id)) { }
+                            else
+                            {
+                                removed.Add(set);
+                            }
+                        }
+
+                        if (removed.Count > 0)
+                        {
+                            DatabaseContext.Current.RemoveStickerSets(removed);
+                        }
+
+                        if (needData.Count > 0)
+                        {
+                            var results = new List<TLMessagesStickerSet>();
+                            var resultsSyncRoot = new object();
+                            ProtoService.GetStickerSetsAsync(new TLMessagesAllStickers { Sets = new TLVector<TLStickerSet>(needData.Values) },
+                                result =>
+                                {
+                                    Debugger.Break();
+                                    //DatabaseContext.Current.InsertStickerSets(needData.Values);
+                                },
+                                stickerSetResult =>
+                                {
+                                    var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
+                                    if (messagesStickerSet != null)
+                                    {
+                                        bool processStickerSets;
+                                        lock (resultsSyncRoot)
+                                        {
+                                            results.Add(messagesStickerSet);
+                                            processStickerSets = results.Count == needData.Values.Count;
+                                        }
+
+                                        if (processStickerSets)
+                                        {
+                                            DatabaseContext.Current.InsertStickerSet(results);
+
+                                            //foreach (var item in ready)
+                                            //{
+                                            //    var items = DatabaseContext.Current.SelectDocuments("Stickers", item.Key);
+                                            //}
+                                        }
+                                    }
+                                },
+                                failure =>
+                                {
+                                    Debugger.Break();
+                                });
                         }
                     }
                 }

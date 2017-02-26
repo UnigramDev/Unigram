@@ -56,7 +56,7 @@ namespace Unigram.Views
         public MainPage()
         {
             InitializeComponent();
-            //NavigationCacheMode = NavigationCacheMode.Required;
+            NavigationCacheMode = NavigationCacheMode.Required;
             DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
 
             _logicalDpi = DisplayInformation.GetForCurrentView().LogicalDpi;

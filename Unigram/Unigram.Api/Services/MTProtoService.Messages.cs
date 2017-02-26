@@ -528,7 +528,7 @@ namespace Telegram.Api.Services
 	        }
 	    }
 
-	    private void GetStickerSetsAsync(ITLStickers stickers, Action<ITLStickers> callback, Action<object> getStickerSetCallback, Action<TLRPCError> faultCallback)
+	    public void GetStickerSetsAsync(ITLStickers stickers, Action<ITLStickers> callback, Action<object> getStickerSetCallback, Action<TLRPCError> faultCallback)
 	    {
 	        var sets = stickers.Sets;
 	        if (sets.Count == 0)

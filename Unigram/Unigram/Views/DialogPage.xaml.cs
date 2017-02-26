@@ -315,6 +315,11 @@ namespace Unigram.Views
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
             StickersPanel.Visibility = StickersPanel.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+
+            if (StickersPanel.Visibility == Visibility.Visible)
+            {
+                ViewModel.OpenStickersCommand.Execute(null);
+            }
         }
 
         private void ProfileBubble_Click(object sender, RoutedEventArgs e)
@@ -541,6 +546,13 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.SendStickerCommand.Execute(e.ClickedItem);
+            ViewModel.StickerPack = null;
+            txtMessage.Text = null;
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading
