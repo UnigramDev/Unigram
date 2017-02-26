@@ -2016,6 +2016,8 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnThreadPool(async () =>
             {
+                var watch = Stopwatch.StartNew();
+
                 var response = await ProtoService.GetAllStickersAsync(0);
                 if (response.IsSucceeded)
                 {
@@ -2092,6 +2094,12 @@ namespace Unigram.ViewModels
                                             //{
                                             //    var items = DatabaseContext.Current.SelectDocuments("Stickers", item.Key);
                                             //}
+
+                                            watch.Stop();
+                                            Execute.BeginOnUIThread(async () =>
+                                            {
+                                                await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
+                                            });
                                         }
                                     }
                                 },
