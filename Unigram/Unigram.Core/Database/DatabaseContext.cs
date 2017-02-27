@@ -33,20 +33,22 @@ namespace Unigram.Core
 
         private const string COUNT_TABLE = "SELECT COUNT(*) FROM `{0}`";
 
-        private const string CREATE_TABLE_STICKERSET = "CREATE TABLE IF NOT EXISTS `StickerSet`(`Id` bigint primary key not null, `AccessHash` bigint, `Title` text, `ShortName` text, `Count` int, `Hash` int, `Flags` int)";
-        private const string INSERT_TABLE_STICKERSET = "INSERT OR REPLACE INTO `StickerSet` (Id,AccessHash,Title,ShortName,Count,Hash,Flags) VALUES(?,?,?,?,?,?,?)";
-        private const string SELECT_TABLE_STICKERSET = "SELECT Id,AccessHash,Title,ShortName,Count,Hash,Flags FROM `StickerSet`";
+        private const string CREATE_TABLE_STICKERSET = "CREATE TABLE IF NOT EXISTS `StickerSets`(`Id` bigint primary key not null, `AccessHash` bigint, `Title` text, `ShortName` text, `Count` int, `Hash` int, `Flags` int, `Order` int)";
+        private const string INSERT_TABLE_STICKERSET = "INSERT OR REPLACE INTO `StickerSets` (`Id`,`AccessHash`,`Title`,`ShortName`,`Count`,`Hash`,`Flags`,`Order`) VALUES(?,?,?,?,?,?,?,?)";
+        private const string SELECT_TABLE_STICKERSET = "SELECT `Id`,`AccessHash`,`Title`,`ShortName`,`Count`,`Hash`,`Flags`,`Order` FROM `StickerSets` ORDER BY `Order`";
+        private const string UPDATE_TABLE_STICKERSET_ORDER = "UPDATE `StickerSets` SET `Order` = ? WHERE `Id` = ?";
 
-        private const string CREATE_TABLE_STICKERPACK = "CREATE TABLE `StickerPack` (`Id` int primary key autoincrement, `StickerId` bigint not null, `SetId` bigint not null, `Emoticon` text not null, `Order` int not null)";
-        private const string CREATE_INDEX_STICKERPACK = "CREATE INDEX `EmoticonIndex` ON `StickerPack` (`Emoticon`)";
-        private const string INSERT_TABLE_STICKERPACK = "INSERT OR REPLACE INTO `StickerPack` (StickerId,SetId,Emoticon,Order) VALUES(?,?,?,?)";
-        private const string SELECT_TABLE_STICKERPACK = "SELECT Stickers.Id,Stickers.AccessHash,Stickers.Date,Stickers.MimeType,Stickers.Size,Stickers.Thumb,Stickers.DCId,Stickers.Version,Stickers.Attributes,Stickers.Tag FROM `Stickers` INNER JOIN `StickerPack` ON Stickers.Id = StickerPack.StickerId WHERE StickerPack.Emoticon = '{0}'";
+        private const string CREATE_TABLE_STICKERPACK = "CREATE TABLE `StickerPacks` (`Id` integer primary key autoincrement, `StickerId` bigint not null, `SetId` bigint not null, `Emoticon` text not null, `Order` int not null)";
+        private const string CREATE_INDEX_STICKERPACK = "CREATE INDEX `EmoticonIndex` ON `StickerPacks` (`Emoticon`)";
+        private const string INSERT_TABLE_STICKERPACK = "INSERT OR REPLACE INTO `StickerPacks` (`StickerId`,`SetId`,`Emoticon`,`Order`) VALUES(?,?,?,?)";
+        private const string SELECT_TABLE_STICKERPACK = "SELECT Stickers.Id,Stickers.AccessHash,Stickers.Date,Stickers.MimeType,Stickers.Size,Stickers.Thumb,Stickers.DCId,Stickers.Version,Stickers.Attributes,Stickers.Tag FROM `Stickers` INNER JOIN `StickerPacks` ON Stickers.`Id` = StickerPacks.`StickerId` WHERE StickerPacks.`Emoticon` = '{0}' ORDER BY StickerPacks.`Order`";
+        private const string UPDATE_TABLE_STICKERPACK_ORDER = "UPDATE `StickerPacks` SET `Order` = ? WHERE `SetId` = ?";
 
-        private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE IF NOT EXISTS `{0}`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'Thumb' string, 'DCId' int, 'Version' int, 'Attributes' string, 'Tag' bigint)";
+        private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE IF NOT EXISTS `{0}`(`Id` bigint primary key not null, `AccessHash` bigint, `Date` int, `MimeType` text, `Size` int, `Thumb` string, `DCId` int, `Version` int, `Attributes` string, `Tag` bigint)";
         private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag) VALUES(?,?,?,?,?,?,?,?,?,?)";
         private const string SELECT_TABLE_DOCUMENT = "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag FROM `{0}`";
 
-        private const string CREATE_TABLE_STORAGEFILE_MAPPING = "CREATE TABLE IF NOT EXISTS `{0}`('Path' text primary key not null, 'DateModified' datetime, 'Id' bigint, 'AccessHash' bigint)";
+        private const string CREATE_TABLE_STORAGEFILE_MAPPING = "CREATE TABLE IF NOT EXISTS `{0}`(`Path` text primary key not null, `DateModified` datetime, `Id` bigint, `AccessHash` bigint)";
         private const string INSERT_TABLE_STORAGEFILE_MAPPING = "INSERT OR REPLACE INTO `{0}` (Path,DateModified,Id,AccessHash) VALUES('{1}','{2}',{3},{4})";
         private const string SELECT_TABLE_STORAGEFILE_MAPPING = "SELECT Path,DateModified,Id,AccessHash FROM `{0}` WHERE Path = '{1}'";
 
@@ -195,8 +197,9 @@ namespace Unigram.Core
 
             Sqlite3.sqlite3_prepare_v2(database, INSERT_TABLE_STICKERSET, out statement);
 
-            foreach (var stickerSet in stickerSets)
+            for (int i = 0; i < stickerSets.Count; i++)
             {
+                var stickerSet = stickerSets[i];
                 Sqlite3.sqlite3_bind_int64(statement, 1, stickerSet.Set.Id);
                 Sqlite3.sqlite3_bind_int64(statement, 2, stickerSet.Set.AccessHash);
                 Sqlite3.sqlite3_bind_text(statement, 3, stickerSet.Set.Title, -1);
@@ -204,6 +207,7 @@ namespace Unigram.Core
                 Sqlite3.sqlite3_bind_int(statement, 5, stickerSet.Set.Count);
                 Sqlite3.sqlite3_bind_int(statement, 6, stickerSet.Set.Hash);
                 Sqlite3.sqlite3_bind_int(statement, 7, (int)stickerSet.Set.Flags);
+                Sqlite3.sqlite3_bind_int(statement, 8, i);
 
                 Sqlite3.sqlite3_step(statement);
                 Sqlite3.sqlite3_reset(statement);
@@ -273,6 +277,54 @@ namespace Unigram.Core
             Sqlite3.sqlite3_close(database);
         }
 
+        public void UpdateStickerSetsOrder(IList<TLStickerSet> stickerSets)
+        {
+            Database database;
+            Statement statement;
+            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+
+            Execute(database, CREATE_TABLE_STICKERSET);
+            Execute(database, CREATE_TABLE_STICKERPACK);
+            Execute(database, CREATE_INDEX_STICKERPACK);
+            Execute(database, "BEGIN IMMEDIATE TRANSACTION");
+
+            Sqlite3.sqlite3_prepare_v2(database, UPDATE_TABLE_STICKERSET_ORDER, out statement);
+
+            for (int i = 0; i < stickerSets.Count; i++)
+            {
+                var stickerSet = stickerSets[i];
+                Sqlite3.sqlite3_bind_int64(statement, 1, i);
+                Sqlite3.sqlite3_bind_int64(statement, 2, stickerSet.Id);
+
+                Sqlite3.sqlite3_step(statement);
+                Sqlite3.sqlite3_reset(statement);
+            }
+
+            Sqlite3.sqlite3_finalize(statement);
+
+            Execute(database, "COMMIT TRANSACTION");
+            Execute(database, "BEGIN IMMEDIATE TRANSACTION");
+
+            Sqlite3.sqlite3_prepare_v2(database, UPDATE_TABLE_STICKERPACK_ORDER, out statement);
+
+            for (int i = 0; i < stickerSets.Count; i++)
+            {
+                var stickerSet = stickerSets[i];
+                Sqlite3.sqlite3_bind_int64(statement, 1, i);
+                Sqlite3.sqlite3_bind_int64(statement, 2, stickerSet.Id);
+
+                Sqlite3.sqlite3_step(statement);
+                Sqlite3.sqlite3_reset(statement);
+            }
+
+            Sqlite3.sqlite3_finalize(statement);
+
+            Execute(database, "COMMIT TRANSACTION");
+
+            Sqlite3.sqlite3_close(database);
+        }
+
+
         public void RemoveStickerSets(IEnumerable<TLStickerSet> stickerSets)
         {
             Database database;
@@ -283,7 +335,8 @@ namespace Unigram.Core
 
             foreach (var item in stickerSets)
             {
-                Execute(database, string.Format("DELETE FROM `StickerSet` WHERE Id = {0}", item.Id));
+                Execute(database, string.Format("DELETE FROM `StickerPacks` WHERE SetId = {0}", item.Id));
+                Execute(database, string.Format("DELETE FROM `StickerSets` WHERE Id = {0}", item.Id));
                 Execute(database, string.Format("DELETE FROM `Stickers` WHERE Tag = {0}", item.Id));
             }
 

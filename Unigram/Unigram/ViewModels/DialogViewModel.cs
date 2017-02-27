@@ -2089,6 +2089,7 @@ namespace Unigram.ViewModels
                                         if (processStickerSets)
                                         {
                                             DatabaseContext.Current.InsertStickerSets(results);
+                                            DatabaseContext.Current.UpdateStickerSetsOrder(allStickers.Sets);
 
                                             //foreach (var item in ready)
                                             //{
@@ -2108,9 +2109,15 @@ namespace Unigram.ViewModels
                                     Debugger.Break();
                                 });
                         }
+                        else
+                        {
+                            DatabaseContext.Current.UpdateStickerSetsOrder(allStickers.Sets);
+                        }
                     }
                 }
             });
+
+            return;
 
             Execute.BeginOnThreadPool(async () =>
             {
