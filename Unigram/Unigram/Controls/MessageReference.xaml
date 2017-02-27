@@ -5,7 +5,7 @@
     xmlns:local="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Margin="0,4,0,8"
+    Margin="0,4,0,4"
     d:DesignHeight="36"
     mc:Ignorable="d">
 

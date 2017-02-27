@@ -91,7 +91,7 @@ namespace Unigram.Controls.Messages
                     }
                     if (message.HasReplyToMsgId)
                     {
-                        top = 0;
+                        top = 4;
                     }
                     if (message.IsPost)
                     {

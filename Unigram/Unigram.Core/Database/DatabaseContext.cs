@@ -33,21 +33,21 @@ namespace Unigram.Core
 
         private const string COUNT_TABLE = "SELECT COUNT(*) FROM `{0}`";
 
-        private const string CREATE_TABLE_STICKERSET = "CREATE TABLE IF NOT EXISTS `StickerSet`('Id' bigint primary key not null, 'AccessHash' bigint, 'Title' text, 'ShortName' text, 'Count' int, 'Hash' int, 'Flags' int)";
-        private const string INSERT_TABLE_STICKERSET = "INSERT OR REPLACE INTO `StickerSet` (Id,AccessHash,Title,ShortName,Count,Hash,Flags) VALUES(?,?,?,?,?,?,?);";
+        private const string CREATE_TABLE_STICKERSET = "CREATE TABLE IF NOT EXISTS `StickerSet`(`Id` bigint primary key not null, `AccessHash` bigint, `Title` text, `ShortName` text, `Count` int, `Hash` int, `Flags` int)";
+        private const string INSERT_TABLE_STICKERSET = "INSERT OR REPLACE INTO `StickerSet` (Id,AccessHash,Title,ShortName,Count,Hash,Flags) VALUES(?,?,?,?,?,?,?)";
         private const string SELECT_TABLE_STICKERSET = "SELECT Id,AccessHash,Title,ShortName,Count,Hash,Flags FROM `StickerSet`";
 
-        private const string CREATE_TABLE_STICKERPACK = "CREATE TABLE `StickerPack` (`Id` INTEGER PRIMARY KEY AUTOINCREMENT, `DocumentId` BIGINT NOT NULL, `Emoticon` TEXT NOT NULL)";
+        private const string CREATE_TABLE_STICKERPACK = "CREATE TABLE `StickerPack` (`Id` int primary key autoincrement, `StickerId` bigint not null, `SetId` bigint not null, `Emoticon` text not null, `Order` int not null)";
         private const string CREATE_INDEX_STICKERPACK = "CREATE INDEX `EmoticonIndex` ON `StickerPack` (`Emoticon`)";
-        private const string INSERT_TABLE_STICKERPACK = "INSERT OR REPLACE INTO `StickerPack` (DocumentId,Emoticon) VALUES(?,?);";
-        private const string SELECT_TABLE_STICKERPACK = "SELECT Stickers.Id,Stickers.AccessHash,Stickers.Date,Stickers.MimeType,Stickers.Size,Stickers.Thumb,Stickers.DCId,Stickers.Version,Stickers.Attributes,Stickers.Tag FROM `Stickers` INNER JOIN `StickerPack` ON Stickers.Id = StickerPack.DocumentId WHERE StickerPack.Emoticon = '{0}'";
+        private const string INSERT_TABLE_STICKERPACK = "INSERT OR REPLACE INTO `StickerPack` (StickerId,SetId,Emoticon,Order) VALUES(?,?,?,?)";
+        private const string SELECT_TABLE_STICKERPACK = "SELECT Stickers.Id,Stickers.AccessHash,Stickers.Date,Stickers.MimeType,Stickers.Size,Stickers.Thumb,Stickers.DCId,Stickers.Version,Stickers.Attributes,Stickers.Tag FROM `Stickers` INNER JOIN `StickerPack` ON Stickers.Id = StickerPack.StickerId WHERE StickerPack.Emoticon = '{0}'";
 
         private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE IF NOT EXISTS `{0}`('Id' bigint primary key not null, 'AccessHash' bigint, 'Date' int, 'MimeType' text, 'Size' int, 'Thumb' string, 'DCId' int, 'Version' int, 'Attributes' string, 'Tag' bigint)";
-        private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag) VALUES(?,?,?,?,?,?,?,?,?,?);";
+        private const string INSERT_TABLE_DOCUMENT = "INSERT OR REPLACE INTO `{0}` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag) VALUES(?,?,?,?,?,?,?,?,?,?)";
         private const string SELECT_TABLE_DOCUMENT = "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,Tag FROM `{0}`";
 
         private const string CREATE_TABLE_STORAGEFILE_MAPPING = "CREATE TABLE IF NOT EXISTS `{0}`('Path' text primary key not null, 'DateModified' datetime, 'Id' bigint, 'AccessHash' bigint)";
-        private const string INSERT_TABLE_STORAGEFILE_MAPPING = "INSERT OR REPLACE INTO `{0}` (Path,DateModified,Id,AccessHash) VALUES('{1}','{2}',{3},{4});";
+        private const string INSERT_TABLE_STORAGEFILE_MAPPING = "INSERT OR REPLACE INTO `{0}` (Path,DateModified,Id,AccessHash) VALUES('{1}','{2}',{3},{4})";
         private const string SELECT_TABLE_STORAGEFILE_MAPPING = "SELECT Path,DateModified,Id,AccessHash FROM `{0}` WHERE Path = '{1}'";
 
         #endregion
@@ -181,7 +181,7 @@ namespace Unigram.Core
             return result;
         }
 
-        public void InsertStickerSets(IEnumerable<TLMessagesStickerSet> stickerSets)
+        public void InsertStickerSets(IList<TLMessagesStickerSet> stickerSets)
         {
             Database database;
             Statement statement;
@@ -216,14 +216,17 @@ namespace Unigram.Core
 
             Sqlite3.sqlite3_prepare_v2(database, INSERT_TABLE_STICKERPACK, out statement);
 
-            foreach (var stickerSet in stickerSets)
+            for (int i = 0; i < stickerSets.Count; i++)
             {
+                var stickerSet = stickerSets[i];
                 foreach (var item in stickerSet.Packs)
                 {
                     foreach (var document in item.Documents)
                     {
                         Sqlite3.sqlite3_bind_int64(statement, 1, document);
-                        Sqlite3.sqlite3_bind_text(statement, 2, item.Emoticon, -1);
+                        Sqlite3.sqlite3_bind_int64(statement, 2, stickerSet.Set.Id);
+                        Sqlite3.sqlite3_bind_text(statement, 3, item.Emoticon, -1);
+                        Sqlite3.sqlite3_bind_int(statement, 4, i);
 
                         Sqlite3.sqlite3_step(statement);
                         Sqlite3.sqlite3_reset(statement);

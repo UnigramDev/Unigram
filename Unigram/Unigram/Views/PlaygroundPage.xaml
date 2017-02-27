@@ -505,6 +505,10 @@
                 <Run Text="👁"/>
                 <Run Text="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
             </TextBlock>
+
+            <Border Background="Red">
+                <controls:MessageReference Background="Blue"/>
+            </Border>
         </StackPanel>
 
 
