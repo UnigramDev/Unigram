@@ -25,7 +25,7 @@ namespace Unigram.Controls
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MessageReference : UserControl
+    public sealed partial class MessageReference : HyperlinkButton
     {
         public MessageReference()
         {
@@ -790,22 +790,22 @@ namespace Unigram.Controls
             return from;
         }
 
-        #region Cursor
+        //#region Cursor
 
-        // Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 1);
+        //// Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 1);
 
-        protected override void OnPointerEntered(PointerRoutedEventArgs e)
-        {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 1);
-            base.OnPointerEntered(e);
-        }
+        //protected override void OnPointerEntered(PointerRoutedEventArgs e)
+        //{
+        //    Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 1);
+        //    base.OnPointerEntered(e);
+        //}
 
-        protected override void OnPointerExited(PointerRoutedEventArgs e)
-        {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
-            base.OnPointerExited(e);
-        }
+        //protected override void OnPointerExited(PointerRoutedEventArgs e)
+        //{
+        //    Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
+        //    base.OnPointerExited(e);
+        //}
 
-        #endregion
+        //#endregion
     }
 }

@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<HyperlinkButton
     x:Class="Unigram.Controls.MessageReference"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,6 +6,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Margin="0,4,0,4"
+    HorizontalContentAlignment="Stretch"
+    VerticalContentAlignment="Stretch"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch"
+    Padding="0"
     d:DesignHeight="36"
     mc:Ignorable="d">
 
@@ -23,9 +28,9 @@
 
         <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="2">
             <TextBlock x:Name="TitleLabel" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
-            <TextBlock RequestedTheme="{ThemeResource MessageTextBlockTheme}" Style="{ThemeResource ReplyBodyTextBlockStyle}">
+            <TextBlock Style="{ThemeResource ReplyBodyTextBlockStyle}">
                 <Run x:Name="ServiceLabel" Foreground="{ThemeResource MessageSubtleLabelBrush}"/><Run x:Name="MessageLabel" Foreground="{ThemeResource MessageForegroundBrush}"/>
             </TextBlock>
         </StackPanel>
     </Grid>
-</UserControl>
+</HyperlinkButton>

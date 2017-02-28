@@ -307,6 +307,11 @@ namespace Unigram.Views
 
         }
 
+        private void Reply_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.MessageOpenReplyCommand.Execute(ViewModel);
+        }
+
         private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
         {
             ViewModel.KeyboardButtonExecute(e.Button, null);

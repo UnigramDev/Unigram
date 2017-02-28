@@ -59,7 +59,7 @@
             <controls:MessageReference 
                 Message="{x:Bind ViewModel.Reply, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
-                Tapped="Reply_Tapped"
+                Click="Reply_Click"
                 Grid.Row="1"/>
 
             <RichTextBlock 
