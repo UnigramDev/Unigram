@@ -252,20 +252,20 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="-56,0,0,0">
+            <Grid Margin="-52,0,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="56"/>
+                    <ColumnDefinition Width="52"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="2"
                                              Source="{x:Bind From, Converter={StaticResource DefaultPhotoConverter}}"
-                                             Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" 
+                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" 
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left" 
-                                             VerticalAlignment="Top"  
-                                             Margin="12,12,0,0"
-                                             Width="36"
-                                             Height="36"/>
+                                             VerticalAlignment="Bottom"  
+                                             Margin="12,0,0,4"
+                                             Width="32"
+                                             Height="32"/>
 
                 <Grid Margin="0,2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -332,11 +332,12 @@
                 </Border>
 
                 <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,12,0,0">
-                    <Ellipse>
+                    <!--<Ellipse>
                         <Ellipse.Fill>
                             <ImageBrush ImageSource="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}"/>
                         </Ellipse.Fill>
-                    </Ellipse>
+                    </Ellipse>-->
+                    <controls:ProfilePictureView Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                 </Border>
                 <!--<Border Visibility="{Binding Action.Photo, Converter={StaticResource ExistsToVisibilityConverter}}" Width="96" Height="96" Margin="0,8,0,0">
                      <controls:ImageControl TelegramSource="{Binding Action.Photo}" Stretch="UniformToFill"/>
@@ -368,20 +369,20 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendMessageTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="-56,0,0,0">
+            <Grid Margin="-52,0,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="56"/>
+                    <ColumnDefinition Width="52"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="2"
                                              Source="{x:Bind From, Converter={StaticResource DefaultPhotoConverter}}"
-                                             Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" 
+                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" 
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left" 
-                                             VerticalAlignment="Top"  
-                                             Margin="12,12,0,0"
-                                             Width="36"
-                                             Height="36"/>
+                                             VerticalAlignment="Bottom"  
+                                             Margin="12,0,0,4"
+                                             Width="32"
+                                             Height="32"/>
                 <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
             </Grid>
         </DataTemplate>

@@ -2325,7 +2325,15 @@ namespace Unigram.ViewModels
 
         private void UpdateAttach(TLMessageBase item, TLMessageBase previous, int index)
         {
-            if (item == null) return;
+            if (item == null)
+            {
+                if (previous != null)
+                {
+                    previous.IsLast = true;
+                }
+
+                return;
+            }
 
             var oldFirst = item.IsFirst;
             var isItemPost = false;

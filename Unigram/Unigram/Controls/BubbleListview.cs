@@ -167,18 +167,18 @@ namespace Unigram.Controls
                             }
                             else
                             {
-                                bubble.Padding = new Thickness(56, 0, 12, 0);
+                                bubble.Padding = new Thickness(52, 0, 12, 0);
                             }
                         }
                         else
                         {
                             if (message.IsSticker())
                             {
-                                bubble.Padding = new Thickness(56, 0, 12, 0);
+                                bubble.Padding = new Thickness(52, 0, 12, 0);
                             }
                             else
                             {
-                                bubble.Padding = new Thickness(56, 0, 56, 0);
+                                bubble.Padding = new Thickness(52, 0, 52, 0);
                             }
                         }
                     }
@@ -192,11 +192,11 @@ namespace Unigram.Controls
                         {
                             if (message.IsOut && !message.IsPost)
                             {
-                                bubble.Padding = new Thickness(56, 0, 12, 0);
+                                bubble.Padding = new Thickness(52, 0, 12, 0);
                             }
                             else
                             {
-                                bubble.Padding = new Thickness(12, 0, 56, 0);
+                                bubble.Padding = new Thickness(12, 0, 52, 0);
                             }
                         }
                     }
