@@ -35,6 +35,7 @@ namespace Unigram.Controls.Items
     {
         public TLDialog ViewModel => DataContext as TLDialog;
         private TLDialog _oldViewModel;
+        private TLDialog _oldValue;
 
         public DialogListViewItem()
         {
@@ -42,8 +43,10 @@ namespace Unigram.Controls.Items
 
             DataContextChanged += (s, args) =>
             {
-                if (ViewModel != null) Bindings.Update();
+                if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
                 if (ViewModel == null) Bindings.StopTracking();
+
+                _oldValue = ViewModel;
             };
 
             DataContextChanged += OnDataContextChanged;
