@@ -82,12 +82,15 @@ namespace Unigram.Common
 
         public TLBitmapSource(TLUser user)
         {
+            Image.DecodePixelWidth = 48;
+            Image.DecodePixelHeight = 48;
+
             var userProfilePhoto = user.Photo as TLUserProfilePhoto;
             if (userProfilePhoto != null)
             {
                 if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
                 {
-                    SetProfilePlaceholder(user, "u" + user.Id, user.Id, user.FullName);
+                    //SetProfilePlaceholder(user, "u" + user.Id, user.Id, user.FullName);
                     SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
                 }
             }
@@ -99,6 +102,9 @@ namespace Unigram.Common
 
         public TLBitmapSource(TLChatBase chatBase)
         {
+            Image.DecodePixelWidth = 48;
+            Image.DecodePixelHeight = 48;
+
             TLChatPhotoBase chatPhotoBase = null;
 
             var channel = chatBase as TLChannel;
@@ -118,7 +124,7 @@ namespace Unigram.Common
             {
                 if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
                 {
-                    SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.DisplayName);
+                    //SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.DisplayName);
                     SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
                 }
             }

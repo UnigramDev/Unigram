@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
@@ -61,6 +63,12 @@ namespace Telegram.Api.TL
             }
         }
         #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public override void RaisePropertyChanged(string propertyName)
+        {
+            Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+        }
     }
 
     public partial class TLChat

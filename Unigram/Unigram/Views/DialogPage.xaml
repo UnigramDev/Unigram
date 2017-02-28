@@ -258,7 +258,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="2"
-                                             Source="{x:Bind From, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" 
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left" 
@@ -374,8 +374,8 @@
                     <ColumnDefinition Width="52"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePictureView x:Phase="2"
-                                             Source="{x:Bind From, Converter={StaticResource DefaultPhotoConverter}}"
+                <controls:ProfilePictureView x:Phase="0"
+                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" 
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left" 
