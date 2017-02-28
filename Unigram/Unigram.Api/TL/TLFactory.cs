@@ -25,6 +25,7 @@ namespace Telegram.Api.TL
 				case TLType.ReqPQ: return (T)(Object)new TLReqPQ(from);
 				case TLType.ReqDHParams: return (T)(Object)new TLReqDHParams(from);
 				case TLType.SetClientDHParams: return (T)(Object)new TLSetClientDHParams(from);
+				case TLType.DestroyAuthKey: return (T)(Object)new TLDestroyAuthKey(from);
 				case TLType.RPCDropAnswer: return (T)(Object)new TLRPCDropAnswer(from);
 				case TLType.GetFutureSalts: return (T)(Object)new TLGetFutureSalts(from);
 				case TLType.Ping: return (T)(Object)new TLPing(from);
@@ -237,6 +238,9 @@ namespace Telegram.Api.TL
 				case TLType.DHGenOk: return (T)(Object)new TLDHGenOk(from);
 				case TLType.DHGenRetry: return (T)(Object)new TLDHGenRetry(from);
 				case TLType.DHGenFail: return (T)(Object)new TLDHGenFail(from);
+				case TLType.DestroyAuthKeyOk: return (T)(Object)new TLDestroyAuthKeyOk(from);
+				case TLType.DestroyAuthKeyNone: return (T)(Object)new TLDestroyAuthKeyNone(from);
+				case TLType.DestroyAuthKeyFail: return (T)(Object)new TLDestroyAuthKeyFail(from);
 				case TLType.MsgsAck: return (T)(Object)new TLMsgsAck(from);
 				case TLType.BadMsgNotification: return (T)(Object)new TLBadMsgNotification(from);
 				case TLType.BadServerSalt: return (T)(Object)new TLBadServerSalt(from);

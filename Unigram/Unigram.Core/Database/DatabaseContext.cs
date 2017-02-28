@@ -41,7 +41,7 @@ namespace Unigram.Core
         private const string CREATE_TABLE_STICKERPACK = "CREATE TABLE `StickerPacks` (`Id` integer primary key autoincrement, `StickerId` bigint not null, `SetId` bigint not null, `Emoticon` text not null, `Order` int not null)";
         private const string CREATE_INDEX_STICKERPACK = "CREATE INDEX `EmoticonIndex` ON `StickerPacks` (`Emoticon`)";
         private const string INSERT_TABLE_STICKERPACK = "INSERT OR REPLACE INTO `StickerPacks` (`StickerId`,`SetId`,`Emoticon`,`Order`) VALUES(?,?,?,?)";
-        private const string SELECT_TABLE_STICKERPACK = "SELECT Stickers.Id,Stickers.AccessHash,Stickers.Date,Stickers.MimeType,Stickers.Size,Stickers.Thumb,Stickers.DCId,Stickers.Version,Stickers.Attributes,Stickers.Tag FROM `Stickers` INNER JOIN `StickerPacks` ON Stickers.`Id` = StickerPacks.`StickerId` WHERE StickerPacks.`Emoticon` = '{0}' ORDER BY StickerPacks.`Order`";
+        private const string SELECT_TABLE_STICKERPACK = "SELECT Stickers.`Id`,Stickers.`AccessHash`,Stickers.`Date`,Stickers.`MimeType`,Stickers.`Size`,Stickers.`Thumb`,Stickers.`DCId`,Stickers.`Version`,Stickers.`Attributes`,Stickers.`Tag` FROM `Stickers` INNER JOIN `StickerPacks` ON Stickers.`Id` = StickerPacks.`StickerId` WHERE StickerPacks.`Emoticon` = '{0}' ORDER BY StickerPacks.`Order`";
         private const string UPDATE_TABLE_STICKERPACK_ORDER = "UPDATE `StickerPacks` SET `Order` = ? WHERE `SetId` = ?";
 
         private const string CREATE_TABLE_DOCUMENT = "CREATE TABLE IF NOT EXISTS `{0}`(`Id` bigint primary key not null, `AccessHash` bigint, `Date` int, `MimeType` text, `Size` int, `Thumb` string, `DCId` int, `Version` int, `Attributes` string, `Tag` bigint)";
@@ -57,6 +57,11 @@ namespace Unigram.Core
         private DatabaseContext()
         {
             _path = FileUtils.GetFileName("database.sqlite");
+        }
+
+        private void OpenDatabase(out Database database)
+        {
+            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
         }
 
         private void Execute(Database database, string query)
@@ -86,7 +91,7 @@ namespace Unigram.Core
         public int Count(string table)
         {
             Database database;
-            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+            OpenDatabase(out database);
 
             Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
             var result = ExecuteWithResult(database, string.Format(COUNT_TABLE, table));
@@ -99,7 +104,7 @@ namespace Unigram.Core
         {
             Database database;
             Statement statement;
-            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+            OpenDatabase(out database);
 
             Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
             Execute(database, "BEGIN IMMEDIATE TRANSACTION");
@@ -147,7 +152,7 @@ namespace Unigram.Core
         {
             Database database;
             Statement statement;
-            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+            OpenDatabase(out database);
 
             Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
 
@@ -187,7 +192,7 @@ namespace Unigram.Core
         {
             Database database;
             Statement statement;
-            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+            OpenDatabase(out database);
 
             Execute(database, CREATE_TABLE_STICKERSET);
             Execute(database, CREATE_TABLE_STICKERPACK);
@@ -281,7 +286,7 @@ namespace Unigram.Core
         {
             Database database;
             Statement statement;
-            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+            OpenDatabase(out database);
 
             Execute(database, CREATE_TABLE_STICKERSET);
             Execute(database, CREATE_TABLE_STICKERPACK);
@@ -328,7 +333,7 @@ namespace Unigram.Core
         public void RemoveStickerSets(IEnumerable<TLStickerSet> stickerSets)
         {
             Database database;
-            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+            OpenDatabase(out database);
 
             Execute(database, CREATE_TABLE_STICKERSET);
             Execute(database, "BEGIN IMMEDIATE TRANSACTION");
@@ -348,7 +353,7 @@ namespace Unigram.Core
         {
             Database database;
             Statement statement;
-            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+            OpenDatabase(out database);
 
             Execute(database, CREATE_TABLE_STICKERSET);
 
@@ -375,11 +380,76 @@ namespace Unigram.Core
             return result;
         }
 
+        public TLStickerSet SelectStickerSet(long id)
+        {
+            Database database;
+            Statement statement;
+            OpenDatabase(out database);
+
+            Execute(database, CREATE_TABLE_STICKERSET);
+
+            Sqlite3.sqlite3_prepare_v2(database, SELECT_TABLE_STICKERSET + " WHERE `Id` = " + id, out statement);
+
+            TLStickerSet result = null;
+            while (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
+            {
+                result = new TLStickerSet
+                {
+                    Id = Sqlite3.sqlite3_column_int64(statement, 0),
+                    AccessHash = Sqlite3.sqlite3_column_int64(statement, 1),
+                    Title = Sqlite3.sqlite3_column_text(statement, 2),
+                    ShortName = Sqlite3.sqlite3_column_text(statement, 3),
+                    Count = Sqlite3.sqlite3_column_int(statement, 4),
+                    Hash = Sqlite3.sqlite3_column_int(statement, 5),
+                    Flags = (TLStickerSet.Flag)Sqlite3.sqlite3_column_int(statement, 6)
+                };
+            }
+
+            Sqlite3.sqlite3_finalize(statement);
+            Sqlite3.sqlite3_close(database);
+
+            return result;
+        }
+
+        public List<TLStickerSetCovered> SelectStickerSetsAsCovered()
+        {
+            Database database;
+            Statement statement;
+            OpenDatabase(out database);
+
+            Execute(database, CREATE_TABLE_STICKERSET);
+
+            Sqlite3.sqlite3_prepare_v2(database, SELECT_TABLE_STICKERSET, out statement);
+
+            var result = new List<TLStickerSetCovered>();
+            while (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
+            {
+                result.Add(new TLStickerSetCovered
+                {
+                    Set = new TLStickerSet
+                    {
+                        Id = Sqlite3.sqlite3_column_int64(statement, 0),
+                        AccessHash = Sqlite3.sqlite3_column_int64(statement, 1),
+                        Title = Sqlite3.sqlite3_column_text(statement, 2),
+                        ShortName = Sqlite3.sqlite3_column_text(statement, 3),
+                        Count = Sqlite3.sqlite3_column_int(statement, 4),
+                        Hash = Sqlite3.sqlite3_column_int(statement, 5),
+                        Flags = (TLStickerSet.Flag)Sqlite3.sqlite3_column_int(statement, 6)
+                    }
+                });
+            }
+
+            Sqlite3.sqlite3_finalize(statement);
+            Sqlite3.sqlite3_close(database);
+
+            return result;
+        }
+
         public List<TLDocument> SelectStickerPack(string emoticon)
         {
             Database database;
             Statement statement;
-            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+            OpenDatabase(out database);
 
             Execute(database, CREATE_TABLE_STICKERPACK);
             Execute(database, CREATE_INDEX_STICKERPACK);
@@ -414,7 +484,7 @@ namespace Unigram.Core
         public void InsertStorageFileMapping(string table, string fileName, DateTime dateModified, int id, long accessHash)
         {
             Database database;
-            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+            OpenDatabase(out database);
 
             Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
 
@@ -430,7 +500,7 @@ namespace Unigram.Core
         {
             Database database;
             Statement statement;
-            Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
+            OpenDatabase(out database);
 
             Execute(database, string.Format(CREATE_TABLE_DOCUMENT, table));
 

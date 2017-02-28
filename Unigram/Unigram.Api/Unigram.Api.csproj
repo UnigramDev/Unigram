@@ -327,6 +327,7 @@
     <Compile Include="TL\Methods\Photos\TLPhotosGetUserPhotos.cs" />
     <Compile Include="TL\Methods\Photos\TLPhotosUpdateProfilePhoto.cs" />
     <Compile Include="TL\Methods\Photos\TLPhotosUploadProfilePhoto.cs" />
+    <Compile Include="TL\Methods\TLDestroyAuthKey.cs" />
     <Compile Include="TL\Methods\TLDestroySession.cs" />
     <Compile Include="TL\Methods\TLGetFutureSalts.cs" />
     <Compile Include="TL\Methods\TLInitConnection.cs" />
@@ -573,6 +574,10 @@
     <Compile Include="TL\TLContactsTopPeersBase.cs" />
     <Compile Include="TL\TLContactsTopPeersNotModified.cs" />
     <Compile Include="TL\TLDCOption.cs" />
+    <Compile Include="TL\TLDestroyAuthKeyFail.cs" />
+    <Compile Include="TL\TLDestroyAuthKeyNone.cs" />
+    <Compile Include="TL\TLDestroyAuthKeyOk.cs" />
+    <Compile Include="TL\TLDestroyAuthKeyResBase.cs" />
     <Compile Include="TL\TLDestroySessionNone.cs" />
     <Compile Include="TL\TLDestroySessionOk.cs" />
     <Compile Include="TL\TLDestroySessionResBase.cs" />

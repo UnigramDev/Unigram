@@ -118,6 +118,7 @@
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="Views\Channels\CreateChannelStep2Page.xaml.cs">
       <DependentUpon>CreateChannelStep2Page.xaml</DependentUpon>

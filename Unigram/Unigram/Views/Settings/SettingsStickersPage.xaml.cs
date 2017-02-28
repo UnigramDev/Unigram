@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Core.Dependency;
+using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -22,9 +24,12 @@ namespace Unigram.Views.Settings
     /// </summary>
     public sealed partial class SettingsStickersPage : Page
     {
+        public SettingsStickersViewModel ViewModel => DataContext as SettingsStickersViewModel;
+
         public SettingsStickersPage()
         {
             InitializeComponent();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsStickersViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
