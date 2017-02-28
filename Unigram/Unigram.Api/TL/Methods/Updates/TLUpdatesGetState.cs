@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Updates
 {
 	/// <summary>
-	/// RCP method updates.getState
+	/// RCP method updates.getState.
+	/// Returns <see cref="Telegram.Api.TL.TLUpdatesState"/>
 	/// </summary>
 	public partial class TLUpdatesGetState : TLObject
 	{

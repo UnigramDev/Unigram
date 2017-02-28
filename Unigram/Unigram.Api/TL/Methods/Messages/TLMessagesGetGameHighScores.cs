@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getGameHighScores
+	/// RCP method messages.getGameHighScores.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesHighScores"/>
 	/// </summary>
 	public partial class TLMessagesGetGameHighScores : TLObject
 	{

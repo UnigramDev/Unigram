@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.sendEncryptedFile
+	/// RCP method messages.sendEncryptedFile.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesSentEncryptedMessage"/>
 	/// </summary>
 	public partial class TLMessagesSendEncryptedFile : TLObject
 	{

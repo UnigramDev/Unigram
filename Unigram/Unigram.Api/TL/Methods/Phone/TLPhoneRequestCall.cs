@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Phone
 {
 	/// <summary>
-	/// RCP method phone.requestCall
+	/// RCP method phone.requestCall.
+	/// Returns <see cref="Telegram.Api.TL.TLPhonePhoneCall"/>
 	/// </summary>
 	public partial class TLPhoneRequestCall : TLObject
 	{

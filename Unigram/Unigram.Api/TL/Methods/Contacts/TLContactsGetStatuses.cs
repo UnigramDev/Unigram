@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Contacts
 {
 	/// <summary>
-	/// RCP method contacts.getStatuses
+	/// RCP method contacts.getStatuses.
+	/// Returns <see cref="Telegram.Api.TL.TLVector<TLContactStatus>"/>
 	/// </summary>
 	public partial class TLContactsGetStatuses : TLObject
 	{

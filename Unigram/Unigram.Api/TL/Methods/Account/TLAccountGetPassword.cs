@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Account
 {
 	/// <summary>
-	/// RCP method account.getPassword
+	/// RCP method account.getPassword.
+	/// Returns <see cref="Telegram.Api.TL.TLAccountPasswordBase"/>
 	/// </summary>
 	public partial class TLAccountGetPassword : TLObject
 	{

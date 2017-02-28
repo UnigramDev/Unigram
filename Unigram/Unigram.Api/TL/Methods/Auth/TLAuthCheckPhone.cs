@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Auth
 {
 	/// <summary>
-	/// RCP method auth.checkPhone
+	/// RCP method auth.checkPhone.
+	/// Returns <see cref="Telegram.Api.TL.TLAuthCheckedPhone"/>
 	/// </summary>
 	public partial class TLAuthCheckPhone : TLObject
 	{

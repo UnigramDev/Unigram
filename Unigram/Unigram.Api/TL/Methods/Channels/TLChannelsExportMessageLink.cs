@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Channels
 {
 	/// <summary>
-	/// RCP method channels.exportMessageLink
+	/// RCP method channels.exportMessageLink.
+	/// Returns <see cref="Telegram.Api.TL.TLExportedMessageLink"/>
 	/// </summary>
 	public partial class TLChannelsExportMessageLink : TLObject
 	{

@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Contacts
 {
 	/// <summary>
-	/// RCP method contacts.exportCard
+	/// RCP method contacts.exportCard.
+	/// Returns <see cref="Telegram.Api.TL.TLVector<TLint>"/>
 	/// </summary>
 	public partial class TLContactsExportCard : TLObject
 	{

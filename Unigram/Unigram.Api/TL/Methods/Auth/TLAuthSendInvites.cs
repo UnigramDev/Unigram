@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Auth
 {
 	/// <summary>
-	/// RCP method auth.sendInvites
+	/// RCP method auth.sendInvites.
+	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
 	/// </summary>
 	public partial class TLAuthSendInvites : TLObject
 	{

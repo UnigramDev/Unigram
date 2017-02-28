@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Account
 {
 	/// <summary>
-	/// RCP method account.getAccountTTL
+	/// RCP method account.getAccountTTL.
+	/// Returns <see cref="Telegram.Api.TL.TLAccountDaysTTL"/>
 	/// </summary>
 	public partial class TLAccountGetAccountTTL : TLObject
 	{

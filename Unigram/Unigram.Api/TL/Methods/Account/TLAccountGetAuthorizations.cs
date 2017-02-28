@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Account
 {
 	/// <summary>
-	/// RCP method account.getAuthorizations
+	/// RCP method account.getAuthorizations.
+	/// Returns <see cref="Telegram.Api.TL.TLAccountAuthorizations"/>
 	/// </summary>
 	public partial class TLAccountGetAuthorizations : TLObject
 	{

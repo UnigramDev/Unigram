@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Contest
 {
 	/// <summary>
-	/// RCP method contest.saveDeveloperInfo
+	/// RCP method contest.saveDeveloperInfo.
+	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
 	/// </summary>
 	public partial class TLContestSaveDeveloperInfo : TLObject
 	{

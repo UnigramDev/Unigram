@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getDocumentByHash
+	/// RCP method messages.getDocumentByHash.
+	/// Returns <see cref="Telegram.Api.TL.TLDocumentBase"/>
 	/// </summary>
 	public partial class TLMessagesGetDocumentByHash : TLObject
 	{

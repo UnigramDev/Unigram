@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getAllStickers
+	/// RCP method messages.getAllStickers.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesAllStickersBase"/>
 	/// </summary>
 	public partial class TLMessagesGetAllStickers : TLObject
 	{

@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Auth
 {
 	/// <summary>
-	/// RCP method auth.requestPasswordRecovery
+	/// RCP method auth.requestPasswordRecovery.
+	/// Returns <see cref="Telegram.Api.TL.TLAuthPasswordRecovery"/>
 	/// </summary>
 	public partial class TLAuthRequestPasswordRecovery : TLObject
 	{

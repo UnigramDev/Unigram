@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods
 {
 	/// <summary>
-	/// RCP method destroy_session
+	/// RCP method destroy_session.
+	/// Returns <see cref="Telegram.Api.TL.TLDestroySessionResBase"/>
 	/// </summary>
 	public partial class TLDestroySession : TLObject
 	{

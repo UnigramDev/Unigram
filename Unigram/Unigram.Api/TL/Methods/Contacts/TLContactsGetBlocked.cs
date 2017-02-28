@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Contacts
 {
 	/// <summary>
-	/// RCP method contacts.getBlocked
+	/// RCP method contacts.getBlocked.
+	/// Returns <see cref="Telegram.Api.TL.TLContactsBlocked"/>
 	/// </summary>
 	public partial class TLContactsGetBlocked : TLObject
 	{

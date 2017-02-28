@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Users
 {
 	/// <summary>
-	/// RCP method users.getFullUser
+	/// RCP method users.getFullUser.
+	/// Returns <see cref="Telegram.Api.TL.TLUserFull"/>
 	/// </summary>
 	public partial class TLUsersGetFullUser : TLObject
 	{

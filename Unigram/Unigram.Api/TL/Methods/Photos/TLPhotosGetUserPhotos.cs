@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Photos
 {
 	/// <summary>
-	/// RCP method photos.getUserPhotos
+	/// RCP method photos.getUserPhotos.
+	/// Returns <see cref="Telegram.Api.TL.TLPhotosPhotos"/>
 	/// </summary>
 	public partial class TLPhotosGetUserPhotos : TLObject
 	{

@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getWebPage
+	/// RCP method messages.getWebPage.
+	/// Returns <see cref="Telegram.Api.TL.TLWebPageBase"/>
 	/// </summary>
 	public partial class TLMessagesGetWebPage : TLObject
 	{

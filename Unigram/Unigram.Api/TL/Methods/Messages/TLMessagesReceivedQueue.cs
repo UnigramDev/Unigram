@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.receivedQueue
+	/// RCP method messages.receivedQueue.
+	/// Returns <see cref="Telegram.Api.TL.TLVector<TLlong>"/>
 	/// </summary>
 	public partial class TLMessagesReceivedQueue : TLObject
 	{

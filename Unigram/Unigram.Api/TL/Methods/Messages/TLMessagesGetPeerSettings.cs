@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getPeerSettings
+	/// RCP method messages.getPeerSettings.
+	/// Returns <see cref="Telegram.Api.TL.TLPeerSettings"/>
 	/// </summary>
 	public partial class TLMessagesGetPeerSettings : TLObject
 	{

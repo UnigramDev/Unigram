@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods
 {
 	/// <summary>
-	/// RCP method rpc_drop_answer
+	/// RCP method rpc_drop_answer.
+	/// Returns <see cref="Telegram.Api.TL.TLRPCDropAnswerBase"/>
 	/// </summary>
 	public partial class TLRPCDropAnswer : TLObject
 	{

@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Help
 {
 	/// <summary>
-	/// RCP method help.saveAppLog
+	/// RCP method help.saveAppLog.
+	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
 	/// </summary>
 	public partial class TLHelpSaveAppLog : TLObject
 	{

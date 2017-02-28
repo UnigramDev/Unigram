@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods
 {
 	/// <summary>
-	/// RCP method destroy_auth_key
+	/// RCP method destroy_auth_key.
+	/// Returns <see cref="Telegram.Api.TL.TLDestroyAuthKeyResBase"/>
 	/// </summary>
 	public partial class TLDestroyAuthKey : TLObject
 	{

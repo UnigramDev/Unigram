@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getInlineBotResults
+	/// RCP method messages.getInlineBotResults.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesBotResults"/>
 	/// </summary>
 	public partial class TLMessagesGetInlineBotResults : TLObject
 	{

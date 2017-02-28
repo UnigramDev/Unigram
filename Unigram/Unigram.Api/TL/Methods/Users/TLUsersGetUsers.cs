@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Users
 {
 	/// <summary>
-	/// RCP method users.getUsers
+	/// RCP method users.getUsers.
+	/// Returns <see cref="Telegram.Api.TL.TLVector<TLUser>"/>
 	/// </summary>
 	public partial class TLUsersGetUsers : TLObject
 	{

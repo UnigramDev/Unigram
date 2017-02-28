@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods
 {
 	/// <summary>
-	/// RCP method req_DH_params
+	/// RCP method req_DH_params.
+	/// Returns <see cref="Telegram.Api.TL.TLServerDHParamsBase"/>
 	/// </summary>
 	public partial class TLReqDHParams : TLObject
 	{

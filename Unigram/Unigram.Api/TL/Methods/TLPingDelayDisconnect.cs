@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods
 {
 	/// <summary>
-	/// RCP method ping_delay_disconnect
+	/// RCP method ping_delay_disconnect.
+	/// Returns <see cref="Telegram.Api.TL.TLPong"/>
 	/// </summary>
 	public partial class TLPingDelayDisconnect : TLObject
 	{

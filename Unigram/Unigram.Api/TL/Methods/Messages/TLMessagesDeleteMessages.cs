@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.deleteMessages
+	/// RCP method messages.deleteMessages.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesAffectedMessages"/>
 	/// </summary>
 	public partial class TLMessagesDeleteMessages : TLObject
 	{

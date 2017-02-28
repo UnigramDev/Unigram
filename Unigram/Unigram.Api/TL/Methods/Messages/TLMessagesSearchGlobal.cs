@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.searchGlobal
+	/// RCP method messages.searchGlobal.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesMessages"/>
 	/// </summary>
 	public partial class TLMessagesSearchGlobal : TLObject
 	{

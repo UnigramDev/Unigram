@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods
 {
 	/// <summary>
-	/// RCP method req_pq
+	/// RCP method req_pq.
+	/// Returns <see cref="Telegram.Api.TL.TLResPQ"/>
 	/// </summary>
 	public partial class TLReqPQ : TLObject
 	{

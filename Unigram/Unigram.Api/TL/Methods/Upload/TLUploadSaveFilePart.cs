@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Upload
 {
 	/// <summary>
-	/// RCP method upload.saveFilePart
+	/// RCP method upload.saveFilePart.
+	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
 	/// </summary>
 	public partial class TLUploadSaveFilePart : TLObject
 	{

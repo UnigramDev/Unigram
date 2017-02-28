@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getArchivedStickers
+	/// RCP method messages.getArchivedStickers.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesArchivedStickers"/>
 	/// </summary>
 	public partial class TLMessagesGetArchivedStickers : TLObject
 	{

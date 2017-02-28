@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getPinnedDialogs
+	/// RCP method messages.getPinnedDialogs.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesPeerDialogs"/>
 	/// </summary>
 	public partial class TLMessagesGetPinnedDialogs : TLObject
 	{

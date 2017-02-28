@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getMessageEditData
+	/// RCP method messages.getMessageEditData.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesMessageEditData"/>
 	/// </summary>
 	public partial class TLMessagesGetMessageEditData : TLObject
 	{

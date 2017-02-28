@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods
 {
 	/// <summary>
-	/// RCP method ping
+	/// RCP method ping.
+	/// Returns <see cref="Telegram.Api.TL.TLPong"/>
 	/// </summary>
 	public partial class TLPing : TLObject
 	{

@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Contacts
 {
 	/// <summary>
-	/// RCP method contacts.getContacts
+	/// RCP method contacts.getContacts.
+	/// Returns <see cref="Telegram.Api.TL.TLContactsContactsBase"/>
 	/// </summary>
 	public partial class TLContactsGetContacts : TLObject
 	{
