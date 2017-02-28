@@ -56,6 +56,8 @@ namespace Unigram.Controls.Messages
             }
         }
 
+        protected TLMessage _oldValue;
+
         //public MessageControlBase()
         //{
         //    DataContextChanged += (s, args) =>

@@ -14,32 +14,6 @@ namespace Telegram.Api.TL
     {
         public const uint Signature = 4294967058u;
 
-        public string EditTimerString
-        {
-            get
-            {
-                int editUntil = this.EditUntil;
-                int value = TLUtils.DateToUniversalTimeTLInt(MTProtoService.Current.ClientTicksDelta, DateTime.Now);
-                if (editUntil < value)
-                {
-                    return string.Empty;
-                }
-
-                var timeSpan = TimeSpan.FromSeconds((double)(editUntil - value));
-                if (timeSpan.TotalDays > 1.0)
-                {
-                    return string.Format("({0})", TimeSpan.FromSeconds((double)(editUntil - value)));
-                }
-
-                if (timeSpan.TotalHours > 1.0)
-                {
-                    return string.Format("({0:hh\\:mm\\:ss})", TimeSpan.FromSeconds((double)(editUntil - value)));
-                }
-
-                return string.Format("({0:mm\\:ss})", TimeSpan.FromSeconds((double)(editUntil - value)));
-            }
-        }
-
         public int EditUntil
         {
             get;
