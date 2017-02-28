@@ -26,11 +26,10 @@
             <Image x:Name="ThumbImage" Stretch="UniformToFill"/>
         </Border>
 
-        <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="2">
-            <TextBlock x:Name="TitleLabel" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{ThemeResource ReplyBaseTextBlockStyle}"/>
-            <TextBlock Style="{ThemeResource ReplyBodyTextBlockStyle}">
-                <Run x:Name="ServiceLabel" Foreground="{ThemeResource MessageSubtleLabelBrush}"/><Run x:Name="MessageLabel" Foreground="{ThemeResource MessageForegroundBrush}"/>
-            </TextBlock>
-        </StackPanel>
+        <TextBlock x:Name="asdjksadjkasdl" Margin="8,0,0,2" VerticalAlignment="Center" MaxLines="2" Style="{ThemeResource ReplyBodyTextBlockStyle}" Grid.Column="2">
+            <Run x:Name="TitleLabel" Foreground="{ThemeResource MessageHeaderForegroundBrush}"/>
+            <LineBreak/>
+            <Run x:Name="ServiceLabel" Foreground="{ThemeResource MessageSubtleLabelBrush}"/><Run x:Name="MessageLabel" Foreground="{ThemeResource MessageForegroundBrush}"/>
+        </TextBlock>
     </Grid>
 </HyperlinkButton>

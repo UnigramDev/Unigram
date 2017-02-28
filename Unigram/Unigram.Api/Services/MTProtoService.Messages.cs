@@ -833,6 +833,7 @@ namespace Telegram.Api.Services
                             message.Id = shortSentMessage.Id;
                             message.RaisePropertyChanged(() => message.Id);
                             message.RaisePropertyChanged(() => message.Date);
+                            message.RaisePropertyChanged(() => message.Self);
 #endif
                         });
 
