@@ -228,19 +228,19 @@ namespace Unigram.Views
                 var dialog = e.ClickedItem as TLDialog;
                 if (dialog != null)
                 {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                    MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), dialog.Peer);
                 }
 
                 var user = e.ClickedItem as TLUser;
                 if (user != null)
                 {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                    MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), new TLPeerUser { UserId = user.Id });
                 }
 
                 var channel = e.ClickedItem as TLChannel;
                 if (channel != null)
                 {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
+                    MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), new TLPeerChannel { ChannelId = channel.Id });
                 }
             }
         }
@@ -260,19 +260,20 @@ namespace Unigram.Views
                 var dialog = listView.SelectedItem as TLDialog;
                 if (dialog != null)
                 {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+
+                    MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), dialog.Peer);
                 }
 
                 var user = listView.SelectedItem as TLUser;
                 if (user != null)
                 {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                    MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), new TLPeerUser { UserId = user.Id });
                 }
 
                 var channel = listView.SelectedItem as TLChannel;
                 if (channel != null)
                 {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
+                    MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), new TLPeerChannel { ChannelId = channel.Id });
                 }
             }
         }
