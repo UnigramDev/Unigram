@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,11 +22,11 @@ namespace Unigram.ViewModels
 
         public ObservableCollection<object> parameterList = new ObservableCollection<object>();
         public ObservableCollection<PivotItem> chatWindows = new ObservableCollection<PivotItem>();
-
         public ChatPageHostViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) : base(protoService, cacheService, aggregator)
         {
             parameterList.CollectionChanged += ParameterList_CollectionChanged;
         }
+
 
         private void ParameterList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -34,6 +35,7 @@ namespace Unigram.ViewModels
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
                     var x = getChatWindow(parameterList.Last());
                     chatWindows.Add(x);
+                    selectedIndex = chatWindows.IndexOf(x);
                     break;
 
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
@@ -56,8 +58,19 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (parameterList.Any(x => x == parameter) == false)
+            if (!parameterList.Contains(parameter))
                 parameterList.Add(parameter);
+            else
+                selectedIndex = parameterList.IndexOf(parameter);
         }
+
+        public int _selectedIndex;
+        public int selectedIndex
+        {
+            get { return _selectedIndex; }
+            set { _selectedIndex = value; }
+        }
+    
     }
+
 }

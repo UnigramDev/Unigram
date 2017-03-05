@@ -8,6 +8,6 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Pivot x:Name="chatHostPivot" ItemsSource="{x:Bind ViewModel.chatWindows}"/>
+        <Pivot x:Name="chatHostPivot" SelectedIndex="{x:Bind ViewModel.selectedIndex}" ItemsSource="{x:Bind ViewModel.chatWindows}"/>
     </Grid>
 </Page>
