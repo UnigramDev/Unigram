@@ -307,7 +307,7 @@ namespace Unigram.Views
 
         }
 
-        private void Reply_Click(object sender, RoutedEventArgs e)
+        private async void Reply_Click(object sender, RoutedEventArgs e)
         {
             var reference = sender as MessageReference;
             var message = reference.Message;
@@ -333,7 +333,7 @@ namespace Unigram.Views
 
                 if (message is TLMessageCommonBase messageCommon)
                 {
-                    ViewModel.MessageOpenReplyCommand.Execute(messageCommon);
+                    await ViewModel.LoadMessageSliceAsync(null, messageCommon.Id);
                 }
             }
         }
