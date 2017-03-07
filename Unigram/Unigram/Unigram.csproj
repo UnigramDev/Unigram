@@ -227,7 +227,6 @@
     <Compile Include="Collections\MediaCollection.cs" />
     <Compile Include="Collections\SortedObservableCollection.cs" />
     <Compile Include="Common\Attached.cs" />
-    <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\Emoticon.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\FluidGridView.cs" />

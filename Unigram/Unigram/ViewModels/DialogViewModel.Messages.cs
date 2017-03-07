@@ -775,6 +775,10 @@ namespace Unigram.ViewModels
             {
                 await LoadMessageSliceAsync(messageCommon.Id, messageCommon.ReplyToMsgId.Value);
             }
+            else if (messageCommon != null)
+            {
+                await LoadMessageSliceAsync(null, messageCommon.Id);
+            }
         }
 
         #endregion
