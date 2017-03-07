@@ -54,8 +54,7 @@ namespace Unigram.Controls
         {
             get
             {
-                float value = 0;
-                m_rootVisual.Properties.TryGetScalar(BlurAmountProperty, out value);
+                m_rootVisual.Properties.TryGetScalar(BlurAmountProperty, out float value);
                 return value;
             }
             set
@@ -72,8 +71,7 @@ namespace Unigram.Controls
         {
             get
             {
-                Color value;
-                m_rootVisual.Properties.TryGetColor("TintColor", out value);
+                m_rootVisual.Properties.TryGetColor("TintColor", out Color value);
                 return value;
             }
             set

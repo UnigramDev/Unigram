@@ -240,8 +240,7 @@ namespace Unigram.Controls.Messages
 
         protected void MessageControl_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            Point point;
-            if (args.TryGetPosition(sender, out point))
+            if (args.TryGetPosition(sender, out Point point))
             {
                 var text = sender as RichTextBlock;
                 var hyperlink = text.GetHyperlinkFromPoint(point);
