@@ -16,9 +16,8 @@ namespace Unigram.Common
         {
             get
             {
-                TLBitmapSource target;
-                WeakReference<TLBitmapSource> reference;
-                if (_context.TryGetValue(photo, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(photo, out WeakReference<TLBitmapSource> reference) && 
+                    reference.TryGetTarget(out TLBitmapSource target))
                 {
                     return target.Image;
                 }
@@ -33,9 +32,8 @@ namespace Unigram.Common
         {
             get
             {
-                TLBitmapSource target;
-                WeakReference<TLBitmapSource> reference;
-                if (_context.TryGetValue(document, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(document, out WeakReference<TLBitmapSource> reference) && 
+                    reference.TryGetTarget(out TLBitmapSource target))
                 {
                     return target.Image;
                 }
@@ -55,9 +53,8 @@ namespace Unigram.Common
                     user.Photo = new TLUserProfilePhotoEmpty();
                 }
 
-                TLBitmapSource target;
-                WeakReference<TLBitmapSource> reference;
-                if (_context.TryGetValue(user.Photo, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(user.Photo, out WeakReference<TLBitmapSource> reference) && 
+                    reference.TryGetTarget(out TLBitmapSource target))
                 {
                     return target.Image;
                 }
@@ -72,9 +69,8 @@ namespace Unigram.Common
         {
             get
             {
-                TLBitmapSource target;
-                WeakReference<TLBitmapSource> reference;
-                if (_context.TryGetValue(chat.Photo, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(chat.Photo, out WeakReference<TLBitmapSource> reference) && 
+                    reference.TryGetTarget(out TLBitmapSource target))
                 {
                     return target.Image;
                 }
@@ -89,9 +85,8 @@ namespace Unigram.Common
         {
             get
             {
-                TLBitmapSource target;
-                WeakReference<TLBitmapSource> reference;
-                if (_context.TryGetValue(channel.Photo, out reference) && reference.TryGetTarget(out target))
+                if (_context.TryGetValue(channel.Photo, out WeakReference<TLBitmapSource> reference) && 
+                    reference.TryGetTarget(out TLBitmapSource target))
                 {
                     return target.Image;
                 }

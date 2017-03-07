@@ -32,8 +32,7 @@ namespace Unigram.ViewModels.Settings
             var folders = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
             foreach (var folder in folders)
             {
-                Guid guid;
-                if (Guid.TryParse(Path.GetFileName(folder), out guid))
+                if (Guid.TryParse(Path.GetFileName(folder), out Guid guid))
                 {
                     Items.Add(guid.ToString());
                 }

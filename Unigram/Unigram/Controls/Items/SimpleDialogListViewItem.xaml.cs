@@ -122,8 +122,7 @@ namespace Unigram.Controls.Items
                 var input = CryptographicBuffer.ConvertStringToBinary(str, BinaryStringEncoding.Utf8);
                 var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
                 var hashed = hasher.HashData(input);
-                byte[] digest;
-                CryptographicBuffer.CopyToByteArray(hashed, out digest);
+                CryptographicBuffer.CopyToByteArray(hashed, out byte[] digest);
 
                 var boh = ((id & 0x300000000) == 0x300000000);
 

@@ -694,8 +694,7 @@ namespace Unigram.ViewModels
                         navigation = "http://" + navigation;
                     }
 
-                    Uri uri;
-                    if (Uri.TryCreate(navigation, UriKind.Absolute, out uri))
+                    if (Uri.TryCreate(navigation, UriKind.Absolute, out Uri uri))
                     {
                         await Launcher.LaunchUriAsync(uri);
                     }
