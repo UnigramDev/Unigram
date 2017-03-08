@@ -251,7 +251,7 @@ namespace Unigram.Views
                 {
                     var photo = page.Photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
                     var image = new Image();
-                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, "thumbnail");
+                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
                     image.Width = 72;
                     image.Height = 72;
                     image.Stretch = Stretch.UniformToFill;
@@ -265,7 +265,7 @@ namespace Unigram.Views
                 {
                     var video = page.Videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
                     var image = new Image();
-                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, "thumbnail");
+                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
                     image.Width = 72;
                     image.Height = 72;
                     image.Stretch = Stretch.UniformToFill;
@@ -326,7 +326,7 @@ namespace Unigram.Views
                 {
                     var photo = page.Photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
                     var image = new ImageView();
-                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, "thumbnail");
+                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
                     image.Constraint = photo;
 
                     items.Add(image);
@@ -337,7 +337,7 @@ namespace Unigram.Views
                 {
                     var video = page.Videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
                     var image = new ImageView();
-                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, "thumbnail");
+                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
                     image.Constraint = video;
 
                     items.Add(image);
@@ -384,7 +384,7 @@ namespace Unigram.Views
             ellipse.Width = 36;
             ellipse.Height = 36;
             ellipse.Margin = new Thickness(0, 0, 12, 0);
-            ellipse.Fill = new ImageBrush { ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photo, "thumbnail"), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+            ellipse.Fill = new ImageBrush { ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photo, true), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
             Grid.SetRowSpan(ellipse, 2);
 
             var textAuthor = new TextBlock();
@@ -425,7 +425,7 @@ namespace Unigram.Views
 
             var video = page.Videos.FirstOrDefault(x => x.Id == block.VideoId);
             var image = new ImageView();
-            image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, "thumbnail");
+            image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
             image.Constraint = video;
 
             _containers.Peek().Children.Add(image);
@@ -620,7 +620,7 @@ namespace Unigram.Views
 
             var photo = page.Photos.FirstOrDefault(x => x.Id == block.PhotoId);
             var image = new ImageView();
-            image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, "thumbnail");
+            image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
             image.Constraint = photo;
 
             _containers.Peek().Children.Add(image);

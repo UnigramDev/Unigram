@@ -140,6 +140,7 @@
     <Compile Include="TL\Core\ITLStickers.cs" />
     <Compile Include="TL\Core\TLActionInfo.cs" />
     <Compile Include="TL\Core\TLInt.cs" />
+    <Compile Include="TL\Core\TLMessageActionUnreadMessages.cs" />
     <Compile Include="TL\Local\TLMessageActionDate.cs" />
     <Compile Include="TL\Local\TLMessagesContainer.cs" />
     <Compile Include="TL\Methods\Account\TLAccountChangePhone.cs" />

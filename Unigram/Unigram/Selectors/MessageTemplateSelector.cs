@@ -33,8 +33,7 @@ namespace Unigram.Selectors
 
         public DataTemplate ServiceMessageTemplate { get; set; }
         public DataTemplate ServiceMessagePhotoTemplate { get; set; }
-
-        public DataTemplate UnreadMessagesTemplate { get; set; }
+        public DataTemplate ServiceMessageLocalTemplate { get; set; }
 
         public MessageTemplateSelector()
         {
@@ -53,12 +52,6 @@ namespace Unigram.Selectors
                 return EmptyMessageTemplate;
             }
 
-            // TODO: actually this is a local TL, and at this time we don't support it.
-            //if (!(tLMessageService.Action is TLMessageActionUnreadMessages))
-            //{
-            //    return ServiceMessageTemplate ?? EmptyMessageTemplate;
-            //}
-
             if (serviceMessage.Action is TLMessageActionChatEditPhoto)
             {
                 return ServiceMessagePhotoTemplate;
@@ -66,6 +59,15 @@ namespace Unigram.Selectors
             else if (serviceMessage.Action is TLMessageActionHistoryClear)
             {
                 return EmptyMessageTemplate;
+            }
+            else if (serviceMessage.Action is TLMessageActionDate)
+            {
+                return ServiceMessageLocalTemplate;
+            }
+            else if (serviceMessage.Action is TLMessageActionUnreadMessages)
+            {
+                //return ServiceMessageUnreadTemplate;
+                return ServiceMessageLocalTemplate;
             }
 
             return ServiceMessageTemplate ?? EmptyMessageTemplate;
