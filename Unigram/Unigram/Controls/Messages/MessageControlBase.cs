@@ -215,24 +215,6 @@ namespace Unigram.Controls.Messages
             Context.KeyboardButtonExecute(e.Button, ViewModel);
         }
 
-        protected void ToolTip_Opened(object sender, RoutedEventArgs e)
-        {
-            var tooltip = sender as ToolTip;
-            if (tooltip != null && ViewModel != null)
-            {
-                var date = Convert.DateTime(ViewModel.Date);
-                var text = $"{DateTimeFormatter.LongDate.Format(date)} {DateTimeFormatter.LongTime.Format(date)}";
-
-                if (ViewModel.HasEditDate)
-                {
-                    var edit = Convert.DateTime(ViewModel.EditDate.Value);
-                    text += $"\r\nEdited: {DateTimeFormatter.LongDate.Format(edit)} {DateTimeFormatter.LongTime.Format(edit)}";
-                }
-
-                tooltip.Content = text;
-            }
-        }
-
         protected void Reply_Click(object sender, RoutedEventArgs e)
         {
             Context.MessageOpenReplyCommand.Execute(ViewModel);

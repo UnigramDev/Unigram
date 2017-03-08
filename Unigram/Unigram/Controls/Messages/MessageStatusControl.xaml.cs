@@ -7,6 +7,7 @@ using Telegram.Api.TL;
 using Unigram.Converters;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Globalization.DateTimeFormatting;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -87,6 +88,24 @@ namespace Unigram.Controls.Messages
                     return "\u00A0\u00A0\uE601";
                 default:
                     return "\u00A0\u00A0\uFFFD";
+            }
+        }
+
+        protected void ToolTip_Opened(object sender, RoutedEventArgs e)
+        {
+            var tooltip = sender as ToolTip;
+            if (tooltip != null && ViewModel != null)
+            {
+                var date = Convert.DateTime(ViewModel.Date);
+                var text = $"{Convert.LongDate.Format(date)} {Convert.LongTime.Format(date)}";
+
+                if (ViewModel.HasEditDate)
+                {
+                    var edit = Convert.DateTime(ViewModel.EditDate.Value);
+                    text += $"\r\nEdited: {Convert.LongDate.Format(edit)} {Convert.LongTime.Format(edit)}";
+                }
+
+                tooltip.Content = text;
             }
         }
     }
