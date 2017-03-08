@@ -437,7 +437,8 @@ namespace Unigram.Common
                 var lastIndex = 0;
                 foreach (Match match in matches)
                 {
-                    var isCommand = IsValidCommand(match.Value, out int index);
+                    var index = 0;
+                    var isCommand = IsValidCommand(match.Value, out index);
 
                     if ((match.Index + index) - lastIndex > 0)
                     {
@@ -669,7 +670,8 @@ namespace Unigram.Common
                             navigation = "http://" + navigation;
                         }
 
-                        if (Uri.TryCreate(navigation, UriKind.Absolute, out Uri uri))
+                        Uri uri;
+                        if (Uri.TryCreate(navigation, UriKind.Absolute, out uri))
                         {
                             await Launcher.LaunchUriAsync(uri);
                         }
@@ -792,11 +794,13 @@ namespace Unigram.Common
             {
                 var query = url.ParseQueryString();
 
-                var accessToken = GetAccessToken(query, out PageKind pageKind);
+                PageKind pageKind;
+                var accessToken = GetAccessToken(query, out pageKind);
                 var post = GetPost(query);
                 var result = url.StartsWith("https://") ? url : ("https://" + url);
 
-                if (Uri.TryCreate(result, UriKind.Absolute, out Uri uri))
+                Uri uri;
+                if (Uri.TryCreate(result, UriKind.Absolute, out uri))
                 {
                     if (uri.Segments.Length >= 2)
                     {
@@ -838,7 +842,8 @@ namespace Unigram.Common
                     var channel = InMemoryCacheService.Current.GetChannel(username) as TLChannel;
                     if (channel != null && channel.HasAccessHash)
                     {
-                        if (int.TryParse(post, out int postId))
+                        int postId;
+                        if (int.TryParse(post, out postId))
                         {
                             service.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)new TLPeerChannel { ChannelId = channel.Id }, postId));
                         }
@@ -862,7 +867,8 @@ namespace Unigram.Common
                         var peerChannel = response.Result.Peer as TLPeerChannel;
                         if (peerChannel != null)
                         {
-                            if (int.TryParse(post, out int postId))
+                            int postId;
+                            if (int.TryParse(post, out postId))
                             {
                                 service.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)peerChannel, postId));
                             }
@@ -1164,7 +1170,8 @@ namespace Unigram.Common
             {
                 foreach (Match match in matches)
                 {
-                    var isCommand = IsValidCommand(match.Value, out int index);
+                    var index = 0;
+                    var isCommand = IsValidCommand(match.Value, out index);
 
                     var navstr = match.Value.Substring(index);
                     if (navstr.StartsWith("@"))

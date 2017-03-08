@@ -417,7 +417,8 @@ namespace Unigram.Converters
                 if (tLPhoto2 != null)
                 {
                     double num3 = 400;
-                    if (double.TryParse((string)parameter, out double num4))
+                    double num4;
+                    if (double.TryParse((string)parameter, out num4))
                     {
                         num3 = num4;
                     }
@@ -449,7 +450,9 @@ namespace Unigram.Converters
         {
             try
             {
-                if (_cachedWebPImages.TryGetValue(cacheKey, out WeakReference<WriteableBitmap> weakReference) && weakReference.TryGetTarget(out WriteableBitmap writeableBitmap))
+                WeakReference<WriteableBitmap> weakReference;
+                WriteableBitmap writeableBitmap;
+                if (_cachedWebPImages.TryGetValue(cacheKey, out weakReference) && weakReference.TryGetTarget(out writeableBitmap))
                 {
                     return writeableBitmap;
                 }
@@ -820,7 +823,8 @@ namespace Unigram.Converters
         {
             var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
 
-            if (_cachedSources.TryGetValue(fileName, out WeakReference weakReference) && weakReference.IsAlive)
+            WeakReference weakReference;
+            if (_cachedSources.TryGetValue(fileName, out weakReference) && weakReference.IsAlive)
             {
                 return weakReference.Target as BitmapSource;
             }

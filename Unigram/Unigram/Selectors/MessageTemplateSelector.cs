@@ -145,7 +145,8 @@ namespace Unigram.Selectors
                 return EmptyMessageTemplate;
             }
 
-            if (_templatesCache.TryGetValue(message.GetType(), out Func<TLMessageBase, DataTemplate> func))
+            Func<TLMessageBase, DataTemplate> func;
+            if (_templatesCache.TryGetValue(message.GetType(), out func))
             {
                 return func.Invoke(message);
             }

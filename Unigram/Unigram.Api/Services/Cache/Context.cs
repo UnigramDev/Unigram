@@ -22,7 +22,8 @@ namespace Telegram.Api.Services.Cache
         {
             get
             {
-                return TryGetValue(index, out T val) ? val : default(T);
+                T val;
+                return TryGetValue(index, out val) ? val : default(T);
             }
 
             set

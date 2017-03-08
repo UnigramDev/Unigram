@@ -773,7 +773,8 @@ namespace Unigram.Views
             }
             else
             {
-                if (Uri.TryCreate(urlText.Url, UriKind.Absolute, out Uri uri))
+                Uri uri;
+                if (Uri.TryCreate(urlText.Url, UriKind.Absolute, out uri))
                 {
                     if (uri.Host.Equals("t.me") || uri.Host.Equals("telegram.me"))
                     {

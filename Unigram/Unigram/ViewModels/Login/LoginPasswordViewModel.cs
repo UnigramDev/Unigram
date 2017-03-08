@@ -77,7 +77,8 @@ namespace Unigram.ViewModels.Login
             var input = CryptographicBuffer.CreateFromByteArray(hash);
             var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
             var hashed = hasher.HashData(input);
-            CryptographicBuffer.CopyToByteArray(hashed, out byte[] data);
+            byte[] data;
+            CryptographicBuffer.CopyToByteArray(hashed, out data);
 
             var result = await ProtoService.CheckPasswordAsync(data);
             if (result?.IsSucceeded == true)
