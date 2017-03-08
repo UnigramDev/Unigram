@@ -406,7 +406,7 @@ namespace Unigram.ViewModels
                             IsOut = true,
                             IsUnread = true,
                             Date = item.Date,
-                            Action = new TLMessageActionUnreadMessages { Count = _currentDialog?.UnreadCount ?? 0 },
+                            Action = new TLMessageActionUnreadMessages(),
                             RandomId = TLLong.Random()
                         };
 
@@ -422,11 +422,6 @@ namespace Unigram.ViewModels
 
             _isLoadingNextSlice = false;
             _isLoadingPreviousSlice = false;
-        }
-
-        public class TLMessageActionUnreadMessages : TLMessageActionBase
-        {
-            public int Count { get; set; }
         }
 
         public async void ProcessReplies(IList<TLMessageBase> messages)
@@ -668,8 +663,7 @@ namespace Unigram.ViewModels
             var dialog = _currentDialog;
             if (dialog != null && dialog.HasDraft)
             {
-                var draft = dialog.Draft as TLDraftMessage;
-                if (draft != null)
+                if (dialog.Draft is TLDraftMessage draft)
                 {
                     Aggregator.Publish(new TLUpdateDraftMessage { Draft = draft, Peer = Peer.ToPeer() });
                     ProcessDraftReply(draft);
@@ -714,50 +708,11 @@ namespace Unigram.ViewModels
                 dialog.RaisePropertyChanged(() => dialog.UnreadCount);
             }
 
-            //Aggregator.Publish("PORCODIO");
-
             //StickersRecent();
             //GifsSaved();
 
             //var file = await KnownFolders.SavedPictures.CreateFileAsync("TEST.TXT", CreationCollisionOption.GenerateUniqueName);
             //await FileIO.WriteTextAsync(file, DateTime.Now.ToString());
-        }
-
-        private void GifsSaved()
-        {
-            Execute.BeginOnThreadPool(async () =>
-            {
-                var response = await ProtoService.GetSavedGifsAsync(SettingsHelper.GifsHash);
-                if (response.IsSucceeded)
-                {
-                    var result = response.Result as TLMessagesSavedGifs;
-                    if (result != null)
-                    {
-                        var gifs = result.Gifs.OfType<TLDocument>();
-
-                        Execute.BeginOnUIThread(() =>
-                        {
-                            SavedGifs.Clear();
-                            SavedGifs.AddRange(gifs);
-                        });
-
-                        SettingsHelper.GifsHash = result.Hash;
-                        DatabaseContext.Current.InsertDocuments("Gifs", gifs, true);
-                    }
-                    else
-                    {
-                        var cached = DatabaseContext.Current.SelectDocuments("Gifs");
-                        if (cached.Count > 0)
-                        {
-                            Execute.BeginOnUIThread(() =>
-                            {
-                                SavedGifs.Clear();
-                                SavedGifs.AddRange(cached);
-                            });
-                        }
-                    }
-                }
-            });
         }
 
         private async void ShowPinnedMessage(TLChannel channel)
@@ -783,15 +738,14 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var inputChannel = new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value };
-                var result = await ProtoService.GetMessagesAsync(inputChannel, new TLVector<int> { channel.PinnedMsgId.Value });
-                if (result.IsSucceeded)
+                var respponse = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int> { channel.PinnedMsgId.Value });
+                if (respponse.IsSucceeded)
                 {
-                    PinnedMessage = result.Result.Messages.FirstOrDefault(x => x.Id == channel.PinnedMsgId.Value);
+                    PinnedMessage = respponse.Result.Messages.FirstOrDefault(x => x.Id == channel.PinnedMsgId.Value);
                 }
                 else
                 {
-                    Telegram.Api.Helpers.Execute.ShowDebugMessage("channels.getMessages error " + result.Error);
+                    Telegram.Api.Helpers.Execute.ShowDebugMessage("channels.getMessages error " + respponse.Error);
                 }
             }
         }
@@ -801,8 +755,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetRecentStickersAsync(false, 0);
             if (response.IsSucceeded)
             {
-                var recent = response.Result as TLMessagesRecentStickers;
-                if (recent != null)
+                if (response.Result is TLMessagesRecentStickers recent)
                 {
                     await StickersAll(recent);
                 }
@@ -869,20 +822,17 @@ namespace Unigram.ViewModels
 
         private TLObject GetParticipant(TLPeerBase peer)
         {
-            var user = peer as TLPeerUser;
-            if (user != null)
+            if (peer is TLPeerUser user)
             {
                 return CacheService.GetUser(user.UserId);
             }
 
-            var chat = peer as TLPeerChat;
-            if (chat != null)
+            if (peer is TLPeerChat chat)
             {
                 return CacheService.GetChat(chat.ChatId);
             }
 
-            var channel = peer as TLPeerChannel;
-            if (channel != null)
+            if (peer is TLPeerChannel channel)
             {
                 return CacheService.GetChat(channel.ChannelId);
             }
@@ -2364,7 +2314,7 @@ namespace Unigram.ViewModels
             else
             {
                 item.IsFirst = true;
-                
+
                 if (previous != null)
                 {
                     previous.IsLast = false;

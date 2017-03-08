@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using Newtonsoft.Json;
 using System;
-using System.Threading.Tasks;
-using Windows.Storage;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Linq;
-using Newtonsoft.Json;
+using Windows.Storage;
 
 namespace Telegram.Api.Helpers
 {

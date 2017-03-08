@@ -60,7 +60,7 @@ namespace Unigram.Common
                 // TODO
             }
 
-           // Debugger.Break();
+            // Debugger.Break();
             return Tuple.Create("Last seen a long time ago", DateTime.Now.AddYears(-30));
         }
 
@@ -113,7 +113,21 @@ namespace Unigram.Common
 
         public static string GetLastSeenTime(TLUser user)
         {
-            if (!user.IsSelf&&user.HasStatus && user.Status != null && user.Status.TypeId == TLType.UserStatusOffline)
+            if (user.Id == 777000)
+            {
+                return "Service notifications";
+            }
+            if (user.IsBot)
+            {
+                // TODO: messages access
+                return "Bot";
+            }
+            if (user.IsSelf)
+            {
+                return "Chat with yourself";
+            }
+
+            if (!user.IsSelf && user.HasStatus && user.Status != null && user.Status.TypeId == TLType.UserStatusOffline)
             {
                 var status = user.Status as TLUserStatusOffline;
                 var seen = TLUtils.ToDateTime(status.WasOnline);

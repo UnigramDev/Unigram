@@ -307,9 +307,35 @@ namespace Unigram.Views
 
         }
 
-        private void Reply_Click(object sender, RoutedEventArgs e)
+        private async void Reply_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.MessageOpenReplyCommand.Execute(ViewModel);
+            var reference = sender as MessageReference;
+            var message = reference.Message;
+
+            if (message != null)
+            {
+                if (message is ReplyInfo replyInfo)
+                {
+                    message = replyInfo.Reply;
+                }
+
+                if (message is TLMessagesContainter container)
+                {
+                    if (container.EditMessage != null)
+                    {
+                        message = container.EditMessage;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                if (message is TLMessageCommonBase messageCommon)
+                {
+                    await ViewModel.LoadMessageSliceAsync(null, messageCommon.Id);
+                }
+            }
         }
 
         private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
