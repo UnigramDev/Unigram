@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class TransferButton : GlyphHyperlinkButton
+    public class TransferButton : GlyphButton
     {
         #region Media
 
@@ -45,11 +45,14 @@ namespace Unigram.Controls
 
         private string UpdateGlyph(TLMessageMediaBase newValue, TLMessageMediaBase oldValue)
         {
-            if (newValue is TLMessageMediaPhoto photoMedia)
+            var photoMedia = newValue as TLMessageMediaPhoto;
+            if (photoMedia != null)
             {
-                if (photoMedia.Photo is TLPhoto photo)
+                var photo = photoMedia.Photo as TLPhoto;
+                if (photo != null)
                 {
-                    if (photo.Full is TLPhotoSize photoSize)
+                    var photoSize = photo.Full as TLPhotoSize;
+                    if( photoSize != null)
                     {
                         var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
                         if (File.Exists(FileUtils.GetTempFileName(fileName)))
@@ -64,11 +67,13 @@ namespace Unigram.Controls
                 }
             }
 
-            if (newValue is TLMessageMediaDocument documentMedia)
+            var documentMedia = newValue as TLMessageMediaDocument;
+            if (documentMedia != null)
             {
                 Visibility = Visibility.Visible;
 
-                if (documentMedia.Document is TLDocument document)
+                var document = documentMedia.Document as TLDocument;
+                if (document != null)
                 {
                     var fileName = document.GetFileName();
                     if (File.Exists(FileUtils.GetTempFileName(fileName)))
