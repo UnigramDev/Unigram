@@ -40,7 +40,7 @@ namespace Unigram.Converters
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var param = parameter.ToString();
+            var param = parameter?.ToString();
             var thumbnail = string.Equals(param, "thumbnail", StringComparison.OrdinalIgnoreCase);
 
             return Convert(value, thumbnail);
