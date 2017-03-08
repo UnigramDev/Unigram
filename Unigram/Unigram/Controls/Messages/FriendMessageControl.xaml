@@ -56,7 +56,7 @@
                        Visibility="Collapsed"
                        Grid.Row="0"/>
 
-            <controls:MessageReference 
+            <local:MessageReference 
                 Message="{x:Bind ViewModel.Reply, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
                 Click="Reply_Click"

@@ -173,15 +173,14 @@
                             <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
                         </Hyperlink>
                     </TextBlock>
-                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
-                        <controls:MessageReference.Resources>
+                    <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
+                        <messages:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
-                            <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
-                        </controls:MessageReference.Resources>
-                    </controls:MessageReference>
+                        </messages:MessageReference.Resources>
+                    </messages:MessageReference>
                 </StackPanel>
 
                 <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Column="1" Grid.Row="1">
@@ -190,12 +189,7 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         MaxWidth="180" MaxHeight="180" Margin="2"/>
 
-                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
-                            <FontIcon Glyph="{x:Bind State, Converter={StaticResource StateToGlyphConverter}, Mode=OneWay}" FontFamily="{ThemeResource TelegramThemeFontFamily}" Height="10" Width="18" FontSize="10" Foreground="White" Margin="4,0,0,3" VerticalAlignment="Bottom"/>
-                        </StackPanel>
-                    </Border>
+                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="0,0,6,0"/>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -219,9 +213,7 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         MaxWidth="180" MaxHeight="180" Margin="2"/>
 
-                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
-                        <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
-                    </Border>
+                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="0,0,6,0"/>
                 </Grid>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}" 
@@ -238,15 +230,15 @@
                             <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
                         </Hyperlink>
                     </TextBlock>
-                    <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
-                        <controls:MessageReference.Resources>
+                    <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
+                        <messages:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
                             <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
-                        </controls:MessageReference.Resources>
-                    </controls:MessageReference>
+                        </messages:MessageReference.Resources>
+                    </messages:MessageReference>
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -285,9 +277,7 @@
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                             MaxWidth="180" MaxHeight="180" Margin="2"/>
 
-                        <Border Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,2,6,4" Margin="0,0,6,0">
-                            <TextBlock Text="{x:Bind Date, Converter={StaticResource MessageDateTimeConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
-                        </Border>
+                        <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="0,0,6,0"/>
                     </Grid>
 
                     <StackPanel Visibility="{x:Bind StickerReplyVisibility}" 
@@ -304,15 +294,15 @@
                                 <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
                             </Hyperlink>
                         </TextBlock>
-                        <controls:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
-                            <controls:MessageReference.Resources>
+                        <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
+                            <messages:MessageReference.Resources>
                                 <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
                                 <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
                                 <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
                                 <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#FFFFFF"/>
                                 <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
-                            </controls:MessageReference.Resources>
-                        </controls:MessageReference>
+                            </messages:MessageReference.Resources>
+                        </messages:MessageReference>
                     </StackPanel>
                 </Grid>
             </Grid>
@@ -365,7 +355,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FriendMessageTemplate">
-            <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+            <messages:UserMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendMessageTemplate" x:DataType="models:TLMessage">
@@ -383,7 +373,7 @@
                                              Margin="12,0,0,4"
                                              Width="32"
                                              Height="32"/>
-                <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
+                <messages:UserMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
             </Grid>
         </DataTemplate>
 
@@ -708,7 +698,7 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="btnPinnedMessage" Command="{Binding PinnedCommand}" Padding="0,0,48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                <controls:MessageReference Click="Reply_Click" Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0" Padding="12,6"/>
+                <messages:MessageReference Click="Reply_Click" Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0" Padding="12,6"/>
             </Button>
             
             <controls:GlyphButton Glyph="&#xE106;" FontSize="12" Grid.Column="1"/>
@@ -949,7 +939,7 @@
                 </Grid.ColumnDefinitions>
                 <!-- ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" Visibility="{Binding ReplyVisibility}" BorderBrush="#2fa9e2" Foreground="#0e7acd" Style="{StaticResource MediaControlStyle}" -->
 
-                <controls:MessageReference Message="{Binding ReplyInfo}" Click="Reply_Click" VerticalAlignment="Center" Margin="-8,0,0,0" Padding="0,6" Grid.Column="1"/>
+                <messages:MessageReference Message="{Binding ReplyInfo}" Click="Reply_Click" VerticalAlignment="Center" Margin="-8,0,0,0" Padding="0,6" Grid.Column="1"/>
 
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>

@@ -260,7 +260,7 @@ namespace Unigram.Controls.Messages
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
 
-        private StackPanel _statusControl;
+        private FrameworkElement _statusControl;
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -329,7 +329,7 @@ namespace Unigram.Controls.Messages
             Calculate:
 
             if (_statusControl == null)
-                _statusControl = FindName("StatusControl") as StackPanel;
+                _statusControl = FindName("StatusControl") as FrameworkElement;
             if (_statusControl.DesiredSize.IsEmpty)
                 _statusControl.Measure(availableSize);
 
