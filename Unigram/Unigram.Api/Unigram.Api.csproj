@@ -391,7 +391,6 @@
   <ItemGroup>
     <Compile Include="Aggregator\EventAggregator.cs" />
     <Compile Include="Aggregator\ExtensionMethods.cs" />
-    <Compile Include="Extensions\ActionExtensions.cs" />
     <Compile Include="Extensions\HttpWebRequestExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\TLObjectExtensions.cs" />

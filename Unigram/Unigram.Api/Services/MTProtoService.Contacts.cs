@@ -11,7 +11,7 @@ namespace Telegram.Api.Services
         {
             var obj = new TLContactsResetTopPeerRating { Category = category, Peer = peer };
 
-            SendInformativeMessage<bool>("contacts.resetTopPeerRating", obj, callback.SafeInvoke, faultCallback);
+            SendInformativeMessage<bool>("contacts.resetTopPeerRating", obj, callback, faultCallback);
         }
 
         public void GetTopPeersCallback(TLContactsGetTopPeers.Flag flags, int offset, int limit, int hash, Action<TLContactsTopPeersBase> callback, Action<TLRPCError> faultCallback = null)

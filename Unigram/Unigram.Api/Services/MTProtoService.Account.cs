@@ -65,7 +65,7 @@ namespace Telegram.Api.Services
         {
             var obj = new TLAccountChangePhone { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode };
 
-            SendInformativeMessage<TLUserBase>("account.changePhone", obj, user => _cacheService.SyncUser(user, callback.SafeInvoke), faultCallback);
+            SendInformativeMessage<TLUserBase>("account.changePhone", obj, user => _cacheService.SyncUser(user, callback), faultCallback);
         }
 
         public void RegisterDeviceCallback(int tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null)

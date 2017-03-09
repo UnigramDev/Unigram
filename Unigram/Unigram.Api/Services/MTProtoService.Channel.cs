@@ -78,7 +78,7 @@ namespace Telegram.Api.Services
 
                     GetFullChannelCallback(channel.ToInputChannel(),
                         messagesChatFull => callback?.Invoke(result),
-                        faultCallback.SafeInvoke);
+                        faultCallback);
                 },
                 faultCallback);
         }
@@ -150,7 +150,7 @@ namespace Telegram.Api.Services
             var obj = new TLChannelsEditAbout { Channel = channel.ToInputChannel(), About = about };
 
             const string caption = "channels.editAbout";
-            SendInformativeMessage<bool>(caption, obj, callback.SafeInvoke, faultCallback);
+            SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
         public void JoinChannelCallback(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
@@ -233,7 +233,7 @@ namespace Telegram.Api.Services
 
                     GetFullChannelCallback(channel.ToInputChannel(),
                         messagesChatFull => callback?.Invoke(result),
-                        faultCallback.SafeInvoke);
+                        faultCallback);
                 },
                 faultCallback);
         }
@@ -560,7 +560,7 @@ namespace Telegram.Api.Services
             var obj = new TLChannelsReportSpam { Channel = channel, UserId = userId, Id = id };
 
             const string caption = "channels.reportSpam";
-            SendInformativeMessage<bool>(caption, obj, callback.SafeInvoke, faultCallback);
+            SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
         public void DeleteUserHistoryCallback(TLChannel channel, TLInputUserBase userId, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null)
