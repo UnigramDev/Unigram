@@ -24,7 +24,7 @@ namespace Telegram.Api.Services
 
             SendInformativeMessage<TLUserFull>("users.getFullUser", obj, userFull =>
             {
-                _cacheService.SyncUser(userFull, result => callback.SafeInvoke(result));
+                _cacheService.SyncUser(userFull, result => callback?.Invoke(result));
             }, faultCallback);
         }
 	}

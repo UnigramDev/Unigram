@@ -76,7 +76,7 @@ namespace Telegram.Api.Services
                         _updatesService.ProcessUpdates(result, true);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback.SafeInvoke);
         }
@@ -89,7 +89,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<bool>(caption, obj,
                 result =>
                 {
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback.SafeInvoke);
         }
@@ -222,7 +222,7 @@ namespace Telegram.Api.Services
                             _updatesService.ProcessUpdates(updates);
                         }
 
-                        callback.SafeInvoke(message);
+                        callback?.Invoke(message);
                     }
                 },
                 fastCallback,
@@ -276,7 +276,7 @@ namespace Telegram.Api.Services
         public void ReportSpamCallback(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
 #if DEBUG
-            Execute.BeginOnThreadPool(() => callback.SafeInvoke(true));
+            Execute.BeginOnThreadPool(() => callback?.Invoke(true));
             return;
 #endif
 
@@ -334,7 +334,7 @@ namespace Telegram.Api.Services
                                         ProcessStickerSets(featuredStickers, results);
                                         featuredStickers.MessagesStickerSets = new TLVector<TLMessagesStickerSet>(results);
                                         //Execute.ShowDebugMessage(caption + " elapsed=" + stopwatch.Elapsed);
-                                        callback.SafeInvoke(featuredStickers);
+                                        callback?.Invoke(featuredStickers);
                                     }
                                 }
                             },
@@ -342,7 +342,7 @@ namespace Telegram.Api.Services
                     }
                     else
                     {
-                        callback.SafeInvoke(result);
+                        callback?.Invoke(result);
                     }
                 });
         }
@@ -377,7 +377,7 @@ namespace Telegram.Api.Services
                                     {
                                         ProcessStickerSets(result, results);
                                         result.MessagesStickerSets = new TLVector<TLMessagesStickerSet>(results);
-                                        callback.SafeInvoke(result);
+                                        callback?.Invoke(result);
                                     }
                                 }
                             },
@@ -385,7 +385,7 @@ namespace Telegram.Api.Services
                     }
                     else
                     {
-                        callback.SafeInvoke(result);
+                        callback?.Invoke(result);
                     }
                 });
         }
@@ -422,7 +422,7 @@ namespace Telegram.Api.Services
             //                        {
             //                            ProcessStickerSets(allStickers32, results);
 
-            //                            callback.SafeInvoke(allStickers32);
+            //                            callback?.Invoke(allStickers32);
             //                        }
             //                    }
             //                },
@@ -430,7 +430,7 @@ namespace Telegram.Api.Services
             //        }
             //        else
             //        {
-            //            callback.SafeInvoke(result);
+            //            callback?.Invoke(result);
             //        }
             //    });
         }
@@ -466,7 +466,7 @@ namespace Telegram.Api.Services
 	                                {
                                         ProcessStickerSets(allStickers32, results);
 
-                                        callback.SafeInvoke(allStickers32);
+                                        callback?.Invoke(allStickers32);
 	                                }
 	                            }
 	                        },
@@ -474,7 +474,7 @@ namespace Telegram.Api.Services
 	                }
 	                else
 	                {
-                        callback.SafeInvoke(result);
+                        callback?.Invoke(result);
 	                }
 	            });
 	    }
@@ -533,7 +533,7 @@ namespace Telegram.Api.Services
 	        var sets = stickers.Sets;
 	        if (sets.Count == 0)
 	        {
-                callback.SafeInvoke(stickers);
+                callback?.Invoke(stickers);
 	            return;
 	        }
 
@@ -646,7 +646,7 @@ namespace Telegram.Api.Services
                                     {
                                         ProcessStickerSets(resultArchive, results);
                                         resultArchive.MessagesStickerSets = new TLVector<TLMessagesStickerSet>(results);
-                                        callback.SafeInvoke(result);
+                                        callback?.Invoke(result);
                                     }
                                 }
                             },
@@ -654,7 +654,7 @@ namespace Telegram.Api.Services
                     }
                     else
                     {
-                        callback.SafeInvoke(result);
+                        callback?.Invoke(result);
                     }
                 }, 
                 faultCallback);
@@ -858,7 +858,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, new List<TLMessage>{ message });
                     }
 
-                    callback.SafeInvoke(message);
+                    callback?.Invoke(message);
                 },
                 fastCallback,
                 faultCallback.SafeInvoke);
@@ -980,7 +980,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, new List<TLMessage> { message });
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 () =>
                 {
@@ -1027,7 +1027,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, new List<TLMessage>{message});
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 () =>
                 {
@@ -1420,7 +1420,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLMessagesMessagesBase>("messages.search", obj, result =>
             {
                 //Execute.ShowDebugMessage("messages.search result " + result.Messages.Count);
-                callback.SafeInvoke(result);
+                callback?.Invoke(result);
             }, faultCallback);
         }
 
@@ -1433,7 +1433,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLMessagesMessagesBase>("messages.searchGlobal", obj, result =>
             {
                 TLUtils.WriteLine(string.Format("{0} messages.searchGlobal result={1}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), result.Messages.Count), LogSeverity.Error);
-                callback.SafeInvoke(result);
+                callback?.Invoke(result);
             }, faultCallback);
         }
 
@@ -1455,7 +1455,7 @@ namespace Telegram.Api.Services
                         _updatesService.SetState(null, result.Pts, null, null, null, caption);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 () => { },
                 faultCallback.SafeInvoke);
@@ -1479,7 +1479,7 @@ namespace Telegram.Api.Services
                         _updatesService.SetState(null, result.Pts, null, null, null, caption);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 () => { },
                 faultCallback.SafeInvoke);
@@ -1577,7 +1577,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, new List<TLMessage> { message });
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 () =>
                 {
@@ -1663,7 +1663,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, messages);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 () =>
                 {
@@ -1687,7 +1687,7 @@ namespace Telegram.Api.Services
                 "messages.getFullChat", obj,
                 messagesChatFull =>
                 {
-                    _cacheService.SyncChat(messagesChatFull, result => callback.SafeInvoke(messagesChatFull));
+                    _cacheService.SyncChat(messagesChatFull, result => callback?.Invoke(messagesChatFull));
                 },
                 faultCallback);
         }
@@ -1711,7 +1711,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -1735,7 +1735,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null, true);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -1759,7 +1759,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -1783,7 +1783,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -1807,7 +1807,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -1832,12 +1832,12 @@ namespace Telegram.Api.Services
                         _cacheService.SyncUsers(chatInvite.Participants, participants =>
                         {
                             chatInvite.Participants = participants;
-                            callback.SafeInvoke(result);
+                            callback?.Invoke(result);
                         });
                     }
                     else
                     {
-                        callback.SafeInvoke(result);
+                        callback?.Invoke(result);
                     }
                 }
                 , faultCallback);
@@ -1868,7 +1868,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -1949,7 +1949,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
 	    }
@@ -1980,7 +1980,7 @@ namespace Telegram.Api.Services
         //                ProcessUpdates(result, null);
         //            }
 
-        //            callback.SafeInvoke(result);
+        //            callback?.Invoke(result);
         //        },
         //        faultCallback);
         //}
@@ -2001,7 +2001,7 @@ namespace Telegram.Api.Services
                         _cacheService.Commit();
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -2048,7 +2048,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
 	    } 

@@ -72,7 +72,7 @@ namespace Telegram.Api.Services
         {
             if (_activeTransport.AuthKey == null)
             {
-                faultCallback.SafeInvoke(new TLRPCError
+                faultCallback?.Invoke(new TLRPCError
                 {
                     ErrorCode = 404,
                     ErrorMessage = "Service is not initialized to register device"
@@ -96,13 +96,13 @@ namespace Telegram.Api.Services
                 {
                     Logs.Log.Write(string.Format("{0} result={1}", methodName, result));
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 error =>
                 {
                     Logs.Log.Write(string.Format("{0} error={1}", methodName, error));
 
-                    faultCallback.SafeInvoke(error);
+                    faultCallback?.Invoke(error);
                 });
         }
 
@@ -123,13 +123,13 @@ namespace Telegram.Api.Services
                 {
                     Logs.Log.Write(string.Format("{0} result={1}", methodName, result));
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 error =>
                 {
                     Logs.Log.Write(string.Format("{0} error={1}", methodName, error));
 
-                    faultCallback.SafeInvoke(error);
+                    faultCallback?.Invoke(error);
                 });
         }
 

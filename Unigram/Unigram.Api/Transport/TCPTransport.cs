@@ -90,7 +90,7 @@ namespace Telegram.Api.Transport
                         if (caption.StartsWith("msgs_ack"))
                         {
                             TLUtils.WriteLine("!!!!!!MSGS_ACK FAULT!!!!!!!", LogSeverity.Error);
-                            faultCallback.SafeInvoke(new TcpTransportResult(SocketAsyncOperation.Send, new Exception("MSGS_ACK_FAULT")));
+                            faultCallback?.Invoke(new TcpTransportResult(SocketAsyncOperation.Send, new Exception("MSGS_ACK_FAULT")));
                             return;
                         }
 
@@ -104,7 +104,7 @@ namespace Telegram.Api.Transport
                                 }
                                 catch (Exception ex)
                                 {
-                                    faultCallback.SafeInvoke(new TcpTransportResult(SocketAsyncOperation.Send, ex));
+                                    faultCallback?.Invoke(new TcpTransportResult(SocketAsyncOperation.Send, ex));
 
                                     WRITE_LOG("Socket.ConnectAsync SendAsync[1]", ex);
                                 }
@@ -112,12 +112,12 @@ namespace Telegram.Api.Transport
                             error =>
                             {
                                 manualResetEvent.Set();
-                                faultCallback.SafeInvoke(error);
+                                faultCallback?.Invoke(error);
                             });
                         var connected = manualResetEvent.WaitOne(25000);
                         if (!connected)
                         {
-                            faultCallback.SafeInvoke(new TcpTransportResult(SocketAsyncOperation.Connect, new Exception("Connect timeout exception 25s")));
+                            faultCallback?.Invoke(new TcpTransportResult(SocketAsyncOperation.Connect, new Exception("Connect timeout exception 25s")));
                         }
                     }
                     else
@@ -128,7 +128,7 @@ namespace Telegram.Api.Transport
                         }
                         catch (Exception ex)
                         {
-                            faultCallback.SafeInvoke(new TcpTransportResult(SocketAsyncOperation.Send, ex));
+                            faultCallback?.Invoke(new TcpTransportResult(SocketAsyncOperation.Send, ex));
 
                             WRITE_LOG("Socket.SendAsync[1]", ex);
                         }
@@ -145,7 +145,7 @@ namespace Telegram.Api.Transport
             args.SetBuffer(packet, 0, packet.Length);
             args.Completed += (sender, eventArgs) =>
             {
-                callback.SafeInvoke(eventArgs.SocketError == SocketError.Success);
+                callback?.Invoke(eventArgs.SocketError == SocketError.Success);
             };
             return args;
         }
@@ -169,7 +169,7 @@ namespace Telegram.Api.Transport
             }
             catch (Exception ex)
             {
-                faultCallback.SafeInvoke(new TcpTransportResult(SocketAsyncOperation.Connect, ex));
+                faultCallback?.Invoke(new TcpTransportResult(SocketAsyncOperation.Connect, ex));
 
                 WRITE_LOG("Socket.ConnectAsync[#3]", ex);
             }
@@ -183,7 +183,7 @@ namespace Telegram.Api.Transport
             {
                 if (args.SocketError != SocketError.Success)
                 {
-                    faultCallback.SafeInvoke(new TcpTransportResult(SocketAsyncOperation.Connect, args.SocketError));
+                    faultCallback?.Invoke(new TcpTransportResult(SocketAsyncOperation.Connect, args.SocketError));
                 }
                 else
                 {
@@ -194,7 +194,7 @@ namespace Telegram.Api.Transport
                     sendArgs.SetBuffer(buffer, 0, buffer.Length);
                     
                     //sendArgs.SetBuffer(new byte[] { 0xef }, 0, 1);
-                    sendArgs.Completed += (o, e) => callback.SafeInvoke();
+                    sendArgs.Completed += (o, e) => callback?.Invoke();
 
                     try
                     {
@@ -202,7 +202,7 @@ namespace Telegram.Api.Transport
                     }
                     catch (Exception ex)
                     {
-                        faultCallback.SafeInvoke(new TcpTransportResult(SocketAsyncOperation.Send, ex));
+                        faultCallback?.Invoke(new TcpTransportResult(SocketAsyncOperation.Send, ex));
 
                         WRITE_LOG("Socket.OnConnected[#4]", ex);
                     }
@@ -211,7 +211,7 @@ namespace Telegram.Api.Transport
             }
             catch (Exception ex)
             {
-                faultCallback.SafeInvoke(new TcpTransportResult(SocketAsyncOperation.Connect, ex));
+                faultCallback?.Invoke(new TcpTransportResult(SocketAsyncOperation.Connect, ex));
 
                 WRITE_LOG("Socket.OnConnected[#4] SendAsync", ex);
             }

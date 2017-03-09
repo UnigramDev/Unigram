@@ -113,7 +113,7 @@ namespace Telegram.Api.Services
                             RaisePropertyChanged(() => History);
 #endif
                         }
-                        faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FastCallback SocketError=" + result });
+                        faultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FastCallback SocketError=" + result });
                     }
                 },
                 error =>
@@ -128,7 +128,7 @@ namespace Telegram.Api.Services
                         RaisePropertyChanged(() => History);
 #endif
                     }
-                    faultCallback.SafeInvoke(new TLRPCError
+                    faultCallback?.Invoke(new TLRPCError
                     {
                         ErrorCode = 404,
 #if WINDOWS_PHONE
@@ -347,7 +347,7 @@ namespace Telegram.Api.Services
                             }
 #endif
                         }
-                        faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FastCallback SocketError=" + result });
+                        faultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FastCallback SocketError=" + result });
                     }
                 },
                 error =>
@@ -365,7 +365,7 @@ namespace Telegram.Api.Services
                         }
 #endif
                     }
-                    faultCallback.SafeInvoke(new TLRPCError
+                    faultCallback?.Invoke(new TLRPCError
                     {
                         ErrorCode = 404,
 #if WINDOWS_PHONE
@@ -456,7 +456,7 @@ namespace Telegram.Api.Services
 
                         if (result)
                         {
-                            faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FastCallback SocketError=" + socketError });
+                            faultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FastCallback SocketError=" + socketError });
                         }
                     }                  
                 },
@@ -470,7 +470,7 @@ namespace Telegram.Api.Services
                     // чтобы callback не вызвался два раза из CheckTimeouts и отсюда
                     if (result)
                     {
-                        faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FaltCallback" });
+                        faultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "FaltCallback" });
                     }                    
                 });
         }

@@ -239,7 +239,7 @@ namespace Telegram.Api.Services.Updates
 
         public void SetInitState()
         {
-            GetStateAsync.SafeInvoke(
+            GetStateAsync?.Invoke(
                 result => SetState(result, "setInitState"),
                 error => Execute.BeginOnThreadPool(TimeSpan.FromSeconds(5.0), SetInitState));
         }
@@ -487,7 +487,7 @@ namespace Telegram.Api.Services.Updates
                     _cacheService.SyncDifferenceWithoutUsersAndChats(difference,
                         result2 =>
                         {
-                            callback.SafeInvoke();
+                            callback?.Invoke();
                         },
                         _syncDifferenceExceptions);
                 });
@@ -3058,7 +3058,7 @@ namespace Telegram.Api.Services.Updates
 //#if DEBUG
 //                                    eventAggregator.Publish(message);
 //#endif
-//                                    callback.SafeInvoke(message, result);
+//                                    callback?.Invoke(message, result);
 //                                });
 //                        },
 //                        error => { Helpers.Execute.ShowDebugMessage("messages.sendEncryptedService error " + error); });
@@ -3315,7 +3315,7 @@ namespace Telegram.Api.Services.Updates
                 if (updatesTooLong != null && updatesTooLong.Count > 0)
                 {
                     //NOTE to get AUTH_KEY_UNREGISTERED
-                    GetStateAsync.SafeInvoke(
+                    GetStateAsync?.Invoke(
                         result =>
                         {
 
@@ -3733,7 +3733,7 @@ namespace Telegram.Api.Services.Updates
                 //TLObject.LogNotify = false;
                 //TelegramEventAggregator.LogPublish = false;
                 RemoveRequest(id);
-                callback.SafeInvoke();
+                callback?.Invoke();
             });
         }
 

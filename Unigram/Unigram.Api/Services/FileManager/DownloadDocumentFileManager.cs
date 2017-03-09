@@ -171,7 +171,7 @@ namespace Telegram.Api.Services.FileManager
                         //    {
                         //        foreach (var callback in part.ParentItem.Callbacks)
                         //        {
-                        //            callback.SafeInvoke(part.ParentItem);
+                        //            callback?.Invoke(part.ParentItem);
                         //        }
                         //    }
                         //});

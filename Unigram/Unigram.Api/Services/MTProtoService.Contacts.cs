@@ -28,12 +28,12 @@ namespace Telegram.Api.Services
                         {
                             topPeers.Users = tuple.Item1;
                             topPeers.Chats = tuple.Item2;
-                            callback.SafeInvoke(result);
+                            callback?.Invoke(result);
                         });
                 }
                 else
                 {
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 }
             }, faultCallback);
         }
@@ -50,7 +50,7 @@ namespace Telegram.Api.Services
                         {
                             result.Users = tuple.Item1;
                             result.Chats = tuple.Item2;
-                            callback.SafeInvoke(result);
+                            callback?.Invoke(result);
                         });
                 }, 
                 faultCallback);

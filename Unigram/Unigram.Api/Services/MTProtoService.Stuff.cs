@@ -88,7 +88,7 @@ namespace Telegram.Api.Services
             SendNonInformativeMessage<TLPong>("ping", obj,
                 result =>
                 {
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback.SafeInvoke);
 	    }
@@ -100,7 +100,7 @@ namespace Telegram.Api.Services
             SendNonInformativeMessage<TLPong>("ping_delay_disconnect", obj,
                 result =>
                 {
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback.SafeInvoke);
         }
@@ -166,7 +166,7 @@ namespace Telegram.Api.Services
                     //    callback();
                     //}
 	            },
-	            error => faultCallback.SafeInvoke());
+	            error => faultCallback?.Invoke());
 	    }
 	}
 }

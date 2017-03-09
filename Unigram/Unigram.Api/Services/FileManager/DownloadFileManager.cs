@@ -188,7 +188,7 @@ namespace Telegram.Api.Services.FileManager
                     }
                     else
                     {
-                        part.ParentItem.Action.SafeInvoke(part.ParentItem);
+                        part.ParentItem.Action?.Invoke(part.ParentItem);
                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
                     }
                 }
