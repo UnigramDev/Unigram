@@ -703,7 +703,7 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="btnPinnedMessage" Command="{Binding PinnedCommand}" Padding="0,0,48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                <messages:MessageReference Click="Reply_Click" Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Center" Margin="0" Padding="12,6"/>
+                <messages:MessageReference Click="Reply_Click" Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="0" Padding="12,0"/>
             </Button>
             
             <controls:GlyphButton Glyph="&#xE106;" FontSize="12" Grid.Column="1"/>
@@ -944,7 +944,7 @@
                 </Grid.ColumnDefinitions>
                 <!-- ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" Visibility="{Binding ReplyVisibility}" BorderBrush="#2fa9e2" Foreground="#0e7acd" Style="{StaticResource MediaControlStyle}" -->
 
-                <messages:MessageReference Message="{Binding ReplyInfo}" Click="Reply_Click" VerticalAlignment="Center" Margin="-8,0,0,0" Padding="0,6" Grid.Column="1"/>
+                <messages:MessageReference Message="{Binding ReplyInfo}" Click="Reply_Click" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="-8,0,0,0" Grid.Column="1"/>
 
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
