@@ -11,7 +11,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
-using Unigram.Native.Tasks;
+using Unigram.Native;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;

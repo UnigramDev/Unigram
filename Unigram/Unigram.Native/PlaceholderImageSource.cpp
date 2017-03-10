@@ -3,7 +3,7 @@
 using namespace concurrency;
 using namespace D2D1;
 using namespace Windows::Storage;
-using namespace Unigram::Native::Tasks;
+using namespace Unigram::Native;
 
 PlaceholderImageSource^ PlaceholderImageSource::m_instance;
 critical_section PlaceholderImageSource::m_criticalSection;
