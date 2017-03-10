@@ -226,25 +226,16 @@ String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
 
 			auto temp = ApplicationData::Current->LocalFolder->Path;
 
-			std::wstringstream path;
-			path << temp->Data()
-				<< L"\\temp\\"
-				<< volumeLL
-				<< L"_"
-				<< local_id->Data()
-				<< L"_"
-				<< secretLL
-				<< L".jpg";
-
-			WIN32_FIND_DATA FindFileData;
-			HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
-			int found = handle != INVALID_HANDLE_VALUE;
-			if (found)
+			auto settings = ApplicationData::Current->LocalSettings;
+			if (settings->Values->HasKey("SessionGuid"))
 			{
-				FindClose(handle);
+				auto guid = safe_cast<String^>(settings->Values->Lookup("SessionGuid"));
 
-				std::wstringstream almost;
-				almost << L"ms-appdata:///local/temp/"
+				std::wstringstream path;
+				path << temp->Data()
+					<< L"\\"
+					<< guid->Data()
+					<< L"\\temp\\"
 					<< volumeLL
 					<< L"_"
 					<< local_id->Data()
@@ -252,17 +243,46 @@ String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
 					<< secretLL
 					<< L".jpg";
 
-				return ref new String(almost.str().c_str());
+				WIN32_FIND_DATA FindFileData;
+				HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
+				int found = handle != INVALID_HANDLE_VALUE;
+				if (found)
+				{
+					FindClose(handle);
+
+					std::wstringstream almost;
+					almost << L"ms-appdata:///local"
+						<< guid->Data()
+						<< "/temp/"
+						<< volumeLL
+						<< L"_"
+						<< local_id->Data()
+						<< L"_"
+						<< secretLL
+						<< L".jpg";
+
+					return ref new String(almost.str().c_str());
+				}
 			}
 		}
 	}
 
-	std::wstringstream almost;
-	almost << L"ms-appdata:///local/temp/placeholders/"
-		<< group->Data()
-		<< L"_placeholder.png";
+	auto settings = ApplicationData::Current->LocalSettings;
+	if (settings->Values->HasKey("SessionGuid"))
+	{
+		auto guid = safe_cast<String^>(settings->Values->Lookup("SessionGuid"));
 
-	return ref new String(almost.str().c_str());
+		std::wstringstream almost;
+		almost << L"ms-appdata:///local/"
+			<< guid->Data()
+			<< L"/temp/placeholders/"
+			<< group->Data()
+			<< L"_placeholder.png";
+
+		return ref new String(almost.str().c_str());
+	}
+
+	return ref new String();
 }
 
 String^ NotificationTask::GetDate(JsonObject^ notification)
@@ -333,8 +353,8 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 
 	std::wstring xml = L"<toast launch='";
 	xml += launch->Data();
-	xml += L"' displaytimestamp='";
-	xml += date->Data();
+	//xml += L"' displaytimestamp='";
+	//xml += date->Data();
 	xml += L"'><visual><binding template='ToastGeneric'>";
 
 	if (picture != nullptr)
