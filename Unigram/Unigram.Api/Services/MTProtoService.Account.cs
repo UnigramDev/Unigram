@@ -65,14 +65,14 @@ namespace Telegram.Api.Services
         {
             var obj = new TLAccountChangePhone { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode };
 
-            SendInformativeMessage<TLUserBase>("account.changePhone", obj, user => _cacheService.SyncUser(user, callback.SafeInvoke), faultCallback);
+            SendInformativeMessage<TLUserBase>("account.changePhone", obj, user => _cacheService.SyncUser(user, callback), faultCallback);
         }
 
         public void RegisterDeviceCallback(int tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             if (_activeTransport.AuthKey == null)
             {
-                faultCallback.SafeInvoke(new TLRPCError
+                faultCallback?.Invoke(new TLRPCError
                 {
                     ErrorCode = 404,
                     ErrorMessage = "Service is not initialized to register device"
@@ -96,13 +96,13 @@ namespace Telegram.Api.Services
                 {
                     Logs.Log.Write(string.Format("{0} result={1}", methodName, result));
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 error =>
                 {
                     Logs.Log.Write(string.Format("{0} error={1}", methodName, error));
 
-                    faultCallback.SafeInvoke(error);
+                    faultCallback?.Invoke(error);
                 });
         }
 
@@ -123,13 +123,13 @@ namespace Telegram.Api.Services
                 {
                     Logs.Log.Write(string.Format("{0} result={1}", methodName, result));
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 error =>
                 {
                     Logs.Log.Write(string.Format("{0} error={1}", methodName, error));
 
-                    faultCallback.SafeInvoke(error);
+                    faultCallback?.Invoke(error);
                 });
         }
 

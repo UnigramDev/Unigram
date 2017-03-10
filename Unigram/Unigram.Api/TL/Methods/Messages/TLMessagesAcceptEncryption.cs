@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.acceptEncryption
+	/// RCP method messages.acceptEncryption.
+	/// Returns <see cref="Telegram.Api.TL.TLEncryptedChatBase"/>
 	/// </summary>
 	public partial class TLMessagesAcceptEncryption : TLObject
 	{

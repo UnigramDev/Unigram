@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getMessagesViews
+	/// RCP method messages.getMessagesViews.
+	/// Returns <see cref="Telegram.Api.TL.TLVector<TLint>"/>
 	/// </summary>
 	public partial class TLMessagesGetMessagesViews : TLObject
 	{

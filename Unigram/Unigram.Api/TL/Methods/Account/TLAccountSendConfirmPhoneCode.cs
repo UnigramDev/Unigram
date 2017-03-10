@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Account
 {
 	/// <summary>
-	/// RCP method account.sendConfirmPhoneCode
+	/// RCP method account.sendConfirmPhoneCode.
+	/// Returns <see cref="Telegram.Api.TL.TLAuthSentCode"/>
 	/// </summary>
 	public partial class TLAccountSendConfirmPhoneCode : TLObject
 	{

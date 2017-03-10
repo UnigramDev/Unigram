@@ -259,7 +259,7 @@
             <TextBlock x:Name="tblUserInfoChatName"
                        Visibility="Visible"
                        HorizontalAlignment="Center"
-                       Text="{x:Bind ViewModel.Item.FullName, Mode=OneWay}"
+                       Text="{x:Bind ViewModel.Item.DisplayName, Mode=OneWay}"
                        Margin="0,4,0,0"
                        TextWrapping="NoWrap"
                        TextTrimming="CharacterEllipsis"

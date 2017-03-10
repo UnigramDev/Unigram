@@ -240,8 +240,8 @@ namespace Telegram.Api.TL
         }
 
 
-        public TLObject _with;
-        public TLObject With
+        public ITLDialogWith _with;
+        public ITLDialogWith With
         {
             get
             {
@@ -292,95 +292,6 @@ namespace Telegram.Api.TL
         }
 
         public int PinnedIndex { get; set; }
-
-        public string FullName
-        {
-            get
-            {
-                var userBase = With as TLUserBase;
-                if (userBase != null)
-                {
-                    var user = With as TLUser;
-                    if (user != null && user.IsSelf)
-                    {
-                        return "You";
-                    }
-
-                    if (userBase.Id == 333000)
-                    {
-                        //return AppResources.AppName;
-                        return "Telegram";
-                    }
-
-                    if (userBase.Id == 777000)
-                    {
-                        //return AppResources.TelegramNotifications;
-                        return "Telegram";
-                    }
-
-                    if (user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact)
-                    {
-                        return PhoneNumber.Format(user.Phone);
-                    }
-
-                    //                    var userRequest = user as TLUserRequest;
-                    //                    if (userRequest != null)
-                    //                    {
-                    //#if WP8
-                    //                    //var phoneUtil = PhoneNumberUtil.GetInstance();
-                    //                    //try
-                    //                    //{
-                    //                    //    return phoneUtil.Format(phoneUtil.Parse("+" + user.Phone.Value, ""), PhoneNumberFormat.INTERNATIONAL);
-                    //                    //}
-                    //                    //catch (Exception e)
-                    //                    {
-                    //                        return "+" + user.Phone.Value;
-                    //                    }
-                    //#else
-                    //                        return "+" + user.Phone.Value;
-                    //#endif
-
-                    //                    }
-
-                    if (userBase is TLUserEmpty /*|| user is TLUserDeleted*/)
-                    {
-
-                    }
-
-                    return userBase.FullName.Trim();
-                }
-
-                var channel = With as TLChannel;
-                if (channel != null)
-                {
-                    return channel.Title.Trim();
-                }
-
-                var chat = With as TLChatBase;
-                if (chat != null)
-                {
-                    return chat.FullName.Trim();
-                }
-
-                //var encryptedChat = With as TLEncryptedChatCommon;
-                //if (encryptedChat != null)
-                //{
-                //    var currentUserId = IoC.Get<IMTProtoService>().CurrentUserId;
-                //    var cache = IoC.Get<ICacheService>();
-
-                //    if (currentUserId.Value == encryptedChat.AdminId.Value)
-                //    {
-                //        var cachedParticipant = cache.GetUser(encryptedChat.ParticipantId);
-                //        return cachedParticipant != null ? cachedParticipant.FullName.Trim() : string.Empty;
-                //    }
-
-                //    var cachedAdmin = cache.GetUser(encryptedChat.AdminId);
-                //    return cachedAdmin != null ? cachedAdmin.FullName.Trim() : string.Empty;
-                //}
-
-                return With != null ? With.ToString() : string.Empty;
-            }
-        }
 
         public Visibility VerifiedVisibility
         {

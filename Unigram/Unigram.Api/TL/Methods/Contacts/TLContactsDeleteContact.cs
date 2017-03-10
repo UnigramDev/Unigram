@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Contacts
 {
 	/// <summary>
-	/// RCP method contacts.deleteContact
+	/// RCP method contacts.deleteContact.
+	/// Returns <see cref="Telegram.Api.TL.TLContactsLink"/>
 	/// </summary>
 	public partial class TLContactsDeleteContact : TLObject
 	{

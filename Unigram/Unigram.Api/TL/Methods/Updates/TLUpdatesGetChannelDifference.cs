@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Updates
 {
 	/// <summary>
-	/// RCP method updates.getChannelDifference
+	/// RCP method updates.getChannelDifference.
+	/// Returns <see cref="Telegram.Api.TL.TLUpdatesChannelDifferenceBase"/>
 	/// </summary>
 	public partial class TLUpdatesGetChannelDifference : TLObject
 	{

@@ -29,7 +29,7 @@ namespace Unigram.Views.Settings
         public SettingsStoragePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<SettingsStorageViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsStorageViewModel>();
         }
     }
 }

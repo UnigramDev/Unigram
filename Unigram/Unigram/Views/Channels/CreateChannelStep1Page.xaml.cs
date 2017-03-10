@@ -29,7 +29,7 @@ namespace Unigram.Views.Channels
         public CreateChannelStep1Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<CreateChannelStep1ViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<CreateChannelStep1ViewModel>();
         }
     }
 }

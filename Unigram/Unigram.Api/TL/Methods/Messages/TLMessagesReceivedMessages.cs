@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.receivedMessages
+	/// RCP method messages.receivedMessages.
+	/// Returns <see cref="Telegram.Api.TL.TLVector<TLReceivedNotifyMessage>"/>
 	/// </summary>
 	public partial class TLMessagesReceivedMessages : TLObject
 	{

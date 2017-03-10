@@ -31,6 +31,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Unigram.Core;
 
 namespace Unigram.Controls
 {
@@ -93,12 +94,12 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            UnigramContainer.Instance.ResolveType<ITelegramEventAggregator>().Subscribe(this);
+            UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Subscribe(this);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            UnigramContainer.Instance.ResolveType<ITelegramEventAggregator>().Unsubscribe(this);
+            UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Unsubscribe(this);
         }
 
         protected override void OnApplyTemplate()
@@ -232,10 +233,8 @@ namespace Unigram.Controls
 
                 if (isDirty)
                 {
-                    string text;
-                    string planText;
-                    Document.GetText(TextGetOptions.FormatRtf, out text);
-                    Document.GetText(TextGetOptions.NoHidden, out planText);
+                    Document.GetText(TextGetOptions.FormatRtf, out string text);
+                    Document.GetText(TextGetOptions.NoHidden, out string planText);
 
                     var parser = new RtfToTLParser();
                     var reader = new RtfReader(parser);
@@ -258,9 +257,7 @@ namespace Unigram.Controls
         {
             if (Document.Selection.Length != 0)
             {
-                int hit;
-                Rect rect;
-                Document.Selection.GetRect(PointOptions.ClientCoordinates, out rect, out hit);
+                Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out int hit);
                 _flyout.ShowAt(this, new Point(rect.X + 12, rect.Y - _presenter?.ActualHeight ?? 0));
             }
             else
@@ -316,8 +313,7 @@ namespace Unigram.Controls
             {
                 FormatText();
 
-                string text;
-                Document.GetText(TextGetOptions.NoHidden, out text);
+                Document.GetText(TextGetOptions.NoHidden, out string text);
 
                 if (MessageHelper.IsValidUsername(text))
                 {
@@ -374,8 +370,9 @@ namespace Unigram.Controls
 
         private void UpdateInlineBot(bool fast)
         {
+            var text = Text;
             var command = string.Empty;
-            var inline = SearchInlineBotResults(Text, out command);
+            var inline = SearchInlineBotResults(text, out command);
             if (inline && fast)
             {
                 ViewModel.GetInlineBotResults(command);
@@ -385,13 +382,29 @@ namespace Unigram.Controls
                 ViewModel.CurrentInlineBot = null;
                 ViewModel.InlineBotResults = null;
                 InlinePlaceholderText = string.Empty;
+
+                if (fast)
+                {
+                    // TODO: verify if it is actually a sticker
+                    if (text.Length < 14 && !string.IsNullOrWhiteSpace(text))
+                    {
+                        ViewModel.StickerPack = DatabaseContext.Current.SelectStickerPack(text.Trim());
+                    }
+                    else
+                    {
+                        ViewModel.StickerPack = null;
+                    }
+                }
+                else
+                {
+                    ViewModel.StickerPack = null;
+                }
             }
         }
 
         private void UpdateText()
         {
-            string text;
-            Document.GetText(TextGetOptions.NoHidden, out text);
+            Document.GetText(TextGetOptions.NoHidden, out string text);
 
             _updatingText = true;
             Text = text;
@@ -400,8 +413,7 @@ namespace Unigram.Controls
 
         private void FormatText()
         {
-            string text;
-            Document.GetText(TextGetOptions.NoHidden, out text);
+            Document.GetText(TextGetOptions.NoHidden, out string text);
 
             var caretPosition = Document.Selection.StartPosition;
             var result = Emoticon.Pattern.Matches(text);
@@ -434,10 +446,8 @@ namespace Unigram.Controls
 
             bool isDirty = _isDirty;
 
-            string text;
-            string planText;
-            Document.GetText(TextGetOptions.FormatRtf, out text);
-            Document.GetText(TextGetOptions.NoHidden, out planText);
+            Document.GetText(TextGetOptions.FormatRtf, out string text);
+            Document.GetText(TextGetOptions.NoHidden, out string planText);
 
             //Document.SetText(TextSetOptions.FormatRtf, string.Empty);
             Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
@@ -468,8 +478,7 @@ namespace Unigram.Controls
             {
                 // TODO: a better implementation?
 
-                string text;
-                Document.GetText(TextGetOptions.None, out text);
+                Document.GetText(TextGetOptions.None, out string text);
 
                 var isEmpty = string.IsNullOrWhiteSpace(text);
                 if (isEmpty)
@@ -614,9 +623,7 @@ namespace Unigram.Controls
                 }
 
                 var range = Document.GetRange(Text.Length, Text.Length);
-                int hit;
-                Rect rect;
-                range.GetRect(PointOptions.ClientCoordinates, out rect, out hit);
+                range.GetRect(PointOptions.ClientCoordinates, out Rect rect, out int hit);
 
                 var translateTransform = new TranslateTransform();
                 translateTransform.X = rect.X;

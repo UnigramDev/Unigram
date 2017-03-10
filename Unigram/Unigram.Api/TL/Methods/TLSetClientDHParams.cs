@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods
 {
 	/// <summary>
-	/// RCP method set_client_DH_params
+	/// RCP method set_client_DH_params.
+	/// Returns <see cref="Telegram.Api.TL.TLSetClientDHParamsAnswerBase"/>
 	/// </summary>
 	public partial class TLSetClientDHParams : TLObject
 	{

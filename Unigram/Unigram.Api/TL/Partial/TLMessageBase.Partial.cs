@@ -127,6 +127,23 @@ namespace Telegram.Api.TL
             }
         }
 
+        private bool _isLast;
+        public bool IsLast
+        {
+            get
+            {
+                return _isLast;
+            }
+            set
+            {
+                if (_isLast != value)
+                {
+                    _isLast = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         //public TLMessageBase Reply { get; set; }
 
         public ReplyInfo ReplyInfo

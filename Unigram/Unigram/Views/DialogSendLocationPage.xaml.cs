@@ -44,7 +44,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            DataContext = UnigramContainer.Instance.ResolveType<DialogSendLocationViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<DialogSendLocationViewModel>();
 
             Loaded += OnLoaded;
         }

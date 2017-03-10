@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.checkChatInvite
+	/// RCP method messages.checkChatInvite.
+	/// Returns <see cref="Telegram.Api.TL.TLChatInviteBase"/>
 	/// </summary>
 	public partial class TLMessagesCheckChatInvite : TLObject
 	{

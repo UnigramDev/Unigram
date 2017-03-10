@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Channels
 {
 	/// <summary>
-	/// RCP method channels.getParticipant
+	/// RCP method channels.getParticipant.
+	/// Returns <see cref="Telegram.Api.TL.TLChannelsChannelParticipant"/>
 	/// </summary>
 	public partial class TLChannelsGetParticipant : TLObject
 	{

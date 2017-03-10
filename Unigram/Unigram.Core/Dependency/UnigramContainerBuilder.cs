@@ -11,7 +11,7 @@ namespace Unigram.Core.Dependency
     {
         private static UnigramContainer _instance = new UnigramContainer();
 
-        private ContainerBuilder _builder = new ContainerBuilder();
+        private ContainerBuilder _builder;
         private IContainer _container;
         private bool _isInitialized;
 
@@ -19,7 +19,7 @@ namespace Unigram.Core.Dependency
 
         private UnigramContainer() { }
 
-        public static UnigramContainer Instance
+        public static UnigramContainer Current
         {
             get
             {
@@ -33,6 +33,13 @@ namespace Unigram.Core.Dependency
             {
                 return _builder;
             }
+        }
+
+        public void Reset()
+        {
+            _isInitialized = false;
+            _container?.Dispose();
+            _builder = new ContainerBuilder();
         }
 
         public void Build()

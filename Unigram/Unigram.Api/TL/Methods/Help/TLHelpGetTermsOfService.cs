@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Help
 {
 	/// <summary>
-	/// RCP method help.getTermsOfService
+	/// RCP method help.getTermsOfService.
+	/// Returns <see cref="Telegram.Api.TL.TLHelpTermsOfService"/>
 	/// </summary>
 	public partial class TLHelpGetTermsOfService : TLObject
 	{

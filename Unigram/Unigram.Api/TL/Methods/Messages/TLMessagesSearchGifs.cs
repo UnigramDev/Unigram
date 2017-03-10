@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.searchGifs
+	/// RCP method messages.searchGifs.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesFoundGifs"/>
 	/// </summary>
 	public partial class TLMessagesSearchGifs : TLObject
 	{

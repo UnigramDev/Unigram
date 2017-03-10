@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getAllChats
+	/// RCP method messages.getAllChats.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesChats"/>
 	/// </summary>
 	public partial class TLMessagesGetAllChats : TLObject
 	{

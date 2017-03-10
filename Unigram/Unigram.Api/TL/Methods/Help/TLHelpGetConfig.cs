@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Help
 {
 	/// <summary>
-	/// RCP method help.getConfig
+	/// RCP method help.getConfig.
+	/// Returns <see cref="Telegram.Api.TL.TLConfig"/>
 	/// </summary>
 	public partial class TLHelpGetConfig : TLObject
 	{

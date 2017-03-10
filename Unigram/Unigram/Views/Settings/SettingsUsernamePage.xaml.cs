@@ -32,7 +32,7 @@ namespace Unigram.Views.Settings
         public SettingsUsernamePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<SettingsUsernameViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsUsernameViewModel>();
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x =>

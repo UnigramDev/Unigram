@@ -36,6 +36,8 @@ using Windows.UI.ViewManagement;
 using Unigram.Views.Channels;
 using Unigram.ViewModels.Chats;
 using Unigram.Views.Chats;
+using Windows.System.Profile;
+using Windows.ApplicationModel.Core;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -55,7 +57,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Required;
-            DataContext = UnigramContainer.Instance.ResolveType<MainViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
 
             _logicalDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
 

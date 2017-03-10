@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Contacts
 {
 	/// <summary>
-	/// RCP method contacts.resetTopPeerRating
+	/// RCP method contacts.resetTopPeerRating.
+	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
 	/// </summary>
 	public partial class TLContactsResetTopPeerRating : TLObject
 	{

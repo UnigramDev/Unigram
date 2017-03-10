@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Channels
 {
 	/// <summary>
-	/// RCP method channels.exportInvite
+	/// RCP method channels.exportInvite.
+	/// Returns <see cref="Telegram.Api.TL.TLExportedChatInviteBase"/>
 	/// </summary>
 	public partial class TLChannelsExportInvite : TLObject
 	{

@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Account
 {
 	/// <summary>
-	/// RCP method account.getNotifySettings
+	/// RCP method account.getNotifySettings.
+	/// Returns <see cref="Telegram.Api.TL.TLPeerNotifySettingsBase"/>
 	/// </summary>
 	public partial class TLAccountGetNotifySettings : TLObject
 	{

@@ -141,13 +141,13 @@ namespace Unigram.Common
             {
                 var channelId = ((TLMessageActionChatMigrateTo)action).ChannelId;
                 var channel = InMemoryCacheService.Current.GetChat(channelId) as TLChannel;
-                var fullName = channel != null ? channel.FullName : string.Empty;
+                var fullName = channel != null ? channel.DisplayName : string.Empty;
 
                 return ReplaceLinks(Resources.MessageActionChatMigrateTo, new[] { fullName }, new[] { "tg-channel://" + channelId }, useActiveLinks);
             });
             _actionsCache.Add(typeof(TLMessageActionChannelMigrateFrom), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChannelMigrateFrom));
             _actionsCache.Add(typeof(TLMessageActionHistoryClear), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(string.Empty));
-            _actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(string.Format("{0} unread messages", ((TLMessageActionUnreadMessages)action).Count)));
+            _actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks("Unread messages"));
         }
 
         #region Message

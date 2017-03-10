@@ -8,14 +8,8 @@ using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLUser : ITLInputPeer, INotifyPropertyChanged
+    public partial class TLUser : ITLInputPeer
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        public override void RaisePropertyChanged(string propertyName)
-        {
-            Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
-        }
-
         public override string FullName
         {
             get

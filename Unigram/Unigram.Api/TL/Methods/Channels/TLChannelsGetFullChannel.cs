@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Channels
 {
 	/// <summary>
-	/// RCP method channels.getFullChannel
+	/// RCP method channels.getFullChannel.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesChatFull"/>
 	/// </summary>
 	public partial class TLChannelsGetFullChannel : TLObject
 	{

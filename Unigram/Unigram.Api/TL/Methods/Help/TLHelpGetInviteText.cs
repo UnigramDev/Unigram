@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Help
 {
 	/// <summary>
-	/// RCP method help.getInviteText
+	/// RCP method help.getInviteText.
+	/// Returns <see cref="Telegram.Api.TL.TLHelpInviteText"/>
 	/// </summary>
 	public partial class TLHelpGetInviteText : TLObject
 	{

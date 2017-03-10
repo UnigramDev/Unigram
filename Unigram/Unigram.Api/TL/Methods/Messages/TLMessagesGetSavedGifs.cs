@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getSavedGifs
+	/// RCP method messages.getSavedGifs.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesSavedGifsBase"/>
 	/// </summary>
 	public partial class TLMessagesGetSavedGifs : TLObject
 	{

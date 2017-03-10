@@ -262,8 +262,7 @@ namespace Telegram.Api.Services
 
         protected virtual void RaiseTransportChecked(TransportCheckedEventArgs e)
         {
-            var handler = TransportChecked;
-            if (handler != null) handler(this, e);
+            TransportChecked?.Invoke(this, e);
         }
 
         private void CheckTransport(object state)
@@ -351,7 +350,7 @@ namespace Telegram.Api.Services
                     {
                         try
                         {
-                            item.FaultCallback.SafeInvoke(
+                            item.FaultCallback?.Invoke(
                                 new TLRPCError
                                 {
                                     ErrorCode = (int)TLErrorCode.TIMEOUT,
@@ -396,7 +395,7 @@ namespace Telegram.Api.Services
                     {
                         try
                         {
-                            item.FaultCallback.SafeInvoke(
+                            item.FaultCallback?.Invoke(
                                 new TLRPCError
                                 {
                                     ErrorCode = (int)TLErrorCode.TIMEOUT,
@@ -432,7 +431,7 @@ namespace Telegram.Api.Services
                         {
                             try
                             {
-                                item.FaultCallback.SafeInvoke(
+                                item.FaultCallback?.Invoke(
                                     new TLRPCError
                                     {
                                         ErrorCode = (int)TLErrorCode.TIMEOUT,
@@ -542,7 +541,7 @@ namespace Telegram.Api.Services
                 }
             }
 
-            callback.SafeInvoke(true);
+            callback?.Invoke(true);
         }
 
 
@@ -658,7 +657,7 @@ namespace Telegram.Api.Services
                             string.Format("OnReceivedBytes by {0} AuthKey==null: invoke historyItem {1} with result {2} (data length={3})",
                                 transport.Id, historyItem.Caption, message.Data.GetType(), e.Data.Length));
 #endif
-                        historyItem.Callback.SafeInvoke(message.Query);
+                        historyItem.Callback?.Invoke(message.Query);
                     }
                     else
                     {
@@ -739,7 +738,7 @@ namespace Telegram.Api.Services
                             || (item.MaxAttempt.HasValue
                                 && item.MaxAttempt <= item.CurrentAttempt))
                         {
-                            item.AttemptFailed.SafeInvoke(item.CurrentAttempt);
+                            item.AttemptFailed?.Invoke(item.CurrentAttempt);
                             canceledItems.Add(item);
                         }
                         item.CurrentAttempt++;
@@ -1336,7 +1335,7 @@ namespace Telegram.Api.Services
 
                         if (item != null)
                         {
-                            item.Callback.SafeInvoke(pong);
+                            item.Callback?.Invoke(pong);
                         }
                     }
 
@@ -1547,7 +1546,7 @@ namespace Telegram.Api.Services
             {
                 foreach (var keyValue in history)
                 {
-                    keyValue.FaultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.ClearHistory " + caption/*TODO: , Exception = e*/});
+                    keyValue.FaultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.ClearHistory " + caption/*TODO: , Exception = e*/});
                 }
             });
         }
@@ -1591,7 +1590,7 @@ namespace Telegram.Api.Services
             {
                 foreach (var keyValue in history)
                 {
-                    keyValue.FaultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.ClearHistory " + caption/* TODO:, Exception = e*/ });
+                    keyValue.FaultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.ClearHistory " + caption/* TODO:, Exception = e*/ });
                 }
             });
         }
@@ -1726,7 +1725,7 @@ namespace Telegram.Api.Services
                                 TLUtils.WriteLog(string.Format("RPCError restore transport {0} {1}:{2} item {3}", _activeTransport.Id, _activeTransport.Host, _activeTransport.Port, historyItem.Caption));
 #endif
 
-                                historyItem.FaultCallback.SafeInvoke(er);
+                                historyItem.FaultCallback?.Invoke(er);
                             });
                         }
                         else
@@ -1822,7 +1821,7 @@ namespace Telegram.Api.Services
                                 TLUtils.WriteLog(string.Format("RPCError restore transport {0} {1}:{2} item {3}", _activeTransport.Id, _activeTransport.Host, _activeTransport.Port, historyItem.Caption));
 #endif
 
-                                historyItem.FaultCallback.SafeInvoke(er);
+                                historyItem.FaultCallback?.Invoke(er);
                             });
                         }
                         else
@@ -2162,7 +2161,7 @@ namespace Telegram.Api.Services
     #if DEBUG
                             RaisePropertyChanged(() => History);
     #endif
-                            faultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404 });
+                            faultCallback?.Invoke(new TLRPCError { ErrorCode = 404 });
                         });
                     
                     break;

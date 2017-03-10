@@ -30,7 +30,7 @@ namespace Unigram.Views.Login
         {
             InitializeComponent();
 
-            DataContext = UnigramContainer.Instance.ResolveType<LoginPasswordViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<LoginPasswordViewModel>();
         }
     }
 }

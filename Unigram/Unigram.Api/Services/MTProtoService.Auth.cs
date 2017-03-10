@@ -101,12 +101,12 @@ namespace Telegram.Api.Services
                 result =>
                 {
                     Logs.Log.Write(string.Format("{0} result={1}", methodName, result));
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 }, 
                 error =>
                 {
                     Logs.Log.Write(string.Format("{0} error={1}", methodName, error));
-                    faultCallback.SafeInvoke(error);
+                    faultCallback?.Invoke(error);
                 });
         }
 

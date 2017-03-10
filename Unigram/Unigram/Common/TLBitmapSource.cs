@@ -11,7 +11,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
-using Unigram.Native.Tasks;
+using Unigram.Native;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
@@ -67,7 +67,7 @@ namespace Unigram.Common
 
         static TLBitmapSource()
         {
-            _downloadFileManager = UnigramContainer.Instance.ResolveType<IDownloadFileManager>();
+            _downloadFileManager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
         }
 
         public const int PHASE_PLACEHOLDER = 0;
@@ -82,12 +82,15 @@ namespace Unigram.Common
 
         public TLBitmapSource(TLUser user)
         {
+            Image.DecodePixelWidth = 48;
+            Image.DecodePixelHeight = 48;
+
             var userProfilePhoto = user.Photo as TLUserProfilePhoto;
             if (userProfilePhoto != null)
             {
                 if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
                 {
-                    SetProfilePlaceholder(user, "u" + user.Id, user.Id, user.FullName);
+                    //SetProfilePlaceholder(user, "u" + user.Id, user.Id, user.FullName);
                     SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
                 }
             }
@@ -99,6 +102,9 @@ namespace Unigram.Common
 
         public TLBitmapSource(TLChatBase chatBase)
         {
+            Image.DecodePixelWidth = 48;
+            Image.DecodePixelHeight = 48;
+
             TLChatPhotoBase chatPhotoBase = null;
 
             var channel = chatBase as TLChannel;
@@ -118,13 +124,13 @@ namespace Unigram.Common
             {
                 if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
                 {
-                    SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.FullName);
+                    //SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.DisplayName);
                     SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
                 }
             }
             else
             {
-                SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.FullName);
+                SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.DisplayName);
             }
         }
 
@@ -152,7 +158,7 @@ namespace Unigram.Common
             {
                 Phase = PHASE_PLACEHOLDER;
 
-                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\placeholders\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
+                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(SettingsHelper.SessionGuid + "\\temp\\placeholders\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
                 using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                 {
                     if (stream.Size == 0)

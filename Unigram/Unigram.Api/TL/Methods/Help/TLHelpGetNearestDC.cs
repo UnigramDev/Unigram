@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Help
 {
 	/// <summary>
-	/// RCP method help.getNearestDc
+	/// RCP method help.getNearestDc.
+	/// Returns <see cref="Telegram.Api.TL.TLNearestDC"/>
 	/// </summary>
 	public partial class TLHelpGetNearestDC : TLObject
 	{

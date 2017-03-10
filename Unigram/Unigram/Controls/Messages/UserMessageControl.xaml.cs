@@ -34,8 +34,10 @@ namespace Unigram.Controls.Messages
 
             DataContextChanged += (s, args) =>
             {
-                if (ViewModel != null) Bindings.Update();
+                if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
                 if (ViewModel == null) Bindings.StopTracking();
+
+                _oldValue = ViewModel;
             };
         }
 
@@ -91,7 +93,7 @@ namespace Unigram.Controls.Messages
                     }
                     if (message.HasReplyToMsgId)
                     {
-                        top = 0;
+                        top = 4;
                     }
                     if (message.IsPost)
                     {

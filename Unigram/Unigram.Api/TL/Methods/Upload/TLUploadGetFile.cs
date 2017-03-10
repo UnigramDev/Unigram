@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Upload
 {
 	/// <summary>
-	/// RCP method upload.getFile
+	/// RCP method upload.getFile.
+	/// Returns <see cref="Telegram.Api.TL.TLUploadFile"/>
 	/// </summary>
 	public partial class TLUploadGetFile : TLObject
 	{

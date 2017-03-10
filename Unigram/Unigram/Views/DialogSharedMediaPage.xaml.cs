@@ -32,7 +32,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            DataContext = UnigramContainer.Instance.ResolveType<DialogSharedMediaViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<DialogSharedMediaViewModel>();
 
             // Used to get semi-transparent background for headers.
             // TODO: Check for performance issues on mobile.

@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getHistory
+	/// RCP method messages.getHistory.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesMessages"/>
 	/// </summary>
 	public partial class TLMessagesGetHistory : TLObject
 	{

@@ -29,7 +29,7 @@ namespace Unigram.Views.Settings
         public SettingsBlockedUsersPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<SettingsBlockedUsersViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsBlockedUsersViewModel>();
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

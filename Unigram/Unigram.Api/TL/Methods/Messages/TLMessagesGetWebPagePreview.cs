@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getWebPagePreview
+	/// RCP method messages.getWebPagePreview.
+	/// Returns <see cref="Telegram.Api.TL.TLMessageMediaBase"/>
 	/// </summary>
 	public partial class TLMessagesGetWebPagePreview : TLObject
 	{

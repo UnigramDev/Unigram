@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.getDhConfig
+	/// RCP method messages.getDhConfig.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesDHConfigBase"/>
 	/// </summary>
 	public partial class TLMessagesGetDHConfig : TLObject
 	{

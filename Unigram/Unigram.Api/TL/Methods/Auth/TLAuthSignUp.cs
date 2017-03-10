@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Auth
 {
 	/// <summary>
-	/// RCP method auth.signUp
+	/// RCP method auth.signUp.
+	/// Returns <see cref="Telegram.Api.TL.TLAuthAuthorization"/>
 	/// </summary>
 	public partial class TLAuthSignUp : TLObject
 	{

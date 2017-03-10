@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Account
 {
 	/// <summary>
-	/// RCP method account.updateUsername
+	/// RCP method account.updateUsername.
+	/// Returns <see cref="Telegram.Api.TL.TLUserBase"/>
 	/// </summary>
 	public partial class TLAccountUpdateUsername : TLObject
 	{

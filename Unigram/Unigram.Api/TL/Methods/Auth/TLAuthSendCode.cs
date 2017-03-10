@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Auth
 {
 	/// <summary>
-	/// RCP method auth.sendCode
+	/// RCP method auth.sendCode.
+	/// Returns <see cref="Telegram.Api.TL.TLAuthSentCode"/>
 	/// </summary>
 	public partial class TLAuthSendCode : TLObject
 	{

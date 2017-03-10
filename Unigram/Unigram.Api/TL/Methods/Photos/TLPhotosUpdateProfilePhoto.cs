@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Photos
 {
 	/// <summary>
-	/// RCP method photos.updateProfilePhoto
+	/// RCP method photos.updateProfilePhoto.
+	/// Returns <see cref="Telegram.Api.TL.TLUserProfilePhotoBase"/>
 	/// </summary>
 	public partial class TLPhotosUpdateProfilePhoto : TLObject
 	{

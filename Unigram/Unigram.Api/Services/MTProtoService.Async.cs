@@ -1780,6 +1780,19 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        public Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickersAsync(int hash)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAllStickersBase>>();
+            GetAllStickersCallback(hash, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesAllStickersBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesAllStickersBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
         public Task<MTProtoResponse<TLVector<TLWallPaperBase>>> GetWallpapersAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLWallPaperBase>>>();

@@ -38,7 +38,7 @@ namespace Telegram.Api.Helpers
                 await Task.Delay(delay);
                 try
                 {
-                    action.SafeInvoke();
+                    action?.Invoke();
                 }
                 catch (Exception e)
                 {
@@ -53,7 +53,7 @@ namespace Telegram.Api.Helpers
             {
                 try
                 {
-                    action.SafeInvoke();
+                    action?.Invoke();
                 }
                 catch (Exception e)
                 {
@@ -68,7 +68,7 @@ namespace Telegram.Api.Helpers
             {
                 try
                 {
-                    action.SafeInvoke();
+                    action?.Invoke();
                 }
                 catch (Exception e)
                 {
@@ -83,7 +83,7 @@ namespace Telegram.Api.Helpers
             {
                 try
                 {
-                    action.SafeInvoke();
+                    action?.Invoke();
                 }
                 catch (Exception e)
                 {
@@ -98,7 +98,7 @@ namespace Telegram.Api.Helpers
             {
                 //try
                 //{
-                //    action.SafeInvoke();
+                //    action?.Invoke();
                 //}
                 //catch (Exception e)
                 //{
@@ -128,7 +128,7 @@ namespace Telegram.Api.Helpers
             {
                 try
                 {
-                    action.SafeInvoke();
+                    action?.Invoke();
                 }
                 catch (Exception e)
                 {
@@ -206,7 +206,7 @@ namespace Telegram.Api.Helpers
     //                await Task.Delay(delay);
     //                try
     //                {
-    //                    action.SafeInvoke();
+    //                    action?.Invoke();
     //                }
     //                catch (Exception ex)
     //                {
@@ -219,7 +219,7 @@ namespace Telegram.Api.Helpers
     //                Thread.Sleep(delay);
     //                try
     //                {
-    //                    action.SafeInvoke();
+    //                    action?.Invoke();
     //                }
     //                catch (Exception ex)
     //                {
@@ -236,7 +236,7 @@ namespace Telegram.Api.Helpers
     //            {
     //                try
     //                {
-    //                    action.SafeInvoke();
+    //                    action?.Invoke();
     //                }
     //                catch (Exception ex)
     //                {
@@ -248,7 +248,7 @@ namespace Telegram.Api.Helpers
     //            {
     //                try
     //                {
-    //                    action.SafeInvoke();
+    //                    action?.Invoke();
     //                }
     //                catch (Exception ex)
     //                {
@@ -271,7 +271,7 @@ namespace Telegram.Api.Helpers
     //            {
     //                try
     //                {
-    //                    action.SafeInvoke();
+    //                    action?.Invoke();
     //                }
     //                catch (Exception ex)
     //                {
@@ -283,7 +283,7 @@ namespace Telegram.Api.Helpers
     //            {
     //                try
     //                {
-    //                    action.SafeInvoke();
+    //                    action?.Invoke();
     //                }
     //                catch (Exception ex)
     //                {

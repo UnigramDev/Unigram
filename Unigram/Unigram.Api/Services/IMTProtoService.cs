@@ -144,6 +144,8 @@ namespace Telegram.Api.Services
         void ChangePhoneCallback(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null);
         void GetWallpapersCallback(Action<TLVector<TLWallPaperBase>> callback, Action<TLRPCError> faultCallback = null);
         void GetAllStickersCallback(byte[] hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetAllStickersCallback(int hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetStickerSetsAsync(ITLStickers stickers, Action<ITLStickers> callback, Action<object> getStickerSetCallback, Action<TLRPCError> faultCallback);
 
         void UpdateDeviceLockedCallback(int period, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 

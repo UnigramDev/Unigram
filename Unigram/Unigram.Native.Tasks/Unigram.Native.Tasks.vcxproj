@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -209,7 +209,6 @@
     <ClInclude Include="DirectXEx.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="NotificationTask.h" />
-    <ClInclude Include="PlaceholderImageSource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -221,7 +220,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="NotificationTask.cpp" />
-    <ClCompile Include="PlaceholderImageSource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="..\unigram.tasks\strings\de\resources.resw" />

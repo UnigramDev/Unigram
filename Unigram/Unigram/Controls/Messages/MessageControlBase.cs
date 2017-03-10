@@ -56,6 +56,8 @@ namespace Unigram.Controls.Messages
             }
         }
 
+        protected TLMessage _oldValue;
+
         //public MessageControlBase()
         //{
         //    DataContextChanged += (s, args) =>
@@ -99,7 +101,7 @@ namespace Unigram.Controls.Messages
                 else if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
                 {
                     var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = InMemoryCacheService.Current.GetChat(message.ToId.Id).FullName, Foreground = Convert.Bubble(message.ToId.Id) });
+                    hyperlink.Inlines.Add(new Run { Text = InMemoryCacheService.Current.GetChat(message.ToId.Id).DisplayName, Foreground = Convert.Bubble(message.ToId.Id) });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
                     hyperlink.Foreground = paragraph.Foreground;
                     hyperlink.Click += (s, args) => From_Click(message);
@@ -119,7 +121,7 @@ namespace Unigram.Controls.Messages
                     var channel = message.FwdFromChannel;
                     if (channel != null)
                     {
-                        name = channel.FullName;
+                        name = channel.DisplayName;
                     }
 
                     var user = message.FwdFromUser;
@@ -213,33 +215,14 @@ namespace Unigram.Controls.Messages
             Context.KeyboardButtonExecute(e.Button, ViewModel);
         }
 
-        protected void ToolTip_Opened(object sender, RoutedEventArgs e)
-        {
-            var tooltip = sender as ToolTip;
-            if (tooltip != null && ViewModel != null)
-            {
-                var date = Convert.DateTime(ViewModel.Date);
-                var text = $"{DateTimeFormatter.LongDate.Format(date)} {DateTimeFormatter.LongTime.Format(date)}";
-
-                if (ViewModel.HasEditDate)
-                {
-                    var edit = Convert.DateTime(ViewModel.EditDate.Value);
-                    text += $"\r\nEdited: {DateTimeFormatter.LongDate.Format(edit)} {DateTimeFormatter.LongTime.Format(edit)}";
-                }
-
-                tooltip.Content = text;
-            }
-        }
-
-        protected void Reply_Tapped(object sender, TappedRoutedEventArgs e)
+        protected void Reply_Click(object sender, RoutedEventArgs e)
         {
             Context.MessageOpenReplyCommand.Execute(ViewModel);
         }
 
         protected void MessageControl_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            Point point;
-            if (args.TryGetPosition(sender, out point))
+            if (args.TryGetPosition(sender, out Point point))
             {
                 var text = sender as RichTextBlock;
                 var hyperlink = text.GetHyperlinkFromPoint(point);
@@ -259,7 +242,7 @@ namespace Unigram.Controls.Messages
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
 
-        private StackPanel _statusControl;
+        private FrameworkElement _statusControl;
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -328,7 +311,7 @@ namespace Unigram.Controls.Messages
             Calculate:
 
             if (_statusControl == null)
-                _statusControl = FindName("StatusControl") as StackPanel;
+                _statusControl = FindName("StatusControl") as FrameworkElement;
             if (_statusControl.DesiredSize.IsEmpty)
                 _statusControl.Measure(availableSize);
 

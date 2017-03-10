@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Account
 {
 	/// <summary>
-	/// RCP method account.getWallPapers
+	/// RCP method account.getWallPapers.
+	/// Returns <see cref="Telegram.Api.TL.TLVector<TLWallPaper>"/>
 	/// </summary>
 	public partial class TLAccountGetWallPapers : TLObject
 	{

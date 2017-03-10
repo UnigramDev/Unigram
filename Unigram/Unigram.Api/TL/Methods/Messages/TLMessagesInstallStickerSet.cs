@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
-	/// RCP method messages.installStickerSet
+	/// RCP method messages.installStickerSet.
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesStickerSetInstallResultBase"/>
 	/// </summary>
 	public partial class TLMessagesInstallStickerSet : TLObject
 	{

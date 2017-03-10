@@ -16,12 +16,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="celt\arm\arm_celt_map.c">
-      <Filter>celt</Filter>
-    </ClCompile>
-    <ClCompile Include="celt\arm\armcpu.c">
-      <Filter>celt</Filter>
-    </ClCompile>
     <ClCompile Include="celt\bands.c">
       <Filter>celt</Filter>
     </ClCompile>
@@ -37,22 +31,10 @@
     <ClCompile Include="celt\celt_lpc.c">
       <Filter>celt</Filter>
     </ClCompile>
-    <ClCompile Include="celt\arm\celt_ne10_fft.c">
-      <Filter>celt</Filter>
-    </ClCompile>
-    <ClCompile Include="celt\arm\celt_ne10_mdct.c">
-      <Filter>celt</Filter>
-    </ClCompile>
-    <ClCompile Include="celt\arm\celt_neon_intr.c">
-      <Filter>celt</Filter>
-    </ClCompile>
     <ClCompile Include="celt\cwrs.c">
       <Filter>celt</Filter>
     </ClCompile>
     <ClCompile Include="celt\dump_modes\dump_modes.c">
-      <Filter>celt</Filter>
-    </ClCompile>
-    <ClCompile Include="celt\dump_modes\dump_modes_arm_ne10.c">
       <Filter>celt</Filter>
     </ClCompile>
     <ClCompile Include="celt\entcode.c">
@@ -104,9 +86,6 @@
       <Filter>silk</Filter>
     </ClCompile>
     <ClCompile Include="silk\float\apply_sine_window_FLP.c">
-      <Filter>silk</Filter>
-    </ClCompile>
-    <ClCompile Include="silk\arm\arm_silk_map.c">
       <Filter>silk</Filter>
     </ClCompile>
     <ClCompile Include="silk\fixed\autocorr_FIX.c">
@@ -328,9 +307,6 @@
     <ClCompile Include="silk\NSQ_del_dec.c">
       <Filter>silk</Filter>
     </ClCompile>
-    <ClCompile Include="silk\arm\NSQ_neon.c">
-      <Filter>silk</Filter>
-    </ClCompile>
     <ClCompile Include="silk\fixed\pitch_analysis_core_FIX.c">
       <Filter>silk</Filter>
     </ClCompile>
@@ -498,6 +474,21 @@
     <ClCompile Include="opus_multistream_encoder.c" />
     <ClCompile Include="repacketizer.c" />
     <ClCompile Include="repacketizer_demo.c" />
+    <ClCompile Include="celt\x86\celt_lpc_sse.c" />
+    <ClCompile Include="celt\x86\pitch_sse.c" />
+    <ClCompile Include="celt\x86\pitch_sse2.c" />
+    <ClCompile Include="celt\x86\pitch_sse4_1.c" />
+    <ClCompile Include="celt\x86\vq_sse2.c" />
+    <ClCompile Include="celt\x86\x86cpu.c" />
+    <ClCompile Include="celt\x86\x86_celt_map.c" />
+    <ClCompile Include="silk\fixed\x86\burg_modified_FIX_sse.c" />
+    <ClCompile Include="silk\fixed\x86\prefilter_FIX_sse.c" />
+    <ClCompile Include="silk\fixed\x86\vector_ops_FIX_sse.c" />
+    <ClCompile Include="silk\x86\NSQ_del_dec_sse.c" />
+    <ClCompile Include="silk\x86\NSQ_sse.c" />
+    <ClCompile Include="silk\x86\VAD_sse.c" />
+    <ClCompile Include="silk\x86\VQ_WMat_EC_sse.c" />
+    <ClCompile Include="silk\x86\x86_silk_map.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="celt\_kiss_fft_guts.h">
@@ -692,22 +683,11 @@
     <ClInclude Include="opus_private.h" />
     <ClInclude Include="tansig_table.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="celt\arm\armcpu.h" />
-    <ClInclude Include="celt\arm\fft_arm.h" />
-    <ClInclude Include="celt\arm\fixed_arm64.h" />
-    <ClInclude Include="celt\arm\fixed_armv4.h" />
-    <ClInclude Include="celt\arm\fixed_armv5e.h" />
-    <ClInclude Include="celt\arm\kiss_fft_armv4.h" />
-    <ClInclude Include="celt\arm\kiss_fft_armv5e.h" />
-    <ClInclude Include="celt\arm\mdct_arm.h" />
-    <ClInclude Include="celt\arm\pitch_arm.h" />
-    <ClInclude Include="celt\static_modes_fixed_arm_ne10.h" />
-    <ClInclude Include="celt\static_modes_float_arm_ne10.h" />
-    <ClInclude Include="silk\arm\macros_arm64.h" />
-    <ClInclude Include="silk\arm\macros_armv4.h" />
-    <ClInclude Include="silk\arm\macros_armv5e.h" />
-    <ClInclude Include="silk\arm\NSQ_neon.h" />
-    <ClInclude Include="silk\arm\SigProc_FIX_armv4.h" />
-    <ClInclude Include="silk\arm\SigProc_FIX_armv5e.h" />
+    <ClInclude Include="celt\x86\celt_lpc_sse.h" />
+    <ClInclude Include="celt\x86\pitch_sse.h" />
+    <ClInclude Include="celt\x86\vq_sse.h" />
+    <ClInclude Include="celt\x86\x86cpu.h" />
+    <ClInclude Include="silk\x86\main_sse.h" />
+    <ClInclude Include="silk\x86\SigProc_FIX_sse.h" />
   </ItemGroup>
 </Project>

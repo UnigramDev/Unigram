@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Contacts
 {
 	/// <summary>
-	/// RCP method contacts.getTopPeers
+	/// RCP method contacts.getTopPeers.
+	/// Returns <see cref="Telegram.Api.TL.TLContactsTopPeersBase"/>
 	/// </summary>
 	public partial class TLContactsGetTopPeers : TLObject
 	{

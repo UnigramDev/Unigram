@@ -28,7 +28,7 @@ namespace Unigram.Views.Chats
         {
             this.InitializeComponent();
 
-            DataContext = UnigramContainer.Instance.ResolveType<ChatDetailsViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<ChatDetailsViewModel>();
 
             SizeChanged += OnSizeChanged;
         }

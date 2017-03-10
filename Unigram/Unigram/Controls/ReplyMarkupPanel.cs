@@ -152,12 +152,15 @@ namespace Unigram.Controls
 
                         if (row.Buttons[i] is TLKeyboardButtonUrl)
                         {
-                            button.Glyph = "\uE12B";
                             button.Glyph = "\uE143";
                         }
                         else if (row.Buttons[i] is TLKeyboardButtonSwitchInline)
                         {
                             button.Glyph = "\uE248";
+                        }
+                        else if (row.Buttons[i] is TLKeyboardButton && IsInline)
+                        {
+                            button.Glyph = "\uE15F";
                         }
 
                         Grid.SetColumn(button, i);

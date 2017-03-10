@@ -20,12 +20,12 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Messages
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MessageReference : UserControl
+    public sealed partial class MessageReference : HyperlinkButton
     {
         public MessageReference()
         {
@@ -403,7 +403,7 @@ namespace Unigram.Controls
                     MessageLabel.Text += photoMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(photoMedia, "thumbnail");
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(photoMedia, true);
             }
 
             return true;
@@ -461,7 +461,7 @@ namespace Unigram.Controls
             {
                 ServiceLabel.Text = $"🎮 {gameMedia.Game.Title}";
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(gameMedia.Game.Photo, "thumbnail");
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(gameMedia.Game.Photo, true);
             }
 
             return true;
@@ -576,7 +576,7 @@ namespace Unigram.Controls
                     ServiceLabel.Text = string.Empty;
                     MessageLabel.Text = message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
 
-                    ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(webPage.Photo, "thumbnail");
+                    ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(webPage.Photo, true);
                 }
                 else
                 {
@@ -608,7 +608,7 @@ namespace Unigram.Controls
                     MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, "thumbnail");
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
             }
 
             return true;
@@ -635,7 +635,7 @@ namespace Unigram.Controls
                     MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, "thumbnail");
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
             }
 
             return true;
@@ -690,7 +690,7 @@ namespace Unigram.Controls
                         if (ThumbRoot != null)
                             ThumbRoot.Visibility = Visibility.Visible;
 
-                        ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, "thumbnail");
+                        ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
                     }
                     else
                     {
@@ -743,7 +743,7 @@ namespace Unigram.Controls
             var action = message.Action as TLMessageActionChatEditPhoto;
             if (action != null)
             {
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(action.Photo, "thumbnail");
+                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(action.Photo, true);
             }
 
             return true;
@@ -790,22 +790,22 @@ namespace Unigram.Controls
             return from;
         }
 
-        #region Cursor
+        //#region Cursor
 
-        // Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 1);
+        //// Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 1);
 
-        protected override void OnPointerEntered(PointerRoutedEventArgs e)
-        {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 1);
-            base.OnPointerEntered(e);
-        }
+        //protected override void OnPointerEntered(PointerRoutedEventArgs e)
+        //{
+        //    Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 1);
+        //    base.OnPointerEntered(e);
+        //}
 
-        protected override void OnPointerExited(PointerRoutedEventArgs e)
-        {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
-            base.OnPointerExited(e);
-        }
+        //protected override void OnPointerExited(PointerRoutedEventArgs e)
+        //{
+        //    Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
+        //    base.OnPointerExited(e);
+        //}
 
-        #endregion
+        //#endregion
     }
 }

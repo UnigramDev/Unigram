@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods
 {
 	/// <summary>
-	/// RCP method get_future_salts
+	/// RCP method get_future_salts.
+	/// Returns <see cref="Telegram.Api.TL.TLFutureSalts"/>
 	/// </summary>
 	public partial class TLGetFutureSalts : TLObject
 	{

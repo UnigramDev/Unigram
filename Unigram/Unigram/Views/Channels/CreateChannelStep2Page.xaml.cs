@@ -29,7 +29,7 @@ namespace Unigram.Views.Channels
         public CreateChannelStep2Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<CreateChannelStep2ViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<CreateChannelStep2ViewModel>();
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

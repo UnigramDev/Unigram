@@ -27,7 +27,7 @@ namespace Unigram.Views.Channels
         public CreateChannelStep3Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<CreateChannelStep3ViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<CreateChannelStep3ViewModel>();
             View.Attach();
         }
     }

@@ -36,7 +36,7 @@ namespace Unigram.Converters
             var chat = value as TLChatBase;
             if (chat != null)
             {
-                var words = chat.FullName.Split(new char[] { ' ' });
+                var words = chat.DisplayName.Split(new char[] { ' ' });
                 if (words.Length > 0)
                 {
                     word1 = words[0];

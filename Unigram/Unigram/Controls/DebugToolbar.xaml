@@ -1,0 +1,34 @@
+﻿<UserControl
+    x:Class="Unigram.Controls.DebugToolbar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="32"
+    d:DesignWidth="400"
+    Loaded="CustomTitleBar_Loaded"
+    Unloaded="CustomTitleBar_Unloaded">
+
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="TitleBar" VerticalAlignment="Top" Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}" Canvas.ZIndex="3">
+            <Rectangle x:Name="BackgroundElement" Fill="{ThemeResource TelegramBackgroundTitlebarBrush}" />
+            <Grid Padding="{x:Bind CoreTitleBarPadding, Mode=OneWay}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <local:GlyphButton x:Name="Play" Visibility="Collapsed" Click="Play_Click" Height="32" Glyph="&#xE102;"/>
+                <local:GlyphButton x:Name="Pause" Click="Pause_Click" Height="32" Glyph="&#xE103;" Grid.Column="1"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

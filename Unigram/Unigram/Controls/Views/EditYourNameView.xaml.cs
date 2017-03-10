@@ -26,7 +26,7 @@ namespace Unigram.Controls.Views
         public EditYourNameView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<SettingsEditNameViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsEditNameViewModel>();
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

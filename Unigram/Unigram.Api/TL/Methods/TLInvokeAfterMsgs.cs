@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods
 {
 	/// <summary>
-	/// RCP method invokeAfterMsgs
+	/// RCP method invokeAfterMsgs.
+	/// Returns <see cref="Telegram.Api.TL.TLObject"/>
 	/// </summary>
 	public partial class TLInvokeAfterMsgs : TLObject
 	{

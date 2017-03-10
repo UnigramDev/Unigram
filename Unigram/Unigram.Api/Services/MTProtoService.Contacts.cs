@@ -11,7 +11,7 @@ namespace Telegram.Api.Services
         {
             var obj = new TLContactsResetTopPeerRating { Category = category, Peer = peer };
 
-            SendInformativeMessage<bool>("contacts.resetTopPeerRating", obj, callback.SafeInvoke, faultCallback);
+            SendInformativeMessage<bool>("contacts.resetTopPeerRating", obj, callback, faultCallback);
         }
 
         public void GetTopPeersCallback(TLContactsGetTopPeers.Flag flags, int offset, int limit, int hash, Action<TLContactsTopPeersBase> callback, Action<TLRPCError> faultCallback = null)
@@ -28,12 +28,12 @@ namespace Telegram.Api.Services
                         {
                             topPeers.Users = tuple.Item1;
                             topPeers.Chats = tuple.Item2;
-                            callback.SafeInvoke(result);
+                            callback?.Invoke(result);
                         });
                 }
                 else
                 {
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 }
             }, faultCallback);
         }
@@ -50,7 +50,7 @@ namespace Telegram.Api.Services
                         {
                             result.Users = tuple.Item1;
                             result.Chats = tuple.Item2;
-                            callback.SafeInvoke(result);
+                            callback?.Invoke(result);
                         });
                 }, 
                 faultCallback);

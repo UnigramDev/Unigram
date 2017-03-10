@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods
 {
 	/// <summary>
-	/// RCP method invokeWithoutUpdates
+	/// RCP method invokeWithoutUpdates.
+	/// Returns <see cref="Telegram.Api.TL.TLObject"/>
 	/// </summary>
 	public partial class TLInvokeWithoutUpdates : TLObject
 	{

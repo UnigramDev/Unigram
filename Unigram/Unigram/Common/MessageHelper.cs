@@ -39,12 +39,12 @@ namespace Unigram.Common
     {
         #region Message
 
-        public static TLMessageBase GetMessage(DependencyObject obj)
+        public static TLMessage GetMessage(DependencyObject obj)
         {
-            return (TLMessageBase)obj.GetValue(MessageProperty);
+            return (TLMessage)obj.GetValue(MessageProperty);
         }
 
-        public static void SetMessage(DependencyObject obj, TLMessageBase value)
+        public static void SetMessage(DependencyObject obj, TLMessage value)
         {
             // TODO: shitty hack!!!
             var oldValue = obj.GetValue(MessageProperty);
@@ -57,17 +57,17 @@ namespace Unigram.Common
         }
 
         public static readonly DependencyProperty MessageProperty =
-            DependencyProperty.RegisterAttached("Message", typeof(TLMessageBase), typeof(MessageHelper), new PropertyMetadata(null, OnMessageChanged));
+            DependencyProperty.RegisterAttached("Message", typeof(TLMessage), typeof(MessageHelper), new PropertyMetadata(null, OnMessageChanged));
 
         private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as RichTextBlock;
-            var newValue = e.NewValue as TLMessageBase;
+            var newValue = e.NewValue as TLMessage;
 
             OnMessageChanged(sender, newValue);
         }
 
-        private static void OnMessageChanged(RichTextBlock sender, TLMessageBase newValue)
+        private static void OnMessageChanged(RichTextBlock sender, TLMessage newValue)
         {
             sender.IsTextSelectionEnabled = false;
 
@@ -437,8 +437,7 @@ namespace Unigram.Common
                 var lastIndex = 0;
                 foreach (Match match in matches)
                 {
-                    var index = 0;
-                    var isCommand = IsValidCommand(match.Value, out index);
+                    var isCommand = IsValidCommand(match.Value, out int index);
 
                     if ((match.Index + index) - lastIndex > 0)
                     {
@@ -637,7 +636,7 @@ namespace Unigram.Common
             else if (type == TLType.MessageEntityHashtag)
             {
                 //await UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchAsync((string)data);
-                UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
+                UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
             }
             else
             {
@@ -670,8 +669,7 @@ namespace Unigram.Common
                             navigation = "http://" + navigation;
                         }
 
-                        Uri uri;
-                        if (Uri.TryCreate(navigation, UriKind.Absolute, out uri))
+                        if (Uri.TryCreate(navigation, UriKind.Absolute, out Uri uri))
                         {
                             await Launcher.LaunchUriAsync(uri);
                         }
@@ -794,13 +792,11 @@ namespace Unigram.Common
             {
                 var query = url.ParseQueryString();
 
-                PageKind pageKind;
-                var accessToken = GetAccessToken(query, out pageKind);
+                var accessToken = GetAccessToken(query, out PageKind pageKind);
                 var post = GetPost(query);
                 var result = url.StartsWith("https://") ? url : ("https://" + url);
 
-                Uri uri;
-                if (Uri.TryCreate(result, UriKind.Absolute, out uri))
+                if (Uri.TryCreate(result, UriKind.Absolute, out Uri uri))
                 {
                     if (uri.Segments.Length >= 2)
                     {
@@ -842,8 +838,7 @@ namespace Unigram.Common
                     var channel = InMemoryCacheService.Current.GetChannel(username) as TLChannel;
                     if (channel != null && channel.HasAccessHash)
                     {
-                        int postId;
-                        if (int.TryParse(post, out postId))
+                        if (int.TryParse(post, out int postId))
                         {
                             service.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)new TLPeerChannel { ChannelId = channel.Id }, postId));
                         }
@@ -867,8 +862,7 @@ namespace Unigram.Common
                         var peerChannel = response.Result.Peer as TLPeerChannel;
                         if (peerChannel != null)
                         {
-                            int postId;
-                            if (int.TryParse(post, out postId))
+                            if (int.TryParse(post, out int postId))
                             {
                                 service.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)peerChannel, postId));
                             }
@@ -945,7 +939,7 @@ namespace Unigram.Common
 
         private static async void NavigateToInviteLink(string link)
         {
-            var protoService = UnigramContainer.Instance.ResolveType<IMTProtoService>();
+            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
             var response = await protoService.CheckChatInviteAsync(link);
             if (response.IsSucceeded)
             {
@@ -1170,8 +1164,7 @@ namespace Unigram.Common
             {
                 foreach (Match match in matches)
                 {
-                    var index = 0;
-                    var isCommand = IsValidCommand(match.Value, out index);
+                    var isCommand = IsValidCommand(match.Value, out int index);
 
                     var navstr = match.Value.Substring(index);
                     if (navstr.StartsWith("@"))

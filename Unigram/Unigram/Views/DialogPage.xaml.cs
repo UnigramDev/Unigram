@@ -13,6 +13,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Core.Models;
@@ -53,7 +54,7 @@ namespace Unigram.Views
         public DialogPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Instance.ResolveType<DialogViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
 
             CheckMessageBoxEmpty();
 
@@ -307,6 +308,37 @@ namespace Unigram.Views
 
         }
 
+        private async void Reply_Click(object sender, RoutedEventArgs e)
+        {
+            var reference = sender as MessageReference;
+            var message = reference.Message;
+
+            if (message != null)
+            {
+                if (message is ReplyInfo replyInfo)
+                {
+                    message = replyInfo.Reply;
+                }
+
+                if (message is TLMessagesContainter container)
+                {
+                    if (container.EditMessage != null)
+                    {
+                        message = container.EditMessage;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                if (message is TLMessageCommonBase messageCommon)
+                {
+                    await ViewModel.LoadMessageSliceAsync(null, messageCommon.Id);
+                }
+            }
+        }
+
         private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
         {
             ViewModel.KeyboardButtonExecute(e.Button, null);
@@ -315,6 +347,11 @@ namespace Unigram.Views
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
             StickersPanel.Visibility = StickersPanel.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+
+            if (StickersPanel.Visibility == Visibility.Visible)
+            {
+                ViewModel.OpenStickersCommand.Execute(null);
+            }
         }
 
         private void ProfileBubble_Click(object sender, RoutedEventArgs e)
@@ -541,6 +578,13 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.SendStickerCommand.Execute(e.ClickedItem);
+            ViewModel.StickerPack = null;
+            txtMessage.Text = null;
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading

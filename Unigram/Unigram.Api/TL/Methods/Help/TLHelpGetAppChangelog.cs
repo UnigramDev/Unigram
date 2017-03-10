@@ -4,7 +4,8 @@ using System;
 namespace Telegram.Api.TL.Methods.Help
 {
 	/// <summary>
-	/// RCP method help.getAppChangelog
+	/// RCP method help.getAppChangelog.
+	/// Returns <see cref="Telegram.Api.TL.TLHelpAppChangelogBase"/>
 	/// </summary>
 	public partial class TLHelpGetAppChangelog : TLObject
 	{
