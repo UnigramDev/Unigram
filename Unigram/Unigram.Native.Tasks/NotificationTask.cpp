@@ -261,15 +261,6 @@ String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
 						<< secretLL
 						<< L".jpg";
 
-					//std::wstringstream almost;
-					//almost << L"ms-appdata:///local/temp/"
-					//	<< volumeLL
-					//	<< L"_"
-					//	<< local_id->Data()
-					//	<< L"_"
-					//	<< secretLL
-					//	<< L".jpg";
-
 					return ref new String(almost.str().c_str());
 				}
 			}
