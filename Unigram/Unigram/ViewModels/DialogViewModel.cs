@@ -2068,8 +2068,6 @@ namespace Unigram.ViewModels
                 }
             });
 
-            return;
-
             Execute.BeginOnThreadPool(async () =>
             {
                 var gifs = await _gifsService.GetSavedGifs();
