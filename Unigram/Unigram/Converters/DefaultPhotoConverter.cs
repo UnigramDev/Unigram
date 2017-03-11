@@ -433,10 +433,10 @@ namespace Unigram.Converters
                     //    }
                     //}
 
-                    var photoSizeBase = photo.Full;
+                    var photoSizeBase = tLPhoto2.Full;
                     if (thumbnail)
                     {
-                        photoSizeBase = photo.Thumb;
+                        photoSizeBase = tLPhoto2.Thumb;
                     }
 
                     var photoSize = photoSizeBase as TLPhotoSize;

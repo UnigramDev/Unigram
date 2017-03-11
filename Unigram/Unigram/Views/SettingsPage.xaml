@@ -304,7 +304,7 @@
                     </Grid.ColumnDefinitions>
                     <controls:ProfilePictureView Command="{Binding PhotoCommand}" Source="{x:Bind ViewModel.Self, Converter={StaticResource DefaultPhotoConverter}}" Height="48" Width="48" Margin="12" Grid.RowSpan="2"/>
 
-                    <TextBlock Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+                    <TextBlock Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
                     <TextBlock Text="online" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
                 </Grid>
                 <Grid Grid.Row="1">

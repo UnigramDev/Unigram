@@ -955,6 +955,7 @@ namespace Unigram.ViewModels
                             var with = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (ITLDialogWith)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
                             var item = new TLDialog
                             {
+                                IsSearchResult = true,
                                 TopMessage = message.Id,
                                 TopMessageRandomId = message.RandomId,
                                 TopMessageItem = message,

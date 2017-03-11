@@ -142,7 +142,7 @@ namespace Unigram.ViewModels
                 var user = getUser.Invoke(typingUsers[0].Item1) as TLUser;
                 if (user == null)
                 {
-                    getFullInfoAction.SafeInvoke(peer);
+                    getFullInfoAction?.Invoke(peer);
                     return null;
                 }
 
@@ -210,7 +210,7 @@ namespace Unigram.ViewModels
 
                 if (missing.Count > 0)
                 {
-                    getFullInfoAction.SafeInvoke(peer);
+                    getFullInfoAction?.Invoke(peer);
                     return null;
                 }
 

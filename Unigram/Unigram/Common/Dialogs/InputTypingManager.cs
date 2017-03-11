@@ -54,11 +54,11 @@ namespace Unigram.Common.Dialogs
             if (typing.Count > 0)
             {
                 StartTypingTimer((int)(max - now).TotalMilliseconds);
-                _typingCallback.SafeInvoke(typing);
+                _typingCallback?.Invoke(typing);
                 return;
             }
 
-            _callback.SafeInvoke();
+            _callback?.Invoke();
         }
 
         public void RemoveTypingUser(int userId)
@@ -80,11 +80,11 @@ namespace Unigram.Common.Dialogs
 
             if (typing.Count > 0)
             {
-                _typingCallback.SafeInvoke(typing);
+                _typingCallback?.Invoke(typing);
                 return;
             }
 
-            _callback.SafeInvoke();
+            _callback?.Invoke();
         }
 
         public void Start()
@@ -160,12 +160,12 @@ namespace Unigram.Common.Dialogs
             if (typing.Count > 0)
             {
                 StartTypingTimer((int)(max - now).TotalMilliseconds);
-                _typingCallback.SafeInvoke(typing);
+                _typingCallback?.Invoke(typing);
                 return;
             }
 
             StopTypingTimer();
-            _callback.SafeInvoke();
+            _callback?.Invoke();
         }
     }
 }

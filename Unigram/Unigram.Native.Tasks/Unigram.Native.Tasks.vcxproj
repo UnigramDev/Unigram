@@ -209,7 +209,6 @@
     <ClInclude Include="DirectXEx.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="NotificationTask.h" />
-    <ClInclude Include="PlaceholderImageSource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -221,7 +220,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="NotificationTask.cpp" />
-    <ClCompile Include="PlaceholderImageSource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="..\unigram.tasks\strings\de\resources.resw" />

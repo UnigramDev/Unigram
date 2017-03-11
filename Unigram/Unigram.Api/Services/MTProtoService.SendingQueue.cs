@@ -163,7 +163,7 @@ namespace Telegram.Api.Services
                     || error.CodeEquals(TLErrorCode.INTERNAL)))
             {
                 RemoveFromQueue(item);
-                item.FaultQueueCallback.SafeInvoke(error);
+                item.FaultQueueCallback?.Invoke(error);
             }
         }
 
@@ -219,7 +219,7 @@ namespace Telegram.Api.Services
                     //}
 
 
-                    //item.FastCallback.SafeInvoke();
+                    //item.FastCallback?.Invoke();
                 },
                 error =>
                 {
@@ -269,7 +269,7 @@ namespace Telegram.Api.Services
             {
                 foreach (var item in itemsToRemove)
                 {
-                    item.FaultQueueCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.CleanupQueue" });
+                    item.FaultQueueCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.CleanupQueue" });
                 }
             });
         }
@@ -315,7 +315,7 @@ namespace Telegram.Api.Services
             {
                 foreach (var item in itemsToRemove)
                 {
-                    item.FaultQueueCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.CleanupQueue" });
+                    item.FaultQueueCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "MTProtoService.CleanupQueue" });
                 }
             });
         }
@@ -534,7 +534,7 @@ namespace Telegram.Api.Services
 
         public void GetSyncErrorsAsync(Action<ExceptionInfo, IList<ExceptionInfo>> callback)
         {
-            Helpers.Execute.BeginOnThreadPool(() => callback.SafeInvoke(_cacheService.LastSyncMessageException, _updatesService.SyncDifferenceExceptions));
+            Helpers.Execute.BeginOnThreadPool(() => callback?.Invoke(_cacheService.LastSyncMessageException, _updatesService.SyncDifferenceExceptions));
         }
 
         public void GetSendingQueueInfoAsync(Action<string> callback)
@@ -584,7 +584,7 @@ namespace Telegram.Api.Services
                     }
                 }
 
-                callback.SafeInvoke(info.ToString());
+                callback?.Invoke(info.ToString());
             });
         }
 

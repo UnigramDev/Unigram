@@ -1,0 +1,23 @@
+﻿<local:HackedContentPresenter
+    x:Class="Unigram.Controls.Messages.MessageStatusControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:Unigram.Controls.Messages"
+    mc:Ignorable="d"
+    d:DesignHeight="24"
+    d:DesignWidth="400"
+    Background="Transparent"
+    Foreground="{ThemeResource MessageSubtleLabelBrush}"
+    VerticalAlignment="Bottom" 
+    HorizontalAlignment="Right"
+    Padding="0,0,6,0">
+
+    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}">
+        <ToolTipService.ToolTip>
+            <ToolTip Opened="ToolTip_Opened"/>
+        </ToolTipService.ToolTip>
+        <Run x:Name="ViewsGlyph" FontSize="10" FontFamily="{ThemeResource TelegramThemeFontFamily}"/><Run Text="{x:Bind ConvertViews(ViewModel, ViewModel.Views), Mode=OneWay}"/><Run Text="{x:Bind ConvertEdit(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay}" FontStyle="Italic"/><Run Text="{x:Bind Convert.Date(ViewModel.Date)}"/><Run Text="{x:Bind ConvertState(ViewModel.IsOut, ViewModel.State), Mode=OneWay}" FontSize="10" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
+    </TextBlock>
+</local:HackedContentPresenter>

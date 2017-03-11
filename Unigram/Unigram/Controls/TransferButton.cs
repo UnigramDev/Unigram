@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class TransferButton : GlyphHyperlinkButton
+    public class TransferButton : GlyphButton
     {
         #region Media
 

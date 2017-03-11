@@ -72,7 +72,7 @@ namespace Telegram.Logs
 
             str = string.Format("{0} {1}{2}", timestamp, str, Environment.NewLine);
             FileUtils.Write(_fileSyncRoot, DirectoryName, FileName, str);
-            callback.SafeInvoke();
+            callback?.Invoke();
         }
 
         private const string DirectoryName = "Logs";
@@ -88,7 +88,7 @@ namespace Telegram.Logs
             {
                 FileUtils.CopyLog(_fileSyncRoot, DirectoryName, FileName, fileName, IsEnabled);
 
-                callback.SafeInvoke(fileName);
+                callback?.Invoke(fileName);
             });
         }
 
@@ -98,7 +98,7 @@ namespace Telegram.Logs
             {
                 FileUtils.Clear(_fileSyncRoot, DirectoryName);
 
-                callback.SafeInvoke();
+                callback?.Invoke();
             });
         }
     }

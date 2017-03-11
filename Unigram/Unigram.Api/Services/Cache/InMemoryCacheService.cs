@@ -898,7 +898,7 @@ namespace Telegram.Api.Services.Cache
                 () =>
                 {
                     var history = GetHistory(peer, limit);
-                    callback.SafeInvoke(history);
+                    callback?.Invoke(history);
                 });
         }
 
@@ -911,7 +911,7 @@ namespace Telegram.Api.Services.Cache
                     {
                         if (_database != null) _database.Clear();
                     }
-                    callback.SafeInvoke();
+                    callback?.Invoke();
                 });
         }
 
@@ -1801,7 +1801,7 @@ namespace Telegram.Api.Services.Cache
 
             //Debug.WriteLine("messages.getDialogs after commit elapsed=" + stopwatch.Elapsed);
 
-            callback.SafeInvoke(result);
+            callback?.Invoke(result);
         }
 
         public void SyncChannelDialogs(TLMessagesDialogsBase dialogs, Action<TLMessagesDialogsBase> callback)
@@ -1834,7 +1834,7 @@ namespace Telegram.Api.Services.Cache
             _database.Commit();
 
             TLUtils.WritePerformance("SyncDialogs time: " + timer.Elapsed);
-            callback.SafeInvoke(result);
+            callback?.Invoke(result);
         }
 
         private void MergeReadMaxIdAndNotifySettings(TLMessagesDialogsBase dialogs)
@@ -2115,7 +2115,7 @@ namespace Telegram.Api.Services.Cache
 
             //TLUtils.WritePerformance("SyncUserFull time: " + timer.Elapsed);
             
-            callback.SafeInvoke(userFull);
+            callback?.Invoke(userFull);
         }
 
 
@@ -2389,7 +2389,7 @@ namespace Telegram.Api.Services.Cache
 
         //    _database.Commit();
 
-        //    callback.SafeInvoke(chatResult);
+        //    callback?.Invoke(chatResult);
         //}
 
         //public void SyncEncryptedMessagesInternal(int? qts, TLVector<TLEncryptedMessageBase> messages, TLVector<TLEncryptedMessageBase> result, IList<ExceptionInfo> exceptions = null)
@@ -2689,7 +2689,7 @@ namespace Telegram.Api.Services.Cache
 
             _database.Commit();
 
-            callback.SafeInvoke(chats);
+            callback?.Invoke(chats);
         }
 
         public void SyncChat(TLMessagesChatFull messagesChatFull, Action<TLMessagesChatFull> callback)
@@ -2725,7 +2725,7 @@ namespace Telegram.Api.Services.Cache
 
             //TLUtils.WritePerformance("SyncChatFull time: " + timer.Elapsed);
 
-            callback.SafeInvoke(messagesChatFull);
+            callback?.Invoke(messagesChatFull);
         }
 
         public void SyncChats(TLVector<TLChatBase> chats, Action<TLVector<TLChatBase>> callback)
@@ -2872,7 +2872,7 @@ namespace Telegram.Api.Services.Cache
 
             _database.Commit();
 
-            callback.SafeInvoke(users);
+            callback?.Invoke(users);
         }
 
         public void SyncContacts(TLContactsImportedContacts contacts, Action<TLContactsImportedContacts> callback)
@@ -3262,11 +3262,11 @@ namespace Telegram.Api.Services.Cache
                     var disabledFeature = disabledFeatures.FirstOrDefault(x => string.Equals(x.Feature.ToString(), featureKey, StringComparison.OrdinalIgnoreCase));
                     if (disabledFeature != null)
                     {
-                        faultCallback.SafeInvoke(disabledFeature);
+                        faultCallback?.Invoke(disabledFeature);
                         return;
                     }
 
-                    callback.SafeInvoke();
+                    callback?.Invoke();
                 }
             }
         }
@@ -3278,11 +3278,11 @@ namespace Telegram.Api.Services.Cache
                 var config23 = config as TLConfig;
                 if (config23 != null)
                 {
-                    callback.SafeInvoke(count > config23.ChatBigSize);
+                    callback?.Invoke(count > config23.ChatBigSize);
                     return;
                 }
 
-                callback.SafeInvoke(false);
+                callback?.Invoke(false);
             });
         }
 
@@ -3305,7 +3305,7 @@ namespace Telegram.Api.Services.Cache
                         {
                             featureKey = result ? bigChatKey : chatKey;
 
-                            callback.SafeInvoke(config, featureKey);
+                            callback?.Invoke(config, featureKey);
                         });
 
                         return;
@@ -3319,7 +3319,7 @@ namespace Telegram.Api.Services.Cache
                         {
                             featureKey = result ? bigChatKey : chatKey;
 
-                            callback.SafeInvoke(config, featureKey);
+                            callback?.Invoke(config, featureKey);
                         });
 
                         return;
@@ -3328,11 +3328,11 @@ namespace Telegram.Api.Services.Cache
                     if (user != null)
                     {
                         featureKey = pmKey;
-                        callback.SafeInvoke(config, featureKey);
+                        callback?.Invoke(config, featureKey);
                         return;
                     }
 
-                    callback.SafeInvoke(config, featureKey);
+                    callback?.Invoke(config, featureKey);
                 });
         }
 
@@ -3368,7 +3368,7 @@ namespace Telegram.Api.Services.Cache
                 _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
             }
 #endif
-            callback.SafeInvoke(_config);
+            callback?.Invoke(_config);
         }
 
         public void SetConfig(TLConfig config)
@@ -3458,7 +3458,7 @@ namespace Telegram.Api.Services.Cache
                 {
                     _database.Compress();
 
-                    callback.SafeInvoke();
+                    callback?.Invoke();
                 });
             }
         }

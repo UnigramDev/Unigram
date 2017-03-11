@@ -438,7 +438,7 @@ namespace Telegram.Api.Transport
 #if LOG_REGISTRATION
                     TLUtils.WriteLog(String.Format("Socket.ClearNonEncryptedHistory {0} item {1}", Id, historyItem.Value.Caption));
 #endif
-                    historyItem.Value.FaultCallback.SafeInvoke(new TLRPCError { ErrorCode = 404, ErrorMessage = error.ToString() });
+                    historyItem.Value.FaultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = error.ToString() });
                 }
 
                 _nonEncryptedHistory.Clear();

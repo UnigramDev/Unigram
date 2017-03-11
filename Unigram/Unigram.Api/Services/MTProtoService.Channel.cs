@@ -21,7 +21,7 @@ namespace Telegram.Api.Services
         //            var chats = result as TLChats24;
         //            if (chats != null)
         //            {
-        //                _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), chats.Chats, tuple => callback.SafeInvoke(result));
+        //                _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), chats.Chats, tuple => callback?.Invoke(result));
         //            }
         //        },
         //        faultCallback);
@@ -52,7 +52,7 @@ namespace Telegram.Api.Services
                 var chats = result as TLMessagesChats;
                 if (chats != null)
                 {
-                    _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), chats.Chats, tuple => callback.SafeInvoke(result));
+                    _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), chats.Chats, tuple => callback?.Invoke(result));
                 }
             }, 
             faultCallback);
@@ -77,8 +77,8 @@ namespace Telegram.Api.Services
                     }
 
                     GetFullChannelCallback(channel.ToInputChannel(),
-                        messagesChatFull => callback.SafeInvoke(result),
-                        faultCallback.SafeInvoke);
+                        messagesChatFull => callback?.Invoke(result),
+                        faultCallback);
                 },
                 faultCallback);
         }
@@ -93,7 +93,7 @@ namespace Telegram.Api.Services
             {
                 _cacheService.SyncUsers(result.Users, r => { });
 
-                callback.SafeInvoke(result);
+                callback?.Invoke(result);
             }, 
             faultCallback);
         }
@@ -117,7 +117,7 @@ namespace Telegram.Api.Services
                         }
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -140,7 +140,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -150,7 +150,7 @@ namespace Telegram.Api.Services
             var obj = new TLChannelsEditAbout { Channel = channel.ToInputChannel(), About = about };
 
             const string caption = "channels.editAbout";
-            SendInformativeMessage<bool>(caption, obj, callback.SafeInvoke, faultCallback);
+            SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
         public void JoinChannelCallback(TLChannel channel, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
@@ -178,7 +178,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -208,7 +208,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -232,8 +232,8 @@ namespace Telegram.Api.Services
                     }
 
                     GetFullChannelCallback(channel.ToInputChannel(),
-                        messagesChatFull => callback.SafeInvoke(result),
-                        faultCallback.SafeInvoke);
+                        messagesChatFull => callback?.Invoke(result),
+                        faultCallback);
                 },
                 faultCallback);
         }
@@ -256,7 +256,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -281,7 +281,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -304,7 +304,7 @@ namespace Telegram.Api.Services
                     //    _updatesService.SetState(null, result.Pts, null, null, null, caption);
                     //}
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -334,7 +334,7 @@ namespace Telegram.Api.Services
                 "cnannels.getFullChannel", obj,
                 messagesChatFull =>
                 {
-                    _cacheService.SyncChat(messagesChatFull, result => callback.SafeInvoke(messagesChatFull));
+                    _cacheService.SyncChat(messagesChatFull, result => callback?.Invoke(messagesChatFull));
                 },
                 faultCallback);
         }
@@ -358,7 +358,7 @@ namespace Telegram.Api.Services
 
                     _cacheService.Commit();
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -381,7 +381,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 }, 
                 faultCallback);
         }
@@ -425,7 +425,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null, true);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -462,7 +462,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -496,7 +496,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -519,7 +519,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -550,7 +550,7 @@ namespace Telegram.Api.Services
                         ProcessUpdates(result, null, true);
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }
@@ -560,7 +560,7 @@ namespace Telegram.Api.Services
             var obj = new TLChannelsReportSpam { Channel = channel, UserId = userId, Id = id };
 
             const string caption = "channels.reportSpam";
-            SendInformativeMessage<bool>(caption, obj, callback.SafeInvoke, faultCallback);
+            SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
         public void DeleteUserHistoryCallback(TLChannel channel, TLInputUserBase userId, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null)
@@ -581,7 +581,7 @@ namespace Telegram.Api.Services
                         channel.Pts = multiChannelPts.Pts;
                     }
 
-                    callback.SafeInvoke(result);
+                    callback?.Invoke(result);
                 },
                 faultCallback);
         }

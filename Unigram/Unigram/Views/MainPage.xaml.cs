@@ -260,8 +260,14 @@ namespace Unigram.Views
                 var dialog = listView.SelectedItem as TLDialog;
                 if (dialog != null)
                 {
-
-                    MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), dialog.Peer);
+                    if (dialog.IsSearchResult)
+                    {
+                        MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(dialog.Peer, dialog.TopMessage));
+                    }
+                    else
+                    {
+                        MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), dialog.Peer);
+                    }
                 }
 
                 var user = listView.SelectedItem as TLUser;

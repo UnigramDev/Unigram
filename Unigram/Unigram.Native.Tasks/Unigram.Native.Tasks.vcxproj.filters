@@ -30,12 +30,10 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="NotificationTask.cpp" />
-    <ClCompile Include="PlaceholderImageSource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="NotificationTask.h" />
-    <ClInclude Include="PlaceholderImageSource.h" />
     <ClInclude Include="DirectXEx.h" />
   </ItemGroup>
   <ItemGroup>

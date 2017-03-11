@@ -288,7 +288,7 @@
                                                     </Ellipse.Fill>
                                                 </Ellipse>
 
-                                                <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                                <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                                 <TextBlock Text="{x:Bind Username}"
                                                             VerticalAlignment="Top" 
                                                             Style="{StaticResource CaptionTextBlockStyle}" 
@@ -331,7 +331,7 @@
                                                     </Ellipse.Fill>
                                                 </Ellipse>
 
-                                                <TextBlock Text="{x:Bind DisplayName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                                <TextBlock Text="{x:Bind DisplayName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                                 <TextBlock Text="{x:Bind Username}"
                                                             VerticalAlignment="Top" 
                                                             Style="{StaticResource CaptionTextBlockStyle}" 
@@ -362,7 +362,7 @@
                                                 <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
                                                     <TextBlock Foreground="White" Text="{x:Bind Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
                                                 </Grid>
-                                                <TextBlock Text="{x:Bind DisplayName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                                <TextBlock Text="{x:Bind DisplayName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                                 <TextBlock Text="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}"
                                                             VerticalAlignment="Top" 
                                                             Style="{StaticResource CaptionTextBlockStyle}" 
@@ -470,7 +470,7 @@
                                                 </Ellipse.Fill>
                                             </Ellipse>
 
-                                            <TextBlock Text="{x:Bind FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+                                            <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
                                             <TextBlock Text="{x:Bind Phone, Converter={StaticResource PhoneNumberFormatConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
                                         </Grid>
                                     </Button>
@@ -503,7 +503,7 @@
                                         </Ellipse.Fill>
                                     </Ellipse>
 
-                                    <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                    <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                     <TextBlock Text="{x:Bind Converter={StaticResource LastSeenConverter}}" 
                                                 x:Phase="1"
                                                 VerticalAlignment="Top" 

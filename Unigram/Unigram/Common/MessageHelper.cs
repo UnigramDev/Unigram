@@ -382,7 +382,7 @@ namespace Unigram.Common
                     object data = text.Substring(entity.Offset, entity.Length);
 
                     var hyper = new Hyperlink();
-                    hyper.Click += (s, args) => Hyperlink_Navigate(type, data);
+                    hyper.Click += (s, args) => Hyperlink_Navigate(type, data, message);
                     hyper.Inlines.Add(new Run { Text = (string)data });
                     hyper.Foreground = foreground;
                     paragraph.Inlines.Add(hyper);
@@ -406,7 +406,7 @@ namespace Unigram.Common
                     }
 
                     var hyper = new Hyperlink();
-                    hyper.Click += (s, args) => Hyperlink_Navigate(type, data);
+                    hyper.Click += (s, args) => Hyperlink_Navigate(type, data, message);
                     hyper.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
                     hyper.Foreground = foreground;
                     paragraph.Inlines.Add(hyper);
@@ -459,7 +459,7 @@ namespace Unigram.Common
                         }
 
                         var hyperlink = new Hyperlink();
-                        hyperlink.Click += (s, args) => Hyperlink_Legacy(match.Value.Substring(index));
+                        hyperlink.Click += (s, args) => Hyperlink_Legacy(match.Value.Substring(index), message as TLMessage);
                         hyperlink.UnderlineStyle = UnderlineStyle.Single;
                         hyperlink.Foreground = foreground;
                         hyperlink.Inlines.Add(new Run { Text = label });
@@ -529,7 +529,7 @@ namespace Unigram.Common
         //    }
         //}
 
-        private static void Hyperlink_Legacy(string navstr)
+        private static void Hyperlink_Legacy(string navstr, TLMessage message)
         {
             if (string.IsNullOrEmpty(navstr))
             {
@@ -538,27 +538,27 @@ namespace Unigram.Common
 
             if (navstr.StartsWith("@"))
             {
-                Hyperlink_Navigate(TLType.MessageEntityMention, navstr);
+                Hyperlink_Navigate(TLType.MessageEntityMention, navstr, message);
             }
             else if (navstr.StartsWith("#"))
             {
-                Hyperlink_Navigate(TLType.MessageEntityHashtag, navstr);
+                Hyperlink_Navigate(TLType.MessageEntityHashtag, navstr, message);
             }
             else if (navstr.StartsWith("/"))
             {
-                Hyperlink_Navigate(TLType.MessageEntityBotCommand, navstr);
+                Hyperlink_Navigate(TLType.MessageEntityBotCommand, navstr, message);
             }
             else if (!navstr.Contains("@"))
             {
-                Hyperlink_Navigate(TLType.MessageEntityUrl, navstr);
+                Hyperlink_Navigate(TLType.MessageEntityUrl, navstr, message);
             }
             else
             {
-                Hyperlink_Navigate(TLType.MessageEntityEmail, navstr);
+                Hyperlink_Navigate(TLType.MessageEntityEmail, navstr, message);
             }
         }
 
-        private static async void Hyperlink_Navigate(TLType type, object data)
+        private static async void Hyperlink_Navigate(TLType type, object data, TLMessage message)
         {
             if (type == TLType.InputMessageEntityMentionName)
             {
@@ -649,6 +649,19 @@ namespace Unigram.Common
                     }
                     else
                     {
+                        if (message?.Media is TLMessageMediaWebPage webpageMedia)
+                        {
+                            if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
+                            {
+                                var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                                if (service != null)
+                                {
+                                    service.Navigate(typeof(ArticlePage), webpageMedia);
+                                    return;
+                                }
+                            }
+                        }
+
                         if (type == TLType.MessageEntityTextUrl)
                         {
                             var dialog = new TLMessageDialog(navigation, "Open this link?");
