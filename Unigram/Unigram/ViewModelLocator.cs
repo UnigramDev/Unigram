@@ -167,8 +167,13 @@ namespace Unigram
 
                 Execute.BeginOnUIThread(() =>
                 {
-                    App.Current.NavigationService.Navigate(typeof(LoginWelcomePage));
-                    App.Current.NavigationService.Frame.BackStack.Clear();
+                    var type = App.Current.NavigationService.CurrentPageType;
+                    if (type.Name.StartsWith("Login")) { }
+                    else
+                    {
+                        App.Current.NavigationService.Navigate(typeof(LoginWelcomePage));
+                        App.Current.NavigationService.Frame.BackStack.Clear();
+                    }
                 });
             };
         }
