@@ -221,7 +221,7 @@ namespace Unigram.Controls.Media
                         _graph = result.Graph;
                         Debug.WriteLine("Graph successfully created!");
 
-                        var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
+                        var file = await FileUtils.GetTempFileAsync(fileName);
 
                         var fileInputNodeResult = await _graph.CreateFileInputNodeAsync(file);
                         if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)

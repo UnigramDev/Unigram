@@ -809,7 +809,7 @@ namespace Unigram.ViewModels
                             var file = await picker.PickSaveFileAsync();
                             if (file != null)
                             {
-                                var sticker = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
+                                var sticker = await FileUtils.GetTempFileAsync(fileName);
 
                                 if (Path.GetExtension(file.Name).Equals(".webp"))
                                 {
@@ -869,7 +869,7 @@ namespace Unigram.ViewModels
                                 var file = await picker.PickSaveFileAsync();
                                 if (file != null)
                                 {
-                                    var result = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
+                                    var result = await FileUtils.GetTempFileAsync(fileName);
                                     await result.CopyAndReplaceAsync(file);
                                 }
                             }
@@ -902,7 +902,7 @@ namespace Unigram.ViewModels
                             var file = await picker.PickSaveFileAsync();
                             if (file != null)
                             {
-                                var result = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
+                                var result = await FileUtils.GetTempFileAsync(fileName);
                                 await result.CopyAndReplaceAsync(file);
                             }
                         }

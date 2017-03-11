@@ -39,7 +39,12 @@ namespace Telegram.Api.Helpers
         {
             return ApplicationData.Current.LocalFolder.CreateFileAsync($"{SettingsHelper.SessionGuid}\\temp\\{fileName}", CreationCollisionOption.ReplaceExisting);
         }
-        
+
+        public static IAsyncOperation<StorageFile> GetTempFileAsync(string fileName)
+        {
+            return ApplicationData.Current.LocalFolder.GetFileAsync($"{SettingsHelper.SessionGuid}\\temp\\{fileName}");
+        }
+
         public static void CreateTemporaryFolder()
         {
             if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp\\parts")) == false)
