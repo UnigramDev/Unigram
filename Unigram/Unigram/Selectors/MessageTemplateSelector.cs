@@ -19,14 +19,6 @@ namespace Unigram.Selectors
         public DataTemplate FriendMessageTemplate { get; set; }
         public DataTemplate ChatFriendMessageTemplate { get; set; }
 
-        public DataTemplate UserForwardTemplate { get; set; }
-        public DataTemplate FriendForwardTemplate { get; set; }
-        public DataTemplate ChatFriendForwardTemplate { get; set; }
-
-        public DataTemplate UserMediaTemplate { get; set; }
-        public DataTemplate FriendMediaTemplate { get; set; }
-        public DataTemplate ChatFriendMediaTemplate { get; set; }
-
         public DataTemplate UserStickerTemplate { get; set; }
         public DataTemplate FriendStickerTemplate { get; set; }
         public DataTemplate ChatFriendStickerTemplate { get; set; }
@@ -70,7 +62,7 @@ namespace Unigram.Selectors
                 return ServiceMessageLocalTemplate;
             }
 
-            return ServiceMessageTemplate ?? EmptyMessageTemplate;
+            return ServiceMessageTemplate;
         }
 
         private DataTemplate GenerateCommonMessageTemplate(TLMessageBase m)
@@ -85,57 +77,27 @@ namespace Unigram.Selectors
             {
                 if (message.IsOut && !message.IsPost)
                 {
-                    return UserStickerTemplate ?? EmptyMessageTemplate;
+                    return UserStickerTemplate;
                 }
-                if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
+                else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
                 {
-                    return ChatFriendStickerTemplate ?? EmptyMessageTemplate;
+                    return ChatFriendStickerTemplate;
                 }
 
-                return FriendStickerTemplate ?? EmptyMessageTemplate;
+                return FriendStickerTemplate;
             }
             else
             {
                 if (message.IsOut && !message.IsPost)
                 {
-                    if (!(message?.Media is TLMessageMediaEmpty))
-                    {
-                        return UserMediaTemplate ?? UserMessageTemplate;
-                    }
-
-                    //if (message25?.FwdFromId != null)
-                    //{
-                    //    return UserForwardTemplate ?? UserMessageTemplate;
-                    //}
-
-                    return UserMessageTemplate ?? EmptyMessageTemplate;
+                    return UserMessageTemplate;
                 }
-                if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
+                else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
                 {
-                    if (!(message?.Media is TLMessageMediaEmpty))
-                    {
-                        return ChatFriendMediaTemplate ?? ChatFriendMessageTemplate;
-                    }
-
-                    //if (message25?.FwdFromId != null)
-                    //{
-                    //    return ChatFriendForwardTemplate ?? ChatFriendMessageTemplate;
-                    //}
-
-                    return ChatFriendMessageTemplate ?? EmptyMessageTemplate;
+                    return ChatFriendMessageTemplate;
                 }
-
-                if (!(message?.Media is TLMessageMediaEmpty))
-                {
-                    return FriendMediaTemplate ?? FriendMessageTemplate;
-                }
-
-                //if (message25?.FwdFromId != null)
-                //{
-                //    return FriendForwardTemplate ?? FriendMessageTemplate;
-                //}
-
-                return FriendMessageTemplate ?? EmptyMessageTemplate;
+                
+                return FriendMessageTemplate;
             }
         }
 
