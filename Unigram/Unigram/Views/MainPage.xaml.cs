@@ -286,7 +286,14 @@ namespace Unigram.Views
                 var dialog = e.ClickedItem as TLDialog;
                 if (dialog != null)
                 {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                    if (dialog.IsSearchResult)
+                    {
+                        MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(dialog.Peer, dialog.TopMessage));
+                    }
+                    else
+                    {
+                        MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                    }
                 }
 
                 var user = e.ClickedItem as TLUser;
