@@ -80,6 +80,14 @@ namespace Unigram.Controls
 
                         return "\uE160";
                     }
+                    else if (documentMedia.DownloadingProgress > 0 && documentMedia.DownloadingProgress < 1)
+                    {
+                        return "\uE10A";
+                    }
+                    else if (documentMedia.UploadingProgress > 0 && documentMedia.DownloadingProgress < 1)
+                    {
+                        return "\uE10A";
+                    }
 
                     return "\uE118";
                 }
