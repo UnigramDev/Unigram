@@ -117,7 +117,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid Background="{ThemeResource MessageMediaBackgroundBrush}" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top">
-            <controls:GlyphButton x:Name="StatusGlyph" Click="Toggle_Click" Glyph="&#xE118;" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+            <controls:GlyphHyperlinkButton x:Name="StatusGlyph" Click="Toggle_Click" Glyph="&#xE118;" Foreground="{ThemeResource MessageMediaForegroundBrush}" RequestedTheme="Dark" CornerRadius="24"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Progress}"/>
         </Grid>
 

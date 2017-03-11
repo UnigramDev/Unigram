@@ -295,6 +295,23 @@ namespace Telegram.Api.TL
 
         public bool IsSearchResult { get; set; }
 
+        public Visibility ChatBaseVisibility
+        {
+            get
+            {
+                var chatType = Peer as TLPeerBase;
+                if (Peer.TypeId == TLType.PeerChat ||
+                    Peer.TypeId == TLType.PeerChannel)
+                {
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    return Visibility.Collapsed;
+                }
+            }
+        }
+
         public Visibility VerifiedVisibility
         {
             get

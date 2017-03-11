@@ -44,7 +44,6 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-
     public sealed partial class DialogPage : Page
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;

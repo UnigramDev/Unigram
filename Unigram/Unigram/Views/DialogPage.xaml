@@ -255,7 +255,7 @@
                     <ColumnDefinition Width="52"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePictureView x:Phase="2"
+                <controls:ProfilePictureView x:Phase="3"
                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" 
                                              Click="ProfileBubble_Click"
@@ -369,7 +369,7 @@
                     <ColumnDefinition Width="52"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePictureView x:Phase="0"
+                <controls:ProfilePictureView x:Phase="3"
                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" 
                                              Click="ProfileBubble_Click"
@@ -579,7 +579,7 @@
 
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                             <TextBlock x:Name="tblDialogName"
-                                       Text="{Binding With.DisplayName}"
+                                       Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}"
                                        Style="{StaticResource BaseTextBlockStyle}"
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"

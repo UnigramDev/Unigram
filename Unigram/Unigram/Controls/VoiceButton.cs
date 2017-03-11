@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
 {
-    public class VoiceButton : GlyphButton
+    public class VoiceButton : GlyphHyperlinkButton
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 

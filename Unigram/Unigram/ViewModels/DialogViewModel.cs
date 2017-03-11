@@ -95,8 +95,8 @@ namespace Unigram.ViewModels
 
         private TLDialog _currentDialog;
 
-        private TLObject _with;
-        public TLObject With
+        private ITLDialogWith _with;
+        public ITLDialogWith With
         {
             get
             {

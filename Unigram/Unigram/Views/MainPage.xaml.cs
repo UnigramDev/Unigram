@@ -51,7 +51,6 @@ namespace Unigram.Views
         public MainViewModel ViewModel => DataContext as MainViewModel;
 
         private object _lastSelected;
-        private object _lastSelectedContact;
 
         public MainPage()
         {
@@ -100,10 +99,9 @@ namespace Unigram.Views
 
             if (e.Parameter is string)
             {
-                var parameter = SerializationService.Json.Deserialize((string)e.Parameter) as string;
-                if (parameter != null)
+                if (SerializationService.Json.Deserialize((string)e.Parameter) is string parameter)
                 {
-                    var data = Toast.SplitArguments((string)parameter);
+                    var data = Toast.SplitArguments(parameter);
                     if (data.ContainsKey("from_id"))
                     {
                         var user = ViewModel.CacheService.GetUser(int.Parse(data["from_id"]));
@@ -146,33 +144,87 @@ namespace Unigram.Views
                     parameter = tuple.Item1;
                 }
 
-                var dialog = ViewModel.Dialogs.Items.FirstOrDefault(x => x.Peer.Equals(parameter));
-                if (dialog != null)
-                {
-                    _lastSelected = dialog;
-                    DialogsListView.SelectedItem = dialog;
-                }
-                else
-                {
-                    _lastSelected = null;
-                    DialogsListView.SelectedItem = null;
-                }
+                UpdateListViewsSelectedItem(parameter as TLPeerBase);
+            }
+        }
 
-                if (parameter is TLPeerUser)
+        private void UpdateListViewsSelectedItem(TLPeerBase peer)
+        {
+            if (peer == null)
+            {
+                _lastSelected = null;
+                DialogsListView.SelectedItem = null;
+
+                _lastSelected = null;
+                UsersListView.SelectedItem = null;
+                return;
+            }
+
+            var dialog = ViewModel.Dialogs.Items.FirstOrDefault(x => x.Peer.Equals(peer));
+            if (dialog != null)
+            {
+                _lastSelected = dialog;
+                DialogsListView.SelectedItem = dialog;
+            }
+            else
+            {
+                _lastSelected = null;
+                DialogsListView.SelectedItem = null;
+            }
+
+            var user = ViewModel.Contacts.Items.FirstOrDefault(x => x.Id == peer.Id);
+            if (user != null)
+            {
+                _lastSelected = user;
+                UsersListView.SelectedItem = user;
+            }
+            else
+            {
+                _lastSelected = null;
+                UsersListView.SelectedItem = null;
+            }
+        }
+
+        private TLPeerBase GetPeerFromBackStack()
+        {
+            if (MasterDetail.NavigationService.CurrentPageType == typeof(DialogPage))
+            {
+                if (TryGetPeerFromParameter(MasterDetail.NavigationService.CurrentPageParam, out TLPeerBase peer))
                 {
-                    var user = ViewModel.Contacts.Items.FirstOrDefault(x => x.Id == ((TLPeerUser)parameter).UserId);
-                    if (user != null)
+                    return peer;
+                }
+            }
+
+            for (int i = MasterDetail.NavigationService.Frame.BackStackDepth - 1; i >= 0; i--)
+            {
+                var entry = MasterDetail.NavigationService.Frame.BackStack[i];
+                if (entry.SourcePageType == typeof(DialogPage))
+                {
+                    if (TryGetPeerFromParameter(entry.Parameter, out TLPeerBase peer))
                     {
-                        _lastSelectedContact = user;
-                        UsersListView.SelectedItem = user;
-                    }
-                    else
-                    {
-                        _lastSelected = null;
-                        UsersListView.SelectedItem = null;
+                        return peer;
                     }
                 }
             }
+
+            return null;
+        }
+
+        private bool TryGetPeerFromParameter(object parameter, out TLPeerBase peer)
+        {
+            if (parameter is string)
+            {
+                parameter = MasterDetail.NavigationService.SerializationService.Deserialize((string)parameter);
+            }
+
+            var tuple = parameter as Tuple<TLPeerBase, int>;
+            if (tuple != null)
+            {
+                parameter = tuple.Item1;
+            }
+
+            peer = parameter as TLPeerBase;
+            return peer != null;
         }
 
         private void ClearNavigation()
@@ -204,6 +256,9 @@ namespace Unigram.Views
                 DialogsSearchListView.IsItemClickEnabled = true;
                 DialogsSearchListView.SelectionMode = ListViewSelectionMode.None;
                 DialogsSearchListView.SelectedItem = null;
+                UsersListView.IsItemClickEnabled = true;
+                UsersListView.SelectionMode = ListViewSelectionMode.None;
+                UsersListView.SelectedItem = null;
                 Separator.BorderThickness = new Thickness(0);
             }
             else
@@ -214,6 +269,9 @@ namespace Unigram.Views
                 DialogsSearchListView.IsItemClickEnabled = false;
                 DialogsSearchListView.SelectionMode = ListViewSelectionMode.Single;
                 DialogsSearchListView.SelectedItem = _lastSelected;
+                UsersListView.IsItemClickEnabled = false;
+                UsersListView.SelectionMode = ListViewSelectionMode.Single;
+                UsersListView.SelectedItem = _lastSelected;
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
             }
         }
@@ -251,6 +309,10 @@ namespace Unigram.Views
             if (listView.SelectedItem != null)
             {
                 listView.ScrollIntoView(listView.SelectedItem);
+            }
+            else
+            {
+                UpdateListViewsSelectedItem(GetPeerFromBackStack());
             }
 
             if (listView.SelectedItem != null && _lastSelected != listView.SelectedItem)
@@ -339,7 +401,7 @@ namespace Unigram.Views
         private void searchInit()
         {
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchDialogs, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x => 
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x =>
             {
                 if (string.IsNullOrWhiteSpace(SearchDialogs.Text))
                 {
@@ -368,15 +430,6 @@ namespace Unigram.Views
                 ViewModel.Contacts.GetSelfAsync();
             }
             catch { }
-        }
-
-        private void UsersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (UsersListView.SelectedItem != null && _lastSelectedContact != UsersListView.SelectedItem && UsersListView.SelectionMode != ListViewSelectionMode.Multiple)
-            {
-                var user = UsersListView.SelectedItem as TLUser;
-                MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
-            }
         }
 
         private void Self_Click(object sender, RoutedEventArgs e)
