@@ -69,12 +69,12 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 
 		if (loc_key->Equals(L"PHONE_CALL_MISSED"))
 		{
-			ToastNotificationManager::History->Remove(L"phoneCall");
+			//ToastNotificationManager::History->Remove(L"phoneCall");
 		}
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST")) 
 		{
-			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
+			//UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
 		{
