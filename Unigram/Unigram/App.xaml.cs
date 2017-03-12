@@ -79,17 +79,15 @@ namespace Unigram
                 await new MessageDialog(args.Message ?? "Error", args.Exception?.ToString() ?? "Error").ShowAsync();
             };
 
-#if RELEASE
+#if !DEBUG
 
-            Microsoft.HockeyApp.HockeyClient.Current.Configure("f914027fdbf04179b2a84bb0ab6ff0b9",
+            HockeyClient.Current.Configure("7d36a4260af54125bbf6db407911ed3b",
                 new TelemetryConfiguration()
                 {
                     EnableDiagnostics = true,
-                    Collectors = Microsoft.HockeyApp.WindowsCollectors.Metadata |
-                                    Microsoft.HockeyApp.WindowsCollectors.PageView |
-                                    Microsoft.HockeyApp.WindowsCollectors.Session |
-                                    Microsoft.HockeyApp.WindowsCollectors.UnhandledException |
-                                    Microsoft.HockeyApp.WindowsCollectors.WatsonData
+                    Collectors = WindowsCollectors.Metadata |
+                                 WindowsCollectors.Session |
+                                 WindowsCollectors.UnhandledException
                 });
 
 #endif
