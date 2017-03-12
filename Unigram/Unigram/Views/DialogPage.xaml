@@ -382,6 +382,22 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="ServiceUserCallMessageTemplate">
+            <messages:UserCallMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}">
+                <StackPanel.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.MergedDictionaries>
+                            <ResourceDictionary Source="ms-appx:///Themes/AccentSent.xaml"/>
+                        </ResourceDictionary.MergedDictionaries>
+                    </ResourceDictionary>
+                </StackPanel.Resources>
+            </messages:UserCallMessageControl>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ServiceFriendCallMessageTemplate">
+            <messages:UserCallMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+        </DataTemplate>
+
         <selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
                                            UserMessageTemplate="{StaticResource UserMessageTemplate}"
                                            UserStickerTemplate="{StaticResource UserStickerTemplate}"
@@ -391,7 +407,9 @@
                                            ChatFriendStickerTemplate="{StaticResource ChatFriendStickerTemplate}"
                                            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
                                            ServiceMessagePhotoTemplate="{StaticResource ServiceMessagePhotoTemplate}"
-                                           ServiceMessageLocalTemplate="{StaticResource ServiceMessageLocalTemplate}"/>
+                                           ServiceMessageLocalTemplate="{StaticResource ServiceMessageLocalTemplate}"
+                                           ServiceUserCallTemplate="{StaticResource ServiceUserCallMessageTemplate}"
+                                           ServiceFriendCallTemplate="{StaticResource ServiceFriendCallMessageTemplate}"/>
 
         <Style x:Key="UploadProgressRingStyle" TargetType="ProgressRing">
             <Setter Property="Background" Value="Transparent" />

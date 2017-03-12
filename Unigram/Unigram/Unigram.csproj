@@ -105,6 +105,9 @@
     <Compile Include="Controls\Messages\MessageStatusControl.xaml.cs">
       <DependentUpon>MessageStatusControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\UserCallMessageControl.xaml.cs">
+      <DependentUpon>UserCallMessageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\TLListView.cs" />
@@ -434,8 +437,9 @@
     </AppxManifest>
     <PRIResource Include="Strings\en\Resources.resw">
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>MockedReswFileCodeGenerator</Generator>
+      <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Resources.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
@@ -564,6 +568,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\MessageStatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\UserCallMessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

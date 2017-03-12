@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
+using Unigram.Strings;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -77,6 +78,90 @@ namespace Unigram.Converters
         //            return Application.Current.Resources["ListViewItemPlaceholderBackgroundThemeBrush"] as SolidColorBrush;
         //    }
         //}
+
+        public string CallDuration(int seconds)
+        {
+            if (seconds < 60)
+            {
+                var format = Resources.CallSeconds_any;
+                var number = seconds;
+                if (number == 1)
+                {
+                    format = Resources.CallSeconds_1;
+                }
+                else if (number == 2)
+                {
+                    format = Resources.CallSeconds_2;
+                }
+                else if (number == 4)
+                {
+                    format = Resources.CallSeconds_3_10;
+                }
+
+                return string.Format(format, seconds);
+            }
+            else
+            {
+                var format = Resources.CallMinutes_any;
+                var number = seconds / 60;
+                if (number == 1)
+                {
+                    format = Resources.CallMinutes_1;
+                }
+                else if (number == 2)
+                {
+                    format = Resources.CallMinutes_2;
+                }
+                else if (number == 4)
+                {
+                    format = Resources.CallMinutes_3_10;
+                }
+
+                return string.Format(format, seconds);
+            }
+        }
+
+        public string CallShortDuration(int seconds)
+        {
+            if (seconds < 60)
+            {
+                var format = Resources.CallShortSeconds_any;
+                var number = seconds;
+                if (number == 1)
+                {
+                    format = Resources.CallShortSeconds_1;
+                }
+                else if (number == 2)
+                {
+                    format = Resources.CallShortSeconds_2;
+                }
+                else if (number == 4)
+                {
+                    format = Resources.CallShortSeconds_3_10;
+                }
+
+                return string.Format(format, seconds);
+            }
+            else
+            {
+                var format = Resources.CallShortMinutes_any;
+                var number = seconds / 60;
+                if (number == 1)
+                {
+                    format = Resources.CallShortMinutes_1;
+                }
+                else if (number == 2)
+                {
+                    format = Resources.CallShortMinutes_2;
+                }
+                else if (number == 4)
+                {
+                    format = Resources.CallShortMinutes_3_10;
+                }
+
+                return string.Format(format, seconds);
+            }
+        }
 
         public string Date(int value)
         {

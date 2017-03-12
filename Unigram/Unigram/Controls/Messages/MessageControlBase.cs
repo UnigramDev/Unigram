@@ -398,4 +398,194 @@ namespace Unigram.Controls.Messages
         }
         #endregion
     }
+
+    public class CallMessageControlBase : StackPanel
+    {
+        public TLMessageService ViewModel => DataContext as TLMessageService;
+
+        public BindConvert Convert => BindConvert.Current;
+
+        private DialogViewModel _context;
+        public DialogViewModel Context
+        {
+            get
+            {
+                if (_context == null)
+                {
+                    var parent = VisualTreeHelper.GetParent(this);
+                    while (parent as BubbleListViewItem == null)
+                    {
+                        parent = VisualTreeHelper.GetParent(parent);
+                    }
+
+                    var item = parent as BubbleListViewItem;
+                    if (item != null)
+                    {
+                        _context = item.Owner.DataContext as DialogViewModel;
+                    }
+                }
+
+                return _context;
+            }
+        }
+
+        protected TLMessageService _oldValue;
+
+        //public MessageControlBase()
+        //{
+        //    DataContextChanged += (s, args) =>
+        //    {
+        //        if (ViewModel != null)
+        //        {
+        //            Loading(s, null);
+        //        }
+        //    };
+        //}
+
+        #region Binding
+        protected Visibility EditedVisibility(bool hasEditDate, bool hasViaBotId, TLReplyMarkupBase replyMarkup)
+        {
+            return hasEditDate && !hasViaBotId && replyMarkup?.TypeId != TLType.ReplyInlineMarkup ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        protected object ConvertMedia(TLMessageMediaBase media)
+        {
+            return ViewModel;
+        }
+        #endregion
+
+        protected void OnMessageChanged(TextBlock paragraph)
+        {
+            paragraph.Inlines.Clear();
+
+            var message = DataContext as TLMessage;
+            if (message != null)
+            {
+                if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId ?? 0) });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = paragraph.Foreground;
+                    hyperlink.Click += (s, args) => From_Click(message);
+
+                    paragraph.Inlines.Add(hyperlink);
+                }
+                else if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = InMemoryCacheService.Current.GetChat(message.ToId.Id).DisplayName, Foreground = Convert.Bubble(message.ToId.Id) });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = paragraph.Foreground;
+                    hyperlink.Click += (s, args) => From_Click(message);
+
+                    paragraph.Inlines.Add(hyperlink);
+                }
+
+                if (message.HasFwdFrom)
+                {
+                    if (paragraph.Inlines.Count > 0)
+                        paragraph.Inlines.Add(new LineBreak());
+
+                    paragraph.Inlines.Add(new Run { Text = "Forwarded from " });
+
+                    var name = string.Empty;
+
+                    var channel = message.FwdFromChannel;
+                    if (channel != null)
+                    {
+                        name = channel.DisplayName;
+                    }
+
+                    var user = message.FwdFromUser;
+                    if (user != null)
+                    {
+                        if (name.Length > 0)
+                        {
+                            name += $" ({user.FullName})";
+                        }
+                        else
+                        {
+                            name = user.FullName;
+                        }
+                    }
+
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = name });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = paragraph.Foreground;
+                    hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+                    paragraph.Inlines.Add(hyperlink);
+                }
+
+                if (message.HasViaBotId && message.ViaBot != null)
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = paragraph.Foreground;
+                    hyperlink.Click += (s, args) => ViaBot_Click(message);
+
+                    paragraph.Inlines.Add(hyperlink);
+                }
+
+                if (paragraph.Inlines.Count > 0)
+                {
+                    paragraph.Inlines.Add(new Run { Text = " " });
+                    paragraph.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    paragraph.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                paragraph.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void From_Click(TLMessage message)
+        {
+            if (message.IsPost)
+            {
+                Context.NavigationService.Navigate(typeof(ChatDetailsPage), new TLPeerChannel { ChannelId = message.ToId.Id });
+            }
+            else if (message.From != null)
+            {
+                Context.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.From.Id });
+            }
+        }
+
+        private void FwdFrom_Click(TLMessage message)
+        {
+            if (message.FwdFromChannel != null)
+            {
+                if (message.FwdFrom.HasChannelPost)
+                {
+                    // TODO
+                    Context.NavigationService.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)new TLPeerChannel { ChannelId = message.FwdFromChannel.Id }, message.FwdFrom.ChannelPost ?? int.MaxValue));
+                }
+                else
+                {
+                    Context.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = message.FwdFromChannel.Id });
+                }
+            }
+            else if (message.FwdFromUser != null)
+            {
+                Context.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFromUser.Id });
+            }
+        }
+
+        private void ViaBot_Click(TLMessage message)
+        {
+            Context.Text = $"@{message.ViaBot.Username} ";
+        }
+
+        /// <summary>
+        /// x:Bind hack
+        /// </summary>
+        public new event TypedEventHandler<FrameworkElement, object> Loading;
+    }
 }

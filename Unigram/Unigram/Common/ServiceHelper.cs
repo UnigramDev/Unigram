@@ -19,6 +19,8 @@ using Windows.UI.Xaml.Media;
 using Unigram.Strings;
 using static Unigram.ViewModels.DialogViewModel;
 using Unigram.Views.Users;
+using Windows.ApplicationModel.Resources;
+using Unigram.Converters;
 
 namespace Unigram.Common
 {
@@ -148,6 +150,29 @@ namespace Unigram.Common
             _actionsCache.Add(typeof(TLMessageActionChannelMigrateFrom), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(Resources.MessageActionChannelMigrateFrom));
             _actionsCache.Add(typeof(TLMessageActionHistoryClear), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(string.Empty));
             _actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks("Unread messages"));
+            _actionsCache.Add(typeof(TLMessageActionPhoneCall), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            {
+                if (message is TLMessageService serviceMessage && action is TLMessageActionPhoneCall phoneCallAction)
+                {
+                    var loader = ResourceLoader.GetForCurrentView("Resources");
+                    var text = string.Empty;
+
+                    var outgoing = serviceMessage.IsOut;
+                    var missed = phoneCallAction.Reason is TLPhoneCallDiscardReasonMissed || phoneCallAction.Reason is TLPhoneCallDiscardReasonBusy;
+
+                    var type = loader.GetString(missed ? (outgoing ? "CallCanceled" : "CallMissed") : (outgoing ? "CallOutgoing" : "CallIncoming"));
+                    var duration = string.Empty;
+
+                    if (!missed)
+                    {
+                        duration = BindConvert.Current.CallDuration(phoneCallAction.Duration ?? 0);
+                    }
+
+                    return ReplaceLinks(missed ? type : string.Format(Resources.CallTimeFormat, type, duration));
+                }
+
+                return null;
+            });
         }
 
         #region Message

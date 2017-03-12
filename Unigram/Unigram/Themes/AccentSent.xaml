@@ -24,6 +24,9 @@
             <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
             <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
 
+            <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="Green"/>
+            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>
+
             <HorizontalAlignment x:Key="MessageHorizontalAlignment">Right</HorizontalAlignment>
 
             <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
@@ -47,6 +50,9 @@
 
             <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
             <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
+
+            <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="Green"/>
+            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>
 
             <HorizontalAlignment x:Key="MessageHorizontalAlignment">Right</HorizontalAlignment>
 

@@ -23,6 +23,9 @@ namespace Unigram.Selectors
         public DataTemplate FriendStickerTemplate { get; set; }
         public DataTemplate ChatFriendStickerTemplate { get; set; }
 
+        public DataTemplate ServiceUserCallTemplate { get; set; }
+        public DataTemplate ServiceFriendCallTemplate { get; set; }
+
         public DataTemplate ServiceMessageTemplate { get; set; }
         public DataTemplate ServiceMessagePhotoTemplate { get; set; }
         public DataTemplate ServiceMessageLocalTemplate { get; set; }
@@ -33,7 +36,6 @@ namespace Unigram.Selectors
             _templatesCache.Add(typeof(TLMessageService), new Func<TLMessageBase, DataTemplate>(GenerateServiceMessageTemplate));
             _templatesCache.Add(typeof(TLMessageEmpty), (TLMessageBase m) => EmptyMessageTemplate);
             _templatesCache.Add(typeof(TLMessage), new Func<TLMessageBase, DataTemplate>(GenerateCommonMessageTemplate));
-            //_templatesCache.Add(typeof(TLMessageForwarded), new Func<TLMessageBase, DataTemplate>(GenerateCommonMessageTemplate));
         }
 
         private DataTemplate GenerateServiceMessageTemplate(TLMessageBase message)
@@ -60,6 +62,10 @@ namespace Unigram.Selectors
             {
                 //return ServiceMessageUnreadTemplate;
                 return ServiceMessageLocalTemplate;
+            }
+            else if (serviceMessage.Action is TLMessageActionPhoneCall)
+            {
+                return serviceMessage.IsOut ? ServiceUserCallTemplate : ServiceFriendCallTemplate;
             }
 
             return ServiceMessageTemplate;

@@ -67,9 +67,14 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		auto picture = GetPicture(custom, group);
 		auto date = GetDate(notification);
 
+		if (loc_key->Equals(L"PHONE_CALL_MISSED"))
+		{
+			ToastNotificationManager::History->Remove(L"phoneCall");
+		}
+
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST")) 
 		{
-			UpdatePhoneCall(caption, message, sound, launch, L"YOLO", group, picture, date, loc_key);
+			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
 		{
@@ -426,7 +431,7 @@ void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^
 
 	if (picture != nullptr)
 	{
-		xml += L"<image placement='appLogoOverride' hint-crop='circle' src='";
+		xml += L"<image hint-crop='circle' src='";
 		xml += picture->Data();
 		xml += L"'/>";
 	}

@@ -2296,7 +2296,7 @@ namespace Unigram.ViewModels
                     if (previous is TLMessage) isPreviousPost = ((TLMessage)previous).IsPost;
 
                     attach = !isPreviousPost &&
-                             !(previous is TLMessageService) &&
+                             !(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
                              !(previous is TLMessageEmpty) &&
                              previous.FromId == item.FromId &&
                              item.Date - previous.Date < 900;
