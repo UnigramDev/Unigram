@@ -544,11 +544,11 @@ namespace Unigram.ViewModels
                 With = user;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
 
-                // test calls
+                //test calls
                 //var config = await ProtoService.GetDHConfigAsync(0, 0);
                 //if (config.IsSucceeded)
                 //{
-                //    var dh = config.Value;
+                //    var dh = config.Result;
                 //    if (!TLUtils.CheckPrime(dh.P, dh.G))
                 //    {
                 //        return;
@@ -569,7 +569,13 @@ namespace Unigram.ViewModels
                 //        UserId = new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 },
                 //        RandomId = TLInt.Random(),
                 //        GA = ga,
-                //        Protocol = new TLPhoneCallProtocol()
+                //        Protocol = new TLPhoneCallProtocol
+                //        {
+                //            IsUdpP2p = true,
+                //            IsUdpReflector = true,
+                //            MinLayer = 65,
+                //            MaxLayer = 65,
+                //        }
                 //    };
 
                 //    var proto = (MTProtoService)ProtoService;

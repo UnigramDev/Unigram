@@ -131,6 +131,19 @@ namespace Unigram.Views
                     }
                 }
             }
+
+            var config = ViewModel.CacheService.GetConfig();
+            if (config != null)
+            {
+                if (config.IsPhoneCallsEnabled)
+                {
+
+                }
+                else if (rpMasterTitlebar.Items.Count > 2)
+                {
+                    rpMasterTitlebar.Items.RemoveAt(2);
+                }
+            }
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)
@@ -283,8 +296,7 @@ namespace Unigram.Views
             {
                 _lastSelected = e.ClickedItem;
 
-                var dialog = e.ClickedItem as TLDialog;
-                if (dialog != null)
+                if (e.ClickedItem is TLDialog dialog)
                 {
                     if (dialog.IsSearchResult)
                     {
@@ -296,14 +308,18 @@ namespace Unigram.Views
                     }
                 }
 
-                var user = e.ClickedItem as TLUser;
-                if (user != null)
+                if (e.ClickedItem is TLMessageCommonBase message)
+                {
+                    var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
+                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(peer, message.Id));
+                }
+
+                if (e.ClickedItem is TLUser user)
                 {
                     MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
                 }
 
-                var channel = e.ClickedItem as TLChannel;
-                if (channel != null)
+                if (e.ClickedItem is TLChannel channel)
                 {
                     MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
                 }
@@ -326,8 +342,7 @@ namespace Unigram.Views
             {
                 _lastSelected = listView.SelectedItem;
 
-                var dialog = listView.SelectedItem as TLDialog;
-                if (dialog != null)
+                if (listView.SelectedItem is TLDialog dialog)
                 {
                     if (dialog.IsSearchResult)
                     {
@@ -339,14 +354,18 @@ namespace Unigram.Views
                     }
                 }
 
-                var user = listView.SelectedItem as TLUser;
-                if (user != null)
+                if (listView.SelectedItem is TLMessageCommonBase message)
+                {
+                    var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
+                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(peer, message.Id));
+                }
+
+                if (listView.SelectedItem is TLUser user)
                 {
                     MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
                 }
 
-                var channel = listView.SelectedItem as TLChannel;
-                if (channel != null)
+                if (listView.SelectedItem is TLChannel channel)
                 {
                     MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
                 }

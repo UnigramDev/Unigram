@@ -8,11 +8,11 @@ namespace Telegram.Api.TL
 		[Flags]
 		public enum Flag : Int32
 		{
-			PhonecallsEnabled = (1 << 1),
+			PhoneCallsEnabled = (1 << 1),
 			TmpSessions = (1 << 0),
 		}
 
-		public bool IsPhonecallsEnabled { get { return Flags.HasFlag(Flag.PhonecallsEnabled); } set { Flags = value ? (Flags | Flag.PhonecallsEnabled) : (Flags & ~Flag.PhonecallsEnabled); } }
+		public bool IsPhoneCallsEnabled { get { return Flags.HasFlag(Flag.PhoneCallsEnabled); } set { Flags = value ? (Flags | Flag.PhoneCallsEnabled) : (Flags & ~Flag.PhoneCallsEnabled); } }
 		public bool HasTmpSessions { get { return Flags.HasFlag(Flag.TmpSessions); } set { Flags = value ? (Flags | Flag.TmpSessions) : (Flags & ~Flag.TmpSessions); } }
 
 		public Flag Flags { get; set; }

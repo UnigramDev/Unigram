@@ -91,7 +91,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected void ToolTip_Opened(object sender, RoutedEventArgs e)
+        private void ToolTip_Opened(object sender, RoutedEventArgs e)
         {
             var tooltip = sender as ToolTip;
             if (tooltip != null && ViewModel != null)

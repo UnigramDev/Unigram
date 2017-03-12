@@ -576,6 +576,25 @@ namespace Unigram.Views
             }
         }
 
+        private void MessageCallAgain_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var message = element.DataContext as TLMessageService;
+                if (message != null)
+                {
+                    if (message.Action is TLMessageActionPhoneCall)
+                    {
+                        Visibility = Visibility.Visible;
+                        return;
+                    }
+                }
+
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
         #endregion
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)

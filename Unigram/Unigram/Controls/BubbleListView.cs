@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-   public class BubbleListView : ListView, IHandle<string>, IHandle
+   public class BubbleListView : ListView
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -33,25 +33,12 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Aggregator.Subscribe(this);
-
             var panel = ItemsPanelRoot as ItemsStackPanel;
             if (panel != null)
             {
                 ItemsStack = panel;
                 ItemsStack.ItemsUpdatingScrollMode = UpdatingScrollMode;
                 ItemsStack.SizeChanged += Panel_SizeChanged;
-            }
-        }
-
-        public void Handle(string message)
-        {
-            if (message == "PORCODIO")
-            {
-                Execute.BeginOnUIThread(async () =>
-                {
-                    await ViewModel.LoadFirstSliceAsync();
-                });
             }
         }
 

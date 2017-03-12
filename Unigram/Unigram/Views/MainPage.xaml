@@ -8,6 +8,7 @@
     xmlns:items="using:Unigram.Controls.Items"
     xmlns:triggers="using:Unigram.Triggers"
     xmlns:models="using:Telegram.Api.TL"
+    xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:behaviors="using:Unigram.Behaviors"
     xmlns:vms="using:Unigram.ViewModels"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
@@ -124,8 +125,8 @@
 
             <Pivot x:Name="rpMasterTitlebar" Grid.RowSpan="2">
                 <Pivot.HeaderTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <DataTemplate x:DataType="x:String">
+                        <TextBlock Text="{x:Bind}" Style="{StaticResource BaseTextBlockStyle}"/>
                     </DataTemplate>
                 </Pivot.HeaderTemplate>
                 <Pivot.LeftHeader>
@@ -488,6 +489,24 @@
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
+                    </ListView>
+                </PivotItem>
+                <PivotItem x:Name="Calls" Header="Calls">
+                    <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
+                              ItemClick="ListView_ItemClick"
+                              IsItemClickEnabled="True"
+                              SelectionMode="None">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <messages:HistoryCallMessageControl/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="0"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
                     </ListView>
                 </PivotItem>
             </Pivot>

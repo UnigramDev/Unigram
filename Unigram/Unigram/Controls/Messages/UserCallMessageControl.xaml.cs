@@ -24,6 +24,7 @@ namespace Unigram.Controls.Messages
         public UserCallMessageControl()
         {
             InitializeComponent();
+            _layoutRoot = LayoutRoot;
 
             DataContextChanged += (s, args) =>
             {
@@ -36,9 +37,6 @@ namespace Unigram.Controls.Messages
 
         private string ConvertTitle(TLMessageService message)
         {
-            //                 <Run x:Name="ReasonGlyph" Text="&#xE60B;" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-            //< Run Text = "&#xE60C;" FontSize = "10" FontFamily = "{StaticResource TelegramThemeFontFamily}" />
-
             if (message.Action is TLMessageActionPhoneCall phoneCallAction)
             {
                 var loader = ResourceLoader.GetForCurrentView("Resources");
@@ -47,24 +45,6 @@ namespace Unigram.Controls.Messages
                 var missed = phoneCallAction.Reason is TLPhoneCallDiscardReasonMissed || phoneCallAction.Reason is TLPhoneCallDiscardReasonBusy;
 
                 return loader.GetString(missed ? (outgoing ? "CallCanceled" : "CallMissed") : (outgoing ? "CallOutgoing" : "CallIncoming"));
-            }
-
-            return string.Empty;
-        }
-
-        private string ConvertReason(TLMessageService message)
-        {
-            //                 <Run x:Name="ReasonGlyph" Text="&#xE60B;" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-            //< Run Text = "&#xE60C;" FontSize = "10" FontFamily = "{StaticResource TelegramThemeFontFamily}" />
-
-            if (message.Action is TLMessageActionPhoneCall phoneCallAction)
-            {
-                var outgoing = message.IsOut;
-                var missed = phoneCallAction.Reason is TLPhoneCallDiscardReasonMissed || phoneCallAction.Reason is TLPhoneCallDiscardReasonBusy;
-
-                VisualStateManager.GoToState(LayoutRoot, missed ? "Missed" : "Default", false);
-
-                return outgoing ? "\uE60B\u00A0" : "\uE60C\u00A0";
             }
 
             return string.Empty;

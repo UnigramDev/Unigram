@@ -110,6 +110,28 @@ namespace Telegram.Api.TL
             }
         }
 
+        private ITLDialogWith _owner;
+        public ITLDialogWith Owner
+        {
+            get
+            {
+                if (_owner == null)
+                {
+                    if (this is TLMessageCommonBase messageCommon)
+                    {
+                        var peer = messageCommon.IsOut || messageCommon.ToId is TLPeerChannel || messageCommon.ToId is TLPeerChat ? messageCommon.ToId : new TLPeerUser { UserId = messageCommon.FromId.Value };
+                        if (peer is TLPeerUser)
+                            _owner = InMemoryCacheService.Current.GetUser(peer.Id);
+                        if (peer is TLPeerChat || ToId is TLPeerChannel)
+                            _owner = InMemoryCacheService.Current.GetChat(peer.Id);
+                    }
+
+                }
+
+                return _owner;
+            }
+        }
+
         private bool _isFirst;
         public bool IsFirst
         {

@@ -102,6 +102,10 @@
     <Compile Include="Controls\DialogSearchBar.xaml.cs">
       <DependentUpon>DialogSearchBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\CallMessageControlBase.cs" />
+    <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">
+      <DependentUpon>HistoryCallMessageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\MessageStatusControl.xaml.cs">
       <DependentUpon>MessageStatusControl.xaml</DependentUpon>
     </Compile>
@@ -115,6 +119,7 @@
       <DependentUpon>UsersSelectionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
@@ -564,6 +569,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\FriendMessageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\HistoryCallMessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

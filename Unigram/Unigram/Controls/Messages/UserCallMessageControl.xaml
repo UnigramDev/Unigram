@@ -51,6 +51,9 @@
                        Style="{StaticResource CaptionTextBlockStyle}"
                        Margin="0,6,0,-2"
                        Grid.Row="1">
+                <ToolTipService.ToolTip>
+                    <ToolTip Opened="ToolTip_Opened"/>
+                </ToolTipService.ToolTip>
                 <Run x:Name="ReasonGlyph" Text="{x:Bind ConvertReason(ViewModel)}" FontSize="10" Foreground="{ThemeResource MessageCallForegroundBrush}" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
                 <Run Text="{x:Bind Convert.Date(ViewModel.Date)}"/><Run Text="{x:Bind ConvertDuration(ViewModel.Action)}"/>
             </TextBlock>
