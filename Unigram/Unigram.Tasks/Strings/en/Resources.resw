@@ -288,6 +288,12 @@
   <data name="MESSAGE_VIDEO" xml:space="preserve">
     <value>sent you a video</value>
   </data>
+  <data name="PHONE_CALL_MISSED" xml:space="preserve">
+    <value>Missed call</value>
+  </data>
+  <data name="PHONE_CALL_REQUEST" xml:space="preserve">
+    <value>{0} is calling you</value>
+  </data>
   <data name="PINNED_AUDIO" xml:space="preserve">
     <value>pinned a voice message</value>
   </data>

@@ -282,6 +282,12 @@
   <data name="MESSAGE_VIDEO" xml:space="preserve">
     <value>te envió un vídeo</value>
   </data>
+  <data name="PHONE_CALL_MISSED" xml:space="preserve">
+    <value>Llamada perdida</value>
+  </data>
+  <data name="PHONE_CALL_REQUEST" xml:space="preserve">
+    <value>{0} te está llamando</value>
+  </data>
   <data name="PINNED_AUDIO" xml:space="preserve">
     <value>ancló un mensaje de voz</value>
   </data>
