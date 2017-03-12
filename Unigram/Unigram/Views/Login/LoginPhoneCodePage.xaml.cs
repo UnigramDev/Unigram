@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.TL;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels.Login;
 using Windows.Foundation;
@@ -42,7 +43,7 @@ namespace Unigram.Views.Login
         public class NavigationParameters
         {
             public string PhoneNumber { get; set; }
-            public string PhoneCodeHash { get; set; }
+            public TLAuthSentCode Result { get; set; }
         }
     }
 }

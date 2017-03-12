@@ -19,7 +19,7 @@ namespace Unigram.ViewModels.Login
 {
     public class LoginPhoneCodeViewModel : UnigramViewModelBase
     {
-        private LoginPhoneCodePage.NavigationParameters _sentCode;
+        private string _phoneNumber;
 
         public LoginPhoneCodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
@@ -28,8 +28,29 @@ namespace Unigram.ViewModels.Login
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            _sentCode = (LoginPhoneCodePage.NavigationParameters)parameter;
+            var param = parameter as LoginPhoneCodePage.NavigationParameters;
+            if (param != null)
+            {
+                _phoneNumber = param.PhoneNumber;
+                _sentCode = param.Result;
+
+                RaisePropertyChanged(() => SentCode);
+            }
+
             return Task.CompletedTask;
+        }
+
+        private TLAuthSentCode _sentCode;
+        public TLAuthSentCode SentCode
+        {
+            get
+            {
+                return _sentCode;
+            }
+            set
+            {
+                Set(ref _sentCode, value);
+            }
         }
 
         private string _phoneCode;
@@ -42,7 +63,19 @@ namespace Unigram.ViewModels.Login
             set
             {
                 Set(ref _phoneCode, value);
-                if (_phoneCode.Length == 5)
+
+                var length = 5;
+
+                if (_sentCode.Type is TLAuthSentCodeTypeApp appType)
+                {
+                    length = appType.Length;
+                }
+                else if (_sentCode.Type is TLAuthSentCodeTypeSms smsType)
+                {
+                    length = smsType.Length;
+                }
+
+                if (_phoneCode.Length == length)
                 {
                     SendExecute();
                 }
@@ -67,7 +100,7 @@ namespace Unigram.ViewModels.Login
         public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
-            var phoneNumber = _sentCode.PhoneNumber;
+            var phoneNumber = _phoneNumber;
             var phoneCodeHash = _sentCode.PhoneCodeHash;
 
             IsLoading = true;
@@ -134,6 +167,29 @@ namespace Unigram.ViewModels.Login
                 }
 
                 Execute.ShowDebugMessage("account.signIn error " + result.Error);
+            }
+        }
+
+        private RelayCommand _resendCommand;
+        public RelayCommand ResendCommand => _resendCommand = _resendCommand ?? new RelayCommand(ResendExecute, () => !IsLoading);
+        private async void ResendExecute()
+        {
+            if (_sentCode.HasNextType)
+            {
+                IsLoading = true;
+
+                var response = await ProtoService.ResendCodeAsync(_phoneNumber, _sentCode.PhoneCodeHash);
+                if (response.IsSucceeded)
+                {
+                    if (response.Result.Type is TLAuthSentCodeTypeSms || response.Result.Type is TLAuthSentCodeTypeApp)
+                    {
+                        NavigationService.Navigate(typeof(LoginPhoneCodePage), new LoginPhoneCodePage.NavigationParameters
+                        {
+                            PhoneNumber = _phoneNumber,
+                            Result = response.Result
+                        });
+                    }
+                }
             }
         }
     }

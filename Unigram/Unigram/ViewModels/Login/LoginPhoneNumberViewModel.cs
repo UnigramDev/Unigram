@@ -187,15 +187,13 @@ namespace Unigram.ViewModels.Login
 
             IsLoading = true;
 
-            var result = await ProtoService.SendCodeAsync(PhoneCode.TrimStart('+') + PhoneNumber, /* TODO: Verify */ null);
+            var result = await ProtoService.SendCodeAsync(PhoneCode + PhoneNumber, /* TODO: Verify */ null);
             if (result?.IsSucceeded == true)
             {
                 var state = new LoginPhoneCodePage.NavigationParameters
                 {
                     PhoneNumber = PhoneCode.TrimStart('+') + PhoneNumber,
-                    PhoneCodeHash = result.Result.PhoneCodeHash,
-                    //PhoneRegistered = result.Value.PhoneRegistered.Value,
-                    //PhoneCallTimeout = result.Value.SendCallTimeout.Value
+                    Result = result.Result,
                 };
 
                 NavigationService.Navigate(typeof(LoginPhoneCodePage), state);
