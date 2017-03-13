@@ -770,13 +770,26 @@ namespace Unigram.Controls.Messages
                 return title;
             }
 
-            var from = message.From?.FullName ?? string.Empty;
-            if (message.ViaBot != null)
+            if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
             {
-                from += $" via @{message.ViaBot.Username}";
-            }
+                var chat = InMemoryCacheService.Current.GetChat(message.ToId.Id);
+                if (chat != null)
+                {
+                    return chat.DisplayName;
+                }
 
-            return from;
+                return string.Empty;
+            }
+            else
+            {
+                var from = message.From?.FullName ?? string.Empty;
+                if (message.ViaBot != null)
+                {
+                    from += $" via @{message.ViaBot.Username}";
+                }
+
+                return from;
+            }
         }
 
         private string GetFromLabel(TLMessageService message, string title)
@@ -786,8 +799,21 @@ namespace Unigram.Controls.Messages
                 return Title;
             }
 
-            var from = message.From?.FullName ?? string.Empty;
-            return from;
+            if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+            {
+                var chat = InMemoryCacheService.Current.GetChat(message.ToId.Id);
+                if (chat != null)
+                {
+                    return chat.DisplayName;
+                }
+
+                return string.Empty;
+            }
+            else
+            {
+                var from = message.From?.FullName ?? string.Empty;
+                return from;
+            }
         }
 
         //#region Cursor
