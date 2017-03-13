@@ -206,7 +206,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DirectXEx.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="NotificationTask.h" />
   </ItemGroup>

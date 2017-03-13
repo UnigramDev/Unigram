@@ -34,7 +34,6 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="NotificationTask.h" />
-    <ClInclude Include="DirectXEx.h" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="..\unigram.tasks\strings\de\resources.resw">
