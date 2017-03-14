@@ -723,7 +723,6 @@ namespace Unigram.ViewModels
             if (App.State.ForwardMessages != null)
             {
                 Reply = new TLMessagesContainter { FwdMessages = new TLVector<TLMessage>(App.State.ForwardMessages) };
-                App.State.ForwardMessages = null;
             }
         }
 
@@ -960,6 +959,11 @@ namespace Unigram.ViewModels
             {
                 if (_reply != value)
                 {
+                    if (_reply is TLMessagesContainter container && container.FwdMessages != null && value == null)
+                    {
+                        App.State.ForwardMessages = null;
+                    }
+
                     _reply = value;
                     RaisePropertyChanged();
                     RaisePropertyChanged(() => ReplyInfo);
@@ -1061,6 +1065,8 @@ namespace Unigram.ViewModels
                     }
                     else if (container.FwdMessages != null)
                     {
+                        App.State.ForwardMessages = null;
+
                         TLInputPeerBase fromPeer = null;
                         var msgs = new TLVector<TLMessage>();
                         var msgIds = new TLVector<int>();

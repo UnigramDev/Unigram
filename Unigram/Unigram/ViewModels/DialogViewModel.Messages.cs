@@ -303,6 +303,13 @@ namespace Unigram.ViewModels
 
         private void MessagesForwardExecute()
         {
+            var messages = SelectedMessages.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
+            if (messages.Count > 0)
+            {
+                App.State.ForwardMessages = new List<TLMessage>(messages);
+                NavigationService.GoBack();
+            }
+
             //_stateService.ForwardMessages = Messages.Where(x => x.IsSelected).ToList();
             //_stateService.ForwardMessages.Reverse();
 
