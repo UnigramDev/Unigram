@@ -93,7 +93,7 @@ namespace Telegram.Api.TL
         }
 
         // TODO
-        public TLInputPeerBase ToInputPeer()
+        public override TLInputPeerBase ToInputPeer()
         {
             if (HasAccessHash)
             {

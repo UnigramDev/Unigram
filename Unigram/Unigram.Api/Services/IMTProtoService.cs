@@ -173,7 +173,7 @@ namespace Telegram.Api.Services
         void SendMediaCallback(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void StartBotCallback(TLInputUserBase bot, string startParam, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void ForwardMessageCallback(TLInputPeerBase peer, int fwdMessageId, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
-        void ForwardMessagesCallback(TLInputPeerBase toPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void ForwardMessagesCallback(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void CreateChatCallback(TLVector<TLInputUserBase> users, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void EditChatTitleCallback(int chatId, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void EditChatPhotoCallback(int chatId, TLInputChatPhotoBase photo, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);

@@ -234,6 +234,11 @@ namespace Telegram.Api.TL
             Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
+        public virtual TLInputPeerBase ToInputPeer()
+        {
+            throw new NotImplementedException();
+        }
+
         //public override void ReadFromCache(TLBinaryReader from)
         //{
         //    ReadInboxMaxId = from.ReadInt32();

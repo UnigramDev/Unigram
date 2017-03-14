@@ -1586,7 +1586,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ForwardMessagesCallback(TLInputPeerBase toPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ForwardMessagesCallback(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var randomId = new TLVector<long>();
             foreach (var message in messages)
@@ -1594,34 +1594,36 @@ namespace Telegram.Api.Services
                 randomId.Add(message.RandomId.Value);
             }
 
-            TLInputPeerBase fromPeer = null;
+            //TLInputPeerBase fromPeer = null;
             var message48 = messages.FirstOrDefault() as TLMessage;
-            // TODO: verify
-            //if (message48 != null)
-            //{
-            //    fromPeer = message48.FwdFromChannelPeer;
-            //}
+            //// TODO: verify
+            ////if (message48 != null)
+            ////{
+            ////    fromPeer = message48.FwdFromChannelPeer;
+            ////}
 
-            //if (fromPeer == null)
-            //{
-            //    var message40 = messages.FirstOrDefault() as TLMessage;
-            //    if (message40 != null)
-            //    {
-            //        fromPeer = message40.FwdFromChannelPeer ?? PeerToInputPeer(message40.FwdFromPeer);
-            //    }
-            //}
+            ////if (fromPeer == null)
+            ////{
+            ////    var message40 = messages.FirstOrDefault() as TLMessage;
+            ////    if (message40 != null)
+            ////    {
+            ////        fromPeer = message40.FwdFromChannelPeer ?? PeerToInputPeer(message40.FwdFromPeer);
+            ////    }
+            ////}
 
-            if (message48.HasFwdFrom)
-            {
-                if (message48.FwdFrom.HasChannelId)
-                {
-                    fromPeer = PeerToInputPeer(new TLPeerChannel { ChannelId = message48.FwdFrom.ChannelId.Value });
-                }
-                else if (message48.FwdFrom.HasFromId)
-                {
-                    fromPeer = PeerToInputPeer(new TLPeerUser { UserId = message48.FwdFrom.FromId.Value });
-                }
-            }
+            //if (message48.HasFwdFrom)
+            //{
+            //    fromPeer = message48.Parent.ToInputPeer();
+
+            //    //if (message48.FwdFrom.HasChannelId)
+            //    //{
+            //    //    fromPeer = PeerToInputPeer(new TLPeerChannel { ChannelId = message48.FwdFrom.ChannelId.Value });
+            //    //}
+            //    //else if (message48.FwdFrom.HasFromId)
+            //    //{
+            //    //    fromPeer = PeerToInputPeer(new TLPeerUser { UserId = message48.FwdFrom.FromId.Value });
+            //    //}
+            //}
 
             var obj = new TLMessagesForwardMessages { ToPeer = toPeer, Id = id, RandomId = randomId, FromPeer = fromPeer };
 

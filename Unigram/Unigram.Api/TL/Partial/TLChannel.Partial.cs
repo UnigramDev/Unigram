@@ -80,7 +80,7 @@ namespace Telegram.Api.TL
         //    to.Write(((ITLReadMaxId)this).ReadOutboxMaxId);
         //}
 
-        public TLInputPeerBase ToInputPeer()
+        public override TLInputPeerBase ToInputPeer()
         {
             return new TLInputPeerChannel { ChannelId = Id, AccessHash = AccessHash.Value };
         }

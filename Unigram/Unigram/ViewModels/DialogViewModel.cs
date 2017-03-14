@@ -1061,6 +1061,7 @@ namespace Unigram.ViewModels
                     }
                     else if (container.FwdMessages != null)
                     {
+                        TLInputPeerBase fromPeer = null;
                         var msgs = new TLVector<TLMessage>();
                         var msgIds = new TLVector<int>();
 
@@ -1072,10 +1073,16 @@ namespace Unigram.ViewModels
                             clone.ToId = Peer.ToPeer();
                             clone.RandomId = TLLong.Random();
                             clone.IsOut = true;
+                            clone.IsPost = false;
                             clone.FromId = SettingsHelper.UserId;
                             clone.IsMediaUnread = Peer is TLInputPeerChannel ? true : false;
                             clone.IsUnread = true;
                             clone.State = TLMessageState.Sending;
+
+                            if (fromPeer == null)
+                            {
+                                fromPeer = fwdMessage.Parent.ToInputPeer();
+                            }
 
                             if (clone.FwdFrom == null)
                             {
@@ -1097,7 +1104,7 @@ namespace Unigram.ViewModels
                                         clone.HasFwdFrom = true;
                                         clone.FwdFrom = new TLMessageFwdHeader
                                         {
-                                            HasFromId = true,
+                                            HasFromId = fwdMessage.HasFromId,
                                             FromId = fwdMessage.FromId,
                                             Date = fwdMessage.Date
                                         };
@@ -1130,7 +1137,7 @@ namespace Unigram.ViewModels
 
                         CacheService.SyncSendingMessages(msgs, null, async (m) =>
                         {
-                            await ProtoService.ForwardMessagesAsync(Peer, msgIds, msgs, false);
+                            var response = await ProtoService.ForwardMessagesAsync(Peer, fromPeer, msgIds, msgs, false);
                         });
                     }
 
