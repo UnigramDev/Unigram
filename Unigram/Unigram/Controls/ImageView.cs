@@ -11,7 +11,7 @@ using Telegram.Api.TL;
 
 namespace Unigram.Controls
 {
-    public class ImageView : Control
+    public class ImageView : HyperlinkButton
     {
         private Image Holder;
 
@@ -63,9 +63,14 @@ namespace Unigram.Controls
 
         private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            ((ImageView)d).OnConstraintChanged(e.NewValue, e.OldValue);
             ((ImageView)d).InvalidateMeasure();
         }
 
+        protected virtual void OnConstraintChanged(object newValue, object oldValue)
+        {
+
+        }
         #endregion
 
         protected override Size MeasureOverride(Size availableSize)
