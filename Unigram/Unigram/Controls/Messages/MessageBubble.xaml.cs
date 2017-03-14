@@ -79,25 +79,16 @@ namespace Unigram.Controls.Messages
                     var right = -12;
                     var bottom = -8;
 
-                    if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+                    if (message.Media.TypeId != TLType.MessageMediaVenue)
                     {
-                        top = 4;
-                    }
-                    if (message.HasFwdFrom)
-                    {
-                        top = 4;
-                    }
-                    if (message.HasViaBotId)
-                    {
-                        top = 4;
-                    }
-                    if (message.HasReplyToMsgId)
-                    {
-                        top = 4;
-                    }
-                    if (message.IsPost)
-                    {
-                        top = 4;
+                        if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+                        {
+                            top = 4;
+                        }
+                        if (message.HasFwdFrom || message.HasViaBotId || message.HasReplyToMsgId || message.IsPost)
+                        {
+                            top = 4;
+                        }
                     }
 
                     var caption = false;

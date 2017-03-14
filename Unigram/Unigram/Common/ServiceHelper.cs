@@ -262,7 +262,7 @@ namespace Unigram.Common
             if (serviceMessage.ToId is TLPeerChannel)
             {
                 var channel = InMemoryCacheService.Current.GetChat(serviceMessage.ToId.Id) as TLChannel;
-                var flag = channel != null && channel.IsMegagroup;
+                var flag = channel != null && channel.IsMegaGroup;
 
                 var pinMessageAction = action as TLMessageActionPinMessage;
                 if (pinMessageAction != null)

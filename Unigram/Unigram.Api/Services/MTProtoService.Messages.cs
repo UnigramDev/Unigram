@@ -1615,15 +1615,15 @@ namespace Telegram.Api.Services
             {
                 if (message48.FwdFrom.HasChannelId)
                 {
-                    fromPeer = new TLInputPeerChannel { ChannelId = message48.FwdFrom.ChannelId.Value };
+                    fromPeer = PeerToInputPeer(new TLPeerChannel { ChannelId = message48.FwdFrom.ChannelId.Value });
                 }
                 else if (message48.FwdFrom.HasFromId)
                 {
-                    fromPeer = PeerToInputPeer(new TLPeerUser { Id = message48.FwdFrom.FromId.Value });
+                    fromPeer = PeerToInputPeer(new TLPeerUser { UserId = message48.FwdFrom.FromId.Value });
                 }
             }
 
-            var obj = new TLMessagesForwardMessages { ToPeer = toPeer, Id = id, RandomId = randomId, FromPeer = fromPeer, Flags = 0 };
+            var obj = new TLMessagesForwardMessages { ToPeer = toPeer, Id = id, RandomId = randomId, FromPeer = fromPeer };
 
             if (message48 != null && message48.IsSilent)
             {

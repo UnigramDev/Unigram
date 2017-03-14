@@ -977,7 +977,7 @@ namespace Unigram.Common
                 if (invite != null)
                 {
                     var content = "AppResources.JoinGroupConfirmation";
-                    if (invite.IsChannel && !invite.IsMegagroup)
+                    if (invite.IsChannel && !invite.IsMegaGroup)
                     {
                         content = "AppResources.JoinChannelConfirmation";
                     }

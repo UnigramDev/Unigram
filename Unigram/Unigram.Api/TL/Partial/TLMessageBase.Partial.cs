@@ -84,7 +84,7 @@ namespace Telegram.Api.TL
                 {
                     var instance = InMemoryCacheService.Current;
                     var channel = instance.GetChat(ToId.Id) as TLChannel;
-                    if (channel != null && channel.IsMegagroup)
+                    if (channel != null && channel.IsMegaGroup)
                     {
                         return true;
                     }
@@ -716,5 +716,29 @@ namespace Telegram.Api.TL
             }
         }
 
+    }
+
+    public partial class TLMessage
+    {
+        public TLMessage Clone()
+        {
+            var clone = new TLMessage();
+            clone.Flags = Flags;
+            clone.Id = Id;
+            clone.FromId = FromId;
+            clone.ToId = ToId;
+            clone.FwdFrom = FwdFrom;
+            clone.ViaBotId = ViaBotId;
+            clone.ReplyToMsgId = ReplyToMsgId;
+            clone.Date = Date;
+            clone.Message = Message;
+            clone.Media = Media;
+            clone.ReplyMarkup = ReplyMarkup;
+            clone.Entities = Entities;
+            clone.Views = Views;
+            clone.EditDate = EditDate;
+
+            return clone;
+        }
     }
 }

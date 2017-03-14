@@ -26,5 +26,17 @@ namespace Unigram.Views
         {
             this.InitializeComponent();
         }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (App.State.ForwardMessages != null)
+            {
+                EmptyLabel.Text = "Choose a recipient...";
+            }
+            else
+            {
+                EmptyLabel.Text = "Please select a chat to start messaging";
+            }
+        }
     }
 }

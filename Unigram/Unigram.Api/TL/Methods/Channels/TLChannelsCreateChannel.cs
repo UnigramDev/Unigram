@@ -13,11 +13,11 @@ namespace Telegram.Api.TL.Methods.Channels
 		public enum Flag : Int32
 		{
 			Broadcast = (1 << 0),
-			Megagroup = (1 << 1),
+			MegaGroup = (1 << 1),
 		}
 
 		public bool IsBroadcast { get { return Flags.HasFlag(Flag.Broadcast); } set { Flags = value ? (Flags | Flag.Broadcast) : (Flags & ~Flag.Broadcast); } }
-		public bool IsMegagroup { get { return Flags.HasFlag(Flag.Megagroup); } set { Flags = value ? (Flags | Flag.Megagroup) : (Flags & ~Flag.Megagroup); } }
+		public bool IsMegaGroup { get { return Flags.HasFlag(Flag.MegaGroup); } set { Flags = value ? (Flags | Flag.MegaGroup) : (Flags & ~Flag.MegaGroup); } }
 
 		public Flag Flags { get; set; }
 		public String Title { get; set; }

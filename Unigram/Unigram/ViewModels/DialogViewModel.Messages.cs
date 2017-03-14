@@ -238,6 +238,11 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
         private void MessageForwardExecute(TLMessageBase message)
         {
+            if (message is TLMessage)
+            {
+                App.State.ForwardMessages = new List<TLMessage> { message as TLMessage };
+                NavigationService.GoBack();
+            }
         }
 
         #endregion

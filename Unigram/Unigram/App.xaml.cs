@@ -36,6 +36,9 @@ using Windows.UI.Core;
 using Unigram.Converters;
 using Windows.Foundation.Metadata;
 using Windows.ApplicationModel.Core;
+using System.Collections;
+using Telegram.Api.TL;
+using System.Collections.Generic;
 
 namespace Unigram
 {
@@ -46,6 +49,8 @@ namespace Unigram
     {
         public static ShareOperation ShareOperation { get; private set; }
         public static AppServiceConnection Connection { get; private set; }
+
+        public static AppState State { get; } = new AppState();
 
         public ViewModelLocator Locator
         {
@@ -296,5 +301,10 @@ namespace Unigram
                 Debug.WriteLine("Device does not have a Titlebar");
             }
         }
+    }
+
+    public class AppState
+    {
+        public IEnumerable<TLMessage> ForwardMessages { get; set; }
     }
 }

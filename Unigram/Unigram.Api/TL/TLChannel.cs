@@ -15,7 +15,7 @@ namespace Telegram.Api.TL
 			Moderator = (1 << 4),
 			Broadcast = (1 << 5),
 			Verified = (1 << 7),
-			Megagroup = (1 << 8),
+			MegaGroup = (1 << 8),
 			Restricted = (1 << 9),
 			Democracy = (1 << 10),
 			Signatures = (1 << 11),
@@ -32,7 +32,7 @@ namespace Telegram.Api.TL
 		public bool IsModerator { get { return Flags.HasFlag(Flag.Moderator); } set { Flags = value ? (Flags | Flag.Moderator) : (Flags & ~Flag.Moderator); } }
 		public bool IsBroadcast { get { return Flags.HasFlag(Flag.Broadcast); } set { Flags = value ? (Flags | Flag.Broadcast) : (Flags & ~Flag.Broadcast); } }
 		public bool IsVerified { get { return Flags.HasFlag(Flag.Verified); } set { Flags = value ? (Flags | Flag.Verified) : (Flags & ~Flag.Verified); } }
-		public bool IsMegagroup { get { return Flags.HasFlag(Flag.Megagroup); } set { Flags = value ? (Flags | Flag.Megagroup) : (Flags & ~Flag.Megagroup); } }
+		public bool IsMegaGroup { get { return Flags.HasFlag(Flag.MegaGroup); } set { Flags = value ? (Flags | Flag.MegaGroup) : (Flags & ~Flag.MegaGroup); } }
 		public bool IsRestricted { get { return Flags.HasFlag(Flag.Restricted); } set { Flags = value ? (Flags | Flag.Restricted) : (Flags & ~Flag.Restricted); } }
 		public bool IsDemocracy { get { return Flags.HasFlag(Flag.Democracy); } set { Flags = value ? (Flags | Flag.Democracy) : (Flags & ~Flag.Democracy); } }
 		public bool IsSignatures { get { return Flags.HasFlag(Flag.Signatures); } set { Flags = value ? (Flags | Flag.Signatures) : (Flags & ~Flag.Signatures); } }

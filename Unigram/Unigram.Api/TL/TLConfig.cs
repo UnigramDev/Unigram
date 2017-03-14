@@ -22,7 +22,7 @@ namespace Telegram.Api.TL
 		public Int32 ThisDC { get; set; }
 		public TLVector<TLDCOption> DCOptions { get; set; }
 		public Int32 ChatSizeMax { get; set; }
-		public Int32 MegagroupSizeMax { get; set; }
+		public Int32 MegaGroupSizeMax { get; set; }
 		public Int32 ForwardedCountMax { get; set; }
 		public Int32 OnlineUpdatePeriodMs { get; set; }
 		public Int32 OfflineBlurTimeoutMs { get; set; }
@@ -62,7 +62,7 @@ namespace Telegram.Api.TL
 			ThisDC = from.ReadInt32();
 			DCOptions = TLFactory.Read<TLVector<TLDCOption>>(from);
 			ChatSizeMax = from.ReadInt32();
-			MegagroupSizeMax = from.ReadInt32();
+			MegaGroupSizeMax = from.ReadInt32();
 			ForwardedCountMax = from.ReadInt32();
 			OnlineUpdatePeriodMs = from.ReadInt32();
 			OfflineBlurTimeoutMs = from.ReadInt32();
@@ -98,7 +98,7 @@ namespace Telegram.Api.TL
 			to.Write(ThisDC);
 			to.WriteObject(DCOptions);
 			to.Write(ChatSizeMax);
-			to.Write(MegagroupSizeMax);
+			to.Write(MegaGroupSizeMax);
 			to.Write(ForwardedCountMax);
 			to.Write(OnlineUpdatePeriodMs);
 			to.Write(OfflineBlurTimeoutMs);

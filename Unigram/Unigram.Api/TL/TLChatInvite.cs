@@ -11,14 +11,14 @@ namespace Telegram.Api.TL
 			Channel = (1 << 0),
 			Broadcast = (1 << 1),
 			Public = (1 << 2),
-			Megagroup = (1 << 3),
+			MegaGroup = (1 << 3),
 			Participants = (1 << 4),
 		}
 
 		public bool IsChannel { get { return Flags.HasFlag(Flag.Channel); } set { Flags = value ? (Flags | Flag.Channel) : (Flags & ~Flag.Channel); } }
 		public bool IsBroadcast { get { return Flags.HasFlag(Flag.Broadcast); } set { Flags = value ? (Flags | Flag.Broadcast) : (Flags & ~Flag.Broadcast); } }
 		public bool IsPublic { get { return Flags.HasFlag(Flag.Public); } set { Flags = value ? (Flags | Flag.Public) : (Flags & ~Flag.Public); } }
-		public bool IsMegagroup { get { return Flags.HasFlag(Flag.Megagroup); } set { Flags = value ? (Flags | Flag.Megagroup) : (Flags & ~Flag.Megagroup); } }
+		public bool IsMegaGroup { get { return Flags.HasFlag(Flag.MegaGroup); } set { Flags = value ? (Flags | Flag.MegaGroup) : (Flags & ~Flag.MegaGroup); } }
 		public bool HasParticipants { get { return Flags.HasFlag(Flag.Participants); } set { Flags = value ? (Flags | Flag.Participants) : (Flags & ~Flag.Participants); } }
 
 		public Flag Flags { get; set; }
