@@ -1059,10 +1059,15 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    message.HasReplyToMsgId = true;
-                    message.ReplyToMsgId = Reply.Id;
-                    message.Reply = Reply;
-                    Reply = null;
+                    var boh = Reply as TLMessage;
+                    boh.RandomId = TLLong.Random();
+                    await ProtoService.ForwardMessageAsync(Peer, Reply.Id, boh);
+                    return;
+
+                    //message.HasReplyToMsgId = true;
+                    //message.ReplyToMsgId = Reply.Id;
+                    //message.Reply = Reply;
+                    //Reply = null;
                 }
             }
 

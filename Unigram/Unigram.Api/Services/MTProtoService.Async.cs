@@ -12,6 +12,7 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ReorderPinnedDialogsAsync(TLVector<TLInputPeerBase> order, bool force)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -25,6 +26,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ToggleDialogPinAsync(TLInputPeerBase peer, bool pin)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -38,6 +40,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber, bool? currentNumber, Action<int> attemptFailed = null)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthSentCode>>();
@@ -51,6 +54,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesRecentStickersBase>> GetRecentStickersAsync(bool attached, int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesRecentStickersBase>>();
@@ -64,6 +68,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesAffectedMessages>> ReadMessageContentsAsync(TLVector<int> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedMessages>>();
@@ -77,6 +82,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> JoinChannelAsync(TLChannel channel)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -90,6 +96,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesBotCallbackAnswer>> GetBotCallbackAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, bool game)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesBotCallbackAnswer>>();
@@ -103,6 +110,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id, bool revoke)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedMessages>>();
@@ -116,6 +124,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLHelpTermsOfService>> GetTermsOfServiceAsync(string langCode)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLHelpTermsOfService>>();
@@ -129,6 +138,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLChannelsChannelParticipant>> GetParticipantAsync(TLInputChannelBase inputChannel, TLInputUserBase userId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsChannelParticipant>>();
@@ -142,6 +152,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
@@ -155,6 +166,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> AddChatUserAsync(int chatId, TLInputUserBase userId, int fwdLimit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -168,6 +180,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> ForwardMessagesAsync(TLInputPeerBase toPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -181,6 +194,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ReorderStickerSetsAsync(bool masks, TLVector<long> order)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -194,6 +208,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessage>> SendInlineBotResultAsync(TLMessage message, Action fastCallback)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessage>>();
@@ -207,6 +222,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> GetAllDraftsAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -220,6 +236,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAccountPrivacyRules>> GetPrivacyAsync(TLInputPrivacyKeyBase key)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountPrivacyRules>>();
@@ -233,6 +250,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLNearestDC>> GetNearestDCAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLNearestDC>>();
@@ -246,6 +264,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesAffectedMessages>> ReadHistoryAsync(TLInputPeerBase peer, int maxId, int offset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedMessages>>();
@@ -259,6 +278,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAccountPasswordSettings>> GetPasswordSettingsAsync(byte[] currentPasswordHash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountPasswordSettings>>();
@@ -272,6 +292,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteUserHistoryAsync(TLChannel channel, TLInputUserBase userId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedHistory>>();
@@ -285,6 +306,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLExportedMessageLink>> ExportMessageLinkAsync(TLInputChannelBase channel, int id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLExportedMessageLink>>();
@@ -298,6 +320,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -311,6 +334,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLPeerSettings>> GetPeerSettingsAsync(TLInputPeerBase peer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPeerSettings>>();
@@ -324,6 +348,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesStickerSet>> GetStickerSetAsync(TLInputStickerSetBase stickerset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesStickerSet>>();
@@ -337,6 +362,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> SaveGifAsync(TLInputDocumentBase id, bool unsave)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -350,6 +376,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLHelpSupport>> GetSupportAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLHelpSupport>>();
@@ -363,6 +390,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesDHConfig>> GetDHConfigAsync(int version, int randomLength)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesDHConfig>>();
@@ -376,6 +404,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ResetNotifySettingsAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -389,6 +418,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> UnblockAsync(TLInputUserBase id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -402,6 +432,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, TLSendMessageActionBase action)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -415,6 +446,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesDifferenceBase>> GetDifferenceWithoutUpdatesAsync(int pts, int date, int qts)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesDifferenceBase>>();
@@ -428,6 +460,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> UpdatePasswordSettingsAsync(byte[] currentPasswordHash, TLAccountPasswordInputSettings newSettings)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -441,6 +474,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ReadHistoryAsync(TLChannel channel, int maxId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -454,6 +488,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLContactsTopPeersBase>> GetTopPeersAsync(TLContactsGetTopPeers.Flag flags, int offset, int limit, int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsTopPeersBase>>();
@@ -467,6 +502,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> EditChatTitleAsync(int chatId, string title)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -480,6 +516,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> CheckUsernameAsync(string username)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -493,6 +530,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ResetAuthorizationsAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -506,6 +544,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLPhotosPhotosBase>> GetUserPhotosAsync(TLInputUserBase userId, int offset, long maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPhotosPhotosBase>>();
@@ -519,6 +558,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLPhotosPhoto>> UploadProfilePhotoAsync(TLInputFile file)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPhotosPhoto>>();
@@ -532,6 +572,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> UpdateNotifySettingsAsync(TLInputNotifyPeerBase peer, TLInputPeerNotifySettings settings)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -545,6 +586,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUploadFile>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFile>>();
@@ -558,6 +600,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUserBase>> UpdateProfileAsync(string firstName, string lastName, string about)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUserBase>>();
@@ -571,6 +614,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLContactsImportedContacts>> ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsImportedContacts>>();
@@ -584,6 +628,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, bool typing)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -597,6 +642,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> RegisterDeviceAsync(int tokenType, string token)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -610,6 +656,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> LogOutAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -623,6 +670,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> ToggleSignaturesAsync(TLInputChannelBase channel, bool enabled)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -636,6 +684,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLChannelsChannelParticipants>> GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsChannelParticipants>>();
@@ -649,6 +698,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesMessagesBase>> GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
@@ -662,6 +712,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> DeleteChatUserAsync(int chatId, TLInputUserBase userId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -675,6 +726,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> ForwardMessageAsync(TLInputPeerBase peer, int fwdMessageId, TLMessage message)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -688,6 +740,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesMessagesBase>> SearchGlobalAsync(string query, int offsetDate, TLInputPeerBase offsetPeer, int offsetId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
@@ -701,6 +754,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesFoundGifs>> SearchGifsAsync(string q, int offset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesFoundGifs>>();
@@ -714,6 +768,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesBotResults>> GetInlineBotResultsAsync(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesBotResults>>();
@@ -727,6 +782,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesFeaturedStickersBase>> GetFeaturedStickersAsync(bool full, int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesFeaturedStickersBase>>();
@@ -740,6 +796,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLVector<TLUserBase>>> GetUsersAsync(TLVector<TLInputUserBase> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLUserBase>>>();
@@ -753,6 +810,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> UnregisterDeviceAsync(int tokenType, string token)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -766,6 +824,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ConfirmPhoneAsync(string phoneCodeHash, string phoneCode)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -779,6 +838,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> UpdateUsernameAsync(TLInputChannelBase channel, string username)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -792,6 +852,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesStickerSetInstallResultBase>> InstallStickerSetAsync(TLInputStickerSetBase stickerset, bool archived)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesStickerSetInstallResultBase>>();
@@ -805,6 +866,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLChatInviteBase>> CheckChatInviteAsync(string hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLChatInviteBase>>();
@@ -818,6 +880,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLDocumentBase>> GetDocumentByHashAsync(byte[] sha256, int size, string mimeType)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLDocumentBase>>();
@@ -831,6 +894,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> SaveDraftAsync(TLInputPeerBase peer, TLDraftMessageBase draft)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -844,6 +908,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLPhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPhotoBase>>();
@@ -857,6 +922,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLContactsBlockedBase>> GetBlockedAsync(int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsBlockedBase>>();
@@ -870,6 +936,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(string hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsContactsBase>>();
@@ -883,6 +950,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUserFull>> GetFullUserAsync(TLInputUserBase id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUserFull>>();
@@ -896,6 +964,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesDifferenceBase>> GetDifferenceAsync(int pts, int date, int qts)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesDifferenceBase>>();
@@ -909,6 +978,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAuthAuthorization>> CheckPasswordAsync(byte[] passwordHash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthAuthorization>>();
@@ -922,6 +992,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ResetTopPeerRatingAsync(TLTopPeerCategoryBase category, TLInputPeerBase peer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -935,6 +1006,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessageMediaBase>> GetWebPagePreviewAsync(string message)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessageMediaBase>>();
@@ -948,6 +1020,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLWebPageBase>> GetWebPageAsync(string url, int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLWebPageBase>>();
@@ -961,6 +1034,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> EditChatPhotoAsync(int chatId, TLInputChatPhotoBase photo)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -974,6 +1048,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUserBase>> UpdateUsernameAsync(string username)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUserBase>>();
@@ -987,6 +1062,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAuthSentCode>> SendConfirmPhoneCodeAsync(string hash, bool currentNumber)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthSentCode>>();
@@ -1000,6 +1076,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> EditAboutAsync(TLChannel channel, string about)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1013,6 +1090,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ClearRecentStickersAsync(bool attached)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1026,6 +1104,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> HideReportSpamAsync(TLInputPeerBase peer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1039,6 +1118,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> ImportChatInviteAsync(string hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1052,6 +1132,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAuthSentCode>> SendChangePhoneCodeAsync(string phoneNumber, bool? currentNumber)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthSentCode>>();
@@ -1065,6 +1146,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAccountPrivacyRules>> SetPrivacyAsync(TLInputPrivacyKeyBase key, TLVector<TLInputPrivacyRuleBase> rules)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountPrivacyRules>>();
@@ -1078,6 +1160,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> SetAccountTTLAsync(TLAccountDaysTTL ttl)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1091,6 +1174,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLContactsFound>> SearchAsync(string q, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsFound>>();
@@ -1104,6 +1188,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesChatFull>> GetFullChatAsync(int chatId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatFull>>();
@@ -1117,6 +1202,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesChatFull>> UpdateChannelAsync(int? channelId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatFull>>();
@@ -1130,6 +1216,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLExportedChatInviteBase>> ExportChatInviteAsync(int chatId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLExportedChatInviteBase>>();
@@ -1143,6 +1230,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ReportSpamAsync(TLInputPeerBase peer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1156,6 +1244,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesState>> GetStateAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesState>>();
@@ -1169,6 +1258,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLHelpAppChangelogBase>> GetAppChangelogAsync(string deviceModel, string systemVersion, string appVersion, string langCode)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLHelpAppChangelogBase>>();
@@ -1182,6 +1272,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAuthPasswordRecovery>> RequestPasswordRecoveryAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthPasswordRecovery>>();
@@ -1195,6 +1286,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAccountPasswordBase>> GetPasswordAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountPasswordBase>>();
@@ -1208,6 +1300,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> UpdatePinnedMessageAsync(bool silent, TLInputChannelBase channel, int id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1221,6 +1314,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> EditPhotoAsync(TLChannel channel, TLInputChatPhotoBase photo)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1234,6 +1328,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> KickFromChannelAsync(TLChannel channel, TLInputUserBase userId, bool kicked)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1247,6 +1342,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessage>> SendMessageAsync(TLMessage message, Action fastCallback)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessage>>();
@@ -1260,6 +1356,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLPong>> PingAsync(long pingId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPong>>();
@@ -1273,6 +1370,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
@@ -1286,6 +1384,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ResetAuthorizationAsync(long hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1299,6 +1398,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> MigrateChatAsync(int chatId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1312,6 +1412,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1325,6 +1426,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLInputChannelBase channel, TLVector<int> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedMessages>>();
@@ -1338,6 +1440,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> CreateChannelAsync(TLChannelsCreateChannel.Flag flags, string title, string about)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1351,6 +1454,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLVector<int> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
@@ -1364,6 +1468,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> CancelCodeAsync(string phoneNumber, string phoneCodeHash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1377,6 +1482,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> EditTitleAsync(TLChannel channel, string title)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1390,6 +1496,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> UninstallStickerSetAsync(TLInputStickerSetBase stickerset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1403,6 +1510,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> CreateChatAsync(TLVector<TLInputUserBase> users, string title)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1416,6 +1524,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> StartBotAsync(TLInputUserBase bot, string startParam, TLMessage message)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1429,6 +1538,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int offset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedHistory>>();
@@ -1442,6 +1552,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAccountAuthorizations>> GetAuthorizationsAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountAuthorizations>>();
@@ -1455,6 +1566,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> EditChatAdminAsync(int chatId, TLInputUserBase userId, bool isAdmin)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1468,6 +1580,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> InviteToChannelAsync(TLInputChannelBase channel, TLVector<TLInputUserBase> users)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1481,6 +1594,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesArchivedStickers>> GetArchivedStickersAsync(bool full, long offsetId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesArchivedStickers>>();
@@ -1494,6 +1608,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> UpdateDeviceLockedAsync(int period)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1507,6 +1622,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLContactsLink>> DeleteContactAsync(TLInputUserBase id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsLink>>();
@@ -1520,6 +1636,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesDialogsBase>> GetDialogsAsync(int offsetDate, int offsetId, TLInputPeerBase offsetPeer, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesDialogsBase>>();
@@ -1533,6 +1650,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ReportPeerAsync(TLInputPeerBase peer, TLReportReasonBase reason)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1546,6 +1664,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ReportSpamAsync(TLInputChannelBase channel, TLInputUserBase userId, TLVector<int> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1559,6 +1678,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> ToggleInvitesAsync(TLInputChannelBase channel, bool enabled)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1572,6 +1692,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLExportedChatInviteBase>> ExportInviteAsync(TLInputChannelBase channel)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLExportedChatInviteBase>>();
@@ -1585,6 +1706,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> SaveBigFilePartAsync(long fileId, int filePart, int fileTotalParts, byte[] bytes)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1598,6 +1720,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> UpdateStatusAsync(bool offline)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1611,6 +1734,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> BlockAsync(TLInputUserBase id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1624,6 +1748,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAuthAuthorization>> SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthAuthorization>>();
@@ -1637,6 +1762,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> ToggleChatAdminsAsync(int chatId, bool enabled)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1650,6 +1776,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesMessageEditData>> GetMessageEditDataAsync(TLInputPeerBase peer, int id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessageEditData>>();
@@ -1663,6 +1790,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> CheckUsernameAsync(TLInputChannelBase channel, string username)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1676,6 +1804,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesChatFull>> GetFullChannelAsync(TLInputChannelBase channel)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatFull>>();
@@ -1689,6 +1818,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> DeleteChannelAsync(TLChannel channel)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1702,6 +1832,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesPeerDialogs>> GetPeerDialogsAsync(TLVector<TLInputPeerBase> peers)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesPeerDialogs>>();
@@ -1715,6 +1846,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> SendMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1728,6 +1860,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesSavedGifsBase>> GetSavedGifsAsync(int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesSavedGifsBase>>();
@@ -1741,6 +1874,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> SetInlineBotResultsAsync(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1754,6 +1888,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ReadFeaturedStickersAsync(TLVector<long> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1767,6 +1902,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickersAsync(byte[] hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAllStickersBase>>();
@@ -1780,6 +1916,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickersAsync(int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAllStickersBase>>();
@@ -1793,6 +1930,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLVector<TLWallPaperBase>>> GetWallpapersAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLWallPaperBase>>>();
@@ -1806,6 +1944,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLContactsResolvedPeer>> ResolveUsernameAsync(string username)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsResolvedPeer>>();
@@ -1819,6 +1958,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAccountDaysTTL>> GetAccountTTLAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountDaysTTL>>();
@@ -1832,6 +1972,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLPong>> PingDelayDisconnectAsync(long pingId, int disconnectDelay)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPong>>();
@@ -1845,6 +1986,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesChatsBase>> GetAdminedPublicChannelsAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatsBase>>();
@@ -1858,6 +2000,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUploadFile>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFile>>();
@@ -1871,6 +2014,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesMessagesBase>> SearchAsync(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
@@ -1884,6 +2028,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> DeleteAccountAsync(string reason)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1897,6 +2042,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesChannelDifferenceBase>> GetChannelDifferenceAsync(TLInputChannelBase inputChannel, TLChannelMessagesFilterBase filter, int pts, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesChannelDifferenceBase>>();
@@ -1910,6 +2056,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> LeaveChannelAsync(TLChannel channel)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1923,6 +2070,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUserBase>> ChangePhoneAsync(string phoneNumber, string phoneCodeHash, string phoneCode)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUserBase>>();
@@ -1936,6 +2084,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLVector<TLContactStatus>>> GetStatusesAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLContactStatus>>>();
@@ -1949,6 +2098,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> DeleteAccountTTLAsync(string reason)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1962,6 +2112,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLPeerNotifySettingsBase>> GetNotifySettingsAsync(TLInputNotifyPeerBase peer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPeerNotifySettingsBase>>();
@@ -1975,6 +2126,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> SaveFilePartAsync(long fileId, int filePart, byte[] bytes)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
@@ -1988,6 +2140,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAuthAuthorization>> SignInAsync(string phoneNumber, string phoneCodeHash, string phoneCode)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthAuthorization>>();
@@ -2001,6 +2154,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAuthAuthorization>> RecoverPasswordAsync(string code)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthAuthorization>>();
@@ -2014,6 +2168,7 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLAuthSentCode>> ResendCodeAsync(string phoneNumber, string phoneCodeHash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthSentCode>>();
@@ -3840,6 +3995,7 @@ namespace Telegram.Api.Services
         //    return tsc.Task;
         //}
 
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLVector<TLStickerSetCoveredBase>>> GetAttachedStickersAsync(TLInputStickeredMediaBase media)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLStickerSetCoveredBase>>>();
