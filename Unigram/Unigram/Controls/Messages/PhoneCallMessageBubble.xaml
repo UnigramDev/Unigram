@@ -1,5 +1,5 @@
-﻿<local:CallMessageControlBase
-    x:Class="Unigram.Controls.Messages.UserCallMessageControl"
+﻿<local:PhoneCallMessageBubbleBase
+    x:Class="Unigram.Controls.Messages.PhoneCallMessageBubble"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Messages"
@@ -62,4 +62,4 @@
         </Grid>
     </UserControl>
 
-</local:CallMessageControlBase>
+</local:PhoneCallMessageBubbleBase>

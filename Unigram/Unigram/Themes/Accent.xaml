@@ -9,6 +9,8 @@
             <SolidColorBrush x:Key="MessageBorderBrush" Color="#144D7B29"/>
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
+            
+            <StaticResource x:Key="MessageSubtleForegroundBrush" ResourceKey="SystemControlDisabledChromeDisabledLowBrush"/>
 
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
@@ -42,6 +44,7 @@
             <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#444444"/>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
@@ -49,6 +52,8 @@
             <SolidColorBrush x:Key="MessageBorderBrush" Color="#29748ea2"/>
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
+            
+            <StaticResource x:Key="MessageSubtleForegroundBrush" ResourceKey="SystemControlDisabledChromeDisabledLowBrush"/>
 
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
@@ -81,6 +86,7 @@
             <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#C7C7C7"/>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -97,7 +103,6 @@
     <SolidColorBrush x:Key="TelegramDialogLabelFromBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>
     <SolidColorBrush x:Key="TelegramDialogUnreadBadgeBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#BBBBBB"/>
     <SolidColorBrush x:Key="TelegramDialogUnreadLabelBrush" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="TelegramDialogVerifiedForegroundBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="{StaticResource SystemAltHighColor}"/>

@@ -26,9 +26,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class UserMessageControl : MessageControlBase
+    public sealed partial class MessageBubble : MessageBubbleBase
     {
-        public UserMessageControl()
+        public MessageBubble()
         {
             InitializeComponent();
 

@@ -349,7 +349,7 @@
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:UserMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}">
+            <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}">
                 <StackPanel.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -357,11 +357,11 @@
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </StackPanel.Resources>
-            </messages:UserMessageControl>
+            </messages:MessageBubble>
         </DataTemplate>
 
         <DataTemplate x:Key="FriendMessageTemplate">
-            <messages:UserMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+            <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendMessageTemplate" x:DataType="models:TLMessage">
@@ -379,12 +379,12 @@
                                              Margin="12,0,0,4"
                                              Width="32"
                                              Height="32"/>
-                <messages:UserMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
+                <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceUserCallMessageTemplate">
-            <messages:UserCallMessageControl ContextFlyout="{StaticResource ServiceMenuFlyout}">
+            <messages:PhoneCallMessageBubble ContextFlyout="{StaticResource ServiceMenuFlyout}">
                 <StackPanel.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -392,11 +392,11 @@
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </StackPanel.Resources>
-            </messages:UserCallMessageControl>
+            </messages:PhoneCallMessageBubble>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceFriendCallMessageTemplate">
-            <messages:UserCallMessageControl ContextFlyout="{StaticResource ServiceMenuFlyout}"/>
+            <messages:PhoneCallMessageBubble ContextFlyout="{StaticResource ServiceMenuFlyout}"/>
         </DataTemplate>
 
         <selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"

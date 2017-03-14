@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public class MessageControlBase : StackPanel
+    public class MessageBubbleBase : StackPanel
     {
         public TLMessage ViewModel => DataContext as TLMessage;
 
@@ -101,7 +101,7 @@ namespace Unigram.Controls.Messages
                 else if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
                 {
                     var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = InMemoryCacheService.Current.GetChat(message.ToId.Id).DisplayName, Foreground = Convert.Bubble(message.ToId.Id) });
+                    hyperlink.Inlines.Add(new Run { Text = message.Parent?.DisplayName ?? string.Empty, Foreground = Convert.Bubble(message.ToId.Id) });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
                     hyperlink.Foreground = paragraph.Foreground;
                     hyperlink.Click += (s, args) => From_Click(message);

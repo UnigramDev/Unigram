@@ -43,7 +43,7 @@ namespace Unigram.Themes
         {
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
-            var bubble = image.Ancestors<MessageControlBase>().FirstOrDefault() as MessageControlBase;
+            var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
             if (bubble != null)
             {
                 if (bubble.Context != null)
@@ -72,7 +72,7 @@ namespace Unigram.Themes
         {
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
-            var bubble = image.Ancestors<MessageControlBase>().FirstOrDefault() as MessageControlBase;
+            var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
             if (bubble != null)
             {
                 if (bubble.Context != null)

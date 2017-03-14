@@ -772,13 +772,7 @@ namespace Unigram.Controls.Messages
 
             if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
             {
-                var chat = InMemoryCacheService.Current.GetChat(message.ToId.Id);
-                if (chat != null)
-                {
-                    return chat.DisplayName;
-                }
-
-                return string.Empty;
+                return message.Parent?.DisplayName ?? string.Empty;
             }
             else
             {
@@ -801,18 +795,11 @@ namespace Unigram.Controls.Messages
 
             if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
             {
-                var chat = InMemoryCacheService.Current.GetChat(message.ToId.Id);
-                if (chat != null)
-                {
-                    return chat.DisplayName;
-                }
-
-                return string.Empty;
+                return message.Parent?.DisplayName ?? string.Empty;
             }
             else
             {
-                var from = message.From?.FullName ?? string.Empty;
-                return from;
+                return message.From?.FullName ?? string.Empty;
             }
         }
 

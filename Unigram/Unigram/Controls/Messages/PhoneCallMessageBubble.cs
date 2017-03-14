@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public class CallMessageControlBase : StackPanel
+    public class PhoneCallMessageBubbleBase : StackPanel
     {
         public TLMessageService ViewModel => DataContext as TLMessageService;
 

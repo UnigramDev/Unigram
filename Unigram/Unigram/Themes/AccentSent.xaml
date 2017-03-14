@@ -11,6 +11,8 @@
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
+            <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
@@ -37,6 +39,8 @@
             <SolidColorBrush x:Key="MessageBorderBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+
+            <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource SystemAccentColorDark1}"/>

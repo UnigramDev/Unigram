@@ -26,7 +26,7 @@
         <TextBlock Margin="8,0,0,2" VerticalAlignment="Center" MaxLines="2" Style="{ThemeResource ReplyBodyTextBlockStyle}" Grid.Column="1">
             <Run x:Name="TitleLabel" Foreground="{ThemeResource MessageHeaderForegroundBrush}"/>
             <LineBreak/>
-            <Run x:Name="ServiceLabel" Foreground="{ThemeResource MessageSubtleLabelBrush}"/><Run x:Name="MessageLabel" Foreground="{ThemeResource MessageForegroundBrush}"/>
+            <Run x:Name="ServiceLabel" Foreground="{ThemeResource MessageSubtleForegroundBrush}"/><Run x:Name="MessageLabel" Foreground="{ThemeResource MessageForegroundBrush}"/>
         </TextBlock>
     </Grid>
 </HyperlinkButton>

@@ -103,15 +103,15 @@
     <Compile Include="Controls\DialogSearchBar.xaml.cs">
       <DependentUpon>DialogSearchBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\CallMessageControlBase.cs" />
+    <Compile Include="Controls\Messages\PhoneCallMessageBubble.cs" />
     <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">
       <DependentUpon>HistoryCallMessageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\MessageStatusControl.xaml.cs">
       <DependentUpon>MessageStatusControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\UserCallMessageControl.xaml.cs">
-      <DependentUpon>UserCallMessageControl.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\PhoneCallMessageBubble.xaml.cs">
+      <DependentUpon>PhoneCallMessageBubble.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
@@ -268,14 +268,11 @@
     <Compile Include="Controls\Media\VoiceMediaControl.xaml.cs">
       <DependentUpon>VoiceMediaControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\FriendMessageControl.xaml.cs">
-      <DependentUpon>FriendMessageControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Messages\UserMessageControl.xaml.cs">
-      <DependentUpon>UserMessageControl.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\MessageBubble.xaml.cs">
+      <DependentUpon>MessageBubble.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MasterDetailView.cs" />
-    <Compile Include="Controls\Messages\MessageControlBase.cs" />
+    <Compile Include="Controls\Messages\MessageBubbleBase.cs" />
     <Compile Include="Controls\Views\PhotosView.xaml.cs">
       <DependentUpon>PhotosView.xaml</DependentUpon>
     </Compile>
@@ -569,10 +566,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Messages\FriendMessageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\Messages\HistoryCallMessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -581,11 +574,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Messages\UserCallMessageControl.xaml">
+    <Page Include="Controls\Messages\PhoneCallMessageBubble.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Messages\UserMessageControl.xaml">
+    <Page Include="Controls\Messages\MessageBubble.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

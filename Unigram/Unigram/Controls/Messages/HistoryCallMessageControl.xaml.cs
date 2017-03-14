@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class HistoryCallMessageControl : CallMessageControlBase
+    public sealed partial class HistoryCallMessageControl : PhoneCallMessageBubbleBase
     {
         public HistoryCallMessageControl()
         {
