@@ -1075,6 +1075,8 @@ namespace Unigram.ViewModels
                         {
                             var clone = fwdMessage.Clone();
                             clone.Id = 0;
+                            clone.HasReplyToMsgId = false;
+                            clone.ReplyToMsgId = null;
                             clone.Date = date;
                             clone.ToId = Peer.ToPeer();
                             clone.RandomId = TLLong.Random();
@@ -1084,6 +1086,33 @@ namespace Unigram.ViewModels
                             clone.IsMediaUnread = Peer is TLInputPeerChannel ? true : false;
                             clone.IsUnread = true;
                             clone.State = TLMessageState.Sending;
+
+                            if (channel != null)
+                            {
+                                if (channel.IsBroadcast)
+                                {
+                                    if (!channel.IsSignatures)
+                                    {
+                                        clone.HasFromId = false;
+                                        clone.FromId = null;
+                                    }
+
+                                    if (IsSilent)
+                                    {
+                                        clone.IsSilent = true;
+                                    }
+
+                                    clone.HasViews = true;
+                                    clone.Views = 1;
+                                }
+                            }
+
+                            if (clone.Media is TLMessageMediaGame gameMedia)
+                            {
+                                clone.HasEntities = false;
+                                clone.Entities = null;
+                                clone.Message = null;
+                            }
 
                             if (fromPeer == null)
                             {
