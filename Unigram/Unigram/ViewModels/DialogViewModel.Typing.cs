@@ -106,35 +106,35 @@ namespace Unigram.ViewModels
                     var action = tuple.Item2;
                     if (action is TLSendMessageUploadPhotoAction)
                     {
-                        return Resources.SendingPhoto;
+                        return AppResources.SendingPhoto;
                     }
                     else if (action is TLSendMessageRecordAudioAction)
                     {
-                        return Resources.RecordingVoiceMessage;
+                        return AppResources.RecordingVoiceMessage;
                     }
                     else if (action is TLSendMessageUploadAudioAction)
                     {
-                        return Resources.SendingAudio;
+                        return AppResources.SendingAudio;
                     }
                     else if (action is TLSendMessageUploadDocumentAction)
                     {
-                        return Resources.SendingFile;
+                        return AppResources.SendingFile;
                     }
                     else if (action is TLSendMessageRecordVideoAction)
                     {
-                        return Resources.RecordingVideo;
+                        return AppResources.RecordingVideo;
                     }
                     else if (action is TLSendMessageUploadVideoAction)
                     {
-                        return Resources.SendingVideo;
+                        return AppResources.SendingVideo;
                     }
                     else if (action is TLSendMessageGamePlayAction)
                     {
-                        return Resources.PlayingGame;
+                        return AppResources.PlayingGame;
                     }
                 }
 
-                return Resources.Typing;
+                return AppResources.Typing;
             }
 
             if (typingUsers.Count == 1)
@@ -154,41 +154,41 @@ namespace Unigram.ViewModels
                     var action = tuple.Item2;
                     if (action is TLSendMessageUploadPhotoAction)
                     {
-                        return string.Format(Resources.IsSendingPhoto, userName);
+                        return string.Format(AppResources.IsSendingPhoto, userName);
                     }
                     if (action is TLSendMessageUploadAudioAction)
                     {
-                        return string.Format(Resources.IsSendingAudio, userName);
+                        return string.Format(AppResources.IsSendingAudio, userName);
                     }
                     if (action is TLSendMessageRecordAudioAction)
                     {
-                        return string.Format(Resources.IsRecordingAudio, userName);
+                        return string.Format(AppResources.IsRecordingAudio, userName);
                     }
                     if (action is TLSendMessageUploadDocumentAction)
                     {
-                        return string.Format(Resources.IsSendingFile, userName);
+                        return string.Format(AppResources.IsSendingFile, userName);
                     }
                     if (action is TLSendMessageRecordVideoAction)
                     {
-                        return string.Format(Resources.IsRecordingVideo, userName);
+                        return string.Format(AppResources.IsRecordingVideo, userName);
                     }
                     if (action is TLSendMessageUploadVideoAction)
                     {
-                        return string.Format(Resources.IsSendingVideo, userName);
+                        return string.Format(AppResources.IsSendingVideo, userName);
                     }
                     if (action is TLSendMessageGamePlayAction)
                     {
-                        return string.Format(Resources.IsPlayingGame, userName);
+                        return string.Format(AppResources.IsPlayingGame, userName);
                     }
                 }
 
-                return string.Format(Resources.IsTyping, userName);
+                return string.Format(AppResources.IsTyping, userName);
             }
             else
             {
                 if (typingUsers.Count > 3)
                 {
-                    return string.Format(Resources.AreTyping, Language.Declension(typingUsers.Count, Resources.CompanyNominativeSingular, Resources.CompanyNominativePlural, Resources.CompanyGenitiveSingular, Resources.CompanyGenitivePlural, null, null));
+                    return string.Format(AppResources.AreTyping, Language.Declension(typingUsers.Count, AppResources.CompanyNominativeSingular, AppResources.CompanyNominativePlural, AppResources.CompanyGenitiveSingular, AppResources.CompanyGenitivePlural, null, null));
                 }
 
                 var names = new List<string>(typingUsers.Count);
@@ -214,7 +214,7 @@ namespace Unigram.ViewModels
                     return null;
                 }
 
-                return string.Format(Resources.AreTyping, string.Join(", ", names));
+                return string.Format(AppResources.AreTyping, string.Join(", ", names));
             }
         }
     }

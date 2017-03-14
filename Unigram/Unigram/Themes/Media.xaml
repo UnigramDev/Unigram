@@ -64,10 +64,10 @@
             <controls:ProgressBarRing Value="{Binding Media.Progress}"/>
 
             <!--<controls:ProgressBarRing 
-                    SmoothValue="{Binding UploadingProgress}"
-                    common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
-                    Maximum="1" 
-                    Visibility="Collapsed"/>-->
+                 SmoothValue="{Binding UploadingProgress}"
+                 common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
+                 Maximum="1" 
+                 Visibility="Collapsed"/>-->
         </Grid>
     </DataTemplate>
 
@@ -90,10 +90,10 @@
             </Grid>
 
             <!--<controls:ProgressBarRing 
-                    SmoothValue="{Binding UploadingProgress}"
-                    common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
-                    Maximum="1" 
-                    Visibility="Collapsed"/>-->
+                 SmoothValue="{Binding UploadingProgress}"
+                 common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
+                 Maximum="1" 
+                 Visibility="Collapsed"/>-->
         </Grid>
     </DataTemplate>
 
@@ -121,14 +121,14 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <!--<Grid Background="{Binding Media.UserId, Converter={StaticResource BubblePlaceholderConverter}}" Width="48" Height="48" CornerRadius="24" Margin="0,0,12,0" Grid.RowSpan="2">
-                <TextBlock Foreground="White" Text="{Binding Media.User, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
-                <Ellipse>
-                    <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding Media.User.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                    </Ellipse.Fill>
-                </Ellipse>
-                <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
-            </Grid>-->
+                 <TextBlock Foreground="White" Text="{Binding Media.User, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
+                 <Ellipse>
+                 <Ellipse.Fill>
+                 <ImageBrush ImageSource="{Binding Media.User.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                 </Ellipse.Fill>
+                 </Ellipse>
+                 <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
+                 </Grid>-->
 
             <Ellipse Width="48" Height="48" Margin="0,0,12,0" Grid.RowSpan="2">
                 <Ellipse.Fill>
@@ -149,8 +149,13 @@
 
     <DataTemplate x:Key="MediaGeoPointTemplate">
         <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-            <controls:ImageView Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" Constraint="{Binding Media}" MaxWidth="320" MaxHeight="240"/>
-            <Border Width="20" Height="20" CornerRadius="10" Background="#54000000">
+            <controls:ImageView 
+                Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}"
+                Constraint="{Binding Media}" 
+                Click="GeoPoint_Click"
+                MaxWidth="320" 
+                MaxHeight="240"/>
+            <Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
                 <Border CornerRadius="10" Margin="1" Background="White">
                     <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
                 </Border>
@@ -165,8 +170,13 @@
                 <TextBlock Text="{Binding Media.Address}" Style="{StaticResource BodyTextBlockStyle}"/>
             </StackPanel>
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                <controls:ImageView Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" Constraint="{Binding Media}" MaxWidth="320" MaxHeight="240"/>
-                <Border Width="20" Height="20" CornerRadius="10" Background="#54000000">
+                <controls:ImageView 
+                    Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" 
+                    Constraint="{Binding Media}" 
+                    Click="Venue_Click"
+                    MaxWidth="320" 
+                    MaxHeight="240"/>
+                <Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
                     <Border CornerRadius="10" Margin="1" Background="White">
                         <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
                     </Border>
@@ -420,21 +430,21 @@
 
 
     <selectors:MediaTemplateSelector x:Key="MediaTemplateSelector"
-        EmptyTemplate="{StaticResource MediaEmptyTemplate}"
-        AudioTemplate="{StaticResource MediaAudioTemplate}"
-        ContactTemplate="{StaticResource ContactMediaTemplate}"
-        DocumentTemplate="{StaticResource MediaDocumentTemplate}"
-        DocumentThumbTemplate="{StaticResource MediaDocumentThumbTemplate}"
-        GameTemplate="{StaticResource GameMediaTemplate}"
-        GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
-        GifTemplate="{StaticResource MediaGifTemplate}"
-        PhotoTemplate="{StaticResource MediaPhotoTemplate}"
-        VideoTemplate="{StaticResource MediaVideoTemplate}"
-        VenueTemplate="{StaticResource MediaVenueTemplate}"
-        WebPageTemplate="{StaticResource WebPageMediaTemplate}"
-        WebPageGifTemplate="{StaticResource WebPageGifMediaTemplate}"
-        WebPageDocumentTemplate="{StaticResource WebPageDocumentMediaTemplate}"
-        WebPagePhotoTemplate="{StaticResource WebPagePhotoMediaTemplate}"
-        WebPageSmallPhotoTemplate="{StaticResource WebPageSmallPhotoMediaTemplate}"/>
+                                     EmptyTemplate="{StaticResource MediaEmptyTemplate}"
+                                     AudioTemplate="{StaticResource MediaAudioTemplate}"
+                                     ContactTemplate="{StaticResource ContactMediaTemplate}"
+                                     DocumentTemplate="{StaticResource MediaDocumentTemplate}"
+                                     DocumentThumbTemplate="{StaticResource MediaDocumentThumbTemplate}"
+                                     GameTemplate="{StaticResource GameMediaTemplate}"
+                                     GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
+                                     GifTemplate="{StaticResource MediaGifTemplate}"
+                                     PhotoTemplate="{StaticResource MediaPhotoTemplate}"
+                                     VideoTemplate="{StaticResource MediaVideoTemplate}"
+                                     VenueTemplate="{StaticResource MediaVenueTemplate}"
+                                     WebPageTemplate="{StaticResource WebPageMediaTemplate}"
+                                     WebPageGifTemplate="{StaticResource WebPageGifMediaTemplate}"
+                                     WebPageDocumentTemplate="{StaticResource WebPageDocumentMediaTemplate}"
+                                     WebPagePhotoTemplate="{StaticResource WebPagePhotoMediaTemplate}"
+                                     WebPageSmallPhotoTemplate="{StaticResource WebPageSmallPhotoMediaTemplate}"/>
 
 </ResourceDictionary>

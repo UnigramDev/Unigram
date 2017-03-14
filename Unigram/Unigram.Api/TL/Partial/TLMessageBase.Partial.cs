@@ -479,7 +479,7 @@ namespace Telegram.Api.TL
 
             if (m.Views != null)
             {
-                var currentViews = Views != null ? Views : 0;
+                var currentViews = Views ?? 0;
                 if (currentViews < m.Views)
                 {
                     Views = m.Views;

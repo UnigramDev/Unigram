@@ -83,7 +83,7 @@ namespace Unigram.Controls.Messages
                     duration = base.Convert.CallDuration(phoneCallAction.Duration ?? 0);
                 }
 
-                return missed ? type : string.Format(Unigram.Strings.Resources.CallTimeFormat, type, duration);
+                return missed ? type : string.Format(Unigram.Strings.AppResources.CallTimeFormat, type, duration);
             }
 
             return string.Empty;

@@ -159,8 +159,7 @@ namespace Telegram.Api.Services.Cache
         {
             if (message.Id != 0)
             {
-                TLPeerChannel peerChannel;
-                if (TLUtils.IsChannelMessage(message, out peerChannel))
+                if (TLUtils.IsChannelMessage(message, out TLPeerChannel peerChannel))
                 {
                     var channelContext = ChannelsContext[peerChannel.Id];
                     if (channelContext != null)
@@ -196,8 +195,7 @@ namespace Telegram.Api.Services.Cache
         {
             if (message.Id != 0)
             {
-                TLPeerChannel peerChannel;
-                if (TLUtils.IsChannelMessage(message, out peerChannel))
+                if (TLUtils.IsChannelMessage(message, out TLPeerChannel peerChannel))
                 {
                     var channelContext = ChannelsContext[peerChannel.Id];
                     if (channelContext == null)
@@ -459,8 +457,7 @@ namespace Telegram.Api.Services.Cache
                     // в бродкастах дата у всех сообщений совпадает: правильный порядок можно определить по индексу сообщения
                     if (Dialogs[i].GetDateIndex() == dateIndex)
                     {
-                        var currentMessageId = Dialogs[i].TopMessage != null ? Dialogs[i].TopMessage : 0;
-
+                        var currentMessageId = Dialogs[i].TopMessage;
                         if (currentMessageId != 0 && messageId != 0)
                         {
                             if (currentMessageId < messageId)
@@ -1851,7 +1848,7 @@ namespace Telegram.Api.Services.Cache
                             var topMessage = dialog.TopMessageItem != null ? dialog.TopMessageItem.Id : new int?();
                             if (topMessage == null)
                             {
-                                dialog.TopMessageRandomId = dialog.TopMessageItem != null ? dialog.TopMessageItem.RandomId : null;
+                                dialog.TopMessageRandomId = dialog.TopMessageItem?.RandomId;
                             }
                             else
                             {

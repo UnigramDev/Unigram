@@ -39,11 +39,7 @@ namespace Telegram.Api.Services
 
         protected void RaiseGotUserCountry(string country)
         {
-            var handler = GotUserCountry;
-            if (handler != null)
-            {
-                handler(this, new CountryEventArgs{Country = country});
-            }
+            GotUserCountry?.Invoke(this, new CountryEventArgs { Country = country });
         }
 
         public void SetInitState()
@@ -58,17 +54,17 @@ namespace Telegram.Api.Services
 
         public Tuple<int, int, int> GetCurrentPacketInfo()
         {
-            return _activeTransport != null ? _activeTransport.GetCurrentPacketInfo() : null;
+            return _activeTransport?.GetCurrentPacketInfo();
         }
 
         public string GetTransportInfo()
         {
-            return _activeTransport != null ? _activeTransport.GetTransportInfo() : null;
+            return _activeTransport?.GetTransportInfo();
         }
 
         public string Country
         {
-            get { return _config != null ? _config.Country : null; }
+            get { return _config?.Country; }
         }
 
         private int _currentUserId;
@@ -227,8 +223,7 @@ namespace Telegram.Api.Services
                 var transportSessionId = _activeTransport != null ? _activeTransport.SessionId : null;
                 var transportSequenceNumber = _activeTransport != null ? _activeTransport.SequenceNumber : 0;
                 var transportClientTicksDelta = _activeTransport != null ? _activeTransport.ClientTicksDelta : 0;
-                bool isCreated;
-                _activeTransport = _transportService.GetTransport(Constants.FirstServerIpAddress, Constants.FirstServerPort, Type, out isCreated);
+                _activeTransport = _transportService.GetTransport(Constants.FirstServerIpAddress, Constants.FirstServerPort, Type, out bool isCreated);
                 if (isCreated)
                 {
                     _activeTransport.DCId = Constants.FirstServerDCId;
@@ -468,7 +463,7 @@ namespace Telegram.Api.Services
                 var now = DateTime.Now;
                 var currentTime = TLUtils.DateToUniversalTimeTLInt(ClientTicksDelta, now);
 
-                var activeTransportString = _activeTransport != null ? _activeTransport.ToString() : null;
+                var activeTransportString = _activeTransport?.ToString();
 
                 var sb = new StringBuilder();
                 sb.AppendLine("current_time utc0:");
@@ -491,7 +486,7 @@ namespace Telegram.Api.Services
         {
             Execute.BeginOnThreadPool(() =>
             {
-                var activeTransportString = _activeTransport != null ? _activeTransport.ToString() : null;
+                var activeTransportString = _activeTransport?.ToString();
 
                 var sb = new StringBuilder();
                 sb.AppendLine("active transport:");
@@ -527,8 +522,7 @@ namespace Telegram.Api.Services
                 var transportSessionId = _activeTransport != null ? _activeTransport.SessionId : null;
                 var transportSequenceNumber = _activeTransport != null ? _activeTransport.SequenceNumber : 0;
                 var transportClientTicksDelta = _activeTransport != null ? _activeTransport.ClientTicksDelta : 0;
-                bool isCreated;
-                _activeTransport = _transportService.GetTransport(dcIpAddress, dcPort, Type, out isCreated);
+                _activeTransport = _transportService.GetTransport(dcIpAddress, dcPort, Type, out bool isCreated);
                 if (isCreated)
                 {
                     _activeTransport.DCId = transportDCId;
@@ -751,10 +745,7 @@ namespace Telegram.Api.Services
 #endif
                         _delayedItems.Remove(canceledItem);
 
-                        if (canceledItem.FaultCallback != null)
-                        {
-                            canceledItem.FaultCallback(new TLRPCError { ErrorCode = 404 });
-                        }
+                        canceledItem.FaultCallback?.Invoke(new TLRPCError { ErrorCode = 404 });
                     }
                 }
             });
@@ -825,8 +816,7 @@ namespace Telegram.Api.Services
                                     var transportSessionId = _activeTransport != null ? _activeTransport.SessionId : null;
                                     var transportSequenceNumber = _activeTransport != null ? _activeTransport.SequenceNumber : 0;
                                     var transportClientTicksDelta = _activeTransport != null ? _activeTransport.ClientTicksDelta : 0;
-                                    bool isCreated;
-                                    _activeTransport = _transportService.GetTransport(Constants.FirstServerIpAddress, Constants.FirstServerPort, Type, out isCreated);
+                                    _activeTransport = _transportService.GetTransport(Constants.FirstServerIpAddress, Constants.FirstServerPort, Type, out bool isCreated);
                                     if (isCreated)
                                     {
                                         _activeTransport.DCId = Constants.FirstServerDCId;
@@ -931,8 +921,7 @@ namespace Telegram.Api.Services
                                     var transportSessionId = _activeTransport != null ? _activeTransport.SessionId : null;
                                     var transportSequenceNumber = _activeTransport != null ? _activeTransport.SequenceNumber : 0;
                                     var transportClientTicksDelta = _activeTransport != null ? _activeTransport.ClientTicksDelta : 0;
-                                    bool isCreated;
-                                    _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port, Type, out isCreated);
+                                    _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port, Type, out bool isCreated);
                                     if (isCreated)
                                     {
                                         _activeTransport.DCId = transportDCId;
@@ -1498,8 +1487,7 @@ namespace Telegram.Api.Services
                 var transportSessionId = _activeTransport != null ? _activeTransport.SessionId : null;
                 var transportSequenceNumber = _activeTransport != null ? _activeTransport.SequenceNumber : 0;
                 var transportClientTicksDelta = _activeTransport != null ? _activeTransport.ClientTicksDelta : 0;
-                bool isCreated;
-                _activeTransport = _transportService.GetTransport(_activeTransport.Host, _activeTransport.Port, Type, out isCreated);
+                _activeTransport = _transportService.GetTransport(_activeTransport.Host, _activeTransport.Port, Type, out bool isCreated);
                 if (isCreated)
                 {
                     _activeTransport.DCId = transportDCId;
@@ -1656,8 +1644,7 @@ namespace Telegram.Api.Services
                                 var transportSessionId = TLLong.Random();
                                 var transportSequenceNumber = 0;
                                 var transportClientsTicksDelta = dcOption.ClientTicksDelta;
-                                bool isCreated;
-                                _activeTransport = _transportService.GetTransport(dcOption.IpAddress.ToString(), dcOption.Port, Type, out isCreated);
+                                _activeTransport = _transportService.GetTransport(dcOption.IpAddress.ToString(), dcOption.Port, Type, out bool isCreated);
                                 if (isCreated)
                                 {
                                     _activeTransport.DCId = transportDCId;
@@ -1708,8 +1695,7 @@ namespace Telegram.Api.Services
                                 var activeDCOption = _config.DCOptions[_config.ActiveDCOptionIndex];
                                 lock (_activeTransportRoot)
                                 {
-                                    bool isCreated;
-                                    _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port, Type, out isCreated);
+                                    _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port, Type, out bool isCreated);
                                     if (isCreated)
                                     {
                                         _activeTransport.DCId = activeDCOption.Id;
@@ -1749,8 +1735,7 @@ namespace Telegram.Api.Services
                             var transportSessionId = TLLong.Random();
                             var transportSequenceNumber = 0;
                             var transportClientsTicksDelta = activeDCOption.ClientTicksDelta;
-                            bool isCreated;
-                            _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port, Type, out isCreated);
+                            _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port, Type, out bool isCreated);
                             if (isCreated)
                             {
                                 _activeTransport.DCId = transportDCId;
@@ -1804,8 +1789,7 @@ namespace Telegram.Api.Services
                                 var activeDCOption2 = _config.DCOptions[_config.ActiveDCOptionIndex];
                                 lock (_activeTransportRoot)
                                 {
-                                    bool isCreated;
-                                    _activeTransport = _transportService.GetTransport(activeDCOption2.IpAddress.ToString(), activeDCOption2.Port, Type, out isCreated);
+                                    _activeTransport = _transportService.GetTransport(activeDCOption2.IpAddress.ToString(), activeDCOption2.Port, Type, out bool isCreated);
                                     if (isCreated)
                                     {
                                         _activeTransport.DCId = activeDCOption2.Id;
@@ -1881,8 +1865,7 @@ namespace Telegram.Api.Services
                         var transportSessionId = TLLong.Random();
                         var transportSequenceNumber = 0;
                         var transportClientsTicksDelta = activeDCOption.ClientTicksDelta;
-                        bool isCreated;
-                        _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port, Type, out isCreated);
+                        _activeTransport = _transportService.GetTransport(activeDCOption.IpAddress.ToString(), activeDCOption.Port, Type, out bool isCreated);
                         if (isCreated)
                         {
                             _activeTransport.DCId = transportDCId;
@@ -2007,9 +1990,9 @@ namespace Telegram.Api.Services
                 //}
 
             }
-            else if (historyItem.FaultCallback != null)
+            else
             {
-                historyItem.FaultCallback(error);
+                historyItem.FaultCallback?.Invoke(error);
             }
         }
 
@@ -2129,8 +2112,7 @@ namespace Telegram.Api.Services
                             var transportSessionId = _activeTransport.SessionId;
                             var transportSequenceNumber = _activeTransport.SequenceNumber;
                             var transportClientTicksDelta =_activeTransport.ClientTicksDelta;
-                            bool isCreated;
-                            _activeTransport = _transportService.GetTransport(_activeTransport.Host, _activeTransport.Port, Type, out isCreated);
+                            _activeTransport = _transportService.GetTransport(_activeTransport.Host, _activeTransport.Port, Type, out bool isCreated);
                             if (isCreated)
                             {
                                 _activeTransport.DCId = transportDCId;
@@ -2217,8 +2199,7 @@ namespace Telegram.Api.Services
                             var transportSessionId = _activeTransport.SessionId;
                             var transportSequenceNumber = _activeTransport.SequenceNumber;
                             var transportClientTicksDelta = _activeTransport.ClientTicksDelta;
-                            bool isCreated;
-                            _activeTransport = _transportService.GetTransport(_activeTransport.Host, _activeTransport.Port, Type, out isCreated);
+                            _activeTransport = _transportService.GetTransport(_activeTransport.Host, _activeTransport.Port, Type, out bool isCreated);
                             if (isCreated)
                             {
                                 _activeTransport.DCId = transportDCId;
@@ -2240,7 +2221,7 @@ namespace Telegram.Api.Services
                             Debug.WriteLine("@{0} {1} result {2}", string.Format("{0}: {1}", historyItem.Caption, "seqNo"), transportMessage.MsgId, result);
 	                
                         },//ReceiveBytesAsync(result, authKey)}, 
-                        error => { if (faultCallback != null) faultCallback(null); });
+                        error => { faultCallback?.Invoke(null); });
                     
                     break;
             }
@@ -2328,8 +2309,7 @@ namespace Telegram.Api.Services
                     var transportSessionId = _activeTransport.SessionId;
                     var transportSequenceNumber = _activeTransport.SequenceNumber;
                     var transportClientTicksDelta = _activeTransport.ClientTicksDelta;
-                    bool isCreated;
-                    _activeTransport = _transportService.GetTransport(_activeTransport.Host, _activeTransport.Port, Type, out isCreated);
+                    _activeTransport = _transportService.GetTransport(_activeTransport.Host, _activeTransport.Port, Type, out bool isCreated);
                     if (isCreated)
                     {
                         _activeTransport.DCId = transportDCId;
@@ -2350,7 +2330,7 @@ namespace Telegram.Api.Services
                     Debug.WriteLine("@{0} {1} result {2}", historyItem.Caption, transportMessage.MsgId, result);
 	                
                 },//ReceiveBytesAsync(result, authKey)}, 
-                error => { if (faultCallback != null) faultCallback(new TLRPCError()); });
+                error => { faultCallback?.Invoke(new TLRPCError()); });
         }
 
 

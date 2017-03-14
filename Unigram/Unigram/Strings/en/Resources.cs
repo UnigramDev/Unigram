@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 03/12/2017 12:08:08
+// 	Generated: 03/14/2017 17:17:00
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -25,12 +25,12 @@ namespace Unigram.Strings
     using Windows.ApplicationModel.Resources;
     
     
-    public partial class Resources
+    public partial class AppResources
     {
         
         private static ResourceLoader resourceLoader;
         
-        static Resources()
+        static AppResources()
         {
             string executingAssemblyName;
             executingAssemblyName = Windows.UI.Xaml.Application.Current.GetType().AssemblyQualifiedName;
@@ -38,17 +38,25 @@ namespace Unigram.Strings
             executingAssemblySplit = executingAssemblyName.Split(',');
             executingAssemblyName = executingAssemblySplit[1];
             string currentAssemblyName;
-            currentAssemblyName = typeof(Resources).AssemblyQualifiedName;
+            currentAssemblyName = typeof(AppResources).AssemblyQualifiedName;
             string[] currentAssemblySplit;
             currentAssemblySplit = currentAssemblyName.Split(',');
             currentAssemblyName = currentAssemblySplit[1];
             if (executingAssemblyName.Equals(currentAssemblyName))
             {
-                resourceLoader = ResourceLoader.GetForCurrentView("Resources");
+                resourceLoader = ResourceLoader.GetForViewIndependentUse("Resources");
             }
             else
             {
-                resourceLoader = ResourceLoader.GetForCurrentView(currentAssemblyName + "/Resources");
+                resourceLoader = ResourceLoader.GetForViewIndependentUse(currentAssemblyName + "/Resources");
+            }
+        }
+        
+        public static ResourceLoader Loader
+        {
+            get
+            {
+                return resourceLoader;
             }
         }
         
