@@ -42,7 +42,7 @@ namespace Unigram.Themes
             this.InitializeComponent();
         }
 
-        private async void ImageView_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void Photo_Click(object sender, RoutedEventArgs e)
         {
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;

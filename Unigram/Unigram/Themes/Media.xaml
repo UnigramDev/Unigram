@@ -59,7 +59,7 @@
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Tapped="ImageView_Tapped"/>
+                                Click="Photo_Click"/>
 
             <controls:ProgressBarRing Value="{Binding Media.Progress}"/>
 

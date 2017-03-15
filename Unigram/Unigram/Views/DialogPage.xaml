@@ -190,10 +190,9 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         HorizontalAlignment="Right"
                         MaxWidth="180" 
-                        MaxHeight="180" 
-                        Margin="2"/>
+                        MaxHeight="180"/>
 
-                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="0,0,6,0"/>
+                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="6"/>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -216,11 +215,10 @@
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         HorizontalAlignment="Left"
-                        MaxWidth="180" 
-                        MaxHeight="180" 
-                        Margin="2"/>
+                        MaxWidth="180"
+                        MaxHeight="180"/>
 
-                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="0,0,6,0"/>
+                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="6"/>
                 </Grid>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}" 
@@ -282,11 +280,10 @@
                             Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}" 
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                             HorizontalAlignment="Left"
-                            MaxWidth="180" 
-                            MaxHeight="180"
-                            Margin="2"/>
+                            MaxWidth="180"
+                            MaxHeight="180"/>
 
-                        <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="0,0,6,0"/>
+                        <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="6"/>
                     </Grid>
 
                     <StackPanel Visibility="{x:Bind StickerReplyVisibility}" 

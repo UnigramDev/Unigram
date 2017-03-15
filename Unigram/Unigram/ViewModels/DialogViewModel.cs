@@ -1114,6 +1114,12 @@ namespace Unigram.ViewModels
                 clone.IsUnread = true;
                 clone.State = TLMessageState.Sending;
 
+                if (clone.Media == null)
+                {
+                    clone.HasMedia = true;
+                    clone.Media = new TLMessageMediaEmpty();
+                }
+
                 if (With is TLChannel channel)
                 {
                     if (channel.IsBroadcast)
