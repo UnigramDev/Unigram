@@ -167,7 +167,7 @@
                             HorizontalAlignment="Right"
                             MaxWidth="180"
                             Padding="8,0,8,6"
-                            Margin="0,0,6,6"
+                            Margin="0,0,4,4"
                             Grid.Row="1">
                     <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
                         <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
@@ -192,7 +192,7 @@
                         MaxWidth="180"
                         MaxHeight="180"/>
 
-                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="6"/>
+                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -218,7 +218,7 @@
                         MaxWidth="180"
                         MaxHeight="180"/>
 
-                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="6"/>
+                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
@@ -227,7 +227,7 @@
                             HorizontalAlignment="Left"
                             MaxWidth="180"
                             Padding="8,0,8,6"
-                            Margin="6,0,0,6"
+                            Margin="4,0,0,4"
                             Grid.Column="1"
                             Grid.Row="1">
                     <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
@@ -283,7 +283,7 @@
                             MaxWidth="180"
                             MaxHeight="180"/>
 
-                        <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="6"/>
+                        <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                     </Grid>
 
                     <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
@@ -292,7 +292,7 @@
                                 HorizontalAlignment="Left"
                                 MaxWidth="180"
                                 Padding="8,0,8,6"
-                                Margin="6,0,0,6"
+                                Margin="4,0,0,4"
                                 Grid.Column="1"
                                 Grid.Row="1">
                         <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
