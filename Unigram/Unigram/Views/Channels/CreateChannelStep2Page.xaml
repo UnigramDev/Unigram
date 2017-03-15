@@ -53,8 +53,8 @@
                     <TextBlock Text="People can share this link with others and find your channel using Telegram search." Margin="12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
                 </StackPanel>
 
-                <ListView Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                          ItemsSource="{x:Bind ViewModel.AdminedPublicChannels}" 
+                <ListView Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          ItemsSource="{x:Bind ViewModel.AdminedPublicChannels}"
                           IsItemClickEnabled="True"
                           ItemClick="ListView_ItemClick"
                           SelectionMode="None"
@@ -76,11 +76,11 @@
                                 <controls:ProfilePictureView x:Phase="2" Source="{x:Bind PhotoSelf, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
                                 <TextBlock Text="{x:Bind DisplayName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                                <TextBlock VerticalAlignment="Top" 
-                                           Style="{StaticResource CaptionTextBlockStyle}" 
+                                <TextBlock VerticalAlignment="Top"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                           TextTrimming="CharacterEllipsis" 
-                                           TextWrapping="NoWrap" 
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap"
                                            Grid.Column="1"
                                            Grid.Row="1"
                                            MaxLines="1">

@@ -53,7 +53,7 @@
                                     PlaceholderText="Your code"
                                     Grid.Row="3"/>
 
-            <HyperlinkButton Command="{x:Bind ViewModel.ResendCommand}" 
+            <HyperlinkButton Command="{x:Bind ViewModel.ResendCommand}"
                              Visibility="{x:Bind (Visibility)ViewModel.SentCode.HasNextType}"
                              Content="Haven't received the code?"
                              Grid.Row="4"/>
@@ -66,7 +66,7 @@
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     HorizontalAlignment="Stretch"
                     Content="Next"
-                    Margin="0,8,0,0"         
+                    Margin="0,8,0,0"
                     Grid.Row="6"
                     Visibility="Collapsed"/>
         </Grid>

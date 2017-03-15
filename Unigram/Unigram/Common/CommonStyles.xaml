@@ -645,7 +645,7 @@
                                 MinWidth="32"
                                 Margin="0,2,0,2" />
                         </Grid>
-                        <Grid x:Name="VerticalRoot" 
+                        <Grid x:Name="VerticalRoot"
                            Background="{TemplateBinding Background}"
                            BorderBrush="{TemplateBinding BorderBrush}"
                            IsHitTestVisible="False">
@@ -1399,7 +1399,7 @@
                                RelativePanel.LeftOf="imgMasterLvChatStatus" />
                     <Image x:Name="imgMasterLvChatStatus"
                            Height="16"
-                           MinWidth="16" 
+                           MinWidth="16"
                            Source="ms-appx:///Assets/Icons/MessageStatus/ic_double_tick_lightbg.png"
                            Margin="4,0,0,0"
                            RelativePanel.AlignVerticalCenterWithPanel="True"
@@ -1431,13 +1431,13 @@
     <!--Style for master title bar on all pages-->
     <Style TargetType="RelativePanel"
            x:Key="StyleRPMasterTitleBar">
-        <Setter Property="Height" 
+        <Setter Property="Height"
                 Value="{ThemeResource AppBarThemeCompactHeight}" />
-        <Setter Property="Background" 
+        <Setter Property="Background"
                 Value="{ThemeResource SystemControlBackgroundChromeMediumBrush}" />
-        <Setter Property="BorderBrush" 
+        <Setter Property="BorderBrush"
                 Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
-        <Setter Property="BorderThickness" 
+        <Setter Property="BorderThickness"
                 Value="0,0,0,0"/>
         <Setter Property="RelativePanel.AlignLeftWithPanel"
                 Value="True" />
@@ -1447,7 +1447,7 @@
                 Value="True" />
     </Style>
 
-    
+
     <!--Style for white background TextBox -->
     <Style TargetType="TextBox" x:Key="whiteBackGroundTextBox">
         <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
@@ -1660,7 +1660,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="Ciao" TargetType="PivotHeaderItem">
         <Setter Property="FontSize" Value="{ThemeResource PivotHeaderItemFontSize}" />
         <Setter Property="FontFamily" Value="{ThemeResource PivotHeaderItemFontFamily}" />
@@ -1675,7 +1675,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="PivotHeaderItem">
-                    <Grid 
+                    <Grid
                         x:Name="Grid"
                         Background="{TemplateBinding Background}">
                         <Grid.Resources>

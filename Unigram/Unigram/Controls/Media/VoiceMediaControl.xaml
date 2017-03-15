@@ -129,7 +129,7 @@
             </Grid.RowDefinitions>
             <!--<Slider x:Name="Slide" Value="50" Style="{StaticResource SliderStyle}" IsThumbToolTipEnabled="False" VerticalAlignment="Center"/>-->
             <controls:ProgressVoice x:Name="Slide" HorizontalAlignment="Left" Value="50" Media="{Binding Media}"/>
-            
+
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,4,0,0" RequestedTheme="Light" Grid.Row="1">
                 <TextBlock x:Name="DurationLabel" Text="00:01" Foreground="{ThemeResource SliderTrackFill}" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 <TextBlock Visibility="{x:Bind (Visibility)ViewModel.IsMediaUnread, Mode=OneWay}" Text=" ●" Foreground="{ThemeResource SliderTrackFill}" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,-1,0,0"/>

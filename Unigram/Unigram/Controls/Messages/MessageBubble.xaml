@@ -18,11 +18,11 @@
     <Border Height="8" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <UserControl x:Name="LayoutRoot">
-        <Grid Margin="{ThemeResource MessageContentMargin}" 
-              Padding="{ThemeResource MessageContentPadding}" 
+        <Grid Margin="{ThemeResource MessageContentMargin}"
+              Padding="{ThemeResource MessageContentPadding}"
               CornerRadius="{ThemeResource MessageCornerRadius}"
-              Background="{ThemeResource MessageBackgroundBrush}" 
-              BorderBrush="{ThemeResource MessageBorderBrush}" 
+              Background="{ThemeResource MessageBackgroundBrush}"
+              BorderBrush="{ThemeResource MessageBorderBrush}"
               BorderThickness="0,0,0,2">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
@@ -43,22 +43,22 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="HeaderLabel" 
+            <TextBlock x:Name="HeaderLabel"
                        Margin="0,0,0,2"
-                       Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
+                       Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                        RequestedTheme="{ThemeResource MessageTextBlockTheme}"
                        Style="{ThemeResource CaptionTextBlockStyle}"
                        FontWeight="SemiBold"
                        Visibility="Collapsed"
                        Grid.Row="0"/>
 
-            <local:MessageReference 
+            <local:MessageReference
                 Message="{x:Bind ViewModel.Reply, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
                 Click="Reply_Click"
                 Grid.Row="1"/>
 
-            <RichTextBlock 
+            <RichTextBlock
                 x:Name="MessageControl"
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
                 Style="{ThemeResource BodyRichTextBlockStyle}"
@@ -79,7 +79,7 @@
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                 Grid.Row="3"/>
 
-            <local:MessageStatusControl 
+            <local:MessageStatusControl
                 x:Name="StatusControl"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"

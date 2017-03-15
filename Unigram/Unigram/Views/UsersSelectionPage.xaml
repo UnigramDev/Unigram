@@ -33,15 +33,15 @@
         <Border Background="{ThemeResource CommandBarOverflowPresenterBackground}" MinHeight="48" Grid.Row="1">
             <ScrollViewer x:Name="ScrollingHost"
                           VerticalScrollBarVisibility="Auto"
-                          VerticalScrollMode="Auto" 
+                          VerticalScrollMode="Auto"
                           MaxHeight="80">
                 <controls:TagsTextBox ItemsSource="{x:Bind ViewModel.SelectedItems}" VerticalAlignment="Stretch" PlaceholderText="Search" Margin="0,8" SizeChanged="TagsTextBox_SizeChanged"/>
             </ScrollViewer>
         </Border>
 
         <ListView x:Name="List"
-                  ItemsSource="{x:Bind ViewModel.Items}" 
-                  SelectionMode="Multiple" 
+                  ItemsSource="{x:Bind ViewModel.Items}"
+                  SelectionMode="Multiple"
                   SelectionChanged="ListView_SelectionChanged"
                   Grid.Row="2">
             <ListView.ItemTemplate>
@@ -65,13 +65,13 @@
                             <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
                         </Grid>
                         <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                        <TextBlock Text="{x:Bind Converter={StaticResource LastSeenConverter}}" 
-                                   VerticalAlignment="Top" 
-                                   Style="{StaticResource CaptionTextBlockStyle}" 
+                        <TextBlock Text="{x:Bind Converter={StaticResource LastSeenConverter}}"
+                                   VerticalAlignment="Top"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   TextTrimming="CharacterEllipsis" 
-                                   TextWrapping="NoWrap" 
-                                   Grid.Column="1" 
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   Grid.Column="1"
                                    Grid.Row="1"
                                    MaxLines="1"
                                    x:Phase="1"/>

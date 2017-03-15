@@ -26,9 +26,9 @@
                 </Grid.RowDefinitions>
                 <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
                       Visibility="{Binding ThumbUrl, Converter={StaticResource NullToVisibilityConverter}}"
-                      Width="48" Height="48" 
+                      Width="48" Height="48"
                       VerticalAlignment="Top"
-                      Margin="0,0,12,0" 
+                      Margin="0,0,12,0"
                       Grid.RowSpan="2">
                     <Image Source="{Binding ThumbUrl}" Stretch="UniformToFill"/>
                 </Grid>
@@ -93,7 +93,7 @@
             </Grid>
         </DataTemplate>
 
-        <selectors:InlineBotResultTemplateSelector 
+        <selectors:InlineBotResultTemplateSelector
             x:Key="InlineBotResultTemplateSelector"
             ResultTemplate="{StaticResource ResultTemplate}"
             GameResultTemplate="{StaticResource GameResultTemplate}"
@@ -102,7 +102,7 @@
             GifTemplate="{StaticResource GifTemplate}"
             GifResultTemplate="{StaticResource GifResultTemplate}"/>
 
-        <!--<selectors:InlineBotResultTemplateSelector 
+        <!--<selectors:InlineBotResultTemplateSelector
                 x:Key="InlineBotResultTemplateSelector"
                 ResultTemplate="{StaticResource ResultTemplate}"
                 PhotoTemplate="{StaticResource PhotoTemplate}"
@@ -163,10 +163,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Button Content="{Binding InlineBotResults.SwitchPm.Text}" 
+            <Button Content="{Binding InlineBotResults.SwitchPm.Text}"
                     Visibility="{Binding InlineBotResults.SwitchPm, Converter={StaticResource NullToVisibilityConverter}}"
                     HorizontalAlignment="Stretch"/>
-            <controls:OrientableListView ItemsSource="{Binding InlineBotResults.Results}" 
+            <controls:OrientableListView ItemsSource="{Binding InlineBotResults.Results}"
                                          IsHorizontal="{Binding InlineBotResults.IsGallery}"
                                          ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
                                          ItemClick="ListView_ItemClick"

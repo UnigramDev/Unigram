@@ -1,5 +1,5 @@
 ﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.ThemeDictionaries>
@@ -49,9 +49,9 @@
             <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
-     
+
     <CornerRadius x:Key="MessageCornerRadius">4</CornerRadius>
-     
+
     <SolidColorBrush x:Key="TelegramDialogStateBrush" Color="#64BC54"/>
     <SolidColorBrush x:Key="TelegramDialogLabelFromBrush" Color="#4981AF"/>
     <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>

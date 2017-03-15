@@ -230,9 +230,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
-        <RelativePanel x:Name="profilePane" 
-                       Padding="0,24"              
-                       Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" 
+        <RelativePanel x:Name="profilePane"
+                       Padding="0,24"
+                       Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
                        VerticalAlignment="Stretch"
                        Grid.RowSpan="2">
             <!--User icon-->
@@ -249,10 +249,10 @@
                 <Button x:Name="elpContentInfoChatIcon"
                         HorizontalAlignment="Center"
                         MinWidth="96"
-                        MinHeight="96"                                
+                        MinHeight="96"
                         Padding="0"
                         BorderThickness="0"
-                        Background="Transparent"                                
+                        Background="Transparent"
                         Command="{Binding PhotoCommand}"/>
 
             </Grid>
@@ -269,17 +269,17 @@
                        RelativePanel.Below="grdProfile"
                        RelativePanel.AlignHorizontalCenterWithPanel="True"/>
             <!-- Chat-status (Personal + Group) -->
-            <TextBlock x:Name="tblUserInfoChatStatus" 
+            <TextBlock x:Name="tblUserInfoChatStatus"
                         HorizontalAlignment="Center"
                         RelativePanel.Below="tblUserInfoChatName"
-                        RelativePanel.AlignHorizontalCenterWithPanel="True"    
+                        RelativePanel.AlignHorizontalCenterWithPanel="True"
                         Visibility="Visible"
                         Text="{x:Bind ViewModel.Status}"
                         Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                         Style="{ThemeResource BodyTextBlockStyle}" />
         </RelativePanel>
 
-        <Grid x:Name="profileControlPane" 
+        <Grid x:Name="profileControlPane"
               Grid.Column="1"
               Grid.RowSpan="2">
             <Pivot Name="pvtHeader" Style="{StaticResource TabStylePivotStyle}"
@@ -290,13 +290,13 @@
                     </PivotItem.Header>
                     <ScrollViewer>
                         <StackPanel>
-                            <local:TableStackPanel x:Name="Group2" 
+                            <local:TableStackPanel x:Name="Group2"
                                                    BorderThickness="0,0,0,1"
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
                                 <!-- Manually hidden -->
-                                <controls:HyperButton Content="Manage Administrators" 
+                                <controls:HyperButton Content="Manage Administrators"
                                                       Visibility="Collapsed"
                                                       IsEnabled="False"
                                                       Style="{StaticResource HyperButtonStyle}"/>
@@ -313,50 +313,50 @@
                                                       Style="{StaticResource HyperButtonStyle}"/>
 
                                 <!-- Manually hidden -->
-                                <controls:HyperButton Content="http://www.batmantrolls.com/thisisnotagroup"  
+                                <controls:HyperButton Content="http://www.batmantrolls.com/thisisnotagroup"
                                                       Tag="Invite Link"
                                                       Visibility="Collapsed"
                                                       Style="{StaticResource SubtitleButtonStyle}"/>
                             </local:TableStackPanel>
 
-                            <local:TableStackPanel x:Name="Group3" 
+                            <local:TableStackPanel x:Name="Group3"
                                                    BorderThickness="0,0,0,1"
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
                                 <controls:HyperButton Content="Shared media"
                                                       Command="{Binding MediaCommand}"
-                                                      Style="{StaticResource HyperButtonStyle}" 
+                                                      Style="{StaticResource HyperButtonStyle}"
                                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
-                                <controls:HyperCheckButton Content="Enabled" 
-                                                           Tag="Notifications and sounds" 
+                                <controls:HyperCheckButton Content="Enabled"
+                                                           Tag="Notifications and sounds"
                                                            IsOn="{Binding AreNotificationsEnabled}"
                                                            Style="{ThemeResource CheckButtonStyle}"/>
                             </local:TableStackPanel>
 
-                            <local:TableStackPanel x:Name="Group4" 
+                            <local:TableStackPanel x:Name="Group4"
                                                    BorderThickness="0,0,0,1"
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24">
                                 <!-- Manually hidden -->
-                                <controls:HyperButton Content="Clear History" 
+                                <controls:HyperButton Content="Clear History"
                                                       Visibility="Collapsed"
                                                       IsEnabled="False"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <!--For Chats-->
-                                <controls:HyperButton Content="Delete and Exit" 
+                                <controls:HyperButton Content="Delete and Exit"
                                                       Command="{Binding BlockCommand}"
                                                       Visibility="{Binding StopVisibility}"
-                                                      Style="{StaticResource HyperButtonStyle}" 
+                                                      Style="{StaticResource HyperButtonStyle}"
                                                       Foreground="Red"/>
                                 <!--For Channels-->
                                 <!-- Manually hidden -->
-                                <controls:HyperButton Content="Leave Group" 
+                                <controls:HyperButton Content="Leave Group"
                                                       Visibility="Collapsed"
                                                       IsEnabled="False"
-                                                      Style="{StaticResource HyperButtonStyle}" 
+                                                      Style="{StaticResource HyperButtonStyle}"
                                                       Foreground="Red"/>
                             </local:TableStackPanel>
                         </StackPanel>
@@ -394,10 +394,10 @@
                                             </Ellipse>
                                             <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                             <TextBlock Text="{Binding lastSeen}" Grid.Column="1" VerticalAlignment="Top" Grid.Row="1"
-                                                       Style="{ThemeResource CaptionTextBlockStyle}" 
+                                                       Style="{ThemeResource CaptionTextBlockStyle}"
                                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                                       TextTrimming="CharacterEllipsis" 
-                                                       TextWrapping="NoWrap" 
+                                                       TextTrimming="CharacterEllipsis"
+                                                       TextWrapping="NoWrap"
                                                        MaxLines="1"/>
                                         </Grid>
                                     </DataTemplate>

@@ -49,11 +49,11 @@
                            Style="{StaticResource BaseTextBlockStyle}"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"/>
-                <TextBlock Text="{x:Bind Convert.Date(ViewModel.Date)}" 
-                           Style="{ThemeResource CaptionTextBlockStyle}" 
-                           Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" 
-                           VerticalAlignment="Bottom" 
-                           Margin="0,0,0,2" 
+                <TextBlock Text="{x:Bind Convert.Date(ViewModel.Date)}"
+                           Style="{ThemeResource CaptionTextBlockStyle}"
+                           Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                           VerticalAlignment="Bottom"
+                           Margin="0,0,0,2"
                            Grid.Column="1"/>
             </Grid>
 

@@ -15,7 +15,7 @@
             <Setter Property="Margin" Value="0"/>
         </Style>
     </Page.Resources>
-    
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -28,7 +28,7 @@
                     <PivotItem.Header>
                         <controls:TabHeaderStyle Glyph="&#xE114;" />
                     </PivotItem.Header>
-                    <GridView x:Name="ScrollingMedia" 
+                    <GridView x:Name="ScrollingMedia"
                               ItemsSource="{Binding MediaCollection}"
                               SelectionMode="None"
                               Padding="6,0,6,6"
@@ -90,10 +90,10 @@
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" 
-                                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" 
-                                                       VerticalAlignment="Bottom" 
-                                                       Margin="0,0,0,1" 
+                                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                                       VerticalAlignment="Bottom"
+                                                       Margin="0,0,0,1"
                                                        Grid.Column="1">
                                                 <Run Text="{Binding Count}"/>
                                                 <Run Text="files"/>
@@ -117,7 +117,7 @@
                         <controls:TabHeaderStyle Glyph="&#xE8C8;" />
                     </PivotItem.Header>
                     <ListView x:Name="ScrollingFiles"
-                              ItemsSource="{Binding FilesCollection}"      
+                              ItemsSource="{Binding FilesCollection}"
                               SelectionMode="None">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
@@ -170,10 +170,10 @@
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" 
-                                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" 
-                                                       VerticalAlignment="Bottom" 
-                                                       Margin="0,0,0,1" 
+                                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                                       VerticalAlignment="Bottom"
+                                                       Margin="0,0,0,1"
                                                        Grid.Column="1">
                                                 <Run Text="{Binding Count}"/>
                                                 <Run Text="files"/>
@@ -242,7 +242,7 @@
                                            VerticalAlignment="Center"
                                            RelativePanel.AlignLeftWithPanel="True"
                                            TextWrapping="WrapWholeWords"/>
-                                <HyperlinkButton x:Name="tblLinkName" Content="www.mspoweruser.com" NavigateUri="http://www.mspoweruser.com" Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"               
+                                <HyperlinkButton x:Name="tblLinkName" Content="www.mspoweruser.com" NavigateUri="http://www.mspoweruser.com" Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                                  FontSize="16"
                                                  Margin="0,0,0,4"
                                                  VerticalAlignment="Center"

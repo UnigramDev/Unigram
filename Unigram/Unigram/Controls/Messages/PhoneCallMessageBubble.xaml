@@ -19,11 +19,11 @@
     <Border Height="8" Visibility="{x:Bind (Visibility)ViewModel.IsFirst, Mode=OneWay}"/>
 
     <UserControl x:Name="LayoutRoot">
-        <Grid Margin="{ThemeResource MessageContentMargin}" 
-              Padding="{ThemeResource MessageContentPadding}" 
+        <Grid Margin="{ThemeResource MessageContentMargin}"
+              Padding="{ThemeResource MessageContentPadding}"
               CornerRadius="{ThemeResource MessageCornerRadius}"
-              Background="{ThemeResource MessageBackgroundBrush}" 
-              BorderBrush="{ThemeResource MessageBorderBrush}" 
+              Background="{ThemeResource MessageBackgroundBrush}"
+              BorderBrush="{ThemeResource MessageBorderBrush}"
               BorderThickness="0,0,0,2">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
