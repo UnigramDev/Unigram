@@ -59,6 +59,7 @@
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
                 <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
                                     Constraint="{Binding Photo}"
+                                    IsHitTestVisible="False"
                                     Height="96"/>
                 <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
             </Grid>
@@ -66,7 +67,10 @@
 
         <DataTemplate x:Key="PhotoResultTemplate" x:DataType="models:TLBotInlineResult">
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{Binding ThumbUrl}" Constraint="{Binding}" Height="96"/>
+                <controls:ImageView Source="{Binding ThumbUrl}"
+                                    Constraint="{Binding}"
+                                    IsHitTestVisible="False"
+                                    Height="96"/>
             </Grid>
         </DataTemplate>
 
@@ -74,6 +78,7 @@
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
                 <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
                                     Constraint="{Binding Photo}"
+                                    IsHitTestVisible="False"
                                     Height="96"/>
                 <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
             </Grid>
@@ -81,7 +86,10 @@
 
         <DataTemplate x:Key="GifResultTemplate" x:DataType="models:TLBotInlineResult">
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{Binding ThumbUrl}" Constraint="{Binding}" Height="96"/>
+                <controls:ImageView Source="{Binding ThumbUrl}"
+                                    Constraint="{Binding}"
+                                    IsHitTestVisible="False"
+                                    Height="96"/>
             </Grid>
         </DataTemplate>
 
