@@ -40,11 +40,11 @@
 
                         <StackPanel VerticalAlignment="Center" Grid.Column="1">
                             <TextBlock Text="{x:Bind FullName}"/>
-                            <TextBlock Visibility="{x:Bind (Visibility)HasUsername}" 
-                                       VerticalAlignment="Top" 
-                                       Style="{StaticResource CaptionTextBlockStyle}" 
+                            <TextBlock Visibility="{x:Bind (Visibility)HasUsername}"
+                                       VerticalAlignment="Top"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                       TextTrimming="CharacterEllipsis" 
+                                       TextTrimming="CharacterEllipsis"
                                        TextWrapping="NoWrap"
                                        MaxLines="1">
                                 <Run Text="@"/><Run Text="{x:Bind Username}"/>

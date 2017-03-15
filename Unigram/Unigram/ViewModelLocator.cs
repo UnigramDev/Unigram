@@ -40,6 +40,8 @@ namespace Unigram
             container = UnigramContainer.Current;
         }
 
+        public IHardwareService HardwareService => container.ResolveType<IHardwareService>();
+
         public void Configure()
         {
             InitializeLayer();

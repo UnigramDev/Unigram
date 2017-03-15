@@ -1,5 +1,5 @@
 ﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls">
 
@@ -17,7 +17,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="CheckButtonStyle" TargetType="local:HyperCheckButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
@@ -408,7 +408,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="local:MasterDetailView">
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
         <Setter Property="Template">
@@ -440,12 +440,12 @@
                             <ColumnDefinition x:Name="MasterColumn"/>
                             <ColumnDefinition x:Name="DetailColumn" Width="0"/>
                         </Grid.ColumnDefinitions>
-                        <ContentPresenter x:Name="MasterFrame" 
-                                          Content="{TemplateBinding Content}" 
-                                          ContentTemplate="{TemplateBinding ContentTemplate}" 
+                        <ContentPresenter x:Name="MasterFrame"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
                                           ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          HorizontalContentAlignment="Stretch" 
+                                          HorizontalContentAlignment="Stretch"
                                           VerticalContentAlignment="Stretch"/>
                         <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}"/>
                     </Grid>
@@ -812,7 +812,7 @@
                                     Margin="{TemplateBinding Padding}"
                                     Glyph="{TemplateBinding Glyph}"
                                     FontFamily="{TemplateBinding FontFamily}"
-                                    FontSize="{TemplateBinding FontSize}" 
+                                    FontSize="{TemplateBinding FontSize}"
                                     Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
                             <TextBlock
                                     x:Name="Presenter"
@@ -825,7 +825,7 @@
                                     IsTextScaleFactorEnabled="False"
                                     TextAlignment="Center"
                                     HorizontalAlignment="Center"
-                                    Margin="2,4,2,0" 
+                                    Margin="2,4,2,0"
                                     Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
                         </StackPanel>
                     </Grid>

@@ -68,7 +68,7 @@
                             <Button.Content>
                                 <StackPanel Height="48" Orientation="Horizontal" Margin="0,8">
                                     <Border Height="40" Width="40" CornerRadius="36" Margin="12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-                                        <TextBlock Text="" 
+                                        <TextBlock Text=""
                                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                                                    FontFamily="Segoe MDL2 Assets"
                                                    VerticalAlignment="Center"
@@ -97,7 +97,7 @@
                 <DataTemplate>
                     <StackPanel Height="48" Orientation="Horizontal">
                         <Border Height="40" Width="40" CornerRadius="36" Margin="0,0,12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-                            <TextBlock Text="" 
+                            <TextBlock Text=""
                                        FontFamily="Segoe MDL2 Assets"
                                        VerticalAlignment="Center"
                                        TextAlignment="Center"

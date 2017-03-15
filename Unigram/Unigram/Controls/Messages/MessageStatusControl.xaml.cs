@@ -93,13 +93,14 @@ namespace Unigram.Controls.Messages
 
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
         {
+            var message = ViewModel;
             var tooltip = sender as ToolTip;
-            if (tooltip != null && ViewModel != null)
+            if (tooltip != null && message != null)
             {
-                var date = Convert.DateTime(ViewModel.Date);
+                var date = Convert.DateTime(message.Date);
                 var text = $"{Convert.LongDate.Format(date)} {Convert.LongTime.Format(date)}";
 
-                if (ViewModel.HasEditDate)
+                if (message.HasEditDate && !message.HasViaBotId && message.ReplyMarkup?.TypeId != TLType.ReplyInlineMarkup)
                 {
                     var edit = Convert.DateTime(ViewModel.EditDate.Value);
                     text += $"\r\nEdited: {Convert.LongDate.Format(edit)} {Convert.LongTime.Format(edit)}";

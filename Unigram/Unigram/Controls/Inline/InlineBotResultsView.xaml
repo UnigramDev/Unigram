@@ -26,9 +26,9 @@
                 </Grid.RowDefinitions>
                 <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
                       Visibility="{Binding ThumbUrl, Converter={StaticResource NullToVisibilityConverter}}"
-                      Width="48" Height="48" 
+                      Width="48" Height="48"
                       VerticalAlignment="Top"
-                      Margin="0,0,12,0" 
+                      Margin="0,0,12,0"
                       Grid.RowSpan="2">
                     <Image Source="{Binding ThumbUrl}" Stretch="UniformToFill"/>
                 </Grid>
@@ -59,6 +59,7 @@
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
                 <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
                                     Constraint="{Binding Photo}"
+                                    IsHitTestVisible="False"
                                     Height="96"/>
                 <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
             </Grid>
@@ -66,7 +67,10 @@
 
         <DataTemplate x:Key="PhotoResultTemplate" x:DataType="models:TLBotInlineResult">
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{Binding ThumbUrl}" Constraint="{Binding}" Height="96"/>
+                <controls:ImageView Source="{Binding ThumbUrl}"
+                                    Constraint="{Binding}"
+                                    IsHitTestVisible="False"
+                                    Height="96"/>
             </Grid>
         </DataTemplate>
 
@@ -74,6 +78,7 @@
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
                 <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
                                     Constraint="{Binding Photo}"
+                                    IsHitTestVisible="False"
                                     Height="96"/>
                 <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
             </Grid>
@@ -81,11 +86,14 @@
 
         <DataTemplate x:Key="GifResultTemplate" x:DataType="models:TLBotInlineResult">
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{Binding ThumbUrl}" Constraint="{Binding}" Height="96"/>
+                <controls:ImageView Source="{Binding ThumbUrl}"
+                                    Constraint="{Binding}"
+                                    IsHitTestVisible="False"
+                                    Height="96"/>
             </Grid>
         </DataTemplate>
 
-        <selectors:InlineBotResultTemplateSelector 
+        <selectors:InlineBotResultTemplateSelector
             x:Key="InlineBotResultTemplateSelector"
             ResultTemplate="{StaticResource ResultTemplate}"
             GameResultTemplate="{StaticResource GameResultTemplate}"
@@ -94,7 +102,7 @@
             GifTemplate="{StaticResource GifTemplate}"
             GifResultTemplate="{StaticResource GifResultTemplate}"/>
 
-        <!--<selectors:InlineBotResultTemplateSelector 
+        <!--<selectors:InlineBotResultTemplateSelector
                 x:Key="InlineBotResultTemplateSelector"
                 ResultTemplate="{StaticResource ResultTemplate}"
                 PhotoTemplate="{StaticResource PhotoTemplate}"
@@ -155,10 +163,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Button Content="{Binding InlineBotResults.SwitchPm.Text}" 
+            <Button Content="{Binding InlineBotResults.SwitchPm.Text}"
                     Visibility="{Binding InlineBotResults.SwitchPm, Converter={StaticResource NullToVisibilityConverter}}"
                     HorizontalAlignment="Stretch"/>
-            <controls:OrientableListView ItemsSource="{Binding InlineBotResults.Results}" 
+            <controls:OrientableListView ItemsSource="{Binding InlineBotResults.Results}"
                                          IsHorizontal="{Binding InlineBotResults.IsGallery}"
                                          ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
                                          ItemClick="ListView_ItemClick"

@@ -27,6 +27,9 @@ using Telegram.Api.Helpers;
 using Unigram.Controls;
 using System.Diagnostics;
 using Windows.UI.Popups;
+using System.Threading.Tasks;
+using System.Globalization;
+using System.Net;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -39,11 +42,11 @@ namespace Unigram.Themes
             this.InitializeComponent();
         }
 
-        private async void ImageView_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void Photo_Click(object sender, RoutedEventArgs e)
         {
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
-            var bubble = image.Ancestors<MessageControlBase>().FirstOrDefault() as MessageControlBase;
+            var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
             if (bubble != null)
             {
                 if (bubble.Context != null)
@@ -72,7 +75,7 @@ namespace Unigram.Themes
         {
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
-            var bubble = image.Ancestors<MessageControlBase>().FirstOrDefault() as MessageControlBase;
+            var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
             if (bubble != null)
             {
                 if (bubble.Context != null)
@@ -144,6 +147,44 @@ namespace Unigram.Themes
                     }
                 }
             }
+        }
+
+        private async void GeoPoint_Click(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+
+            if (message != null)
+            {
+                if (message.Media is TLMessageMediaGeo geoMedia)
+                {
+                    await LaunchGeoPointAsync(message.From?.FullName ?? string.Empty, geoMedia.Geo as TLGeoPoint);
+                }
+            }
+        }
+
+        private async void Venue_Click(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+
+            if (message != null)
+            {
+                if (message.Media is TLMessageMediaVenue venueMedia)
+                {
+                    await LaunchGeoPointAsync(message.From?.FullName ?? string.Empty, venueMedia.Geo as TLGeoPoint);
+                }
+            }
+        }
+
+        private IAsyncOperation<bool> LaunchGeoPointAsync(string title, TLGeoPoint point)
+        {
+            if (point != null)
+            {
+                return Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}_{2}", point.Lat, point.Long, WebUtility.UrlEncode(title))));
+            }
+
+            return Task.FromResult(true).AsAsyncOperation();
         }
     }
 }

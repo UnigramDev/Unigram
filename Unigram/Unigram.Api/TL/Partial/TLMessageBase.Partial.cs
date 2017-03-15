@@ -84,7 +84,7 @@ namespace Telegram.Api.TL
                 {
                     var instance = InMemoryCacheService.Current;
                     var channel = instance.GetChat(ToId.Id) as TLChannel;
-                    if (channel != null && channel.IsMegagroup)
+                    if (channel != null && channel.IsMegaGroup)
                     {
                         return true;
                     }
@@ -110,25 +110,25 @@ namespace Telegram.Api.TL
             }
         }
 
-        private ITLDialogWith _owner;
-        public ITLDialogWith Owner
+        private ITLDialogWith _parent;
+        public ITLDialogWith Parent
         {
             get
             {
-                if (_owner == null)
+                if (_parent == null)
                 {
                     if (this is TLMessageCommonBase messageCommon)
                     {
                         var peer = messageCommon.IsOut || messageCommon.ToId is TLPeerChannel || messageCommon.ToId is TLPeerChat ? messageCommon.ToId : new TLPeerUser { UserId = messageCommon.FromId.Value };
                         if (peer is TLPeerUser)
-                            _owner = InMemoryCacheService.Current.GetUser(peer.Id);
+                            _parent = InMemoryCacheService.Current.GetUser(peer.Id);
                         if (peer is TLPeerChat || ToId is TLPeerChannel)
-                            _owner = InMemoryCacheService.Current.GetChat(peer.Id);
+                            _parent = InMemoryCacheService.Current.GetChat(peer.Id);
                     }
 
                 }
 
-                return _owner;
+                return _parent;
             }
         }
 
@@ -479,7 +479,7 @@ namespace Telegram.Api.TL
 
             if (m.Views != null)
             {
-                var currentViews = Views != null ? Views : 0;
+                var currentViews = Views ?? 0;
                 if (currentViews < m.Views)
                 {
                     Views = m.Views;
@@ -716,5 +716,29 @@ namespace Telegram.Api.TL
             }
         }
 
+    }
+
+    public partial class TLMessage
+    {
+        public TLMessage Clone()
+        {
+            var clone = new TLMessage();
+            clone.Flags = Flags;
+            clone.Id = Id;
+            clone.FromId = FromId;
+            clone.ToId = ToId;
+            clone.FwdFrom = FwdFrom;
+            clone.ViaBotId = ViaBotId;
+            clone.ReplyToMsgId = ReplyToMsgId;
+            clone.Date = Date;
+            clone.Message = Message;
+            clone.Media = Media;
+            clone.ReplyMarkup = ReplyMarkup;
+            clone.Entities = Entities;
+            clone.Views = Views;
+            clone.EditDate = EditDate;
+
+            return clone;
+        }
     }
 }

@@ -83,38 +83,38 @@ namespace Unigram.Converters
         {
             if (seconds < 60)
             {
-                var format = Resources.CallSeconds_any;
+                var format = AppResources.CallSeconds_any;
                 var number = seconds;
                 if (number == 1)
                 {
-                    format = Resources.CallSeconds_1;
+                    format = AppResources.CallSeconds_1;
                 }
                 else if (number == 2)
                 {
-                    format = Resources.CallSeconds_2;
+                    format = AppResources.CallSeconds_2;
                 }
                 else if (number == 4)
                 {
-                    format = Resources.CallSeconds_3_10;
+                    format = AppResources.CallSeconds_3_10;
                 }
 
                 return string.Format(format, seconds);
             }
             else
             {
-                var format = Resources.CallMinutes_any;
+                var format = AppResources.CallMinutes_any;
                 var number = seconds / 60;
                 if (number == 1)
                 {
-                    format = Resources.CallMinutes_1;
+                    format = AppResources.CallMinutes_1;
                 }
                 else if (number == 2)
                 {
-                    format = Resources.CallMinutes_2;
+                    format = AppResources.CallMinutes_2;
                 }
                 else if (number == 4)
                 {
-                    format = Resources.CallMinutes_3_10;
+                    format = AppResources.CallMinutes_3_10;
                 }
 
                 return string.Format(format, seconds);
@@ -125,38 +125,38 @@ namespace Unigram.Converters
         {
             if (seconds < 60)
             {
-                var format = Resources.CallShortSeconds_any;
+                var format = AppResources.CallShortSeconds_any;
                 var number = seconds;
                 if (number == 1)
                 {
-                    format = Resources.CallShortSeconds_1;
+                    format = AppResources.CallShortSeconds_1;
                 }
                 else if (number == 2)
                 {
-                    format = Resources.CallShortSeconds_2;
+                    format = AppResources.CallShortSeconds_2;
                 }
                 else if (number == 4)
                 {
-                    format = Resources.CallShortSeconds_3_10;
+                    format = AppResources.CallShortSeconds_3_10;
                 }
 
                 return string.Format(format, seconds);
             }
             else
             {
-                var format = Resources.CallShortMinutes_any;
+                var format = AppResources.CallShortMinutes_any;
                 var number = seconds / 60;
                 if (number == 1)
                 {
-                    format = Resources.CallShortMinutes_1;
+                    format = AppResources.CallShortMinutes_1;
                 }
                 else if (number == 2)
                 {
-                    format = Resources.CallShortMinutes_2;
+                    format = AppResources.CallShortMinutes_2;
                 }
                 else if (number == 4)
                 {
-                    format = Resources.CallShortMinutes_3_10;
+                    format = AppResources.CallShortMinutes_3_10;
                 }
 
                 return string.Format(format, seconds);

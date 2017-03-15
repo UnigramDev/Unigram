@@ -34,7 +34,7 @@
             <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;" Grid.Column="1"/>
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
-        
+
         <Grid x:Name="ContentPanel" Padding="12,20" MaxWidth="360" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -88,7 +88,7 @@
                                         IsTextPredictionEnabled="False"
                                         KeyDown="PhoneNumber_KeyDown"
                                         Header="Phone number:"
-                                        PlaceholderText="Enter your phone number" 
+                                        PlaceholderText="Enter your phone number"
                                         Grid.Column="1"/>
 
             </Grid>
@@ -101,7 +101,7 @@
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     HorizontalAlignment="Stretch"
                     Content="Next"
-                    Margin="0,8,0,0"         
+                    Margin="0,8,0,0"
                     Grid.Row="5"
                     Visibility="Collapsed"/>
 

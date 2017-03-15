@@ -60,7 +60,17 @@ namespace Unigram.Views
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
 
+            ViewModel.PropertyChanged += OnPropertyChanged;
+
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("Reply"))
+            {
+                CheckMessageBoxEmpty();
+            }
         }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
@@ -125,7 +135,13 @@ namespace Unigram.Views
 
         private void CheckMessageBoxEmpty()
         {
-            if (txtMessage.IsEmpty)
+            var forwarding = false;
+            if (ViewModel.Reply is TLMessagesContainter container)
+            {
+                forwarding = container.FwdMessages != null && container.FwdMessages.Count > 0;
+            }
+
+            if (txtMessage.IsEmpty && !forwarding)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnStickers.Visibility = Visibility.Visible;

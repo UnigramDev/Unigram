@@ -238,6 +238,11 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
         private void MessageForwardExecute(TLMessageBase message)
         {
+            if (message is TLMessage)
+            {
+                App.State.ForwardMessages = new List<TLMessage> { message as TLMessage };
+                NavigationService.GoBack();
+            }
         }
 
         #endregion
@@ -298,6 +303,13 @@ namespace Unigram.ViewModels
 
         private void MessagesForwardExecute()
         {
+            var messages = SelectedMessages.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
+            if (messages.Count > 0)
+            {
+                App.State.ForwardMessages = new List<TLMessage>(messages);
+                NavigationService.GoBack();
+            }
+
             //_stateService.ForwardMessages = Messages.Where(x => x.IsSelected).ToList();
             //_stateService.ForwardMessages.Reverse();
 
@@ -759,7 +771,7 @@ namespace Unigram.ViewModels
             if (keyboardButton != null)
             {
                 _text = keyboardButton.Text;
-                await SendMessageAsync(null, false, true);
+                await SendMessageAsync(null, true);
             }
         }
 

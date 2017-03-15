@@ -9,7 +9,7 @@
       xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
       mc:Ignorable="d">
-    
+
     <Page.Transitions>
         <TransitionCollection>
             <NavigationThemeTransition>
@@ -17,7 +17,7 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
-    
+
     <Page.Resources>
         <Style x:Key="HyperButtonStyle" TargetType="controls:HyperButton">
             <Setter Property="Background" Value="Transparent"/>
@@ -273,7 +273,7 @@
                 <RowDefinition Height="48" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-        
+
             <!-- Titlebar -->
             <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
                 <Grid.ColumnDefinitions>
@@ -311,47 +311,47 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto"
                                   VerticalScrollMode="Auto">
                         <StackPanel>
-                            <local:TableStackPanel x:Name="SwitchGroup1" 
+                            <local:TableStackPanel x:Name="SwitchGroup1"
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
                                 <!-- Manually hidden -->
-                                <controls:HyperCheckButton Content="Enabled" 
+                                <controls:HyperCheckButton Content="Enabled"
                                                            Visibility="Collapsed"
                                                            IsEnabled="False"
-                                                           Tag="Enable Location Services" 
+                                                           Tag="Enable Location Services"
                                                            Style="{ThemeResource CheckButtonStyle}"/>
                                 <!-- Manually hidden -->
-                                <controls:HyperCheckButton Content="Enabled" 
+                                <controls:HyperCheckButton Content="Enabled"
                                                            Visibility="Collapsed"
                                                            IsEnabled="False"
-                                                           Tag="Sync with People Hub" 
+                                                           Tag="Sync with People Hub"
                                                            Style="{ThemeResource CheckButtonStyle}"/>
                             </local:TableStackPanel>
-                            <local:TableStackPanel x:Name="OptionsGroup1" 
+                            <local:TableStackPanel x:Name="OptionsGroup1"
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
                                 <!-- Manually hidden -->
-                                <controls:HyperButton Content="Notifications and sounds" 
+                                <controls:HyperButton Content="Notifications and sounds"
                                                       Click="Notifications_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
-                                <controls:HyperButton Content="Privacy and security" 
+                                <controls:HyperButton Content="Privacy and security"
                                                       Click="Privacy_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
-                                <controls:HyperButton Content="Data and storage" 
+                                <controls:HyperButton Content="Data and storage"
                                                       Click="Data_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
-                                <controls:HyperButton Content="Stickers" 
+                                <controls:HyperButton Content="Stickers"
                                                       Click="Stickers_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                                 <!-- Manually hidden -->
-                                <controls:HyperButton Content="Chat wallpaper" 
+                                <controls:HyperButton Content="Chat wallpaper"
                                                       Visibility="Collapsed"
                                                       Command="{x:Bind WallpaperPageCommand}"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                             </local:TableStackPanel>
-                            <local:TableStackPanel x:Name="OptionsGroup2" 
+                            <local:TableStackPanel x:Name="OptionsGroup2"
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
@@ -364,7 +364,7 @@
                                                       Click="Username_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                             </local:TableStackPanel>
-                            <local:TableStackPanel x:Name="OptionsGroup3" 
+                            <local:TableStackPanel x:Name="OptionsGroup3"
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">
@@ -373,7 +373,7 @@
                                                       Click="Accounts_Click"
                                                       Style="{StaticResource HyperButtonStyle}"/>
                             </local:TableStackPanel>
-                            <local:TableStackPanel x:Name="OptionsGroup4" 
+                            <local:TableStackPanel x:Name="OptionsGroup4"
                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                    Margin="0,24,0,0">

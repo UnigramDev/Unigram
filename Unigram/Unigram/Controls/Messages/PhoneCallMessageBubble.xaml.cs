@@ -19,9 +19,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class UserCallMessageControl : CallMessageControlBase
+    public sealed partial class PhoneCallMessageBubble : PhoneCallMessageBubbleBase
     {
-        public UserCallMessageControl()
+        public PhoneCallMessageBubble()
         {
             InitializeComponent();
             _layoutRoot = LayoutRoot;

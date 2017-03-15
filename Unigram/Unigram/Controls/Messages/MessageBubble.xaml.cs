@@ -26,9 +26,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class UserMessageControl : MessageControlBase
+    public sealed partial class MessageBubble : MessageBubbleBase
     {
-        public UserMessageControl()
+        public MessageBubble()
         {
             InitializeComponent();
 
@@ -76,28 +76,19 @@ namespace Unigram.Controls.Messages
                 {
                     var left = -8;
                     var top = -4;
-                    var right = -12;
-                    var bottom = -8;
+                    var right = -10;
+                    var bottom = -6;
 
-                    if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+                    if (message.Media.TypeId != TLType.MessageMediaVenue)
                     {
-                        top = 4;
-                    }
-                    if (message.HasFwdFrom)
-                    {
-                        top = 4;
-                    }
-                    if (message.HasViaBotId)
-                    {
-                        top = 4;
-                    }
-                    if (message.HasReplyToMsgId)
-                    {
-                        top = 4;
-                    }
-                    if (message.IsPost)
-                    {
-                        top = 4;
+                        if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+                        {
+                            top = 4;
+                        }
+                        if (message.HasFwdFrom || message.HasViaBotId || message.HasReplyToMsgId || message.IsPost)
+                        {
+                            top = 4;
+                        }
                     }
 
                     var caption = false;

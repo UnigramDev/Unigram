@@ -24,16 +24,16 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBlock Text="{Binding Media.Document.FileName}" 
+            <TextBlock Text="{Binding Media.Document.FileName}"
                        MaxLines="1"
                        TextWrapping="NoWrap"
                        TextTrimming="CharacterEllipsis"
                        Style="{StaticResource BaseTextBlockStyle}"/>
 
-            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
+            <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                       TextTrimming="CharacterEllipsis" 
-                       TextWrapping="NoWrap" 
+                       TextTrimming="CharacterEllipsis"
+                       TextWrapping="NoWrap"
                        MaxLines="1"
                        Grid.ColumnSpan="2"
                        Grid.Row="1">

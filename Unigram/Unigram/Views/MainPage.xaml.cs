@@ -159,6 +159,10 @@ namespace Unigram.Views
 
                 UpdateListViewsSelectedItem(parameter as TLPeerBase);
             }
+            else
+            {
+                UpdateListViewsSelectedItem(GetPeerFromBackStack());
+            }
         }
 
         private void UpdateListViewsSelectedItem(TLPeerBase peer)
@@ -553,11 +557,11 @@ namespace Unigram.Views
                         {
                             if (channel.IsCreator)
                             {
-                                element.Text = channel.IsMegagroup ? "Delete group" : "Delete channel";
+                                element.Text = channel.IsMegaGroup ? "Delete group" : "Delete channel";
                             }
                             else
                             {
-                                element.Text = channel.IsMegagroup ? "Leave group" : "Leave channel";
+                                element.Text = channel.IsMegaGroup ? "Leave group" : "Leave channel";
                             }
                         }
 

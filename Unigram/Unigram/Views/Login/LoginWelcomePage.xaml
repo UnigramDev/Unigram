@@ -109,8 +109,8 @@
             <Border Width="200" Height="200" Background="Black">
                 <!-- Logo placeholder -->
                 <Grid Background="White">
-                    <Ellipse Height="148" 
-                                 Width="148" 
+                    <Ellipse Height="148"
+                                 Width="148"
                                  Fill="{ThemeResource SystemControlBackgroundAccentBrush}"
                                  HorizontalAlignment="Center"/>
                     <Ellipse Height="148"
@@ -124,7 +124,7 @@
             </Border>
         </Border>
 
-        <FlipView ItemsSource="{Binding Items}" 
+        <FlipView ItemsSource="{Binding Items}"
                   SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                   Grid.Row="2">
             <FlipView.ItemTemplate>
@@ -144,13 +144,13 @@
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>
-        
+
         <Button Content="Continue"
                 Command="{Binding ContinueCommand}"
-                HorizontalAlignment="Stretch" 
+                HorizontalAlignment="Stretch"
                 Grid.Row="3"/>
 
-        <ListView ItemsSource="{Binding Items}" 
+        <ListView ItemsSource="{Binding Items}"
                   ItemContainerStyle="{StaticResource IndicatorListViewItemStyle}"
                   SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                   Style="{StaticResource IndicatorListViewStyle}"

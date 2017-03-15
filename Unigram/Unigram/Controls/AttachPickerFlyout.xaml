@@ -12,7 +12,7 @@
     <UserControl.Resources>
         <x:Double x:Key="MenuFlyoutMaxWidth">360</x:Double>
     </UserControl.Resources>
-    
+
     <ListView x:Name="Library"
               ItemsSource="{StaticResource MediaLibrary}"
               ItemClick="Library_ItemClick"

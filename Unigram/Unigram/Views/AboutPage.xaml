@@ -19,7 +19,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                
+
                 <!-- Titlebar -->
                 <StackPanel Orientation="Horizontal"
                             Grid.Row="0"
@@ -27,13 +27,13 @@
                     <Grid Height="96"
                           Width="96">
                         <!-- Logo background -->
-                        <Ellipse Height="60" 
-                                 Width="60"                              
+                        <Ellipse Height="60"
+                                 Width="60"
                                  Fill="White"
                                  VerticalAlignment="Center"
                                  HorizontalAlignment="Center"/>
-                        <Ellipse Height="56" 
-                                 Width="56"                              
+                        <Ellipse Height="56"
+                                 Width="56"
                                  Fill="{ThemeResource TelegramBackgroundAccentBrush}"
                                  VerticalAlignment="Center"
                                  HorizontalAlignment="Center"/>
@@ -48,7 +48,7 @@
                             </Ellipse.Fill>
                         </Ellipse>
                     </Grid>
-                    
+
                     <!-- App info -->
                     <StackPanel Orientation="Vertical"
                                 Margin="0,0"
@@ -78,7 +78,7 @@
                     <TextBlock x:Uid="About-Thanks-Intro"
                                Text="Thank you for using Unigram! We woudn't have been able to get this far without all help of the community."
                                TextWrapping="Wrap"
-                               FontSize="14" 
+                               FontSize="14"
                                Margin="0,0,0,6"/>
 
                     <!-- Core-team -->
@@ -177,7 +177,7 @@
                                 Grid.Column="0"
                                 Content="Abdel Daoudi"
                                 Padding="0,4"
-                                Style="{ThemeResource TextBlockButtonStyle}" 
+                                Style="{ThemeResource TextBlockButtonStyle}"
                                 Click="btnCoreAbdelWebsite_Click"/>
                         <Button Grid.Row="5"
                                 Grid.Column="1"
@@ -188,7 +188,7 @@
                     </Grid>
 
                     <!-- Insiders -->
-                    <TextBlock Text="... and all the Unigram Insiders!" 
+                    <TextBlock Text="... and all the Unigram Insiders!"
                                Margin="0,6,0,0"/>
 
                     <!-- Special thanks -->
@@ -196,7 +196,7 @@
                                Text="Special thanks:"
                                FontSize="18"
                                Style="{StaticResource BaseTextBlockStyle}" />
-                    <TextBlock Text="We want to especially thank these people for their help and knowledge while building the app:" 
+                    <TextBlock Text="We want to especially thank these people for their help and knowledge while building the app:"
                                FontSize="14"
                                TextWrapping="Wrap"
                                Margin="0,0,0,6"/>
@@ -206,6 +206,6 @@
                             Click="btnThanksTelegramDesktopTwitter_Click"/>
                 </StackPanel>
             </Grid>
-        </ScrollViewer>        
+        </ScrollViewer>
     </Grid>
 </Page>
