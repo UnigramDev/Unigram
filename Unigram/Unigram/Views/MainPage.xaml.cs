@@ -159,6 +159,10 @@ namespace Unigram.Views
 
                 UpdateListViewsSelectedItem(parameter as TLPeerBase);
             }
+            else
+            {
+                UpdateListViewsSelectedItem(GetPeerFromBackStack());
+            }
         }
 
         private void UpdateListViewsSelectedItem(TLPeerBase peer)
