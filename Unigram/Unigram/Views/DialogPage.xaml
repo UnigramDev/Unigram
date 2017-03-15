@@ -167,7 +167,7 @@
                             HorizontalAlignment="Right"
                             MaxWidth="180"
                             Padding="8,0,8,6"
-                            Margin="0,0,6,0"
+                            Margin="0,0,6,6"
                             Grid.Row="1">
                     <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
                         <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
@@ -227,7 +227,7 @@
                             HorizontalAlignment="Left"
                             MaxWidth="180"
                             Padding="8,0,8,6"
-                            Margin="6,0,0,0"
+                            Margin="6,0,0,6"
                             Grid.Column="1"
                             Grid.Row="1">
                     <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
@@ -292,7 +292,7 @@
                                 HorizontalAlignment="Left"
                                 MaxWidth="180"
                                 Padding="8,0,8,6"
-                                Margin="6,0,0,0"
+                                Margin="6,0,0,6"
                                 Grid.Column="1"
                                 Grid.Row="1">
                         <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
