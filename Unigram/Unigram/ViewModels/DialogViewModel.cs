@@ -1007,34 +1007,11 @@ namespace Unigram.ViewModels
             await SendMessageAsync(null, args != null);
         }
 
-        public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool sticker, bool useReplyMarkup = false)
+        public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool useReplyMarkup = false)
         {
-            var messageText = Text?.Replace('\r', '\n');
-
-            TLDocument document = null;
-            TLMessageMediaBase media = null;
-            if (sticker)
-            {
-                messageText = string.Empty;
-
-                var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "unigramstickers" });
-                if (set.IsSucceeded)
-                {
-                    document = set.Result.Documents.FirstOrDefault(x => x.Id == 200980520715159710) as TLDocument;
-                }
-            }
-
-            if (document != null)
-            {
-                media = new TLMessageMediaDocument { Document = document };
-            }
-            else
-            {
-                media = new TLMessageMediaEmpty();
-            }
-
+            var messageText = Text?.Replace("\r\n", "\n");
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
-            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, messageText, media, TLLong.Random(), null);
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
 
             message.Entities = entities != null ? new TLVector<TLMessageEntityBase>(entities) : null;
             message.HasEntities = entities != null;
@@ -1047,10 +1024,11 @@ namespace Unigram.ViewModels
                 message.IsSilent = IsSilent;
             }
 
+            IEnumerable<TLMessage> forwardMessages = null;
+
             if (Reply != null)
             {
-                var container = Reply as TLMessagesContainter;
-                if (container != null)
+                if (Reply is TLMessagesContainter container)
                 {
                     if (container.EditMessage != null)
                     {
@@ -1062,124 +1040,17 @@ namespace Unigram.ViewModels
                         {
 
                         }
+
+                        Reply = null;
+                        return;
                     }
                     else if (container.FwdMessages != null)
                     {
-                        App.State.ForwardMessages = null;
-
-                        TLInputPeerBase fromPeer = null;
-                        var msgs = new TLVector<TLMessage>();
-                        var msgIds = new TLVector<int>();
-
-                        foreach (var fwdMessage in container.FwdMessages)
-                        {
-                            var clone = fwdMessage.Clone();
-                            clone.Id = 0;
-                            clone.HasReplyToMsgId = false;
-                            clone.ReplyToMsgId = null;
-                            clone.Date = date;
-                            clone.ToId = Peer.ToPeer();
-                            clone.RandomId = TLLong.Random();
-                            clone.IsOut = true;
-                            clone.IsPost = false;
-                            clone.FromId = SettingsHelper.UserId;
-                            clone.IsMediaUnread = Peer is TLInputPeerChannel ? true : false;
-                            clone.IsUnread = true;
-                            clone.State = TLMessageState.Sending;
-
-                            if (channel != null)
-                            {
-                                if (channel.IsBroadcast)
-                                {
-                                    if (!channel.IsSignatures)
-                                    {
-                                        clone.HasFromId = false;
-                                        clone.FromId = null;
-                                    }
-
-                                    if (IsSilent)
-                                    {
-                                        clone.IsSilent = true;
-                                    }
-
-                                    clone.HasViews = true;
-                                    clone.Views = 1;
-                                }
-                            }
-
-                            if (clone.Media is TLMessageMediaGame gameMedia)
-                            {
-                                clone.HasEntities = false;
-                                clone.Entities = null;
-                                clone.Message = null;
-                            }
-
-                            if (fromPeer == null)
-                            {
-                                fromPeer = fwdMessage.Parent.ToInputPeer();
-                            }
-
-                            if (clone.FwdFrom == null)
-                            {
-                                if (fwdMessage.ToId is TLPeerChannel)
-                                {
-                                    var fwdChannel = CacheService.GetChat(fwdMessage.ToId.Id) as TLChannel;
-                                    if (fwdChannel != null && fwdChannel.IsMegaGroup)
-                                    {
-                                        clone.HasFwdFrom = true;
-                                        clone.FwdFrom = new TLMessageFwdHeader
-                                        {
-                                            HasFromId = true,
-                                            FromId = fwdMessage.FromId,
-                                            Date = fwdMessage.Date
-                                        };
-                                    }
-                                    else
-                                    {
-                                        clone.HasFwdFrom = true;
-                                        clone.FwdFrom = new TLMessageFwdHeader
-                                        {
-                                            HasFromId = fwdMessage.HasFromId,
-                                            FromId = fwdMessage.FromId,
-                                            Date = fwdMessage.Date
-                                        };
-
-                                        if (fwdChannel.IsBroadcast)
-                                        {
-                                            clone.FwdFrom.HasChannelId = clone.FwdFrom.HasChannelPost = true;
-                                            clone.FwdFrom.ChannelId = fwdChannel.Id;
-                                            clone.FwdFrom.ChannelPost = fwdMessage.Id;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    clone.HasFwdFrom = true;
-                                    clone.FwdFrom = new TLMessageFwdHeader
-                                    {
-                                        HasFromId = true,
-                                        FromId = fwdMessage.FromId,
-                                        Date = fwdMessage.Date
-                                    };
-                                }
-                            }
-
-                            msgs.Add(clone);
-                            msgIds.Add(fwdMessage.Id);
-
-                            Messages.Add(clone);
-                        }
-
-                        CacheService.SyncSendingMessages(msgs, null, async (m) =>
-                        {
-                            var response = await ProtoService.ForwardMessagesAsync(Peer, fromPeer, msgIds, msgs, false);
-                        });
+                        forwardMessages = container.FwdMessages;
+                        Reply = null;
                     }
-
-                    Reply = null;
-                    return;
                 }
-                else
+                else if (Reply != null)
                 {
                     message.HasReplyToMsgId = true;
                     message.ReplyToMsgId = Reply.Id;
@@ -1188,27 +1059,10 @@ namespace Unigram.ViewModels
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(messageText))
+            if (string.IsNullOrWhiteSpace(messageText) == false)
             {
-                return;
-            }
-
-            var previousMessage = InsertSendingMessage(message, useReplyMarkup);
-            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
-            {
-                if (document != null)
-                {
-                    var input = new TLInputMediaDocument
-                    {
-                        Id = new TLInputDocument
-                        {
-                            Id = document.Id,
-                            AccessHash = document.AccessHash
-                        }
-                    };
-                    await ProtoService.SendMediaAsync(Peer, input, message);
-                }
-                else
+                var previousMessage = InsertSendingMessage(message, useReplyMarkup);
+                CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
                 {
                     var response = await ProtoService.SendMessageAsync(message, () =>
                     {
@@ -1218,7 +1072,134 @@ namespace Unigram.ViewModels
                     {
                         message.RaisePropertyChanged(() => message.Media);
                     }
+
+                    if (forwardMessages != null)
+                    {
+                        App.State.ForwardMessages = null;
+                        await ForwardMessagesAsync(forwardMessages);
+                    }
+                });
+            }
+            else
+            {
+                if (forwardMessages != null)
+                {
+                    App.State.ForwardMessages = null;
+                    await ForwardMessagesAsync(forwardMessages);
                 }
+            }
+        }
+
+        public async Task ForwardMessagesAsync(IEnumerable<TLMessage> forwardMessages)
+        {
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            TLInputPeerBase fromPeer = null;
+            var msgs = new TLVector<TLMessage>();
+            var msgIds = new TLVector<int>();
+
+            foreach (var fwdMessage in forwardMessages)
+            {
+                var clone = fwdMessage.Clone();
+                clone.Id = 0;
+                clone.HasReplyToMsgId = false;
+                clone.ReplyToMsgId = null;
+                clone.Date = date;
+                clone.ToId = Peer.ToPeer();
+                clone.RandomId = TLLong.Random();
+                clone.IsOut = true;
+                clone.IsPost = false;
+                clone.FromId = SettingsHelper.UserId;
+                clone.IsMediaUnread = Peer is TLInputPeerChannel ? true : false;
+                clone.IsUnread = true;
+                clone.State = TLMessageState.Sending;
+
+                if (With is TLChannel channel)
+                {
+                    if (channel.IsBroadcast)
+                    {
+                        if (!channel.IsSignatures)
+                        {
+                            clone.HasFromId = false;
+                            clone.FromId = null;
+                        }
+
+                        if (IsSilent)
+                        {
+                            clone.IsSilent = true;
+                        }
+
+                        clone.HasViews = true;
+                        clone.Views = 1;
+                    }
+                }
+
+                if (clone.Media is TLMessageMediaGame gameMedia)
+                {
+                    clone.HasEntities = false;
+                    clone.Entities = null;
+                    clone.Message = null;
+                }
+
+                if (fromPeer == null)
+                {
+                    fromPeer = fwdMessage.Parent.ToInputPeer();
+                }
+
+                if (clone.FwdFrom == null)
+                {
+                    if (fwdMessage.ToId is TLPeerChannel)
+                    {
+                        var fwdChannel = CacheService.GetChat(fwdMessage.ToId.Id) as TLChannel;
+                        if (fwdChannel != null && fwdChannel.IsMegaGroup)
+                        {
+                            clone.HasFwdFrom = true;
+                            clone.FwdFrom = new TLMessageFwdHeader
+                            {
+                                HasFromId = true,
+                                FromId = fwdMessage.FromId,
+                                Date = fwdMessage.Date
+                            };
+                        }
+                        else
+                        {
+                            clone.HasFwdFrom = true;
+                            clone.FwdFrom = new TLMessageFwdHeader
+                            {
+                                HasFromId = fwdMessage.HasFromId,
+                                FromId = fwdMessage.FromId,
+                                Date = fwdMessage.Date
+                            };
+
+                            if (fwdChannel.IsBroadcast)
+                            {
+                                clone.FwdFrom.HasChannelId = clone.FwdFrom.HasChannelPost = true;
+                                clone.FwdFrom.ChannelId = fwdChannel.Id;
+                                clone.FwdFrom.ChannelPost = fwdMessage.Id;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        clone.HasFwdFrom = true;
+                        clone.FwdFrom = new TLMessageFwdHeader
+                        {
+                            HasFromId = true,
+                            FromId = fwdMessage.FromId,
+                            Date = fwdMessage.Date
+                        };
+                    }
+                }
+
+                msgs.Add(clone);
+                msgIds.Add(fwdMessage.Id);
+
+                Messages.Add(clone);
+            }
+
+            CacheService.SyncSendingMessages(msgs, null, async (_) =>
+            {
+                await ProtoService.ForwardMessagesAsync(Peer, fromPeer, msgIds, msgs, false);
             });
         }
 

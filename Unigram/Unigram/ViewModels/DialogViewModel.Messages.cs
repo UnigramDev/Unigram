@@ -771,7 +771,7 @@ namespace Unigram.ViewModels
             if (keyboardButton != null)
             {
                 _text = keyboardButton.Text;
-                await SendMessageAsync(null, false, true);
+                await SendMessageAsync(null, true);
             }
         }
 
