@@ -387,7 +387,12 @@ namespace Telegram.Api.Services.Cache
                 Init();
             }
 
-            return ChatsContext[id.Value];
+            if (id.HasValue)
+            {
+                return ChatsContext[id.Value];
+            }
+
+            return null;
         }
 
         // TODO: Encrypted 
@@ -408,7 +413,12 @@ namespace Telegram.Api.Services.Cache
                 Init();
             }
 
-            return UsersContext[id.Value];
+            if (id.HasValue)
+            {
+                return UsersContext[id.Value];
+            }
+
+            return null;
         }
 
         public TLUserBase GetUser(TLUserProfilePhoto photo)

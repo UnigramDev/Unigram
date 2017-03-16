@@ -740,10 +740,13 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, true);
                     if (response.IsSucceeded && response.Result.IsHasUrl && response.Result.HasUrl)
                     {
-                        var user = CacheService.GetUser(message.ViaBotId) as TLUser;
-                        if (user != null)
+                        if (CacheService.GetUser(message.ViaBotId) is TLUser user)
                         {
                             NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Username = user.Username, Title = gameMedia.Game.Title });
+                        }
+                        else
+                        {
+                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Title = gameMedia.Game.Title });
                         }
                     }
                 }

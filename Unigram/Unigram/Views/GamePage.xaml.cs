@@ -35,8 +35,11 @@ namespace Unigram.Views
             var args = SerializationService.Json.Deserialize<NavigationParameters>((string)e.Parameter);
             if (args != null)
             {
-                tblDialogName.Text = args.Title;
-                tblDialogStatus.Text = "@" + args.Username;
+                TitleLabel.Text = args.Title;
+                UsernameLabel.Text = "@" + args.Username;
+
+                TitleLabel.Visibility = string.IsNullOrWhiteSpace(args.Title) ? Visibility.Collapsed : Visibility.Visible;
+                UsernameLabel.Visibility = string.IsNullOrWhiteSpace(args.Username) ? Visibility.Collapsed : Visibility.Visible;
 
                 View.Navigate(new Uri(args.Url));
             }
