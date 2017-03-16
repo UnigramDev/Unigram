@@ -63,9 +63,7 @@ namespace Unigram.ViewModels
 
                     foreach (var photo in result.Result.Messages)
                     {
-                        var message = photo as TLMessage;
-                        var media = message.Media as TLMessageMediaPhoto;
-                        if (media != null)
+                        if (photo is TLMessage message && message.Media is TLMessageMediaPhoto media)
                         {
                             Items.Add(media.Photo);
                         }
