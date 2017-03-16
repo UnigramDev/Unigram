@@ -614,7 +614,7 @@ namespace Unigram.Converters
                 {
                     try
                     {
-                        await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
+                        await manager.DownloadFileAsync(filename, document.DCId, document.ToInputFileLocation(), document.Size);
                         Execute.BeginOnUIThread(async () =>
                         {
                             try
@@ -994,7 +994,7 @@ namespace Unigram.Converters
                 var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
+                    await manager.DownloadFileAsync(filename, document.DCId, document.ToInputFileLocation(), document.Size);
                     var buffer = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(filename)));
                     Execute.BeginOnUIThread(() =>
                     {

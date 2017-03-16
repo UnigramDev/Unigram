@@ -808,7 +808,7 @@ namespace Unigram.Common
 
                 var accessToken = GetAccessToken(query, out PageKind pageKind);
                 var post = GetPost(query);
-                var result = url.StartsWith("https://") ? url : ("https://" + url);
+                var result = url.StartsWith("http") ? url : ("https://" + url);
 
                 if (Uri.TryCreate(result, UriKind.Absolute, out Uri uri))
                 {
