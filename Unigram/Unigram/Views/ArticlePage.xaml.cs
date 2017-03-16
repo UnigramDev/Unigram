@@ -773,9 +773,15 @@ namespace Unigram.Views
             }
             else
             {
-                if (Uri.TryCreate(urlText.Url, UriKind.Absolute, out Uri uri))
+                var url = urlText.Url;
+                if (url.StartsWith("http") == false)
                 {
-                    if (uri.Host.Equals("t.me") || uri.Host.Equals("telegram.me"))
+                    url = "http://" + url;
+                }
+
+                if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                {
+                    if (Constants.TelegramHosts.Contains(uri.Host))
                     {
                         MessageHelper.HandleTelegramUrl(urlText.Url);
                     }
