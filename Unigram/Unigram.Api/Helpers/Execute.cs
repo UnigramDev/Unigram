@@ -185,11 +185,6 @@ namespace Telegram.Api.Helpers
             waitHandle.WaitOne();
         }
 
-        public static void ShowMessageBox(string message)
-        {
-            new MessageDialog(message).ShowAsync();
-        }
-
         public static void ShowDebugMessage(string message)
         {
         }

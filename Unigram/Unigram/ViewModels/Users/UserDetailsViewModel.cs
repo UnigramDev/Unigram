@@ -348,7 +348,7 @@ namespace Unigram.ViewModels.Users
                     var result = await ProtoService.ReportPeerAsync(user.ToInputPeer(), reason);
                     if (result.IsSucceeded && result.Result)
                     {
-                        await new MessageDialog("Resources.ReportSpamNotification", "Unigram").ShowAsync();
+                        await new MessageDialog("Resources.ReportSpamNotification", "Unigram").ShowQueuedAsync();
                     }
                 }
             }

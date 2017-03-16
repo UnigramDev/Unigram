@@ -612,11 +612,19 @@ namespace Unigram.Converters
                 var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
-                    Execute.BeginOnUIThread(async () =>
+                    try
                     {
-                        await renderer.SetSourceAsync(FileUtils.GetTempFileUri(filename));
-                    });
+                        await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
+                        Execute.BeginOnUIThread(async () =>
+                        {
+                            try
+                            {
+                                await renderer.SetSourceAsync(FileUtils.GetTempFileUri(filename));
+                            }
+                            catch { }
+                        });
+                    }
+                    catch { }
                 });
 
                 return renderer.ImageSource;

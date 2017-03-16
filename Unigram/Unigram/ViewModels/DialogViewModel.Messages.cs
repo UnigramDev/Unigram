@@ -695,7 +695,7 @@ namespace Unigram.ViewModels
                     dialog.DefaultCommandIndex = 0;
                     dialog.CancelCommandIndex = 1;
 
-                    var result = await dialog.ShowAsync();
+                    var result = await dialog.ShowQueuedAsync();
                     if (result == null || (int)result?.Id == 1)
                     {
                         return;
@@ -723,12 +723,12 @@ namespace Unigram.ViewModels
                 {
                     if (response.Result.IsAlert)
                     {
-                        await new MessageDialog(response.Result.Message).ShowAsync();
+                        await new MessageDialog(response.Result.Message).ShowQueuedAsync();
                     }
                     else
                     {
                         // TODO:
-                        await new MessageDialog(response.Result.Message).ShowAsync();
+                        await new MessageDialog(response.Result.Message).ShowQueuedAsync();
                     }
                 }
 

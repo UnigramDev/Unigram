@@ -624,12 +624,12 @@ namespace Unigram.Common
                             return;
                         }
 
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
                     else
                     {
                         // TODO
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
                 }
             }
@@ -886,12 +886,12 @@ namespace Unigram.Common
                             return;
                         }
 
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
                     else
                     {
                         // TODO
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
 
                     //mtProtoService.ResolveUsernameAsync(new TLString(username), delegate (TLResolvedPeer result)

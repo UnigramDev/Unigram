@@ -181,7 +181,7 @@ namespace Unigram.ViewModels.Login
         {
             if(PhoneCode == null || PhoneNumber == null)
             {
-                await new MessageDialog("Please type phone number and phone code").ShowAsync();
+                await new MessageDialog("Please type phone number and phone code").ShowQueuedAsync();
                 return;
             }
 
@@ -201,7 +201,7 @@ namespace Unigram.ViewModels.Login
             else if (result.Error != null)
             {
                 IsLoading = false;
-                await new MessageDialog(result.Error.ErrorMessage, result.Error.ErrorCode.ToString()).ShowAsync();
+                await new MessageDialog(result.Error.ErrorMessage, result.Error.ErrorCode.ToString()).ShowQueuedAsync();
             }
         }
 

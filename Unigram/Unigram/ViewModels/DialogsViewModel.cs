@@ -623,7 +623,7 @@ namespace Unigram.ViewModels
                         var already = Items.FirstOrDefault(x => x.Index == e.Dialog.Index);
                         if (already != null)
                         {
-                            Execute.BeginOnUIThread(async () => await new MessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowAsync());
+                            Execute.BeginOnUIThread(async () => await new MessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
 
                             e.Dialog = already;
                             currentPosition = Items.IndexOf(already);

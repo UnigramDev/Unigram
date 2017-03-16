@@ -81,7 +81,7 @@ namespace Unigram
             UnhandledException += async (s, args) =>
             {
                 args.Handled = true;
-                await new MessageDialog(args.Message ?? "Error", args.Exception?.ToString() ?? "Error").ShowAsync();
+                await new MessageDialog(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
             };
 
 #if !DEBUG

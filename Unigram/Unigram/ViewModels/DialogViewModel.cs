@@ -2165,7 +2165,7 @@ namespace Unigram.ViewModels
                                             watch.Stop();
                                             Execute.BeginOnUIThread(async () =>
                                             {
-                                                await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
+                                                await new MessageDialog(watch.Elapsed.ToString()).ShowQueuedAsync();
                                             });
                                         }
                                     }
