@@ -101,6 +101,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsAccountsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<StickerSetViewModel>();
 
             container.Build();
 

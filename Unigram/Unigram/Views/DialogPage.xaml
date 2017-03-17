@@ -188,6 +188,7 @@
                     <controls:StickerView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                        Click="StickerSet_Click"
                         HorizontalAlignment="Right"
                         MaxWidth="180"
                         MaxHeight="180"/>
@@ -214,6 +215,7 @@
                     <controls:StickerView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                        Click="StickerSet_Click"
                         HorizontalAlignment="Left"
                         MaxWidth="180"
                         MaxHeight="180"/>
@@ -279,6 +281,7 @@
                         <controls:StickerView
                             Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
+                            Click="StickerSet_Click"
                             HorizontalAlignment="Left"
                             MaxWidth="180"
                             MaxHeight="180"/>

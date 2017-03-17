@@ -14,6 +14,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Core.Models;
@@ -618,6 +619,21 @@ namespace Unigram.Views
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
             ViewModel.StickerPack = null;
             txtMessage.Text = null;
+        }
+
+        private async void StickerSet_Click(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                var stickerAttribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
+                {
+                    await new StickerSetView(stickerAttribute.StickerSet).ShowAsync();
+                }
+            }
         }
     }
 

@@ -201,7 +201,7 @@ namespace Unigram.ViewModels.Login
             else if (result.Error != null)
             {
                 IsLoading = false;
-                await new MessageDialog(result.Error.ErrorMessage, result.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                await new MessageDialog(result.Error.ErrorMessage ?? "Error message", result.Error.ErrorCode.ToString()).ShowQueuedAsync();
             }
         }
 

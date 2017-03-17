@@ -136,7 +136,7 @@ namespace Unigram
             //NavigationService.Navigate(typeof(BlankPage1));
             //return Task.CompletedTask;
 
-            ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
+            //ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
             ModalDialog.ModalBackground = new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
             ModalDialog.CanBackButtonDismiss = true;
             ModalDialog.DisableBackButtonWhenModal = false;
@@ -153,7 +153,7 @@ namespace Unigram
                 if (share != null)
                 {
                     ShareOperation = share.ShareOperation;
-                    NavigationService.Navigate(typeof(Views.ShareTargetPage));
+                    NavigationService.Navigate(typeof(ShareTargetPage));
                 }
                 else if (voice != null)
                 {
@@ -162,16 +162,16 @@ namespace Unigram
 
                     if (command == "ShowAllDialogs")
                     {
-                        NavigationService.Navigate(typeof(Views.MainPage));
+                        NavigationService.Navigate(typeof(MainPage));
                     }
                     if (command == "ShowSpecificDialog")
                     {
                         //#TODO: Fix that this'll open a specific dialog
-                        NavigationService.Navigate(typeof(Views.MainPage));
+                        NavigationService.Navigate(typeof(MainPage));
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(Views.MainPage));
+                        NavigationService.Navigate(typeof(MainPage));
                     }
                 }
                 else
@@ -179,7 +179,7 @@ namespace Unigram
                     var activate = args as ToastNotificationActivatedEventArgs;
                     var launch = activate?.Argument ?? null;
 
-                    NavigationService.Navigate(typeof(Views.MainPage), launch);
+                    NavigationService.Navigate(typeof(MainPage), launch);
 
                     timer.Stop();
                     Debug.WriteLine($"LAUNCH TIME: {timer.Elapsed}");
@@ -187,7 +187,7 @@ namespace Unigram
             }
             else
             {
-                NavigationService.Navigate(typeof(Views.Login.LoginWelcomePage));
+                NavigationService.Navigate(typeof(LoginWelcomePage));
             }
 
             ShowStatusBar();
