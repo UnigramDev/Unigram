@@ -15,7 +15,7 @@
     MaxWidth="432">
 
     <!-- TODO: not the right way -->
-    <Border Height="8" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
+    <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <UserControl x:Name="LayoutRoot">
         <Grid x:Name="ContentPanel"

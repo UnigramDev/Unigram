@@ -843,7 +843,7 @@
                     <Border Height="4"/>
                 </ListView.Header>
                 <ListView.Footer>
-                    <Border Height="10"/>
+                    <Border Height="8"/>
                 </ListView.Footer>
                 <!--<ListView.GroupStyle>
                      <GroupStyle>

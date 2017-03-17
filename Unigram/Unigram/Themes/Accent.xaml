@@ -92,7 +92,7 @@
 
 
     <Thickness x:Key="MessageContentPadding">8,4,10,6</Thickness>
-    <Thickness x:Key="MessageContentMargin">0,2,0,2</Thickness>
+    <Thickness x:Key="MessageContentMargin">0,2,0,0</Thickness>
     <CornerRadius x:Key="MessageCornerRadius">0</CornerRadius>
 
     <SolidColorBrush x:Key="TelegramDialogLabelStateBrush" Color="#64BC54"/>
