@@ -72,5 +72,21 @@ namespace Telegram.Api.Services.FileManager
             FileName = isoFileName;
             FileLength = isoFileLength;
         }
+
+        public TLInputFileBase ToInputFile()
+        {
+            return IsSmallFile ? (TLInputFileBase)new TLInputFile
+            {
+                Id = FileId,
+                Md5Checksum = string.Empty,
+                Name = FileName,
+                Parts = Parts.Count
+            } : new TLInputFileBig
+            {
+                Id = FileId,
+                Name = FileName,
+                Parts = Parts.Count
+            };
+        }
     }
 }

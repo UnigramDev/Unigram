@@ -1364,18 +1364,12 @@ namespace Unigram.ViewModels
                 CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
                 {
                     var fileId = TLLong.Random();
-                    var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
+                    var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileName, false).AsTask(media.Upload());
                     if (upload != null)
                     {
                         var inputMedia = new TLInputMediaUploadedDocument
                         {
-                            File = new TLInputFile
-                            {
-                                Id = upload.FileId,
-                                Md5Checksum = string.Empty,
-                                Name = fileName,
-                                Parts = upload.Parts.Count,
-                            },
+                            File = upload.ToInputFile(),
                             MimeType = document.MimeType,
                             Caption = media.Caption,
                             Attributes = new TLVector<TLDocumentAttributeBase>
@@ -1462,20 +1456,8 @@ namespace Unigram.ViewModels
                     {
                         var inputMedia = new TLInputMediaUploadedThumbDocument
                         {
-                            File = new TLInputFile
-                            {
-                                Id = upload.FileId,
-                                Md5Checksum = string.Empty,
-                                Name = fileName,
-                                Parts = upload.Parts.Count,
-                            },
-                            Thumb = new TLInputFile
-                            {
-                                Id = thumbUpload.FileId,
-                                Md5Checksum = string.Empty,
-                                Name = desiredName,
-                                Parts = thumbUpload.Parts.Count
-                            },
+                            File = upload.ToInputFile(),
+                            Thumb = thumbUpload.ToInputFile(),
                             MimeType = document.MimeType,
                             Caption = media.Caption,
                             Attributes = new TLVector<TLDocumentAttributeBase>
@@ -1640,13 +1622,7 @@ namespace Unigram.ViewModels
                     var inputMedia = new TLInputMediaUploadedPhoto
                     {
                         Caption = media.Caption,
-                        File = new TLInputFile
-                        {
-                            Id = upload.FileId,
-                            Name = "file.jpg",
-                            Parts = upload.Parts.Count,
-                            Md5Checksum = string.Empty
-                        }
+                        File = upload.ToInputFile()
                     };
 
                     var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
@@ -1699,13 +1675,7 @@ namespace Unigram.ViewModels
                 {
                     var inputMedia = new TLInputMediaUploadedDocument
                     {
-                        File = new TLInputFile
-                        {
-                            Id = upload.FileId,
-                            Md5Checksum = string.Empty,
-                            Name = fileName,
-                            Parts = upload.Parts.Count
-                        },
+                        File = upload.ToInputFile(),
                         MimeType = "image/gif",
                         Caption = media.Caption,
                         Attributes = new TLVector<TLDocumentAttributeBase>
@@ -1792,13 +1762,7 @@ namespace Unigram.ViewModels
                 {
                     var inputMedia = new TLInputMediaUploadedDocument
                     {
-                        File = new TLInputFile
-                        {
-                            Id = upload.FileId,
-                            Md5Checksum = string.Empty,
-                            Name = fileName,
-                            Parts = upload.Parts.Count
-                        },
+                        File = upload.ToInputFile(),
                         MimeType = "audio/ogg",
                         Caption = media.Caption,
                         Attributes = new TLVector<TLDocumentAttributeBase>

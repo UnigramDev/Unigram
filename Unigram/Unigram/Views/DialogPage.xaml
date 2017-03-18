@@ -122,7 +122,7 @@
         </Style>
 
         <!-- Teorically temporary location, but we'll see -->
-        <MenuFlyout x:Key="MessageMenuFlyout">
+        <MenuFlyout x:Key="MessageMenuFlyout" Opening="MenuFlyout_Opening">
             <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
             <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin message"/>
             <MenuFlyoutItem Loaded="MessageEdit_Loaded" Command="{x:Bind ViewModel.MessageEditCommand}" CommandParameter="{Binding}" Text="Edit message"/>
@@ -133,7 +133,7 @@
             <MenuFlyoutItem Loaded="MessageSaveMedia_Loaded" Command="{x:Bind ViewModel.MessageSaveMediaCommand}" CommandParameter="{Binding}" Text="Save file as..."/>
         </MenuFlyout>
 
-        <MenuFlyout x:Key="StickerMenuFlyout">
+        <MenuFlyout x:Key="StickerMenuFlyout" Opening="MenuFlyout_Opening">
             <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
             <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin message"/>
             <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
@@ -142,7 +142,7 @@
             <MenuFlyoutItem Loaded="MessageSaveSticker_Loaded" Command="{x:Bind ViewModel.MessageSaveStickerCommand}" CommandParameter="{Binding}" Text="Save image as..."/>
         </MenuFlyout>
 
-        <MenuFlyout x:Key="ServiceMenuFlyout">
+        <MenuFlyout x:Key="ServiceMenuFlyout" Opening="MenuFlyout_Opening">
             <MenuFlyoutItem Loaded="MessageCallAgain_Loaded" Text="All Again" IsEnabled="False"/>
             <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
             <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>

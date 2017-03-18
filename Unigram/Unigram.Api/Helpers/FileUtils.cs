@@ -91,7 +91,7 @@ namespace Telegram.Api.Helpers
                         };
 
                         var desiredName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-                        var desiredFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\" + desiredName);
+                        var desiredFile = await CreateTempFileAsync(desiredName);
 
                         var buffer = new Windows.Storage.Streams.Buffer(Convert.ToUInt32(randomStream.Size));
                         var buffer2 = await randomStream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None);

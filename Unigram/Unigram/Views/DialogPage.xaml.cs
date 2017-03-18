@@ -635,6 +635,16 @@ namespace Unigram.Views
                 }
             }
         }
+
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            var flyout = sender as MenuFlyout;
+
+            foreach (var item in flyout.Items)
+            {
+                item.Visibility = Visibility.Visible;
+            }
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading
