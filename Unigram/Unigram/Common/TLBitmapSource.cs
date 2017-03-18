@@ -222,7 +222,8 @@ namespace Unigram.Common
                 {
                     Phase = phase;
 
-                    Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    //Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    Image.UriSource = FileUtils.GetTempFileUri(fileName);
                     return true;
                 }
             }

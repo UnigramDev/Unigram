@@ -54,6 +54,12 @@ namespace Unigram.Controls
         public BubbleTextBox()
         {
             DefaultStyleKey = typeof(BubbleTextBox);
+
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
             ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
 
             _flyout = new MenuFlyout();

@@ -8,8 +8,22 @@ using Windows.UI;
 namespace Unigram.Helpers
 {
     // ColorHelper is a set of color conversion utilities
-    public static class ColorHelper
+    public static class ColorsHelper
     {
+        public static Color AlphaBlend(Color color1, Color color2)
+        {
+            return AlphaBlend(color1, color2, color2.A);
+        }
+
+        public static Color AlphaBlend(Color color1, Color color2, byte alpha)
+        {
+            float factor = alpha / 255f;
+            byte red = (byte)(color1.R * (1 - factor) + color2.R * factor);
+            byte green = (byte)(color1.G * (1 - factor) + color2.G * factor);
+            byte blue = (byte)(color1.B * (1 - factor) + color2.B * factor);
+            return Color.FromArgb(0xFF, red, green, blue);
+        }
+
         public static HSL RGB2HSL(Color colorToChange)
         {
             double h = 0, s = 0, l = 0;

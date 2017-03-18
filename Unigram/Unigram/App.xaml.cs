@@ -287,8 +287,8 @@ namespace Unigram
                 titlebar.InactiveBackgroundColor = subtitleBrush.Color;
                 titlebar.ButtonInactiveBackgroundColor = subtitleBrush.Color;
 
-                titlebar.ButtonHoverBackgroundColor = Helpers.ColorHelper.ChangeShade(titleBrush.Color, -0.06f);
-                titlebar.ButtonPressedBackgroundColor = Helpers.ColorHelper.ChangeShade(titleBrush.Color, -0.09f);
+                titlebar.ButtonHoverBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.06f);
+                titlebar.ButtonPressedBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.09f);
 
                 // Branding colours
                 //titlebar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);

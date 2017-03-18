@@ -94,8 +94,7 @@ namespace Unigram.Controls
                 goto Calculate;
             }
 
-            var photo = Constraint as TLPhoto;
-            if (photo != null)
+            if (Constraint is TLPhoto photo)
             {
                 //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
                 var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
@@ -108,8 +107,7 @@ namespace Unigram.Controls
                 }
             }
 
-            var document = Constraint as TLDocument;
-            if (document != null)
+            if (Constraint is TLDocument document)
             {
                 var imageSize = document.Attributes.OfType<TLDocumentAttributeImageSize>().FirstOrDefault();
                 if (imageSize != null)
@@ -130,8 +128,7 @@ namespace Unigram.Controls
                 }
             }
 
-            var inlineResult = Constraint as TLBotInlineResult;
-            if (inlineResult != null)
+            if (Constraint is TLBotInlineResult inlineResult)
             {
                 width = inlineResult.HasW ? inlineResult.W.Value : 0;
                 height = inlineResult.HasH ? inlineResult.H.Value : 0;

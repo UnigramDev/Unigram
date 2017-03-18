@@ -631,7 +631,7 @@ namespace Unigram.Views
                 var stickerAttribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
                 if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
                 {
-                    await new StickerSetView(stickerAttribute.StickerSet).ShowAsync();
+                    await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet, Stickers_ItemClick);
                 }
             }
         }

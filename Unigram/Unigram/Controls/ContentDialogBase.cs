@@ -14,6 +14,9 @@ using LinqToVisualTree;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls.Primitives;
 using Template10.Common;
+using Unigram.Helpers;
+using Windows.UI;
+using Windows.Foundation.Metadata;
 
 namespace Unigram.Controls
 {
@@ -24,7 +27,7 @@ namespace Unigram.Controls
         private TaskCompletionSource<ContentDialogBaseResult> _callback;
         private ContentDialogBaseResult _result;
 
-        private Border BackgroundElement;
+        protected Border BackgroundElement;
         private AppViewBackButtonVisibility BackButtonVisibility;
 
         public event EventHandler Closing;
@@ -33,6 +36,7 @@ namespace Unigram.Controls
         {
             DefaultStyleKey = typeof(ContentDialogBase);
 
+            Loading += OnLoading;
             Loaded += OnLoaded;
             //FullSizeDesired = true;
 
@@ -54,6 +58,53 @@ namespace Unigram.Controls
             }
         }
 
+        private void MaskTitleAndStatusBar()
+        {
+            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+            var titleBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+            var overlayBrush = OverlayBrush as SolidColorBrush;
+
+            if (overlayBrush != null)
+            {
+                var maskBackground = ColorsHelper.AlphaBlend(titleBrush.Color, overlayBrush.Color);
+                var maskForeground = ColorsHelper.AlphaBlend(Colors.Black, overlayBrush.Color);
+
+                titlebar.BackgroundColor = maskBackground;
+                titlebar.ForegroundColor = maskForeground;
+                titlebar.ButtonBackgroundColor = maskBackground;
+                titlebar.ButtonForegroundColor = maskForeground;
+
+                if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+                {
+                    var statusBar = StatusBar.GetForCurrentView();
+                    statusBar.BackgroundColor = maskBackground;
+                    statusBar.ForegroundColor = maskForeground;
+                }
+            }
+        }
+
+        private void UnmaskTitleAndStatusBar()
+        {
+            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+            var titleBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+            var overlayBrush = OverlayBrush as SolidColorBrush;
+
+            if (overlayBrush != null)
+            {
+                var maskBackground = ColorsHelper.AlphaBlend(titleBrush.Color, overlayBrush.Color);
+
+                titlebar.BackgroundColor = titleBrush.Color;
+                titlebar.ButtonBackgroundColor = titleBrush.Color;
+
+                if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+                {
+                    var statusBar = StatusBar.GetForCurrentView();
+                    statusBar.BackgroundColor = titleBrush.Color;
+                    statusBar.ForegroundColor = Colors.Black;
+                }
+            }
+        }
+
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync()
         {
             return AsyncInfo.Run(async (token) =>
@@ -67,8 +118,8 @@ namespace Unigram.Controls
                 {
                     _popupHost = new Popup();
                     _popupHost.Child = this;
-                    _popupHost.Opened += _popupHost_Opened;
-                    _popupHost.Closed += _popupHost_Closed;
+                    _popupHost.Opened += PopupHost_Opened;
+                    _popupHost.Closed += PopupHost_Closed;
                 }
 
                 _popupHost.IsOpen = true;
@@ -77,8 +128,10 @@ namespace Unigram.Controls
             });
         }
 
-        private void _popupHost_Opened(object sender, object e)
+        private void PopupHost_Opened(object sender, object e)
         {
+            MaskTitleAndStatusBar();
+
             //BackButtonVisibility = SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility;
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
@@ -88,8 +141,10 @@ namespace Unigram.Controls
             OnVisibleBoundsChanged(ApplicationView.GetForCurrentView(), null);
         }
 
-        private void _popupHost_Closed(object sender, object e)
+        private void PopupHost_Closed(object sender, object e)
         {
+            UnmaskTitleAndStatusBar();
+
             _callback.TrySetResult(_result);
 
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
@@ -130,8 +185,23 @@ namespace Unigram.Controls
             UpdateViewBase();
         }
 
+        private void OnLoading(FrameworkElement sender, object args)
+        {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
+            UpdateViewBase();
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
             UpdateViewBase();
         }
 
