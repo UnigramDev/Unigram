@@ -89,6 +89,7 @@ namespace Unigram.Controls.Views
         }
 
         private Border LineTop;
+        private Border LineAccent;
 
         private SpriteVisual _backgroundVisual;
         private ExpressionAnimation _expression;
@@ -96,6 +97,7 @@ namespace Unigram.Controls.Views
         private void GridView_Loaded(object sender, RoutedEventArgs e)
         {
             LineTop = List.Descendants<Border>().FirstOrDefault(x => ((Border)x).Name.Equals("LineTop")) as Border;
+            LineAccent = List.Descendants<Border>().FirstOrDefault(x => ((Border)x).Name.Equals("LineAccent")) as Border;
 
             var scroll = List.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
             if (scroll != null)
@@ -116,7 +118,6 @@ namespace Unigram.Controls.Views
                 _expression.SetReferenceParameter("Scrolling", props);
                 _expression.SetScalarParameter("Maximum", -(float)Yolo.Margin.Top + 1);
                 _backgroundVisual.StartAnimation("Offset.Y", _expression);
-
             }
 
             var panel = List.ItemsPanelRoot as ItemsWrapGrid;
@@ -145,6 +146,7 @@ namespace Unigram.Controls.Views
             }
 
             LineTop.BorderThickness = new Thickness(0, 0, 0, top);
+            LineAccent.BorderThickness = new Thickness(0, top > 0 ? 0 : 1, 0, 0);
             LineBottom.BorderThickness = new Thickness(0, bottom, 0, 0);
         }
 

@@ -3,6 +3,93 @@
                     xmlns:local="using:Unigram.Common"
                     xmlns:controls="using:Unigram.Controls">
 
+    <StaticResource x:Key="AccentButtonBackground" ResourceKey="SystemControlForegroundAccentBrush" />
+    <StaticResource x:Key="AccentButtonBackgroundPointerOver" ResourceKey="SystemControlForegroundAccentBrush" />
+    <StaticResource x:Key="AccentButtonBackgroundPressed" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
+    <StaticResource x:Key="AccentButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <StaticResource x:Key="AccentButtonForeground" ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
+    <StaticResource x:Key="AccentButtonForegroundPointerOver" ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
+    <StaticResource x:Key="AccentButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseHighBrush" />
+    <StaticResource x:Key="AccentButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <StaticResource x:Key="AccentButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <StaticResource x:Key="AccentButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
+    <StaticResource x:Key="AccentButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <StaticResource x:Key="AccentButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
+
+    <Style x:Key="AccentButtonStyle" TargetType="Button">
+        <Setter Property="Foreground" Value="{ThemeResource AccentButtonForeground}"/>
+        <Setter Property="Background" Value="{ThemeResource AccentButtonBackground}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource AccentButtonBorderBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          AutomationProperties.AccessibilityView="Raw" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <x:String x:Key="ScrollbarExpandDelay">00:00:00.1</x:String>
     <x:String x:Key="ScrollbarExpandDuration">00:00:00.2</x:String>
     <x:String x:Key="ScrollbarContractDelay">00:00:03</x:String>
@@ -86,11 +173,11 @@
                                         </VisualStateGroup>
                                     </VisualStateManager.VisualStateGroups>
                                     <FontIcon x:Name="Arrow"
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        Glyph="&#xE0E3;"
-                                        Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
-                                        FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}"
-                                        MirroredWhenRightToLeft="True" />
+                                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              Glyph="&#xE0E3;"
+                                              Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
+                                              FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}"
+                                              MirroredWhenRightToLeft="True" />
                                 </Grid>
                             </ControlTemplate>
                             <ControlTemplate x:Key="HorizontalDecrementTemplate" TargetType="RepeatButton">
@@ -142,11 +229,11 @@
                                         </VisualStateGroup>
                                     </VisualStateManager.VisualStateGroups>
                                     <FontIcon x:Name="Arrow"
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        Glyph="&#xE0E2;"
-                                        Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
-                                        FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}"
-                                        MirroredWhenRightToLeft="True" />
+                                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              Glyph="&#xE0E2;"
+                                              Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
+                                              FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}"
+                                              MirroredWhenRightToLeft="True" />
                                 </Grid>
                             </ControlTemplate>
                             <ControlTemplate x:Key="VerticalIncrementTemplate" TargetType="RepeatButton">
@@ -198,10 +285,10 @@
                                         </VisualStateGroup>
                                     </VisualStateManager.VisualStateGroups>
                                     <FontIcon x:Name="Arrow"
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        Glyph="&#xE0E5;"
-                                        Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
-                                        FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}" />
+                                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              Glyph="&#xE0E5;"
+                                              Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
+                                              FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}" />
                                 </Grid>
                             </ControlTemplate>
                             <ControlTemplate x:Key="VerticalDecrementTemplate" TargetType="RepeatButton">
@@ -253,10 +340,10 @@
                                         </VisualStateGroup>
                                     </VisualStateManager.VisualStateGroups>
                                     <FontIcon x:Name="Arrow"
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        Glyph="&#xE0E4;"
-                                        Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
-                                        FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}" />
+                                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              Glyph="&#xE0E4;"
+                                              Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
+                                              FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}" />
                                 </Grid>
                             </ControlTemplate>
                             <ControlTemplate x:Key="VerticalThumbTemplate" TargetType="Thumb">
@@ -284,9 +371,9 @@
                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarThumbFillDisabled}" />
                                                     </ObjectAnimationUsingKeyFrames>
                                                     <DoubleAnimation Duration="0"
-                                                        To="0"
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        Storyboard.TargetName="ThumbVisual" />
+                                                                     To="0"
+                                                                     Storyboard.TargetProperty="Opacity"
+                                                                     Storyboard.TargetName="ThumbVisual" />
                                                 </Storyboard>
                                             </VisualState>
                                         </VisualStateGroup>
@@ -318,9 +405,9 @@
                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarThumbFillDisabled}" />
                                                     </ObjectAnimationUsingKeyFrames>
                                                     <DoubleAnimation Duration="0"
-                                                        To="0"
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        Storyboard.TargetName="ThumbVisual" />
+                                                                     To="0"
+                                                                     Storyboard.TargetProperty="Opacity"
+                                                                     Storyboard.TargetName="ThumbVisual" />
                                                 </Storyboard>
                                             </VisualState>
                                         </VisualStateGroup>
@@ -334,48 +421,48 @@
                                     <VisualTransition From="PointerOver" To="Normal">
                                         <Storyboard>
                                             <DoubleAnimation BeginTime="{ThemeResource ScrollbarContractDelay}"
-                                                     Duration="{ThemeResource ScrollbarContractDuration}"
-                                                     Storyboard.TargetName="VerticalThumbTransform"
-                                                     Storyboard.TargetProperty="ScaleX"
-                                                     To="{ThemeResource SmallScrollThumbScale}" />
+                                                             Duration="{ThemeResource ScrollbarContractDuration}"
+                                                             Storyboard.TargetName="VerticalThumbTransform"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource SmallScrollThumbScale}" />
                                             <DoubleAnimation BeginTime="{ThemeResource ScrollbarContractDelay}"
-                                                     Duration="{ThemeResource ScrollbarContractDuration}"
-                                                     Storyboard.TargetName="VerticalThumbTransform"
-                                                     Storyboard.TargetProperty="TranslateX"
-                                                     To="{ThemeResource SmallScrollThumbOffset}" />
+                                                             Duration="{ThemeResource ScrollbarContractDuration}"
+                                                             Storyboard.TargetName="VerticalThumbTransform"
+                                                             Storyboard.TargetProperty="TranslateX"
+                                                             To="{ThemeResource SmallScrollThumbOffset}" />
 
                                             <DoubleAnimation BeginTime="{ThemeResource ScrollbarContractDelay}"
-                                                     Duration="{ThemeResource ScrollbarContractDuration}"
-                                                     Storyboard.TargetName="HorizontalThumbTransform"
-                                                     Storyboard.TargetProperty="ScaleY"
-                                                     To="{ThemeResource SmallScrollThumbScale}" />
+                                                             Duration="{ThemeResource ScrollbarContractDuration}"
+                                                             Storyboard.TargetName="HorizontalThumbTransform"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource SmallScrollThumbScale}" />
                                             <DoubleAnimation BeginTime="{ThemeResource ScrollbarContractDelay}"
-                                                     Duration="{ThemeResource ScrollbarContractDuration}"
-                                                     Storyboard.TargetName="HorizontalThumbTransform"
-                                                     Storyboard.TargetProperty="TranslateY"
-                                                     To="{ThemeResource SmallScrollThumbOffset}" />
+                                                             Duration="{ThemeResource ScrollbarContractDuration}"
+                                                             Storyboard.TargetName="HorizontalThumbTransform"
+                                                             Storyboard.TargetProperty="TranslateY"
+                                                             To="{ThemeResource SmallScrollThumbOffset}" />
 
                                             <FadeOutThemeAnimation TargetName="VerticalSmallIncrease"
-                                                           BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
                                             <FadeOutThemeAnimation TargetName="VerticalLargeIncrease"
-                                                           BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
                                             <FadeOutThemeAnimation TargetName="VerticalLargeDecrease"
-                                                           BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
                                             <FadeOutThemeAnimation TargetName="VerticalSmallDecrease"
-                                                           BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
                                             <FadeOutThemeAnimation TargetName="VerticalTrackRect"
-                                                           BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
 
                                             <FadeOutThemeAnimation TargetName="HorizontalSmallIncrease"
-                                                           BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
                                             <FadeOutThemeAnimation TargetName="HorizontalLargeIncrease"
-                                                           BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
                                             <FadeOutThemeAnimation TargetName="HorizontalLargeDecrease"
-                                                           BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
                                             <FadeOutThemeAnimation TargetName="HorizontalSmallDecrease"
-                                                           BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
                                             <FadeOutThemeAnimation TargetName="HorizontalTrackRect"
-                                                           BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
                                         </Storyboard>
                                     </VisualTransition>
                                 </VisualStateGroup.Transitions>
@@ -470,9 +557,9 @@
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                         <DoubleAnimation Duration="0"
-                                            To="0.5"
-                                            Storyboard.TargetProperty="Opacity"
-                                            Storyboard.TargetName="Root" />
+                                                         To="0.5"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Storyboard.TargetName="Root" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Stroke">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarTrackStrokeDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -564,9 +651,9 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="HorizontalRoot"
-                           Background="{TemplateBinding Background}"
-                           BorderBrush="{TemplateBinding BorderBrush}"
-                           IsHitTestVisible="False">
+                              Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              IsHitTestVisible="False">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
@@ -575,80 +662,80 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Rectangle x:Name="HorizontalTrackRect"
-                                Grid.ColumnSpan="5"
-                                Margin="0"
-                                StrokeThickness="{ThemeResource ScrollBarTrackBorderThemeThickness}"
-                                Fill="{ThemeResource ScrollBarTrackFill}"
-                                Stroke="{ThemeResource ScrollBarTrackStroke}" />
+                                       Grid.ColumnSpan="5"
+                                       Margin="0"
+                                       StrokeThickness="{ThemeResource ScrollBarTrackBorderThemeThickness}"
+                                       Fill="{ThemeResource ScrollBarTrackFill}"
+                                       Stroke="{ThemeResource ScrollBarTrackStroke}" />
                             <RepeatButton x:Name="HorizontalSmallDecrease"
-                                Grid.Column="0"
-                                MinHeight="{ThemeResource ScrollbarSize}"
-                                IsTabStop="False"
-                                Interval="50"
-                                Margin="0"
-                                Template="{StaticResource HorizontalDecrementTemplate}"
-                                Width="{ThemeResource ScrollbarSize}"
-                                AllowFocusOnInteraction="False"
-                                VerticalAlignment="Center" />
+                                          Grid.Column="0"
+                                          MinHeight="{ThemeResource ScrollbarSize}"
+                                          IsTabStop="False"
+                                          Interval="50"
+                                          Margin="0"
+                                          Template="{StaticResource HorizontalDecrementTemplate}"
+                                          Width="{ThemeResource ScrollbarSize}"
+                                          AllowFocusOnInteraction="False"
+                                          VerticalAlignment="Center" />
                             <RepeatButton x:Name="HorizontalLargeDecrease"
-                                Grid.Column="1"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                IsTabStop="False"
-                                Interval="50"
-                                Template="{StaticResource RepeatButtonTemplate}"
-                                Width="0"
-                                AllowFocusOnInteraction="False" />
+                                          Grid.Column="1"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch"
+                                          IsTabStop="False"
+                                          Interval="50"
+                                          Template="{StaticResource RepeatButtonTemplate}"
+                                          Width="0"
+                                          AllowFocusOnInteraction="False" />
                             <Thumb x:Name="HorizontalThumb"
-                                Grid.Column="2"
-                                Background="{ThemeResource ScrollBarThumbBackground}"
-                                Template="{StaticResource HorizontalThumbTemplate}"
-                                Height="{ThemeResource ScrollbarSize}"
-                                MinWidth="{ThemeResource ScrollbarSize}"
-                                AutomationProperties.AccessibilityView="Raw"
-                                VerticalAlignment="Bottom"
-                                RenderTransformOrigin="0.5,1">
+                                   Grid.Column="2"
+                                   Background="{ThemeResource ScrollBarThumbBackground}"
+                                   Template="{StaticResource HorizontalThumbTemplate}"
+                                   Height="{ThemeResource ScrollbarSize}"
+                                   MinWidth="{ThemeResource ScrollbarSize}"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   VerticalAlignment="Bottom"
+                                   RenderTransformOrigin="0.5,1">
                                 <Thumb.RenderTransform>
                                     <CompositeTransform x:Name="HorizontalThumbTransform"
-                                                    ScaleX="1.0"
-                                                    ScaleY="{ThemeResource SmallScrollThumbScale}"
-                                                    TranslateX="0"
-                                                    TranslateY="{ThemeResource SmallScrollThumbOffset}" />
+                                                        ScaleX="1.0"
+                                                        ScaleY="{ThemeResource SmallScrollThumbScale}"
+                                                        TranslateX="0"
+                                                        TranslateY="{ThemeResource SmallScrollThumbOffset}" />
                                 </Thumb.RenderTransform>
                             </Thumb>
                             <RepeatButton x:Name="HorizontalLargeIncrease"
-                                Grid.Column="3"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                IsTabStop="False"
-                                Interval="50"
-                                AllowFocusOnInteraction="False"
-                                Template="{StaticResource RepeatButtonTemplate}" />
+                                          Grid.Column="3"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch"
+                                          IsTabStop="False"
+                                          Interval="50"
+                                          AllowFocusOnInteraction="False"
+                                          Template="{StaticResource RepeatButtonTemplate}" />
                             <RepeatButton x:Name="HorizontalSmallIncrease"
-                                Grid.Column="4"
-                                MinHeight="{ThemeResource ScrollbarSize}"
-                                IsTabStop="False"
-                                Interval="50"
-                                Margin="0"
-                                Template="{StaticResource HorizontalIncrementTemplate}"
-                                Width="{ThemeResource ScrollbarSize}"
-                                AllowFocusOnInteraction="False"
-                                VerticalAlignment="Center" />
+                                          Grid.Column="4"
+                                          MinHeight="{ThemeResource ScrollbarSize}"
+                                          IsTabStop="False"
+                                          Interval="50"
+                                          Margin="0"
+                                          Template="{StaticResource HorizontalIncrementTemplate}"
+                                          Width="{ThemeResource ScrollbarSize}"
+                                          AllowFocusOnInteraction="False"
+                                          VerticalAlignment="Center" />
                         </Grid>
                         <Grid x:Name="HorizontalPanningRoot" MinWidth="24">
                             <Border x:Name="HorizontalPanningThumb"
-                                VerticalAlignment="Bottom"
-                                HorizontalAlignment="Left"
-                                Background="{ThemeResource ScrollBarPanningThumbBackground}"
-                                BorderThickness="0"
-                                Height="2"
-                                MinWidth="32"
-                                Margin="0,2,0,2" />
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Left"
+                                    Background="{ThemeResource ScrollBarPanningThumbBackground}"
+                                    BorderThickness="0"
+                                    Height="2"
+                                    MinWidth="32"
+                                    Margin="0,2,0,2" />
                         </Grid>
                         <Grid x:Name="VerticalRoot"
-                           Background="{TemplateBinding Background}"
-                           BorderBrush="{TemplateBinding BorderBrush}"
-                           IsHitTestVisible="False">
+                              Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              IsHitTestVisible="False">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -657,72 +744,72 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Rectangle x:Name="VerticalTrackRect"
-                                Grid.RowSpan="5"
-                                Margin="0"
-                                StrokeThickness="{ThemeResource ScrollBarTrackBorderThemeThickness}"
-                                Fill="{ThemeResource ScrollBarTrackFill}"
-                                Stroke="{ThemeResource ScrollBarTrackStroke}" />
+                                       Grid.RowSpan="5"
+                                       Margin="0"
+                                       StrokeThickness="{ThemeResource ScrollBarTrackBorderThemeThickness}"
+                                       Fill="{ThemeResource ScrollBarTrackFill}"
+                                       Stroke="{ThemeResource ScrollBarTrackStroke}" />
                             <RepeatButton x:Name="VerticalSmallDecrease"
-                                Height="{ThemeResource ScrollbarSize}"
-                                MinWidth="{ThemeResource ScrollbarSize}"
-                                IsTabStop="False"
-                                Interval="50"
-                                Margin="0"
-                                Grid.Row="0"
-                                Template="{StaticResource VerticalDecrementTemplate}"
-                                HorizontalAlignment="Center" />
+                                          Height="{ThemeResource ScrollbarSize}"
+                                          MinWidth="{ThemeResource ScrollbarSize}"
+                                          IsTabStop="False"
+                                          Interval="50"
+                                          Margin="0"
+                                          Grid.Row="0"
+                                          Template="{StaticResource VerticalDecrementTemplate}"
+                                          HorizontalAlignment="Center" />
                             <RepeatButton x:Name="VerticalLargeDecrease"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Height="0"
-                                IsTabStop="False"
-                                Interval="50"
-                                Grid.Row="1"
-                                AllowFocusOnInteraction="False"
-                                Template="{StaticResource RepeatButtonTemplate}" />
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch"
+                                          Height="0"
+                                          IsTabStop="False"
+                                          Interval="50"
+                                          Grid.Row="1"
+                                          AllowFocusOnInteraction="False"
+                                          Template="{StaticResource RepeatButtonTemplate}" />
                             <Thumb x:Name="VerticalThumb"
-                                Grid.Row="2"
-                                Background="{ThemeResource ScrollBarThumbBackground}"
-                                Template="{StaticResource VerticalThumbTemplate}"
-                                Width="{ThemeResource ScrollbarSize}"
-                                MinHeight="{ThemeResource ScrollbarSize}"
-                                AutomationProperties.AccessibilityView="Raw"
-                                RenderTransformOrigin="1,0.5">
+                                   Grid.Row="2"
+                                   Background="{ThemeResource ScrollBarThumbBackground}"
+                                   Template="{StaticResource VerticalThumbTemplate}"
+                                   Width="{ThemeResource ScrollbarSize}"
+                                   MinHeight="{ThemeResource ScrollbarSize}"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   RenderTransformOrigin="1,0.5">
                                 <Thumb.RenderTransform>
                                     <CompositeTransform x:Name="VerticalThumbTransform"
-                                                      ScaleX="{ThemeResource SmallScrollThumbScale}"
-                                                      ScaleY="1.0"
-                                                      TranslateX="{ThemeResource SmallScrollThumbOffset}"
-                                                      TranslateY="0" />
+                                                        ScaleX="{ThemeResource SmallScrollThumbScale}"
+                                                        ScaleY="1.0"
+                                                        TranslateX="{ThemeResource SmallScrollThumbOffset}"
+                                                        TranslateY="0" />
                                 </Thumb.RenderTransform>
                             </Thumb>
                             <RepeatButton x:Name="VerticalLargeIncrease"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                IsTabStop="False"
-                                Interval="50"
-                                Grid.Row="3"
-                                AllowFocusOnInteraction="False"
-                                Template="{StaticResource RepeatButtonTemplate}" />
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch"
+                                          IsTabStop="False"
+                                          Interval="50"
+                                          Grid.Row="3"
+                                          AllowFocusOnInteraction="False"
+                                          Template="{StaticResource RepeatButtonTemplate}" />
                             <RepeatButton x:Name="VerticalSmallIncrease"
-                                Height="{ThemeResource ScrollbarSize}"
-                                MinWidth="{ThemeResource ScrollbarSize}"
-                                IsTabStop="False"
-                                Interval="50"
-                                Margin="0"
-                                Grid.Row="4"
-                                Template="{StaticResource VerticalIncrementTemplate}"
-                                HorizontalAlignment="Center" />
+                                          Height="{ThemeResource ScrollbarSize}"
+                                          MinWidth="{ThemeResource ScrollbarSize}"
+                                          IsTabStop="False"
+                                          Interval="50"
+                                          Margin="0"
+                                          Grid.Row="4"
+                                          Template="{StaticResource VerticalIncrementTemplate}"
+                                          HorizontalAlignment="Center" />
                         </Grid>
                         <Grid x:Name="VerticalPanningRoot" MinHeight="24">
                             <Border x:Name="VerticalPanningThumb"
-                                VerticalAlignment="Top"
-                                HorizontalAlignment="Right"
-                                Background="{ThemeResource ScrollBarPanningThumbBackground}"
-                                BorderThickness="0"
-                                Width="2"
-                                MinHeight="32"
-                                Margin="2,0,2,0" />
+                                    VerticalAlignment="Top"
+                                    HorizontalAlignment="Right"
+                                    Background="{ThemeResource ScrollBarPanningThumbBackground}"
+                                    BorderThickness="0"
+                                    Width="2"
+                                    MinHeight="32"
+                                    Margin="2,0,2,0" />
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -903,34 +990,34 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <ScrollContentPresenter x:Name="ScrollContentPresenter"
-                                Grid.RowSpan="2"
-                                Grid.ColumnSpan="2"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                Margin="{TemplateBinding Padding}" />
+                                                    Grid.RowSpan="2"
+                                                    Grid.ColumnSpan="2"
+                                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                    Margin="{TemplateBinding Padding}" />
                             <Grid
                                 Grid.RowSpan="2"
                                 Grid.ColumnSpan="2" />
                             <ScrollBar x:Name="VerticalScrollBar"
-                                Grid.Column="1"
-                                IsTabStop="False"
-                                Maximum="{TemplateBinding ScrollableHeight}"
-                                Orientation="Vertical"
-                                Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                                Value="{TemplateBinding VerticalOffset}"
-                                ViewportSize="{TemplateBinding ViewportHeight}"
-                                HorizontalAlignment="Right" />
+                                       Grid.Column="1"
+                                       IsTabStop="False"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       Orientation="Vertical"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                       Value="{TemplateBinding VerticalOffset}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       HorizontalAlignment="Right" />
                             <ScrollBar x:Name="HorizontalScrollBar"
-                                IsTabStop="False"
-                                Maximum="{TemplateBinding ScrollableWidth}"
-                                Orientation="Horizontal"
-                                Grid.Row="1"
-                                Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
-                                Value="{TemplateBinding HorizontalOffset}"
-                                ViewportSize="{TemplateBinding ViewportWidth}" />
+                                       IsTabStop="False"
+                                       Maximum="{TemplateBinding ScrollableWidth}"
+                                       Orientation="Horizontal"
+                                       Grid.Row="1"
+                                       Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                                       Value="{TemplateBinding HorizontalOffset}"
+                                       ViewportSize="{TemplateBinding ViewportWidth}" />
                             <Border x:Name="ScrollBarSeparator"
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Background="{ThemeResource ScrollViewerScrollBarSeparatorBackground}" />
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Background="{ThemeResource ScrollViewerScrollBarSeparatorBackground}" />
                         </Grid>
                     </Border>
                 </ControlTemplate>
@@ -2045,10 +2132,10 @@
             <Setter.Value>
                 <ControlTemplate TargetType="MenuFlyoutItem">
                     <Grid x:Name="LayoutRoot"
-                              Padding="{TemplateBinding Padding}"
-                              Background="{TemplateBinding Background}"
-                              BorderBrush="{TemplateBinding BorderBrush}"
-                              BorderThickness="{TemplateBinding BorderThickness}">
+                          Padding="{TemplateBinding Padding}"
+                          Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
@@ -2110,11 +2197,11 @@
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Margin="0,0,12,0" Glyph="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                             <TextBlock x:Name="TextBlock"
-                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                           Foreground="{TemplateBinding Foreground}"
-                                           Text="{TemplateBinding Text}"
-                                           TextTrimming="Clip"/>
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       Text="{TemplateBinding Text}"
+                                       TextTrimming="Clip"/>
                         </StackPanel>
                     </Grid>
                 </ControlTemplate>

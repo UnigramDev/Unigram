@@ -449,7 +449,7 @@ namespace Unigram.ViewModels
                 var mediaCaption = message.Media as ITLMediaCaption;
                 if (mediaCaption != null)
                 {
-                    return mediaCaption.Caption;
+                    return mediaCaption.Caption ?? string.Empty;
                 }
             }
             else

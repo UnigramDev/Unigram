@@ -15,6 +15,7 @@ using Telegram.Api.TL;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Windows.Storage.FileProperties;
 using Windows.Graphics.Imaging;
+using Windows.ApplicationModel;
 
 namespace Telegram.Api.Helpers
 {
@@ -57,6 +58,8 @@ namespace Telegram.Api.Helpers
 
         public static async Task<TLPhotoSizeBase> GetFileThumbnailAsync(StorageFile file)
         {
+            //file = await Package.Current.InstalledLocation.GetFileAsync("Assets\\Thumb.jpg");
+
             var imageProps = await file.Properties.GetImagePropertiesAsync();
             var videoProps = await file.Properties.GetVideoPropertiesAsync();
 
