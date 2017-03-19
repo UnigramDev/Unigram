@@ -1025,7 +1025,7 @@
                                       AllowFocusOnInteraction="False"
                                       FontSize="24"
                                       Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                      Padding="4,0,0,0"
+                                      Padding="4,2,0,0"
                                       Grid.Column="2"/>
             </Grid>
 
@@ -1133,7 +1133,7 @@
                 <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0"/>
             </ScrollViewer>-->
 
-            <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="4"/>
+            <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="4" Grid.RowSpan="2"/>
         </Grid>
     </Grid>
 </Page>
