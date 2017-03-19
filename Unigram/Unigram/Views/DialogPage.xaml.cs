@@ -387,6 +387,16 @@ namespace Unigram.Views
 
         #region Context menu
 
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            var flyout = sender as MenuFlyout;
+
+            foreach (var item in flyout.Items)
+            {
+                item.Visibility = Visibility.Visible;
+            }
+        }
+
         private void MessageReply_Loaded(object sender, RoutedEventArgs e)
         {
             var element = sender as MenuFlyoutItem;
@@ -582,8 +592,25 @@ namespace Unigram.Views
                 {
                     if (message.Media is TLMessageMediaDocument || message.Media is TLMessageMediaPhoto)
                     {
-                        // TOOD: check if file exists
+                        Visibility = Visibility.Visible;
+                        return;
+                    }
+                }
 
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void MessageSaveGIF_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var message = element.DataContext as TLMessage;
+                if (message != null)
+                {
+                    if (message.IsGif())
+                    {
                         Visibility = Visibility.Visible;
                         return;
                     }
@@ -633,16 +660,6 @@ namespace Unigram.Views
                 {
                     await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet, Stickers_ItemClick);
                 }
-            }
-        }
-
-        private void MenuFlyout_Opening(object sender, object e)
-        {
-            var flyout = sender as MenuFlyout;
-
-            foreach (var item in flyout.Items)
-            {
-                item.Visibility = Visibility.Visible;
             }
         }
     }

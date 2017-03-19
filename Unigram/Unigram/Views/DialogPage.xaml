@@ -130,6 +130,7 @@
             <MenuFlyoutItem Loaded="MessageForward_Loaded" Command="{x:Bind ViewModel.MessageForwardCommand}" CommandParameter="{Binding}" Text="Forward message"/>
             <MenuFlyoutItem Loaded="MessageCopy_Loaded" Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy text"/>
             <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
+            <MenuFlyoutItem Loaded="MessageSaveGIF_Loaded" Command="{x:Bind ViewModel.MessageSaveGIFCommand}" CommandParameter="{Binding}" Text="Save to GIFs"/>
             <MenuFlyoutItem Loaded="MessageSaveMedia_Loaded" Command="{x:Bind ViewModel.MessageSaveMediaCommand}" CommandParameter="{Binding}" Text="Save file as..."/>
         </MenuFlyout>
 
@@ -143,7 +144,7 @@
         </MenuFlyout>
 
         <MenuFlyout x:Key="ServiceMenuFlyout" Opening="MenuFlyout_Opening">
-            <MenuFlyoutItem Loaded="MessageCallAgain_Loaded" Text="All Again" IsEnabled="False"/>
+            <MenuFlyoutItem Loaded="MessageCallAgain_Loaded" Text="Call Again" IsEnabled="False"/>
             <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
             <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
         </MenuFlyout>

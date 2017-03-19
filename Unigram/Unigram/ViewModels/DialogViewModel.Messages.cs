@@ -895,5 +895,22 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        #region Save to GIFs
+
+        public RelayCommand<TLMessage> MessageSaveGIFCommand => new RelayCommand<TLMessage>(MessageSaveGIFExecute);
+        private async void MessageSaveGIFExecute(TLMessage message)
+        {
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                var response = await ProtoService.SaveGifAsync(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, false);
+                if (response.IsSucceeded)
+                {
+                    UpdateGIFs();
+                }
+            }
+        }
+
+        #endregion
     }
 }

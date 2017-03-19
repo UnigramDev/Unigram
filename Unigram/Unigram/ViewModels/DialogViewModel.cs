@@ -2147,6 +2147,11 @@ namespace Unigram.ViewModels
                 }
             });
 
+            UpdateGIFs();
+        }
+
+        private void UpdateGIFs()
+        {
             Execute.BeginOnThreadPool(async () =>
             {
                 var gifs = await _gifsService.GetSavedGifs();
