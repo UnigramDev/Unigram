@@ -784,7 +784,7 @@ namespace Unigram.Common
                 var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
                 if (index != -1)
                 {
-                    string text = url.Substring(index).Replace("/", string.Empty);
+                    var text = url.Substring(index).Replace("/", string.Empty);
                     if (!string.IsNullOrEmpty(text))
                     {
                         NavigateToInviteLink(text);
@@ -796,10 +796,10 @@ namespace Unigram.Common
                 var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
                 if (index != -1)
                 {
-                    string text = url.Substring(index).Replace("/", string.Empty);
+                    var text = url.Substring(index).Replace("/", string.Empty);
                     if (!string.IsNullOrEmpty(text))
                     {
-                        //NavigateToStickerSet(text);
+                        NavigateToStickerSet(text);
                     }
                 }
             }
@@ -827,6 +827,11 @@ namespace Unigram.Common
                     }
                 }
             }
+        }
+
+        private static async void NavigateToStickerSet(string text)
+        {
+            await StickerSetView.Current.ShowAsync(new TLInputStickerSetShortName { ShortName = text });
         }
 
         private static async void NavigateToUsername(IMTProtoService mtProtoService, string username, string accessToken, string post, string game)
@@ -984,7 +989,7 @@ namespace Unigram.Common
                         content = "AppResources.JoinChannelConfirmation";
                     }
 
-                    ContentDialog dialog;
+                    ContentDialogBase dialog;
                     //if (invite.IsChannel && !invite.IsMegaGroup)
                     //{
                     //    dialog = new TLMessageDialog(content, invite.Title);
@@ -999,7 +1004,7 @@ namespace Unigram.Common
                     }
 
                     var result = await dialog.ShowAsync();
-                    if (result == ContentDialogResult.Primary)
+                    if (result == ContentDialogBaseResult.OK)
                     {
                         var import = await protoService.ImportChatInviteAsync(link);
                         if (import.IsSucceeded)

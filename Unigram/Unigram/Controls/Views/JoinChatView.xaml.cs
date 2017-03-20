@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class JoinChatView : ContentDialog
+    public sealed partial class JoinChatView : BottomSheet
     {
         public TLChatInvite ViewModel => DataContext as TLChatInvite;
 
@@ -52,12 +52,14 @@ namespace Unigram.Controls.Views
             return string.Format("+{0}", total - count);
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void Join_Click(object sender, RoutedEventArgs e)
         {
+            Hide(ContentDialogBaseResult.OK);
         }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void Cancel_Click(object sender, RoutedEventArgs e)
         {
+            Hide(ContentDialogBaseResult.Cancel);
         }
     }
 }

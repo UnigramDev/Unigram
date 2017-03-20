@@ -19,6 +19,9 @@ using LinqToVisualTree;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Composition;
 using System.Diagnostics;
+using Windows.UI.ViewManagement;
+using Windows.Foundation.Metadata;
+using Windows.UI;
 
 // The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -145,9 +148,43 @@ namespace Unigram.Controls.Views
                 bottom = 0;
             }
 
+            //if (LineTop.BorderThickness.Bottom != top)
+            //{
+            //    if (top == 0)
+            //    {
+            //        MaskTitleAndStatusBar();
+            //    }
+            //    else
+            //    {
+            //        SetupTitleAndStatusBar();
+            //    }
+            //}
+
             LineTop.BorderThickness = new Thickness(0, 0, 0, top);
             LineAccent.BorderThickness = new Thickness(0, top > 0 ? 0 : 1, 0, 0);
             LineBottom.BorderThickness = new Thickness(0, bottom, 0, 0);
+        }
+
+        // SystemControlBackgroundChromeMediumLowBrush
+
+        private void SetupTitleAndStatusBar()
+        {
+            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+            var titleBrush = Application.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
+            var overlayBrush = OverlayBrush as SolidColorBrush;
+
+            if (overlayBrush != null)
+            {
+                titlebar.BackgroundColor = titleBrush.Color;
+                titlebar.ButtonBackgroundColor = titleBrush.Color;
+
+                if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+                {
+                    var statusBar = StatusBar.GetForCurrentView();
+                    statusBar.BackgroundColor = titleBrush.Color;
+                    statusBar.ForegroundColor = Colors.Black;
+                }
+            }
         }
 
         private void List_SizeChanged(object sender, SizeChangedEventArgs e)

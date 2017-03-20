@@ -98,6 +98,7 @@
     <Compile Include="Common\RatioControl.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
+    <Compile Include="Controls\BottomSheet.cs" />
     <Compile Include="Controls\DebugToolbar.xaml.cs">
       <DependentUpon>DebugToolbar.xaml</DependentUpon>
     </Compile>
