@@ -81,14 +81,16 @@ namespace Unigram.Controls.Views
 
         private string ConvertIsInstalled(bool installed, bool archived, bool official, bool masks)
         {
-            if (installed)
+            if (installed && !archived)
             {
                 return official 
                     ? string.Format(masks ? "Archive {0} masks" : "Archive {0} stickers", ViewModel.StickerSet.Count)
                     : string.Format(masks ? "Remove {0} masks" : "Remove {0} stickers", ViewModel.StickerSet.Count);
             }
 
-            return string.Format(masks ? "Add {0} masks" : "Add {0} stickers", ViewModel.StickerSet.Count);
+            return official || archived
+                ? string.Format(masks ? "Show {0} masks" : "Show {0} stickers", ViewModel.StickerSet.Count)
+                : string.Format(masks ? "Add {0} masks" : "Add {0} stickers", ViewModel.StickerSet.Count);
         }
 
         private Border LineTop;

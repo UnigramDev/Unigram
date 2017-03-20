@@ -57,7 +57,7 @@
             <Pivot x:Name="Pivot" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
                 <PivotItem Margin="0,-48,0,0">
                     <GridView x:Name="GifsView"
-                              ItemsSource="{Binding SavedGifs}"
+                              ItemsSource="{Binding Stickers.SavedGifs}"
                               common:FluidGridView.OrientationOnly="False"
                               IsItemClickEnabled="True"
                               SelectionMode="None"

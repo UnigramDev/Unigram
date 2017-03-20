@@ -65,7 +65,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private readonly IGifsService _gifsService;
+        private readonly DialogStickersViewModel _stickers;
         private readonly IUploadFileManager _uploadFileManager;
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
@@ -74,22 +74,18 @@ namespace Unigram.ViewModels
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IGifsService gifsService, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, FeaturedStickersViewModel featuredStickers)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, DialogStickersViewModel stickers)
             : base(protoService, cacheService, aggregator)
         {
-            _gifsService = gifsService;
             _uploadFileManager = uploadFileManager;
             _uploadAudioManager = uploadAudioManager;
             _uploadDocumentManager = uploadDocumentManager;
             _uploadVideoManager = uploadVideoManager;
 
-            FeaturedStickers = featuredStickers;
-            SavedGifs = new ObservableCollection<TLDocument>();
+            _stickers = stickers;
         }
 
-        public FeaturedStickersViewModel FeaturedStickers { get; private set; }
-
-
+        public DialogStickersViewModel Stickers { get { return _stickers; } }
 
 
 
@@ -819,9 +815,6 @@ namespace Unigram.ViewModels
         }
 
         public List<KeyedList<TLStickerSet, TLDocument>> StickerSets { get; set; }
-
-        public int SavedGifsHash { get; private set; }
-        public ObservableCollection<TLDocument> SavedGifs { get; private set; }
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
@@ -2044,224 +2037,8 @@ namespace Unigram.ViewModels
         public RelayCommand OpenStickersCommand => new RelayCommand(OpenStickersExecute);
         private void OpenStickersExecute()
         {
-            Execute.BeginOnThreadPool(async () =>
-            {
-                var watch = Stopwatch.StartNew();
-
-                var response = await ProtoService.GetAllStickersAsync(0);
-                if (response.IsSucceeded)
-                {
-                    var old = DatabaseContext.Current.SelectStickerSets();
-
-                    var allStickers = response.Result as TLMessagesAllStickers;
-                    if (allStickers != null)
-                    {
-                        var needData = new Dictionary<long, TLStickerSet>();
-                        var ready = new Dictionary<long, TLStickerSet>();
-                        var removed = new List<TLStickerSet>();
-
-                        foreach (var set in allStickers.Sets)
-                        {
-                            var cached = old.FirstOrDefault(x => x.Id == set.Id);
-                            if (cached != null)
-                            {
-                                if (cached.Hash == set.Hash)
-                                {
-                                    ready[set.Id] = cached;
-                                }
-                                else
-                                {
-                                    needData[set.Id] = set;
-                                }
-                            }
-                            else
-                            {
-                                needData[set.Id] = set;
-                            }
-                        }
-
-                        foreach (var set in old)
-                        {
-                            if (needData.ContainsKey(set.Id) || ready.ContainsKey(set.Id)) { }
-                            else
-                            {
-                                removed.Add(set);
-                            }
-                        }
-
-                        if (removed.Count > 0)
-                        {
-                            DatabaseContext.Current.RemoveStickerSets(removed);
-                        }
-
-                        if (needData.Count > 0)
-                        {
-                            var results = new List<TLMessagesStickerSet>();
-                            var resultsSyncRoot = new object();
-                            ProtoService.GetStickerSetsAsync(new TLMessagesAllStickers { Sets = new TLVector<TLStickerSet>(needData.Values) },
-                                result =>
-                                {
-                                    Debugger.Break();
-                                    //DatabaseContext.Current.InsertStickerSets(needData.Values);
-                                },
-                                stickerSetResult =>
-                                {
-                                    var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
-                                    if (messagesStickerSet != null)
-                                    {
-                                        bool processStickerSets;
-                                        lock (resultsSyncRoot)
-                                        {
-                                            results.Add(messagesStickerSet);
-                                            processStickerSets = results.Count == needData.Values.Count;
-                                        }
-
-                                        if (processStickerSets)
-                                        {
-                                            DatabaseContext.Current.InsertStickerSets(results);
-                                            DatabaseContext.Current.UpdateStickerSetsOrder(allStickers.Sets);
-
-                                            //foreach (var item in ready)
-                                            //{
-                                            //    var items = DatabaseContext.Current.SelectDocuments("Stickers", item.Key);
-                                            //}
-
-                                            watch.Stop();
-                                            Execute.BeginOnUIThread(async () =>
-                                            {
-                                                await new MessageDialog(watch.Elapsed.ToString()).ShowQueuedAsync();
-                                            });
-                                        }
-                                    }
-                                },
-                                failure =>
-                                {
-                                    Debugger.Break();
-                                });
-                        }
-                        else
-                        {
-                            DatabaseContext.Current.UpdateStickerSetsOrder(allStickers.Sets);
-                        }
-                    }
-                }
-            });
-
-            UpdateGIFs();
-        }
-
-        private void UpdateGIFs()
-        {
-            Execute.BeginOnThreadPool(async () =>
-            {
-                var gifs = await _gifsService.GetSavedGifs();
-                if (gifs.Key != SavedGifsHash || SavedGifs.Count == 0)
-                {
-                    Execute.BeginOnUIThread(() =>
-                    {
-                        SavedGifsHash = gifs.Key;
-                        //SavedGifs.Clear();
-                        //SavedGifs.AddRange(gifs);
-
-                        if (SavedGifs.Count > 0)
-                        {
-                            for (int i = 0; i < gifs.Count; i++)
-                            {
-                                var user = gifs[i];
-                                var index = -1;
-
-                                for (int j = 0; j < SavedGifs.Count; j++)
-                                {
-                                    if (SavedGifs[j].Id == user.Id)
-                                    {
-                                        index = j;
-                                        break;
-                                    }
-                                }
-
-                                if (index > -1 && index != i)
-                                {
-                                    SavedGifs.RemoveAt(index);
-                                    SavedGifs.Insert(Math.Min(i, SavedGifs.Count), user);
-                                }
-                                else if (index == -1)
-                                {
-                                    SavedGifs.Insert(Math.Min(i, SavedGifs.Count), user);
-                                }
-                            }
-
-                            for (int i = 0; i < SavedGifs.Count; i++)
-                            {
-                                var user = SavedGifs[i];
-                                var index = -1;
-
-                                for (int j = 0; j < gifs.Count; j++)
-                                {
-                                    if (gifs[j].Id == user.Id)
-                                    {
-                                        index = j;
-                                        break;
-                                    }
-                                }
-
-                                if (index == -1)
-                                {
-                                    SavedGifs.Remove(user);
-                                    i--;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            SavedGifs.Clear();
-                            SavedGifs.AddRange(gifs);
-                        }
-
-                        //var old = SavedGifs.ToArray();
-                        //if (old.Length > 0)
-                        //{
-                        //    var order = new Dictionary<int, int>();
-                        //    for (int i = 0; i < old.Length; i++)
-                        //    {
-                        //        order[i] = -1;
-
-                        //        for (int j = 0; j < gifs.Count; j++)
-                        //        {
-                        //            if (old[i].Id == gifs[j].Id)
-                        //            {
-                        //                order[i] = j;
-                        //                break;
-                        //            }
-                        //        }
-                        //    }
-
-                        //    //for (int j = 0; j < order.First().Value; j++)
-                        //    //{
-                        //    //    if (order.ContainsKey(j) == false)
-                        //    //    {
-                        //    //        order[j] = j;
-                        //    //    }
-                        //    //}
-
-                        //    foreach (var item in order)
-                        //    {
-                        //        if (item.Key != item.Value)
-                        //        {
-                        //            SavedGifs.RemoveAt(item.Key);
-                        //            SavedGifs.Insert(item.Value, gifs[item.Value]);
-                        //        }
-                        //    }
-
-                        //    //Debugger.Break();
-                        //}
-                        //else
-                        //{
-                        //    SavedGifs.Clear();
-                        //    SavedGifs.AddRange(gifs);
-                        //}
-                    });
-                }
-            });
+            _stickers.SyncStickers();
+            _stickers.SyncGifs();
         }
 
         #endregion

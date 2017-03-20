@@ -906,7 +906,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SaveGifAsync(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, false);
                 if (response.IsSucceeded)
                 {
-                    UpdateGIFs();
+                    _stickers.SyncGifs();
                 }
             }
         }

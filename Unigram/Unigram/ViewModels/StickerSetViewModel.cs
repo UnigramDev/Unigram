@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,9 +17,13 @@ namespace Unigram.ViewModels
 {
     public class StickerSetViewModel : UnigramViewModelBase
     {
-        public StickerSetViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        private readonly DialogStickersViewModel _stickers;
+
+        public StickerSetViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, DialogStickersViewModel stickers) 
             : base(protoService, cacheService, aggregator)
         {
+            _stickers = stickers;
+
             Items = new List<KeyedList<TLStickerSet, TLDocument>>();
             Items.Add(new KeyedList<TLStickerSet, TLDocument>((TLStickerSet)null));
         }
@@ -68,5 +73,52 @@ namespace Unigram.ViewModels
         }
 
         public List<KeyedList<TLStickerSet, TLDocument>> Items { get; private set; }
+
+        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        private async void SendExecute()
+        {
+            IsLoading = true;
+
+            if (_stickerSet.IsInstalled && !_stickerSet.IsArchived && !_stickerSet.IsOfficial)
+            {
+                var response = await ProtoService.UninstallStickerSetAsync(new TLInputStickerSetID { Id = _stickerSet.Id, AccessHash = _stickerSet.AccessHash });
+                if (response.IsSucceeded)
+                {
+                    _stickers.SyncStickers();
+
+                    _stickerSet.IsInstalled = false;
+                    _stickerSet.IsArchived = false;
+
+                    RaisePropertyChanged(() => StickerSet);
+                    IsLoading = false;
+                }
+            }
+            else
+            {
+                var archive = _stickerSet.IsOfficial && !_stickerSet.IsArchived;
+
+                var response = await ProtoService.InstallStickerSetAsync(new TLInputStickerSetID { Id = _stickerSet.Id, AccessHash = _stickerSet.AccessHash }, archive);
+                if (response.IsSucceeded)
+                {
+                    _stickers.SyncStickers();
+
+                    _stickerSet.IsInstalled = true;
+                    _stickerSet.IsArchived = archive;
+
+                    //if (response.Result is TLMessagesStickerSetInstallResultArchive archived)
+                    //{
+                    //    Debugger.Break();
+                    //}
+                    //else
+                    //{
+                    //    _stickerSet.IsInstalled = true;
+                    //    _stickerSet.IsArchived = archive;
+                    //}
+
+                    RaisePropertyChanged(() => StickerSet);
+                    IsLoading = false;
+                }
+            }
+        }
     }
 }

@@ -5,10 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
+using Unigram.Core;
 
-namespace Unigram.Core.Services
+namespace Unigram.Services
 {
-    public class StickersService
+    public interface IStickersService
+    {
+
+    }
+
+    public class StickersService : IStickersService
     {
         private readonly IMTProtoService _protoService;
 
