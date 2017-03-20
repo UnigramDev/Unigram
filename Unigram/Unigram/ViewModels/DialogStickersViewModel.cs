@@ -27,6 +27,8 @@ namespace Unigram.ViewModels
         {
             _stickersService = stickersService;
             _gifsService = gifsService;
+
+            SavedGifs = new ObservableCollection<TLDocument>();
         }
 
         public int SavedGifsHash { get; private set; }
