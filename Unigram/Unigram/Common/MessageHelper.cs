@@ -15,6 +15,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
@@ -983,11 +984,19 @@ namespace Unigram.Common
                         content = "AppResources.JoinChannelConfirmation";
                     }
 
-                    var dialog = new TLMessageDialog(content, invite.Title);
-                    dialog.Title = invite.Title;
-                    dialog.Content = content;
-                    dialog.PrimaryButtonText = "OK";
-                    dialog.SecondaryButtonText = "Cancel";
+                    ContentDialog dialog;
+                    //if (invite.IsChannel && !invite.IsMegaGroup)
+                    //{
+                    //    dialog = new TLMessageDialog(content, invite.Title);
+                    //    dialog.Title = invite.Title;
+                    //    dialog.Content = content;
+                    //    dialog.PrimaryButtonText = "OK";
+                    //    dialog.SecondaryButtonText = "Cancel";
+                    //}
+                    //else
+                    {
+                        dialog = new JoinChatView { DataContext = invite };
+                    }
 
                     var result = await dialog.ShowAsync();
                     if (result == ContentDialogResult.Primary)
