@@ -849,7 +849,16 @@ namespace Unigram.Common
                     //}
                     //TelegramViewBase.NavigateToUser(user, accessToken, pageKind);
 
-                    service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
+                    service.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+
+                    //if (user.IsBot)
+                    //{
+                    //    service.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                    //}
+                    //else
+                    //{
+                    //    service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
+                    //}
 
                     return;
                 }
@@ -875,7 +884,16 @@ namespace Unigram.Common
                         var peerUser = response.Result.Peer as TLPeerUser;
                         if (peerUser != null)
                         {
-                            service.Navigate(typeof(UserDetailsPage), peerUser);
+                            service.Navigate(typeof(DialogPage), peerUser);
+
+                            //if (user.IsBot)
+                            //{
+                            //    service.Navigate(typeof(DialogPage), peerUser);
+                            //}
+                            //else
+                            //{
+                            //    service.Navigate(typeof(UserDetailsPage), peerUser);
+                            //}
                             return;
                         }
 

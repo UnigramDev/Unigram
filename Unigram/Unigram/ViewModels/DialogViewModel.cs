@@ -43,6 +43,7 @@ using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Popups;
 using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api;
 
 namespace Unigram.ViewModels
 {
@@ -378,7 +379,7 @@ namespace Unigram.ViewModels
             var lastRead = true;
 
             var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
-            var offset = _currentDialog?.UnreadCount > 0 ? -51 : 0;
+            var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -51 : 0;
             var limit = 50;
 
             var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, maxId, limit);
@@ -1057,13 +1058,29 @@ namespace Unigram.ViewModels
                 var previousMessage = InsertSendingMessage(message, useReplyMarkup);
                 CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
                 {
-                    var response = await ProtoService.SendMessageAsync(message, () =>
-                    {
-                        message.State = TLMessageState.Confirmed;
-                    });
+                    var response = await ProtoService.SendMessageAsync(message, () => { message.State = TLMessageState.Confirmed; });
                     if (response.IsSucceeded)
                     {
                         message.RaisePropertyChanged(() => message.Media);
+                    }
+                    else
+                    {
+                        if (response.Error.CodeEquals(TLErrorCode.PEER_FLOOD))
+                        {
+                            var dialog = new TLMessageDialog();
+                            dialog.Title = "Telegram";
+                            dialog.Message = "Sorry, you can only send messages to mutual contacts at the moment.";
+                            dialog.PrimaryButtonText = "More info";
+                            dialog.SecondaryButtonText = "OK";
+
+                            var confirm = await dialog.ShowAsync();
+                            if (confirm == ContentDialogResult.Primary)
+                            {
+                                MessageHelper.HandleTelegramUrl("t.me/SpamBot");
+                            }
+                        }
+
+                        return;
                     }
 
                     if (forwardMessages != null)
