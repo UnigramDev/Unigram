@@ -42,6 +42,11 @@ namespace Unigram.Views.Settings
             }
         }
 
+        private void ArchivedStickers_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             await StickerSetView.Current.ShowAsync((TLMessagesStickerSet)e.ClickedItem);

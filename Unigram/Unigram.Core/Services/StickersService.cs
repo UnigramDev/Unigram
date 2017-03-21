@@ -22,6 +22,8 @@ namespace Unigram.Services
 
         void CheckStickers(int type);
 
+        void CheckArchivedStickersCount(int type);
+
         void CheckFeaturedStickers();
 
         List<TLDocument> GetRecentStickers(int type);
@@ -88,6 +90,7 @@ namespace Unigram.Services
         event StickersDidLoadedEventHandler StickersDidLoaded;
         event FeaturedStickersDidLoadedEventHandler FeaturedStickersDidLoaded;
         event RecentDocumentsDidLoadedEventHandler RecentDocumentsDidLoaded;
+        event ArchivedStickersCountDidLoadedEventHandler ArchivedStickersCountDidLoaded;
     }
 
     public class StickersService : IStickersService
@@ -165,6 +168,14 @@ namespace Unigram.Services
             if (!loadingStickers[type] && (!stickersLoaded[type] || Math.Abs(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000 - loadDate[type]) >= 60 * 60))
             {
                 LoadStickers(type, true, false);
+            }
+        }
+
+        public void CheckArchivedStickersCount(int type)
+        {
+            //if (!loadingStickers[type] && (!stickersLoaded[type] || Math.Abs(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000 - loadDate[type]) >= 60 * 60))
+            {
+                LoadArchivedStickersCount(type, true);
             }
         }
 

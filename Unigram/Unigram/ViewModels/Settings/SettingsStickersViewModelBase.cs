@@ -26,6 +26,8 @@ namespace Unigram.ViewModels.Settings
             _type = type;
             _stickersService = stickersService;
             _stickersService.StickersDidLoaded += OnStickersDidLoaded;
+            _stickersService.FeaturedStickersDidLoaded += OnFeaturedStickersDidLoaded;
+            _stickersService.ArchivedStickersCountDidLoaded += OnArchivedStickersCountDidLoaded;
 
             Items = new ObservableCollection<TLMessagesStickerSet>();
         }
@@ -37,7 +39,12 @@ namespace Unigram.ViewModels.Settings
                 Execute.BeginOnThreadPool(() =>
                 {
                     _stickersService.CheckStickers(_type);
-                    ProcessStickerSets(_type);
+                    _stickersService.CheckArchivedStickersCount(_type);
+
+                    if (_type == StickersService.TYPE_IMAGE)
+                    {
+                        _stickersService.CheckFeaturedStickers();
+                    }
                 });
             }
 
@@ -52,6 +59,22 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        private void OnFeaturedStickersDidLoaded(object sender, FeaturedStickersDidLoadedEventArgs e)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                FeaturedStickersCount = _stickersService.GetUnreadStickerSets().Count;
+            });
+        }
+
+        private void OnArchivedStickersCountDidLoaded(object sender, ArchivedStickersCountDidLoadedEventArgs e)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                ArchivedStickersCount = _stickersService.GetArchivedStickersCount(_type);
+            });
+        }
+
         private void ProcessStickerSets(int type)
         {
             var stickers = _stickersService.GetStickerSets(type);
@@ -59,6 +82,32 @@ namespace Unigram.ViewModels.Settings
             {
                 Items.AddRange(stickers, true);
             });
+        }
+
+        private int _featuredStickersCount;
+        public int FeaturedStickersCount
+        {
+            get
+            {
+                return _featuredStickersCount;
+            }
+            set
+            {
+                Set(ref _featuredStickersCount, value);
+            }
+        }
+
+        private int _archivedStickersCount;
+        public int ArchivedStickersCount
+        {
+            get
+            {
+                return _archivedStickersCount;
+            }
+            set
+            {
+                Set(ref _archivedStickersCount, value);
+            }
         }
 
         public ObservableCollection<TLMessagesStickerSet> Items { get; private set; }
