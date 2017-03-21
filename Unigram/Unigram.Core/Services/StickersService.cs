@@ -68,9 +68,9 @@ namespace Unigram.Services
 
         void LoadFeaturedStickers(bool cache, bool force);
 
-        void MarkFaturedStickersAsRead(bool query);
+        void MarkFeaturedStickersAsRead(bool query);
 
-        void MarkFaturedStickersByIdAsRead(long id);
+        void MarkFeaturedStickersByIdAsRead(long id);
 
         void LoadStickers(int type, bool cache, bool force);
 
@@ -113,6 +113,13 @@ namespace Unigram.Services
         private List<long> readingStickerSets = new List<long>();
         private bool loadingFeaturedStickers;
         private bool featuredStickersLoaded;
+
+        private readonly IMTProtoService _protoService;
+
+        public StickersService(IMTProtoService protoService)
+        {
+            _protoService = protoService;
+        }
 
         public void Cleanup()
         {
@@ -215,7 +222,7 @@ namespace Unigram.Services
         public void RemoveRecentGif(TLDocument document)
         {
             recentGifs.Remove(document);
-            MTProtoService.Current.SaveGifCallback(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, true, null);
+            _protoService.SaveGifCallback(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, true, null);
 
             try
             {
@@ -420,6 +427,7 @@ namespace Unigram.Services
                         recentStickersLoaded[type] = true;
                     }
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.recentDocumentsDidLoaded, gif, type);
+                    RecentDocumentsDidLoaded?.Invoke(this, new RecentDocumentsDidLoadedEventArgs(gif, type));
                     LoadRecents(type, gif, false);
                 }
                 catch (Exception e)
@@ -445,7 +453,7 @@ namespace Unigram.Services
                 if (gif)
                 {
                     var hash = CalculateDocumentsHash(recentGifs);
-                    MTProtoService.Current.GetSavedGifsCallback(hash, result =>
+                    _protoService.GetSavedGifsCallback(hash, result =>
                     {
                         List<TLDocument> arrayList = null;
                         if (result is TLMessagesSavedGifs)
@@ -462,7 +470,7 @@ namespace Unigram.Services
                 {
                     var hash = CalculateDocumentsHash(recentStickers[type]);
                     var attached = type == TYPE_MASK;
-                    MTProtoService.Current.GetRecentStickersCallback(attached, hash, result =>
+                    _protoService.GetRecentStickersCallback(attached, hash, result =>
                     {
                         List<TLDocument> arrayList = null;
                         if (result is TLMessagesRecentStickers)
@@ -576,6 +584,7 @@ namespace Unigram.Services
                     }
 
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.recentDocumentsDidLoaded, gif, type);
+                    RecentDocumentsDidLoaded?.Invoke(this, new RecentDocumentsDidLoadedEventArgs(gif, type));
                 }
             }
         }
@@ -599,6 +608,7 @@ namespace Unigram.Services
 
             loadHash[type] = CalculateStickersHash(stickerSets[type]);
             //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
+            StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(type));
             LoadStickers(type, false, true);
         }
 
@@ -649,6 +659,7 @@ namespace Unigram.Services
             }
             loadHash[type] = CalculateStickersHash(stickerSets[type]);
             //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
+            StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(type));
             LoadStickers(type, false, true);
         }
 
@@ -708,7 +719,7 @@ namespace Unigram.Services
             {
                 TLMessagesGetFeaturedStickers req = new TLMessagesGetFeaturedStickers();
                 req.Hash = force ? 0 : loadFeaturedHash;
-                MTProtoService.Current.SendRequestCallback<TLMessagesFeaturedStickersBase>(req, result =>
+                _protoService.SendRequestCallback<TLMessagesFeaturedStickersBase>(req, result =>
                 {
                     if (result is TLMessagesFeaturedStickers res)
                     {
@@ -778,6 +789,7 @@ namespace Unigram.Services
                     loadFeaturedHash = hash;
                     loadFeaturedDate = date;
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.featuredStickersDidLoaded);
+                    FeaturedStickersDidLoaded?.Invoke(this, new FeaturedStickersDidLoadedEventArgs());
                     //    }
                     //});
                 }
@@ -880,14 +892,50 @@ namespace Unigram.Services
             return (int)acc;
         }
 
-        public void MarkFaturedStickersAsRead(bool query)
+        public void MarkFeaturedStickersAsRead(bool query)
         {
-            // TODO
+            if (unreadStickerSets.Count == 0)
+            {
+                return;
+            }
+            unreadStickerSets.Clear();
+            loadFeaturedHash = CalculateFeaturedStickersHash(featuredStickerSets);
+            //NotificationCenter.getInstance().postNotificationName(NotificationCenter.featuredStickersDidLoaded);
+            FeaturedStickersDidLoaded?.Invoke(this, new FeaturedStickersDidLoadedEventArgs());
+            PutFeaturedStickersToCache(featuredStickerSets, unreadStickerSets, loadFeaturedDate, loadFeaturedHash);
+            if (query)
+            {
+
+                TLMessagesReadFeaturedStickers req = new TLMessagesReadFeaturedStickers();
+                _protoService.SendRequestCallback<bool>(req, null);
+            }
         }
 
-        public void MarkFaturedStickersByIdAsRead(long id)
+        public void MarkFeaturedStickersByIdAsRead(long id)
         {
-            // TODO
+            if (!unreadStickerSets.Contains(id) || readingStickerSets.Contains(id))
+            {
+                return;
+            }
+            readingStickerSets.Add(id);
+            TLMessagesReadFeaturedStickers req = new TLMessagesReadFeaturedStickers();
+            req.Id = new TLVector<long>();
+            req.Id.Add(id);
+            _protoService.SendRequestCallback<bool>(req, null);
+
+            //AndroidUtilities.runOnUIThread(new Runnable()
+            //{
+            //    @Override
+            //    public void run()
+            //    {
+            unreadStickerSets.Remove(id);
+            readingStickerSets.Remove(id);
+            loadFeaturedHash = CalculateFeaturedStickersHash(featuredStickerSets);
+            //NotificationCenter.getInstance().postNotificationName(NotificationCenter.featuredStickersDidLoaded);
+            FeaturedStickersDidLoaded?.Invoke(this, new FeaturedStickersDidLoadedEventArgs());
+            PutFeaturedStickersToCache(featuredStickerSets, unreadStickerSets, loadFeaturedDate, loadFeaturedHash);
+            //    }
+            //}, 1000);
         }
 
         public void LoadStickers(int type, bool cache, bool force)
@@ -947,7 +995,7 @@ namespace Unigram.Services
                     hash = ((TLMessagesGetMaskStickers)req).Hash = force ? 0 : loadHash[type];
                 }
 
-                MTProtoService.Current.SendRequestCallback<TLMessagesAllStickersBase>(req, async result =>
+                _protoService.SendRequestCallback<TLMessagesAllStickersBase>(req, async result =>
                 {
                     if (result is TLMessagesAllStickers)
                     {
@@ -982,7 +1030,7 @@ namespace Unigram.Services
                                 newStickerArray.Add(null);
                                 int index = a;
 
-                                var response = await MTProtoService.Current.GetStickerSetAsync(new TLInputStickerSetID { Id = stickerSet.Id, AccessHash = stickerSet.AccessHash });
+                                var response = await _protoService.GetStickerSetAsync(new TLInputStickerSetID { Id = stickerSet.Id, AccessHash = stickerSet.AccessHash });
                                 if (response.IsSucceeded)
                                 {
                                     TLMessagesStickerSet res1 = (TLMessagesStickerSet)response.Result;
@@ -1002,7 +1050,7 @@ namespace Unigram.Services
 
                                 }
 
-                                //MTProtoService.Current.GetStickerSetCallback(new TLInputStickerSetID { Id = stickerSet.Id, AccessHash = stickerSet.AccessHash }, callback =>
+                                //_protoService.GetStickerSetCallback(new TLInputStickerSetID { Id = stickerSet.Id, AccessHash = stickerSet.AccessHash }, callback =>
                                 //{
                                 //});
 
@@ -1226,6 +1274,7 @@ namespace Unigram.Services
                         stickersByEmoji = stickersByEmojiNew;
                     }
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
+                    StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(type));
                     //    }
                     //});
                 }
@@ -1280,14 +1329,16 @@ namespace Unigram.Services
                 loadHash[type] = CalculateStickersHash(stickerSets[type]);
                 PutStickersToCache(type, stickerSets[type], loadDate[type], loadHash[type]);
                 //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
+                StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(type));
                 TLMessagesInstallStickerSet req = new TLMessagesInstallStickerSet();
                 req.StickerSet = stickerSetID;
                 req.Archived = hide == 1;
-                MTProtoService.Current.SendRequestCallback<TLMessagesStickerSetInstallResultBase>(req, result =>
+                _protoService.SendRequestCallback<TLMessagesStickerSetInstallResultBase>(req, result =>
                 {
                     if (result is TLMessagesStickerSetInstallResultArchive)
                     {
                         //NotificationCenter.getInstance().postNotificationName(NotificationCenter.needReloadArchivedStickers, type);
+                        NeedReloadArchivedStickers?.Invoke(this, new NeedReloadArchivedStickersEventArgs(type));
                         //if (hide != 1 && baseFragment != null && baseFragment.getParentActivity() != null)
                         //{
                         //    StickersArchiveAlert alert = new StickersArchiveAlert(baseFragment.getParentActivity(), showSettings ? baseFragment : null, ((TLRPC.TL_messages_stickerSetInstallResultArchive)response).sets);
@@ -1303,7 +1354,7 @@ namespace Unigram.Services
             {
                 TLMessagesUninstallStickerSet req = new TLMessagesUninstallStickerSet();
                 req.StickerSet = stickerSetID;
-                MTProtoService.Current.SendRequestCallback<bool>(req, result =>
+                _protoService.SendRequestCallback<bool>(req, result =>
                 {
                     //try
                     //{
@@ -1337,9 +1388,8 @@ namespace Unigram.Services
         }
 
         public event NeedReloadArchivedStickersEventHandler NeedReloadArchivedStickers;
-
         public event StickersDidLoadedEventHandler StickersDidLoaded;
-
+        public event FeaturedStickersDidLoadedEventHandler FeaturedStickersDidLoaded;
         public event RecentDocumentsDidLoadedEventHandler RecentDocumentsDidLoaded;
     }
 
@@ -1349,7 +1399,7 @@ namespace Unigram.Services
         Mask = 1
     }
 
-    public delegate void NeedReloadArchivedStickersEventHandler(object sender, NeedReloadArchivedStickersEventHandler e);
+    public delegate void NeedReloadArchivedStickersEventHandler(object sender, NeedReloadArchivedStickersEventArgs e);
     public class NeedReloadArchivedStickersEventArgs : EventArgs
     {
         public int Type { get; private set; }
@@ -1368,6 +1418,14 @@ namespace Unigram.Services
         public StickersDidLoadedEventArgs(int type)
         {
             Type = type;
+        }
+    }
+
+    public delegate void FeaturedStickersDidLoadedEventHandler(object sender, FeaturedStickersDidLoadedEventArgs e);
+    public class FeaturedStickersDidLoadedEventArgs : EventArgs
+    {
+        public FeaturedStickersDidLoadedEventArgs()
+        {
         }
     }
 
