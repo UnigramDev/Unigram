@@ -26,35 +26,35 @@ namespace Unigram.Services
         public static int TYPE_IMAGE = 0;
         public static int TYPE_MASK = 1;
 
-        private static List<TLMessagesStickerSet>[] stickerSets = new[] { new List<TLMessagesStickerSet>(), new List<TLMessagesStickerSet>() };
-        private static Dictionary<long, TLMessagesStickerSet> stickerSetsById = new Dictionary<long, TLMessagesStickerSet>();
-        private static Dictionary<string, TLMessagesStickerSet> stickerSetsByName = new Dictionary<string, TLMessagesStickerSet>();
-        private static bool[] loadingStickers = new bool[2];
-        private static bool[] stickersLoaded = new bool[2];
-        private static int[] loadHash = new int[2];
-        private static int[] loadDate = new int[2];
+        private List<TLMessagesStickerSet>[] stickerSets = new[] { new List<TLMessagesStickerSet>(), new List<TLMessagesStickerSet>() };
+        private Dictionary<long, TLMessagesStickerSet> stickerSetsById = new Dictionary<long, TLMessagesStickerSet>();
+        private Dictionary<string, TLMessagesStickerSet> stickerSetsByName = new Dictionary<string, TLMessagesStickerSet>();
+        private bool[] loadingStickers = new bool[2];
+        private bool[] stickersLoaded = new bool[2];
+        private int[] loadHash = new int[2];
+        private int[] loadDate = new int[2];
 
-        private static Dictionary<long, string> stickersByEmoji = new Dictionary<long, string>();
-        private static Dictionary<string, List<TLDocument>> allStickers = new Dictionary<string, List<TLDocument>>();
+        private Dictionary<long, string> stickersByEmoji = new Dictionary<long, string>();
+        private Dictionary<string, List<TLDocument>> allStickers = new Dictionary<string, List<TLDocument>>();
 
-        private static List<TLDocument>[] recentStickers = new[] { new List<TLDocument>(), new List<TLDocument>() };
-        private static bool[] loadingRecentStickers = new bool[2];
-        private static bool[] recentStickersLoaded = new bool[2];
+        private List<TLDocument>[] recentStickers = new[] { new List<TLDocument>(), new List<TLDocument>() };
+        private bool[] loadingRecentStickers = new bool[2];
+        private bool[] recentStickersLoaded = new bool[2];
 
-        private static List<TLDocument> recentGifs = new List<TLDocument>();
-        private static bool loadingRecentGifs;
-        private static bool recentGifsLoaded;
+        private List<TLDocument> recentGifs = new List<TLDocument>();
+        private bool loadingRecentGifs;
+        private bool recentGifsLoaded;
 
-        private static int loadFeaturedHash;
-        private static int loadFeaturedDate;
-        private static List<TLStickerSetCoveredBase> featuredStickerSets = new List<TLStickerSetCoveredBase>();
-        private static Dictionary<long, TLStickerSetCoveredBase> featuredStickerSetsById = new Dictionary<long, TLStickerSetCoveredBase>();
-        private static List<long> unreadStickerSets = new List<long>();
-        private static List<long> readingStickerSets = new List<long>();
-        private static bool loadingFeaturedStickers;
-        private static bool featuredStickersLoaded;
+        private int loadFeaturedHash;
+        private int loadFeaturedDate;
+        private List<TLStickerSetCoveredBase> featuredStickerSets = new List<TLStickerSetCoveredBase>();
+        private Dictionary<long, TLStickerSetCoveredBase> featuredStickerSetsById = new Dictionary<long, TLStickerSetCoveredBase>();
+        private List<long> unreadStickerSets = new List<long>();
+        private List<long> readingStickerSets = new List<long>();
+        private bool loadingFeaturedStickers;
+        private bool featuredStickersLoaded;
 
-        public static void cleanup()
+        public void cleanup()
         {
             for (int a = 0; a < 2; a++)
             {
@@ -83,7 +83,7 @@ namespace Unigram.Services
             recentGifsLoaded = false;
         }
 
-        public static void checkStickers(int type)
+        public void checkStickers(int type)
         {
             if (!loadingStickers[type] && (!stickersLoaded[type] || Math.Abs(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000 - loadDate[type]) >= 60 * 60))
             {
@@ -91,7 +91,7 @@ namespace Unigram.Services
             }
         }
 
-        public static void checkFeaturedStickers()
+        public void checkFeaturedStickers()
         {
             if (!loadingFeaturedStickers && (!featuredStickersLoaded || Math.Abs(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000 - loadFeaturedDate) >= 60 * 60))
             {
@@ -99,17 +99,17 @@ namespace Unigram.Services
             }
         }
 
-        public static List<TLDocument> getRecentStickers(int type)
+        public List<TLDocument> getRecentStickers(int type)
         {
             return new List<TLDocument>(recentStickers[type]);
         }
 
-        public static List<TLDocument> getRecentStickersNoCopy(int type)
+        public List<TLDocument> getRecentStickersNoCopy(int type)
         {
             return recentStickers[type];
         }
 
-        public static void addRecentSticker(int type, TLDocument document, int date)
+        public void addRecentSticker(int type, TLDocument document, int date)
         {
             bool found = false;
             for (int a = 0; a < recentStickers[type].Count; a++)
@@ -147,12 +147,12 @@ namespace Unigram.Services
             processLoadedRecentDocuments(type, arrayList, false, date);
         }
 
-        public static List<TLDocument> getRecentGifs()
+        public List<TLDocument> getRecentGifs()
         {
             return new List<TLDocument>(recentGifs);
         }
 
-        public static void removeRecentGif(TLDocument document)
+        public void removeRecentGif(TLDocument document)
         {
             recentGifs.Remove(document);
             MTProtoService.Current.SaveGifCallback(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, true, null);
@@ -170,7 +170,7 @@ namespace Unigram.Services
             }
         }
 
-        public static void addRecentGif(TLDocument document, int date)
+        public void addRecentGif(TLDocument document, int date)
         {
             bool found = false;
             for (int a = 0; a < recentGifs.Count; a++)
@@ -209,63 +209,63 @@ namespace Unigram.Services
             processLoadedRecentDocuments(0, arrayList, true, date);
         }
 
-        public static bool isLoadingStickers(int type)
+        public bool isLoadingStickers(int type)
         {
             return loadingStickers[type];
         }
 
-        public static TLMessagesStickerSet getStickerSetByName(String name)
+        public TLMessagesStickerSet getStickerSetByName(String name)
         {
             return stickerSetsByName[name];
         }
 
-        public static TLMessagesStickerSet getStickerSetById(long id)
+        public TLMessagesStickerSet getStickerSetById(long id)
         {
             return stickerSetsById[id];
         }
 
-        public static Dictionary<string, List<TLDocument>> getAllStickers()
+        public Dictionary<string, List<TLDocument>> getAllStickers()
         {
             return allStickers;
         }
 
-        public static List<TLMessagesStickerSet> getStickerSets(int type)
+        public List<TLMessagesStickerSet> getStickerSets(int type)
         {
             return stickerSets[type];
         }
 
-        public static List<TLStickerSetCoveredBase> getFeaturedStickerSets()
+        public List<TLStickerSetCoveredBase> getFeaturedStickerSets()
         {
             return featuredStickerSets;
         }
 
-        public static List<long> getUnreadStickerSets()
+        public List<long> getUnreadStickerSets()
         {
             return unreadStickerSets;
         }
 
-        public static bool isStickerPackInstalled(long id)
+        public bool isStickerPackInstalled(long id)
         {
             return stickerSetsById.ContainsKey(id);
         }
 
-        public static bool isStickerPackUnread(long id)
+        public bool isStickerPackUnread(long id)
         {
             return unreadStickerSets.Contains(id);
         }
 
-        public static bool isStickerPackInstalled(string name)
+        public bool isStickerPackInstalled(string name)
         {
             return stickerSetsByName.ContainsKey(name);
         }
 
-        public static string getEmojiForSticker(long id)
+        public string getEmojiForSticker(long id)
         {
             string value = stickersByEmoji[id];
             return value != null ? value : string.Empty;
         }
 
-        private static int calcDocumentsHash(List<TLDocument> arrayList)
+        private int calcDocumentsHash(List<TLDocument> arrayList)
         {
             if (arrayList == null)
             {
@@ -289,7 +289,7 @@ namespace Unigram.Services
             return (int)acc;
         }
 
-        public static void loadRecents(int type, bool gif, bool cache)
+        public void loadRecents(int type, bool gif, bool cache)
         {
             if (gif)
             {
@@ -417,7 +417,7 @@ namespace Unigram.Services
             }
         }
 
-        private static void processLoadedRecentDocuments(int type, List<TLDocument> documents, bool gif, int date)
+        private void processLoadedRecentDocuments(int type, List<TLDocument> documents, bool gif, int date)
         {
             if (documents != null)
             {
@@ -520,7 +520,7 @@ namespace Unigram.Services
             }
         }
 
-        public static void reorderStickers(int type, List<long> order)
+        public void reorderStickers(int type, List<long> order)
         {
             stickerSets[type].Sort((lhs, rhs) =>
             {
@@ -542,12 +542,12 @@ namespace Unigram.Services
             loadStickers(type, false, true);
         }
 
-        public static void calcNewHash(int type)
+        public void calcNewHash(int type)
         {
             loadHash[type] = calcStickersHash(stickerSets[type]);
         }
 
-        public static void addNewStickerSet(TLMessagesStickerSet set)
+        public void addNewStickerSet(TLMessagesStickerSet set)
         {
             if (stickerSetsById.ContainsKey(set.Set.Id) || stickerSetsByName.ContainsKey(set.Set.ShortName))
             {
@@ -594,7 +594,7 @@ namespace Unigram.Services
 
         #region Featured stickers
 
-        public static void loadFeaturesStickers(bool cache, bool force)
+        public void loadFeaturesStickers(bool cache, bool force)
         {
             if (loadingFeaturedStickers)
             {
@@ -664,7 +664,7 @@ namespace Unigram.Services
             }
         }
 
-        private static void processLoadedFeaturedStickers(IList<TLStickerSetCoveredBase> res, IList<long> unreadStickers, bool cache, int date, int hash)
+        private void processLoadedFeaturedStickers(IList<TLStickerSetCoveredBase> res, IList<long> unreadStickers, bool cache, int date, int hash)
         {
             loadingFeaturedStickers = false;
             featuredStickersLoaded = true;
@@ -744,7 +744,7 @@ namespace Unigram.Services
             //});
         }
 
-        private static void putFeaturedStickersToCache(IList<TLStickerSetCoveredBase> stickers, IList<long> unreadStickers, int date, int hash)
+        private void putFeaturedStickersToCache(IList<TLStickerSetCoveredBase> stickers, IList<long> unreadStickers, int date, int hash)
         {
             TLVector<TLStickerSetCoveredBase> stickersFinal = stickers != null ? new TLVector<TLStickerSetCoveredBase>(stickers) : null;
 
@@ -800,7 +800,7 @@ namespace Unigram.Services
             }
         }
 
-        private static int calcFeaturedStickersHash(IList<TLStickerSetCoveredBase> sets)
+        private int calcFeaturedStickersHash(IList<TLStickerSetCoveredBase> sets)
         {
             long acc = 0;
             for (int a = 0; a < sets.Count; a++)
@@ -822,19 +822,19 @@ namespace Unigram.Services
             return (int)acc;
         }
 
-        public static void markFaturedStickersAsRead(bool query)
+        public void markFaturedStickersAsRead(bool query)
         {
             // TODO
         }
 
-        public static void markFaturedStickersByIdAsRead(long id)
+        public void markFaturedStickersByIdAsRead(long id)
         {
             // TODO
         }
 
         #endregion
 
-        public static void loadStickers(int type, bool cache, bool force)
+        public void loadStickers(int type, bool cache, bool force)
         {
             if (loadingStickers[type])
             {
@@ -961,7 +961,7 @@ namespace Unigram.Services
             }
         }
 
-        private static void putStickersToCache(int type, List<TLMessagesStickerSet> stickers, int date, int hash)
+        private void putStickersToCache(int type, List<TLMessagesStickerSet> stickers, int date, int hash)
         {
             TLVector<TLMessagesStickerSet> stickersFinal = stickers != null ? new TLVector<TLMessagesStickerSet>(stickers) : null;
 
@@ -1010,13 +1010,13 @@ namespace Unigram.Services
             }
         }
 
-        public static string getStickerSetName(long setId)
+        public string getStickerSetName(long setId)
         {
             TLMessagesStickerSet stickerSet = stickerSetsById[setId];
             return stickerSet != null ? stickerSet.Set.ShortName : null;
         }
 
-        public static long getStickerSetId(TLDocument document)
+        public long getStickerSetId(TLDocument document)
         {
             for (int a = 0; a < document.Attributes.Count; a++)
             {
@@ -1035,7 +1035,7 @@ namespace Unigram.Services
             return -1;
         }
 
-        private static int calcStickersHash(List<TLMessagesStickerSet> sets)
+        private int calcStickersHash(List<TLMessagesStickerSet> sets)
         {
             long acc = 0;
             for (int a = 0; a < sets.Count; a++)
@@ -1052,7 +1052,7 @@ namespace Unigram.Services
             return (int)acc;
         }
 
-        private static void processLoadedStickers(int type, List<TLMessagesStickerSet> res, bool cache, int date, int hash)
+        private void processLoadedStickers(int type, List<TLMessagesStickerSet> res, bool cache, int date, int hash)
         {
             loadingStickers[type] = false;
             stickersLoaded[type] = true;
@@ -1194,7 +1194,7 @@ namespace Unigram.Services
             //});        
         }
 
-        public static void removeStickersSet(TLStickerSet stickerSet, int hide, bool showSettings)
+        public void removeStickersSet(TLStickerSet stickerSet, int hide, bool showSettings)
         {
             int type = stickerSet.IsMasks ? TYPE_MASK : TYPE_IMAGE;
             TLInputStickerSetID stickerSetID = new TLInputStickerSetID();
@@ -1279,10 +1279,21 @@ namespace Unigram.Services
                 });
             }
         }
+
+        public event NeedReloadArchivedStickersEventHandler NeedReloadArchivedStickers;
+
+        public event StickersDidLoadedEventHandler StickersDidLoaded;
+
+        public event RecentDocumentsDidLoadedEventHandler RecentDocumentsDidLoaded;
+    }
+
+    public enum StickerSetType : int
+    {
+        Image = 0,
+        Mask = 1
     }
 
     public delegate void NeedReloadArchivedStickersEventHandler(object sender, NeedReloadArchivedStickersEventHandler e);
-
     public class NeedReloadArchivedStickersEventArgs : EventArgs
     {
         public int Type { get; private set; }
@@ -1294,7 +1305,6 @@ namespace Unigram.Services
     }
 
     public delegate void StickersDidLoadedEventHandler(object sender, StickersDidLoadedEventArgs e);
-
     public class StickersDidLoadedEventArgs : EventArgs
     {
         public int Type { get; private set; }
@@ -1306,7 +1316,6 @@ namespace Unigram.Services
     }
 
     public delegate void RecentDocumentsDidLoadedEventHandler(object sender, RecentDocumentsDidLoadedEventArgs e);
-
     public class RecentDocumentsDidLoadedEventArgs : EventArgs
     {
         public bool IsGifs { get; private set; }

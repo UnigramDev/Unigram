@@ -110,7 +110,6 @@ namespace Unigram.Views
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var service = new StickersService();
-            StickersService.loadStickers(StickersService.TYPE_IMAGE, false, false);
             //StickersService.loadRecents(StickersService.TYPE_IMAGE, false, true);
         }
     }
