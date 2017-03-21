@@ -61,13 +61,14 @@ namespace Unigram.Controls
         protected void MaskTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var titleBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+            var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
             var overlayBrush = OverlayBrush as SolidColorBrush;
 
             if (overlayBrush != null)
             {
-                var maskBackground = ColorsHelper.AlphaBlend(titleBrush.Color, overlayBrush.Color);
-                var maskForeground = ColorsHelper.AlphaBlend(Colors.Black, overlayBrush.Color);
+                var maskBackground = ColorsHelper.AlphaBlend(backgroundBrush.Color, overlayBrush.Color);
+                var maskForeground = ColorsHelper.AlphaBlend(foregroundBrush.Color, overlayBrush.Color);
 
                 titlebar.BackgroundColor = maskBackground;
                 titlebar.ForegroundColor = maskForeground;
@@ -86,22 +87,19 @@ namespace Unigram.Controls
         protected void UnmaskTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var titleBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
-            var overlayBrush = OverlayBrush as SolidColorBrush;
+            var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
 
-            if (overlayBrush != null)
+            titlebar.BackgroundColor = backgroundBrush.Color;
+            titlebar.ForegroundColor = foregroundBrush.Color;
+            titlebar.ButtonBackgroundColor = backgroundBrush.Color;
+            titlebar.ButtonForegroundColor = foregroundBrush.Color;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                var maskBackground = ColorsHelper.AlphaBlend(titleBrush.Color, overlayBrush.Color);
-
-                titlebar.BackgroundColor = titleBrush.Color;
-                titlebar.ButtonBackgroundColor = titleBrush.Color;
-
-                if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-                {
-                    var statusBar = StatusBar.GetForCurrentView();
-                    statusBar.BackgroundColor = titleBrush.Color;
-                    statusBar.ForegroundColor = Colors.Black;
-                }
+                var statusBar = StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = backgroundBrush.Color;
+                statusBar.ForegroundColor = foregroundBrush.Color;
             }
         }
 
