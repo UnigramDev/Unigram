@@ -31,7 +31,7 @@ namespace Unigram.Core
 
         #region Queries
 
-        private const string COUNT_TABLE = "SELECT COUNT(*) FROM `{0}`";
+        public const string COUNT_TABLE = "SELECT COUNT(*) FROM `{0}`";
 
         private const string CREATE_TABLE_STICKERSET = "CREATE TABLE IF NOT EXISTS `StickerSets`(`Id` bigint primary key not null, `AccessHash` bigint, `Title` text, `ShortName` text, `Count` int, `Hash` int, `Flags` int, `Order` int)";
         private const string INSERT_TABLE_STICKERSET = "INSERT OR REPLACE INTO `StickerSets` (`Id`,`AccessHash`,`Title`,`ShortName`,`Count`,`Hash`,`Flags`,`Order`) VALUES(?,?,?,?,?,?,?,?)";
@@ -59,12 +59,12 @@ namespace Unigram.Core
             _path = FileUtils.GetFileName("database.sqlite");
         }
 
-        private void OpenDatabase(out Database database)
+        public void OpenDatabase(out Database database)
         {
             Sqlite3.sqlite3_open_v2(_path, out database, 2 | 4, string.Empty);
         }
 
-        private void Execute(Database database, string query)
+        public void Execute(Database database, string query)
         {
             Statement statement;
             Sqlite3.sqlite3_prepare_v2(database, query, out statement);

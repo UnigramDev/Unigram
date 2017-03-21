@@ -376,6 +376,11 @@ namespace Telegram.Api.Services
                 });
 	    }
 
+        public void SendRequestCallback<T>(TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null)
+        {
+            SendInformativeMessage<T>("manual.Sent", obj, callback, faultCallback);
+        }
+
 	    private void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null, 
             int? maxAttempt = null,                 // to send delayed items
             Action<int> attemptFailed = null)       // to send delayed items

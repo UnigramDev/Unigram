@@ -172,20 +172,19 @@ namespace Unigram.Controls.Views
         private void SetupTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var titleBrush = Application.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
-            var overlayBrush = OverlayBrush as SolidColorBrush;
+            var backgroundBrush = Application.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
+            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
 
-            if (overlayBrush != null)
+            titlebar.BackgroundColor = backgroundBrush.Color;
+            titlebar.ForegroundColor = foregroundBrush.Color;
+            titlebar.ButtonBackgroundColor = backgroundBrush.Color;
+            titlebar.ButtonForegroundColor = foregroundBrush.Color;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                titlebar.BackgroundColor = titleBrush.Color;
-                titlebar.ButtonBackgroundColor = titleBrush.Color;
-
-                if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-                {
-                    var statusBar = StatusBar.GetForCurrentView();
-                    statusBar.BackgroundColor = titleBrush.Color;
-                    statusBar.ForegroundColor = Colors.Black;
-                }
+                var statusBar = StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = backgroundBrush.Color;
+                statusBar.ForegroundColor = foregroundBrush.Color;
             }
         }
 

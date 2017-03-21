@@ -108,6 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DisposableMutex.cs" />
+    <Compile Include="Common\ApplicationSettings.cs" />
+    <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\FunctionalComparer.cs" />
     <Compile Include="Common\KeyedList.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Dependency\UnigramContainerBuilder.cs" />

@@ -246,6 +246,8 @@ namespace Telegram.Api.TL
 
         public static bool IsGif(TLDocument document)
         {
+            return false;
+
             if (document != null && document.MimeType.Equals("video/mp4", StringComparison.OrdinalIgnoreCase))
             {
                 return IsGif(document.Attributes, document.Size);
@@ -318,7 +320,7 @@ namespace Telegram.Api.TL
             {
                 var videoAttribute = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 var animatedAttribute = document.Attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
-                if (videoAttribute != null && animatedAttribute == null)
+                if (videoAttribute != null /*&& animatedAttribute == null*/)
                 {
                     return true;
                 }

@@ -505,6 +505,8 @@
                 <Run Text="👁"/>
                 <Run Text="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
             </TextBlock>
+
+            <Button Content="Test" Click="Button_Click"/>
         </StackPanel>
 
 

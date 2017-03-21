@@ -55,6 +55,8 @@ namespace Telegram.Api.Services
 
         void MessageAcknowledgments(TLVector<long> ids);
 
+        void SendRequestCallback<T>(TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null);
+
         // auth
         void SendCodeCallback(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null);
         void ResendCodeCallback(string phoneNumber, string phoneCodeHash, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
