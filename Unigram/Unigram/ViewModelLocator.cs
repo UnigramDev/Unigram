@@ -99,10 +99,12 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsSessionsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsBlockUserViewModel>();
-            container.ContainerBuilder.RegisterType<SettingsFeaturedStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsAccountsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsStickersFeaturedViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsStickersArchivedViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsMasksViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
 
             container.Build();

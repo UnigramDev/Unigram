@@ -22,6 +22,7 @@ using System.Diagnostics;
 using Windows.UI.ViewManagement;
 using Windows.Foundation.Metadata;
 using Windows.UI;
+using Template10.Utils;
 
 // The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -63,6 +64,7 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickerSetBase parameter, ItemClickEventHandler callback)
         {
+            ViewModel.IsLoading = true;
             ViewModel.StickerSet = new TLStickerSet();
             ViewModel.Items[0].Key = new TLStickerSet();
             ViewModel.Items[0].Clear();
@@ -76,6 +78,21 @@ namespace Unigram.Controls.Views
             });
 
             Loaded += handler;
+            return ShowAsync();
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessagesStickerSet parameter)
+        {
+            return ShowAsync(parameter, null);
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessagesStickerSet parameter, ItemClickEventHandler callback)
+        {
+            ViewModel.IsLoading = false;
+            ViewModel.StickerSet = parameter.Set;
+            ViewModel.Items[0].Key = parameter.Set;
+            ViewModel.Items[0].AddRange(parameter.Documents.OfType<TLDocument>(), true);
+
             return ShowAsync();
         }
 

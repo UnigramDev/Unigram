@@ -130,6 +130,7 @@
       <DependentUpon>UsersSelectionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
@@ -140,8 +141,11 @@
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsMasksViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsStickersArchivedViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsStickersViewModelBase.cs" />
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="Views\Channels\CreateChannelStep2Page.xaml.cs">
@@ -164,6 +168,12 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsLastSeenPage.xaml.cs">
       <DependentUpon>SettingsLastSeenPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsMasksPage.xaml.cs">
+      <DependentUpon>SettingsMasksPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsStickersArchivedPage.xaml.cs">
+      <DependentUpon>SettingsStickersArchivedPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SwitchAccountPage.xaml.cs">
       <DependentUpon>SwitchAccountPage.xaml</DependentUpon>
@@ -348,7 +358,7 @@
     <Compile Include="ViewModels\PhotosViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsEditNameViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsFeaturedStickersViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsStickersFeaturedViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSessionsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsUsernameViewModel.cs" />
@@ -415,8 +425,8 @@
     <Compile Include="Views\Settings\SettingsDataPage.xaml.cs">
       <DependentUpon>SettingsDataPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsFeaturedStickersPage.xaml.cs">
-      <DependentUpon>SettingsFeaturedStickersPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsStickersFeaturedPage.xaml.cs">
+      <DependentUpon>SettingsStickersFeaturedPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsNotificationsPage.xaml.cs">
       <DependentUpon>SettingsNotificationsPage.xaml</DependentUpon>
@@ -774,11 +784,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\SettingsFeaturedStickersPage.xaml">
+    <Page Include="Views\Settings\SettingsStickersArchivedPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsStickersFeaturedPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsLastSeenPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsMasksPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -860,9 +878,7 @@
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Settings\PrivacyAndSecurity\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

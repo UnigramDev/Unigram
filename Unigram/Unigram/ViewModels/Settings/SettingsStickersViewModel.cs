@@ -11,32 +11,16 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Utils;
 using Unigram.Core;
+using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsStickersViewModel : UnigramViewModelBase
+    public class SettingsStickersViewModel : SettingsStickersViewModelBase
     {
-        public SettingsStickersViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsStickersViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService)
+            : base(protoService, cacheService, aggregator, stickersService, StickersService.TYPE_IMAGE)
         {
-            Items = new ObservableCollection<TLStickerSetCovered>();
         }
-
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
-        {
-            Execute.BeginOnThreadPool(() =>
-            {
-                var cached = DatabaseContext.Current.SelectStickerSetsAsCovered();
-                Execute.BeginOnUIThread(() =>
-                {
-                    Items.AddRange(cached);
-                });
-            });
-
-            return Task.CompletedTask;
-        }
-
-        public ObservableCollection<TLStickerSetCovered> Items { get; private set; }
     }
 }

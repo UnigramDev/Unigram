@@ -44,6 +44,8 @@ namespace Unigram.Services
 
         Dictionary<string, List<TLDocument>> GetAllStickers();
 
+        int GetArchivedStickersCount(int type);
+
         List<TLMessagesStickerSet> GetStickerSets(int type);
 
         List<TLStickerSetCoveredBase> GetFeaturedStickerSets();
@@ -66,6 +68,8 @@ namespace Unigram.Services
 
         void AddNewStickerSet(TLMessagesStickerSet set);
 
+        void LoadArchivedStickersCount(int type, bool cache);
+
         void LoadFeaturedStickers(bool cache, bool force);
 
         void MarkFeaturedStickersAsRead(bool query);
@@ -79,6 +83,11 @@ namespace Unigram.Services
         long GetStickerSetId(TLDocument document);
 
         void RemoveStickersSet(TLStickerSet stickerSet, int hide, bool showSettings);
+
+        event NeedReloadArchivedStickersEventHandler NeedReloadArchivedStickers;
+        event StickersDidLoadedEventHandler StickersDidLoaded;
+        event FeaturedStickersDidLoadedEventHandler FeaturedStickersDidLoaded;
+        event RecentDocumentsDidLoadedEventHandler RecentDocumentsDidLoaded;
     }
 
     public class StickersService : IStickersService
@@ -91,6 +100,7 @@ namespace Unigram.Services
         private Dictionary<string, TLMessagesStickerSet> stickerSetsByName = new Dictionary<string, TLMessagesStickerSet>();
         private bool[] loadingStickers = new bool[2];
         private bool[] stickersLoaded = new bool[2];
+        private int[] archivedStickersCount = new int[2];
         private int[] loadHash = new int[2];
         private int[] loadDate = new int[2];
 
@@ -294,6 +304,11 @@ namespace Unigram.Services
         public Dictionary<string, List<TLDocument>> GetAllStickers()
         {
             return allStickers;
+        }
+
+        public int GetArchivedStickersCount(int type)
+        {
+            return archivedStickersCount[type];
         }
 
         public List<TLMessagesStickerSet> GetStickerSets(int type)
@@ -661,6 +676,36 @@ namespace Unigram.Services
             //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
             StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(type));
             LoadStickers(type, false, true);
+        }
+
+        public void LoadArchivedStickersCount(int type, bool cache)
+        {
+            if (cache)
+            {
+                int count = ApplicationSettings.Current.GetValueOrDefault("archivedStickersCount" + type, -1);
+                if (count == -1)
+                {
+                    LoadArchivedStickersCount(type, false);
+                    return;
+                }
+
+                archivedStickersCount[type] = count;
+                //NotificationCenter.getInstance().postNotificationName(NotificationCenter.archivedStickersCountDidLoaded, new Object[] { Integer.valueOf(type) });
+                ArchivedStickersCountDidLoaded?.Invoke(this, new ArchivedStickersCountDidLoadedEventArgs(type));
+            }
+            else
+            {
+                var req = new TLMessagesGetArchivedStickers();
+                req.Limit = 0;
+                req.IsMasks = type == TYPE_MASK;
+                _protoService.SendRequestCallback<TLMessagesArchivedStickers>(req, result =>
+                {
+                    archivedStickersCount[type] = result.Count;
+                    ApplicationSettings.Current.AddOrUpdateValue("archivedStickersCount" + type, result.Count);
+                    //NotificationCenter.getInstance().postNotificationName(NotificationCenter.archivedStickersCountDidLoaded, new Object[] { Integer.valueOf(StickersQuery.19.this.val$type) });
+                    ArchivedStickersCountDidLoaded?.Invoke(this, new ArchivedStickersCountDidLoadedEventArgs(type));
+                });
+            }
         }
 
         public void LoadFeaturedStickers(bool cache, bool force)
@@ -1391,6 +1436,7 @@ namespace Unigram.Services
         public event StickersDidLoadedEventHandler StickersDidLoaded;
         public event FeaturedStickersDidLoadedEventHandler FeaturedStickersDidLoaded;
         public event RecentDocumentsDidLoadedEventHandler RecentDocumentsDidLoaded;
+        public event ArchivedStickersCountDidLoadedEventHandler ArchivedStickersCountDidLoaded;
     }
 
     public enum StickerSetType : int
@@ -1437,6 +1483,18 @@ namespace Unigram.Services
         public int Type { get; private set; }
 
         public RecentDocumentsDidLoadedEventArgs(bool gif, int type)
+        {
+            IsGifs = gif;
+            Type = type;
+        }
+    }
+
+    public delegate void ArchivedStickersCountDidLoadedEventHandler(object sender, ArchivedStickersCountDidLoadedEventArgs e);
+    public class ArchivedStickersCountDidLoadedEventArgs : EventArgs
+    {
+        public int Type { get; private set; }
+
+        public ArchivedStickersCountDidLoadedEventArgs(int type)
         {
             Type = type;
         }

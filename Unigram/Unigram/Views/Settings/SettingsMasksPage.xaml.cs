@@ -17,44 +17,29 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Unigram.Views.Settings
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SettingsStickersPage : Page
+    public sealed partial class SettingsMasksPage : Page
     {
-        public SettingsStickersViewModel ViewModel => DataContext as SettingsStickersViewModel;
+        public SettingsMasksViewModel ViewModel => DataContext as SettingsMasksViewModel;
 
-        public SettingsStickersPage()
+        public SettingsMasksPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsStickersViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsMasksViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            while (Frame.BackStackDepth > 1)
+            while (Frame.BackStackDepth > 2)
             {
-                Frame.BackStack.RemoveAt(1);
+                Frame.BackStack.RemoveAt(2);
             }
-        }
-
-        private void FeaturedStickers_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStickersFeaturedPage));
-        }
-
-        private void ArchivedStickers_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStickersArchivedPage));
-        }
-
-        private void Masks_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsMasksPage));
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
