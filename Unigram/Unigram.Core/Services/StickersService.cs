@@ -18,7 +18,65 @@ namespace Unigram.Services
 {
     public interface IStickersService
     {
+        void cleanup();
 
+        void checkStickers(int type);
+
+        void checkFeaturedStickers();
+
+        List<TLDocument> getRecentStickers(int type);
+
+        List<TLDocument> getRecentStickersNoCopy(int type);
+
+        void addRecentSticker(int type, TLDocument document, int date);
+
+        List<TLDocument> getRecentGifs();
+
+        void addRecentGif(TLDocument document, int date);
+
+        void removeRecentGif(TLDocument document);
+
+        bool isLoadingStickers(int type);
+
+        TLMessagesStickerSet getStickerSetByName(string name);
+
+        TLMessagesStickerSet getStickerSetById(long id);
+
+        Dictionary<string, List<TLDocument>> getAllStickers();
+
+        List<TLMessagesStickerSet> getStickerSets(int type);
+
+        List<TLStickerSetCoveredBase> getFeaturedStickerSets();
+
+        List<long> getUnreadStickerSets();
+
+        bool isStickerPackInstalled(long id);
+
+        bool isStickerPackUnread(long id);
+
+        bool isStickerPackInstalled(string name);
+
+        string getEmojiForSticker(long id);
+
+        void loadRecents(int type, bool gif, bool cache);
+
+        void reorderStickers(int type, List<long> order);
+
+        void addNewStickerSet(TLMessagesStickerSet set);
+
+        void loadFeaturesStickers(bool cache, bool force);
+
+        void markFaturedStickersAsRead(bool query);
+
+        void markFaturedStickersByIdAsRead(long id);
+
+        void loadStickers(int type, bool cache, bool force);
+
+        string getStickerSetName(long setId);
+
+        long getStickerSetId(TLDocument document);
+
+        void removeStickersSet(TLStickerSet stickerSet, int hide, bool showSettings);
     }
 
     public class StickersService : IStickersService
@@ -214,7 +272,7 @@ namespace Unigram.Services
             return loadingStickers[type];
         }
 
-        public TLMessagesStickerSet getStickerSetByName(String name)
+        public TLMessagesStickerSet getStickerSetByName(string name)
         {
             return stickerSetsByName[name];
         }
@@ -592,8 +650,6 @@ namespace Unigram.Services
             loadStickers(type, false, true);
         }
 
-        #region Featured stickers
-
         public void loadFeaturesStickers(bool cache, bool force)
         {
             if (loadingFeaturedStickers)
@@ -831,8 +887,6 @@ namespace Unigram.Services
         {
             // TODO
         }
-
-        #endregion
 
         public void loadStickers(int type, bool cache, bool force)
         {
