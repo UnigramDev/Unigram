@@ -1098,6 +1098,7 @@ namespace Unigram.Common
                 if (response.Error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || response.Error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || response.Error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
                 {
                     //MessageBox.Show(AppResources.GroupNotExistsError, AppResources.Error, 0);
+                    await TLMessageDialog.ShowAsync("This invite link is broken or has expired.", "Warning", "OK");
                     return;
                 }
 
