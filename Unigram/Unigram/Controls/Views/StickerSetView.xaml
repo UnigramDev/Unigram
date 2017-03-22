@@ -48,6 +48,9 @@
             <GridView.Header>
                 <Border x:Name="Header"/>
             </GridView.Header>
+            <GridView.Footer>
+                <Border Height="12"/>
+            </GridView.Footer>
             <GridView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>

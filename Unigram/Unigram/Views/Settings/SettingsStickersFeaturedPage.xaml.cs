@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.TL;
+using Unigram.Controls.Views;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
@@ -30,6 +32,12 @@ namespace Unigram.Views.Settings
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<SettingsStickersFeaturedViewModel>();
+        }
+
+        private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var set = (TLStickerSetCoveredBase)e.ClickedItem;
+            await StickerSetView.Current.ShowAsync(new TLInputStickerSetID { Id = set.Set.Id, AccessHash = set.Set.AccessHash });
         }
     }
 }

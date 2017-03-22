@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Services;
+using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods.Messages;
 using Unigram.Common;
@@ -89,7 +90,7 @@ namespace Unigram.Services
         event NeedReloadArchivedStickersEventHandler NeedReloadArchivedStickers;
         event StickersDidLoadedEventHandler StickersDidLoaded;
         event FeaturedStickersDidLoadedEventHandler FeaturedStickersDidLoaded;
-        event RecentDocumentsDidLoadedEventHandler RecentDocumentsDidLoaded;
+        event RecentsDidLoadedEventHandler RecentsDidLoaded;
         event ArchivedStickersCountDidLoadedEventHandler ArchivedStickersCountDidLoaded;
     }
 
@@ -128,24 +129,26 @@ namespace Unigram.Services
         private bool featuredStickersLoaded;
 
         private readonly IMTProtoService _protoService;
+        private readonly ICacheService _cacheService;
 
-        public StickersService(IMTProtoService protoService)
+        public StickersService(IMTProtoService protoService, ICacheService cacheService)
         {
             _protoService = protoService;
+            _cacheService = cacheService;
         }
 
         public void Cleanup()
         {
-            for (int a = 0; a < 2; a++)
+            for (int i = 0; i < 2; i++)
             {
-                loadHash[a] = 0;
-                loadDate[a] = 0;
-                stickerSets[a].Clear();
-                recentStickers[a].Clear();
-                loadingStickers[a] = false;
-                stickersLoaded[a] = false;
-                loadingRecentStickers[a] = false;
-                recentStickersLoaded[a] = false;
+                loadHash[i] = 0;
+                loadDate[i] = 0;
+                stickerSets[i].Clear();
+                recentStickers[i].Clear();
+                loadingStickers[i] = false;
+                stickersLoaded[i] = false;
+                loadingRecentStickers[i] = false;
+                recentStickersLoaded[i] = false;
             }
             loadFeaturedDate = 0;
             loadFeaturedHash = 0;
@@ -200,12 +203,12 @@ namespace Unigram.Services
         public void AddRecentSticker(int type, TLDocument document, int date)
         {
             bool found = false;
-            for (int a = 0; a < recentStickers[type].Count; a++)
+            for (int i = 0; i < recentStickers[type].Count; i++)
             {
-                TLDocument image = recentStickers[type][a];
+                TLDocument image = recentStickers[type][i];
                 if (image.Id == document.Id)
                 {
-                    recentStickers[type].RemoveAt(a);
+                    recentStickers[type].RemoveAt(i);
                     recentStickers[type].Insert(0, image);
                     found = true;
                 }
@@ -261,12 +264,12 @@ namespace Unigram.Services
         public void AddRecentGif(TLDocument document, int date)
         {
             bool found = false;
-            for (int a = 0; a < recentGifs.Count; a++)
+            for (int i = 0; i < recentGifs.Count; i++)
             {
-                TLDocument image = recentGifs[a];
+                TLDocument image = recentGifs[i];
                 if (image.Id == document.Id)
                 {
-                    recentGifs.RemoveAt(a);
+                    recentGifs.RemoveAt(i);
                     recentGifs.Insert(0, image);
                     found = true;
                 }
@@ -275,7 +278,8 @@ namespace Unigram.Services
             {
                 recentGifs.Insert(0, document);
             }
-            if (recentGifs.Count > 200)
+
+            if (recentGifs.Count > _cacheService.Config.SavedGifsLimit)
             {
                 TLDocument old = recentGifs[recentGifs.Count - 1];
                 recentGifs.RemoveAt(recentGifs.Count - 1);
@@ -366,9 +370,9 @@ namespace Unigram.Services
             }
 
             long acc = 0;
-            for (int a = 0; a < Math.Min(200, arrayList.Count); a++)
+            for (int i = 0; i < Math.Min(_cacheService.Config.SavedGifsLimit, arrayList.Count); i++)
             {
-                TLDocument document = arrayList[a];
+                TLDocument document = arrayList[i];
                 if (document == null)
                 {
                     continue;
@@ -453,7 +457,7 @@ namespace Unigram.Services
                         recentStickersLoaded[type] = true;
                     }
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.recentDocumentsDidLoaded, gif, type);
-                    RecentDocumentsDidLoaded?.Invoke(this, new RecentDocumentsDidLoadedEventArgs(gif, type));
+                    RecentsDidLoaded?.Invoke(this, new RecentsDidLoadedEventArgs(gif, type));
                     LoadRecents(type, gif, false);
                 }
                 catch (Exception e)
@@ -521,7 +525,7 @@ namespace Unigram.Services
 
                     //SQLiteDatabase database = MessagesStorage.getInstance().getDatabase();
                     //int maxCount = gif ? MessagesController.getInstance().maxRecentGifsCount : MessagesController.getInstance().maxRecentStickersCount;
-                    int maxCount = gif ? 200 : 20;
+                    int maxCount = gif ? _cacheService.Config.SavedGifsLimit : _cacheService.Config.StickersRecentLimit;
                     //database.beginTransaction();
                     //SQLitePreparedStatement state = database.executeFast("REPLACE INTO web_recent_v3 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -535,14 +539,14 @@ namespace Unigram.Services
                     Sqlite3.sqlite3_prepare_v2(database, "INSERT OR REPLACE INTO `web_recent_v3` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,MetaType,MetaDate) VALUES(?,?,?,?,?,?,?,?,?,?,?)", out statement);
 
                     int count = documents.Count;
-                    for (int a = 0; a < count; a++)
+                    for (int i = 0; i < count; i++)
                     {
-                        if (a == maxCount)
+                        if (i == maxCount)
                         {
                             break;
                         }
 
-                        TLDocument document = documents[a];
+                        TLDocument document = documents[i];
 
                         var thumb = JsonConvert.SerializeObject(document.Thumb, settings);
                         var attributes = JsonConvert.SerializeObject(document.Attributes, settings);
@@ -558,7 +562,7 @@ namespace Unigram.Services
                         Sqlite3.sqlite3_bind_int(statement, 8, document.Version);
                         Sqlite3.sqlite3_bind_text(statement, 9, attributes, -1);
                         Sqlite3.sqlite3_bind_int(statement, 10, gif ? 2 : (type == TYPE_IMAGE ? 3 : 4));
-                        Sqlite3.sqlite3_bind_int(statement, 11, date != 0 ? date : count - a);
+                        Sqlite3.sqlite3_bind_int(statement, 11, date != 0 ? date : count - i);
                         Sqlite3.sqlite3_step(statement);
                     }
 
@@ -568,9 +572,9 @@ namespace Unigram.Services
                     if (documents.Count >= maxCount)
                     {
                         DatabaseContext.Current.Execute(database, "BEGIN IMMEDIATE TRANSACTION");
-                        for (int a = maxCount; a < documents.Count; a++)
+                        for (int i = maxCount; i < documents.Count; i++)
                         {
-                            DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = " + documents[a].Id);
+                            DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = " + documents[i].Id);
                         }
                         DatabaseContext.Current.Execute(database, "COMMIT TRANSACTION");
                     }
@@ -610,7 +614,7 @@ namespace Unigram.Services
                     }
 
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.recentDocumentsDidLoaded, gif, type);
-                    RecentDocumentsDidLoaded?.Invoke(this, new RecentDocumentsDidLoadedEventArgs(gif, type));
+                    RecentsDidLoaded?.Invoke(this, new RecentsDidLoadedEventArgs(gif, type));
                 }
             }
         }
@@ -654,14 +658,14 @@ namespace Unigram.Services
             stickerSetsById[set.Set.Id] = set;
             stickerSetsByName[set.Set.ShortName] = set;
             Dictionary<long, TLDocument> stickersById = new Dictionary<long, TLDocument>();
-            for (int a = 0; a < set.Documents.Count; a++)
+            for (int i = 0; i < set.Documents.Count; i++)
             {
-                TLDocument document = set.Documents[a] as TLDocument;
+                TLDocument document = set.Documents[i] as TLDocument;
                 stickersById[document.Id] = document;
             }
-            for (int a = 0; a < set.Packs.Count; a++)
+            for (int i = 0; i < set.Packs.Count; i++)
             {
-                TLStickerPack stickerPack = set.Packs[a];
+                TLStickerPack stickerPack = set.Packs[i];
                 stickerPack.Emoticon = stickerPack.Emoticon.Replace("\uFE0F", "");
                 List<TLDocument> arrayList = allStickers[stickerPack.Emoticon];
                 if (arrayList == null)
@@ -669,9 +673,9 @@ namespace Unigram.Services
                     arrayList = new List<TLDocument>();
                     allStickers[stickerPack.Emoticon] = arrayList;
                 }
-                for (int c = 0; c < stickerPack.Documents.Count; c++)
+                for (int k = 0; k < stickerPack.Documents.Count; k++)
                 {
-                    long id = stickerPack.Documents[c];
+                    long id = stickerPack.Documents[k];
                     if (!stickersByEmoji.ContainsKey(id))
                     {
                         stickersByEmoji[id] = stickerPack.Emoticon;
@@ -823,9 +827,9 @@ namespace Unigram.Services
                     List<TLStickerSetCoveredBase> stickerSetsNew = new List<TLStickerSetCoveredBase>();
                     Dictionary<long, TLStickerSetCoveredBase> stickerSetsByIdNew = new Dictionary<long, TLStickerSetCoveredBase>();
 
-                    for (int a = 0; a < res.Count; a++)
+                    for (int i = 0; i < res.Count; i++)
                     {
-                        TLStickerSetCoveredBase stickerSet = res[a];
+                        TLStickerSetCoveredBase stickerSet = res[i];
                         stickerSetsNew.Add(stickerSet);
                         stickerSetsByIdNew[stickerSet.Set.Id] = stickerSet;
                     }
@@ -929,9 +933,9 @@ namespace Unigram.Services
         private int CalculateFeaturedStickersHash(IList<TLStickerSetCoveredBase> sets)
         {
             long acc = 0;
-            for (int a = 0; a < sets.Count; a++)
+            for (int i = 0; i < sets.Count; i++)
             {
-                TLStickerSet set = sets[a].Set;
+                TLStickerSet set = sets[i].Set;
                 if (set.IsArchived)
                 {
                     continue;
@@ -1064,9 +1068,9 @@ namespace Unigram.Services
                         else
                         {
                             Dictionary<long, TLMessagesStickerSet> newStickerSets = new Dictionary<long, TLMessagesStickerSet>();
-                            for (int a = 0; a < res.Sets.Count; a++)
+                            for (int i = 0; i < res.Sets.Count; i++)
                             {
-                                TLStickerSet stickerSet = res.Sets[a];
+                                TLStickerSet stickerSet = res.Sets[i];
 
                                 if (stickerSetsById.TryGetValue(stickerSet.Id, out TLMessagesStickerSet oldSet) && oldSet.Set.Hash == stickerSet.Hash)
                                 {
@@ -1084,7 +1088,7 @@ namespace Unigram.Services
                                 }
 
                                 newStickerArray.Add(null);
-                                int index = a;
+                                int index = i;
 
                                 var response = await _protoService.GetStickerSetAsync(new TLInputStickerSetID { Id = stickerSet.Id, AccessHash = stickerSet.AccessHash });
                                 if (response.IsSucceeded)
@@ -1178,9 +1182,9 @@ namespace Unigram.Services
 
         public long GetStickerSetId(TLDocument document)
         {
-            for (int a = 0; a < document.Attributes.Count; a++)
+            for (int i = 0; i < document.Attributes.Count; i++)
             {
-                TLDocumentAttributeBase attribute = document.Attributes[a];
+                TLDocumentAttributeBase attribute = document.Attributes[i];
                 if (attribute is TLDocumentAttributeSticker stickerAttribute)
                 {
                     if (stickerAttribute.StickerSet is TLInputStickerSetID inputStickerSet)
@@ -1198,9 +1202,9 @@ namespace Unigram.Services
         private int CalculateStickersHash(List<TLMessagesStickerSet> sets)
         {
             long acc = 0;
-            for (int a = 0; a < sets.Count; a++)
+            for (int i = 0; i < sets.Count; i++)
             {
-                TLStickerSet set = sets[a].Set;
+                TLStickerSet set = sets[i].Set;
                 if (set.IsArchived)
                 {
                     continue;
@@ -1251,9 +1255,9 @@ namespace Unigram.Services
                     Dictionary<long, TLDocument> stickersByIdNew = new Dictionary<long, TLDocument>();
                     Dictionary<string, List<TLDocument>> allStickersNew = new Dictionary<string, List<TLDocument>>();
 
-                    for (int a = 0; a < res.Count; a++)
+                    for (int i = 0; i < res.Count; i++)
                     {
-                        TLMessagesStickerSet stickerSet = res[a];
+                        TLMessagesStickerSet stickerSet = res[i];
                         if (stickerSet == null)
                         {
                             continue;
@@ -1262,9 +1266,9 @@ namespace Unigram.Services
                         stickerSetsByIdNew[stickerSet.Set.Id] = stickerSet;
                         stickerSetsByNameNew[stickerSet.Set.ShortName] = stickerSet;
 
-                        for (int b = 0; b < stickerSet.Documents.Count; b++)
+                        for (int j = 0; j < stickerSet.Documents.Count; j++)
                         {
-                            TLDocumentBase document = stickerSet.Documents[b];
+                            TLDocumentBase document = stickerSet.Documents[j];
                             if (document == null || document is TLDocumentEmpty)
                             {
                                 continue;
@@ -1273,9 +1277,9 @@ namespace Unigram.Services
                         }
                         if (!stickerSet.Set.IsArchived)
                         {
-                            for (int b = 0; b < stickerSet.Packs.Count; b++)
+                            for (int j = 0; j < stickerSet.Packs.Count; j++)
                             {
-                                TLStickerPack stickerPack = stickerSet.Packs[b];
+                                TLStickerPack stickerPack = stickerSet.Packs[j];
                                 if (stickerPack == null || stickerPack.Emoticon == null)
                                 {
                                     continue;
@@ -1288,9 +1292,9 @@ namespace Unigram.Services
                                     arrayList = new List<TLDocument>();
                                     allStickersNew[stickerPack.Emoticon] = arrayList;
                                 }
-                                for (int c = 0; c < stickerPack.Documents.Count; c++)
+                                for (int k = 0; k < stickerPack.Documents.Count; k++)
                                 {
-                                    long id = stickerPack.Documents[c];
+                                    long id = stickerPack.Documents[k];
                                     if (!stickersByEmojiNew.ContainsKey(id))
                                     {
                                         stickersByEmojiNew[id] = stickerPack.Emoticon;
@@ -1313,9 +1317,9 @@ namespace Unigram.Services
                     //    @Override
                     //                            public void run()
                     //    {
-                    for (int a = 0; a < stickerSets[type].Count; a++)
+                    for (int i = 0; i < stickerSets[type].Count; i++)
                     {
-                        TLStickerSet set = stickerSets[type][a].Set;
+                        TLStickerSet set = stickerSets[type][i].Set;
                         stickerSetsById.Remove(set.Id);
                         stickerSetsByName.Remove(set.ShortName);
                     }
@@ -1364,12 +1368,12 @@ namespace Unigram.Services
             if (hide != 0)
             {
                 stickerSet.IsArchived = hide == 1;
-                for (int a = 0; a < stickerSets[type].Count; a++)
+                for (int i = 0; i < stickerSets[type].Count; i++)
                 {
-                    TLMessagesStickerSet set = stickerSets[type][a];
+                    TLMessagesStickerSet set = stickerSets[type][i];
                     if (set.Set.Id == stickerSet.Id)
                     {
-                        stickerSets[type].RemoveAt(a);
+                        stickerSets[type].RemoveAt(i);
                         if (hide == 2)
                         {
                             stickerSets[type].Insert(0, set);
@@ -1446,7 +1450,7 @@ namespace Unigram.Services
         public event NeedReloadArchivedStickersEventHandler NeedReloadArchivedStickers;
         public event StickersDidLoadedEventHandler StickersDidLoaded;
         public event FeaturedStickersDidLoadedEventHandler FeaturedStickersDidLoaded;
-        public event RecentDocumentsDidLoadedEventHandler RecentDocumentsDidLoaded;
+        public event RecentsDidLoadedEventHandler RecentsDidLoaded;
         public event ArchivedStickersCountDidLoadedEventHandler ArchivedStickersCountDidLoaded;
     }
 
@@ -1486,14 +1490,14 @@ namespace Unigram.Services
         }
     }
 
-    public delegate void RecentDocumentsDidLoadedEventHandler(object sender, RecentDocumentsDidLoadedEventArgs e);
-    public class RecentDocumentsDidLoadedEventArgs : EventArgs
+    public delegate void RecentsDidLoadedEventHandler(object sender, RecentsDidLoadedEventArgs e);
+    public class RecentsDidLoadedEventArgs : EventArgs
     {
         public bool IsGifs { get; private set; }
 
         public int Type { get; private set; }
 
-        public RecentDocumentsDidLoadedEventArgs(bool gif, int type)
+        public RecentsDidLoadedEventArgs(bool gif, int type)
         {
             IsGifs = gif;
             Type = type;

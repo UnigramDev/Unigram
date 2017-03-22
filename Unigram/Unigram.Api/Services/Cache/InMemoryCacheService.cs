@@ -3345,18 +3345,24 @@ namespace Telegram.Api.Services.Cache
         }
 
         private TLConfig _config;
+        public TLConfig Config
+        {
+            get
+            {
+                if (_config == null)
+                    _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
+
+                return _config;
+            }
+        }
 
         public TLConfig GetConfig()
         {
-#if SILVERLIGHT || WIN_RT
             if (_config == null)
-            {
                 _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
-            }
-#endif
+
             return _config;
         }
-
 
         public void GetConfigAsync(Action<TLConfig> callback)
         {
