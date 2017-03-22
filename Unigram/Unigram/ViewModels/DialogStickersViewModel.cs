@@ -89,6 +89,8 @@ namespace Unigram.ViewModels
 
         private void OnStickersDidLoaded(object sender, StickersDidLoadedEventArgs e)
         {
+            Debug.WriteLine("StickersDidLoaded");
+
             if (e.Type == StickersService.TYPE_IMAGE)
             {
                 var stickers = _stickersService.GetStickerSets(e.Type);

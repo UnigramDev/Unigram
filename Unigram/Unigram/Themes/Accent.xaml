@@ -45,6 +45,9 @@
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
             <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#444444"/>
+
+            <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-dark.png"/>
+
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
@@ -87,6 +90,9 @@
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
             <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#C7C7C7"/>
+
+            <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-light.png"/>
+
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

@@ -64,6 +64,11 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickerSetBase parameter, ItemClickEventHandler callback)
         {
+            if (_scrollingHost != null)
+            {
+                _scrollingHost.ChangeView(null, 0, null, true);
+            }
+
             ViewModel.IsLoading = true;
             ViewModel.StickerSet = new TLStickerSet();
             ViewModel.Items[0].Key = new TLStickerSet();
@@ -88,6 +93,11 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessagesStickerSet parameter, ItemClickEventHandler callback)
         {
+            if (_scrollingHost != null)
+            {
+                _scrollingHost.ChangeView(null, 0, null, true);
+            }
+
             ViewModel.IsLoading = false;
             ViewModel.StickerSet = parameter.Set;
             ViewModel.Items[0].Key = parameter.Set;
@@ -113,8 +123,11 @@ namespace Unigram.Controls.Views
         private Border LineTop;
         private Border LineAccent;
 
+        private ScrollViewer _scrollingHost;
+
         private SpriteVisual _backgroundVisual;
         private ExpressionAnimation _expression;
+        private ExpressionAnimation _expressionClip;
 
         private void GridView_Loaded(object sender, RoutedEventArgs e)
         {
@@ -124,22 +137,34 @@ namespace Unigram.Controls.Views
             var scroll = List.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
             if (scroll != null)
             {
+                _scrollingHost = scroll;
                 scroll.ViewChanged += Scroll_ViewChanged;
                 Scroll_ViewChanged(scroll, null);
 
                 var brush = App.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
-
                 var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroll);
-                _backgroundVisual = ElementCompositionPreview.GetElementVisual(Yolo).Compositor.CreateSpriteVisual();
+
+                if (_backgroundVisual == null)
+                {
+                    _backgroundVisual = ElementCompositionPreview.GetElementVisual(BackgroundPanel).Compositor.CreateSpriteVisual();
+                    ElementCompositionPreview.SetElementChildVisual(BackgroundPanel, _backgroundVisual);
+                }
+
                 _backgroundVisual.Brush = _backgroundVisual.Compositor.CreateColorBrush(brush.Color);
-                _backgroundVisual.Size = new System.Numerics.Vector2((float)Yolo.ActualWidth, (float)Yolo.ActualHeight);
+                _backgroundVisual.Size = new System.Numerics.Vector2((float)BackgroundPanel.ActualWidth, (float)BackgroundPanel.ActualHeight);
+                _backgroundVisual.Clip = _backgroundVisual.Compositor.CreateInsetClip();
 
-                ElementCompositionPreview.SetElementChildVisual(Yolo, _backgroundVisual);
-
-                _expression = _backgroundVisual.Compositor.CreateExpressionAnimation("Max(Maximum, Scrolling.Translation.Y)");
+                _expression = _expression ?? _backgroundVisual.Compositor.CreateExpressionAnimation("Max(Maximum, Scrolling.Translation.Y)");
                 _expression.SetReferenceParameter("Scrolling", props);
-                _expression.SetScalarParameter("Maximum", -(float)Yolo.Margin.Top + 1);
+                _expression.SetScalarParameter("Maximum", -(float)BackgroundPanel.Margin.Top + 1);
+                _backgroundVisual.StopAnimation("Offset.Y");
                 _backgroundVisual.StartAnimation("Offset.Y", _expression);
+
+                _expressionClip = _expressionClip ?? _backgroundVisual.Compositor.CreateExpressionAnimation("Min(0, Maximum - Scrolling.Translation.Y)");
+                _expressionClip.SetReferenceParameter("Scrolling", props);
+                _expressionClip.SetScalarParameter("Maximum", -(float)BackgroundPanel.Margin.Top + 1);
+                _backgroundVisual.Clip.StopAnimation("Offset.Y");
+                _backgroundVisual.Clip.StartAnimation("Offset.Y", _expressionClip);
             }
 
             var panel = List.ItemsPanelRoot as ItemsWrapGrid;
@@ -158,7 +183,7 @@ namespace Unigram.Controls.Views
             var top = 1;
             var bottom = 1;
 
-            if (scroll.VerticalOffset <= Header.Margin.Top)
+            if (scroll.VerticalOffset <= BackgroundPanel.Margin.Top)
             {
                 top = 0;
             }
@@ -211,17 +236,26 @@ namespace Unigram.Controls.Views
             var minHeigth = itemWidth * 3d - 12 + 48;
             var top = Math.Max(0, e.NewSize.Height - minHeigth);
 
-            Header.Margin = new Thickness(0, top, 0, 0);
+            Header.Height = top;
 
-            Yolo.Height = e.NewSize.Height;
-            Yolo.Margin = new Thickness(0, top, 0, -top);
+            BackgroundPanel.Height = e.NewSize.Height;
+            BackgroundPanel.Margin = new Thickness(0, top, 0, -top);
 
-            if (_backgroundVisual != null && _expression != null)
+            if (_backgroundVisual != null && _expression != null && _expressionClip != null)
             {
+                var brush = App.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
+
+                _backgroundVisual.Brush = _backgroundVisual.Compositor.CreateColorBrush(brush.Color);
                 _backgroundVisual.Size = new System.Numerics.Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
+                _backgroundVisual.Clip = _backgroundVisual.Compositor.CreateInsetClip();
+
                 _expression.SetScalarParameter("Maximum", -(float)top + 1);
                 _backgroundVisual.StopAnimation("Offset.Y");
                 _backgroundVisual.StartAnimation("Offset.Y", _expression);
+
+                _expressionClip.SetScalarParameter("Maximum", -(float)top + 1);
+                _backgroundVisual.Clip.StopAnimation("Offset.Y");
+                _backgroundVisual.Clip.StartAnimation("Offset.Y", _expressionClip);
             }
         }
 
@@ -233,9 +267,14 @@ namespace Unigram.Controls.Views
         //    BackgroundElement.BorderThickness = new Thickness(0);
         //}
 
-        private void Close_Click(object sender, RoutedEventArgs e)
+        private void LightDismiss_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Hide(ContentDialogBaseResult.None);
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            Hide(ContentDialogBaseResult.Cancel);
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)

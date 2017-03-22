@@ -77,7 +77,7 @@
                                               HorizontalContentAlignment="Stretch"
                                               VerticalContentAlignment="Stretch"/>
                             <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}">
-                                <Image Source="ms-appx:///Assets/Images/DefaultBackground.png" Stretch="UniformToFill" d:IsHidden="True"/>
+                                <Image Source="{ThemeResource DefaultBackgroundBrush}" Stretch="UniformToFill" d:IsHidden="True"/>
                                 <!--<win2d:CanvasControl x:Name="BackgroundCanvas" CreateResources="BackgroundCanvas_CreateResources" Draw="BackgroundCanvas_Draw" />-->
                             </Grid>
                         </Grid>

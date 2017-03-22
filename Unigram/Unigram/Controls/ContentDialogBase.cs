@@ -226,9 +226,9 @@ namespace Unigram.Controls
             }
             else
             {
-                BackgroundElement.MinWidth = Math.Min(640, bounds.Width);
+                BackgroundElement.MinWidth = Math.Min(360, bounds.Width);
                 BackgroundElement.MinHeight = Math.Min(500, bounds.Height);
-                BackgroundElement.MaxWidth = Math.Min(640, bounds.Width);
+                BackgroundElement.MaxWidth = Math.Min(360, bounds.Width);
                 BackgroundElement.MaxHeight = Math.Min(500, bounds.Height);
 
                 if (BackgroundElement.MinWidth == bounds.Width && BackgroundElement.MinHeight == bounds.Height)

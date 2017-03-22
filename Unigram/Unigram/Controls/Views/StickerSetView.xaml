@@ -23,17 +23,17 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Border x:Name="Yolo"/>
+        <Border x:Name="BackgroundPanel"/>
 
         <GridView x:Name="List"
-                  ItemsSource="{Binding Source={StaticResource ViewSource}}"
+                  ItemsSource="{x:Bind ViewSource.View}"
                   ItemClick="List_ItemClick"
-                  common:FluidGridView.OrientationOnly="False"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   Padding="12,0"
                   Loaded="GridView_Loaded"
-                  SizeChanged="List_SizeChanged">
+                  SizeChanged="List_SizeChanged"
+                  common:FluidGridView.OrientationOnly="False">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="5"/>
             </common:FluidGridView.Triggers>
@@ -46,7 +46,7 @@
                 </DataTemplate>
             </GridView.ItemTemplate>
             <GridView.Header>
-                <Border x:Name="Header"/>
+                <Border x:Name="Header" Background="Transparent" Tapped="LightDismiss_Tapped"/>
             </GridView.Header>
             <GridView.Footer>
                 <Border Height="12"/>
