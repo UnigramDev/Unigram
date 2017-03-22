@@ -174,8 +174,8 @@
                             <ListView ItemsSource="{x:Bind StickersSource.View.CollectionGroups}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="wuxdata:ICollectionViewGroup">
-                                        <!--<TextBlock Text="{x:Bind Group.(tl:TLMessagesStickerSet.Set.Title)}" Style="{StaticResource BaseTextBlockStyle}"/>-->
-                                        <TextBlock Text="{Binding Group.Set.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <TextBlock Text="{x:Bind Group.(tl:TLMessagesStickerSet.Set).Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <!--<TextBlock Text="{Binding Group.Set.Title}" Style="{StaticResource BaseTextBlockStyle}"/>-->
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <ListView.ItemContainerStyle>

@@ -58,27 +58,25 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
             DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
 
-            _logicalDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-
             Loaded += OnLoaded;
 
-            Theme.RegisterPropertyChangedCallback(Border.BackgroundProperty, OnThemeChanged);
+            //Theme.RegisterPropertyChangedCallback(Border.BackgroundProperty, OnThemeChanged);
 
             searchInit();
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
         }
 
-        private async void OnThemeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            if (_canvas != null)
-            {
-                _backgroundImage = await CanvasBitmap.LoadAsync(_canvas, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
-                _backgroundBrush = new CanvasImageBrush(_canvas, _backgroundImage);
-                _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
-                _canvas.Invalidate();
-            }
-        }
+        //private async void OnThemeChanged(DependencyObject sender, DependencyProperty dp)
+        //{
+        //    if (_canvas != null)
+        //    {
+        //        _backgroundImage = await CanvasBitmap.LoadAsync(_canvas, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
+        //        _backgroundBrush = new CanvasImageBrush(_canvas, _backgroundImage);
+        //        _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
+        //        _canvas.Invalidate();
+        //    }
+        //}
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -471,33 +469,6 @@ namespace Unigram.Views
         {
             Frame.Navigate(typeof(SettingsPage));
         }
-
-        #region Background
-
-        private float _logicalDpi;
-        private CanvasBitmap _backgroundImage;
-        private CanvasImageBrush _backgroundBrush;
-
-        private CanvasControl _canvas;
-
-        private void BackgroundCanvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
-        {
-            _canvas = sender;
-
-            args.TrackAsyncAction(Task.Run(async () =>
-            {
-                _backgroundImage = await CanvasBitmap.LoadAsync(sender, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
-                _backgroundBrush = new CanvasImageBrush(sender, _backgroundImage);
-                _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
-            }).AsAsyncAction());
-        }
-
-        private void BackgroundCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
-        {
-            args.DrawingSession.FillRectangle(new Rect(new Point(), sender.RenderSize), _backgroundBrush);
-        }
-
-        #endregion
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {

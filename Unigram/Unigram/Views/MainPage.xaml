@@ -40,6 +40,11 @@
 
         <Style TargetType="controls:MasterDetailView">
             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+            <!--<Setter Property="Background">
+                <Setter.Value>
+                    <ImageBrush ImageSource="{ThemeResource DefaultBackgroundBrush}" Stretch="UniformToFill"/>
+                </Setter.Value>
+            </Setter>-->
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:MasterDetailView">
@@ -76,9 +81,8 @@
                                               ContentTransitions="{TemplateBinding ContentTransitions}"
                                               HorizontalContentAlignment="Stretch"
                                               VerticalContentAlignment="Stretch"/>
-                            <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}">
-                                <Image Source="{ThemeResource DefaultBackgroundBrush}" Stretch="UniformToFill" d:IsHidden="True"/>
-                                <!--<win2d:CanvasControl x:Name="BackgroundCanvas" CreateResources="BackgroundCanvas_CreateResources" Draw="BackgroundCanvas_Draw" />-->
+                            <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}" d:IsHidden="True">
+                                <controls:DialogBackground/>
                             </Grid>
                         </Grid>
                     </ControlTemplate>
