@@ -232,21 +232,24 @@ namespace Telegram.Api.TL
     public partial class TLMessage
     {
         #region Gif
-        public bool IsGif()
+        public bool IsGif(bool real = false)
         {
             var documentMedia = Media as TLMessageMediaDocument;
-            return documentMedia != null && IsGif(documentMedia.Document as TLDocument);
+            return documentMedia != null && IsGif(documentMedia.Document as TLDocument, real);
         }
 
-        public static bool IsGif(TLDocumentBase documentBase)
+        public static bool IsGif(TLDocumentBase documentBase, bool real = false)
         {
             var document = documentBase as TLDocument;
-            return document != null && IsGif(document);
+            return document != null && IsGif(document, real);
         }
 
-        public static bool IsGif(TLDocument document)
+        public static bool IsGif(TLDocument document, bool real = false)
         {
-            return false;
+            if (real == false)
+            {
+                return false;
+            }
 
             if (document != null && document.MimeType.Equals("video/mp4", StringComparison.OrdinalIgnoreCase))
             {

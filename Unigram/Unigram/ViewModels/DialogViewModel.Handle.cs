@@ -8,6 +8,8 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Converters;
+using Unigram.Services;
 
 namespace Unigram.ViewModels
 {
@@ -231,14 +233,29 @@ namespace Unigram.ViewModels
             //    return;
             //}
 
+            if (messageCommon is TLMessage message)
+            {
+                if (message.IsOut && !message.HasFwdFrom && message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    if (message.IsGif(true))
+                    {
+                        _stickersService.AddRecentGif(documentMedia.Document as TLDocument, message.Date);
+                    }
+                    else if (message.IsSticker())
+                    {
+                        _stickersService.AddRecentSticker(StickersService.TYPE_IMAGE, documentMedia.Document as TLDocument, message.Date);
+                    }
+                }
+            }
+
             if (With is TLUserBase && messageCommon.ToId is TLPeerUser && !messageCommon.IsOut && ((TLUserBase)With).Id == messageCommon.FromId.Value)
             {
                 InsertMessage(messageCommon);
 
                 //if (this._isActive)
                 {
-                    var message = messageCommon as TLMessage;
-                    if (message != null)
+                    //var message = messageCommon as TLMessage;
+                    //if (message != null)
                     {
                         //var replyKeyboardRows = message.ReplyMarkup as IReplyKeyboardRows;
                         //if (replyKeyboardRows != null)

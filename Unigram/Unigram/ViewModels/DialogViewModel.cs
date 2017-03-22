@@ -67,6 +67,7 @@ namespace Unigram.ViewModels
         }
 
         private readonly DialogStickersViewModel _stickers;
+        private readonly IStickersService _stickersService;
         private readonly IUploadFileManager _uploadFileManager;
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
@@ -75,13 +76,14 @@ namespace Unigram.ViewModels
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, DialogStickersViewModel stickers)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, DialogStickersViewModel stickers)
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
             _uploadAudioManager = uploadAudioManager;
             _uploadDocumentManager = uploadDocumentManager;
             _uploadVideoManager = uploadVideoManager;
+            _stickersService = stickersService;
 
             _stickers = stickers;
         }
@@ -856,50 +858,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async void StickersRecent()
-        {
-            var response = await ProtoService.GetRecentStickersAsync(false, 0);
-            if (response.IsSucceeded)
-            {
-                if (response.Result is TLMessagesRecentStickers recent)
-                {
-                    await StickersAll(recent);
-                }
-            }
-        }
-
-        private async Task StickersAll(TLMessagesRecentStickers recent)
-        {
-            var response = await ProtoService.GetAllStickersAsync(new byte[0]);
-            if (response.IsSucceeded)
-            {
-                var result = response.Result as TLMessagesAllStickers;
-                if (result != null)
-                {
-                    //var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, Extensions.Buffered<TLDocument>(x.Count)));
-                    var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, result.Documents.OfType<TLDocument>().Where(y => ((TLInputStickerSetID)y.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().StickerSet).Id == x.Id)));
-                    StickerSets = new List<KeyedList<TLStickerSet, TLDocument>>(stickerSets);
-                    StickerSets.Insert(0, new KeyedList<TLStickerSet, TLDocument>(new TLStickerSet { Title = "Frequently used", ShortName = "tlg/recentlyUsed" }, recent.Stickers.OfType<TLDocument>()));
-                    RaisePropertyChanged(() => StickerSets);
-
-                    //await Task.Delay(1000);
-
-                    //var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = StickerSets[1].Key.ShortName });
-                    //if (set.IsSucceeded)
-                    //{
-                    //    for (int i = 0; i < set.Value.Documents.Count; i++)
-                    //    {
-                    //        StickerSets[1][i] = set.Value.Documents[i] as TLDocument;
-                    //    }
-                    //}
-
-                    Debug.WriteLine("Done");
-
-                    //var boh = result.Documents.OfType<TLDocument>().GroupBy(x => ((TLInputStickerSetID)x.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().Stickerset).Id).ToList();
-                }
-            }
-        }
-
         private List<TLDocument> _stickerPack;
         public List<TLDocument> StickerPack
         {
@@ -912,8 +870,6 @@ namespace Unigram.ViewModels
                 Set(ref _stickerPack, value);
             }
         }
-
-        public List<KeyedList<TLStickerSet, TLDocument>> StickerSets { get; set; }
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {

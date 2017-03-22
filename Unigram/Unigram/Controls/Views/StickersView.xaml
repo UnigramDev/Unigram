@@ -6,6 +6,7 @@
     xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:tl="using:Telegram.Api.TL"
+    xmlns:wuxdata="using:Windows.UI.Xaml.Data"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -13,7 +14,7 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <CollectionViewSource x:Key="Stickers" Source="{Binding StickerSets}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="StickersSource" Source="{x:Bind ViewModel.Stickers.SavedStickers}" ItemsPath="Documents" IsSourceGrouped="True"/>
     </UserControl.Resources>
 
     <Grid>
@@ -57,7 +58,7 @@
             <Pivot x:Name="Pivot" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
                 <PivotItem Margin="0,-48,0,0">
                     <GridView x:Name="GifsView"
-                              ItemsSource="{Binding Stickers.SavedGifs}"
+                              ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
                               common:FluidGridView.OrientationOnly="False"
                               IsItemClickEnabled="True"
                               SelectionMode="None"
@@ -91,85 +92,105 @@
                     </GridView>
                 </PivotItem>
                 <PivotItem Margin="0,-48,0,0">
-                    <GridView x:Name="Stickers"
-                              ItemsSource="{Binding Source={StaticResource Stickers}}"
-                              common:FluidGridView.OrientationOnly="False"
-                              IsItemClickEnabled="True"
-                              SelectionMode="None"
-                              ItemClick="Stickers_ItemClick"
-                              Loaded="Stickers_Loaded"
-                              Padding="12,0">
-                        <common:FluidGridView.Triggers>
-                            <common:FluidGridViewTrigger RowsOrColumns="5"/>
-                        </common:FluidGridView.Triggers>
-                        <GridView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Key.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <SemanticZoom>
+                        <SemanticZoom.ZoomedInView>
+                            <GridView x:Name="Stickers"
+                                      ItemsSource="{x:Bind StickersSource.View}"
+                                      common:FluidGridView.OrientationOnly="False"
+                                      IsItemClickEnabled="True"
+                                      SelectionMode="None"
+                                      ItemClick="Stickers_ItemClick"
+                                      Loaded="Stickers_Loaded"
+                                      Padding="12,0">
+                                <common:FluidGridView.Triggers>
+                                    <common:FluidGridViewTrigger RowsOrColumns="5"/>
+                                </common:FluidGridView.Triggers>
+                                <GridView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                                                <TextBlock Text="{x:Bind Set.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                        <GroupStyle.HeaderContainerStyle>
+                                            <Style TargetType="GridViewHeaderItem">
+                                                <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
+                                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                                <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                                <Setter Property="Margin" Value="0,0,0,0"/>
+                                                <Setter Property="Padding" Value="0,8,0,9"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                <Setter Property="VerticalContentAlignment" Value="Top" />
+                                                <Setter Property="MinHeight" Value="0"/>
+                                                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="GridViewHeaderItem">
+                                                            <Border Background="{TemplateBinding Background}"
+                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                                                <ContentPresenter x:Name="ContentPresenter"
+                                                                                  Margin="{TemplateBinding Padding}"
+                                                                                  Content="{TemplateBinding Content}"
+                                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.HeaderContainerStyle>
+                                    </GroupStyle>
+                                </GridView.GroupStyle>
+                                <!--<GridView.ItemsPanel>
+                                     <ItemsPanelTemplate>
+                                     <ItemsWrapGrid Orientation="Horizontal" ItemWidth="66.8" ItemHeight="66.8"/>
+                                     </ItemsPanelTemplate>
+                                     </GridView.ItemsPanel>-->
+                                <GridView.ItemTemplate>
+                                    <DataTemplate x:DataType="tl:TLDocument">
+                                        <Image x:Phase="3" Margin="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
                                     </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                                <GroupStyle.HeaderContainerStyle>
-                                    <Style TargetType="GridViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
-                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                        <Setter Property="Margin" Value="0,0,0,0"/>
-                                        <Setter Property="Padding" Value="0,8,0,9"/>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment" Value="Top" />
-                                        <Setter Property="MinHeight" Value="0"/>
-                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="GridViewHeaderItem">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <ContentPresenter x:Name="ContentPresenter"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          Content="{TemplateBinding Content}"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
+                                </GridView.ItemTemplate>
+                                <GridView.Footer>
+                                    <Border Height="12"/>
+                                </GridView.Footer>
+                                <GridView.ItemContainerStyle>
+                                    <Style TargetType="GridViewItem">
+                                        <Setter Property="Margin" Value="0"/>
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                                     </Style>
-                                </GroupStyle.HeaderContainerStyle>
-                            </GroupStyle>
-                        </GridView.GroupStyle>
-                        <!--<GridView.ItemsPanel>
-                             <ItemsPanelTemplate>
-                             <ItemsWrapGrid Orientation="Horizontal" ItemWidth="66.8" ItemHeight="66.8"/>
-                             </ItemsPanelTemplate>
-                             </GridView.ItemsPanel>-->
-                        <GridView.ItemTemplate>
-                            <DataTemplate x:DataType="tl:TLDocument">
-                                <Image x:Phase="3" Margin="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <GridView.Footer>
-                            <Border Height="12"/>
-                        </GridView.Footer>
-                        <GridView.ItemContainerStyle>
-                            <Style TargetType="GridViewItem">
-                                <Setter Property="Margin" Value="0"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                            </Style>
-                        </GridView.ItemContainerStyle>
-                        <GridView.ItemContainerTransitions>
-                            <TransitionCollection/>
-                        </GridView.ItemContainerTransitions>
-                    </GridView>
+                                </GridView.ItemContainerStyle>
+                                <GridView.ItemContainerTransitions>
+                                    <TransitionCollection/>
+                                </GridView.ItemContainerTransitions>
+                            </GridView>
+                        </SemanticZoom.ZoomedInView>
+                        <SemanticZoom.ZoomedOutView>
+                            <ListView ItemsSource="{x:Bind StickersSource.View.CollectionGroups}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="wuxdata:ICollectionViewGroup">
+                                        <!--<TextBlock Text="{x:Bind Group.(tl:TLMessagesStickerSet.Set.Title)}" Style="{StaticResource BaseTextBlockStyle}"/>-->
+                                        <TextBlock Text="{Binding Group.Set.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="MinHeight" Value="0"/>
+                                        <Setter Property="Padding" Value="12,8,12,9"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                            </ListView>
+                        </SemanticZoom.ZoomedOutView>
+                    </SemanticZoom>
                 </PivotItem>
             </Pivot>
             <ListView x:Name="Toolbar"
-                      ItemsSource="{Binding StickerSets}"
+                      ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
                       Height="{ThemeResource AppBarThemeCompactHeight}"
                       Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                       SelectionChanged="ListView_SelectionChanged"
@@ -196,8 +217,8 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Image Margin="4" Source="{Binding [0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
+                    <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                        <Image Margin="4" Source="{x:Bind Documents[0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.Header>

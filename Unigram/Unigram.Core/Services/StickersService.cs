@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -168,7 +169,7 @@ namespace Unigram.Services
 
         public void CheckStickers(int type)
         {
-            if (!loadingStickers[type] && (!stickersLoaded[type] || Math.Abs(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000 - loadDate[type]) >= 60 * 60))
+            if (!loadingStickers[type] && (!stickersLoaded[type] || Math.Abs(Utils.CurrentTimestamp / 1000 - loadDate[type]) >= 60 * 60))
             {
                 LoadStickers(type, true, false);
             }
@@ -176,7 +177,7 @@ namespace Unigram.Services
 
         public void CheckArchivedStickersCount(int type)
         {
-            //if (!loadingStickers[type] && (!stickersLoaded[type] || Math.Abs(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000 - loadDate[type]) >= 60 * 60))
+            //if (!loadingStickers[type] && (!stickersLoaded[type] || Math.Abs(Utils.CurrentTimestamp / 1000 - loadDate[type]) >= 60 * 60))
             {
                 LoadArchivedStickersCount(type, true);
             }
@@ -184,7 +185,7 @@ namespace Unigram.Services
 
         public void CheckFeaturedStickers()
         {
-            if (!loadingFeaturedStickers && (!featuredStickersLoaded || Math.Abs(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000 - loadFeaturedDate) >= 60 * 60))
+            if (!loadingFeaturedStickers && (!featuredStickersLoaded || Math.Abs(Utils.CurrentTimestamp / 1000 - loadFeaturedDate) >= 60 * 60))
             {
                 LoadFeaturedStickers(true, false);
             }
@@ -217,7 +218,7 @@ namespace Unigram.Services
             {
                 recentStickers[type].Insert(0, document);
             }
-            if (recentStickers[type].Count > 30)
+            if (recentStickers[type].Count > _cacheService.Config.StickersRecentLimit)
             {
                 TLDocument old = recentStickers[type][recentStickers[type].Count - 1];
                 recentStickers[type].RemoveAt(recentStickers[type].Count - 1);
@@ -476,7 +477,7 @@ namespace Unigram.Services
                 {
                     lastLoadTime = ApplicationSettings.Current.GetValueOrDefault<long>("lastStickersLoadTime", 0);
                 }
-                if (Math.Abs(DateTime.Now.TimeOfDay.TotalMilliseconds - lastLoadTime) < 60 * 60 * 1000)
+                if (Math.Abs(Utils.CurrentTimestamp - lastLoadTime) < 60 * 60 * 1000)
                 {
                     return;
                 }
@@ -593,13 +594,13 @@ namespace Unigram.Services
                 {
                     loadingRecentGifs = false;
                     recentGifsLoaded = true;
-                    ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", (long)DateTime.Now.TimeOfDay.TotalMilliseconds);
+                    ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", Utils.CurrentTimestamp);
                 }
                 else
                 {
                     loadingRecentStickers[type] = false;
                     recentStickersLoaded[type] = true;
-                    ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", (long)DateTime.Now.TimeOfDay.TotalMilliseconds);
+                    ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", Utils.CurrentTimestamp);
                 }
 
                 if (documents != null)
@@ -783,11 +784,11 @@ namespace Unigram.Services
                 {
                     if (result is TLMessagesFeaturedStickers res)
                     {
-                        ProcessLoadedFeaturedStickers(res.Sets, res.Unread, false, (int)(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000), res.Hash);
+                        ProcessLoadedFeaturedStickers(res.Sets, res.Unread, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
                     }
                     else
                     {
-                        ProcessLoadedFeaturedStickers(null, null, false, (int)(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000), req.Hash);
+                        ProcessLoadedFeaturedStickers(null, null, false, (int)(Utils.CurrentTimestamp / 1000), req.Hash);
                     }
                 });
             }
@@ -802,7 +803,7 @@ namespace Unigram.Services
             //    @Override
             //    public void run()
             //    {
-            if (cache && (res == null || Math.Abs(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000 - date) >= 60 * 60) || !cache && res == null && hash == 0)
+            if (cache && (res == null || Math.Abs(Utils.CurrentTimestamp / 1000 - date) >= 60 * 60) || !cache && res == null && hash == 0)
             {
                 //AndroidUtilities.runOnUIThread(new Runnable() {
                 //    @Override
@@ -1063,7 +1064,7 @@ namespace Unigram.Services
                         List<TLMessagesStickerSet> newStickerArray = new List<TLMessagesStickerSet>();
                         if (res.Sets.Count == 0)
                         {
-                            ProcessLoadedStickers(type, newStickerArray, false, (int)(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000), res.Hash);
+                            ProcessLoadedStickers(type, newStickerArray, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
                         }
                         else
                         {
@@ -1082,7 +1083,7 @@ namespace Unigram.Services
 
                                     if (newStickerSets.Count == res.Sets.Count)
                                     {
-                                        ProcessLoadedStickers(type, newStickerArray, false, (int)(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000), res.Hash);
+                                        ProcessLoadedStickers(type, newStickerArray, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
                                     }
                                     continue;
                                 }
@@ -1105,7 +1106,7 @@ namespace Unigram.Services
                                                 newStickerArray.RemoveAt(j);
                                             }
                                         }
-                                        ProcessLoadedStickers(type, newStickerArray, false, (int)(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000), res.Hash);
+                                        ProcessLoadedStickers(type, newStickerArray, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
                                     }
 
                                 }
@@ -1119,7 +1120,7 @@ namespace Unigram.Services
                     }
                     else
                     {
-                        ProcessLoadedStickers(type, null, false, (int)(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000), hash);
+                        ProcessLoadedStickers(type, null, false, (int)(Utils.CurrentTimestamp / 1000), hash);
                     }
                 });
             }
@@ -1226,7 +1227,7 @@ namespace Unigram.Services
             //    @Override
             //    public void run()
             //    {
-            if (cache && (res == null || Math.Abs(DateTime.Now.TimeOfDay.TotalMilliseconds / 1000 - date) >= 60 * 60) || !cache && res == null && hash == 0)
+            if (cache && (res == null || Math.Abs(Utils.CurrentTimestamp / 1000 - date) >= 60 * 60) || !cache && res == null && hash == 0)
             {
                 //AndroidUtilities.runOnUIThread(new Runnable() {
                 //    @Override
