@@ -68,8 +68,7 @@ namespace Unigram.Controls.Messages
         {
             if (item == null)
             {
-                Visibility = Visibility.Collapsed;
-                return false;
+                return SetUnsupportedTemplate(null, null);
             }
 
             var replyInfo = item as ReplyInfo;
@@ -331,7 +330,7 @@ namespace Unigram.Controls.Messages
                 var emptyMessage = obj as TLMessageEmpty;
                 if (emptyMessage != null)
                 {
-                    return SetEmptyTemplate(message, Title);
+                    return SetEmptyTemplate(emptyMessage, Title);
                 }
 
                 return SetUnsupportedTemplate(message, Title);
@@ -749,15 +748,29 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetEmptyTemplate(TLMessage message, string title)
+        private bool SetEmptyTemplate(TLMessageBase message, string title)
         {
-            Visibility = Visibility.Collapsed;
-            return false;
+            Visibility = Visibility.Visible;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = string.Empty;
+            ServiceLabel.Text = message is TLMessageEmpty ? "Deleted message" : string.Empty;
+            MessageLabel.Text = string.Empty;
+            return true;
         }
 
-        private bool SetUnsupportedTemplate(TLMessage message, string title)
+        private bool SetUnsupportedTemplate(TLMessageBase message, string title)
         {
             Visibility = Visibility.Collapsed;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = string.Empty;
+            ServiceLabel.Text = string.Empty;
+            MessageLabel.Text = string.Empty;
             return false;
         }
 
