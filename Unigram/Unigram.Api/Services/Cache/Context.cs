@@ -31,5 +31,10 @@ namespace Telegram.Api.Services.Cache
                 base[index] = value;
             }
         }
+
+        public void Remove(long key)
+        {
+            TryRemove(key, out T value);
+        }
     }
 }
