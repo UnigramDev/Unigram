@@ -28,7 +28,7 @@
                 <StackPanel>
                     <Button Click="FeaturedStickers_Click">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Featured stickers" VerticalAlignment="Center"/>
+                            <TextBlock Text="Trending stickers" VerticalAlignment="Center"/>
                             <ContentControl Content="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}" Visibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
                                 <ContentControl.ContentTransitions>
                                     <TransitionCollection>

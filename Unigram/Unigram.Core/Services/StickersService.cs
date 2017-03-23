@@ -784,6 +784,34 @@ namespace Unigram.Services
                 {
                     if (result is TLMessagesFeaturedStickers res)
                     {
+                        //for (int i = 0; i < res.Sets.Count; i++)
+                        //{
+                        //    if (res.Sets[i] is TLStickerSetCovered covered)
+                        //    {
+                        //        var multi = new TLStickerSetMultiCovered();
+                        //        multi.Set = covered.Set;
+                        //        multi.Covers = new TLVector<TLDocumentBase>();
+
+                        //        for (int j = 0; j < res.Documents.Count; j++)
+                        //        {
+                        //            if (res.Documents[j] is TLDocument document && document.StickerSet is TLInputStickerSetID set)
+                        //            {
+                        //                if (covered.Set.Id == set.Id)
+                        //                {
+                        //                    multi.Covers.Add(document);
+                        //                }
+                        //            }
+
+                        //            if (multi.Covers.Count == 5)
+                        //            {
+                        //                break;
+                        //            }
+                        //        }
+
+                        //        res.Sets[i] = multi;
+                        //    }
+                        //}
+
                         ProcessLoadedFeaturedStickers(res.Sets, res.Unread, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
                     }
                     else

@@ -27,11 +27,6 @@ namespace Unigram.Common
         /// <exception cref="System.InvalidOperationException">This method can only be invoked from UI thread.</exception>
         public static async Task<IUICommand> ShowQueuedAsync(this MessageDialog dialog)
         {
-            if (!Window.Current.Dispatcher.HasThreadAccess)
-            {
-                throw new InvalidOperationException("This method can only be invoked from UI thread.");
-            }
-
             while (_currentDialogShowRequest != null)
             {
                 await _currentDialogShowRequest.Task;

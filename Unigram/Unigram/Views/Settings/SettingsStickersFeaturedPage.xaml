@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}">
-            <TextBlock Text="Featured stickers"
+            <TextBlock Text="Trending stickers"
                        Style="{StaticResource BaseTextBlockStyle}"
                        VerticalAlignment="Center"
                        Margin="12,0"/>

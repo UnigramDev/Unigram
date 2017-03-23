@@ -108,6 +108,7 @@
     <Compile Include="Controls\DialogSearchBar.xaml.cs">
       <DependentUpon>DialogSearchBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GlyphRadioButton.cs" />
     <Compile Include="Controls\MenuFlyoutLazyItem.cs" />
     <Compile Include="Controls\Messages\PhoneCallMessageBubble.cs" />
     <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">

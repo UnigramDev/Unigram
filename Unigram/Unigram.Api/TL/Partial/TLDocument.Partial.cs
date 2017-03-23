@@ -43,6 +43,20 @@ namespace Telegram.Api.TL
             }
         }
 
+        public TLInputStickerSetBase StickerSet
+        {
+            get
+            {
+                var attribute = Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                if (attribute != null && !attribute.IsMask)
+                {
+                    return attribute.StickerSet;
+                }
+
+                return null;
+            }
+        }
+
         public string Duration
         {
             get

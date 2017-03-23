@@ -8,12 +8,10 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class PivotRadioButton : RadioButton
+    public class PivotRadioButton : GlyphRadioButton
     {
         public PivotRadioButton()
         {
-            DefaultStyleKey = typeof(PivotRadioButton);
-
             Click += OnClick;
         }
 
@@ -24,24 +22,6 @@ namespace Unigram.Controls
                 SelectedValue = Index;
             }
         }
-
-        public static readonly DependencyProperty GlyphProperty = DependencyProperty.Register("Glyph", typeof(string), typeof(PivotRadioButton), new PropertyMetadata("\uE10F"));
-
-        public string Glyph
-        {
-            get { return GetValue(GlyphProperty) as string; }
-            set { SetValue(GlyphProperty, value); }
-        }
-
-        public static readonly DependencyProperty LabelProperty = DependencyProperty.Register("Label", typeof(string), typeof(PivotRadioButton), new PropertyMetadata("Home"));
-
-        public string Label
-        {
-            get { return GetValue(LabelProperty) as string; }
-            set { SetValue(LabelProperty, value); }
-        }
-
-
 
         #region SelectedValue
         public int SelectedValue
