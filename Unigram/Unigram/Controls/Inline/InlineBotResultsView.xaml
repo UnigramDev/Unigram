@@ -5,7 +5,7 @@
     xmlns:local="using:Unigram.Controls.Inline"
     xmlns:controls="using:Unigram.Controls"
     xmlns:selectors="using:Unigram.Selectors"
-    xmlns:models="using:Telegram.Api.TL"
+    xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -37,7 +37,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="GameResultTemplate">
+        <DataTemplate x:Key="GameMediaTemplate" x:DataType="tl:TLBotInlineMediaResult">
             <Grid Margin="8,4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -48,24 +48,24 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="48" Height="48" VerticalAlignment="Top" Margin="0,0,12,0" Grid.RowSpan="2">
-                    <Image Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
+                    <Image Source="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
                 </Grid>
-                <TextBlock Text="{Binding Title}" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                <TextBlock Text="{Binding Description}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
+                <TextBlock Text="{x:Bind Title}" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+                <TextBlock Text="{x:Bind Description}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="PhotoTemplate" x:DataType="models:TLBotInlineMediaResult">
+        <DataTemplate x:Key="PhotoMediaTemplate" x:DataType="tl:TLBotInlineMediaResult">
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{Binding Photo}"
+                <controls:ImageView Source="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{x:Bind Photo}"
                                     IsHitTestVisible="False"
                                     Height="96"/>
                 <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="PhotoResultTemplate" x:DataType="models:TLBotInlineResult">
+        <DataTemplate x:Key="PhotoTemplate" x:DataType="tl:TLBotInlineResult">
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
                 <controls:ImageView Source="{Binding ThumbUrl}"
                                     Constraint="{Binding}"
@@ -74,20 +74,29 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="GifTemplate" x:DataType="models:TLBotInlineResult">
+        <DataTemplate x:Key="GifTemplate" x:DataType="tl:TLBotInlineResult">
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{Binding Photo, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{Binding Photo}"
+                <controls:ImageView Source="{Binding ThumbUrl}"
+                                    Constraint="{Binding}"
+                                    IsHitTestVisible="False"
+                                    Height="96"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GifMediaTemplate" x:DataType="tl:TLBotInlineMediaResult">
+            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
+                <controls:ImageView Source="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{x:Bind Photo}"
                                     IsHitTestVisible="False"
                                     Height="96"/>
                 <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="GifResultTemplate" x:DataType="models:TLBotInlineResult">
-            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{Binding ThumbUrl}"
-                                    Constraint="{Binding}"
+        <DataTemplate x:Key="StickerResultTemplate" x:DataType="tl:TLBotInlineMediaResult">
+            <Grid Background="Transparent" Height="96" Margin="4,8">
+                <controls:ImageView Source="{x:Bind Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{x:Bind Document}"
                                     IsHitTestVisible="False"
                                     Height="96"/>
             </Grid>
@@ -96,11 +105,12 @@
         <selectors:InlineBotResultTemplateSelector
             x:Key="InlineBotResultTemplateSelector"
             ResultTemplate="{StaticResource ResultTemplate}"
-            GameResultTemplate="{StaticResource GameResultTemplate}"
+            GameMediaTemplate="{StaticResource GameMediaTemplate}"
             PhotoTemplate="{StaticResource PhotoTemplate}"
-            PhotoResultTemplate="{StaticResource PhotoResultTemplate}"
+            PhotoMediaTemplate="{StaticResource PhotoMediaTemplate}"
             GifTemplate="{StaticResource GifTemplate}"
-            GifResultTemplate="{StaticResource GifResultTemplate}"/>
+            GifMediaTemplate="{StaticResource GifMediaTemplate}"
+            StickerMediaTemplate="{StaticResource StickerResultTemplate}"/>
 
         <!--<selectors:InlineBotResultTemplateSelector
                 x:Key="InlineBotResultTemplateSelector"
