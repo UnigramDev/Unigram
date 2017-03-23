@@ -53,7 +53,7 @@ namespace Unigram.Services
 
         List<TLMessagesStickerSet> GetStickerSets(int type);
 
-        List<TLStickerSetCoveredBase> GetFeaturedStickerSets();
+        List<TLMessagesStickerSet> GetFeaturedStickerSets();
 
         List<long> GetUnreadStickerSets();
 
@@ -123,8 +123,8 @@ namespace Unigram.Services
 
         private int loadFeaturedHash;
         private int loadFeaturedDate;
-        private List<TLStickerSetCoveredBase> featuredStickerSets = new List<TLStickerSetCoveredBase>();
-        private Dictionary<long, TLStickerSetCoveredBase> featuredStickerSetsById = new Dictionary<long, TLStickerSetCoveredBase>();
+        private List<TLMessagesStickerSet> featuredStickerSets = new List<TLMessagesStickerSet>();
+        private Dictionary<long, TLMessagesStickerSet> featuredStickerSetsById = new Dictionary<long, TLMessagesStickerSet>();
         private List<long> unreadStickerSets = new List<long>();
         private List<long> readingStickerSets = new List<long>();
         private bool loadingFeaturedStickers;
@@ -333,7 +333,7 @@ namespace Unigram.Services
             return stickerSets[type];
         }
 
-        public List<TLStickerSetCoveredBase> GetFeaturedStickerSets()
+        public List<TLMessagesStickerSet> GetFeaturedStickerSets()
         {
             return featuredStickerSets;
         }
@@ -734,7 +734,7 @@ namespace Unigram.Services
             loadingFeaturedStickers = true;
             if (cache)
             {
-                List<TLStickerSetCoveredBase> newStickerArray = null;
+                List<TLMessagesStickerSet> newStickerArray = null;
                 List<long> unread = null;
                 int date = 0;
                 int hash = 0;
@@ -751,7 +751,7 @@ namespace Unigram.Services
                         var data = Sqlite3.sqlite3_column_blob(statement, 0);
                         if (data != null)
                         {
-                            newStickerArray = TLFactory.From<TLVector<TLStickerSetCoveredBase>>(data).ToList();
+                            newStickerArray = TLFactory.From<TLVector<TLMessagesStickerSet>>(data).ToList();
                         }
 
                         var data2 = Sqlite3.sqlite3_column_blob(statement, 1);
@@ -785,35 +785,56 @@ namespace Unigram.Services
                 {
                     if (result is TLMessagesFeaturedStickers res)
                     {
-                        //for (int i = 0; i < res.Sets.Count; i++)
-                        //{
-                        //    if (res.Sets[i] is TLStickerSetCovered covered)
-                        //    {
-                        //        var multi = new TLStickerSetMultiCovered();
-                        //        multi.Set = covered.Set;
-                        //        multi.Covers = new TLVector<TLDocumentBase>();
+                        List<TLMessagesStickerSet> newStickerArray = new List<TLMessagesStickerSet>();
+                        if (res.Sets.Count == 0)
+                        {
+                            ProcessLoadedFeaturedStickers(newStickerArray, res.Unread, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
+                        }
+                        else
+                        {
+                            ConcurrentDictionary<long, TLMessagesStickerSet> newStickerSets = new ConcurrentDictionary<long, TLMessagesStickerSet>();
+                            for (int i = 0; i < res.Sets.Count; i++)
+                            {
+                                TLStickerSetCoveredBase stickerSet = res.Sets[i];
 
-                        //        for (int j = 0; j < res.Documents.Count; j++)
-                        //        {
-                        //            if (res.Documents[j] is TLDocument document && document.StickerSet is TLInputStickerSetID set)
-                        //            {
-                        //                if (covered.Set.Id == set.Id)
-                        //                {
-                        //                    multi.Covers.Add(document);
-                        //                }
-                        //            }
+                                if (featuredStickerSetsById.TryGetValue(stickerSet.Set.Id, out TLMessagesStickerSet oldSet) && oldSet.Set.Hash == stickerSet.Set.Hash)
+                                {
+                                    oldSet.Set.IsArchived = stickerSet.Set.IsArchived;
+                                    oldSet.Set.IsInstalled = stickerSet.Set.IsInstalled;
+                                    oldSet.Set.IsOfficial = stickerSet.Set.IsOfficial;
+                                    newStickerSets[oldSet.Set.Id] = oldSet;
+                                    newStickerArray.Add(oldSet);
 
-                        //            if (multi.Covers.Count == 5)
-                        //            {
-                        //                break;
-                        //            }
-                        //        }
+                                    if (newStickerSets.Count == res.Sets.Count)
+                                    {
+                                        ProcessLoadedFeaturedStickers(newStickerArray, res.Unread, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
+                                    }
+                                    continue;
+                                }
 
-                        //        res.Sets[i] = multi;
-                        //    }
-                        //}
+                                newStickerArray.Add(null);
+                                int index = i;
 
-                        ProcessLoadedFeaturedStickers(res.Sets, res.Unread, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
+                                _protoService.GetStickerSetCallback(new TLInputStickerSetID { Id = stickerSet.Set.Id, AccessHash = stickerSet.Set.AccessHash }, callback =>
+                                {
+                                    newStickerArray[index] = callback;
+                                    newStickerSets[stickerSet.Set.Id] = callback;
+                                    if (newStickerSets.Count == res.Sets.Count)
+                                    {
+                                        for (int j = 0; j < newStickerArray.Count; j++)
+                                        {
+                                            if (newStickerArray[j] == null)
+                                            {
+                                                newStickerArray.RemoveAt(j);
+                                            }
+                                        }
+
+                                        ProcessLoadedFeaturedStickers(newStickerArray, res.Unread, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
+                                    }
+                                });
+
+                            }
+                        }
                     }
                     else
                     {
@@ -823,7 +844,7 @@ namespace Unigram.Services
             }
         }
 
-        private void ProcessLoadedFeaturedStickers(IList<TLStickerSetCoveredBase> res, IList<long> unreadStickers, bool cache, int date, int hash)
+        private void ProcessLoadedFeaturedStickers(IList<TLMessagesStickerSet> res, IList<long> unreadStickers, bool cache, int date, int hash)
         {
             loadingFeaturedStickers = false;
             featuredStickersLoaded = true;
@@ -854,12 +875,12 @@ namespace Unigram.Services
             {
                 try
                 {
-                    List<TLStickerSetCoveredBase> stickerSetsNew = new List<TLStickerSetCoveredBase>();
-                    Dictionary<long, TLStickerSetCoveredBase> stickerSetsByIdNew = new Dictionary<long, TLStickerSetCoveredBase>();
+                    List<TLMessagesStickerSet> stickerSetsNew = new List<TLMessagesStickerSet>();
+                    Dictionary<long, TLMessagesStickerSet> stickerSetsByIdNew = new Dictionary<long, TLMessagesStickerSet>();
 
                     for (int i = 0; i < res.Count; i++)
                     {
-                        TLStickerSetCoveredBase stickerSet = res[i];
+                        TLMessagesStickerSet stickerSet = res[i];
                         stickerSetsNew.Add(stickerSet);
                         stickerSetsByIdNew[stickerSet.Set.Id] = stickerSet;
                     }
@@ -904,9 +925,9 @@ namespace Unigram.Services
             //});
         }
 
-        private void PutFeaturedStickersToCache(IList<TLStickerSetCoveredBase> stickers, IList<long> unreadStickers, int date, int hash)
+        private void PutFeaturedStickersToCache(IList<TLMessagesStickerSet> stickers, IList<long> unreadStickers, int date, int hash)
         {
-            TLVector<TLStickerSetCoveredBase> stickersFinal = stickers != null ? new TLVector<TLStickerSetCoveredBase>(stickers) : null;
+            TLVector<TLMessagesStickerSet> stickersFinal = stickers != null ? new TLVector<TLMessagesStickerSet>(stickers) : null;
 
             try
             {
@@ -960,7 +981,7 @@ namespace Unigram.Services
             }
         }
 
-        private int CalculateFeaturedStickersHash(IList<TLStickerSetCoveredBase> sets)
+        private int CalculateFeaturedStickersHash(IList<TLMessagesStickerSet> sets)
         {
             long acc = 0;
             for (int i = 0; i < sets.Count; i++)
@@ -1088,9 +1109,8 @@ namespace Unigram.Services
 
                 _protoService.SendRequestCallback<TLMessagesAllStickersBase>(req, result =>
                 {
-                    if (result is TLMessagesAllStickers)
+                    if (result is TLMessagesAllStickers res)
                     {
-                        TLMessagesAllStickers res = (TLMessagesAllStickers)result;
                         List<TLMessagesStickerSet> newStickerArray = new List<TLMessagesStickerSet>();
                         if (res.Sets.Count == 0)
                         {
