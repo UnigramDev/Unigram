@@ -137,9 +137,12 @@ namespace Unigram.Services
         {
             _protoService = protoService;
             _cacheService = cacheService;
+
+            //ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", (long)0);
+            //ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", (long)0);
         }
 
-        public void Cleanup()
+    public void Cleanup()
         {
             for (int i = 0; i < 2; i++)
             {
@@ -1099,7 +1102,6 @@ namespace Unigram.Services
                 {
                     req = new TLMessagesGetAllStickers();
                     hash = ((TLMessagesGetAllStickers)req).Hash = force ? 0 : loadHash[type];
-                    hash = ((TLMessagesGetAllStickers)req).Hash = 0;
                 }
                 else
                 {

@@ -45,7 +45,7 @@ namespace Unigram.ViewModels
             };
 
             SavedGifs = new ObservableCollection<TLDocument>();
-            FeaturedStickers = new ObservableCollection<TLStickerSetCoveredBase>();
+            FeaturedStickers = new ObservableCollection<TLStickerSetMultiCovered>();
             SavedStickers = new ObservableCollection<TLMessagesStickerSet>();
         }
 
@@ -117,22 +117,11 @@ namespace Unigram.ViewModels
 
                 foreach (var set in stickers)
                 {
-                    if (set is TLStickerSetMultiCovered)
+                    FeaturedStickers.Add(new TLStickerSetMultiCovered
                     {
-                        FeaturedStickers.Add(set);
-                    }
-                    else
-                    {
-                        var covered = set as TLStickerSetCovered;
-                        FeaturedStickers.Add(new TLStickerSetMultiCovered
-                        {
-                            Set = covered.Set,
-                            Covers = new TLVector<TLDocumentBase>
-                                 {
-                                     covered.Cover
-                                 }
-                        });
-                    }
+                        Set = set.Set,
+                        Covers = new TLVector<TLDocumentBase>(set.Documents.Take(Math.Min(set.Documents.Count, 5)))
+                    });
                 }
             });
         }
@@ -140,7 +129,7 @@ namespace Unigram.ViewModels
         public int SavedGifsHash { get; private set; }
         public ObservableCollection<TLDocument> SavedGifs { get; private set; }
 
-        public ObservableCollection<TLStickerSetCoveredBase> FeaturedStickers { get; private set; }
+        public ObservableCollection<TLStickerSetMultiCovered> FeaturedStickers { get; private set; }
 
         public ObservableCollection<TLMessagesStickerSet> SavedStickers { get; private set; }
 
