@@ -21,19 +21,16 @@ namespace Unigram.ViewModels
     public class DialogStickersViewModel : UnigramViewModelBase
     {
         private readonly IStickersService _stickersService;
-        private readonly IGifsService _gifsService;
 
         private TLMessagesStickerSet _frequentlyUsed;
 
-        public DialogStickersViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService, IGifsService gifsService)
+        public DialogStickersViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService)
             : base(protoService, cacheService, aggregator)
         {
             _stickersService = stickersService;
             _stickersService.RecentsDidLoaded += OnRecentsDidLoaded;
             _stickersService.StickersDidLoaded += OnStickersDidLoaded;
             _stickersService.FeaturedStickersDidLoaded += OnFeaturedStickersDidLoaded;
-
-            _gifsService = gifsService;
 
             _frequentlyUsed = new TLMessagesStickerSet
             {
@@ -53,42 +50,11 @@ namespace Unigram.ViewModels
         {
             if (e.IsGifs)
             {
-                var recent = _stickersService.GetRecentGifs();
-                Execute.BeginOnUIThread(() =>
-                {
-                    SavedGifs.AddRange(recent, true);
-                });
+                ProcessRecentGifs();
             }
             else if (e.Type == StickersService.TYPE_IMAGE)
             {
-                var recent = _stickersService.GetRecentStickers(e.Type);
-                Execute.BeginOnUIThread(() =>
-                {
-                    _frequentlyUsed.Documents = new TLVector<TLDocumentBase>(recent);
-
-                    if (SavedStickers.Count > 0 && SavedStickers[0].Set.ShortName.Equals("tg/recentlyUsed"))
-                    {
-                        SavedStickers.RemoveAt(0);
-                    }
-
-                    if (_frequentlyUsed.Documents.Count > 0)
-                    {
-                        SavedStickers.Insert(0, _frequentlyUsed);
-                    }
-
-                    //var set = new TLMessagesStickerSet
-                    //{
-                    //    Set = new TLStickerSet
-                    //    {
-                    //        Title = "Frequently used",
-                    //        ShortName = "tg/recentlyUsed"
-                    //    },
-                    //    Documents = new TLVector<TLDocumentBase>(recent)
-                    //};
-
-                    //SavedStickers.Clear();
-                    //SavedStickers.Add(set);
-                });
+                ProcessRecentStickers();
             }
         }
 
@@ -98,20 +64,58 @@ namespace Unigram.ViewModels
 
             if (e.Type == StickersService.TYPE_IMAGE)
             {
-                var stickers = _stickersService.GetStickerSets(e.Type);
-                Execute.BeginOnUIThread(() =>
-                {
-                    for (int i = 1; i < SavedStickers.Count; i++)
-                    {
-                        SavedStickers.RemoveAt(i);
-                    }
-
-                    SavedStickers.AddRange(stickers);
-                });
+                ProcessStickers();
             }
         }
 
         private void OnFeaturedStickersDidLoaded(object sender, FeaturedStickersDidLoadedEventArgs e)
+        {
+            ProcessFeaturedStickers();
+        }
+
+        private void ProcessRecentGifs()
+        {
+            var recent = _stickersService.GetRecentGifs();
+            Execute.BeginOnUIThread(() =>
+            {
+                SavedGifs.AddRange(recent, true);
+            });
+        }
+
+        private void ProcessRecentStickers()
+        {
+            var recent = _stickersService.GetRecentStickers(StickersService.TYPE_IMAGE);
+            Execute.BeginOnUIThread(() =>
+            {
+                _frequentlyUsed.Documents = new TLVector<TLDocumentBase>(recent);
+
+                if (SavedStickers.Count > 0 && SavedStickers[0].Set.ShortName.Equals("tg/recentlyUsed"))
+                {
+                    SavedStickers.RemoveAt(0);
+                }
+
+                if (_frequentlyUsed.Documents.Count > 0)
+                {
+                    SavedStickers.Insert(0, _frequentlyUsed);
+                }
+            });
+        }
+
+        private void ProcessStickers()
+        {
+            var stickers = _stickersService.GetStickerSets(StickersService.TYPE_IMAGE);
+            Execute.BeginOnUIThread(() =>
+            {
+                for (int i = 1; i < SavedStickers.Count; i++)
+                {
+                    SavedStickers.RemoveAt(i);
+                }
+
+                SavedStickers.AddRange(stickers);
+            });
+        }
+
+        private void ProcessFeaturedStickers()
         {
             var stickers = _stickersService.GetFeaturedStickerSets();
             Execute.BeginOnUIThread(() =>
@@ -143,6 +147,10 @@ namespace Unigram.ViewModels
                 _stickersService.LoadRecents(StickersService.TYPE_IMAGE, false, true);
                 _stickersService.CheckStickers(StickersService.TYPE_IMAGE);
                 _stickersService.CheckFeaturedStickers();
+
+                ProcessRecentStickers();
+                ProcessFeaturedStickers();
+                ProcessStickers();
 
                 #region Old
                 //var watch = Stopwatch.StartNew();
@@ -253,6 +261,8 @@ namespace Unigram.ViewModels
             Execute.BeginOnThreadPool(() =>
             {
                 _stickersService.LoadRecents(StickersService.TYPE_IMAGE, true, true);
+
+                ProcessRecentGifs();
 
                 #region Old
                 //var gifs = await _gifsService.GetSavedGifs();

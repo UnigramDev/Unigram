@@ -712,6 +712,7 @@ namespace Unigram.Services
                 archivedStickersCount[type] = count;
                 //NotificationCenter.getInstance().postNotificationName(NotificationCenter.archivedStickersCountDidLoaded, new Object[] { Integer.valueOf(type) });
                 ArchivedStickersCountDidLoaded?.Invoke(this, new ArchivedStickersCountDidLoadedEventArgs(type));
+                LoadArchivedStickersCount(type, false);
             }
             else
             {

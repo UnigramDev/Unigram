@@ -45,6 +45,10 @@ namespace Unigram.ViewModels.Settings
                     {
                         _stickersService.CheckFeaturedStickers();
                     }
+
+                    ProcessStickerSets(_type);
+                    OnFeaturedStickersDidLoaded(null, null);
+                    OnArchivedStickersCountDidLoaded(null, null);
                 });
             }
 
