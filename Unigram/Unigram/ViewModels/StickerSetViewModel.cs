@@ -24,8 +24,7 @@ namespace Unigram.ViewModels
         {
             _stickers = stickers;
 
-            Items = new List<KeyedList<TLStickerSet, TLDocument>>();
-            Items.Add(new KeyedList<TLStickerSet, TLDocument>((TLStickerSet)null));
+            Items = new ObservableCollection<TLMessagesStickerSet>();
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -38,8 +37,8 @@ namespace Unigram.ViewModels
                 if (response.IsSucceeded)
                 {
                     StickerSet = response.Result.Set;
-                    Items[0].Key = response.Result.Set;
-                    Items[0].AddRange(response.Result.Documents.OfType<TLDocument>(), true);
+                    Items.Clear();
+                    Items.Add(response.Result);
 
                     IsLoading = false;
                 }
@@ -72,7 +71,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public List<KeyedList<TLStickerSet, TLDocument>> Items { get; private set; }
+        public ObservableCollection<TLMessagesStickerSet> Items { get; private set; }
 
         public RelayCommand SendCommand => new RelayCommand(SendExecute);
         private async void SendExecute()

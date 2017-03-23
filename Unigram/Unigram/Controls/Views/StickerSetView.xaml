@@ -15,7 +15,7 @@
     mc:Ignorable="d">
 
     <controls:ContentDialogBase.Resources>
-        <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.Items}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.Items}" ItemsPath="Documents" IsSourceGrouped="True"/>
     </controls:ContentDialogBase.Resources>
     
     <Grid>
@@ -54,14 +54,15 @@
             <GridView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="tl:TLMessagesStickerSet">
                             <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                                   Height="{ThemeResource AppBarThemeCompactHeight}" 
+                                  Loaded="GroupHeader_Loaded"
                                   VerticalAlignment="Bottom" 
                                   Margin="-12,0">
                                 <Border x:Name="LineAccent" BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}" BorderThickness="0,1,0,0" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                                 <Border x:Name="LineTop" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                                <TextBlock Text="{Binding Key.Title, Mode=OneWay}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <TextBlock Text="{Binding Set.Title}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
                             </Grid>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>

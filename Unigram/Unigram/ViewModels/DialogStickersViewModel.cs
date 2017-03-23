@@ -145,12 +145,12 @@ namespace Unigram.ViewModels
             Execute.BeginOnThreadPool(() =>
             {
                 _stickersService.LoadRecents(StickersService.TYPE_IMAGE, false, true);
-                _stickersService.CheckStickers(StickersService.TYPE_IMAGE);
-                _stickersService.CheckFeaturedStickers();
+                var stickers = _stickersService.CheckStickers(StickersService.TYPE_IMAGE);
+                var featured = _stickersService.CheckFeaturedStickers();
 
                 ProcessRecentStickers();
-                ProcessFeaturedStickers();
-                ProcessStickers();
+                if (stickers) ProcessStickers();
+                if (featured) ProcessFeaturedStickers();
 
                 #region Old
                 //var watch = Stopwatch.StartNew();

@@ -23,11 +23,11 @@ namespace Unigram.Services
     {
         void Cleanup();
 
-        void CheckStickers(int type);
+        bool CheckStickers(int type);
 
-        void CheckArchivedStickersCount(int type);
+        bool CheckArchivedStickersCount(int type);
 
-        void CheckFeaturedStickers();
+        bool CheckFeaturedStickers();
 
         List<TLDocument> GetRecentStickers(int type);
 
@@ -171,28 +171,37 @@ namespace Unigram.Services
             recentGifsLoaded = false;
         }
 
-        public void CheckStickers(int type)
+        public bool CheckStickers(int type)
         {
             if (!loadingStickers[type] && (!stickersLoaded[type] || Math.Abs(Utils.CurrentTimestamp / 1000 - loadDate[type]) >= 60 * 60))
             {
                 LoadStickers(type, true, false);
+                return false;
             }
+
+            return true;
         }
 
-        public void CheckArchivedStickersCount(int type)
+        public bool CheckArchivedStickersCount(int type)
         {
             //if (!loadingStickers[type] && (!stickersLoaded[type] || Math.Abs(Utils.CurrentTimestamp / 1000 - loadDate[type]) >= 60 * 60))
             {
                 LoadArchivedStickersCount(type, true);
+                return false;
             }
+
+            return true;
         }
 
-        public void CheckFeaturedStickers()
+        public bool CheckFeaturedStickers()
         {
             if (!loadingFeaturedStickers && (!featuredStickersLoaded || Math.Abs(Utils.CurrentTimestamp / 1000 - loadFeaturedDate) >= 60 * 60))
             {
                 LoadFeaturedStickers(true, false);
+                return false;
             }
+
+            return true;
         }
 
         public List<TLDocument> GetRecentStickers(int type)

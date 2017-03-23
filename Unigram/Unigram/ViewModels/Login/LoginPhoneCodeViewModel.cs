@@ -66,11 +66,11 @@ namespace Unigram.ViewModels.Login
 
                 var length = 5;
 
-                if (_sentCode.Type is TLAuthSentCodeTypeApp appType)
+                if (_sentCode != null && _sentCode.Type is TLAuthSentCodeTypeApp appType)
                 {
                     length = appType.Length;
                 }
-                else if (_sentCode.Type is TLAuthSentCodeTypeSms smsType)
+                else if (_sentCode != null && _sentCode.Type is TLAuthSentCodeTypeSms smsType)
                 {
                     length = smsType.Length;
                 }
@@ -100,6 +100,12 @@ namespace Unigram.ViewModels.Login
         public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
+            if (_sentCode == null)
+            {
+                //...
+                return;
+            }
+
             var phoneNumber = _phoneNumber;
             var phoneCodeHash = _sentCode.PhoneCodeHash;
 
@@ -174,6 +180,12 @@ namespace Unigram.ViewModels.Login
         public RelayCommand ResendCommand => _resendCommand = _resendCommand ?? new RelayCommand(ResendExecute, () => !IsLoading);
         private async void ResendExecute()
         {
+            if (_sentCode == null)
+            {
+                //...
+                return;
+            }
+
             if (_sentCode.HasNextType)
             {
                 IsLoading = true;

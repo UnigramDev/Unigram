@@ -22,6 +22,7 @@ namespace Unigram.Controls
 {
     public class ContentDialogBase : ContentControl
     {
+        private ApplicationView _applicationView;
         private Popup _popupHost;
 
         private TaskCompletionSource<ContentDialogBaseResult> _callback;
@@ -112,10 +113,13 @@ namespace Unigram.Controls
                 _result = ContentDialogBaseResult.None;
                 _callback = new TaskCompletionSource<ContentDialogBaseResult>();
 
+                _applicationView = ApplicationView.GetForCurrentView();
+
                 if (_popupHost == null)
                 {
                     _popupHost = new Popup();
                     _popupHost.Child = this;
+                    _popupHost.Loading += PopupHost_Loading;
                     _popupHost.Opened += PopupHost_Opened;
                     _popupHost.Closed += PopupHost_Closed;
                 }
@@ -126,17 +130,22 @@ namespace Unigram.Controls
             });
         }
 
+        private void PopupHost_Loading(FrameworkElement sender, object args)
+        {
+            OnVisibleBoundsChanged(_applicationView, null);
+        }
+
         private void PopupHost_Opened(object sender, object e)
         {
             MaskTitleAndStatusBar();
 
             //BackButtonVisibility = SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility;
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
+            _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
             //BootStrapper.BackRequested += BootStrapper_BackRequested;
             //Window.Current.SizeChanged += OnSizeChanged;
 
-            OnVisibleBoundsChanged(ApplicationView.GetForCurrentView(), null);
+            OnVisibleBoundsChanged(_applicationView, null);
         }
 
         private void PopupHost_Closed(object sender, object e)
@@ -146,7 +155,7 @@ namespace Unigram.Controls
             _callback.TrySetResult(_result);
 
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
+            _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
             BootStrapper.BackRequested -= BootStrapper_BackRequested;
         }
 
@@ -205,7 +214,7 @@ namespace Unigram.Controls
 
         private void UpdateViewBase()
         {
-            var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
+            var bounds = _applicationView.VisibleBounds;
             MinWidth = bounds.Width;
             MinHeight = bounds.Height;
             MaxWidth = bounds.Width;
@@ -214,11 +223,22 @@ namespace Unigram.Controls
             UpdateView(bounds);
         }
 
+        protected bool IsFullScreenMode()
+        {
+            var bounds = _applicationView.VisibleBounds;
+            return IsFullScreenMode(bounds);
+        }
+
+        protected virtual bool IsFullScreenMode(Rect bounds)
+        {
+            return (HorizontalAlignment == HorizontalAlignment.Stretch && VerticalAlignment == VerticalAlignment.Stretch) || (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500));
+        }
+
         protected virtual void UpdateView(Rect bounds)
         {
             if (BackgroundElement == null) return;
 
-            if ((HorizontalAlignment == HorizontalAlignment.Stretch && VerticalAlignment == VerticalAlignment.Stretch) || (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500)))
+            if (IsFullScreenMode(bounds))
             {
                 BackgroundElement.MinWidth = bounds.Width;
                 BackgroundElement.MinHeight = bounds.Height;
@@ -227,9 +247,9 @@ namespace Unigram.Controls
             else
             {
                 BackgroundElement.MinWidth = Math.Min(360, bounds.Width);
-                BackgroundElement.MinHeight = Math.Min(500, bounds.Height);
+                BackgroundElement.MinHeight = Math.Min(460, bounds.Height);
                 BackgroundElement.MaxWidth = Math.Min(360, bounds.Width);
-                BackgroundElement.MaxHeight = Math.Min(500, bounds.Height);
+                BackgroundElement.MaxHeight = Math.Min(460, bounds.Height);
 
                 if (BackgroundElement.MinWidth == bounds.Width && BackgroundElement.MinHeight == bounds.Height)
                 {

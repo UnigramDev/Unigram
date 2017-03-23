@@ -74,15 +74,9 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickerSetBase parameter, ItemClickEventHandler callback)
         {
-            if (_scrollingHost != null)
-            {
-                _scrollingHost.ChangeView(null, 0, null, true);
-            }
-
             ViewModel.IsLoading = true;
             ViewModel.StickerSet = new TLStickerSet();
-            ViewModel.Items[0].Key = new TLStickerSet();
-            ViewModel.Items[0].Clear();
+            ViewModel.Items.Clear();
 
             RoutedEventHandler handler = null;
             handler = new RoutedEventHandler(async (s, args) =>
@@ -103,15 +97,10 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessagesStickerSet parameter, ItemClickEventHandler callback)
         {
-            if (_scrollingHost != null)
-            {
-                _scrollingHost.ChangeView(null, 0, null, true);
-            }
-
             ViewModel.IsLoading = false;
             ViewModel.StickerSet = parameter.Set;
-            ViewModel.Items[0].Key = parameter.Set;
-            ViewModel.Items[0].AddRange(parameter.Documents.OfType<TLDocument>(), true);
+            ViewModel.Items.Clear();
+            ViewModel.Items.Add(parameter);
 
             return ShowAsync();
         }
@@ -141,13 +130,11 @@ namespace Unigram.Controls.Views
 
         private void GridView_Loaded(object sender, RoutedEventArgs e)
         {
-            LineTop = List.Descendants<Border>().FirstOrDefault(x => ((Border)x).Name.Equals("LineTop")) as Border;
-            LineAccent = List.Descendants<Border>().FirstOrDefault(x => ((Border)x).Name.Equals("LineAccent")) as Border;
-
             var scroll = List.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
             if (scroll != null)
             {
                 _scrollingHost = scroll;
+                _scrollingHost.ChangeView(null, 0, null, true);
                 scroll.ViewChanged += Scroll_ViewChanged;
                 Scroll_ViewChanged(scroll, null);
 
@@ -187,15 +174,35 @@ namespace Unigram.Controls.Views
             }
         }
 
+        private void GroupHeader_Loaded(object sender, RoutedEventArgs e)
+        {
+            var groupHeader = sender as Grid;
+            if (groupHeader != null)
+            {
+                LineTop = groupHeader.FindName("LineTop") as Border;
+                LineAccent = groupHeader.FindName("LineAccent") as Border;
+
+                if (_scrollingHost != null)
+                {
+                    Scroll_ViewChanged(_scrollingHost, null);
+                }
+            }
+        }
+
         private void Scroll_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scroll = sender as ScrollViewer;
             var top = 1;
+            var accent = 0;
             var bottom = 1;
 
             if (scroll.VerticalOffset <= BackgroundPanel.Margin.Top)
             {
                 top = 0;
+            }
+            if (scroll.VerticalOffset < BackgroundPanel.Margin.Top)
+            {
+                accent = 1;
             }
             if (scroll.VerticalOffset == scroll.ScrollableHeight)
             {
@@ -214,9 +221,12 @@ namespace Unigram.Controls.Views
             //    }
             //}
 
-            LineTop.BorderThickness = new Thickness(0, 0, 0, top);
-            LineAccent.BorderThickness = new Thickness(0, top > 0 ? 0 : 1, 0, 0);
-            LineBottom.BorderThickness = new Thickness(0, bottom, 0, 0);
+            if (LineTop != null)
+            {
+                LineTop.BorderThickness = new Thickness(0, 0, 0, top);
+                LineAccent.BorderThickness = new Thickness(0, accent, 0, 0);
+                LineBottom.BorderThickness = new Thickness(0, bottom, 0, 0);
+            }
         }
 
         // SystemControlBackgroundChromeMediumLowBrush
@@ -245,6 +255,20 @@ namespace Unigram.Controls.Views
             var itemWidth = (e.NewSize.Width - 24) / 5d;
             var minHeigth = itemWidth * 3d - 12 + 48;
             var top = Math.Max(0, e.NewSize.Height - minHeigth);
+
+            if (!IsFullScreenMode())
+            {
+                top = 0;
+            }
+
+            if (top == 0)
+            {
+                Header.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Header.Visibility = Visibility.Visible;
+            }
 
             Header.Height = top;
 

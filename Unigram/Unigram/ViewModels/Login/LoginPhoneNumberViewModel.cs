@@ -23,7 +23,6 @@ namespace Unigram.ViewModels.Login
         public LoginPhoneNumberViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-
             var alphabet = "abcdefghijklmnopqrstuvwxyz";
             var list = new List<KeyedList<string, Country>>(alphabet.Length);
             var dictionary = new Dictionary<string, KeyedList<string, Country>>();
@@ -42,16 +41,6 @@ namespace Unigram.ViewModels.Login
             }
 
             Countries = list;
-
-            // IDEA FELA
-
-            //if(SelectedCountry == null)
-            //{
-            //    SelectedCountry = Countries[0][0];
-            //}
-
-            // Oldimplementation, keeping it till further investigation.
-            // This portion is moved in a RelayCommand in MATEI'S IDEA.
 
             ProtoService.GotUserCountry += GotUserCountry;
 
@@ -79,10 +68,6 @@ namespace Unigram.ViewModels.Login
                 }
             }
 
-            // IDEA MATEI
-            //if (country != null && string.IsNullOrEmpty(PhoneNumber))
-
-            // Old implementation, keeping it til further investigation
             if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
             {
                 Execute.BeginOnUIThread(() =>
@@ -187,35 +172,22 @@ namespace Unigram.ViewModels.Login
 
             IsLoading = true;
 
-            var result = await ProtoService.SendCodeAsync(PhoneCode + PhoneNumber, /* TODO: Verify */ null);
-            if (result?.IsSucceeded == true)
+            var response = await ProtoService.SendCodeAsync(PhoneCode + PhoneNumber, /* TODO: Verify */ null);
+            if (response.IsSucceeded)
             {
                 var state = new LoginPhoneCodePage.NavigationParameters
                 {
                     PhoneNumber = PhoneCode.TrimStart('+') + PhoneNumber,
-                    Result = result.Result,
+                    Result = response.Result,
                 };
 
                 NavigationService.Navigate(typeof(LoginPhoneCodePage), state);
             }
-            else if (result.Error != null)
+            else if (response.Error != null)
             {
                 IsLoading = false;
-                await new MessageDialog(result.Error.ErrorMessage ?? "Error message", result.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
             }
         }
-
-        // IDEA MATEI
-
-        //public RelayCommand LocalizeCommand => new RelayCommand(LocalizeExecute);
-        //private void LocalizeExecute()
-        //{
-        //    ProtoService.GotUserCountry += GotUserCountry;
-
-        //    if (!string.IsNullOrEmpty(ProtoService.Country))
-        //    {
-        //        GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
-        //    }
-        //}
     }
 }

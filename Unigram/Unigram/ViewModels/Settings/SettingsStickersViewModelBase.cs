@@ -38,16 +38,16 @@ namespace Unigram.ViewModels.Settings
             {
                 Execute.BeginOnThreadPool(() =>
                 {
-                    _stickersService.CheckStickers(_type);
+                    var stickers = _stickersService.CheckStickers(_type);
                     _stickersService.CheckArchivedStickersCount(_type);
 
                     if (_type == StickersService.TYPE_IMAGE)
                     {
-                        _stickersService.CheckFeaturedStickers();
+                        var featured = _stickersService.CheckFeaturedStickers();
+                        if (featured) OnFeaturedStickersDidLoaded(null, null);
                     }
 
-                    ProcessStickerSets(_type);
-                    OnFeaturedStickersDidLoaded(null, null);
+                    if (stickers) ProcessStickerSets(_type);
                     OnArchivedStickersCountDidLoaded(null, null);
                 });
             }
