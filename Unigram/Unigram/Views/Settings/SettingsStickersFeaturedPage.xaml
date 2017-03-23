@@ -29,62 +29,28 @@
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   Grid.Row="1">
-            <ListView.ItemTemplateSelector>
-                <selectors:StickerSetCoveredTemplateSelector>
-                    <selectors:StickerSetCoveredTemplateSelector.CoveredTemplate>
-                        <DataTemplate x:DataType="tl:TLStickerSetCovered">
-                            <Grid Margin="0,6" Background="Transparent">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="48"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                    <Grid Margin="0,6" Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                                <Image x:Phase="3" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+                        <Image x:Phase="3" Source="{x:Bind Documents[0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
 
-                                <TextBlock Text="{x:Bind Set.Title}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                                <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1">
-                                    <Run Text="{x:Bind Set.Count}"/>
-                                    <Run Text="stickers"/>
-                                </TextBlock>
-
-                                <controls:GlyphButton Visibility="{x:Bind Set.IsInstalled, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Glyph="&#xE109;" Grid.Column="2" Grid.RowSpan="2"/>
-                                <FontIcon Visibility="{x:Bind (Visibility)Set.IsInstalled}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Glyph="&#xE10B;" Grid.Column="2" Grid.RowSpan="2"/>
-                            </Grid>
-                        </DataTemplate>
-                    </selectors:StickerSetCoveredTemplateSelector.CoveredTemplate>
-                    <selectors:StickerSetCoveredTemplateSelector.MultiCoveredTemplate>
-                        <DataTemplate x:DataType="tl:TLStickerSetMultiCovered">
-                            <Grid Margin="0,6" Background="Transparent">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="48"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <Image x:Phase="3" Source="{x:Bind Covers[0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
-
-                                <TextBlock Text="{x:Bind Set.Title}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                                <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1">
-                                    <Run Text="{x:Bind Set.Count}"/>
-                                    <Run Text="stickers"/>
-                                </TextBlock>
-
-                                <controls:GlyphButton Visibility="{x:Bind Set.IsInstalled, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Glyph="&#xE109;" Grid.Column="2" Grid.RowSpan="2"/>
-                                <FontIcon Visibility="{x:Bind (Visibility)Set.IsInstalled}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Glyph="&#xE10B;" Grid.Column="2" Grid.RowSpan="2"/>
-                            </Grid>
-                        </DataTemplate>
-                    </selectors:StickerSetCoveredTemplateSelector.MultiCoveredTemplate>
-                </selectors:StickerSetCoveredTemplateSelector>
-            </ListView.ItemTemplateSelector>
+                        <TextBlock Text="{x:Bind Set.Title}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+                        <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1">
+                            <Run Text="{x:Bind Set.Count}"/>
+                            <Run Text="stickers"/>
+                        </TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
