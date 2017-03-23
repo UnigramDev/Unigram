@@ -61,21 +61,17 @@ namespace Unigram.Controls.Views
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Pivot.SelectedIndex == 0)
+            if (Pivot.SelectedIndex != 2)
             {
-                if (Toolbar.Items.Count > 0)
-                {
-                    Toolbar.SelectedIndex = 0;
-                }
-            }
-            else
-            {
-                // TODO
+                Toolbar.SelectedItem = null;
             }
         }
 
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Pivot.SelectedIndex = 2;
+            //Stickers.ScrollIntoView(((TLMessagesStickerSet)Toolbar.SelectedItem).Documents[0]);
+
             //Pivot.SelectedIndex = Math.Min(1, Toolbar.SelectedIndex);
             //Stickers.ScrollIntoView(ViewModel.StickerSets[Toolbar.SelectedIndex][0]);
         }
@@ -83,7 +79,7 @@ namespace Unigram.Controls.Views
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollingHost = Stickers.ItemsPanelRoot as ItemsWrapGrid;
-            if (scrollingHost != null)
+            if (scrollingHost != null && Pivot.SelectedIndex == 2)
             {
                 var first = Stickers.ContainerFromIndex(scrollingHost.FirstVisibleIndex);
                 if (first != null)

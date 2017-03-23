@@ -262,7 +262,7 @@
                       ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
                       Height="{ThemeResource AppBarThemeCompactHeight}"
                       Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                      SelectionChanged="ListView_SelectionChanged"
+                      SelectionChanged="Toolbar_SelectionChanged"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                       ScrollViewer.HorizontalScrollMode="Auto"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"
@@ -287,14 +287,14 @@
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="tl:TLMessagesStickerSet">
-                        <Image Margin="4" Source="{x:Bind Documents[0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
+                        <Image Margin="4" Source="{x:Bind Documents[0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.Header>
                     <StackPanel Orientation="Horizontal">
                         <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="0" Glyph="&#xE608;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
                         <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE945;"/>
-                        <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="2" Glyph="&#xE121;"/>
+                        <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="2" Glyph="&#xE121;" Visibility="Collapsed"/>
                     </StackPanel>
                 </ListView.Header>
                 <ListView.Footer>
