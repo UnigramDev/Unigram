@@ -53,7 +53,7 @@
                 </StackPanel>
 
                 <StackPanel Padding="12,8">
-                    <HyperlinkButton Content="Reset All Notifications" Foreground="Red"/>
+                    <HyperlinkButton Command="{x:Bind ViewModel.ResetCommand}" Content="Reset All Notifications" Foreground="Red"/>
                     <TextBlock Text="Undo all custom notification settings for all your contacts and groups." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>

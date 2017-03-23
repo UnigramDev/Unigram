@@ -288,7 +288,7 @@
         <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" />
         <Setter Property="OverlayBrush" Value="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}" />
         <Setter Property="HorizontalAlignment" Value="Center" />
-        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="MaxHeight" Value="Infinity" />
         <Setter Property="MinHeight" Value="{ThemeResource ContentDialogMinHeight}" />

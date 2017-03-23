@@ -10,10 +10,10 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    VerticalAlignment="Center"
-    RequestedTheme="Dark">
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch">
 
-    <Grid Background="Black">
+    <Grid Background="Black" RequestedTheme="Dark">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState>
@@ -50,7 +50,7 @@
                     Grid.ColumnSpan="2">
             <FlipView.ItemTemplate>
                 <DataTemplate>
-                    <Image Source="{Binding Preview}"/>
+                    <Image Source="{Binding Preview}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>

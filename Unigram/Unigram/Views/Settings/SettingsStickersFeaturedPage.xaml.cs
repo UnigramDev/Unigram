@@ -36,8 +36,7 @@ namespace Unigram.Views.Settings
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var set = (TLStickerSetCoveredBase)e.ClickedItem;
-            await StickerSetView.Current.ShowAsync(new TLInputStickerSetID { Id = set.Set.Id, AccessHash = set.Set.AccessHash });
+            await StickerSetView.Current.ShowAsync((TLMessagesStickerSet)e.ClickedItem);
         }
     }
 }

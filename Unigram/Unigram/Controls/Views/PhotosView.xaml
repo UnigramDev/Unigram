@@ -10,10 +10,9 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     HorizontalAlignment="Stretch"
-    VerticalAlignment="Stretch"
-    RequestedTheme="Dark">
+    VerticalAlignment="Stretch">
 
-    <Grid x:Name="LayoutRoot">
+    <Grid x:Name="LayoutRoot" RequestedTheme="Dark">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>

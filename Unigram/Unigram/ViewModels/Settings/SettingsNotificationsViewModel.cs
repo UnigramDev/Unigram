@@ -8,8 +8,11 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Common;
+using Unigram.Controls;
 using Windows.Foundation.Metadata;
 using Windows.Phone.Devices.Notification;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -272,6 +275,28 @@ namespace Unigram.ViewModels.Settings
                     GroupAlert = settings.MuteUntil == 0;
                     GroupPreview = settings.IsShowPreviews;
                 });
+            }
+        }
+
+        public RelayCommand ResetCommand => new RelayCommand(ResetExecute);
+        private async void ResetExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync("Reset all notifications?", "Confirm", "OK", "Cancel");
+            if (confirm == ContentDialogResult.Primary)
+            {
+                _suppressUpdating = true;
+                PrivateAlert = true;
+                PrivatePreview = true;
+                PrivateSound = string.Empty;
+                GroupAlert = true;
+                GroupPreview = true;
+                GroupSound = string.Empty;
+                InAppSounds = true;
+                InAppPreview = true;
+                InAppVibrate = true;
+                _suppressUpdating = false;
+
+                var response = await ProtoService.ResetNotifySettingsAsync();
             }
         }
     }
