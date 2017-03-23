@@ -71,7 +71,10 @@ namespace Unigram.ViewModels
                         SavedStickers.RemoveAt(0);
                     }
 
-                    SavedStickers.Insert(0, _frequentlyUsed);
+                    if (_frequentlyUsed.Documents.Count > 0)
+                    {
+                        SavedStickers.Insert(0, _frequentlyUsed);
+                    }
 
                     //var set = new TLMessagesStickerSet
                     //{

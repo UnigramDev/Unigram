@@ -69,7 +69,7 @@
                             <common:FluidGridViewTrigger RowsOrColumns="5"/>
                         </common:FluidGridView.Triggers>
                         <GridView.Header>
-                            <Border Padding="12,8,0,9" Margin="-10,0">
+                            <Border Padding="12,8,0,8" Height="32" Margin="-10,0">
                                 <TextBlock Text="Saved GIFs" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </Border>
                         </GridView.Header>
@@ -96,10 +96,10 @@
                               ItemsSource="{x:Bind ViewModel.Stickers.FeaturedStickers}"
                               IsItemClickEnabled="True"
                               SelectionMode="None"
-                              ItemClick="Gifs_ItemClick"
-                              Loaded="Gifs_Loaded">
+                              ItemClick="Featured_ItemClick"
+                              Loaded="Featured_Loaded">
                         <ListView.Header>
-                            <Border Padding="12,8,0,9">
+                            <Border Padding="12,8,0,8" Height="32">
                                 <TextBlock Text="Trending stickers" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </Border>
                         </ListView.Header>
@@ -186,10 +186,11 @@
                                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                                 <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                                 <Setter Property="Margin" Value="0,0,0,0"/>
-                                                <Setter Property="Padding" Value="0,8,0,9"/>
+                                                <Setter Property="Padding" Value="0,8,0,8"/>
                                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                                 <Setter Property="VerticalContentAlignment" Value="Top" />
-                                                <Setter Property="MinHeight" Value="0"/>
+                                                <Setter Property="MinHeight" Value="32"/>
+                                                <Setter Property="Height" Value="32"/>
                                                 <Setter Property="UseSystemFocusVisuals" Value="True" />
                                                 <Setter Property="Template">
                                                     <Setter.Value>
@@ -286,14 +287,14 @@
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="tl:TLMessagesStickerSet">
-                        <Border/>
-                        <!--<Image Margin="4" Source="{x:Bind Documents[0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>-->
+                        <Image Margin="4" Source="{x:Bind Documents[0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.Header>
                     <StackPanel Orientation="Horizontal">
                         <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="0" Glyph="&#xE608;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
                         <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE945;"/>
+                        <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="2" Glyph="&#xE121;"/>
                     </StackPanel>
                 </ListView.Header>
                 <ListView.Footer>

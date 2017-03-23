@@ -57,6 +57,16 @@ namespace Unigram.Controls.Views
 
         public ItemClickEventHandler ItemClick { get; set; }
 
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSet parameter)
+        {
+            return ShowAsync(parameter, null);
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSet parameter, ItemClickEventHandler callback)
+        {
+            return ShowAsync(new TLInputStickerSetID { Id = parameter.Id, AccessHash = parameter.AccessHash }, callback);
+        }
+
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickerSetBase parameter)
         {
             return ShowAsync(parameter, null);

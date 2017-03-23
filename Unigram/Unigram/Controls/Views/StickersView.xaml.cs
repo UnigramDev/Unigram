@@ -97,5 +97,15 @@ namespace Unigram.Controls.Views
                 }
             }
         }
+
+        private async void Featured_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            await StickerSetView.Current.ShowAsync(((TLStickerSetCoveredBase)e.ClickedItem).Set);
+        }
+
+        private void Featured_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
