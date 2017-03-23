@@ -39,6 +39,7 @@ using Windows.ApplicationModel.Core;
 using System.Collections;
 using Telegram.Api.TL;
 using System.Collections.Generic;
+using Unigram.Core.Services;
 
 namespace Unigram
 {
@@ -206,6 +207,11 @@ namespace Unigram
             BadgeUpdateManager.CreateBadgeUpdaterForApplication().Clear();
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
             ToastNotificationManager.History.Clear();
+
+            Execute.BeginOnThreadPool(async () =>
+            {
+                await new AppUpdateService().CheckForUpdatesAsync();
+            });
 
             try
             {

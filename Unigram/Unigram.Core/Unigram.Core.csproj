@@ -144,6 +144,7 @@
     <Compile Include="Rtf\Write\RtfTable.cs" />
     <Compile Include="Rtf\Write\RtfTableCell.cs" />
     <Compile Include="Rtf\Write\RtfUtility.cs" />
+    <Compile Include="Services\AppUpdateService.cs" />
     <Compile Include="Services\ContactsService.cs" />
     <Compile Include="Services\DialogsService.cs" />
     <Compile Include="Services\GifsService.cs" />

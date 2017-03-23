@@ -72,6 +72,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
             container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
 
             // ViewModels
             container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();

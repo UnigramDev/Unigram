@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Unigram.Core.Common
@@ -14,6 +15,11 @@ namespace Unigram.Core.Common
             {
                 list[item.Key] = item.Value;
             }
+        }
+
+        public static string RegexReplace(this string input, string pattern, string replacement)
+        {
+            return Regex.Replace(input, pattern, replacement);
         }
     }
 }
