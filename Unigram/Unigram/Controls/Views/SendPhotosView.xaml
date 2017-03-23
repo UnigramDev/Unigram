@@ -50,7 +50,9 @@
                     Grid.ColumnSpan="2">
             <FlipView.ItemTemplate>
                 <DataTemplate>
-                    <Image Source="{Binding Preview}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+                    <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" StretchDirection="DownOnly">
+                        <Image Source="{Binding Preview}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
+                    </Viewbox>
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>
