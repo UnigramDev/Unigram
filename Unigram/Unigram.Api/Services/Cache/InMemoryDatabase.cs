@@ -1501,7 +1501,10 @@ namespace Telegram.Api.Services.Cache
 
         public void DeleteUser(int? id)
         {
-            UsersContext.Remove(id.Value);
+            if (id.HasValue)
+            {
+                UsersContext.Remove(id.Value);
+            }
         }
 
         public void DeleteUser(TLUserBase user)
@@ -1561,7 +1564,10 @@ namespace Telegram.Api.Services.Cache
 
         public void DeleteChat(int? id)
         {
-            ChatsContext.Remove(id.Value);
+            if (id.HasValue)
+            {
+                ChatsContext.Remove(id.Value);
+            }
         }
 
         public void DeleteChat(TLChatBase chat)

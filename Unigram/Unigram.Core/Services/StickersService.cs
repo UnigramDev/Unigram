@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -1077,6 +1078,7 @@ namespace Unigram.Services
                 {
                     req = new TLMessagesGetAllStickers();
                     hash = ((TLMessagesGetAllStickers)req).Hash = force ? 0 : loadHash[type];
+                    hash = ((TLMessagesGetAllStickers)req).Hash = 0;
                 }
                 else
                 {
@@ -1084,7 +1086,7 @@ namespace Unigram.Services
                     hash = ((TLMessagesGetMaskStickers)req).Hash = force ? 0 : loadHash[type];
                 }
 
-                _protoService.SendRequestCallback<TLMessagesAllStickersBase>(req, async result =>
+                _protoService.SendRequestCallback<TLMessagesAllStickersBase>(req, result =>
                 {
                     if (result is TLMessagesAllStickers)
                     {
@@ -1096,7 +1098,7 @@ namespace Unigram.Services
                         }
                         else
                         {
-                            Dictionary<long, TLMessagesStickerSet> newStickerSets = new Dictionary<long, TLMessagesStickerSet>();
+                            ConcurrentDictionary<long, TLMessagesStickerSet> newStickerSets = new ConcurrentDictionary<long, TLMessagesStickerSet>();
                             for (int i = 0; i < res.Sets.Count; i++)
                             {
                                 TLStickerSet stickerSet = res.Sets[i];
@@ -1119,12 +1121,10 @@ namespace Unigram.Services
                                 newStickerArray.Add(null);
                                 int index = i;
 
-                                var response = await _protoService.GetStickerSetAsync(new TLInputStickerSetID { Id = stickerSet.Id, AccessHash = stickerSet.AccessHash });
-                                if (response.IsSucceeded)
+                                _protoService.GetStickerSetCallback(new TLInputStickerSetID { Id = stickerSet.Id, AccessHash = stickerSet.AccessHash }, callback =>
                                 {
-                                    TLMessagesStickerSet res1 = (TLMessagesStickerSet)response.Result;
-                                    newStickerArray[index] = res1;
-                                    newStickerSets[stickerSet.Id] = res1;
+                                    newStickerArray[index] = callback;
+                                    newStickerSets[stickerSet.Id] = callback;
                                     if (newStickerSets.Count == res.Sets.Count)
                                     {
                                         for (int j = 0; j < newStickerArray.Count; j++)
@@ -1134,14 +1134,10 @@ namespace Unigram.Services
                                                 newStickerArray.RemoveAt(j);
                                             }
                                         }
+
                                         ProcessLoadedStickers(type, newStickerArray, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
                                     }
-
-                                }
-
-                                //_protoService.GetStickerSetCallback(new TLInputStickerSetID { Id = stickerSet.Id, AccessHash = stickerSet.AccessHash }, callback =>
-                                //{
-                                //});
+                                });
 
                             }
                         }
