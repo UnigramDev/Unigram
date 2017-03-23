@@ -324,7 +324,7 @@ namespace Unigram.Controls.Items
                             int currentUserId = MTProtoService.Current.CurrentUserId;
                             if (currentUserId == from)
                             {
-                                if (dialog.Index != from && !message.IsPost)
+                                if (dialog.Id != from && !message.IsPost)
                                 {
                                     return "You: ";
                                 }

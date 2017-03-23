@@ -113,7 +113,7 @@ namespace Unigram.Collections
                     var currentPosition = IndexOf(e.Dialog);
                     if (currentPosition < 0)
                     {
-                        var already = this.FirstOrDefault(x => x.Index == e.Dialog.Index);
+                        var already = this.FirstOrDefault(x => x.Id == e.Dialog.Id);
                         if (already != null)
                         {
                             currentPosition = IndexOf(already);
@@ -396,14 +396,14 @@ namespace Unigram.Collections
                     var clearedDialogs = new List<TLDialog>();
                     foreach (var current in dialogs)
                     {
-                        if (!dictionary.ContainsKey(current.Index))
+                        if (!dictionary.ContainsKey(current.Id))
                         {
                             clearedDialogs.Add(current);
-                            dictionary[current.Index] = current;
+                            dictionary[current.Id] = current;
                         }
                         else
                         {
-                            var tLDialogBase = dictionary[current.Index];
+                            var tLDialogBase = dictionary[current.Id];
                             if (tLDialogBase.Peer is TLPeerUser && current.Peer is TLPeerUser)
                             {
                                 _cacheService.DeleteDialog(current);

@@ -205,7 +205,7 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(() =>
             {
-                var dialog = Items.FirstOrDefault(x => x.Index == args.Dialog.Index);
+                var dialog = Items.FirstOrDefault(x => x.Id == args.Dialog.Id);
                 if (dialog != null)
                 {
                     Items.Remove(dialog);
@@ -277,7 +277,7 @@ namespace Unigram.ViewModels
 
                 for (int i = 0; i < Items.Count; i++)
                 {
-                    if (Items[i].Index == msgId && Items[i].TopMessage != null && Items[i].TopMessage == message.Id)
+                    if (Items[i].Id == msgId && Items[i].TopMessage != null && Items[i].TopMessage == message.Id)
                     {
                         Items[i].RaisePropertyChanged(() => Items[i].Self);
                     }
@@ -297,7 +297,7 @@ namespace Unigram.ViewModels
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
-                    if (Items[i].Index == message.ToId.Id && Items[i].TopMessage != null && Items[i].TopMessage == message.Id)
+                    if (Items[i].Id == message.ToId.Id && Items[i].TopMessage != null && Items[i].TopMessage == message.Id)
                     {
                         Items[i].RaisePropertyChanged(() => Items[i].Self);
                     }
@@ -312,7 +312,7 @@ namespace Unigram.ViewModels
                 TLDialog dialog = null;
                 for (int i = 0; i < Items.Count; i++)
                 {
-                    if (Items[i].Index == update.Peer.Id)
+                    if (Items[i].Id == update.Peer.Id)
                     {
                         dialog = (Items[i] as TLDialog);
                         if (dialog != null)
@@ -347,7 +347,7 @@ namespace Unigram.ViewModels
                 TLDialog dialog = null;
                 for (int i = 0; i < Items.Count; i++)
                 {
-                    if (Items[i].Index == update.Peer.Id)
+                    if (Items[i].Id == update.Peer.Id)
                     {
                         dialog = (Items[i] as TLDialog);
                         if (dialog != null)
@@ -412,7 +412,7 @@ namespace Unigram.ViewModels
 
                     for (int i = 0; i < update.Order.Count; i++)
                     {
-                        var dialog = Items.FirstOrDefault(x => x.Index == update.Order[i].Id);
+                        var dialog = Items.FirstOrDefault(x => x.Id == update.Order[i].Id);
                         if (dialog != null)
                         {
                             dialog.PinnedIndex = i;
@@ -620,7 +620,7 @@ namespace Unigram.ViewModels
                     var currentPosition = Items.IndexOf(e.Dialog);
                     if (currentPosition == -1)
                     {
-                        var already = Items.FirstOrDefault(x => x.Index == e.Dialog.Index);
+                        var already = Items.FirstOrDefault(x => x.Id == e.Dialog.Id);
                         if (already != null)
                         {
                             Execute.BeginOnUIThread(async () => await new MessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
@@ -862,7 +862,7 @@ namespace Unigram.ViewModels
 
                 foreach (var result in contactsResults)
                 {
-                    var dialog = parent.FirstOrDefault(x => x.Peer.TypeId == TLType.PeerUser && x.Index == result.Id);
+                    var dialog = parent.FirstOrDefault(x => x.Peer.TypeId == TLType.PeerUser && x.Id == result.Id);
                     if (dialog == null)
                     {
                         simple.Add(new TLDialog
@@ -998,7 +998,7 @@ namespace Unigram.ViewModels
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
-                    if (Items[i].Index == dialog.Index)
+                    if (Items[i].Id == dialog.Id)
                     {
                         dialog = (Items[i] as TLDialog);
                         Items.RemoveAt(i);
@@ -1111,7 +1111,7 @@ namespace Unigram.ViewModels
 
                 for (int i = 0; i < Items.Count; i++)
                 {
-                    if (Items[i].Index == dialog.Index)
+                    if (Items[i].Id == dialog.Id)
                     {
                         dialog = (Items[i] as TLDialog);
                         Items.RemoveAt(i);

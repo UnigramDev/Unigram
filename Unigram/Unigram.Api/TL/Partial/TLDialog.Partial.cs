@@ -270,7 +270,7 @@ namespace Telegram.Api.TL
             }
         }
 
-        public int Index
+        public int Id
         {
             get { return Peer != null && Peer.Id != null ? Peer.Id : default(int); }
         }

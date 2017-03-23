@@ -1696,7 +1696,7 @@ namespace Telegram.Api.Services.Cache
                 TLDialog cachedDialog = null;
                 if (DialogsContext != null)
                 {
-                    cachedDialog = DialogsContext[dialog.Index] as TLDialog;
+                    cachedDialog = DialogsContext[dialog.Id] as TLDialog;
                 }
                 //Debug.WriteLine("messages.getDialogs sync dialogs stop get cached elapsed=" + stopwatch.Elapsed);
 
@@ -1746,7 +1746,7 @@ namespace Telegram.Api.Services.Cache
                 TLDialog cachedDialog = null;
                 if (DialogsContext != null)
                 {
-                    cachedDialog = DialogsContext[dialog.Index] as TLDialog;
+                    cachedDialog = DialogsContext[dialog.Id] as TLDialog;
                 }
 
                 if (cachedDialog != null)
@@ -1866,21 +1866,21 @@ namespace Telegram.Api.Services.Cache
                 {
                     if (dialog.Peer is TLPeerChannel)
                     {
-                        if (chatsIndex.TryGetValue(dialog.Index, out TLChatBase chat))
+                        if (chatsIndex.TryGetValue(dialog.Id, out TLChatBase chat))
                         {
                             chat.NotifySettings = dialog.NotifySettings;
                         }
                     }
                     else if (dialog.Peer is TLPeerChat)
                     {
-                        if (chatsIndex.TryGetValue(dialog.Index, out TLChatBase chat))
+                        if (chatsIndex.TryGetValue(dialog.Id, out TLChatBase chat))
                         {
                             chat.NotifySettings = dialog.NotifySettings;
                         }
                     }
                     else if (dialog.Peer is TLPeerUser)
                     {
-                        if (usersIndex.TryGetValue(dialog.Index, out TLUserBase user))
+                        if (usersIndex.TryGetValue(dialog.Id, out TLUserBase user))
                         {
                             user.NotifySettings = dialog.NotifySettings;
                         }
@@ -1892,7 +1892,7 @@ namespace Telegram.Api.Services.Cache
                 {
                     if (dialog.Peer is TLPeerChannel)
                     {
-                        if (chatsIndex.TryGetValue(dialog.Index, out TLChatBase chatBase))
+                        if (chatsIndex.TryGetValue(dialog.Id, out TLChatBase chatBase))
                         {
                             var chat = chatBase as ITLReadMaxId;
                             if (chat != null)
@@ -1904,7 +1904,7 @@ namespace Telegram.Api.Services.Cache
                     }
                     else if (dialog.Peer is TLPeerChat)
                     {
-                        if (chatsIndex.TryGetValue(dialog.Index, out TLChatBase chatBase))
+                        if (chatsIndex.TryGetValue(dialog.Id, out TLChatBase chatBase))
                         {
                             var chat = chatBase as ITLReadMaxId;
                             if (chat != null)
@@ -1916,7 +1916,7 @@ namespace Telegram.Api.Services.Cache
                     }
                     else if (dialog.Peer is TLPeerUser)
                     {
-                        if (usersIndex.TryGetValue(dialog.Index, out TLUserBase userBase))
+                        if (usersIndex.TryGetValue(dialog.Id, out TLUserBase userBase))
                         {
                             var user = userBase as ITLReadMaxId;
                             if (user != null)
