@@ -1001,26 +1001,7 @@ namespace Unigram.Common
                 var invite = response.Result as TLChatInvite;
                 if (invite != null)
                 {
-                    var content = "AppResources.JoinGroupConfirmation";
-                    if (invite.IsChannel && !invite.IsMegaGroup)
-                    {
-                        content = "AppResources.JoinChannelConfirmation";
-                    }
-
-                    ContentDialogBase dialog;
-                    //if (invite.IsChannel && !invite.IsMegaGroup)
-                    //{
-                    //    dialog = new TLMessageDialog(content, invite.Title);
-                    //    dialog.Title = invite.Title;
-                    //    dialog.Content = content;
-                    //    dialog.PrimaryButtonText = "OK";
-                    //    dialog.SecondaryButtonText = "Cancel";
-                    //}
-                    //else
-                    {
-                        dialog = new JoinChatView { DataContext = invite };
-                    }
-
+                    var dialog = new JoinChatView { DataContext = invite };
                     var result = await dialog.ShowAsync();
                     if (result == ContentDialogBaseResult.OK)
                     {
