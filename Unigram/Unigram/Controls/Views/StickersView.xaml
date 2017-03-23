@@ -7,6 +7,8 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
+    xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations.Behaviors"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -68,8 +70,11 @@
                         <common:FluidGridView.Triggers>
                             <common:FluidGridViewTrigger RowsOrColumns="5"/>
                         </common:FluidGridView.Triggers>
+                        <i:Interaction.Behaviors>
+                            <animations:StickyHeaderBehavior/>
+                        </i:Interaction.Behaviors>
                         <GridView.Header>
-                            <Border Padding="12,8,0,8" Height="32" Margin="-10,0">
+                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12,8,0,8" Height="32" Margin="-10,0">
                                 <TextBlock Text="Saved GIFs" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </Border>
                         </GridView.Header>
@@ -89,6 +94,11 @@
                         <GridView.ItemContainerTransitions>
                             <TransitionCollection/>
                         </GridView.ItemContainerTransitions>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" Canvas.ZIndex="-1"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
                     </GridView>
                 </PivotItem>
                 <PivotItem Margin="0,-48,0,0">
@@ -98,8 +108,11 @@
                               SelectionMode="None"
                               ItemClick="Featured_ItemClick"
                               Loaded="Featured_Loaded">
+                        <i:Interaction.Behaviors>
+                            <animations:StickyHeaderBehavior/>
+                        </i:Interaction.Behaviors>
                         <ListView.Header>
-                            <Border Padding="12,8,0,8" Height="32">
+                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12,8,0,8" Height="32">
                                 <TextBlock Text="Trending stickers" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </Border>
                         </ListView.Header>
@@ -157,6 +170,11 @@
                         <ListView.ItemContainerTransitions>
                             <TransitionCollection/>
                         </ListView.ItemContainerTransitions>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Canvas.ZIndex="-1"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
                     </ListView>
                 </PivotItem>
                 <PivotItem Margin="0,-48,0,0">

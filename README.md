@@ -29,6 +29,7 @@ The app uses the following NuGet packages to work:
 * [Autofac](https://www.nuget.org/packages/Autofac/)
 * [HockeySDK.UWP](https://www.nuget.org/packages/HockeySDK.UWP/)
 * [Microsoft.NETCore.UniversalWindowsPlatform](https://www.nuget.org/packages/Microsoft.NETCore.UniversalWindowsPlatform/)
+* [Microsoft.Toolkit.Uwp.UI.Animations](https://www.nuget.org/packages/Microsoft.Toolkit.Uwp.UI.Animations/)
 * [Microsoft.Xaml.Behaviors.Uwp.Managed](https://www.nuget.org/packages/Microsoft.Xaml.Behaviors.Uwp.Managed/)
 * [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/)
 * [Portable.BouncyCastle](https://www.nuget.org/packages/Portable.BouncyCastle/1.8.1.1) (version 1.8.1.1)
