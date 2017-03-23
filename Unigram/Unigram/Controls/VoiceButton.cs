@@ -72,12 +72,37 @@ namespace Unigram.Controls
         {
             if (_recorder?.IsRecording == true)
             {
-                await _recorder.StopAsync();
+                if (_recorder.m_mediaCapture == null)
+                    throw new InvalidOperationException("Cannot stop while not recording");
+
+                await _recorder.m_mediaCapture.StopRecordAsync();
+                _recorder.Stop();
             }
 
             _file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\recording.ogg", CreationCollisionOption.ReplaceExisting);
             _recorder = new OpusRecorder(_file);
-            await _recorder.StartAsync();
+
+            /* This following was moved from sub thread, because of a exception which comes from that device initializiation
+             * is only allowed from UI thread!
+             */
+            if (_recorder.m_mediaCapture != null)
+                throw new InvalidOperationException("Cannot start while recording");
+            try
+            {
+                _recorder.m_mediaCapture = new MediaCapture();
+                await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
+                await _recorder.StartAsync();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                await new Windows.UI.Popups.MessageDialog("The access to microphone was denied!").ShowAsync();
+                return;
+            }
+            catch(Exception)
+            {
+                await new Windows.UI.Popups.MessageDialog("The app couldn't initialize microphone!").ShowAsync();
+                return;
+            }
 
             _isPressed = true;
             _cancelOnRelease = false;
@@ -88,7 +113,7 @@ namespace Unigram.Controls
         {
             if (_recorder?.IsRecording == true)
             {
-                await _recorder.StopAsync();
+                _recorder.Stop();
             }
 
             if (_cancelOnRelease)
@@ -107,7 +132,8 @@ namespace Unigram.Controls
 
             private StorageFile m_file;
             private IMediaExtension m_opusSink;
-            private MediaCapture m_mediaCapture;
+            public MediaCapture m_mediaCapture;
+            public MediaCaptureInitializationSettings settings;
 
             #endregion
 
@@ -130,27 +156,28 @@ namespace Unigram.Controls
             public OpusRecorder(StorageFile file)
             {
                 m_file = file;
+                InitializeSettings();
             }
 
             #endregion
 
             #region methods
 
+            private void InitializeSettings()
+            {
+                settings = new MediaCaptureInitializationSettings();
+                settings.MediaCategory = MediaCategory.Speech;
+                settings.AudioProcessing = AudioProcessing.Default;
+                settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
+                settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
+                settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
+                settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
+                settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
+                settings.StreamingCaptureMode = StreamingCaptureMode.Audio;
+            }
+
             public async Task StartAsync()
             {
-                if (m_mediaCapture != null)
-                    throw new InvalidOperationException("Cannot start while recording");
-
-                m_mediaCapture = new MediaCapture();
-                await m_mediaCapture.InitializeAsync(new MediaCaptureInitializationSettings()
-                {
-                    MediaCategory = MediaCategory.Speech,
-                    AudioProcessing = AudioProcessing.Default,
-                    MemoryPreference = MediaCaptureMemoryPreference.Auto,
-                    SharingMode = MediaCaptureSharingMode.SharedReadOnly,
-                    StreamingCaptureMode = StreamingCaptureMode.Audio,
-                });
-
                 m_opusSink = await OpusCodec.CreateMediaSinkAsync(m_file);
 
                 var wavEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
@@ -160,18 +187,15 @@ namespace Unigram.Controls
                 await m_mediaCapture.StartRecordToCustomSinkAsync(wavEncodingProfile, m_opusSink);
             }
 
-            public async Task StopAsync()
+            public void Stop()
             {
-                if (m_mediaCapture == null)
-                    throw new InvalidOperationException("Cannot stop while not recording");
-
-                await m_mediaCapture.StopRecordAsync();
-
                 m_mediaCapture.Dispose();
                 m_mediaCapture = null;
-
-                ((IDisposable)m_opusSink).Dispose();
-                m_opusSink = null;
+                if(m_opusSink != null)
+                {
+                    ((IDisposable)m_opusSink).Dispose();
+                    m_opusSink = null;
+                }
             }
 
             #endregion

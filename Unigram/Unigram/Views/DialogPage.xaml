@@ -1066,6 +1066,12 @@
                                         IsEnabled="False"
                                         Text="Contact"
                                         Tag="&#xE136;"/>
+                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                        Visibility="Visible"
+                                        IsEnabled="True"
+                                        Text="¯\_(ツ)_/¯"
+                                        Tag="&#xE8BD;"
+                                        Click="{x:Bind SendShrug}"/>
                         <MenuFlyout.MenuFlyoutPresenterStyle>
                             <Style TargetType="MenuFlyoutPresenter">
                                 <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />

@@ -173,6 +173,23 @@ namespace Unigram.Controls
             OnSelectionChanged();
         }
 
+        public void InsertText(string text)
+        {
+            var start = Document.Selection.StartPosition;
+            var end = Document.Selection.EndPosition;
+
+            var preceding = start > 0 && !char.IsWhiteSpace(Document.GetRange(start - 1, start).Character);
+            var trailing = !char.IsWhiteSpace(Document.GetRange(end, end + 1).Character);
+
+            var block = string.Format("{0}{1}{2}",
+                preceding ? " " : "",
+                text,
+                trailing ? " " : "");
+
+            Document.Selection.SetText(TextSetOptions.None, block);
+            Document.Selection.StartPosition = Document.Selection.EndPosition;
+        }
+
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
             // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
