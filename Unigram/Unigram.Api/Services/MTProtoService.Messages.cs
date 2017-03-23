@@ -1868,12 +1868,19 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLChatInviteBase>("messages.checkChatInvite", obj,
                 result =>
                 {
-                    var chatInvite = result as TLChatInvite;
-                    if (chatInvite != null)
+                    if (result is TLChatInvite chatInvite)
                     {
                         _cacheService.SyncUsers(chatInvite.Participants, participants =>
                         {
                             chatInvite.Participants = participants;
+                            callback?.Invoke(result);
+                        });
+                    }
+                    else if (result is TLChatInviteAlready chatInviteAlready)
+                    {
+                        _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), new TLVector<TLChatBase> { chatInviteAlready.Chat }, tuple => 
+                        {
+                            chatInviteAlready.Chat = tuple.Item2.FirstOrDefault() ?? chatInviteAlready.Chat;
                             callback?.Invoke(result);
                         });
                     }
