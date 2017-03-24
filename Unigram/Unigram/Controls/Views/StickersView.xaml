@@ -61,23 +61,25 @@
                 <PivotItem Margin="0,-48,0,0">
                     <GridView x:Name="GifsView"
                               ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
-                              common:FluidGridView.OrientationOnly="False"
                               IsItemClickEnabled="True"
                               SelectionMode="None"
                               ItemClick="Gifs_ItemClick"
                               Loaded="Gifs_Loaded"
                               Padding="10,0,10,10">
-                        <common:FluidGridView.Triggers>
+                        <!--<common:FluidGridView.Triggers>
+                              common:FluidGridView.OrientationOnly="False"
                             <common:FluidGridViewTrigger RowsOrColumns="5"/>
-                        </common:FluidGridView.Triggers>
-                        <GridView.Header>
+                        </common:FluidGridView.Triggers>-->
+                        <!--<ListView.Header>
                             <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12,8,0,8" Height="32" Margin="-10,0">
                                 <TextBlock Text="Saved GIFs" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </Border>
-                        </GridView.Header>
+                        </ListView.Header>-->
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="tl:TLDocument">
-                                <Image x:Phase="3" Margin="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Stretch="UniformToFill"/>
+                                <Border Margin="2">
+                                    <Image x:Phase="3" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill"/>
+                                </Border>
                             </DataTemplate>
                         </GridView.ItemTemplate>
                         <GridView.ItemContainerStyle>
@@ -91,6 +93,11 @@
                         <GridView.ItemContainerTransitions>
                             <TransitionCollection/>
                         </GridView.ItemContainerTransitions>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <local:ItemsTestPanel/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
                     </GridView>
                 </PivotItem>
                 <PivotItem Margin="0,-48,0,0">

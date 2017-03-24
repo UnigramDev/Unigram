@@ -42,6 +42,14 @@ namespace Unigram.ViewModels
 
                     IsLoading = false;
                 }
+                else
+                {
+                    StickerSet = new TLStickerSet();
+                    Items.Clear();
+                    Items.Add(new TLMessagesStickerSet { Set = new TLStickerSet { Title = "Sticker pack not found." } });
+
+                    //IsLoading = false;
+                }
             }
         }
 

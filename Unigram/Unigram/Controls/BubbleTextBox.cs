@@ -408,10 +408,9 @@ namespace Unigram.Controls
 
                 if (fast)
                 {
-                    // TODO: verify if it is actually a sticker
-                    if (text.Length < 14 && !string.IsNullOrWhiteSpace(text))
+                    if (text.Trim().Length <= 14 && !string.IsNullOrWhiteSpace(text))
                     {
-                        ViewModel.StickerPack = DatabaseContext.Current.SelectStickerPack(text.Trim());
+                        ViewModel.StickerPack = ViewModel.Stickers.StickersService.LoadStickersForEmoji(text.Trim());
                     }
                     else
                     {

@@ -89,6 +89,8 @@ namespace Unigram.Services
 
         void RemoveStickersSet(TLStickerSet stickerSet, int hide, bool showSettings);
 
+        List<TLDocument> LoadStickersForEmoji(string emoji);
+
         event NeedReloadArchivedStickersEventHandler NeedReloadArchivedStickers;
         event StickersDidLoadedEventHandler StickersDidLoaded;
         event FeaturedStickersDidLoadedEventHandler FeaturedStickersDidLoaded;
@@ -142,7 +144,7 @@ namespace Unigram.Services
             //ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", (long)0);
         }
 
-    public void Cleanup()
+        public void Cleanup()
         {
             for (int i = 0; i < 2; i++)
             {
@@ -1509,6 +1511,109 @@ namespace Unigram.Services
         public event FeaturedStickersDidLoadedEventHandler FeaturedStickersDidLoaded;
         public event RecentsDidLoadedEventHandler RecentsDidLoaded;
         public event ArchivedStickersCountDidLoadedEventHandler ArchivedStickersCountDidLoaded;
+
+
+
+
+
+
+
+
+
+
+
+        public List<TLDocument> LoadStickersForEmoji(string emoji)
+        {
+            var search = emoji != null && emoji.Length > 0 && emoji.Length <= 14;
+            if (search)
+            {
+                int length = emoji.Length;
+                for (int a = 0; a < length; a++)
+                {
+                    if (a < length - 1 && (emoji[a] == 0xD83C && emoji[a + 1] >= 0xDFFB && emoji[a + 1] <= 0xDFFF || emoji[a] == 0x200D && (emoji[a + 1] == 0x2640 || emoji[a + 1] == 0x2642)))
+                    {
+                        emoji = string.Concat(emoji.Substring(0, a), emoji.Substring(a + 2));
+                        length -= 2;
+                        a--;
+                    }
+                    else if (emoji[a] == 0xfe0f)
+                    {
+                        emoji = string.Concat(emoji.Substring(0, a), emoji.Substring(a + 1));
+                        length--;
+                        a--;
+                    }
+                }
+                string lastSticker = emoji.ToString();
+                Dictionary<string, List<TLDocument>> allStickers = GetAllStickers();
+                if (allStickers != null)
+                {
+                    List<TLDocument> newStickers;
+                    allStickers.TryGetValue(lastSticker, out newStickers);
+                    //if (stickers != null && newStickers == null)
+                    //{
+                    //    if (visible)
+                    //    {
+                    //        delegate.needChangePanelVisibility(false);
+                    //        visible = false;
+                    //    }
+                    //}
+                    //else
+                    {
+                        var stickers = newStickers != null && newStickers.Count > 0 ? new List<TLDocument>(newStickers) : null;
+                        return stickers;
+
+                        if (stickers != null)
+                        {
+                            List<TLDocument> recentStickers = GetRecentStickersNoCopy(TYPE_IMAGE);
+                            if (recentStickers.Count > 0)
+                            {
+                                stickers.Sort(new Comparison<TLDocument>((lhs, rhs) =>
+                                {
+                                    int getIndex(long id)
+                                    {
+                                        for (int a = 0; a < recentStickers.Count; a++)
+                                        {
+                                            if (recentStickers[a].Id == id)
+                                            {
+                                                return a;
+                                            }
+                                        }
+                                        return -1;
+                                    }
+
+                                    int idx1 = getIndex(lhs.Id);
+                                    int idx2 = getIndex(rhs.Id);
+                                    if (idx1 > idx2)
+                                    {
+                                        return -1;
+                                    }
+                                    else if (idx1 < idx2)
+                                    {
+                                        return 1;
+                                    }
+
+                                    return 0;
+                                }));
+                            }
+                        }
+                        //checkStickerFilesExistAndDownload();
+                        //delegate.needChangePanelVisibility(stickers != null && !stickers.isEmpty() && stickersToLoad.isEmpty());
+                        //notifyDataSetChanged();
+                        //visible = true;
+                    }
+                }
+            }
+            //if (!search)
+            //{
+            //    if (visible && stickers != null)
+            //    {
+            //        visible = false;
+            //        delegate.needChangePanelVisibility(false);
+            //    }
+            //}
+
+            return null;
+        }
     }
 
     public enum StickerSetType : int
