@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace Unigram.Common
 {
     public class TLBitmapContext
     {
-        private Dictionary<object, WeakReference<TLBitmapSource>> _context = new Dictionary<object, WeakReference<TLBitmapSource>>();
+        private ConcurrentDictionary<object, WeakReference<TLBitmapSource>> _context = new ConcurrentDictionary<object, WeakReference<TLBitmapSource>>();
 
         public BitmapImage this[TLPhoto photo]
         {

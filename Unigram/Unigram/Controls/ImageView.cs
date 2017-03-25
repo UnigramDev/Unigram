@@ -26,6 +26,12 @@ namespace Unigram.Controls
             Holder = (Image)GetTemplateChild("Holder");
             Holder.ImageFailed += Holder_ImageFailed;
             Holder.ImageOpened += Holder_ImageOpened;
+            Holder.Loaded += Holder_Loaded;
+        }
+
+        private void Holder_Loaded(object sender, RoutedEventArgs e)
+        {
+            OnSourceChanged(Source, null);
         }
 
         private void Holder_ImageFailed(object sender, ExceptionRoutedEventArgs e)
@@ -47,7 +53,20 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(ImageSource), typeof(ImageView), new PropertyMetadata(null));
+            DependencyProperty.Register("Source", typeof(ImageSource), typeof(ImageView), new PropertyMetadata(null, OnSourceChanged));
+
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ImageView)d).OnSourceChanged((ImageSource)e.NewValue, (ImageSource)e.OldValue);
+        }
+
+        private void OnSourceChanged(ImageSource newValue, ImageSource oldValue)
+        {
+            if (newValue is WriteableBitmap bitmap && bitmap.PixelWidth > 0 && bitmap.PixelHeight > 0)
+            {
+                ImageOpened?.Invoke(this, null);
+            }
+        }
 
         #endregion
 

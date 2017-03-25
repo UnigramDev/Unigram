@@ -134,6 +134,11 @@
       <DependentUpon>UsersSelectionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="Controls\ZoomableGridView.cs" />
+    <Compile Include="Controls\ZoomableGridViewItem.cs" />
+    <Compile Include="Controls\ZoomableGridViewPopup.xaml.cs">
+      <DependentUpon>ZoomableGridViewPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
@@ -661,6 +666,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\UsersSelectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ZoomableGridViewPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

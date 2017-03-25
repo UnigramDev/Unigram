@@ -25,15 +25,16 @@
         </Grid.RowDefinitions>
         <Border x:Name="BackgroundPanel"/>
 
-        <GridView x:Name="List"
-                  ItemsSource="{x:Bind ViewSource.View}"
-                  ItemClick="List_ItemClick"
-                  IsItemClickEnabled="True"
-                  SelectionMode="None"
-                  Padding="12,0"
-                  Loaded="GridView_Loaded"
-                  SizeChanged="List_SizeChanged"
-                  common:FluidGridView.OrientationOnly="False">
+        <controls:ZoomableGridView
+            x:Name="List"
+            ItemsSource="{x:Bind ViewSource.View}"
+            ItemClick="List_ItemClick"
+            IsItemClickEnabled="True"
+            SelectionMode="None"
+            Padding="12,0"
+            Loaded="GridView_Loaded"
+            SizeChanged="List_SizeChanged"
+            common:FluidGridView.OrientationOnly="False">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="5"/>
             </common:FluidGridView.Triggers>
@@ -114,12 +115,12 @@
                     <ItemsWrapGrid Orientation="Horizontal"  Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
-        </GridView>
+        </controls:ZoomableGridView>
 
         <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <!--<ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="2*"/>-->
+                     <ColumnDefinition Width="2*"/>-->
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
@@ -133,26 +134,26 @@
 
 
             <!--<Button Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                    HorizontalAlignment="Stretch" 
-                    HorizontalContentAlignment="Left" 
-                    Margin="12,8,4,8">
-                <StackPanel Orientation="Horizontal">
-                    <Grid Background="{ThemeResource SystemControlForegroundAccentBrush}"
-                          MinWidth="20"
-                            Height="20"
-                            CornerRadius="10"
-                            Margin="0,0,8,0">
-                        <TextBlock Text="{x:Bind ViewModel.StickerSet.Count, Mode=OneWay}"
-                                   Style="{ThemeResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
-                                   TextAlignment="Center"
-                                   Margin="4,2,4,0"/>
-                    </Grid>
-
-                    
-                    <TextBlock Text="Add stickers"/>
-                </StackPanel>
-            </Button>-->
+                 HorizontalAlignment="Stretch" 
+                 HorizontalContentAlignment="Left" 
+                 Margin="12,8,4,8">
+                 <StackPanel Orientation="Horizontal">
+                 <Grid Background="{ThemeResource SystemControlForegroundAccentBrush}"
+                 MinWidth="20"
+                 Height="20"
+                 CornerRadius="10"
+                 Margin="0,0,8,0">
+                 <TextBlock Text="{x:Bind ViewModel.StickerSet.Count, Mode=OneWay}"
+                 Style="{ThemeResource CaptionTextBlockStyle}"
+                 Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                 TextAlignment="Center"
+                 Margin="4,2,4,0"/>
+                 </Grid>
+                 
+                 
+                 <TextBlock Text="Add stickers"/>
+                 </StackPanel>
+                 </Button>-->
 
             <Button Click="Close_Click" Content="Close" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
         </Grid>

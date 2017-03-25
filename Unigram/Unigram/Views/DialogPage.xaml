@@ -935,7 +935,7 @@
         </Grid>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
-            <views:StickersView x:Name="StickersPanel" Visibility="Collapsed"/>
+            <views:StickersView x:Name="StickersPanel" Visibility="Collapsed" MaxHeight="360"/>
             <views:ReplyMarkupView x:Name="ReplyMarkupPanel" Visibility="Collapsed"/>
         </Grid>
 

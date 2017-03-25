@@ -59,22 +59,23 @@
             </Grid.RowDefinitions>
             <Pivot x:Name="Pivot" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
                 <PivotItem Margin="0,-48,0,0">
-                    <GridView x:Name="GifsView"
-                              ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
-                              IsItemClickEnabled="True"
-                              SelectionMode="None"
-                              ItemClick="Gifs_ItemClick"
-                              Loaded="Gifs_Loaded"
-                              Padding="10,0,10,10">
-                        <!--<common:FluidGridView.Triggers>
-                              common:FluidGridView.OrientationOnly="False"
-                            <common:FluidGridViewTrigger RowsOrColumns="5"/>
-                        </common:FluidGridView.Triggers>-->
-                        <!--<ListView.Header>
-                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12,8,0,8" Height="32" Margin="-10,0">
-                                <TextBlock Text="Saved GIFs" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                            </Border>
-                        </ListView.Header>-->
+                    <controls:ZoomableGridView
+                        x:Name="GifsView"
+                        ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
+                             common:FluidGridView.OrientationOnly="False"
+                        IsItemClickEnabled="True"
+                        SelectionMode="None"
+                        ItemClick="Gifs_ItemClick"
+                        Loaded="Gifs_Loaded"
+                        Padding="10,0,10,10">
+                        <common:FluidGridView.Triggers>
+                             <common:FluidGridViewTrigger RowsOrColumns="5"/>
+                             </common:FluidGridView.Triggers>
+                        <GridView.Header>
+                             <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12,8,0,8" Height="32" Margin="-10,0">
+                             <TextBlock Text="Saved GIFs" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                             </Border>
+                             </GridView.Header>
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="tl:TLDocument">
                                 <Border Margin="2">
@@ -93,12 +94,12 @@
                         <GridView.ItemContainerTransitions>
                             <TransitionCollection/>
                         </GridView.ItemContainerTransitions>
-                        <GridView.ItemsPanel>
+                        <!--<GridView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <local:ItemsTestPanel/>
                             </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                    </GridView>
+                        </GridView.ItemsPanel>-->
+                    </controls:ZoomableGridView>
                 </PivotItem>
                 <PivotItem Margin="0,-48,0,0">
                     <ListView x:Name="FeaturedView"
@@ -172,14 +173,15 @@
                 <PivotItem Margin="0,-48,0,0">
                     <SemanticZoom>
                         <SemanticZoom.ZoomedInView>
-                            <GridView x:Name="Stickers"
-                                      ItemsSource="{x:Bind StickersSource.View}"
-                                      common:FluidGridView.OrientationOnly="False"
-                                      IsItemClickEnabled="True"
-                                      SelectionMode="None"
-                                      ItemClick="Stickers_ItemClick"
-                                      Loaded="Stickers_Loaded"
-                                      Padding="12,0">
+                            <controls:ZoomableGridView
+                                x:Name="Stickers"
+                                ItemsSource="{x:Bind StickersSource.View}"
+                                common:FluidGridView.OrientationOnly="False"
+                                IsItemClickEnabled="True"
+                                SelectionMode="None"
+                                ItemClick="Stickers_ItemClick"
+                                Loaded="Stickers_Loaded"
+                                Padding="12,0">
                                 <common:FluidGridView.Triggers>
                                     <common:FluidGridViewTrigger RowsOrColumns="5"/>
                                 </common:FluidGridView.Triggers>
@@ -252,7 +254,7 @@
                                         <ItemsWrapGrid Orientation="Horizontal" AreStickyGroupHeadersEnabled="False"/>
                                     </ItemsPanelTemplate>
                                 </GridView.ItemsPanel>
-                            </GridView>
+                            </controls:ZoomableGridView>
                         </SemanticZoom.ZoomedInView>
                         <SemanticZoom.ZoomedOutView>
                             <ListView ItemsSource="{x:Bind StickersSource.View.CollectionGroups}">
