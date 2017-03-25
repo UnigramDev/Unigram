@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
@@ -31,6 +33,7 @@ using Windows.Storage.Search;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.System.Profile;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
@@ -38,6 +41,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -64,6 +68,41 @@ namespace Unigram.Views
             ViewModel.PropertyChanged += OnPropertyChanged;
 
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+
+            if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
+            {
+                var visual = ElementCompositionPreview.GetElementVisual(Header);
+                visual.Clip = Window.Current.Compositor.CreateInsetClip();
+
+                var showShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                showShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
+                showShowAnimation.InsertKeyFrame(1.0f, new Vector3());
+                showShowAnimation.Target = nameof(Visual.Offset);
+                showShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                var showHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                showHideAnimation.InsertKeyFrame(0.0f, new Vector3());
+                showHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0));
+                showHideAnimation.Target = nameof(Visual.Offset);
+                showHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                var hideHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                hideHideAnimation.InsertKeyFrame(0.0f, new Vector3());
+                hideHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0));
+                hideHideAnimation.Target = nameof(Visual.Offset);
+                hideHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                var hideShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                hideShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0));
+                hideShowAnimation.InsertKeyFrame(1.0f, new Vector3());
+                hideShowAnimation.Target = nameof(Visual.Offset);
+                hideShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, showShowAnimation);
+                ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
+                ElementCompositionPreview.SetImplicitShowAnimation(btnDialogInfo, hideShowAnimation);
+                ElementCompositionPreview.SetImplicitHideAnimation(btnDialogInfo, showHideAnimation);
+            }
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -79,10 +118,12 @@ namespace Unigram.Views
             if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
             {
                 ManagePanel.Visibility = Visibility.Collapsed;
+                btnDialogInfo.Visibility = Visibility.Visible;
             }
             else
             {
                 ManagePanel.Visibility = Visibility.Visible;
+                btnDialogInfo.Visibility = Visibility.Collapsed;
             }
 
             ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
