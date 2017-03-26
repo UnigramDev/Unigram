@@ -11,6 +11,8 @@ using Template10.Common;
 using Windows.UI.Xaml.Media;
 using Unigram.Core.Services;
 using Unigram.Views.Users;
+using System.Diagnostics;
+using Windows.UI.ViewManagement;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -43,6 +45,8 @@ namespace Unigram.Controls
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             UpdateVisualState();
+
+            VisualStateManager.GoToState(this, "ResetState", false);
 
             if (CurrentState != MasterDetailState.Narrow && ViewStateChanged != null)
             {

@@ -40,6 +40,7 @@ using System.Collections;
 using Telegram.Api.TL;
 using System.Collections.Generic;
 using Unigram.Core.Services;
+using Template10.Controls;
 
 namespace Unigram
 {
@@ -124,6 +125,17 @@ namespace Unigram
         ////        task.Run(args.TaskInstance);
         ////    }
         ////}
+
+        public override UIElement CreateRootElement(IActivatedEventArgs e)
+        {
+            var navigationFrame = new Frame();
+            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame);
+            return new ModalDialog
+            {
+                DisableBackButtonWhenModal = false,
+                Content = navigationFrame
+            };
+        }
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {

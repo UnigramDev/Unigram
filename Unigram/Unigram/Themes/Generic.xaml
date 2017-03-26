@@ -434,6 +434,7 @@
                                         <AdaptiveTrigger MinWindowWidth="0"/>
                                     </VisualState.StateTriggers>
                                 </VisualState>
+                                <VisualState x:Name="ResetState"/>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
