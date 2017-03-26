@@ -66,7 +66,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLMessagesMessagesBase>> SearchGlobalAsync(string query, int offsetDate, TLInputPeerBase offsetPeer, int offsetId, int limit);
         Task<MTProtoResponse<TLMessagesFoundGifs>> SearchGifsAsync(string q, int offset);
         Task<MTProtoResponse<TLMessagesBotResults>> GetInlineBotResultsAsync(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset);
-        Task<MTProtoResponse<TLMessagesFeaturedStickersBase>> GetFeaturedStickersAsync(bool full, int hash);
+        Task<MTProtoResponse<TLMessagesFeaturedStickersBase>> GetFeaturedStickersAsync(int hash);
         Task<MTProtoResponse<TLVector<TLUserBase>>> GetUsersAsync(TLVector<TLInputUserBase> id);
         Task<MTProtoResponse<bool>> UnregisterDeviceAsync(int tokenType, string token);
         Task<MTProtoResponse<bool>> ConfirmPhoneAsync(string phoneCodeHash, string phoneCode);

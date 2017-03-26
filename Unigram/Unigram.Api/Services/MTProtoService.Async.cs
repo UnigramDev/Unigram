@@ -783,10 +783,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesFeaturedStickersBase>> GetFeaturedStickersAsync(bool full, int hash)
+        public Task<MTProtoResponse<TLMessagesFeaturedStickersBase>> GetFeaturedStickersAsync(int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesFeaturedStickersBase>>();
-            GetFeaturedStickersCallback(full, hash, (callback) =>
+            GetFeaturedStickersCallback(hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesFeaturedStickersBase>(callback));
             }, (faultCallback) =>

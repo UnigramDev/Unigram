@@ -302,49 +302,12 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void GetFeaturedStickersCallback(bool full, int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetFeaturedStickersCallback(int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetFeaturedStickers { Hash = hash };
 
             const string caption = "messages.getFeaturedStickers";
-
-            var results = new List<TLMessagesStickerSet>();
-            var resultsSyncRoot = new object();
-            SendInformativeMessage<TLMessagesFeaturedStickersBase>(caption, obj,
-                result =>
-                {
-                    var featuredStickers = result as TLMessagesFeaturedStickers;
-                    if (featuredStickers != null && full)
-                    {
-                        GetStickerSetsAsync(featuredStickers, r => callback(r as TLMessagesFeaturedStickersBase),
-                            stickerSetResult =>
-                            {
-                                var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
-                                if (messagesStickerSet != null)
-                                {
-                                    bool processStickerSets;
-                                    lock (resultsSyncRoot)
-                                    {
-                                        results.Add(messagesStickerSet);
-                                        processStickerSets = results.Count == featuredStickers.Sets.Count;
-                                    }
-
-                                    if (processStickerSets)
-                                    {
-                                        ProcessStickerSets(featuredStickers, results);
-                                        featuredStickers.MessagesStickerSets = new TLVector<TLMessagesStickerSet>(results);
-                                        //Execute.ShowDebugMessage(caption + " elapsed=" + stopwatch.Elapsed);
-                                        callback?.Invoke(featuredStickers);
-                                    }
-                                }
-                            },
-                            faultCallback);
-                    }
-                    else
-                    {
-                        callback?.Invoke(result);
-                    }
-                });
+            SendInformativeMessage<TLMessagesFeaturedStickersBase>(caption, obj, callback, faultCallback);
         }
 
         public void GetArchivedStickersCallback(bool full, long offsetId, int limit, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null)
@@ -396,43 +359,6 @@ namespace Telegram.Api.Services
 
             const string caption = "messages.getAllStickers";
             SendInformativeMessage<TLMessagesAllStickersBase>(caption, obj, callback, faultCallback);
-
-            //var results = new List<TLMessagesStickerSet>();
-            //var resultsSyncRoot = new object();
-            //SendInformativeMessage<TLMessagesAllStickersBase>(caption, obj,
-            //    result =>
-            //    {
-            //        var allStickers32 = result as TLMessagesAllStickers;
-            //        if (allStickers32 != null)
-            //        {
-            //            GetStickerSetsAsync(allStickers32, r => callback(r as TLMessagesAllStickersBase),
-            //                stickerSetResult =>
-            //                {
-            //                    var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
-            //                    if (messagesStickerSet != null)
-            //                    {
-            //                        bool processStickerSets;
-            //                        lock (resultsSyncRoot)
-            //                        {
-            //                            results.Add(messagesStickerSet);
-            //                            processStickerSets = results.Count == allStickers32.Sets.Count;
-            //                        }
-
-            //                        if (processStickerSets)
-            //                        {
-            //                            ProcessStickerSets(allStickers32, results);
-
-            //                            callback?.Invoke(allStickers32);
-            //                        }
-            //                    }
-            //                },
-            //                faultCallback);
-            //        }
-            //        else
-            //        {
-            //            callback?.Invoke(result);
-            //        }
-            //    });
         }
 
         public void GetAllStickersCallback(byte[] hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)

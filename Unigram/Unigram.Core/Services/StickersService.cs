@@ -869,9 +869,8 @@ namespace Unigram.Services
             }
             else
             {
-                TLMessagesGetFeaturedStickers req = new TLMessagesGetFeaturedStickers();
-                req.Hash = force ? 0 : loadFeaturedHash;
-                _protoService.SendRequestCallback<TLMessagesFeaturedStickersBase>(req, result =>
+                var hash = force ? 0 : loadFeaturedHash;
+                _protoService.GetFeaturedStickersCallback(hash, result =>
                 {
                     if (result is TLMessagesFeaturedStickers res)
                     {
@@ -928,7 +927,7 @@ namespace Unigram.Services
                     }
                     else
                     {
-                        ProcessLoadedFeaturedStickers(null, null, false, (int)(Utils.CurrentTimestamp / 1000), req.Hash);
+                        ProcessLoadedFeaturedStickers(null, null, false, (int)(Utils.CurrentTimestamp / 1000), hash);
                     }
                 });
             }
