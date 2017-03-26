@@ -44,6 +44,15 @@ namespace Unigram.ViewModels
                     Items.Add(response.Result);
 
                     IsLoading = false;
+
+                    if (_stickersService.IsStickerPackInstalled(response.Result.Set.Id))
+                    {
+                        var existing = _stickersService.GetStickerSetById(response.Result.Set.Id);
+                        if (existing.Set.Hash != response.Result.Set.Hash)
+                        {
+                            _stickersService.LoadStickers(response.Result.Set.IsMasks ? StickersService.TYPE_MASK : StickersService.TYPE_IMAGE, false, true);
+                        }
+                    }
                 }
                 else
                 {

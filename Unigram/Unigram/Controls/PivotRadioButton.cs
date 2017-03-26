@@ -12,6 +12,7 @@ namespace Unigram.Controls
     {
         public PivotRadioButton()
         {
+            DefaultStyleKey = typeof(PivotRadioButton);
             Click += OnClick;
         }
 

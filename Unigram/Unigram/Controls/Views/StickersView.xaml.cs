@@ -31,12 +31,19 @@ namespace Unigram.Controls.Views
             InitializeComponent();
         }
 
-        private void Gifs_Loaded(object sender, RoutedEventArgs e)
+        private void Gifs_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var scrollingHost = GifsView.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
-            if (scrollingHost != null)
-            {
-            }
+            ViewModel.SendGifCommand.Execute(e.ClickedItem);
+        }
+
+        private async void Featured_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            await StickerSetView.Current.ShowAsync(((TLFeaturedStickerSet)e.ClickedItem).Set);
+        }
+
+        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.SendStickerCommand.Execute(e.ClickedItem);
         }
 
         private void Stickers_Loaded(object sender, RoutedEventArgs e)
@@ -47,16 +54,6 @@ namespace Unigram.Controls.Views
                 // Syncronizes GridView with the toolbar ListView
                 scrollingHost.ViewChanged += ScrollingHost_ViewChanged;
             }
-        }
-
-        private void Gifs_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            ViewModel.SendGifCommand.Execute(e.ClickedItem);
-        }
-
-        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            ViewModel.SendStickerCommand.Execute(e.ClickedItem);
         }
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -92,16 +89,6 @@ namespace Unigram.Controls.Views
                     }
                 }
             }
-        }
-
-        private async void Featured_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            await StickerSetView.Current.ShowAsync(((TLStickerSetCoveredBase)e.ClickedItem).Set);
-        }
-
-        private void Featured_Loaded(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 

@@ -16,6 +16,8 @@ using Unigram.Services;
 using Windows.UI.Popups;
 using Template10.Utils;
 using Unigram.Core.Common;
+using Template10.Mvvm;
+using System.ComponentModel;
 
 namespace Unigram.ViewModels
 {
@@ -48,7 +50,7 @@ namespace Unigram.ViewModels
             };
 
             SavedGifs = new ObservableCollection<TLDocument>();
-            FeaturedStickers = new ObservableCollection<TLStickerSetMultiCovered>();
+            FeaturedStickers = new ObservableCollectionEx<TLFeaturedStickerSet>();
             SavedStickers = new ObservableCollectionEx<TLMessagesStickerSet>();
 
             SyncStickers();
@@ -137,25 +139,23 @@ namespace Unigram.ViewModels
         {
             _featured = true;
             var stickers = _stickersService.GetFeaturedStickerSets();
+            var unread = _stickersService.GetUnreadStickerSets();
             Execute.BeginOnUIThread(() =>
             {
-                FeaturedStickers.Clear();
 
-                foreach (var set in stickers)
+                FeaturedUnreadCount = unread.Count;
+                FeaturedStickers.AddRange(stickers.Select(set => new TLFeaturedStickerSet
                 {
-                    FeaturedStickers.Add(new TLStickerSetMultiCovered
-                    {
-                        Set = set.Set,
-                        Covers = new TLVector<TLDocumentBase>(set.Documents.Take(Math.Min(set.Documents.Count, 5)))
-                    });
-                }
+                    Set = set.Set,
+                    IsUnread = unread.Contains(set.Set.Id),
+                    Covers = new TLVector<TLDocumentBase>(set.Documents.Take(Math.Min(set.Documents.Count, 5)))
+                }), true);
             });
         }
 
-        public int SavedGifsHash { get; private set; }
         public ObservableCollection<TLDocument> SavedGifs { get; private set; }
 
-        public ObservableCollection<TLStickerSetMultiCovered> FeaturedStickers { get; private set; }
+        public ObservableCollectionEx<TLFeaturedStickerSet> FeaturedStickers { get; private set; }
 
         public ObservableCollectionEx<TLMessagesStickerSet> SavedStickers { get; private set; }
 
@@ -393,6 +393,51 @@ namespace Unigram.ViewModels
                 //}
                 #endregion
             });
+        }
+
+        private int _featuredUnreadCount;
+        public int FeaturedUnreadCount
+        {
+            get
+            {
+                return _featuredUnreadCount;
+            }
+            set
+            {
+                Set(ref _featuredUnreadCount, value);
+            }
+        }
+    }
+
+    public class TLFeaturedStickerSet : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public TLStickerSet Set { get; set; }
+
+        public TLVector<TLDocumentBase> Covers { get; set; }
+
+        private bool _isUnread;
+        public bool IsUnread
+        {
+            get
+            {
+                return _isUnread;
+            }
+            set
+            {
+                _isUnread = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsUnread"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Unread"));
+            }
+        }
+
+        public string Unread
+        {
+            get
+            {
+                return _isUnread ? "\u2022" : string.Empty;
+            }
         }
     }
 }

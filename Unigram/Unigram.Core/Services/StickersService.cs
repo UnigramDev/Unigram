@@ -1078,8 +1078,7 @@ namespace Unigram.Services
             if (query)
             {
 
-                TLMessagesReadFeaturedStickers req = new TLMessagesReadFeaturedStickers();
-                _protoService.SendRequestCallback<bool>(req, null);
+                _protoService.ReadFeaturedStickersCallback(null, null);
             }
         }
 
@@ -1090,10 +1089,7 @@ namespace Unigram.Services
                 return;
             }
             readingStickerSets.Add(id);
-            TLMessagesReadFeaturedStickers req = new TLMessagesReadFeaturedStickers();
-            req.Id = new TLVector<long>();
-            req.Id.Add(id);
-            _protoService.SendRequestCallback<bool>(req, null);
+            _protoService.ReadFeaturedStickersCallback(new TLVector<long> { id }, null);
 
             //AndroidUtilities.runOnUIThread(new Runnable()
             //{

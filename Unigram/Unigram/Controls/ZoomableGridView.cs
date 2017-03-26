@@ -45,6 +45,14 @@ namespace Unigram.Controls
         internal void OnItemHolding(object sender, object item)
         {
             var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
+            if (bounds != Window.Current.Bounds)
+            {
+                _popupPanel.Margin = new Thickness(bounds.X, bounds.Y, Window.Current.Bounds.Width - bounds.Right, Window.Current.Bounds.Height - bounds.Bottom);
+            }
+            else
+            {
+                _popupPanel.Margin = new Thickness();
+            }
 
             _popupPanel.Width = bounds.Width;
             _popupPanel.Height = bounds.Height;
