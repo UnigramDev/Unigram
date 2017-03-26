@@ -139,11 +139,109 @@
         </Setter>
     </Style>
 
-    <x:Double x:Key="ScrollBarSize">12</x:Double>
+    <StaticResource x:Key="AccentButtonBackground" ResourceKey="SystemControlForegroundAccentBrush" />
+    <StaticResource x:Key="AccentButtonBackgroundPointerOver" ResourceKey="SystemControlForegroundAccentBrush" />
+    <StaticResource x:Key="AccentButtonBackgroundPressed" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
+    <StaticResource x:Key="AccentButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <StaticResource x:Key="AccentButtonForeground" ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
+    <StaticResource x:Key="AccentButtonForegroundPointerOver" ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
+    <StaticResource x:Key="AccentButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseHighBrush" />
+    <StaticResource x:Key="AccentButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <StaticResource x:Key="AccentButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <StaticResource x:Key="AccentButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
+    <StaticResource x:Key="AccentButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <StaticResource x:Key="AccentButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
+
+    <Style x:Key="AccentButtonStyle" TargetType="Button">
+        <Setter Property="Foreground" Value="{ThemeResource AccentButtonForeground}"/>
+        <Setter Property="Background" Value="{ThemeResource AccentButtonBackground}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource AccentButtonBorderBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          AutomationProperties.AccessibilityView="Raw" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <x:String x:Key="ScrollbarExpandDelay">00:00:00.1</x:String>
+    <x:String x:Key="ScrollbarExpandDuration">00:00:00.2</x:String>
+    <x:String x:Key="ScrollbarContractDelay">00:00:03</x:String>
+    <x:String x:Key="ScrollbarContractDuration">00:00:00.2</x:String>
+    <x:Double x:Key="ScrollbarSize">12</x:Double>
+    <x:Double x:Key="SmallScrollThumbScale">0.125</x:Double>
+    <x:Double x:Key="SmallScrollThumbOffset">-2</x:Double>
+    <x:Double x:Key="ScrollbarButtonArrowIconFontSize">4</x:Double>
+
+    <!--<SolidColorBrush x:Key="ScrollViewerScrollBarSeparatorBackground" Color="{StaticResource SystemChromeMediumColor}" Opacity="0.9" />-->
+    <x:String x:Key="ScrollViewerSeparatorExpandDelay">00:00:00.1</x:String>
+    <x:String x:Key="ScrollViewerSeparatorContractDelay">00:00:03</x:String>
 
     <Style TargetType="ScrollBar">
-        <Setter Property="MinWidth" Value="{ThemeResource ScrollBarSize}" />
-        <Setter Property="MinHeight" Value="{ThemeResource ScrollBarSize}" />
+        <Setter Property="MinWidth" Value="{ThemeResource ScrollbarSize}" />
+        <Setter Property="MinHeight" Value="{ThemeResource ScrollbarSize}" />
         <Setter Property="Background" Value="{ThemeResource ScrollBarBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource ScrollBarForeground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource ScrollBarBorderBrush}" />
@@ -214,7 +312,7 @@
                                               FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                               Glyph="&#xE0E3;"
                                               Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
-                                              FontSize="{ThemeResource ScrollBarButtonArrowIconFontSize}"
+                                              FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}"
                                               MirroredWhenRightToLeft="True" />
                                 </Grid>
                             </ControlTemplate>
@@ -270,7 +368,7 @@
                                               FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                               Glyph="&#xE0E2;"
                                               Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
-                                              FontSize="{ThemeResource ScrollBarButtonArrowIconFontSize}"
+                                              FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}"
                                               MirroredWhenRightToLeft="True" />
                                 </Grid>
                             </ControlTemplate>
@@ -326,7 +424,7 @@
                                               FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                               Glyph="&#xE0E5;"
                                               Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
-                                              FontSize="{ThemeResource ScrollBarButtonArrowIconFontSize}" />
+                                              FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}" />
                                 </Grid>
                             </ControlTemplate>
                             <ControlTemplate x:Key="VerticalDecrementTemplate" TargetType="RepeatButton">
@@ -381,11 +479,11 @@
                                               FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                               Glyph="&#xE0E4;"
                                               Foreground="{ThemeResource ScrollBarButtonArrowForeground}"
-                                              FontSize="{ThemeResource ScrollBarButtonArrowIconFontSize}" />
+                                              FontSize="{ThemeResource ScrollbarButtonArrowIconFontSize}" />
                                 </Grid>
                             </ControlTemplate>
                             <ControlTemplate x:Key="VerticalThumbTemplate" TargetType="Thumb">
-                                <Rectangle x:Name="ThumbVisual" Fill="{TemplateBinding Background}">
+                                <Rectangle x:Name="ThumbVisual" Fill="{ThemeResource ScrollBarThumbFill}">
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup x:Name="CommonStates">
                                             <VisualState x:Name="Normal" />
@@ -419,7 +517,7 @@
                                 </Rectangle>
                             </ControlTemplate>
                             <ControlTemplate x:Key="HorizontalThumbTemplate" TargetType="Thumb">
-                                <Rectangle x:Name="ThumbVisual" Fill="{TemplateBinding Background}">
+                                <Rectangle x:Name="ThumbVisual" Fill="{ThemeResource SystemControlForegroundBaseLowBrush}">
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup x:Name="CommonStates">
                                             <VisualState x:Name="Normal" />
@@ -458,325 +556,232 @@
                                 <VisualStateGroup.Transitions>
                                     <VisualTransition From="PointerOver" To="Normal">
                                         <Storyboard>
-                                            <ColorAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb"
-                                                                          Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-                                                <LinearColorKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="{ThemeResource ScrollBarThumbBackgroundColor}" />
-                                                <LinearColorKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="{ThemeResource ScrollBarThumbBackgroundColor}" />
-                                                <LinearColorKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="{ThemeResource ScrollBarPanningThumbBackgroundColor}" />
-                                            </ColorAnimationUsingKeyFrames>
-                                            <ColorAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb"
-                                                                          Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-                                                <LinearColorKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="{ThemeResource ScrollBarThumbBackgroundColor}" />
-                                                <LinearColorKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="{ThemeResource ScrollBarThumbBackgroundColor}" />
-                                                <LinearColorKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="{ThemeResource ScrollBarPanningThumbBackgroundColor}" />
-                                            </ColorAnimationUsingKeyFrames>
+                                            <DoubleAnimation BeginTime="{ThemeResource ScrollbarContractDelay}"
+                                                             Duration="{ThemeResource ScrollbarContractDuration}"
+                                                             Storyboard.TargetName="VerticalThumbTransform"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="{ThemeResource SmallScrollThumbScale}" />
+                                            <DoubleAnimation BeginTime="{ThemeResource ScrollbarContractDelay}"
+                                                             Duration="{ThemeResource ScrollbarContractDuration}"
+                                                             Storyboard.TargetName="VerticalThumbTransform"
+                                                             Storyboard.TargetProperty="TranslateX"
+                                                             To="{ThemeResource SmallScrollThumbOffset}" />
 
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumbTransform"
-                                                                           Storyboard.TargetProperty="ScaleX">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="{ThemeResource SmallScrollThumbScale}" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumbTransform"
-                                                                           Storyboard.TargetProperty="TranslateX">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="0" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="0" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="{ThemeResource SmallScrollThumbOffset}" />
-                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimation BeginTime="{ThemeResource ScrollbarContractDelay}"
+                                                             Duration="{ThemeResource ScrollbarContractDuration}"
+                                                             Storyboard.TargetName="HorizontalThumbTransform"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="{ThemeResource SmallScrollThumbScale}" />
+                                            <DoubleAnimation BeginTime="{ThemeResource ScrollbarContractDelay}"
+                                                             Duration="{ThemeResource ScrollbarContractDuration}"
+                                                             Storyboard.TargetName="HorizontalThumbTransform"
+                                                             Storyboard.TargetProperty="TranslateY"
+                                                             To="{ThemeResource SmallScrollThumbOffset}" />
 
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumbTransform"
-                                                                           Storyboard.TargetProperty="ScaleY">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="{ThemeResource SmallScrollThumbScale}" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumbTransform"
-                                                                           Storyboard.TargetProperty="TranslateY">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="0" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="0" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="{ThemeResource SmallScrollThumbOffset}" />
-                                            </DoubleAnimationUsingKeyFrames>
+                                            <FadeOutThemeAnimation TargetName="VerticalSmallIncrease"
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                            <FadeOutThemeAnimation TargetName="VerticalLargeIncrease"
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                            <FadeOutThemeAnimation TargetName="VerticalLargeDecrease"
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                            <FadeOutThemeAnimation TargetName="VerticalSmallDecrease"
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                            <FadeOutThemeAnimation TargetName="VerticalTrackRect"
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
 
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VerticalSmallIncrease"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="0" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VerticalLargeIncrease"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="0" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VerticalLargeDecrease"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="0" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VerticalSmallDecrease"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="0" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="0" />
-                                            </DoubleAnimationUsingKeyFrames>
-
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HorizontalSmallIncrease"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="0" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HorizontalLargeIncrease"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="0" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HorizontalLargeDecrease"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="0" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HorizontalSmallDecrease"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="0" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractDelay}" Value="1" />
-                                                <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollBarContractFinalKeyframe}" Value="0" />
-                                            </DoubleAnimationUsingKeyFrames>
+                                            <FadeOutThemeAnimation TargetName="HorizontalSmallIncrease"
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                            <FadeOutThemeAnimation TargetName="HorizontalLargeIncrease"
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                            <FadeOutThemeAnimation TargetName="HorizontalLargeDecrease"
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                            <FadeOutThemeAnimation TargetName="HorizontalSmallDecrease"
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
+                                            <FadeOutThemeAnimation TargetName="HorizontalTrackRect"
+                                                                   BeginTime="{ThemeResource ScrollbarContractDelay}" />
                                         </Storyboard>
                                     </VisualTransition>
                                 </VisualStateGroup.Transitions>
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" >
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.Background" Value="{ThemeResource ScrollBarBackgroundPointerOver}" />
-                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource ScrollBarBorderBrushPointerOver}" />
-                                        <Setter Target="HorizontalTrackRect.Stroke" Value="{ThemeResource ScrollBarTrackStrokePointerOver}" />
-                                        <Setter Target="VerticalTrackRect.Stroke" Value="{ThemeResource ScrollBarTrackStrokePointerOver}" />
-                                        <Setter Target="HorizontalTrackRect.Fill" Value="{ThemeResource ScrollBarTrackFillPointerOver}" />
-                                        <Setter Target="VerticalTrackRect.Fill" Value="{ThemeResource ScrollBarTrackFillPointerOver}" />
-                                    </VisualState.Setters>
+                                <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                        Storyboard.TargetName="HorizontalThumb"
-                                                        Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
-                                                        To="{ThemeResource ScrollBarThumbBackgroundColor}" />
-                                        <ColorAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                        Storyboard.TargetName="VerticalThumb"
-                                                        Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
-                                                        To="{ThemeResource ScrollBarThumbBackgroundColor}" />
+                                        <FadeOutThemeAnimation TargetName="VerticalSmallIncrease" />
+                                        <FadeOutThemeAnimation TargetName="VerticalLargeIncrease" />
+                                        <FadeOutThemeAnimation TargetName="VerticalLargeDecrease" />
+                                        <FadeOutThemeAnimation TargetName="VerticalSmallDecrease" />
+                                        <FadeOutThemeAnimation TargetName="VerticalTrackRect" />
 
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                        <FadeOutThemeAnimation TargetName="HorizontalSmallIncrease"/>
+                                        <FadeOutThemeAnimation TargetName="HorizontalLargeIncrease"/>
+                                        <FadeOutThemeAnimation TargetName="HorizontalLargeDecrease"/>
+                                        <FadeOutThemeAnimation TargetName="HorizontalSmallDecrease"/>
+                                        <FadeOutThemeAnimation TargetName="HorizontalTrackRect"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver" >
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarBorderBrushPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarTrackStrokePointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarTrackStrokePointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarTrackFillPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarTrackFillPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+
+                                        <DoubleAnimation BeginTime="{ThemeResource ScrollbarExpandDelay}"
+                                                         Duration="{ThemeResource ScrollbarExpandDuration}"
                                                          Storyboard.TargetName="VerticalThumbTransform"
                                                          Storyboard.TargetProperty="ScaleX"
                                                          To="1.0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                        <DoubleAnimation BeginTime="{ThemeResource ScrollbarExpandDelay}"
+                                                         Duration="{ThemeResource ScrollbarExpandDuration}"
                                                          Storyboard.TargetName="VerticalThumbTransform"
                                                          Storyboard.TargetProperty="TranslateX"
                                                          To="0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                        <DoubleAnimation BeginTime="{ThemeResource ScrollbarExpandDelay}"
+                                                         Duration="{ThemeResource ScrollbarExpandDuration}"
                                                          Storyboard.TargetName="HorizontalThumbTransform"
                                                          Storyboard.TargetProperty="ScaleY"
                                                          To="1.0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                        <DoubleAnimation BeginTime="{ThemeResource ScrollbarExpandDelay}"
+                                                         Duration="{ThemeResource ScrollbarExpandDuration}"
                                                          Storyboard.TargetName="HorizontalThumbTransform"
                                                          Storyboard.TargetProperty="TranslateY"
                                                          To="0" />
 
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="VerticalSmallIncrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="VerticalLargeIncrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="VerticalLargeDecrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="VerticalSmallDecrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="VerticalTrackRect"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" />
+                                        <FadeInThemeAnimation TargetName="VerticalSmallIncrease"
+                                                              BeginTime="{ThemeResource ScrollbarExpandDelay}" />
+                                        <FadeInThemeAnimation TargetName="VerticalLargeIncrease"
+                                                              BeginTime="{ThemeResource ScrollbarExpandDelay}" />
+                                        <FadeInThemeAnimation TargetName="VerticalLargeDecrease"
+                                                              BeginTime="{ThemeResource ScrollbarExpandDelay}" />
+                                        <FadeInThemeAnimation TargetName="VerticalSmallDecrease"
+                                                              BeginTime="{ThemeResource ScrollbarExpandDelay}" />
+                                        <FadeInThemeAnimation TargetName="VerticalTrackRect"
+                                                              BeginTime="{ThemeResource ScrollbarExpandDelay}" />
 
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="HorizontalSmallIncrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="HorizontalLargeIncrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="HorizontalLargeDecrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="HorizontalSmallDecrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="HorizontalTrackRect"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" />
+                                        <FadeInThemeAnimation TargetName="HorizontalSmallIncrease"
+                                                              BeginTime="{ThemeResource ScrollbarExpandDelay}" />
+                                        <FadeInThemeAnimation TargetName="HorizontalLargeIncrease"
+                                                              BeginTime="{ThemeResource ScrollbarExpandDelay}" />
+                                        <FadeInThemeAnimation TargetName="HorizontalLargeDecrease"
+                                                              BeginTime="{ThemeResource ScrollbarExpandDelay}" />
+                                        <FadeInThemeAnimation TargetName="HorizontalSmallDecrease"
+                                                              BeginTime="{ThemeResource ScrollbarExpandDelay}" />
+                                        <FadeInThemeAnimation TargetName="HorizontalTrackRect"
+                                                              BeginTime="{ThemeResource ScrollbarExpandDelay}" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.Background" Value="{ThemeResource ScrollBarBackgroundDisabled}" />
-                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource ScrollBarBorderBrushDisabled}" />
-                                        <Setter Target="Root.Opacity" Value="0.5" />
-                                        <Setter Target="HorizontalTrackRect.Stroke" Value="{ThemeResource ScrollBarTrackStrokeDisabled}" />
-                                        <Setter Target="VerticalTrackRect.Stroke" Value="{ThemeResource ScrollBarTrackStrokeDisabled}" />
-                                        <Setter Target="HorizontalTrackRect.Fill" Value="{ThemeResource ScrollBarTrackFillDisabled}" />
-                                        <Setter Target="VerticalTrackRect.Fill" Value="{ThemeResource ScrollBarTrackFillDisabled}" />
-                                        <Setter Target="HorizontalPanningThumb.Background" Value="{ThemeResource ScrollBarPanningThumbBackgroundDisabled}" />
-                                        <Setter Target="VerticalPanningThumb.Background" Value="{ThemeResource ScrollBarPanningThumbBackgroundDisabled}" />
-                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarBackgroundDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarBorderBrushDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                        <DoubleAnimation Duration="0"
+                                                         To="0.5"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Storyboard.TargetName="Root" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarTrackStrokeDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarTrackStrokeDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarTrackFillDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarTrackFillDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalPanningThumb" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarPanningThumbBackgroundDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalPanningThumb" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ScrollBarPanningThumbBackgroundDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ScrollingIndicatorStates">
                                 <VisualState x:Name="TouchIndicator">
-                                    <VisualState.Setters>
-                                        <Setter Target="HorizontalRoot.Visibility" Value="Collapsed" />
-                                        <Setter Target="VerticalRoot.Visibility" Value="Collapsed" />
-                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <FadeInThemeAnimation TargetName="HorizontalPanningRoot" />
+                                        <FadeInThemeAnimation TargetName="VerticalPanningRoot" />
+                                        <FadeOutThemeAnimation TargetName="HorizontalRoot" />
+                                        <FadeOutThemeAnimation TargetName="VerticalRoot" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalRoot" Storyboard.TargetProperty="Visibility" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Collapsed</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalRoot" Storyboard.TargetProperty="Visibility" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Collapsed</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="MouseIndicator">
-                                    <VisualState.Setters>
-                                        <Setter Target="HorizontalPanningRoot.Visibility" Value="Collapsed" />
-                                        <Setter Target="VerticalPanningRoot.Visibility" Value="Collapsed" />
-                                        <Setter Target="HorizontalRoot.IsHitTestVisible" Value="True" />
-                                        <Setter Target="VerticalRoot.IsHitTestVisible" Value="True" />
-                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <FadeInThemeAnimation TargetName="HorizontalRoot" />
+                                        <FadeInThemeAnimation TargetName="VerticalRoot" />
+                                        <FadeOutThemeAnimation TargetName="HorizontalPanningRoot" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalPanningRoot" Storyboard.TargetProperty="Visibility" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Collapsed</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <FadeOutThemeAnimation TargetName="VerticalPanningRoot" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalPanningRoot" Storyboard.TargetProperty="Visibility" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Collapsed</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="IsHitTestVisible" Storyboard.TargetName="HorizontalRoot">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <x:Boolean>True</x:Boolean>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="IsHitTestVisible" Storyboard.TargetName="VerticalRoot">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <x:Boolean>True</x:Boolean>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="NoIndicator">
                                     <Storyboard>
-                                        <ColorAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                        Storyboard.TargetName="HorizontalThumb" 
-                                                        Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
-                                                        To="{ThemeResource ScrollBarPanningThumbBackgroundColor}" />
-                                        <ColorAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                        Storyboard.TargetName="VerticalThumb"
-                                                        Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
-                                                        To="{ThemeResource ScrollBarPanningThumbBackgroundColor}" />
-
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="VerticalThumbTransform"
-                                                         Storyboard.TargetProperty="ScaleX"
-                                                         To="{ThemeResource SmallScrollThumbScale}" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="VerticalThumbTransform"
-                                                         Storyboard.TargetProperty="TranslateX"
-                                                         To="{ThemeResource SmallScrollThumbOffset}" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="HorizontalThumbTransform"
-                                                         Storyboard.TargetProperty="ScaleY"
-                                                         To="{ThemeResource SmallScrollThumbScale}" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="HorizontalThumbTransform"
-                                                         Storyboard.TargetProperty="TranslateY"
-                                                         To="{ThemeResource SmallScrollThumbOffset}" />
-
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="VerticalSmallIncrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="VerticalLargeIncrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="VerticalLargeDecrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="VerticalSmallDecrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="VerticalTrackRect"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="HorizontalSmallIncrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="HorizontalLargeIncrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="HorizontalLargeDecrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="HorizontalSmallDecrease"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="HorizontalTrackRect"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalRoot" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}">
-                                                <DiscreteObjectKeyFrame.Value>
-                                                    <Visibility>Collapsed</Visibility>
-                                                </DiscreteObjectKeyFrame.Value>
-                                            </DiscreteObjectKeyFrame>
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalRoot" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}">
-                                                <DiscreteObjectKeyFrame.Value>
-                                                    <Visibility>Collapsed</Visibility>
-                                                </DiscreteObjectKeyFrame.Value>
-                                            </DiscreteObjectKeyFrame>
-                                        </ObjectAnimationUsingKeyFrames>
-
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="HorizontalPanningRoot"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-                                        <DoubleAnimation Duration="{ThemeResource ScrollBarContractDuration}"
-                                                         Storyboard.TargetName="VerticalPanningRoot"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0" />
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalPanningRoot" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}">
-                                                <DiscreteObjectKeyFrame.Value>
-                                                    <Visibility>Collapsed</Visibility>
-                                                </DiscreteObjectKeyFrame.Value>
-                                            </DiscreteObjectKeyFrame>
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalPanningRoot" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollBarContractDuration}">
-                                                <DiscreteObjectKeyFrame.Value>
-                                                    <Visibility>Collapsed</Visibility>
-                                                </DiscreteObjectKeyFrame.Value>
-                                            </DiscreteObjectKeyFrame>
-                                        </ObjectAnimationUsingKeyFrames>
+                                        <FadeOutThemeAnimation BeginTime="0" TargetName="HorizontalPanningRoot" />
+                                        <FadeOutThemeAnimation BeginTime="0" TargetName="VerticalPanningRoot" />
+                                        <FadeOutThemeAnimation BeginTime="0" TargetName="HorizontalRoot" />
+                                        <FadeOutThemeAnimation BeginTime="0" TargetName="VerticalRoot" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -793,25 +798,22 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Rectangle x:Name="HorizontalTrackRect"
-                                       Opacity="0"
                                        Grid.ColumnSpan="5"
                                        Margin="0"
                                        StrokeThickness="{ThemeResource ScrollBarTrackBorderThemeThickness}"
                                        Fill="{ThemeResource ScrollBarTrackFill}"
                                        Stroke="{ThemeResource ScrollBarTrackStroke}" />
                             <RepeatButton x:Name="HorizontalSmallDecrease"
-                                          Opacity="0"
                                           Grid.Column="0"
-                                          MinHeight="{ThemeResource ScrollBarSize}"
+                                          MinHeight="{ThemeResource ScrollbarSize}"
                                           IsTabStop="False"
                                           Interval="50"
                                           Margin="0"
                                           Template="{StaticResource HorizontalDecrementTemplate}"
-                                          Width="{ThemeResource ScrollBarSize}"
+                                          Width="{ThemeResource ScrollbarSize}"
                                           AllowFocusOnInteraction="False"
                                           VerticalAlignment="Center" />
                             <RepeatButton x:Name="HorizontalLargeDecrease"
-                                          Opacity="0"
                                           Grid.Column="1"
                                           HorizontalAlignment="Stretch"
                                           VerticalAlignment="Stretch"
@@ -822,10 +824,10 @@
                                           AllowFocusOnInteraction="False" />
                             <Thumb x:Name="HorizontalThumb"
                                    Grid.Column="2"
-                                   Background="{ThemeResource ScrollBarPanningThumbBackground}"
+                                   Background="{ThemeResource ScrollBarThumbBackground}"
                                    Template="{StaticResource HorizontalThumbTemplate}"
-                                   Height="{ThemeResource ScrollBarSize}"
-                                   MinWidth="{ThemeResource ScrollBarSize}"
+                                   Height="{ThemeResource ScrollbarSize}"
+                                   MinWidth="{ThemeResource ScrollbarSize}"
                                    AutomationProperties.AccessibilityView="Raw"
                                    VerticalAlignment="Bottom"
                                    RenderTransformOrigin="0.5,1">
@@ -838,7 +840,6 @@
                                 </Thumb.RenderTransform>
                             </Thumb>
                             <RepeatButton x:Name="HorizontalLargeIncrease"
-                                          Opacity="0"
                                           Grid.Column="3"
                                           HorizontalAlignment="Stretch"
                                           VerticalAlignment="Stretch"
@@ -847,18 +848,17 @@
                                           AllowFocusOnInteraction="False"
                                           Template="{StaticResource RepeatButtonTemplate}" />
                             <RepeatButton x:Name="HorizontalSmallIncrease"
-                                          Opacity="0"
                                           Grid.Column="4"
-                                          MinHeight="{ThemeResource ScrollBarSize}"
+                                          MinHeight="{ThemeResource ScrollbarSize}"
                                           IsTabStop="False"
                                           Interval="50"
                                           Margin="0"
                                           Template="{StaticResource HorizontalIncrementTemplate}"
-                                          Width="{ThemeResource ScrollBarSize}"
+                                          Width="{ThemeResource ScrollbarSize}"
                                           AllowFocusOnInteraction="False"
                                           VerticalAlignment="Center" />
                         </Grid>
-                        <Grid x:Name="HorizontalPanningRoot" MinWidth="24" Visibility="Collapsed">
+                        <Grid x:Name="HorizontalPanningRoot" MinWidth="24">
                             <Border x:Name="HorizontalPanningThumb"
                                     VerticalAlignment="Bottom"
                                     HorizontalAlignment="Left"
@@ -868,7 +868,7 @@
                                     MinWidth="32"
                                     Margin="0,2,0,2" />
                         </Grid>
-                        <Grid x:Name="VerticalRoot" 
+                        <Grid x:Name="VerticalRoot"
                               Background="{TemplateBinding Background}"
                               BorderBrush="{TemplateBinding BorderBrush}"
                               IsHitTestVisible="False">
@@ -880,16 +880,14 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Rectangle x:Name="VerticalTrackRect"
-                                       Opacity="0"
                                        Grid.RowSpan="5"
                                        Margin="0"
                                        StrokeThickness="{ThemeResource ScrollBarTrackBorderThemeThickness}"
                                        Fill="{ThemeResource ScrollBarTrackFill}"
                                        Stroke="{ThemeResource ScrollBarTrackStroke}" />
                             <RepeatButton x:Name="VerticalSmallDecrease"
-                                          Opacity="0"
-                                          Height="{ThemeResource ScrollBarSize}"
-                                          MinWidth="{ThemeResource ScrollBarSize}"
+                                          Height="{ThemeResource ScrollbarSize}"
+                                          MinWidth="{ThemeResource ScrollbarSize}"
                                           IsTabStop="False"
                                           Interval="50"
                                           Margin="0"
@@ -897,7 +895,6 @@
                                           Template="{StaticResource VerticalDecrementTemplate}"
                                           HorizontalAlignment="Center" />
                             <RepeatButton x:Name="VerticalLargeDecrease"
-                                          Opacity="0"
                                           HorizontalAlignment="Stretch"
                                           VerticalAlignment="Stretch"
                                           Height="0"
@@ -908,10 +905,10 @@
                                           Template="{StaticResource RepeatButtonTemplate}" />
                             <Thumb x:Name="VerticalThumb"
                                    Grid.Row="2"
-                                   Background="{ThemeResource ScrollBarPanningThumbBackground}"
+                                   Background="{ThemeResource ScrollBarThumbBackground}"
                                    Template="{StaticResource VerticalThumbTemplate}"
-                                   Width="{ThemeResource ScrollBarSize}"
-                                   MinHeight="{ThemeResource ScrollBarSize}"
+                                   Width="{ThemeResource ScrollbarSize}"
+                                   MinHeight="{ThemeResource ScrollbarSize}"
                                    AutomationProperties.AccessibilityView="Raw"
                                    RenderTransformOrigin="1,0.5">
                                 <Thumb.RenderTransform>
@@ -923,7 +920,6 @@
                                 </Thumb.RenderTransform>
                             </Thumb>
                             <RepeatButton x:Name="VerticalLargeIncrease"
-                                          Opacity="0"
                                           HorizontalAlignment="Stretch"
                                           VerticalAlignment="Stretch"
                                           IsTabStop="False"
@@ -932,9 +928,8 @@
                                           AllowFocusOnInteraction="False"
                                           Template="{StaticResource RepeatButtonTemplate}" />
                             <RepeatButton x:Name="VerticalSmallIncrease"
-                                          Opacity="0"
-                                          Height="{ThemeResource ScrollBarSize}"
-                                          MinWidth="{ThemeResource ScrollBarSize}"
+                                          Height="{ThemeResource ScrollbarSize}"
+                                          MinWidth="{ThemeResource ScrollbarSize}"
                                           IsTabStop="False"
                                           Interval="50"
                                           Margin="0"
@@ -942,7 +937,7 @@
                                           Template="{StaticResource VerticalIncrementTemplate}"
                                           HorizontalAlignment="Center" />
                         </Grid>
-                        <Grid x:Name="VerticalPanningRoot" MinHeight="24" Visibility="Collapsed">
+                        <Grid x:Name="VerticalPanningRoot" MinHeight="24">
                             <Border x:Name="VerticalPanningThumb"
                                     VerticalAlignment="Top"
                                     HorizontalAlignment="Right"
@@ -953,6 +948,214 @@
                                     Margin="2,0,2,0" />
                         </Grid>
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ScrollViewer">
+        <Setter Property="HorizontalScrollMode" Value="Auto" />
+        <Setter Property="VerticalScrollMode" Value="Auto" />
+        <Setter Property="IsHorizontalRailEnabled" Value="True" />
+        <Setter Property="IsVerticalRailEnabled" Value="True" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="ZoomMode" Value="Disabled" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollViewer">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ScrollingIndicatorStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="MouseIndicator" To="NoIndicator">
+                                        <Storyboard>
+                                            <FadeOutThemeAnimation TargetName="ScrollBarSeparator" BeginTime="{StaticResource ScrollViewerSeparatorContractDelay}" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="{StaticResource ScrollViewerSeparatorContractDelay}">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="{StaticResource ScrollViewerSeparatorContractDelay}">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition From="MouseIndicatorFull" To="NoIndicator">
+                                        <Storyboard>
+                                            <FadeOutThemeAnimation TargetName="ScrollBarSeparator" BeginTime="{StaticResource ScrollViewerSeparatorContractDelay}" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="{StaticResource ScrollViewerSeparatorContractDelay}">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="{StaticResource ScrollViewerSeparatorContractDelay}">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition From="MouseIndicatorFull" To="MouseIndicator">
+                                        <Storyboard>
+                                            <FadeOutThemeAnimation TargetName="ScrollBarSeparator" BeginTime="{StaticResource ScrollViewerSeparatorContractDelay}" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode" Duration="0">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode" Duration="0">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition From="TouchIndicator" To="NoIndicator">
+                                        <Storyboard>
+                                            <FadeOutThemeAnimation TargetName="ScrollBarSeparator" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="NoIndicator">
+                                    <Storyboard>
+                                        <FadeOutThemeAnimation TargetName="ScrollBarSeparator" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="TouchIndicator">
+                                    <Storyboard>
+                                        <FadeOutThemeAnimation TargetName="ScrollBarSeparator" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <ScrollingIndicatorMode>TouchIndicator</ScrollingIndicatorMode>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <ScrollingIndicatorMode>TouchIndicator</ScrollingIndicatorMode>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MouseIndicator">
+                                    <Storyboard>
+                                        <FadeOutThemeAnimation TargetName="ScrollBarSeparator" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MouseIndicatorFull">
+                                    <Storyboard>
+                                        <FadeInThemeAnimation TargetName="ScrollBarSeparator" BeginTime="{StaticResource ScrollViewerSeparatorExpandDelay}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid Background="{TemplateBinding Background}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ScrollContentPresenter x:Name="ScrollContentPresenter"
+                                                    Grid.RowSpan="2"
+                                                    Grid.ColumnSpan="2"
+                                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                    Margin="{TemplateBinding Padding}" />
+                            <Grid
+                                Grid.RowSpan="2"
+                                Grid.ColumnSpan="2" />
+                            <ScrollBar x:Name="VerticalScrollBar"
+                                       Grid.Column="1"
+                                       IsTabStop="False"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       Orientation="Vertical"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                       Value="{TemplateBinding VerticalOffset}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       HorizontalAlignment="Right" />
+                            <ScrollBar x:Name="HorizontalScrollBar"
+                                       IsTabStop="False"
+                                       Maximum="{TemplateBinding ScrollableWidth}"
+                                       Orientation="Horizontal"
+                                       Grid.Row="1"
+                                       Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                                       Value="{TemplateBinding HorizontalOffset}"
+                                       ViewportSize="{TemplateBinding ViewportWidth}" />
+                            <Border x:Name="ScrollBarSeparator"
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Background="{ThemeResource ScrollViewerScrollBarSeparatorBackground}" />
+                        </Grid>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
