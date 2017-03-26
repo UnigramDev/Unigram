@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Controls.Views"
     xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
     xmlns:viewModels="using:Unigram.ViewModels"
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
@@ -298,11 +299,22 @@
                         <Setter Property="MinHeight" Value="0"/>
                     </Style>
                 </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="tl:TLMessagesStickerSet">
-                        <Image Margin="4" Source="{x:Bind Documents[0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
+                <ListView.ItemTemplateSelector>
+                    <selectors:StickerSetTemplateSelector>
+                        <selectors:StickerSetTemplateSelector.ItemTemplate>
+                            <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                                <Image Margin="4" Source="{x:Bind Documents[0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}"/>
+                            </DataTemplate>
+                        </selectors:StickerSetTemplateSelector.ItemTemplate>
+                        <selectors:StickerSetTemplateSelector.RecentsTemplate>
+                            <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                                <Border ToolTipService.ToolTip="{x:Bind Set.Title}" Background="Transparent">
+                                    <FontIcon Glyph="&#xE121;" Margin="0,0,0,2"/>
+                                </Border>
+                            </DataTemplate>
+                        </selectors:StickerSetTemplateSelector.RecentsTemplate>
+                    </selectors:StickerSetTemplateSelector>
+                </ListView.ItemTemplateSelector>
                 <ListView.Header>
                     <StackPanel Orientation="Horizontal">
                         <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.SavedGifs.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="0" Glyph="&#xE608;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>

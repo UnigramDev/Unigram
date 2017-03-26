@@ -66,7 +66,11 @@ namespace Unigram.Controls.Views
 
         private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Pivot.SelectedIndex = 2;
+            if (Toolbar.SelectedItem != null)
+            {
+                Pivot.SelectedIndex = 2;
+            }
+
             //Stickers.ScrollIntoView(((TLMessagesStickerSet)Toolbar.SelectedItem).Documents[0]);
 
             //Pivot.SelectedIndex = Math.Min(1, Toolbar.SelectedIndex);

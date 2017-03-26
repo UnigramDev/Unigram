@@ -139,6 +139,7 @@
       <DependentUpon>ZoomableGridViewPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
+    <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
