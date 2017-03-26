@@ -1658,7 +1658,7 @@ namespace Unigram.Services
         }
     }
 
-    public enum StickerSetType : int
+    public enum StickerType : int
     {
         Image = 0,
         Mask = 1
@@ -1667,9 +1667,9 @@ namespace Unigram.Services
     public delegate void NeedReloadArchivedStickersEventHandler(object sender, NeedReloadArchivedStickersEventArgs e);
     public class NeedReloadArchivedStickersEventArgs : EventArgs
     {
-        public int Type { get; private set; }
+        public StickerType Type { get; private set; }
 
-        public NeedReloadArchivedStickersEventArgs(int type)
+        public NeedReloadArchivedStickersEventArgs(StickerType type)
         {
             Type = type;
         }
@@ -1678,9 +1678,9 @@ namespace Unigram.Services
     public delegate void StickersDidLoadedEventHandler(object sender, StickersDidLoadedEventArgs e);
     public class StickersDidLoadedEventArgs : EventArgs
     {
-        public int Type { get; private set; }
+        public StickerType Type { get; private set; }
 
-        public StickersDidLoadedEventArgs(int type)
+        public StickersDidLoadedEventArgs(StickerType type)
         {
             Type = type;
         }
@@ -1699,9 +1699,9 @@ namespace Unigram.Services
     {
         public bool IsGifs { get; private set; }
 
-        public int Type { get; private set; }
+        public StickerType Type { get; private set; }
 
-        public RecentsDidLoadedEventArgs(bool gif, int type)
+        public RecentsDidLoadedEventArgs(bool gif, StickerType type)
         {
             IsGifs = gif;
             Type = type;
@@ -1711,9 +1711,9 @@ namespace Unigram.Services
     public delegate void ArchivedStickersCountDidLoadedEventHandler(object sender, ArchivedStickersCountDidLoadedEventArgs e);
     public class ArchivedStickersCountDidLoadedEventArgs : EventArgs
     {
-        public int Type { get; private set; }
+        public StickerType Type { get; private set; }
 
-        public ArchivedStickersCountDidLoadedEventArgs(int type)
+        public ArchivedStickersCountDidLoadedEventArgs(StickerType type)
         {
             Type = type;
         }
