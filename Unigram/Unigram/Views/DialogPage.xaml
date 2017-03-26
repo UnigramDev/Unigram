@@ -262,7 +262,7 @@
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left"
                                              VerticalAlignment="Bottom"
-                                             Margin="12,0,0,4"
+                                             Margin="12,0,0,2"
                                              Width="32"
                                              Height="32"/>
 
@@ -376,7 +376,7 @@
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left"
                                              VerticalAlignment="Bottom"
-                                             Margin="12,0,0,4"
+                                             Margin="12,0,0,2"
                                              Width="32"
                                              Height="32"/>
                 <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
