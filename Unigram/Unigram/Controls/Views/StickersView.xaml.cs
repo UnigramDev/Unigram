@@ -77,6 +77,11 @@ namespace Unigram.Controls.Views
             //Stickers.ScrollIntoView(ViewModel.StickerSets[Toolbar.SelectedIndex][0]);
         }
 
+        private void Toolbar_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            Stickers.ScrollIntoView(((TLMessagesStickerSet)e.ClickedItem).Documents[0]);
+        }
+
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollingHost = Stickers.ItemsPanelRoot as ItemsWrapGrid;

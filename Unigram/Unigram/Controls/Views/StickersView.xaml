@@ -303,6 +303,8 @@
                       ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
                       Height="{ThemeResource AppBarThemeCompactHeight}"
                       Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      IsItemClickEnabled="True"
+                      ItemClick="Toolbar_ItemClick"
                       SelectionChanged="Toolbar_SelectionChanged"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                       ScrollViewer.HorizontalScrollMode="Auto"
