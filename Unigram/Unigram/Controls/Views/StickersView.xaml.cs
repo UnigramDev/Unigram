@@ -38,7 +38,7 @@ namespace Unigram.Controls.Views
 
         private async void Featured_ItemClick(object sender, ItemClickEventArgs e)
         {
-            await StickerSetView.Current.ShowAsync(((TLFeaturedStickerSet)e.ClickedItem).Set);
+            await StickerSetView.Current.ShowAsync(((TLDocument)e.ClickedItem).StickerSet);
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
