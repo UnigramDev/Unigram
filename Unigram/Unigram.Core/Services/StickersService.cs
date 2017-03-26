@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
@@ -67,7 +68,7 @@ namespace Unigram.Services
 
         void LoadRecents(int type, bool gif, bool cache);
 
-        void ReorderStickers(int type, List<long> order);
+        void ReorderStickers(int type, IList<long> order);
 
         void CalculateNewHash(int type);
 
@@ -98,7 +99,13 @@ namespace Unigram.Services
         event ArchivedStickersCountDidLoadedEventHandler ArchivedStickersCountDidLoaded;
     }
 
-    public class StickersService : IStickersService
+    public class StickersService : IStickersService, IHandle, 
+        IHandle<TLUpdateStickerSets>, 
+        IHandle<TLUpdateStickerSetsOrder>, 
+        IHandle<TLUpdateNewStickerSet>,
+        IHandle<TLUpdateSavedGifs>,
+        IHandle<TLUpdateRecentStickers>,
+        IHandle<TLUpdateReadFeaturedStickers>
     {
         public static int TYPE_IMAGE = 0;
         public static int TYPE_MASK = 1;
@@ -134,15 +141,54 @@ namespace Unigram.Services
 
         private readonly IMTProtoService _protoService;
         private readonly ICacheService _cacheService;
+        private readonly ITelegramEventAggregator _aggregator;
 
-        public StickersService(IMTProtoService protoService, ICacheService cacheService)
+        public StickersService(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
         {
             _protoService = protoService;
             _cacheService = cacheService;
+            _aggregator = aggregator;
+
+            _aggregator.Subscribe(this);
 
             //ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", (long)0);
             //ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", (long)0);
         }
+
+        #region Updates handling
+
+        public void Handle(TLUpdateStickerSets update)
+        {
+            var mask = false;
+            LoadStickers(mask ? TYPE_MASK : TYPE_IMAGE, false, true);
+        }
+
+        public void Handle(TLUpdateStickerSetsOrder update)
+        {
+            ReorderStickers(update.IsMasks ? TYPE_MASK : TYPE_IMAGE, update.Order);
+        }
+
+        public void Handle(TLUpdateNewStickerSet update)
+        {
+            AddNewStickerSet(update.StickerSet);
+        }
+
+        public void Handle(TLUpdateSavedGifs update)
+        {
+            ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
+        }
+
+        public void Handle(TLUpdateRecentStickers update)
+        {
+            ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
+        }
+
+        public void Handle(TLUpdateReadFeaturedStickers update)
+        {
+            MarkFeaturedStickersAsRead(false);
+        }
+        
+        #endregion
 
         public void Cleanup()
         {
@@ -635,7 +681,7 @@ namespace Unigram.Services
             }
         }
 
-        public void ReorderStickers(int type, List<long> order)
+        public void ReorderStickers(int type, IList<long> order)
         {
             stickerSets[type].Sort((lhs, rhs) =>
             {
@@ -683,7 +729,8 @@ namespace Unigram.Services
             {
                 TLStickerPack stickerPack = set.Packs[i];
                 stickerPack.Emoticon = stickerPack.Emoticon.Replace("\uFE0F", "");
-                List<TLDocument> arrayList = allStickers[stickerPack.Emoticon];
+                List<TLDocument> arrayList;
+                allStickers.TryGetValue(stickerPack.Emoticon, out arrayList);
                 if (arrayList == null)
                 {
                     arrayList = new List<TLDocument>();
@@ -696,8 +743,7 @@ namespace Unigram.Services
                     {
                         stickersByEmoji[id] = stickerPack.Emoticon;
                     }
-                    TLDocument sticker = stickersById[id];
-                    if (sticker != null)
+                    if (stickersById.TryGetValue(id, out TLDocument sticker))
                     {
                         arrayList.Add(sticker);
                     }

@@ -17,6 +17,9 @@ using Template10.Common;
 using Unigram.Helpers;
 using Windows.UI;
 using Windows.Foundation.Metadata;
+using Template10.Services.NavigationService;
+using Template10.Services.ViewService;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Controls
 {
@@ -109,6 +112,11 @@ namespace Unigram.Controls
             return AsyncInfo.Run(async (token) =>
             {
                 Margin = new Thickness();
+
+                if (DataContext is INavigable navigable)
+                {
+                    navigable.NavigationService = new ContentDialogNavigationService(this);
+                }
 
                 _result = ContentDialogBaseResult.None;
                 _callback = new TaskCompletionSource<ContentDialogBaseResult>();
@@ -326,5 +334,122 @@ namespace Unigram.Controls
         None,
         OK,
         Yes
+    }
+
+    public class ContentDialogNavigationService : INavigationService
+    {
+        private readonly ContentDialogBase _contentDialog;
+
+        public ContentDialogNavigationService(ContentDialogBase contentDialog)
+        {
+            _contentDialog = contentDialog;
+        }
+
+        public void GoBack(NavigationTransitionInfo infoOverride = null)
+        {
+            _contentDialog.Hide(ContentDialogBaseResult.None);
+        }
+
+        public object Content => throw new NotImplementedException();
+
+        public bool CanGoBack => throw new NotImplementedException();
+
+        public bool CanGoForward => throw new NotImplementedException();
+
+        public string NavigationState { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public object CurrentPageParam => throw new NotImplementedException();
+
+        public Type CurrentPageType => throw new NotImplementedException();
+
+        public DispatcherWrapper Dispatcher => throw new NotImplementedException();
+
+        public Frame Frame => throw new NotImplementedException();
+
+        public FrameFacade FrameFacade => throw new NotImplementedException();
+
+        public bool IsInMainView => throw new NotImplementedException();
+
+        public event TypedEventHandler<Type> AfterRestoreSavedNavigation;
+
+        public void ClearCache(bool removeCachedPagesInBackStack = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearHistory()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GoForward()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> LoadAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Navigate(Type page, object parameter = null, NavigationTransitionInfo infoOverride = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Navigate<T>(T key, object parameter = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> NavigateAsync(Type page, object parameter = null, NavigationTransitionInfo infoOverride = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> NavigateAsync<T>(T key, object parameter = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Refresh()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Refresh(object param)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> RestoreSavedNavigationAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Resuming()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SaveAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SaveNavigationAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SuspendingAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

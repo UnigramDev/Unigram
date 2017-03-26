@@ -11,17 +11,20 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Utils;
 using Unigram.Common;
+using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
     public class StickerSetViewModel : UnigramViewModelBase
     {
+        private readonly IStickersService _stickersService;
         private readonly DialogStickersViewModel _stickers;
 
-        public StickerSetViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, DialogStickersViewModel stickers) 
+        public StickerSetViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService, DialogStickersViewModel stickers) 
             : base(protoService, cacheService, aggregator)
         {
+            _stickersService = stickersService;
             _stickers = stickers;
 
             Items = new ObservableCollection<TLMessagesStickerSet>();
@@ -86,46 +89,73 @@ namespace Unigram.ViewModels
         {
             IsLoading = true;
 
-            if (_stickerSet.IsInstalled && !_stickerSet.IsArchived && !_stickerSet.IsOfficial)
+            if (_stickersService.IsStickerPackInstalled(_stickerSet.Id) == false)
             {
-                var response = await ProtoService.UninstallStickerSetAsync(new TLInputStickerSetID { Id = _stickerSet.Id, AccessHash = _stickerSet.AccessHash });
+                var response = await ProtoService.InstallStickerSetAsync(new TLInputStickerSetID { Id = _stickerSet.Id, AccessHash = _stickerSet.AccessHash }, false);
                 if (response.IsSucceeded)
                 {
-                    _stickers.SyncStickers();
+                    _stickersService.LoadStickers(_stickerSet.IsMasks ? StickersService.TYPE_MASK : StickersService.TYPE_IMAGE, false, true);
 
-                    _stickerSet.IsInstalled = false;
+                    _stickerSet.IsInstalled = true;
                     _stickerSet.IsArchived = false;
 
-                    RaisePropertyChanged(() => StickerSet);
-                    IsLoading = false;
+                    NavigationService.GoBack();
                 }
             }
             else
             {
-                var archive = _stickerSet.IsOfficial && !_stickerSet.IsArchived;
-
-                var response = await ProtoService.InstallStickerSetAsync(new TLInputStickerSetID { Id = _stickerSet.Id, AccessHash = _stickerSet.AccessHash }, archive);
-                if (response.IsSucceeded)
+                if (_stickerSet.IsOfficial)
                 {
-                    _stickers.SyncStickers();
-
-                    _stickerSet.IsInstalled = true;
-                    _stickerSet.IsArchived = archive;
-
-                    //if (response.Result is TLMessagesStickerSetInstallResultArchive archived)
-                    //{
-                    //    Debugger.Break();
-                    //}
-                    //else
-                    //{
-                    //    _stickerSet.IsInstalled = true;
-                    //    _stickerSet.IsArchived = archive;
-                    //}
-
-                    RaisePropertyChanged(() => StickerSet);
-                    IsLoading = false;
+                    _stickersService.RemoveStickersSet(_stickerSet, 1, true);
+                    NavigationService.GoBack();
+                }
+                else
+                {
+                    _stickersService.RemoveStickersSet(_stickerSet, 0, true);
+                    NavigationService.GoBack();
                 }
             }
+
+            //if (_stickerSet.IsInstalled && !_stickerSet.IsArchived && !_stickerSet.IsOfficial)
+            //{
+            //    var response = await ProtoService.UninstallStickerSetAsync(new TLInputStickerSetID { Id = _stickerSet.Id, AccessHash = _stickerSet.AccessHash });
+            //    if (response.IsSucceeded)
+            //    {
+            //        _stickersService.LoadStickers(_stickerSet.IsMasks ? StickersService.TYPE_MASK : StickersService.TYPE_IMAGE, false, true);
+
+            //        _stickerSet.IsInstalled = false;
+            //        _stickerSet.IsArchived = false;
+
+            //        RaisePropertyChanged(() => StickerSet);
+            //        IsLoading = false;
+            //    }
+            //}
+            //else
+            //{
+            //    var archive = _stickerSet.IsOfficial && !_stickerSet.IsArchived;
+
+            //    var response = await ProtoService.InstallStickerSetAsync(new TLInputStickerSetID { Id = _stickerSet.Id, AccessHash = _stickerSet.AccessHash }, archive);
+            //    if (response.IsSucceeded)
+            //    {
+            //        _stickersService.LoadStickers(_stickerSet.IsMasks ? StickersService.TYPE_MASK : StickersService.TYPE_IMAGE, false, true);
+
+            //        _stickerSet.IsInstalled = true;
+            //        _stickerSet.IsArchived = archive;
+
+            //        //if (response.Result is TLMessagesStickerSetInstallResultArchive archived)
+            //        //{
+            //        //    Debugger.Break();
+            //        //}
+            //        //else
+            //        //{
+            //        //    _stickerSet.IsInstalled = true;
+            //        //    _stickerSet.IsArchived = archive;
+            //        //}
+
+            //        RaisePropertyChanged(() => StickerSet);
+            //        IsLoading = false;
+            //    }
+            //}
         }
     }
 }

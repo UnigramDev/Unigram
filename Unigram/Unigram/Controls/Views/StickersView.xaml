@@ -260,16 +260,10 @@
                             <ListView ItemsSource="{x:Bind StickersSource.View.CollectionGroups}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="wuxdata:ICollectionViewGroup">
-                                        <TextBlock Text="{x:Bind Group.(tl:TLMessagesStickerSet.Set).Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <TextBlock Text="{x:Bind Group.(tl:TLMessagesStickerSet.Set).Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
                                         <!--<TextBlock Text="{Binding Group.Set.Title}" Style="{StaticResource BaseTextBlockStyle}"/>-->
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="MinHeight" Value="0"/>
-                                        <Setter Property="Padding" Value="12,8,12,9"/>
-                                    </Style>
-                                </ListView.ItemContainerStyle>
                             </ListView>
                         </SemanticZoom.ZoomedOutView>
                     </SemanticZoom>
@@ -320,6 +314,9 @@
                         <controls:GlyphButton Glyph="&#xE115;"/>
                     </StackPanel>
                 </ListView.Footer>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection/>
+                </ListView.ItemContainerTransitions>
             </ListView>
 
             <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.Row="2"/>

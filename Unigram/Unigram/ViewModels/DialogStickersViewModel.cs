@@ -15,6 +15,7 @@ using Unigram.Core;
 using Unigram.Services;
 using Windows.UI.Popups;
 using Template10.Utils;
+using Unigram.Core.Common;
 
 namespace Unigram.ViewModels
 {
@@ -23,6 +24,11 @@ namespace Unigram.ViewModels
         public readonly IStickersService _stickersService;
 
         private TLMessagesStickerSet _frequentlyUsed;
+
+        private bool _recentGifs;
+        private bool _recentStickers;
+        private bool _featured;
+        private bool _stickers;
 
         public DialogStickersViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService)
             : base(protoService, cacheService, aggregator)
@@ -43,7 +49,10 @@ namespace Unigram.ViewModels
 
             SavedGifs = new ObservableCollection<TLDocument>();
             FeaturedStickers = new ObservableCollection<TLStickerSetMultiCovered>();
-            SavedStickers = new ObservableCollection<TLMessagesStickerSet>();
+            SavedStickers = new ObservableCollectionEx<TLMessagesStickerSet>();
+
+            SyncStickers();
+            SyncGifs();
         }
 
         public IStickersService StickersService
@@ -111,20 +120,22 @@ namespace Unigram.ViewModels
 
         private void ProcessStickers()
         {
+            _stickers = true;
             var stickers = _stickersService.GetStickerSets(Services.StickersService.TYPE_IMAGE);
             Execute.BeginOnUIThread(() =>
             {
-                for (int i = 1; i < SavedStickers.Count; i++)
-                {
-                    SavedStickers.RemoveAt(i);
-                }
+                SavedStickers.AddRange(stickers, true);
 
-                SavedStickers.AddRange(stickers);
+                if (_frequentlyUsed.Documents.Count > 0)
+                {
+                    SavedStickers.Insert(0, _frequentlyUsed);
+                }
             });
         }
 
         private void ProcessFeaturedStickers()
         {
+            _featured = true;
             var stickers = _stickersService.GetFeaturedStickerSets();
             Execute.BeginOnUIThread(() =>
             {
@@ -146,7 +157,7 @@ namespace Unigram.ViewModels
 
         public ObservableCollection<TLStickerSetMultiCovered> FeaturedStickers { get; private set; }
 
-        public ObservableCollection<TLMessagesStickerSet> SavedStickers { get; private set; }
+        public ObservableCollectionEx<TLMessagesStickerSet> SavedStickers { get; private set; }
 
         public void SyncStickers()
         {
@@ -157,8 +168,8 @@ namespace Unigram.ViewModels
                 var featured = _stickersService.CheckFeaturedStickers();
 
                 ProcessRecentStickers();
-                if (stickers) ProcessStickers();
-                if (featured) ProcessFeaturedStickers();
+                if (stickers && !_stickers) ProcessStickers();
+                if (featured && !_featured) ProcessFeaturedStickers();
 
                 #region Old
                 //var watch = Stopwatch.StartNew();

@@ -2030,10 +2030,10 @@ namespace Telegram.Api.Services.Updates
             {
                 Execute.ShowDebugMessage("TLUpdateStickerSetsOrder56");
 
-                if (updateStickerSetsOrder.IsMasks)
-                {
-                    return true;
-                }
+                //if (updateStickerSetsOrder.IsMasks)
+                //{
+                //    return true;
+                //}
 
                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateStickerSetsOrder));
 

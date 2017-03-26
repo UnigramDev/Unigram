@@ -112,6 +112,7 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\FunctionalComparer.cs" />
     <Compile Include="Common\KeyedList.cs" />
+    <Compile Include="Common\ObservableCollectionEx.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Dependency\UnigramContainerBuilder.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
