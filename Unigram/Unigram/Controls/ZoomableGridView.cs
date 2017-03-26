@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Unigram.Core.Dependency;
+using Unigram.Services;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -54,6 +57,11 @@ namespace Unigram.Controls
                 _popupPanel.Margin = new Thickness();
             }
 
+            //if (item is TLDocument content && content.StickerSet != null)
+            //{
+            //    Debug.WriteLine(string.Join(" ", UnigramContainer.Current.ResolveType<IStickersService>().GetEmojiForSticker(content.Id)));
+            //}
+
             _popupPanel.Width = bounds.Width;
             _popupPanel.Height = bounds.Height;
             _popupContent.Content = item;
@@ -76,6 +84,11 @@ namespace Unigram.Controls
             {
                 if (element.DataContext is TLDocument content && _popupContent.Content != content)
                 {
+                    //if (content.StickerSet != null)
+                    //{
+                    //    Debug.WriteLine(string.Join(" ", UnigramContainer.Current.ResolveType<IStickersService>().GetEmojiForSticker(content.Id)));
+                    //}
+
                     _popupContent.Content = content;
                 }
             }

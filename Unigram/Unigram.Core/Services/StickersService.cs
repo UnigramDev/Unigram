@@ -64,7 +64,7 @@ namespace Unigram.Services
 
         bool IsStickerPackInstalled(string name);
 
-        string GetEmojiForSticker(long id);
+        List<string> GetEmojiForSticker(long id);
 
         void LoadRecents(StickerType stickerType, bool gif, bool cache);
 
@@ -116,7 +116,7 @@ namespace Unigram.Services
         private int[] loadHash = new int[2];
         private int[] loadDate = new int[2];
 
-        private Dictionary<long, string> stickersByEmoji = new Dictionary<long, string>();
+        private Dictionary<long, List<String>> stickersByEmoji = new Dictionary<long, List<String>>();
         private Dictionary<string, List<TLDocument>> allStickers = new Dictionary<string, List<TLDocument>>();
 
         private List<TLDocument>[] recentStickers = new[] { new List<TLDocument>(), new List<TLDocument>() };
@@ -419,10 +419,14 @@ namespace Unigram.Services
             return stickerSetsByName.ContainsKey(name);
         }
 
-        public string GetEmojiForSticker(long id)
+        public List<string> GetEmojiForSticker(long id)
         {
-            string value = stickersByEmoji[id];
-            return value != null ? value : string.Empty;
+            if (stickersByEmoji.TryGetValue(id, out List<string> value))
+            {
+                return value;
+            }
+
+            return new List<string>(0);
         }
 
         private int CalculateDocumentsHash(List<TLDocument> arrayList)
@@ -757,10 +761,16 @@ namespace Unigram.Services
                 for (int k = 0; k < stickerPack.Documents.Count; k++)
                 {
                     long id = stickerPack.Documents[k];
-                    if (!stickersByEmoji.ContainsKey(id))
+                    List<string> emojiList;
+                    stickersByEmoji.TryGetValue(id, out emojiList);
+                    if (emojiList == null)
                     {
-                        stickersByEmoji[id] = stickerPack.Emoticon;
+                        emojiList = new List<string>();
+                        stickersByEmoji[id] = emojiList;
                     }
+
+                    emojiList.Add(stickerPack.Emoticon);
+
                     if (stickersById.TryGetValue(id, out TLDocument sticker))
                     {
                         arrayList.Add(sticker);
@@ -1373,7 +1383,7 @@ namespace Unigram.Services
                     List<TLMessagesStickerSet> stickerSetsNew = new List<TLMessagesStickerSet>();
                     Dictionary<long, TLMessagesStickerSet> stickerSetsByIdNew = new Dictionary<long, TLMessagesStickerSet>();
                     Dictionary<string, TLMessagesStickerSet> stickerSetsByNameNew = new Dictionary<string, TLMessagesStickerSet>();
-                    Dictionary<long, string> stickersByEmojiNew = new Dictionary<long, string>();
+                    Dictionary<long, List<string>> stickersByEmojiNew = new Dictionary<long, List<string>>();
                     Dictionary<long, TLDocument> stickersByIdNew = new Dictionary<long, TLDocument>();
                     Dictionary<string, List<TLDocument>> allStickersNew = new Dictionary<string, List<TLDocument>>();
 
@@ -1417,10 +1427,16 @@ namespace Unigram.Services
                                 for (int k = 0; k < stickerPack.Documents.Count; k++)
                                 {
                                     long id = stickerPack.Documents[k];
-                                    if (!stickersByEmojiNew.ContainsKey(id))
+                                    List<string> emojiList;
+                                    stickersByEmojiNew.TryGetValue(id, out emojiList);
+                                    if (emojiList == null)
                                     {
-                                        stickersByEmojiNew[id] = stickerPack.Emoticon;
+                                        emojiList = new List<string>();
+                                        stickersByEmojiNew[id] = emojiList;
                                     }
+
+                                    emojiList.Add(stickerPack.Emoticon);
+
                                     if (stickersByIdNew.TryGetValue(id, out TLDocument sticker))
                                     {
                                         arrayList.Add(sticker);
