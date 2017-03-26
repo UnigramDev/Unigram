@@ -38,6 +38,7 @@ using Unigram.ViewModels.Chats;
 using Unigram.Views.Chats;
 using Windows.System.Profile;
 using Windows.ApplicationModel.Core;
+using Unigram.Core.Services;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -225,11 +226,11 @@ namespace Unigram.Views
             return null;
         }
 
-        private bool TryGetPeerFromParameter(object parameter, out TLPeerBase peer)
+        public static bool TryGetPeerFromParameter(object parameter, out TLPeerBase peer)
         {
             if (parameter is string)
             {
-                parameter = MasterDetail.NavigationService.SerializationService.Deserialize((string)parameter);
+                parameter = TLSerializationService.Current.Deserialize((string)parameter);
             }
 
             var tuple = parameter as Tuple<TLPeerBase, int>;

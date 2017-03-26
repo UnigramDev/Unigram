@@ -19,6 +19,7 @@ using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Core.Models;
+using Unigram.Core.Services;
 using Unigram.ViewModels;
 using Unigram.Views.Chats;
 using Unigram.Views.Users;
@@ -104,6 +105,23 @@ namespace Unigram.Views
             //    ElementCompositionPreview.SetImplicitHideAnimation(btnDialogInfo, showHideAnimation);
             //}
         }
+
+        //protected override async void OnNavigatedTo(NavigationEventArgs e)
+        //{
+        //    if (MainPage.TryGetPeerFromParameter(e.Parameter, out TLPeerBase peer))
+        //    {
+        //        DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>(peer);
+
+        //        CheckMessageBoxEmpty();
+
+        //        ViewModel.PropertyChanged -= OnPropertyChanged;
+        //        ViewModel.PropertyChanged += OnPropertyChanged;
+
+        //        await ViewModel.OnNavigatedToAsync(TLSerializationService.Current.Deserialize((string)e.Parameter), e.NavigationMode, null);
+        //    }
+
+        //    base.OnNavigatedTo(e);
+        //}
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {

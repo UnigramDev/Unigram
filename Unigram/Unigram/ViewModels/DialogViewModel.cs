@@ -194,7 +194,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadNextSliceAsync()
         {
-            if (_isLoadingNextSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice) return;
             _isLoadingNextSlice = true;
 
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
@@ -253,7 +253,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadPreviousSliceAsync()
         {
-            if (_isLoadingPreviousSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice) return;
             _isLoadingPreviousSlice = true;
 
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
@@ -261,6 +261,7 @@ namespace Unigram.ViewModels
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
             var maxId = int.MaxValue;
+            var limit = 50;
 
             //for (int i = 0; i < Messages.Count; i++)
             //{
@@ -272,7 +273,7 @@ namespace Unigram.ViewModels
 
             maxId = Messages.LastOrDefault()?.Id ?? 1;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -50, maxId, 50);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit, maxId, limit);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -300,6 +301,8 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
+
+                IsFirstSliceLoaded = result.Result.Messages.Count < limit;
             }
 
             _isLoadingPreviousSlice = false;
@@ -623,6 +626,8 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            Messages.Clear();
+
             var tuple = parameter as Tuple<TLPeerBase, int>;
             if (tuple != null)
             {
