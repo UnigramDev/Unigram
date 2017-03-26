@@ -50,7 +50,7 @@ namespace Unigram.ViewModels
                         var existing = _stickersService.GetStickerSetById(response.Result.Set.Id);
                         if (existing.Set.Hash != response.Result.Set.Hash)
                         {
-                            _stickersService.LoadStickers(response.Result.Set.IsMasks ? StickersService.TYPE_MASK : StickersService.TYPE_IMAGE, false, true);
+                            _stickersService.LoadStickers(response.Result.Set.IsMasks ? StickerType.Mask : StickerType.Image, false, true);
                         }
                     }
                 }
@@ -103,7 +103,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.InstallStickerSetAsync(new TLInputStickerSetID { Id = _stickerSet.Id, AccessHash = _stickerSet.AccessHash }, false);
                 if (response.IsSucceeded)
                 {
-                    _stickersService.LoadStickers(_stickerSet.IsMasks ? StickersService.TYPE_MASK : StickersService.TYPE_IMAGE, false, true);
+                    _stickersService.LoadStickers(_stickerSet.IsMasks ? StickerType.Mask : StickerType.Image, false, true);
 
                     _stickerSet.IsInstalled = true;
                     _stickerSet.IsArchived = false;

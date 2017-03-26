@@ -18,9 +18,9 @@ namespace Unigram.ViewModels.Settings
     public class SettingsStickersViewModelBase : UnigramViewModelBase
     {
         private readonly IStickersService _stickersService;
-        private readonly int _type;
+        private readonly StickerType _type;
 
-        public SettingsStickersViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService, int type)
+        public SettingsStickersViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService, StickerType type)
             : base(protoService, cacheService, aggregator)
         {
             _type = type;
@@ -41,7 +41,7 @@ namespace Unigram.ViewModels.Settings
                     var stickers = _stickersService.CheckStickers(_type);
                     _stickersService.CheckArchivedStickersCount(_type);
 
-                    if (_type == StickersService.TYPE_IMAGE)
+                    if (_type == StickerType.Image)
                     {
                         var featured = _stickersService.CheckFeaturedStickers();
                         if (featured) OnFeaturedStickersDidLoaded(null, null);
@@ -79,7 +79,7 @@ namespace Unigram.ViewModels.Settings
             });
         }
 
-        private void ProcessStickerSets(int type)
+        private void ProcessStickerSets(StickerType type)
         {
             var stickers = _stickersService.GetStickerSets(type);
             Execute.BeginOnUIThread(() =>

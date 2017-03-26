@@ -19,7 +19,7 @@ namespace Unigram.ViewModels.Settings
     public class SettingsStickersViewModel : SettingsStickersViewModelBase
     {
         public SettingsStickersViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService)
-            : base(protoService, cacheService, aggregator, stickersService, StickersService.TYPE_IMAGE)
+            : base(protoService, cacheService, aggregator, stickersService, StickerType.Image)
         {
         }
     }

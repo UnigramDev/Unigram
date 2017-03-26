@@ -24,17 +24,17 @@ namespace Unigram.Services
     {
         void Cleanup();
 
-        bool CheckStickers(int type);
+        bool CheckStickers(StickerType stickerType);
 
-        bool CheckArchivedStickersCount(int type);
+        bool CheckArchivedStickersCount(StickerType stickerType);
 
         bool CheckFeaturedStickers();
 
-        List<TLDocument> GetRecentStickers(int type);
+        List<TLDocument> GetRecentStickers(StickerType stickerType);
 
-        List<TLDocument> GetRecentStickersNoCopy(int type);
+        List<TLDocument> GetRecentStickersNoCopy(StickerType stickerType);
 
-        void AddRecentSticker(int type, TLDocument document, int date);
+        void AddRecentSticker(StickerType stickerType, TLDocument document, int date);
 
         List<TLDocument> GetRecentGifs();
 
@@ -42,7 +42,7 @@ namespace Unigram.Services
 
         void RemoveRecentGif(TLDocument document);
 
-        bool IsLoadingStickers(int type);
+        bool IsLoadingStickers(StickerType stickerType);
 
         TLMessagesStickerSet GetStickerSetByName(string name);
 
@@ -50,9 +50,9 @@ namespace Unigram.Services
 
         Dictionary<string, List<TLDocument>> GetAllStickers();
 
-        int GetArchivedStickersCount(int type);
+        int GetArchivedStickersCount(StickerType stickerType);
 
-        List<TLMessagesStickerSet> GetStickerSets(int type);
+        List<TLMessagesStickerSet> GetStickerSets(StickerType stickerType);
 
         List<TLMessagesStickerSet> GetFeaturedStickerSets();
 
@@ -66,15 +66,15 @@ namespace Unigram.Services
 
         string GetEmojiForSticker(long id);
 
-        void LoadRecents(int type, bool gif, bool cache);
+        void LoadRecents(StickerType stickerType, bool gif, bool cache);
 
-        void ReorderStickers(int type, IList<long> order);
+        void ReorderStickers(StickerType stickerType, IList<long> order);
 
-        void CalculateNewHash(int type);
+        void CalculateNewHash(StickerType stickerType);
 
         void AddNewStickerSet(TLMessagesStickerSet set);
 
-        void LoadArchivedStickersCount(int type, bool cache);
+        void LoadArchivedStickersCount(StickerType stickerType, bool cache);
 
         void LoadFeaturedStickers(bool cache, bool force);
 
@@ -82,7 +82,7 @@ namespace Unigram.Services
 
         void MarkFeaturedStickersByIdAsRead(long id);
 
-        void LoadStickers(int type, bool cache, bool force);
+        void LoadStickers(StickerType stickerType, bool cache, bool force);
 
         string GetStickerSetName(long setId);
 
@@ -107,9 +107,6 @@ namespace Unigram.Services
         IHandle<TLUpdateRecentStickers>,
         IHandle<TLUpdateReadFeaturedStickers>
     {
-        public static int TYPE_IMAGE = 0;
-        public static int TYPE_MASK = 1;
-
         private List<TLMessagesStickerSet>[] stickerSets = new[] { new List<TLMessagesStickerSet>(), new List<TLMessagesStickerSet>() };
         private Dictionary<long, TLMessagesStickerSet> stickerSetsById = new Dictionary<long, TLMessagesStickerSet>();
         private Dictionary<string, TLMessagesStickerSet> stickerSetsByName = new Dictionary<string, TLMessagesStickerSet>();
@@ -160,12 +157,12 @@ namespace Unigram.Services
         public void Handle(TLUpdateStickerSets update)
         {
             var mask = false;
-            LoadStickers(mask ? TYPE_MASK : TYPE_IMAGE, false, true);
+            LoadStickers(mask ? StickerType.Mask : StickerType.Image, false, true);
         }
 
         public void Handle(TLUpdateStickerSetsOrder update)
         {
-            ReorderStickers(update.IsMasks ? TYPE_MASK : TYPE_IMAGE, update.Order);
+            ReorderStickers(update.IsMasks ? StickerType.Mask : StickerType.Image, update.Order);
         }
 
         public void Handle(TLUpdateNewStickerSet update)
@@ -219,22 +216,23 @@ namespace Unigram.Services
             recentGifsLoaded = false;
         }
 
-        public bool CheckStickers(int type)
+        public bool CheckStickers(StickerType stickerType)
         {
+            var type = (int)stickerType;
             if (!loadingStickers[type] && (!stickersLoaded[type] || Math.Abs(Utils.CurrentTimestamp / 1000 - loadDate[type]) >= 60 * 60))
             {
-                LoadStickers(type, true, false);
+                LoadStickers(stickerType, true, false);
                 return false;
             }
 
             return true;
         }
 
-        public bool CheckArchivedStickersCount(int type)
+        public bool CheckArchivedStickersCount(StickerType stickerType)
         {
             //if (!loadingStickers[type] && (!stickersLoaded[type] || Math.Abs(Utils.CurrentTimestamp / 1000 - loadDate[type]) >= 60 * 60))
             {
-                LoadArchivedStickersCount(type, true);
+                LoadArchivedStickersCount(stickerType, true);
                 return false;
             }
 
@@ -252,18 +250,21 @@ namespace Unigram.Services
             return true;
         }
 
-        public List<TLDocument> GetRecentStickers(int type)
+        public List<TLDocument> GetRecentStickers(StickerType stickerType)
         {
+            var type = (int)stickerType;
             return new List<TLDocument>(recentStickers[type]);
         }
 
-        public List<TLDocument> GetRecentStickersNoCopy(int type)
+        public List<TLDocument> GetRecentStickersNoCopy(StickerType stickerType)
         {
+            var type = (int)stickerType;
             return recentStickers[type];
         }
 
-        public void AddRecentSticker(int type, TLDocument document, int date)
+        public void AddRecentSticker(StickerType stickerType, TLDocument document, int date)
         {
+            var type = (int)stickerType;
             bool found = false;
             for (int i = 0; i < recentStickers[type].Count; i++)
             {
@@ -297,7 +298,7 @@ namespace Unigram.Services
             }
             List<TLDocument> arrayList = new List<TLDocument>();
             arrayList.Add(document);
-            ProcessLoadedRecentDocuments(type, arrayList, false, date);
+            ProcessLoadedRecentDocuments(stickerType, arrayList, false, date);
         }
 
         public List<TLDocument> GetRecentGifs()
@@ -363,9 +364,9 @@ namespace Unigram.Services
             ProcessLoadedRecentDocuments(0, arrayList, true, date);
         }
 
-        public bool IsLoadingStickers(int type)
+        public bool IsLoadingStickers(StickerType stickerType)
         {
-            return loadingStickers[type];
+            return loadingStickers[(int)stickerType];
         }
 
         public TLMessagesStickerSet GetStickerSetByName(string name)
@@ -383,14 +384,14 @@ namespace Unigram.Services
             return allStickers;
         }
 
-        public int GetArchivedStickersCount(int type)
+        public int GetArchivedStickersCount(StickerType stickerType)
         {
-            return archivedStickersCount[type];
+            return archivedStickersCount[(int)stickerType];
         }
 
-        public List<TLMessagesStickerSet> GetStickerSets(int type)
+        public List<TLMessagesStickerSet> GetStickerSets(StickerType stickerType)
         {
-            return stickerSets[type];
+            return stickerSets[(int)stickerType];
         }
 
         public List<TLMessagesStickerSet> GetFeaturedStickerSets()
@@ -448,8 +449,9 @@ namespace Unigram.Services
             return (int)acc;
         }
 
-        public void LoadRecents(int type, bool gif, bool cache)
+        public void LoadRecents(StickerType stickerType, bool gif, bool cache)
         {
+            var type = (int)stickerType;
             if (gif)
             {
                 if (loadingRecentGifs)
@@ -484,7 +486,7 @@ namespace Unigram.Services
 
                     List<TLDocument> arrayList = new List<TLDocument>();
 
-                    Sqlite3.sqlite3_prepare_v2(database, "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,MetaType,MetaDate FROM web_recent_v3 WHERE MetaType = " + (gif ? 2 : (type == TYPE_IMAGE ? 3 : 4)) + " ORDER BY MetaDate DESC", out statement);
+                    Sqlite3.sqlite3_prepare_v2(database, "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,MetaType,MetaDate FROM web_recent_v3 WHERE MetaType = " + (gif ? 2 : (stickerType == StickerType.Image ? 3 : 4)) + " ORDER BY MetaDate DESC", out statement);
 
                     var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
                     while (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
@@ -519,8 +521,21 @@ namespace Unigram.Services
                         recentStickersLoaded[type] = true;
                     }
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.recentDocumentsDidLoaded, gif, type);
-                    RecentsDidLoaded?.Invoke(this, new RecentsDidLoadedEventArgs(gif, type));
-                    LoadRecents(type, gif, false);
+                    RecentsDidLoaded?.Invoke(this, new RecentsDidLoadedEventArgs(gif, stickerType));
+
+                    if (arrayList.Count == 0)
+                    {
+                        if (gif)
+                        {
+                            ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
+                        }
+                        else
+                        {
+                            ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
+                        }
+                    }
+
+                    LoadRecents(stickerType, gif, false);
                 }
                 catch (Exception e)
                 {
@@ -554,14 +569,13 @@ namespace Unigram.Services
                             arrayList = res.Gifs.OfType<TLDocument>().ToList();
                         }
 
-                        ProcessLoadedRecentDocuments(type, arrayList, gif, 0);
+                        ProcessLoadedRecentDocuments(stickerType, arrayList, gif, 0);
                     });
-
                 }
                 else
                 {
                     var hash = CalculateDocumentsHash(recentStickers[type]);
-                    var attached = type == TYPE_MASK;
+                    var attached = stickerType == StickerType.Mask;
                     _protoService.GetRecentStickersCallback(attached, hash, result =>
                     {
                         List<TLDocument> arrayList = null;
@@ -571,14 +585,15 @@ namespace Unigram.Services
                             arrayList = res.Stickers.OfType<TLDocument>().ToList();
                         }
 
-                        ProcessLoadedRecentDocuments(type, arrayList, gif, 0);
+                        ProcessLoadedRecentDocuments(stickerType, arrayList, gif, 0);
                     });
                 }
             }
         }
 
-        private void ProcessLoadedRecentDocuments(int type, List<TLDocument> documents, bool gif, int date)
+        private void ProcessLoadedRecentDocuments(StickerType stickerType, List<TLDocument> documents, bool gif, int date)
         {
+            var type = (int)stickerType;
             if (documents != null)
             {
                 try
@@ -623,7 +638,7 @@ namespace Unigram.Services
                         Sqlite3.sqlite3_bind_int(statement, 7, document.DCId);
                         Sqlite3.sqlite3_bind_int(statement, 8, document.Version);
                         Sqlite3.sqlite3_bind_text(statement, 9, attributes, -1);
-                        Sqlite3.sqlite3_bind_int(statement, 10, gif ? 2 : (type == TYPE_IMAGE ? 3 : 4));
+                        Sqlite3.sqlite3_bind_int(statement, 10, gif ? 2 : (stickerType == StickerType.Image ? 3 : 4));
                         Sqlite3.sqlite3_bind_int(statement, 11, date != 0 ? date : count - i);
                         Sqlite3.sqlite3_step(statement);
                     }
@@ -676,13 +691,14 @@ namespace Unigram.Services
                     }
 
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.recentDocumentsDidLoaded, gif, type);
-                    RecentsDidLoaded?.Invoke(this, new RecentsDidLoadedEventArgs(gif, type));
+                    RecentsDidLoaded?.Invoke(this, new RecentsDidLoadedEventArgs(gif, stickerType));
                 }
             }
         }
 
-        public void ReorderStickers(int type, IList<long> order)
+        public void ReorderStickers(StickerType stickerType, IList<long> order)
         {
+            var type = (int)stickerType;
             stickerSets[type].Sort((lhs, rhs) =>
             {
                 int index1 = order.IndexOf(lhs.Set.Id);
@@ -700,12 +716,13 @@ namespace Unigram.Services
 
             loadHash[type] = CalculateStickersHash(stickerSets[type]);
             //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
-            StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(type));
-            LoadStickers(type, false, true);
+            StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(stickerType));
+            LoadStickers(stickerType, false, true);
         }
 
-        public void CalculateNewHash(int type)
+        public void CalculateNewHash(StickerType stickerType)
         {
+            var type = (int)stickerType;
             loadHash[type] = CalculateStickersHash(stickerSets[type]);
         }
 
@@ -715,7 +732,8 @@ namespace Unigram.Services
             {
                 return;
             }
-            int type = set.Set.IsMasks ? TYPE_MASK : TYPE_IMAGE;
+            StickerType stickerType = set.Set.IsMasks ? StickerType.Mask : StickerType.Image;
+            int type = (int)stickerType;
             stickerSets[type].Insert(0, set);
             stickerSetsById[set.Set.Id] = set;
             stickerSetsByName[set.Set.ShortName] = set;
@@ -751,37 +769,38 @@ namespace Unigram.Services
             }
             loadHash[type] = CalculateStickersHash(stickerSets[type]);
             //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
-            StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(type));
-            LoadStickers(type, false, true);
+            StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(stickerType));
+            LoadStickers(stickerType, false, true);
         }
 
-        public void LoadArchivedStickersCount(int type, bool cache)
+        public void LoadArchivedStickersCount(StickerType stickerType, bool cache)
         {
+            var type = (int)stickerType;
             if (cache)
             {
                 int count = ApplicationSettings.Current.GetValueOrDefault("archivedStickersCount" + type, -1);
                 if (count == -1)
                 {
-                    LoadArchivedStickersCount(type, false);
+                    LoadArchivedStickersCount(stickerType, false);
                     return;
                 }
 
                 archivedStickersCount[type] = count;
                 //NotificationCenter.getInstance().postNotificationName(NotificationCenter.archivedStickersCountDidLoaded, new Object[] { Integer.valueOf(type) });
-                ArchivedStickersCountDidLoaded?.Invoke(this, new ArchivedStickersCountDidLoadedEventArgs(type));
-                LoadArchivedStickersCount(type, false);
+                ArchivedStickersCountDidLoaded?.Invoke(this, new ArchivedStickersCountDidLoadedEventArgs(stickerType));
+                LoadArchivedStickersCount(stickerType, false);
             }
             else
             {
                 var req = new TLMessagesGetArchivedStickers();
                 req.Limit = 0;
-                req.IsMasks = type == TYPE_MASK;
+                req.IsMasks = stickerType == StickerType.Mask;
                 _protoService.SendRequestCallback<TLMessagesArchivedStickers>(req, result =>
                 {
                     archivedStickersCount[type] = result.Count;
                     ApplicationSettings.Current.AddOrUpdateValue("archivedStickersCount" + type, result.Count);
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.archivedStickersCountDidLoaded, new Object[] { Integer.valueOf(StickersQuery.19.this.val$type) });
-                    ArchivedStickersCountDidLoaded?.Invoke(this, new ArchivedStickersCountDidLoadedEventArgs(type));
+                    ArchivedStickersCountDidLoaded?.Invoke(this, new ArchivedStickersCountDidLoadedEventArgs(stickerType));
                 });
             }
         }
@@ -1106,8 +1125,9 @@ namespace Unigram.Services
             //}, 1000);
         }
 
-        public void LoadStickers(int type, bool cache, bool force)
+        public void LoadStickers(StickerType stickerType, bool cache, bool force)
         {
+            var type = (int)stickerType;
             if (loadingStickers[type])
             {
                 return;
@@ -1146,13 +1166,13 @@ namespace Unigram.Services
                 {
                     Sqlite3.sqlite3_close(database);
                 }
-                ProcessLoadedStickers(type, newStickerArray, true, date, hash);
+                ProcessLoadedStickers(stickerType, newStickerArray, true, date, hash);
             }
             else
             {
                 TLObject req;
                 int hash;
-                if (type == TYPE_IMAGE)
+                if (stickerType == StickerType.Image)
                 {
                     req = new TLMessagesGetAllStickers();
                     hash = ((TLMessagesGetAllStickers)req).Hash = force ? 0 : loadHash[type];
@@ -1170,7 +1190,7 @@ namespace Unigram.Services
                         List<TLMessagesStickerSet> newStickerArray = new List<TLMessagesStickerSet>();
                         if (res.Sets.Count == 0)
                         {
-                            ProcessLoadedStickers(type, newStickerArray, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
+                            ProcessLoadedStickers(stickerType, newStickerArray, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
                         }
                         else
                         {
@@ -1189,7 +1209,7 @@ namespace Unigram.Services
 
                                     if (newStickerSets.Count == res.Sets.Count)
                                     {
-                                        ProcessLoadedStickers(type, newStickerArray, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
+                                        ProcessLoadedStickers(stickerType, newStickerArray, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
                                     }
                                     continue;
                                 }
@@ -1211,7 +1231,7 @@ namespace Unigram.Services
                                             }
                                         }
 
-                                        ProcessLoadedStickers(type, newStickerArray, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
+                                        ProcessLoadedStickers(stickerType, newStickerArray, false, (int)(Utils.CurrentTimestamp / 1000), res.Hash);
                                     }
                                 });
 
@@ -1220,13 +1240,13 @@ namespace Unigram.Services
                     }
                     else
                     {
-                        ProcessLoadedStickers(type, null, false, (int)(Utils.CurrentTimestamp / 1000), hash);
+                        ProcessLoadedStickers(stickerType, null, false, (int)(Utils.CurrentTimestamp / 1000), hash);
                     }
                 });
             }
         }
 
-        private void PutStickersToCache(int type, List<TLMessagesStickerSet> stickers, int date, int hash)
+        private void PutStickersToCache(StickerType stickerType, List<TLMessagesStickerSet> stickers, int date, int hash)
         {
             TLVector<TLMessagesStickerSet> stickersFinal = stickers != null ? new TLVector<TLMessagesStickerSet>(stickers) : null;
 
@@ -1249,7 +1269,7 @@ namespace Unigram.Services
                         }
 
                         Sqlite3.sqlite3_reset(statement);
-                        Sqlite3.sqlite3_bind_int(statement, 1, type == TYPE_IMAGE ? 1 : 2);
+                        Sqlite3.sqlite3_bind_int(statement, 1, stickerType == StickerType.Image ? 1 : 2);
                         Sqlite3.sqlite3_bind_blob(statement, 2, data.ToArray(), -1);
                         Sqlite3.sqlite3_bind_int(statement, 3, date);
                         Sqlite3.sqlite3_bind_int(statement, 4, hash);
@@ -1317,8 +1337,9 @@ namespace Unigram.Services
             return (int)acc;
         }
 
-        private void ProcessLoadedStickers(int type, List<TLMessagesStickerSet> res, bool cache, int date, int hash)
+        private void ProcessLoadedStickers(StickerType stickerType, List<TLMessagesStickerSet> res, bool cache, int date, int hash)
         {
+            var type = (int)stickerType;
             loadingStickers[type] = false;
             stickersLoaded[type] = true;
 
@@ -1337,7 +1358,7 @@ namespace Unigram.Services
                 {
                     loadHash[type] = hash;
                 }
-                LoadStickers(type, false, false);
+                LoadStickers(stickerType, false, false);
                 //    }
                 //}, res == null && !cache ? 1000 : 0);
                 if (res == null)
@@ -1411,7 +1432,7 @@ namespace Unigram.Services
 
                     if (!cache)
                     {
-                        PutStickersToCache(type, stickerSetsNew, date, hash);
+                        PutStickersToCache(stickerType, stickerSetsNew, date, hash);
                     }
                     //                        AndroidUtilities.runOnUIThread(new Runnable()
                     //{
@@ -1429,13 +1450,13 @@ namespace Unigram.Services
                     stickerSets[type] = stickerSetsNew;
                     loadHash[type] = hash;
                     loadDate[type] = date;
-                    if (type == TYPE_IMAGE)
+                    if (stickerType == StickerType.Image)
                     {
                         allStickers = allStickersNew;
                         stickersByEmoji = stickersByEmojiNew;
                     }
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
-                    StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(type));
+                    StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(stickerType));
                     //    }
                     //});
                 }
@@ -1454,7 +1475,7 @@ namespace Unigram.Services
                 loadDate[type] = date;
                 //    }
                 //});
-                PutStickersToCache(type, null, date, 0);
+                PutStickersToCache(stickerType, null, date, 0);
             }
             //    }
             //});        
@@ -1462,7 +1483,8 @@ namespace Unigram.Services
 
         public void RemoveStickersSet(TLStickerSet stickerSet, int hide, bool showSettings)
         {
-            int type = stickerSet.IsMasks ? TYPE_MASK : TYPE_IMAGE;
+            StickerType stickerType = stickerSet.IsMasks ? StickerType.Mask : StickerType.Image;
+            int type = (int)stickerType;
             TLInputStickerSetID stickerSetID = new TLInputStickerSetID();
             stickerSetID.AccessHash = stickerSet.AccessHash;
             stickerSetID.Id = stickerSet.Id;
@@ -1488,9 +1510,9 @@ namespace Unigram.Services
                     }
                 }
                 loadHash[type] = CalculateStickersHash(stickerSets[type]);
-                PutStickersToCache(type, stickerSets[type], loadDate[type], loadHash[type]);
+                PutStickersToCache(stickerType, stickerSets[type], loadDate[type], loadHash[type]);
                 //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
-                StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(type));
+                StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(stickerType));
                 TLMessagesInstallStickerSet req = new TLMessagesInstallStickerSet();
                 req.StickerSet = stickerSetID;
                 req.Archived = hide == 1;
@@ -1499,14 +1521,14 @@ namespace Unigram.Services
                     if (result is TLMessagesStickerSetInstallResultArchive)
                     {
                         //NotificationCenter.getInstance().postNotificationName(NotificationCenter.needReloadArchivedStickers, type);
-                        NeedReloadArchivedStickers?.Invoke(this, new NeedReloadArchivedStickersEventArgs(type));
+                        NeedReloadArchivedStickers?.Invoke(this, new NeedReloadArchivedStickersEventArgs(stickerType));
                         //if (hide != 1 && baseFragment != null && baseFragment.getParentActivity() != null)
                         //{
                         //    StickersArchiveAlert alert = new StickersArchiveAlert(baseFragment.getParentActivity(), showSettings ? baseFragment : null, ((TLRPC.TL_messages_stickerSetInstallResultArchive)response).sets);
                         //    baseFragment.showDialog(alert.create());
                         //}
                     }
-                    LoadStickers(type, false, false);
+                    LoadStickers(stickerType, false, false);
                 });
 
 
@@ -1539,11 +1561,11 @@ namespace Unigram.Services
                     //{
                     //    FileLog.e("tmessages", e);
                     //}
-                    LoadStickers(type, false, true);
+                    LoadStickers(stickerType, false, true);
 
                 }, fault =>
                 {
-                    LoadStickers(type, false, true);
+                    LoadStickers(stickerType, false, true);
                 });
             }
         }
@@ -1606,7 +1628,7 @@ namespace Unigram.Services
 
                         if (stickers != null)
                         {
-                            List<TLDocument> recentStickers = GetRecentStickersNoCopy(TYPE_IMAGE);
+                            List<TLDocument> recentStickers = GetRecentStickersNoCopy(StickerType.Image);
                             if (recentStickers.Count > 0)
                             {
                                 stickers.Sort(new Comparison<TLDocument>((lhs, rhs) =>

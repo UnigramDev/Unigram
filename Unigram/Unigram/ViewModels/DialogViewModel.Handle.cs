@@ -243,7 +243,7 @@ namespace Unigram.ViewModels
                     }
                     else if (message.IsSticker())
                     {
-                        _stickersService.AddRecentSticker(StickersService.TYPE_IMAGE, documentMedia.Document as TLDocument, message.Date);
+                        _stickersService.AddRecentSticker(StickerType.Image, documentMedia.Document as TLDocument, message.Date);
                     }
                 }
             }

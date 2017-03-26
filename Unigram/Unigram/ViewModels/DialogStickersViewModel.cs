@@ -71,7 +71,7 @@ namespace Unigram.ViewModels
             {
                 ProcessRecentGifs();
             }
-            else if (e.Type == Services.StickersService.TYPE_IMAGE)
+            else if (e.Type == StickerType.Image)
             {
                 ProcessRecentStickers();
             }
@@ -81,7 +81,7 @@ namespace Unigram.ViewModels
         {
             Debug.WriteLine("StickersDidLoaded");
 
-            if (e.Type == Services.StickersService.TYPE_IMAGE)
+            if (e.Type == StickerType.Image)
             {
                 ProcessStickers();
             }
@@ -103,7 +103,7 @@ namespace Unigram.ViewModels
 
         private void ProcessRecentStickers()
         {
-            var recent = _stickersService.GetRecentStickers(Services.StickersService.TYPE_IMAGE);
+            var recent = _stickersService.GetRecentStickers(StickerType.Image);
             Execute.BeginOnUIThread(() =>
             {
                 _frequentlyUsed.Documents = new TLVector<TLDocumentBase>(recent);
@@ -123,7 +123,7 @@ namespace Unigram.ViewModels
         private void ProcessStickers()
         {
             _stickers = true;
-            var stickers = _stickersService.GetStickerSets(Services.StickersService.TYPE_IMAGE);
+            var stickers = _stickersService.GetStickerSets(StickerType.Image);
             Execute.BeginOnUIThread(() =>
             {
                 SavedStickers.AddRange(stickers, true);
@@ -163,8 +163,8 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnThreadPool(() =>
             {
-                _stickersService.LoadRecents(Services.StickersService.TYPE_IMAGE, false, true);
-                var stickers = _stickersService.CheckStickers(Services.StickersService.TYPE_IMAGE);
+                _stickersService.LoadRecents(StickerType.Image, false, true);
+                var stickers = _stickersService.CheckStickers(StickerType.Image);
                 var featured = _stickersService.CheckFeaturedStickers();
 
                 ProcessRecentStickers();
@@ -279,7 +279,7 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnThreadPool(() =>
             {
-                _stickersService.LoadRecents(Services.StickersService.TYPE_IMAGE, true, true);
+                _stickersService.LoadRecents(StickerType.Image, true, true);
 
                 ProcessRecentGifs();
 

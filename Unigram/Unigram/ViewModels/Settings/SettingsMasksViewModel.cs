@@ -13,7 +13,7 @@ namespace Unigram.ViewModels.Settings
     public class SettingsMasksViewModel : SettingsStickersViewModelBase
     {
         public SettingsMasksViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService) 
-            : base(protoService, cacheService, aggregator, stickersService, StickersService.TYPE_MASK)
+            : base(protoService, cacheService, aggregator, stickersService, StickerType.Mask)
         {
         }
     }
