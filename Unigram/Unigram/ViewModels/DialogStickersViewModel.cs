@@ -415,7 +415,30 @@ namespace Unigram.ViewModels
 
         public TLStickerSet Set { get; set; }
 
-        public TLVector<TLDocumentBase> Covers { get; set; }
+        private TLVector<TLDocumentBase> _covers;
+        public TLVector<TLDocumentBase> Covers
+        {
+            get
+            {
+                return _covers;
+            }
+            set
+            {
+                _covers = new TLVector<TLDocumentBase>();
+
+                for (int i = 0; i < 5; i++)
+                {
+                    if (i < value.Count)
+                    {
+                        _covers.Add(value[i]);
+                    }
+                    else
+                    {
+                        _covers.Add(null);
+                    }
+                }
+            }
+        }
 
         private bool _isUnread;
         public bool IsUnread
