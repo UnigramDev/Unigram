@@ -2053,7 +2053,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="IconMenuFlyoutItem" TargetType="MenuFlyoutItem">
+    <Style x:Key="IconMenuFlyoutItemStyle" TargetType="MenuFlyoutItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="Padding" Value="{ThemeResource MenuFlyoutItemThemePadding}" />

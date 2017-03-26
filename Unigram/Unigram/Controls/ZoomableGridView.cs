@@ -30,17 +30,6 @@ namespace Unigram.Controls
             PointerMoved += ZoomableGridView_PointerMoved;
         }
 
-        private void ZoomableGridView_PointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            if (_popupHost.IsOpen && e.OriginalSource is FrameworkElement element)
-            {
-                if (element.DataContext is TLDocument content && _popupContent.Content != content)
-                {
-                    _popupContent.Content = content;
-                }
-            }
-        }
-
         protected override void OnApplyTemplate()
         {
             _scrollingHost = GetTemplateChild("ScrollViewer") as ScrollViewer;
@@ -73,11 +62,23 @@ namespace Unigram.Controls
             }
         }
 
+        private void ZoomableGridView_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (_popupHost.IsOpen && e.OriginalSource is FrameworkElement element)
+            {
+                if (element.DataContext is TLDocument content && _popupContent.Content != content)
+                {
+                    _popupContent.Content = content;
+                }
+            }
+        }
+
         protected override void OnPointerReleased(PointerRoutedEventArgs e)
         {
             if (_popupHost.IsOpen)
             {
                 _popupHost.IsOpen = false;
+                _popupContent.Content = null;
                 e.Handled = true;
             }
 
@@ -89,6 +90,7 @@ namespace Unigram.Controls
             if (_popupHost.IsOpen)
             {
                 _popupHost.IsOpen = false;
+                _popupContent.Content = null;
                 e.Handled = true;
             }
 
@@ -100,6 +102,7 @@ namespace Unigram.Controls
             if (_popupHost.IsOpen)
             {
                 _popupHost.IsOpen = false;
+                _popupContent.Content = null;
                 e.Handled = true;
             }
 

@@ -164,23 +164,23 @@
                                       Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                             <Button.Flyout>
                                 <MenuFlyout>
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                     Tag="&#xE133;"
                                                     Text="Manage"/>
                                     <MenuFlyoutSeparator/>
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                     Click="NewChat_Click"
                                                     Tag="&#xE125;"
                                                     Text="New Group" />
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                     Click="NewChannel_Click"
                                                     Tag="&#xE789;"
                                                     Text="New Channel" />
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                     Click="cbtnMasterSettings_Click"
                                                     Tag="&#xE115;"
                                                     Text="Settings"/>
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItem}"
+                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                     Click="cbtnMasterAbout_Click"
                                                     Tag="&#xE11B;"
                                                     Text="About"/>
