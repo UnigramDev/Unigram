@@ -17,6 +17,11 @@ namespace Unigram.Common
         {
             get
             {
+                if (photo == null)
+                {
+                    return null;
+                }
+
                 if (_context.TryGetValue(photo, out WeakReference<TLBitmapSource> reference) && 
                     reference.TryGetTarget(out TLBitmapSource target))
                 {
@@ -33,6 +38,11 @@ namespace Unigram.Common
         {
             get
             {
+                if (document == null)
+                {
+                    return null;
+                }
+
                 if (_context.TryGetValue(document, out WeakReference<TLBitmapSource> reference) && 
                     reference.TryGetTarget(out TLBitmapSource target))
                 {
@@ -49,6 +59,11 @@ namespace Unigram.Common
         {
             get
             {
+                if (user == null)
+                {
+                    return null;
+                }
+
                 if (user.Photo == null)
                 {
                     user.Photo = new TLUserProfilePhotoEmpty();
@@ -70,6 +85,11 @@ namespace Unigram.Common
         {
             get
             {
+                if (chat == null)
+                {
+                    return null;
+                }
+
                 if (_context.TryGetValue(chat.Photo, out WeakReference<TLBitmapSource> reference) && 
                     reference.TryGetTarget(out TLBitmapSource target))
                 {
@@ -86,6 +106,11 @@ namespace Unigram.Common
         {
             get
             {
+                if (channel == null)
+                {
+                    return null;
+                }
+
                 if (_context.TryGetValue(channel.Photo, out WeakReference<TLBitmapSource> reference) && 
                     reference.TryGetTarget(out TLBitmapSource target))
                 {

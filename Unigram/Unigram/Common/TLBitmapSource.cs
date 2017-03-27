@@ -158,16 +158,24 @@ namespace Unigram.Common
             {
                 Phase = PHASE_PLACEHOLDER;
 
-                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(SettingsHelper.SessionGuid + "\\temp\\placeholders\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
-                using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                var fileName = FileUtils.GetTempFileName("placeholders\\" + group + "_placeholder.png");
+                if (File.Exists(fileName))
                 {
-                    if (stream.Size == 0)
+                    Image.UriSource = FileUtils.GetTempFileUri("placeholders//" + group + "_placeholder.png");
+                }
+                else
+                {
+                    var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(SettingsHelper.SessionGuid + "\\temp\\placeholders\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
+                    using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                     {
-                        PlaceholderImageSource.Draw(BindConvert.Current.Bubble(id).Color, InitialNameStringConverter.Convert(value), stream);
-                        stream.Seek(0);
-                    }
+                        if (stream.Size == 0)
+                        {
+                            PlaceholderImageSource.Draw(BindConvert.Current.Bubble(id).Color, InitialNameStringConverter.Convert(value), stream);
+                            stream.Seek(0);
+                        }
 
-                    Image.SetSource(stream);
+                        Image.SetSource(stream);
+                    }
                 }
             }
         }

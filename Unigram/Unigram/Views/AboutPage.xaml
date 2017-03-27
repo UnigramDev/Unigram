@@ -94,6 +94,7 @@
                             <RowDefinition />
                             <RowDefinition />
                             <RowDefinition />
+                            <RowDefinition />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -153,7 +154,7 @@
                                 Click="btnCoreMateiWebsite_Click"/>
                         <Button Grid.Row="3"
                                 Grid.Column="1"
-                                Content="@Mapei92"
+                                Content="@matei_dev"
                                 Padding="12,4"
                                 Style="{ThemeResource TextBlockButtonStyle}"
                                 Click="btnCoreMateiTwitter_Click"/>
@@ -185,6 +186,20 @@
                                 Padding="12,4"
                                 Style="{ThemeResource TextBlockButtonStyle}"
                                 Click="btnCoreAbdelTwitter_Click"/>
+
+                        <!-- Row 6 -->
+                        <Button Grid.Row="6"
+                                Grid.Column="0"
+                                Content="Lorenzo Rossoni"
+                                Padding="0,4"
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                IsEnabled="False"/>
+                        <Button Grid.Row="6"
+                                Grid.Column="1"
+                                Content="@LorenzRox"
+                                Padding="12,4"
+                                Style="{ThemeResource TextBlockButtonStyle}"
+                                Click="btnCoreLorenzoTwitter_Click"/>
                     </Grid>
 
                     <!-- Insiders -->
