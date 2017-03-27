@@ -192,12 +192,19 @@ namespace Unigram.Controls.Media
         private AudioGraph _graph;
         private AudioDeviceOutputNode _deviceOutputNode;
         private AudioFileInputNode _fileInputNode;
+
         private static DisplayRequest _displayRequest = new DisplayRequest();
+        private static VoiceMediaControl _currentPlaying;
 
         private async void Toggle_Click(object sender, RoutedEventArgs e)
         {
             if (_state == PlaybackState.Paused)
             {
+                if (_currentPlaying != null && _currentPlaying._state == PlaybackState.Playing)
+                {
+                    _currentPlaying.Toggle_Click(null, null);
+                }
+
                 var documentMedia = ViewModel?.Media as TLMessageMediaDocument;
                 if (documentMedia != null)
                 {
@@ -244,6 +251,7 @@ namespace Unigram.Controls.Media
                         UpdateGlyph();
 
                         _displayRequest.RequestActive();
+                        _currentPlaying = this;
 
                         Slide.Maximum = _fileInputNode.Duration.TotalMilliseconds;
                         Slide.Value = 0;
