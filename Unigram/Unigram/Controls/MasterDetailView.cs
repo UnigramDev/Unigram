@@ -46,8 +46,6 @@ namespace Unigram.Controls
         {
             UpdateVisualState();
 
-            VisualStateManager.GoToState(this, "ResetState", false);
-
             if (CurrentState != MasterDetailState.Narrow && ViewStateChanged != null)
             {
                 ViewStateChanged(this, EventArgs.Empty);
@@ -105,6 +103,8 @@ namespace Unigram.Controls
         protected override void OnApplyTemplate()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
+
+            VisualStateManager.GoToState(this, "ResetState", false);
 
             MasterPresenter = (ContentPresenter)GetTemplateChild("MasterFrame");
             DetailPresenter = (Grid)GetTemplateChild("DetailPresenter");
