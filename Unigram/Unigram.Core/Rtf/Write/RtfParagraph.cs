@@ -529,7 +529,7 @@ namespace Unigram.Core.Rtf.Write
                 result.Append(_defaultCharFormat.renderTail());
             }
             
-            result.AppendLine(_blockTail);
+            //result.AppendLine(_blockTail);
             return result.ToString();
         }
     }
