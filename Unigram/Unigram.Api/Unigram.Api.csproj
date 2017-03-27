@@ -360,6 +360,7 @@
     <Compile Include="TL\Partial\TLMessagesAllStickers.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesArchivedStickers.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesFeaturedStickers.Partial.cs" />
+    <Compile Include="TL\Partial\TLMessagesStickerSet.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesStickerSetInstallResultArchive.Partial.cs" />
     <Compile Include="TL\Partial\TLPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannel.Partial.cs" />

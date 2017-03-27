@@ -361,10 +361,10 @@
     <MainPackageIdentityName>38833FF26BA1D.Unigram</MainPackageIdentityName>
     <ReservedNames>
       <ReservedName>Unigram</ReservedName>
-      <ReservedName>Unigram (Alpha)</ReservedName>
-      <ReservedName>Unigram (Beta)</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
-  <AccountPackageIdentityNames />
-  <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9NBLGGH4S3N3" />
+  <AccountPackageIdentityNames>
+    <MainPackageIdentityName>38833FF26BA1D.UnigramPreview</MainPackageIdentityName>
+  </AccountPackageIdentityNames>
+  <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9NBLGGH4S3N3" />
 </StoreAssociation>

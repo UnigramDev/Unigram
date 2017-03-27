@@ -332,7 +332,7 @@
                     <selectors:StickerSetTemplateSelector>
                         <selectors:StickerSetTemplateSelector.ItemTemplate>
                             <DataTemplate x:DataType="tl:TLMessagesStickerSet">
-                                <Image Margin="4" Source="{x:Bind Documents[0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}"/>
+                                <Image Margin="4" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}"/>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.RecentsTemplate>
