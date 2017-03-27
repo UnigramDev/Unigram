@@ -203,6 +203,15 @@ namespace Unigram
                 NavigationService.Navigate(typeof(LoginWelcomePage));
             }
 
+            // Remove borders on Xbox
+            var device = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
+            bool isXbox = (device.ContainsKey("DeviceFamily") && device["DeviceFamily"] == "Xbox");
+
+            if (isXbox == true)
+            {
+                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+            }
+
             ShowStatusBar();
             ColourTitleBar();
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
