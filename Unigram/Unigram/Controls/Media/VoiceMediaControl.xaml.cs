@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Common;
+using Windows.System.Display;
 
 namespace Unigram.Controls.Media
 {
@@ -191,6 +192,7 @@ namespace Unigram.Controls.Media
         private AudioGraph _graph;
         private AudioDeviceOutputNode _deviceOutputNode;
         private AudioFileInputNode _fileInputNode;
+        private static DisplayRequest _displayRequest = new DisplayRequest();
 
         private async void Toggle_Click(object sender, RoutedEventArgs e)
         {
@@ -240,6 +242,9 @@ namespace Unigram.Controls.Media
                         _timer.Start();
                         _state = PlaybackState.Playing;
                         UpdateGlyph();
+
+                        _displayRequest.RequestActive();
+
                         Slide.Maximum = _fileInputNode.Duration.TotalMilliseconds;
                         Slide.Value = 0;
                     }
@@ -250,6 +255,8 @@ namespace Unigram.Controls.Media
                 _graph?.Stop();
                 _state = PlaybackState.Paused;
                 UpdateGlyph();
+
+                _displayRequest.RequestRelease();
             }
         }
 
@@ -262,6 +269,9 @@ namespace Unigram.Controls.Media
                 _fileInputNode.Seek(TimeSpan.Zero);
                 _state = PlaybackState.Paused;
                 UpdateGlyph();
+
+                _displayRequest.RequestRelease();
+
                 DurationLabel.Text = _fileInputNode.Duration.ToString("mm\\:ss");
                 Slide.Value = 0;
             });
