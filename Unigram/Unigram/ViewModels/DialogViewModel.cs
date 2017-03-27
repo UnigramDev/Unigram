@@ -1041,7 +1041,16 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand ClearReplyCommand => new RelayCommand(() => { Reply = null; });
+        public RelayCommand ClearReplyCommand => new RelayCommand(ClearReplyExecute);
+        private void ClearReplyExecute()
+        {
+            if (Reply is TLMessagesContainter container && container.EditMessage != null)
+            {
+                Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
+            }
+
+            Reply = null;
+        }
 
         #endregion
 

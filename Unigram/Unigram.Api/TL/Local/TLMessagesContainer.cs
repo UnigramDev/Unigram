@@ -14,11 +14,7 @@ namespace Telegram.Api.TL
     {
         public const uint Signature = 4294967058u;
 
-        public int EditUntil
-        {
-            get;
-            set;
-        }
+        public int EditUntil { get; set; }
 
         public new TLObject From
         {
@@ -107,5 +103,7 @@ namespace Telegram.Api.TL
         public TLMessageMediaBase WebPageMedia { get; set; }
 
         public TLMessage EditMessage { get; set; }
+
+        public TLMessage PreviousMessage { get; set; }
     }
 }
