@@ -76,7 +76,7 @@ namespace Unigram.ViewModels
             }
 
             var channel = With as TLChannel;
-            if (channel != null)
+            if (channel != null && channel.HasAccessHash && channel.AccessHash.HasValue)
             {
                 var response = await ProtoService.GetFullChannelAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value });
                 if (response.IsSucceeded)
