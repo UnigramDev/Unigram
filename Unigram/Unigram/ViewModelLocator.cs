@@ -106,6 +106,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsStickersFeaturedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsMasksViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
 
             container.Build();
@@ -171,7 +172,7 @@ namespace Unigram
             protoService.AuthorizationRequired += (s, e) =>
             {
                 SettingsHelper.IsAuthorized = false;
-                Debugger.Break();
+                Debug.WriteLine("!!!UNAUTHORIZED!!!");
 
                 Execute.BeginOnUIThread(() =>
                 {
