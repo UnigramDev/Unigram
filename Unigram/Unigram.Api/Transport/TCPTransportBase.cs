@@ -259,34 +259,33 @@ namespace Telegram.Api.Transport
         }
 
         #region MessageId
-        private readonly object _previousMessageRoot = new object();
+        private static readonly object _messageIdRoot = new object();
 
         public static long PreviousMessageId;
 
         public long GenerateMessageId(bool checkPreviousMessageId = false)
         {
-            var clientDelta = ClientTicksDelta;
-            // serverTime = clientTime + clientDelta
-            var now = DateTime.Now;
-            //var unixTime = (long)Utils.DateTimeToUnixTimestamp(now) << 32;
-
-            var unixTime = (long)(Utils.DateTimeToUnixTimestamp(now) * 4294967296) + clientDelta; //2^32
             long correctUnixTime;
-
-            var addingTicks = 4 - (unixTime % 4);
-            if ((unixTime % 4) == 0)
+            lock (_messageIdRoot)
             {
-                correctUnixTime = unixTime;
-            }
-            else
-            {
-                correctUnixTime = unixTime + addingTicks;
-            }
+                var clientDelta = ClientTicksDelta;
+                // serverTime = clientTime + clientDelta
+                var now = DateTime.Now;
+                //var unixTime = (long)Utils.DateTimeToUnixTimestamp(now) << 32;
 
-            // check with previous messageId
+                var unixTime = (long)(Utils.DateTimeToUnixTimestamp(now) * 4294967296) + clientDelta; //2^32
 
-            lock (_previousMessageRoot)
-            {
+                var addingTicks = 4 - (unixTime % 4);
+                if ((unixTime % 4) == 0)
+                {
+                    correctUnixTime = unixTime;
+                }
+                else
+                {
+                    correctUnixTime = unixTime + addingTicks;
+                }
+
+                // check with previous messageId
                 if (PreviousMessageId != 0 && checkPreviousMessageId)
                 {
                     correctUnixTime = Math.Max(PreviousMessageId + 4, correctUnixTime);
