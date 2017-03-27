@@ -36,7 +36,6 @@ namespace Unigram.Core.Services
 
                 try
                 {
-
                     var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
                     if (channel.Uri != SettingsHelper.ChannelUri)
                     {

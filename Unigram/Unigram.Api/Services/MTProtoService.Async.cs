@@ -1595,10 +1595,24 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesArchivedStickers>> GetArchivedStickersAsync(bool full, long offsetId, int limit)
+        public Task<MTProtoResponse<TLMessagesArchivedStickers>> GetArchivedStickersAsync(bool full, long offsetId, int limit, bool masks)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesArchivedStickers>>();
-            GetArchivedStickersCallback(full, offsetId, limit, (callback) =>
+            GetArchivedStickersCallback(full, offsetId, limit, masks, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesArchivedStickers>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesArchivedStickers>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLMessagesArchivedStickers>> GetArchivedStickersAsync(long offsetId, int limit, bool masks)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesArchivedStickers>>();
+            GetArchivedStickersCallback(offsetId, limit, masks, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesArchivedStickers>(callback));
             }, (faultCallback) =>

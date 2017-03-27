@@ -151,9 +151,11 @@
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsMasksArchivedViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsMasksViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersArchivedViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsStickersArchivedViewModelBase.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModelBase.cs" />
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
@@ -178,6 +180,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsLastSeenPage.xaml.cs">
       <DependentUpon>SettingsLastSeenPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsMasksArchivedPage.xaml.cs">
+      <DependentUpon>SettingsMasksArchivedPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsMasksPage.xaml.cs">
       <DependentUpon>SettingsMasksPage.xaml</DependentUpon>
@@ -799,6 +804,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsDataPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsMasksArchivedPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

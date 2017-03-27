@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsStickersViewModelBase : UnigramViewModelBase
+    public abstract class SettingsStickersViewModelBase : UnigramViewModelBase
     {
         private readonly IStickersService _stickersService;
         private readonly StickerType _type;
