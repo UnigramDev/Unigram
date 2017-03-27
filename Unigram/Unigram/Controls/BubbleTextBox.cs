@@ -824,6 +824,7 @@ namespace Unigram.Controls
 
                 _isDirty = true;
                 Document.SetText(TextSetOptions.FormatRtf, document.Render());
+                Document.GetRange(0, text.Length).CharacterFormat.ForegroundColor = Document.GetDefaultCharacterFormat().ForegroundColor;
                 Document.Selection.SetRange(text.Length, text.Length);
             }
             else
