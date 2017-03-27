@@ -430,6 +430,10 @@ namespace Unigram.Views
                 ViewModel.OpenStickersCommand.Execute(null);
                 InputPane.GetForCurrentView().TryHide();
             }
+            else
+            {
+                InputPane.GetForCurrentView().TryShow();
+            }
         }
 
         private void ProfileBubble_Click(object sender, RoutedEventArgs e)

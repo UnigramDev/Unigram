@@ -463,7 +463,10 @@ namespace Unigram.Views
 
         private void Self_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self?.Id ?? 0 });
+            if (ViewModel.Contacts.Self != null)
+            {
+                MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self.Id });
+            }
         }
 
         private void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
