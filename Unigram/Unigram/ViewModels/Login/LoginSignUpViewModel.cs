@@ -10,8 +10,10 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Views;
 using Unigram.Views.Login;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Login
@@ -95,70 +97,31 @@ namespace Unigram.ViewModels.Login
 
             IsLoading = true;
 
-            var result = await ProtoService.SignUpAsync(phoneNumber, phoneCodeHash, _phoneCode, _firstName, _lastName);
-            if (result.IsSucceeded)
+            var response = await ProtoService.SignUpAsync(phoneNumber, phoneCodeHash, _phoneCode, _firstName, _lastName);
+            if (response.IsSucceeded)
             {
                 ProtoService.SetInitState();
-                ProtoService.CurrentUserId = result.Result.User.Id;
+                ProtoService.CurrentUserId = response.Result.User.Id;
                 SettingsHelper.IsAuthorized = true;
-                SettingsHelper.UserId = result.Result.User.Id;
+                SettingsHelper.UserId = response.Result.User.Id;
 
                 // TODO: maybe ask about notifications?
 
                 NavigationService.Navigate(typeof(MainPage));
             }
-            else
+            else if (response.Error != null)
             {
                 IsLoading = false;
 
-                if (result.Error.TypeEquals(TLErrorType.PHONE_NUMBER_UNOCCUPIED))
+                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    //var signup = await ProtoService.SignUpAsync(phoneNumber, phoneCodeHash, PhoneCode, "Paolo", "Veneziani");
-                    //if (signup.IsSucceeded)
-                    //{
-                    //    ProtoService.SetInitState();
-                    //    ProtoService.CurrentUserId = signup.Value.User.Id;
-                    //    SettingsHelper.IsAuthorized = true;
-                    //    SettingsHelper.UserId = signup.Value.User.Id;
-                    //}
-
-                    //this._callTimer.Stop();
-                    //this.StateService.ClearNavigationStack = true;
-                    //this.NavigationService.UriFor<SignUpViewModel>().Navigate();
+                    await TLMessageDialog.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
                 }
-                else if (result.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
+                else
                 {
-                    //await new MessageDialog(Resources.PhoneCodeInvalidString, Resources.Error).ShowAsync();
+                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
                 }
-                else if (result.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY))
-                {
-                    //await new MessageDialog(Resources.PhoneCodeEmpty, Resources.Error).ShowAsync();
-                }
-                else if (result.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
-                {
-                    //await new MessageDialog(Resources.PhoneCodeExpiredString, Resources.Error).ShowAsync();
-                }
-                else if (result.Error.TypeEquals(TLErrorType.SESSION_PASSWORD_NEEDED))
-                {
-                    //this.IsWorking = true;
-                    var password = await ProtoService.GetPasswordAsync();
-                    if (password.IsSucceeded)
-                    {
-                        NavigationService.Navigate(typeof(LoginPasswordPage), password.Result);
-                    }
-                    else
-                    {
-                        Execute.ShowDebugMessage("account.getPassword error " + password.Error);
-                    }
-                }
-                else if (result.Error.CodeEquals(TLErrorCode.FLOOD))
-                {
-                    //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({error.Message})", Resources.Error).ShowAsync();
-                }
-
-                Execute.ShowDebugMessage("account.signIn error " + result.Error);
             }
         }
-
     }
 }

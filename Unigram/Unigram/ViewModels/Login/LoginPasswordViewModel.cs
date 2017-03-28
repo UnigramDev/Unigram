@@ -15,6 +15,7 @@ using Unigram.Views;
 using Unigram.Views.Login;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -162,9 +163,20 @@ namespace Unigram.ViewModels.Login
 
             if (_parameters.Password.HasRecovery)
             {
+                IsLoading = true;
 
+                var response = await ProtoService.RequestPasswordRecoveryAsync();
+                if (response.IsSucceeded)
+                {
+                    await TLMessageDialog.ShowAsync(string.Format("We have sent a recovery code to the e-mail you provided:\n\n{0}", response.Result.EmailPattern), "Telegram", "OK");
+                }
+                else if (response.Error != null)
+                {
+                    IsLoading = false;
+                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                }
             }
-            else if (!_parameters.Password.HasRecovery && !_isResettable)
+            else
             {
                 await TLMessageDialog.ShowAsync("Since you haven't provided a recovery e-mail when setting up your password, your remaining options are either to remember your password or to reset your account.", "Sorry", "OK");
                 IsResettable = true;
@@ -182,6 +194,8 @@ namespace Unigram.ViewModels.Login
                 var response = await ProtoService.DeleteAccountAsync("Forgot password");
                 if (response.IsSucceeded)
                 {
+                    var logout = await ProtoService.LogOutAsync();
+
                     var state = new LoginSignUpPage.NavigationParameters
                     {
                         PhoneNumber = _parameters.PhoneNumber,
@@ -191,9 +205,10 @@ namespace Unigram.ViewModels.Login
 
                     NavigationService.Navigate(typeof(LoginSignUpPage), state);
                 }
-                else
+                else if (response.Error != null)
                 {
                     IsLoading = false;
+                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
                 }
             }
         }
