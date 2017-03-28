@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.IO;
 using Windows.Storage;
 
@@ -48,6 +49,11 @@ namespace Telegram.Api.Helpers
                 var path = FileUtils.GetFileName(key);
                 if (File.Exists(path))
                 {
+                    if (File.Exists(path + ".bak"))
+                    {
+                        File.Delete(path + ".bak");
+                    }
+
                     File.Move(path, path + ".bak");
                 }
 
