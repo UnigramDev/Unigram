@@ -40,6 +40,7 @@ namespace Unigram.Views.Settings
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+            AuthenticationHelper.Authenticate();
             _localsettingsDataContainer = ApplicationData.Current.LocalSettings;
             GetAuthenticationToggleStatus();
         }

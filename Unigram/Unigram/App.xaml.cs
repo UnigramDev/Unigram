@@ -210,33 +210,8 @@ namespace Unigram
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Task.Run(() => OnStartSync());
-            Authenticate();
+            AuthenticationHelper.Authenticate();
             return Task.CompletedTask;
-        }
-
-        private static async void Authenticate()
-        {
-            var localSettingValues = ApplicationData.Current.LocalSettings.Values;
-            if (localSettingValues.ContainsKey("AuthenticationType"))
-            {
-                var authResult = false;
-                switch (localSettingValues["AuthenticationType"].ToString())
-                {
-                    case "WindowsHello":
-                        authResult = await AuthenticationHelper.AuthenticateUsingWindowsHello();
-                        break;
-                    case "Local":
-                        authResult = await AuthenticationHelper.AuthenticateLocally();
-                        break;
-                    default:
-                        Debug.WriteLine("Wrong value stored in the AuthenticationType Key");
-                        break;
-                }
-                if (!authResult)
-                {
-                    Application.Current.Exit();
-                }
-            }
         }
 
         private async void OnStartSync()
