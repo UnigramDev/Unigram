@@ -16,13 +16,13 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Login
 {
-    public class LoginSignupViewModel : UnigramViewModelBase
+    public class LoginSignUpViewModel : UnigramViewModelBase
     {
         private string _phoneNumber;
         private string _phoneCode;
         private TLAuthSentCode _sentCode;
 
-        public LoginSignupViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public LoginSignUpViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
         }

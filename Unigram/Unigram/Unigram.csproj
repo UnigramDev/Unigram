@@ -148,7 +148,7 @@
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
-    <Compile Include="ViewModels\Login\LoginSignUpViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginSignUViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
@@ -371,7 +371,7 @@
     <Compile Include="ViewModels\FeaturedStickersViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginPasswordViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginPhoneCodeViewModel.cs" />
-    <Compile Include="ViewModels\Login\LoginPhoneNumberViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginSignInViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PhotosViewModelBase.cs" />
