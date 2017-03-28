@@ -139,6 +139,7 @@
     <Compile Include="Controls\ZoomableGridViewPopup.xaml.cs">
       <DependentUpon>ZoomableGridViewPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AuthenticationHelper.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
@@ -181,6 +182,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsMasksPage.xaml.cs">
       <DependentUpon>SettingsMasksPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsPasscodeLockPage.xaml.cs">
+      <DependentUpon>SettingsPasscodeLockPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsStickersArchivedPage.xaml.cs">
       <DependentUpon>SettingsStickersArchivedPage.xaml</DependentUpon>
@@ -799,6 +803,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsDataPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsPasscodeLockPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -44,5 +44,10 @@ namespace Unigram.Views.Settings
         {
             Frame.Navigate(typeof(SettingsBlockedUsersPage));
         }
+
+        private void Passcode_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPasscodeLockPage));
+        }
     }
 }

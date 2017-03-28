@@ -30,7 +30,7 @@
             </StackPanel>
             <StackPanel BorderThickness="0,0,0,1" Padding="0,8" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
                 <TextBlock Text="SECURITY" Margin="12,0,12,4" Style="{StaticResource CaptionTextBlockStyle}"/>
-                <Button IsEnabled="False" Content="Passcode Lock" Click="Sessions_Click"/>
+                <Button Content="Passcode Lock and Windows Hello" Click="Passcode_Click"/>
                 <Button IsEnabled="False" Content="Two-Step Verification" Click="Sessions_Click"/>
                 <Button Content="Active Sessions" Click="Sessions_Click"/>
             </StackPanel>
