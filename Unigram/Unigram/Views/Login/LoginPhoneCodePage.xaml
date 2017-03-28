@@ -37,6 +37,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock x:Name="TitleLabel" x:Uid="Login-Code-Title" Text="Your code" Style="{ThemeResource TitleTextBlockStyle}"/>
             <TextBlock common:TextBlockHelper.SentCodeType="{x:Bind ViewModel.SentCode.Type}"
