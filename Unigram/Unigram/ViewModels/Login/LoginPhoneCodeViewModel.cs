@@ -141,14 +141,14 @@ namespace Unigram.ViewModels.Login
                     //this._callTimer.Stop();
                     //this.StateService.ClearNavigationStack = true;
                     //this.NavigationService.UriFor<SignUpViewModel>().Navigate();
-                    var state = new LoginSignupPage.NavigationParameters
+                    var state = new LoginSignUpPage.NavigationParameters
                     {
                         PhoneNumber = _phoneNumber,
                         PhoneCode = _phoneCode,
                         Result = _sentCode,
                     };
 
-                    NavigationService.Navigate(typeof(LoginSignupPage), state);
+                    NavigationService.Navigate(typeof(LoginSignUpPage), state);
                 }
                 else if (result.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
                 {

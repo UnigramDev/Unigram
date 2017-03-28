@@ -19,15 +19,15 @@ using Windows.Web.Http;
 
 namespace Unigram.Views.Login
 {
-    public sealed partial class LoginPhoneNumberPage : Page
+    public sealed partial class LoginSignInPage : Page
     {
-        public LoginPhoneNumberViewModel ViewModel => DataContext as LoginPhoneNumberViewModel;
+        public LoginSignInViewModel ViewModel => DataContext as LoginSignInViewModel;
 
-        public LoginPhoneNumberPage()
+        public LoginSignInPage()
         {
             InitializeComponent();
 
-            DataContext = UnigramContainer.Current.ResolveType<LoginPhoneNumberViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<LoginSignInViewModel>();
 
             // Used to hide the app gray bar on desktop.
             // Currently this is always hidden on both family devices.

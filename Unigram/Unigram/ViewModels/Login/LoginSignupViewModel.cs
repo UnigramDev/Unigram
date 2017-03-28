@@ -29,7 +29,7 @@ namespace Unigram.ViewModels.Login
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var param = parameter as LoginSignupPage.NavigationParameters;
+            var param = parameter as LoginSignUpPage.NavigationParameters;
             if (param != null)
             {
                 _phoneNumber = param.PhoneNumber;

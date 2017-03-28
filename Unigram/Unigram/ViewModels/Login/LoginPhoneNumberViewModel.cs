@@ -18,9 +18,9 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Login
 {
 
-    public class LoginPhoneNumberViewModel : UnigramViewModelBase
+    public class LoginSignInViewModel : UnigramViewModelBase
     {
-        public LoginPhoneNumberViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public LoginSignInViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             var alphabet = "abcdefghijklmnopqrstuvwxyz";
