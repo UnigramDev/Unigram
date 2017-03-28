@@ -77,6 +77,7 @@ namespace Unigram
             // ViewModels
             container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();
             container.ContainerBuilder.RegisterType<LoginSignInViewModel>();
+            container.ContainerBuilder.RegisterType<LoginSignUpViewModel>();
             container.ContainerBuilder.RegisterType<LoginSentCodeViewModel>();
             container.ContainerBuilder.RegisterType<LoginPasswordViewModel>();
             container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();

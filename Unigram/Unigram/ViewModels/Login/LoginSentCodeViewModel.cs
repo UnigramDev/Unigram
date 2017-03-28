@@ -10,6 +10,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Views;
 using Unigram.Views.Login;
 using Windows.UI.Popups;
@@ -106,12 +107,18 @@ namespace Unigram.ViewModels.Login
                 return;
             }
 
+            if (_phoneCode == null)
+            {
+                await TLMessageDialog.ShowAsync("Please enter your code.");
+                return;
+            }
+
             var phoneNumber = _phoneNumber;
             var phoneCodeHash = _sentCode.PhoneCodeHash;
 
             IsLoading = true;
 
-            var result = await ProtoService.SignInAsync(phoneNumber, phoneCodeHash, PhoneCode);
+            var result = await ProtoService.SignInAsync(phoneNumber, phoneCodeHash, _phoneCode);
             if (result.IsSucceeded)
             {
                 ProtoService.SetInitState();
@@ -166,9 +173,17 @@ namespace Unigram.ViewModels.Login
                 {
                     //this.IsWorking = true;
                     var password = await ProtoService.GetPasswordAsync();
-                    if (password.IsSucceeded)
+                    if (password.IsSucceeded && password.Result is TLAccountPassword)
                     {
-                        NavigationService.Navigate(typeof(LoginPasswordPage), password.Result);
+                        var state = new LoginPasswordPage.NavigationParameters
+                        {
+                            PhoneNumber = _phoneNumber,
+                            PhoneCode = _phoneCode,
+                            Result = _sentCode,
+                            Password = password.Result as TLAccountPassword
+                        };
+
+                        NavigationService.Navigate(typeof(LoginPasswordPage), state);
                     }
                     else
                     {

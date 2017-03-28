@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.TL;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels.Login;
 using Windows.Foundation;
@@ -29,8 +30,20 @@ namespace Unigram.Views.Login
         public LoginPasswordPage()
         {
             InitializeComponent();
-
             DataContext = UnigramContainer.Current.ResolveType<LoginPasswordViewModel>();
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            ((PasswordBox)sender).GetBindingExpression(PasswordBox.PasswordProperty)?.UpdateSource();
+        }
+
+        public class NavigationParameters
+        {
+            public string PhoneNumber { get; set; }
+            public string PhoneCode { get; set; }
+            public TLAuthSentCode Result { get; set; }
+            public TLAccountPassword Password { get; set; }
         }
     }
 }

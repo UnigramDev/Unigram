@@ -14,6 +14,7 @@ using Windows.UI.Xaml;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Controls;
 
 namespace Unigram.ViewModels.Login
 {
@@ -166,13 +167,13 @@ namespace Unigram.ViewModels.Login
         {
             if(PhoneCode == null || PhoneNumber == null)
             {
-                await new MessageDialog("Please type phone number and phone code").ShowQueuedAsync();
+                await new MessageDialog("Please enter your phone number.").ShowQueuedAsync();
                 return;
             }
 
             IsLoading = true;
 
-            var response = await ProtoService.SendCodeAsync(PhoneCode + PhoneNumber, /* TODO: Verify */ null);
+            var response = await ProtoService.SendCodeAsync(_phoneCode + _phoneNumber, /* TODO: Verify */ null);
             if (response.IsSucceeded)
             {
                 var state = new LoginSentCodePage.NavigationParameters
@@ -186,7 +187,15 @@ namespace Unigram.ViewModels.Login
             else if (response.Error != null)
             {
                 IsLoading = false;
-                await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+
+                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
+                {
+                    await TLMessageDialog.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
+                }
+                else
+                {
+                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                }
             }
         }
     }
