@@ -21,15 +21,15 @@ namespace Unigram.Views.Login
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LoginPhoneCodePage : Page
+    public sealed partial class LoginSentCodePage : Page
     {
-        public LoginPhoneCodeViewModel ViewModel => DataContext as LoginPhoneCodeViewModel;
+        public LoginSentCodeViewModel ViewModel => DataContext as LoginSentCodeViewModel;
 
-        public LoginPhoneCodePage()
+        public LoginSentCodePage()
         {
             InitializeComponent();
 
-            DataContext = UnigramContainer.Current.ResolveType<LoginPhoneCodeViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<LoginSentCodeViewModel>();
 
             // Used to hide the app gray bar on desktop.
             // Currently this is always hidden on both family devices.

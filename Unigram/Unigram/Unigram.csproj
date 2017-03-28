@@ -370,7 +370,7 @@
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
     <Compile Include="ViewModels\FeaturedStickersViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginPasswordViewModel.cs" />
-    <Compile Include="ViewModels\Login\LoginPhoneCodeViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginSentCodeViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginSignInViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -423,8 +423,8 @@
     <Compile Include="Views\Login\LoginPasswordPage.xaml.cs">
       <DependentUpon>LoginPasswordPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Login\LoginPhoneCodePage.xaml.cs">
-      <DependentUpon>LoginPhoneCodePage.xaml</DependentUpon>
+    <Compile Include="Views\Login\LoginSentCodePage.xaml.cs">
+      <DependentUpon>LoginSentCodePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Login\LoginSignInPage.xaml.cs">
       <DependentUpon>LoginSignInPage.xaml</DependentUpon>
@@ -771,7 +771,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Login\LoginPhoneCodePage.xaml">
+    <Page Include="Views\Login\LoginSentCodePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
+using Unigram.Core.Dependency;
+using Unigram.ViewModels.Login;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -23,9 +25,12 @@ namespace Unigram.Views.Login
     /// </summary>
     public sealed partial class LoginSignUpPage : Page
     {
+        public LoginSignUpViewModel ViewModel => DataContext as LoginSignUpViewModel;
+
         public LoginSignUpPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+            DataContext = UnigramContainer.Current.ResolveType<LoginSignUpViewModel>();
         }
 
         public class NavigationParameters

@@ -175,13 +175,13 @@ namespace Unigram.ViewModels.Login
             var response = await ProtoService.SendCodeAsync(PhoneCode + PhoneNumber, /* TODO: Verify */ null);
             if (response.IsSucceeded)
             {
-                var state = new LoginPhoneCodePage.NavigationParameters
+                var state = new LoginSentCodePage.NavigationParameters
                 {
                     PhoneNumber = PhoneCode.TrimStart('+') + PhoneNumber,
                     Result = response.Result,
                 };
 
-                NavigationService.Navigate(typeof(LoginPhoneCodePage), state);
+                NavigationService.Navigate(typeof(LoginSentCodePage), state);
             }
             else if (response.Error != null)
             {

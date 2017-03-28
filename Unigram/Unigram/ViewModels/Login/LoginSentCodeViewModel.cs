@@ -17,18 +17,18 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Login
 {
-    public class LoginPhoneCodeViewModel : UnigramViewModelBase
+    public class LoginSentCodeViewModel : UnigramViewModelBase
     {
         private string _phoneNumber;
 
-        public LoginPhoneCodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public LoginSentCodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var param = parameter as LoginPhoneCodePage.NavigationParameters;
+            var param = parameter as LoginSentCodePage.NavigationParameters;
             if (param != null)
             {
                 _phoneNumber = param.PhoneNumber;
@@ -203,7 +203,7 @@ namespace Unigram.ViewModels.Login
                 {
                     if (response.Result.Type is TLAuthSentCodeTypeSms || response.Result.Type is TLAuthSentCodeTypeApp)
                     {
-                        NavigationService.Navigate(typeof(LoginPhoneCodePage), new LoginPhoneCodePage.NavigationParameters
+                        NavigationService.Navigate(typeof(LoginSentCodePage), new LoginSentCodePage.NavigationParameters
                         {
                             PhoneNumber = _phoneNumber,
                             Result = response.Result
