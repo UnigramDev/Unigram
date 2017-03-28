@@ -9,7 +9,9 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -55,5 +57,29 @@ namespace Unigram.ViewModels
                 Set(ref _self, value);
             }
         }
+
+#if DEBUG
+
+        public RelayCommand DeleteAccountCommand => new RelayCommand(DeleteAccountExecute);
+        private async void DeleteAccountExecute()
+        {
+            // THIS CODE WILL RUN ONLY IF FIRST CONFIGURED SERVER IP IS TEST SERVER
+            if (Telegram.Api.Constants.FirstServerIpAddress.Equals("149.154.167.40"))
+            {
+                var dialog = new InputDialog();
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogResult.Primary && dialog.Text.Equals(Self.Phone) && Self.Username != "frayxrulez")
+                {
+                    var really = await TLMessageDialog.ShowAsync("REAAAALLY???", "REALLYYYY???", "YES", "NO I DON'T WANT TO");
+                    if (really == ContentDialogResult.Primary)
+                    {
+                        await ProtoService.DeleteAccountAsync("Testing registration");
+                        App.Current.Exit();
+                    }
+                }
+            }
+        }
+
+#endif
     }
 }

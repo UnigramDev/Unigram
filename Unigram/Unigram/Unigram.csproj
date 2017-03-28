@@ -148,6 +148,7 @@
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginSignupViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
@@ -168,6 +169,9 @@
     </Compile>
     <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
       <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Login\LoginSignupPage.xaml.cs">
+      <DependentUpon>LoginSignupPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsAccountsPage.xaml.cs">
       <DependentUpon>SettingsAccountsPage.xaml</DependentUpon>
@@ -772,6 +776,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Login\LoginPhoneNumberPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Login\LoginSignupPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

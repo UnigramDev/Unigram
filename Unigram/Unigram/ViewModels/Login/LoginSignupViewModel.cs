@@ -12,73 +12,57 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Views;
 using Unigram.Views.Login;
-using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Login
 {
-    public class LoginPhoneCodeViewModel : UnigramViewModelBase
+    public class LoginSignupViewModel : UnigramViewModelBase
     {
         private string _phoneNumber;
+        private string _phoneCode;
+        private TLAuthSentCode _sentCode;
 
-        public LoginPhoneCodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public LoginSignupViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var param = parameter as LoginPhoneCodePage.NavigationParameters;
+            var param = parameter as LoginSignupPage.NavigationParameters;
             if (param != null)
             {
                 _phoneNumber = param.PhoneNumber;
+                _phoneCode = param.PhoneCode;
                 _sentCode = param.Result;
-
-                RaisePropertyChanged(() => SentCode);
             }
 
             return Task.CompletedTask;
         }
 
-        private TLAuthSentCode _sentCode;
-        public TLAuthSentCode SentCode
+        private string _firstName;
+        public string FirstName
         {
             get
             {
-                return _sentCode;
+                return _firstName;
             }
             set
             {
-                Set(ref _sentCode, value);
+                Set(ref _firstName, value);
             }
         }
 
-        private string _phoneCode;
-        public string PhoneCode
+        private string _lastName;
+        public string LastName
         {
             get
             {
-                return _phoneCode;
+                return _lastName;
             }
             set
             {
-                Set(ref _phoneCode, value);
-
-                var length = 5;
-
-                if (_sentCode != null && _sentCode.Type is TLAuthSentCodeTypeApp appType)
-                {
-                    length = appType.Length;
-                }
-                else if (_sentCode != null && _sentCode.Type is TLAuthSentCodeTypeSms smsType)
-                {
-                    length = smsType.Length;
-                }
-
-                if (_phoneCode.Length == length)
-                {
-                    SendExecute();
-                }
+                Set(ref _lastName, value);
             }
         }
 
@@ -111,7 +95,7 @@ namespace Unigram.ViewModels.Login
 
             IsLoading = true;
 
-            var result = await ProtoService.SignInAsync(phoneNumber, phoneCodeHash, PhoneCode);
+            var result = await ProtoService.SignUpAsync(phoneNumber, phoneCodeHash, _phoneCode, _firstName, _lastName);
             if (result.IsSucceeded)
             {
                 ProtoService.SetInitState();
@@ -141,14 +125,6 @@ namespace Unigram.ViewModels.Login
                     //this._callTimer.Stop();
                     //this.StateService.ClearNavigationStack = true;
                     //this.NavigationService.UriFor<SignUpViewModel>().Navigate();
-                    var state = new LoginSignupPage.NavigationParameters
-                    {
-                        PhoneNumber = _phoneNumber,
-                        PhoneCode = _phoneCode,
-                        Result = _sentCode,
-                    };
-
-                    NavigationService.Navigate(typeof(LoginSignupPage), state);
                 }
                 else if (result.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
                 {
@@ -184,33 +160,5 @@ namespace Unigram.ViewModels.Login
             }
         }
 
-        private RelayCommand _resendCommand;
-        public RelayCommand ResendCommand => _resendCommand = _resendCommand ?? new RelayCommand(ResendExecute, () => !IsLoading);
-        private async void ResendExecute()
-        {
-            if (_sentCode == null)
-            {
-                //...
-                return;
-            }
-
-            if (_sentCode.HasNextType)
-            {
-                IsLoading = true;
-
-                var response = await ProtoService.ResendCodeAsync(_phoneNumber, _sentCode.PhoneCodeHash);
-                if (response.IsSucceeded)
-                {
-                    if (response.Result.Type is TLAuthSentCodeTypeSms || response.Result.Type is TLAuthSentCodeTypeApp)
-                    {
-                        NavigationService.Navigate(typeof(LoginPhoneCodePage), new LoginPhoneCodePage.NavigationParameters
-                        {
-                            PhoneNumber = _phoneNumber,
-                            Result = response.Result
-                        });
-                    }
-                }
-            }
-        }
     }
 }
