@@ -397,7 +397,6 @@
     <Compile Include="Extensions\TLObjectExtensions.cs" />
     <Compile Include="Helpers\Execute.cs" />
     <Compile Include="Helpers\FileUtils.cs" />
-    <Compile Include="Helpers\RequestHelper.cs" />
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Logs\Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
