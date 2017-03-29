@@ -21,46 +21,6 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Common
 {
-    public static class LazyBitmapImage
-    {
-        public static async void SetSource(this BitmapSource bitmap, Uri uri)
-        {
-            var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
-            using (var stream = await file.OpenReadAsync())
-            {
-                try
-                {
-                    await bitmap.SetSourceAsync(stream);
-                }
-                catch
-                {
-                    Debug.Write("AGGRESSIVE");
-                }
-            }
-        }
-
-        public static async void SetSource(this BitmapSource bitmap, byte[] data)
-        {
-            using (var stream = new InMemoryRandomAccessStream())
-            {
-                using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
-                {
-                    writer.WriteBytes(data);
-                    await writer.StoreAsync();
-                }
-
-                try
-                {
-                    await bitmap.SetSourceAsync(stream);
-                }
-                catch
-                {
-                    Debug.Write("AGGRESSIVE");
-                }
-            }
-        }
-    }
-
     public class TLBitmapSource
     {
         private static readonly IDownloadFileManager _downloadFileManager;
@@ -76,7 +36,7 @@ namespace Unigram.Common
 
         public int Phase { get; private set; }
 
-        public BitmapImage Image { get; private set; } = new BitmapImage();
+        public BitmapImage Image { get; private set; } = new BitmapImage { DecodePixelType = DecodePixelType.Logical };
 
         public TLBitmapSource() { }
 
@@ -248,7 +208,8 @@ namespace Unigram.Common
                 var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    //Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    Image.UriSource = FileUtils.GetTempFileUri(fileName);
                 }
                 else
                 {
@@ -270,10 +231,51 @@ namespace Unigram.Common
                         {
                             Execute.BeginOnUIThread(() =>
                             {
-                                Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                                //Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                                Image.UriSource = FileUtils.GetTempFileUri(fileName);
                             });
                         }
                     });
+                }
+            }
+        }
+    }
+
+    public static class LazyBitmapImage
+    {
+        public static async void SetSource(this BitmapSource bitmap, Uri uri)
+        {
+            var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
+            using (var stream = await file.OpenReadAsync())
+            {
+                try
+                {
+                    await bitmap.SetSourceAsync(stream);
+                }
+                catch
+                {
+                    Debug.Write("AGGRESSIVE");
+                }
+            }
+        }
+
+        public static async void SetSource(this BitmapSource bitmap, byte[] data)
+        {
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                {
+                    writer.WriteBytes(data);
+                    await writer.StoreAsync();
+                }
+
+                try
+                {
+                    await bitmap.SetSourceAsync(stream);
+                }
+                catch
+                {
+                    Debug.Write("AGGRESSIVE");
                 }
             }
         }
