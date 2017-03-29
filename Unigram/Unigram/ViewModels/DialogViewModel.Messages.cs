@@ -771,7 +771,7 @@ namespace Unigram.ViewModels
                             }
                             else
                             {
-                                var dialog = new MessageDialog(urlButton.Url, "Open this link?");
+                                var dialog = new MessageDialog(response.Result.Url, "Open this link?");
                                 dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
                                 dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
                                 dialog.DefaultCommandIndex = 0;
