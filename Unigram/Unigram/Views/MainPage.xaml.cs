@@ -266,26 +266,26 @@ namespace Unigram.Views
 
             if (MasterDetail.CurrentState == MasterDetailState.Narrow)
             {
-                DialogsListView.IsItemClickEnabled = true;
+                //DialogsListView.IsItemClickEnabled = true;
                 DialogsListView.SelectionMode = ListViewSelectionMode.None;
                 DialogsListView.SelectedItem = null;
-                DialogsSearchListView.IsItemClickEnabled = true;
+                //DialogsSearchListView.IsItemClickEnabled = true;
                 DialogsSearchListView.SelectionMode = ListViewSelectionMode.None;
                 DialogsSearchListView.SelectedItem = null;
-                UsersListView.IsItemClickEnabled = true;
+                //UsersListView.IsItemClickEnabled = true;
                 UsersListView.SelectionMode = ListViewSelectionMode.None;
                 UsersListView.SelectedItem = null;
                 Separator.BorderThickness = new Thickness(0);
             }
             else
             {
-                DialogsListView.IsItemClickEnabled = false;
+                //DialogsListView.IsItemClickEnabled = false;
                 DialogsListView.SelectionMode = ListViewSelectionMode.Single;
                 DialogsListView.SelectedItem = _lastSelected;
-                DialogsSearchListView.IsItemClickEnabled = false;
+                //DialogsSearchListView.IsItemClickEnabled = false;
                 DialogsSearchListView.SelectionMode = ListViewSelectionMode.Single;
                 DialogsSearchListView.SelectedItem = _lastSelected;
-                UsersListView.IsItemClickEnabled = false;
+                //UsersListView.IsItemClickEnabled = false;
                 UsersListView.SelectionMode = ListViewSelectionMode.Single;
                 UsersListView.SelectedItem = _lastSelected;
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
@@ -329,7 +329,7 @@ namespace Unigram.Views
             }
         }
 
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listView = sender as ListView;
             if (listView.SelectedItem != null)
@@ -338,41 +338,43 @@ namespace Unigram.Views
             }
             else
             {
-                //UpdateListViewsSelectedItem(GetPeerFromBackStack());
+                // Find another solution
+                await Task.Delay(500);
+                UpdateListViewsSelectedItem(GetPeerFromBackStack());
             }
 
-            if (listView.SelectedItem != null && _lastSelected != listView.SelectedItem)
-            {
-                _lastSelected = listView.SelectedItem;
+            //if (listView.SelectedItem != null && _lastSelected != listView.SelectedItem)
+            //{
+            //    _lastSelected = listView.SelectedItem;
 
-                if (listView.SelectedItem is TLDialog dialog)
-                {
-                    if (dialog.IsSearchResult)
-                    {
-                        MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(dialog.Peer, dialog.TopMessage));
-                    }
-                    else
-                    {
-                        MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
-                    }
-                }
+            //    if (listView.SelectedItem is TLDialog dialog)
+            //    {
+            //        if (dialog.IsSearchResult)
+            //        {
+            //            MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(dialog.Peer, dialog.TopMessage));
+            //        }
+            //        else
+            //        {
+            //            MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+            //        }
+            //    }
 
-                if (listView.SelectedItem is TLMessageCommonBase message)
-                {
-                    var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(peer, message.Id));
-                }
+            //    if (listView.SelectedItem is TLMessageCommonBase message)
+            //    {
+            //        var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
+            //        MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(peer, message.Id));
+            //    }
 
-                if (listView.SelectedItem is TLUser user)
-                {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
-                }
+            //    if (listView.SelectedItem is TLUser user)
+            //    {
+            //        MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+            //    }
 
-                if (listView.SelectedItem is TLChannel channel)
-                {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
-                }
-            }
+            //    if (listView.SelectedItem is TLChannel channel)
+            //    {
+            //        MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
+            //    }
+            //}
         }
 
         private void cbtnMasterSelect_Click(object sender, RoutedEventArgs e)

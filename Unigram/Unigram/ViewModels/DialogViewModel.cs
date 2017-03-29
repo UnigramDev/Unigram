@@ -1071,7 +1071,7 @@ namespace Unigram.ViewModels
 
         public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool useReplyMarkup = false)
         {
-            var messageText = Text?.Replace("\r\n", "\n").Replace('\v', '\n');
+            var messageText = Text?.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
 

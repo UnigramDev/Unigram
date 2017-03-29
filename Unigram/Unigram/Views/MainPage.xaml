@@ -442,6 +442,7 @@
                     <ListView x:Name="UsersListView"
                               ItemsSource="{x:Bind ViewModel.Contacts.Items}"
                               Header="{x:Bind ViewModel.Contacts.Self, Mode=OneWay}"
+                              IsItemClickEnabled="True"
                               ItemClick="ListView_ItemClick"
                               SelectionChanged="ListView_SelectionChanged">
                         <ListView.HeaderTemplate>
