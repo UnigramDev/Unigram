@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -1415,19 +1416,19 @@ namespace Unigram.Services
                                 {
                                     continue;
                                 }
+
                                 stickerPack.Emoticon = stickerPack.Emoticon.Replace("\uFE0F", "");
-                                List<TLDocument> arrayList = null;
-                                allStickersNew.TryGetValue(stickerPack.Emoticon, out arrayList);
+                                allStickersNew.TryGetValue(stickerPack.Emoticon, out List<TLDocument> arrayList);
                                 if (arrayList == null)
                                 {
                                     arrayList = new List<TLDocument>();
                                     allStickersNew[stickerPack.Emoticon] = arrayList;
                                 }
+
                                 for (int k = 0; k < stickerPack.Documents.Count; k++)
                                 {
                                     long id = stickerPack.Documents[k];
-                                    List<string> emojiList;
-                                    stickersByEmojiNew.TryGetValue(id, out emojiList);
+                                    stickersByEmojiNew.TryGetValue(id, out List<string> emojiList);
                                     if (emojiList == null)
                                     {
                                         emojiList = new List<string>();
@@ -1639,6 +1640,12 @@ namespace Unigram.Services
                     //else
                     {
                         var stickers = newStickers != null && newStickers.Count > 0 ? new List<TLDocument>(newStickers) : null;
+                        var noDuples = stickers.Distinct(new FunctionalEqualityComparer<TLDocument>((x, y) => x.Id == y.Id, x => x.Id.GetHashCode())).ToList();
+                        if (noDuples.Count != stickers.Count)
+                        {
+                            Debugger.Break();
+                        }
+
                         return stickers;
 
                         if (stickers != null)
