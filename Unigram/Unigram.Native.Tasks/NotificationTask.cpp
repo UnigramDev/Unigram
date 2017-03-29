@@ -22,7 +22,11 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 
 	if (details != nullptr && details->Content != nullptr)
 	{
-		UpdateToastAndTiles(details->Content);
+		try
+		{
+			UpdateToastAndTiles(details->Content);
+		}
+		catch (Exception^ ex) { }
 	}
 
 	deferral->Complete();
@@ -45,8 +49,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		ToastNotificationManager::History->RemoveGroup(group);
 		return;
 	}
-
-
+	
 	bool muted = false;
 	if (data->HasKey("mute"))
 	{
