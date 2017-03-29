@@ -822,9 +822,9 @@ namespace Unigram.ViewModels
             //var file = await KnownFolders.SavedPictures.CreateFileAsync("TEST.TXT", CreationCollisionOption.GenerateUniqueName);
             //await FileIO.WriteTextAsync(file, DateTime.Now.ToString());
 
-            if (App.State.ForwardMessages != null)
+            if (App.InMemoryState.ForwardMessages != null)
             {
-                Reply = new TLMessagesContainter { FwdMessages = new TLVector<TLMessage>(App.State.ForwardMessages) };
+                Reply = new TLMessagesContainter { FwdMessages = new TLVector<TLMessage>(App.InMemoryState.ForwardMessages) };
             }
         }
 
@@ -1014,7 +1014,7 @@ namespace Unigram.ViewModels
                 {
                     if (_reply is TLMessagesContainter container && container.FwdMessages != null && value == null)
                     {
-                        App.State.ForwardMessages = null;
+                        App.InMemoryState.ForwardMessages = null;
                     }
 
                     _reply = value;
@@ -1153,7 +1153,7 @@ namespace Unigram.ViewModels
 
                     if (forwardMessages != null)
                     {
-                        App.State.ForwardMessages = null;
+                        App.InMemoryState.ForwardMessages = null;
                         await ForwardMessagesAsync(forwardMessages);
                     }
                 });
@@ -1162,7 +1162,7 @@ namespace Unigram.ViewModels
             {
                 if (forwardMessages != null)
                 {
-                    App.State.ForwardMessages = null;
+                    App.InMemoryState.ForwardMessages = null;
                     await ForwardMessagesAsync(forwardMessages);
                 }
             }

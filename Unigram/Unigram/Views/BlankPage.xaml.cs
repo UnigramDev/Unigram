@@ -29,7 +29,7 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (App.State.ForwardMessages != null)
+            if (App.InMemoryState.ForwardMessages != null)
             {
                 EmptyLabel.Text = "Choose a recipient...";
             }

@@ -52,7 +52,7 @@ namespace Unigram
         public static ShareOperation ShareOperation { get; private set; }
         public static AppServiceConnection Connection { get; private set; }
 
-        public static AppState State { get; } = new AppState();
+        public static AppInMemoryState InMemoryState { get; } = new AppInMemoryState();
 
         public ViewModelLocator Locator
         {
@@ -330,8 +330,10 @@ namespace Unigram
         }
     }
 
-    public class AppState
+    public class AppInMemoryState
     {
         public IEnumerable<TLMessage> ForwardMessages { get; set; }
+
+        public TLMessage SwitchInline { get; set; }
     }
 }

@@ -244,7 +244,7 @@ namespace Unigram.ViewModels
         {
             if (message is TLMessage)
             {
-                App.State.ForwardMessages = new List<TLMessage> { message as TLMessage };
+                App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
                 NavigationService.GoBack();
             }
         }
@@ -310,7 +310,7 @@ namespace Unigram.ViewModels
             var messages = SelectedMessages.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
-                App.State.ForwardMessages = new List<TLMessage>(messages);
+                App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
                 NavigationService.GoBack();
             }
 
@@ -686,10 +686,27 @@ namespace Unigram.ViewModels
         {
             if (button is TLKeyboardButtonSwitchInline switchInlineButton)
             {
-                return;
-            }
+                var bot = GetBot(message);
+                if (bot != null)
+                {
+                    if (switchInlineButton.IsSamePeer)
+                    {
+                        _text = string.Format("@{0} {1}", bot.Username, switchInlineButton.Query);
 
-            if (button is TLKeyboardButtonUrl urlButton)
+                        if (With is TLChatBase)
+                        {
+                            Reply = message;
+                        }
+
+                        await SendMessageAsync(null, true);
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
+            else if (button is TLKeyboardButtonUrl urlButton)
             {
                 var url = urlButton.Url;
                 if (url.StartsWith("http") == false)
@@ -720,11 +737,8 @@ namespace Unigram.ViewModels
                         await Launcher.LaunchUriAsync(uri);
                     }
                 }
-
-                return;
             }
-
-            if (button is TLKeyboardButtonCallback callbackButton)
+            else if (button is TLKeyboardButtonCallback callbackButton)
             {
                 var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, false);
                 if (response.IsSucceeded && response.Result.HasMessage)
@@ -739,11 +753,8 @@ namespace Unigram.ViewModels
                         await new MessageDialog(response.Result.Message).ShowQueuedAsync();
                     }
                 }
-
-                return;
             }
-
-            if (button is TLKeyboardButtonGame gameButton)
+            else if (button is TLKeyboardButtonGame gameButton)
             {
                 var gameMedia = message.Media as TLMessageMediaGame;
                 if (gameMedia != null)
@@ -761,21 +772,16 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
-
-                return;
             }
-
-            if (button is TLKeyboardButtonRequestPhone requestPhoneButton)
+            else if (button is TLKeyboardButtonRequestPhone requestPhoneButton)
             {
-                return;
+                // TODO
             }
-
-            if (button is TLKeyboardButtonRequestGeoLocation requestGeoButton)
+            else if (button is TLKeyboardButtonRequestGeoLocation requestGeoButton)
             {
-                return;
+                // TODO
             }
-
-            if (button is TLKeyboardButton keyboardButton)
+            else if (button is TLKeyboardButton keyboardButton)
             {
                 _text = keyboardButton.Text;
                 await SendMessageAsync(null, true);
