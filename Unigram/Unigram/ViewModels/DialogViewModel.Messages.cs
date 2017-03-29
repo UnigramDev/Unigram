@@ -743,14 +743,49 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, false);
                 if (response.IsSucceeded && response.Result.HasMessage)
                 {
-                    if (response.Result.IsAlert)
+                    if (response.Result.HasMessage)
                     {
-                        await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                        if (response.Result.IsAlert)
+                        {
+                            await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                        }
+                        else
+                        {
+                            // TODO:
+                            await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                        }
                     }
-                    else
+                    else if (response.Result.HasUrl && response.Result.IsHasUrl /* ??? */)
                     {
-                        // TODO:
-                        await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                        var url = response.Result.Url;
+                        if (url.StartsWith("http") == false)
+                        {
+                            url = "http://" + url;
+                        }
+
+                        if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                        {
+                            if (Constants.TelegramHosts.Contains(uri.Host))
+                            {
+                                MessageHelper.HandleTelegramUrl(response.Result.Url);
+                            }
+                            else
+                            {
+                                var dialog = new MessageDialog(urlButton.Url, "Open this link?");
+                                dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
+                                dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
+                                dialog.DefaultCommandIndex = 0;
+                                dialog.CancelCommandIndex = 1;
+
+                                var result = await dialog.ShowQueuedAsync();
+                                if (result == null || (int)result?.Id == 1)
+                                {
+                                    return;
+                                }
+
+                                await Launcher.LaunchUriAsync(uri);
+                            }
+                        }
                     }
                 }
             }
