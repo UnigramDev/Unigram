@@ -26,7 +26,7 @@
     <Page.Resources>
         <CollectionViewSource x:Key="SearchResults" Source="{Binding Dialogs.Search}" IsSourceGrouped="True"/>
 
-        <MenuFlyout x:Key="DialogMenuFlyout">
+        <MenuFlyout x:Key="DialogMenuFlyout" Opening="MenuFlyout_Opening">
             <MenuFlyoutItem Loaded="DialogPin_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogPinCommand}" CommandParameter="{Binding}" Text="Pin to top"/>
             <MenuFlyoutItem Loaded="DialogClear_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogClearCommand}" CommandParameter="{Binding}" Text="Clear history"/>
             <MenuFlyoutItem Loaded="DialogDelete_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete conversation"/> <!-- Only shows with conversations to single people -->

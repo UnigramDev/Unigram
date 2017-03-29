@@ -492,6 +492,16 @@ namespace Unigram.Views
 
         #region Context menu
 
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            var flyout = sender as MenuFlyout;
+
+            foreach (var item in flyout.Items)
+            {
+                item.Visibility = Visibility.Visible;
+            }
+        }
+
         private void DialogPin_Loaded(object sender, RoutedEventArgs e)
         {
             var element = sender as MenuFlyoutItem;
