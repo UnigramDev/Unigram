@@ -10,16 +10,20 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Views;
+using Unigram.Views.Login;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
+using Windows.UI.Popups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Login
 {
     public class LoginPasswordViewModel : UnigramViewModelBase
     {
-        private TLAccountPassword _password;
+        private LoginPasswordPage.NavigationParameters _parameters;
 
         public LoginPasswordViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
@@ -28,14 +32,14 @@ namespace Unigram.ViewModels.Login
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var password = parameter as TLAccountPasswordBase;
-            if (password != null)
+            var parameters = parameter as LoginPasswordPage.NavigationParameters;
+            if (parameters != null)
             {
-                _password = password as TLAccountPassword;
+                _parameters = parameters;
 
-                if (_password != null)
+                if (parameters.Password is TLAccountPassword password)
                 {
-                    PasswordHint = _password.Hint;
+                    PasswordHint = password.Hint;
                 }
             }
 
@@ -55,24 +59,64 @@ namespace Unigram.ViewModels.Login
             }
         }
 
-        private string _code;
-        public string Code
+        private string _password;
+        public string Password
         {
             get
             {
-                return _code;
+                return _password;
             }
             set
             {
-                Set(ref _code, value);
+                Set(ref _password, value);
             }
         }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        private bool _isResettable;
+        public bool IsResettable
+        {
+            get
+            {
+                return _isResettable;
+            }
+            set
+            {
+                Set(ref _isResettable, value);
+            }
+        }
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get
+            {
+                return _isLoading;
+            }
+            set
+            {
+                Set(ref _isLoading, value);
+                SendCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
-            var currentSalt = _password.CurrentSalt;
-            var hash = TLUtils.Combine(currentSalt, Encoding.UTF8.GetBytes(Code), currentSalt);
+            if (_parameters == null)
+            {
+                // TODO: ...
+                return;
+            }
+
+            if (_password == null)
+            {
+                await TLMessageDialog.ShowAsync("Please enter your password.");
+                return;
+            }
+
+            var currentSalt = _parameters.Password.CurrentSalt;
+            var hash = TLUtils.Combine(currentSalt, Encoding.UTF8.GetBytes(_password), currentSalt);
 
             var input = CryptographicBuffer.CreateFromByteArray(hash);
             var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
@@ -105,6 +149,67 @@ namespace Unigram.ViewModels.Login
                 }
 
                 Execute.ShowDebugMessage("account.checkPassword error " + result.Error);
+            }
+        }
+
+        public RelayCommand ForgotCommand => new RelayCommand(ForgotExecute);
+        private async void ForgotExecute()
+        {
+            if (_parameters == null)
+            {
+                // TODO: ...
+                return;
+            }
+
+            if (_parameters.Password.HasRecovery)
+            {
+                IsLoading = true;
+
+                var response = await ProtoService.RequestPasswordRecoveryAsync();
+                if (response.IsSucceeded)
+                {
+                    await TLMessageDialog.ShowAsync(string.Format("We have sent a recovery code to the e-mail you provided:\n\n{0}", response.Result.EmailPattern), "Telegram", "OK");
+                }
+                else if (response.Error != null)
+                {
+                    IsLoading = false;
+                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                }
+            }
+            else
+            {
+                await TLMessageDialog.ShowAsync("Since you haven't provided a recovery e-mail when setting up your password, your remaining options are either to remember your password or to reset your account.", "Sorry", "OK");
+                IsResettable = true;
+            }
+        }
+
+        public RelayCommand ResetCommand => new RelayCommand(ResetExecute);
+        private async void ResetExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync("This action can't be undone.\n\nIf you reset your account, all your messages and chats will be deleted.", "Warning", "Reset", "Cancel");
+            if (confirm == ContentDialogResult.Primary)
+            {
+                IsLoading = true;
+
+                var response = await ProtoService.DeleteAccountAsync("Forgot password");
+                if (response.IsSucceeded)
+                {
+                    var logout = await ProtoService.LogOutAsync();
+
+                    var state = new LoginSignUpPage.NavigationParameters
+                    {
+                        PhoneNumber = _parameters.PhoneNumber,
+                        PhoneCode = _parameters.PhoneCode,
+                        Result = _parameters.Result,
+                    };
+
+                    NavigationService.Navigate(typeof(LoginSignUpPage), state);
+                }
+                else if (response.Error != null)
+                {
+                    IsLoading = false;
+                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                }
             }
         }
     }

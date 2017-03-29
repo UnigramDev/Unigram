@@ -428,6 +428,11 @@ namespace Unigram.Views
             if (StickersPanel.Visibility == Visibility.Visible)
             {
                 ViewModel.OpenStickersCommand.Execute(null);
+                InputPane.GetForCurrentView().TryHide();
+            }
+            else
+            {
+                InputPane.GetForCurrentView().TryShow();
             }
         }
 

@@ -10,6 +10,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Views;
 using Unigram.Views.Login;
 using Windows.UI.Popups;
@@ -17,18 +18,18 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Login
 {
-    public class LoginPhoneCodeViewModel : UnigramViewModelBase
+    public class LoginSentCodeViewModel : UnigramViewModelBase
     {
         private string _phoneNumber;
 
-        public LoginPhoneCodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public LoginSentCodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var param = parameter as LoginPhoneCodePage.NavigationParameters;
+            var param = parameter as LoginSentCodePage.NavigationParameters;
             if (param != null)
             {
                 _phoneNumber = param.PhoneNumber;
@@ -106,12 +107,18 @@ namespace Unigram.ViewModels.Login
                 return;
             }
 
+            if (_phoneCode == null)
+            {
+                await TLMessageDialog.ShowAsync("Please enter your code.");
+                return;
+            }
+
             var phoneNumber = _phoneNumber;
             var phoneCodeHash = _sentCode.PhoneCodeHash;
 
             IsLoading = true;
 
-            var result = await ProtoService.SignInAsync(phoneNumber, phoneCodeHash, PhoneCode);
+            var result = await ProtoService.SignInAsync(phoneNumber, phoneCodeHash, _phoneCode);
             if (result.IsSucceeded)
             {
                 ProtoService.SetInitState();
@@ -141,6 +148,14 @@ namespace Unigram.ViewModels.Login
                     //this._callTimer.Stop();
                     //this.StateService.ClearNavigationStack = true;
                     //this.NavigationService.UriFor<SignUpViewModel>().Navigate();
+                    var state = new LoginSignUpPage.NavigationParameters
+                    {
+                        PhoneNumber = _phoneNumber,
+                        PhoneCode = _phoneCode,
+                        Result = _sentCode,
+                    };
+
+                    NavigationService.Navigate(typeof(LoginSignUpPage), state);
                 }
                 else if (result.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
                 {
@@ -158,9 +173,17 @@ namespace Unigram.ViewModels.Login
                 {
                     //this.IsWorking = true;
                     var password = await ProtoService.GetPasswordAsync();
-                    if (password.IsSucceeded)
+                    if (password.IsSucceeded && password.Result is TLAccountPassword)
                     {
-                        NavigationService.Navigate(typeof(LoginPasswordPage), password.Result);
+                        var state = new LoginPasswordPage.NavigationParameters
+                        {
+                            PhoneNumber = _phoneNumber,
+                            PhoneCode = _phoneCode,
+                            Result = _sentCode,
+                            Password = password.Result as TLAccountPassword
+                        };
+
+                        NavigationService.Navigate(typeof(LoginPasswordPage), state);
                     }
                     else
                     {
@@ -195,7 +218,7 @@ namespace Unigram.ViewModels.Login
                 {
                     if (response.Result.Type is TLAuthSentCodeTypeSms || response.Result.Type is TLAuthSentCodeTypeApp)
                     {
-                        NavigationService.Navigate(typeof(LoginPhoneCodePage), new LoginPhoneCodePage.NavigationParameters
+                        NavigationService.Navigate(typeof(LoginSentCodePage), new LoginSentCodePage.NavigationParameters
                         {
                             PhoneNumber = _phoneNumber,
                             Result = response.Result

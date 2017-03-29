@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.IO;
 using Windows.Storage;
 
@@ -11,20 +12,31 @@ namespace Telegram.Api.Helpers
 
         public static object GetValue(string key)
         {
+            var error = false;
+            var path = FileUtils.GetFileName(key);
+
             lock (SyncLock)
             {
-                var path = FileUtils.GetFileName(key);
                 if (File.Exists(path))
                 {
-                    using (var file = File.OpenText(path))
+                    try
                     {
-                        var payload = file.ReadToEnd();
+                        var payload = File.ReadAllText(path);
                         var temp = JsonConvert.DeserializeObject(payload, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
                         var obj = temp;
 
                         return obj;
                     }
+                    catch
+                    {
+                        error = true;
+                    }
                 }
+            }
+
+            if (error && File.Exists(path + ".bak"))
+            {
+                return GetValue(key + ".bak");
             }
 
             return null;
@@ -37,18 +49,16 @@ namespace Telegram.Api.Helpers
                 var path = FileUtils.GetFileName(key);
                 if (File.Exists(path))
                 {
-                    File.Delete(path);
-                }
-                using (var file = File.CreateText(path))
-                {
-                    //var type = Encoding.UTF8.GetBytes(value.GetType().FullName + Environment.NewLine);
-                    //var serializer = new DataContractSerializer(value.GetType());
-                    //file.Write(type, 0, type.Length);
-                    //serializer.WriteObject(file, value);
+                    if (File.Exists(path + ".bak"))
+                    {
+                        File.Delete(path + ".bak");
+                    }
 
-                    var payload = JsonConvert.SerializeObject(value, Formatting.Indented, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
-                    file.Write(payload);
+                    File.Move(path, path + ".bak");
                 }
+
+                var payload = JsonConvert.SerializeObject(value, Formatting.None, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+                File.WriteAllText(path, payload);
             }
         }
 

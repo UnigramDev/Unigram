@@ -310,9 +310,9 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLMessagesFeaturedStickersBase>(caption, obj, callback, faultCallback);
         }
 
-        public void GetArchivedStickersCallback(bool full, long offsetId, int limit, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null)
+        public void GetArchivedStickersCallback(bool full, long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesGetArchivedStickers { OffsetId = offsetId, Limit = limit };
+            var obj = new TLMessagesGetArchivedStickers { OffsetId = offsetId, Limit = limit, IsMasks = masks };
 
             const string caption = "messages.getArchivedStickers";
 
@@ -351,6 +351,14 @@ namespace Telegram.Api.Services
                         callback?.Invoke(result);
                     }
                 });
+        }
+
+        public void GetArchivedStickersCallback(long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetArchivedStickers { OffsetId = offsetId, Limit = limit, IsMasks = masks };
+
+            const string caption = "messages.getArchivedStickers";
+            SendInformativeMessage<TLMessagesArchivedStickers>(caption, obj, callback, faultCallback);
         }
 
         public void GetAllStickersCallback(int hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)

@@ -76,8 +76,9 @@ namespace Unigram
 
             // ViewModels
             container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();
-            container.ContainerBuilder.RegisterType<LoginPhoneNumberViewModel>();
-            container.ContainerBuilder.RegisterType<LoginPhoneCodeViewModel>();
+            container.ContainerBuilder.RegisterType<LoginSignInViewModel>();
+            container.ContainerBuilder.RegisterType<LoginSignUpViewModel>();
+            container.ContainerBuilder.RegisterType<LoginSentCodeViewModel>();
             container.ContainerBuilder.RegisterType<LoginPasswordViewModel>();
             container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
@@ -106,6 +107,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsStickersFeaturedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsMasksViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
 
             container.Build();
@@ -171,7 +173,7 @@ namespace Unigram
             protoService.AuthorizationRequired += (s, e) =>
             {
                 SettingsHelper.IsAuthorized = false;
-                Debugger.Break();
+                Debug.WriteLine("!!!UNAUTHORIZED!!!");
 
                 Execute.BeginOnUIThread(() =>
                 {

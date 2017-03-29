@@ -26,6 +26,20 @@ namespace Unigram.Views
             DataContext = UnigramContainer.Current.ResolveType<SettingsViewModel>();
 
             Loaded += OnLoaded;
+
+#if DEBUG
+            // THIS CODE WILL RUN ONLY IF FIRST CONFIGURED SERVER IP IS TEST SERVER
+            if (Telegram.Api.Constants.FirstServerIpAddress.Equals("149.154.167.40"))
+            {
+                var option = new HyperButton();
+                option.Style = Resources["HyperButtonStyle"] as Style;
+                option.Command = ViewModel.DeleteAccountCommand;
+                option.Content = "!!! DELETE ACCOUNT !!!";
+
+                OptionsGroup4.Children.Clear();
+                OptionsGroup4.Children.Add(option);
+            }
+#endif
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Common;
+using Windows.System.Display;
 
 namespace Unigram.Controls.Media
 {
@@ -192,10 +193,18 @@ namespace Unigram.Controls.Media
         private AudioDeviceOutputNode _deviceOutputNode;
         private AudioFileInputNode _fileInputNode;
 
+        private static DisplayRequest _displayRequest = new DisplayRequest();
+        private static VoiceMediaControl _currentPlaying;
+
         private async void Toggle_Click(object sender, RoutedEventArgs e)
         {
             if (_state == PlaybackState.Paused)
             {
+                if (_currentPlaying != null && _currentPlaying._state == PlaybackState.Playing)
+                {
+                    _currentPlaying.Toggle_Click(null, null);
+                }
+
                 var documentMedia = ViewModel?.Media as TLMessageMediaDocument;
                 if (documentMedia != null)
                 {
@@ -240,6 +249,10 @@ namespace Unigram.Controls.Media
                         _timer.Start();
                         _state = PlaybackState.Playing;
                         UpdateGlyph();
+
+                        _displayRequest.RequestActive();
+                        _currentPlaying = this;
+
                         Slide.Maximum = _fileInputNode.Duration.TotalMilliseconds;
                         Slide.Value = 0;
                     }
@@ -250,6 +263,8 @@ namespace Unigram.Controls.Media
                 _graph?.Stop();
                 _state = PlaybackState.Paused;
                 UpdateGlyph();
+
+                _displayRequest.RequestRelease();
             }
         }
 
@@ -262,6 +277,9 @@ namespace Unigram.Controls.Media
                 _fileInputNode.Seek(TimeSpan.Zero);
                 _state = PlaybackState.Paused;
                 UpdateGlyph();
+
+                _displayRequest.RequestRelease();
+
                 DurationLabel.Text = _fileInputNode.Duration.ToString("mm\\:ss");
                 Slide.Value = 0;
             });

@@ -35,7 +35,7 @@ namespace Unigram.ViewModels.Login
         public RelayCommand ContinueCommand => _continueCommand = (_continueCommand ?? new RelayCommand(ContinueExecute, () => SelectedItem == Items.Last()));
         private void ContinueExecute()
         {
-            NavigationService.Navigate(typeof(LoginPhoneNumberPage));
+            NavigationService.Navigate(typeof(LoginSignInPage));
         }
 
         private WelcomeTour _selectedItem;

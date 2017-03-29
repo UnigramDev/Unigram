@@ -44,7 +44,7 @@ namespace Unigram.Views.Settings
 
         private void ArchivedStickers_Click(object sender, RoutedEventArgs e)
         {
-
+            Frame.Navigate(typeof(SettingsMasksArchivedPage));
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)

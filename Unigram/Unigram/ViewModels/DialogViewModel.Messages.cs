@@ -418,7 +418,14 @@ namespace Unigram.ViewModels
             Reply = new TLMessagesContainter
             {
                 EditMessage = _editedMessage,
-                EditUntil = editUntil
+                EditUntil = editUntil,
+                // TODO: setup original content
+                PreviousMessage = new TLMessage
+                {
+                    ToId = message.ToId,
+                    FromId = message.FromId,
+                    IsOut = message.IsOut
+                }
             };
 
             Aggregator.Publish(new EditMessageEventArgs(_editedMessage, text));

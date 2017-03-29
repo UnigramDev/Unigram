@@ -14,13 +14,14 @@ using Windows.UI.Xaml;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Controls;
 
 namespace Unigram.ViewModels.Login
 {
 
-    public class LoginPhoneNumberViewModel : UnigramViewModelBase
+    public class LoginSignInViewModel : UnigramViewModelBase
     {
-        public LoginPhoneNumberViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public LoginSignInViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             var alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -166,27 +167,35 @@ namespace Unigram.ViewModels.Login
         {
             if(PhoneCode == null || PhoneNumber == null)
             {
-                await new MessageDialog("Please type phone number and phone code").ShowQueuedAsync();
+                await new MessageDialog("Please enter your phone number.").ShowQueuedAsync();
                 return;
             }
 
             IsLoading = true;
 
-            var response = await ProtoService.SendCodeAsync(PhoneCode + PhoneNumber, /* TODO: Verify */ null);
+            var response = await ProtoService.SendCodeAsync(_phoneCode + _phoneNumber, /* TODO: Verify */ null);
             if (response.IsSucceeded)
             {
-                var state = new LoginPhoneCodePage.NavigationParameters
+                var state = new LoginSentCodePage.NavigationParameters
                 {
                     PhoneNumber = PhoneCode.TrimStart('+') + PhoneNumber,
                     Result = response.Result,
                 };
 
-                NavigationService.Navigate(typeof(LoginPhoneCodePage), state);
+                NavigationService.Navigate(typeof(LoginSentCodePage), state);
             }
             else if (response.Error != null)
             {
                 IsLoading = false;
-                await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+
+                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
+                {
+                    await TLMessageDialog.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
+                }
+                else
+                {
+                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                }
             }
         }
     }

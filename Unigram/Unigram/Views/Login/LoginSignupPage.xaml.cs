@@ -16,33 +16,27 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+
 namespace Unigram.Views.Login
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LoginPhoneCodePage : Page
+    public sealed partial class LoginSignUpPage : Page
     {
-        public LoginPhoneCodeViewModel ViewModel => DataContext as LoginPhoneCodeViewModel;
+        public LoginSignUpViewModel ViewModel => DataContext as LoginSignUpViewModel;
 
-        public LoginPhoneCodePage()
+        public LoginSignUpPage()
         {
             InitializeComponent();
-
-            DataContext = UnigramContainer.Current.ResolveType<LoginPhoneCodeViewModel>();
-
-            // Used to hide the app gray bar on desktop.
-            // Currently this is always hidden on both family devices.
-            //
-            //if (!Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            //{
-            //    rpMasterTitlebar.Visibility = Visibility.Collapsed;
-            //}
+            DataContext = UnigramContainer.Current.ResolveType<LoginSignUpViewModel>();
         }
 
         public class NavigationParameters
         {
             public string PhoneNumber { get; set; }
+            public string PhoneCode { get; set; }
             public TLAuthSentCode Result { get; set; }
         }
     }

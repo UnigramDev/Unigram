@@ -157,7 +157,8 @@ namespace Telegram.Api.Services
 
         // messages
         void GetFeaturedStickersCallback(int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null);
-        void GetArchivedStickersCallback(bool full, long offsetId, int limit, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null);
+        void GetArchivedStickersCallback(bool full, long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null);
+        void GetArchivedStickersCallback(long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null);
         void ReadFeaturedStickersCallback(TLVector<long> id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void GetAllDraftsCallback(Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void SaveDraftCallback(TLInputPeerBase peer, TLDraftMessageBase draft, Action<bool> callback, Action<TLRPCError> faultCallback = null);
