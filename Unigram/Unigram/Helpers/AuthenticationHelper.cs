@@ -19,7 +19,7 @@ namespace Unigram.Helpers
         private const string LocalPasscodeUserName = "Unigram-App-Local-Passcode";
         private const string WindowsHelloUserName = "Unigram-App-Hello";
 
-        private static async void Authenticate()
+        public static async void Authenticate()
         {
             var localSettingValues = ApplicationData.Current.LocalSettings.Values;
             if (localSettingValues.ContainsKey("AuthenticationType"))
