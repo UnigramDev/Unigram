@@ -13,6 +13,20 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLMessagesChatsBase>> GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatsBase>>();
+            GetCommonChatsCallback(id, maxId, limit, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesChatsBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesChatsBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ReorderPinnedDialogsAsync(TLVector<TLInputPeerBase> order, bool force)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();

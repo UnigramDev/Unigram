@@ -1968,6 +1968,24 @@ namespace Telegram.Api.Services
         //        faultCallback);
         //}
 
+        public void GetCommonChatsCallback(TLInputUserBase id, int maxId, int limit, Action<TLMessagesChatsBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetCommonChats { UserId = id, MaxId = maxId, Limit = limit };
+
+            const string caption = "messages.getCommonChats";
+            SendInformativeMessage<TLMessagesChatsBase>(caption, obj,
+                result =>
+                {
+                    _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), result.Chats, tuple =>
+                    {
+                        result.Chats = tuple.Item2;
+
+                        callback?.Invoke(result);
+                    });
+                },
+                faultCallback);
+        }
+
         public void ToggleDialogPinCallback(TLInputPeerBase peer, bool pin, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesToggleDialogPin { Peer = peer, IsPinned = pin };
