@@ -151,6 +151,10 @@ namespace Unigram.ViewModels
                 {
                     dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
                 }
+                else if (Peer is TLInputPeerChannel)
+                {
+                    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
+                }
 
                 var result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
