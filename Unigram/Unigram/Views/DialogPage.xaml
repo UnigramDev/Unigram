@@ -936,8 +936,20 @@
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
             <views:StickersView x:Name="StickersPanel" Visibility="Collapsed" MaxHeight="360" MinHeight="260"/>
-            <views:ReplyMarkupView x:Name="ReplyMarkupPanel" Visibility="Collapsed"/>
         </Grid>
+
+        <ScrollViewer x:Name="ReplyMarkupPanel"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      HorizontalScrollMode="Disabled"
+                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                      MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                      BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
+                      BorderThickness="0,1,0,0"
+                      Grid.Row="4">
+            <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick" Margin="4"/>
+        </ScrollViewer>
 
         <!-- Input pane -->
         <Grid x:Name="TextArea" 

@@ -810,7 +810,14 @@ namespace Unigram.ViewModels
             }
             else if (button is TLKeyboardButtonRequestPhone requestPhoneButton)
             {
-                // TODO
+                if (CacheService.GetUser(SettingsHelper.UserId) is TLUser cached)
+                {
+                    var confirm = await TLMessageDialog.ShowAsync("The bot will know your phone number. This can be useful for integration with other services.", "Share your phone number?", "OK", "Cancel");
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        await SendContactAsync(cached);
+                    }
+                }
             }
             else if (button is TLKeyboardButtonRequestGeoLocation requestGeoButton)
             {

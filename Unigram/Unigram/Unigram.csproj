@@ -218,9 +218,6 @@
     <Compile Include="Controls\Views\DeleteChannelMessageDialog.xaml.cs">
       <DependentUpon>DeleteChannelMessageDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\ReplyMarkupView.xaml.cs">
-      <DependentUpon>ReplyMarkupView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Views\StickersView.xaml.cs">
       <DependentUpon>StickersView.xaml</DependentUpon>
     </Compile>
@@ -663,10 +660,6 @@
     <Page Include="Controls\TabHeaderStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Views\ReplyMarkupView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\SendPhotosView.xaml">
       <SubType>Designer</SubType>

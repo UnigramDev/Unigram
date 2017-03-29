@@ -419,6 +419,19 @@ namespace Unigram.ViewModels
                     Messages.Add(item);
                 }
 
+                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                {
+                    var message = item as TLMessage;
+                    if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                    {
+                        var user = CacheService.GetUser(message.FromId) as TLUser;
+                        if (user != null && user.IsBot)
+                        {
+                            SetReplyMarkup(message);
+                        }
+                    }
+                }
+
                 IsFirstSliceLoaded = result.Result.Messages.Count < limit;
             }
 
@@ -1870,6 +1883,53 @@ namespace Unigram.ViewModels
                     var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
                 }
             });
+        }
+
+        public Task<bool> SendContactAsync(TLUser user)
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var media = new TLMessageMediaContact
+            {
+                PhoneNumber = user.Phone,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserId = user.Id,
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var inputMedia = new TLInputMediaContact
+                {
+                    PhoneNumber = user.Phone,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                };
+
+                var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                if (result.IsSucceeded)
+                {
+                    tsc.SetResult(true);
+                }
+                else
+                {
+                    tsc.SetResult(false);
+                }
+            });
+
+            return tsc.Task;
         }
 
         private TLMessageBase InsertSendingMessage(TLMessage message, bool useReplyMarkup = false)
