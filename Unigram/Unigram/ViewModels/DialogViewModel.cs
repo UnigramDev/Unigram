@@ -694,6 +694,18 @@ namespace Unigram.ViewModels
             }
             else if (channel != null)
             {
+                if (channel.IsRestricted)
+                {
+                    var reason = channel.ExtractRestrictionReason();
+                    if (reason != null)
+                    {
+                        NavigationService.GoBack();
+
+                        await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
+                        return;
+                    }
+                }
+
                 With = channel;
                 Peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 };
 
