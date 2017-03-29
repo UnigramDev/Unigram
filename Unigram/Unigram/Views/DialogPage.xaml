@@ -944,11 +944,8 @@
                       HorizontalScrollBarVisibility="Disabled"
                       HorizontalScrollMode="Disabled"
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                      MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                      BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
-                      BorderThickness="0,1,0,0"
                       Grid.Row="4">
-            <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick" Margin="4"/>
+            <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick"/>
         </ScrollViewer>
 
         <!-- Input pane -->
@@ -1074,9 +1071,8 @@
                                         Tag="&#xE1C4;"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                         x:Uid="FCBTN-Contact"
-                                        Visibility="Collapsed"
-                                        IsEnabled="False"
                                         Text="Contact"
+                                        Visibility="Collapsed"
                                         Tag="&#xE136;"/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                         Visibility="Visible"

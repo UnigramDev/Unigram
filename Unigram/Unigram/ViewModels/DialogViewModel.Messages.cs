@@ -799,7 +799,7 @@ namespace Unigram.ViewModels
                     {
                         if (CacheService.GetUser(message.ViaBotId) is TLUser user)
                         {
-                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Username = user.Username, Title = gameMedia.Game.Title });
+                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Title = gameMedia.Game.Title, Username = user.Username });
                         }
                         else
                         {
