@@ -62,21 +62,21 @@ namespace Unigram.Controls
 
             ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
 
-            _flyout = new MenuFlyout();
-            _flyout.Items.Add(new MenuFlyoutItem { Text = "Bold" });
-            _flyout.Items.Add(new MenuFlyoutItem { Text = "Italic" });
-            _flyout.AllowFocusOnInteraction = false;
-            _flyout.AllowFocusWhenDisabled = false;
+            //_flyout = new MenuFlyout();
+            //_flyout.Items.Add(new MenuFlyoutItem { Text = "Bold" });
+            //_flyout.Items.Add(new MenuFlyoutItem { Text = "Italic" });
+            //_flyout.AllowFocusOnInteraction = false;
+            //_flyout.AllowFocusWhenDisabled = false;
 
-            ((MenuFlyoutItem)_flyout.Items[0]).Click += Bold_Click;
-            ((MenuFlyoutItem)_flyout.Items[1]).Click += Italic_Click;
-            ((MenuFlyoutItem)_flyout.Items[1]).Loaded += Italic_Loaded;
+            //((MenuFlyoutItem)_flyout.Items[0]).Click += Bold_Click;
+            //((MenuFlyoutItem)_flyout.Items[1]).Click += Italic_Click;
+            //((MenuFlyoutItem)_flyout.Items[1]).Loaded += Italic_Loaded;
 
-#if DEBUG
-            // To test hyperlinks (Used for mention name => to tag people that has no username)
-            _flyout.Items.Add(new MenuFlyoutItem { Text = "Hyperlink" });
-            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
-#endif
+//#if DEBUG
+//            // To test hyperlinks (Used for mention name => to tag people that has no username)
+//            _flyout.Items.Add(new MenuFlyoutItem { Text = "Hyperlink" });
+//            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
+//#endif
 
             Paste += OnPaste;
             Clipboard.ContentChanged += Clipboard_ContentChanged;
@@ -278,15 +278,15 @@ namespace Unigram.Controls
 
         private void OnSelectionChanged()
         {
-            if (Document.Selection.Length != 0)
-            {
-                Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out int hit);
-                _flyout.ShowAt(this, new Point(rect.X + 12, rect.Y - _presenter?.ActualHeight ?? 0));
-            }
-            else
-            {
-                _flyout.Hide();
-            }
+            //if (Document.Selection.Length != 0)
+            //{
+            //    Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out int hit);
+            //    _flyout.ShowAt(this, new Point(rect.X + 12, rect.Y - _presenter?.ActualHeight ?? 0));
+            //}
+            //else
+            //{
+            //    _flyout.Hide();
+            //}
         }
 
         //protected override async void OnKeyDown(KeyRoutedEventArgs e)
