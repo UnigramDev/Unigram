@@ -146,7 +146,7 @@ namespace Unigram.Controls.Messages
                     paragraph.Inlines.Add(hyperlink);
                 }
 
-                if (message.HasViaBotId && message.ViaBot != null)
+                if (message.HasViaBotId && message.ViaBot != null && !message.ViaBot.IsDeleted && message.ViaBot.HasUsername)
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
