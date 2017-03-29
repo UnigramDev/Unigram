@@ -380,6 +380,7 @@
     <Compile Include="TL\Partial\TLMessagesDialogsBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesMessagesBase.Partial.cs" />
     <Compile Include="TL\Partial\TLPhoto.Partial.cs" />
+    <Compile Include="TL\Partial\TLRPCError.Partial.cs" />
     <Compile Include="TL\Partial\TLStickerSet.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdateBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdatesBase.Partial.cs" />

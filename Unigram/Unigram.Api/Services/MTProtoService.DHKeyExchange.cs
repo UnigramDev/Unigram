@@ -82,7 +82,7 @@ namespace Telegram.Api.Services
                     var encryptedInnerData = GetEncryptedInnerData(innerData);
 
 #if LOG_REGISTRATION
-                    var pq = BitConverter.ToUInt64(resPQ.PQ.Data.Reverse().ToArray(), 0);
+                    var pq = BitConverter.ToUInt64(resPQ.PQ.Reverse().ToArray(), 0);
 
                     var logPQString = new StringBuilder();
                     logPQString.AppendLine("PQ Counters");
@@ -90,7 +90,7 @@ namespace Telegram.Api.Services
                     logPQString.AppendLine("pq: " + pq);
                     logPQString.AppendLine("p: " + pqPair.Item1);
                     logPQString.AppendLine("q: " + pqPair.Item2);
-                    logPQString.AppendLine("encrypted_data length: " + encryptedInnerData.Data.Length);
+                    logPQString.AppendLine("encrypted_data length: " + encryptedInnerData.Length);
                     TLUtils.WriteLog(logPQString.ToString());
 
                     TLUtils.WriteLog("Start ReqDHParams");
@@ -366,9 +366,9 @@ namespace Telegram.Api.Services
             sb.AppendLine("pq " + innerData.PQ.ToBytes().Length);
             sb.AppendLine("p " + innerData.P.ToBytes().Length);
             sb.AppendLine("q " + innerData.Q.ToBytes().Length);
-            sb.AppendLine("nonce " + innerData.Nonce.ToBytes().Length);
-            sb.AppendLine("serverNonce " + innerData.ServerNonce.ToBytes().Length);
-            sb.AppendLine("newNonce " + innerData.NewNonce.ToBytes().Length);
+            sb.AppendLine("nonce " + innerData.Nonce.ToArray().Length);
+            sb.AppendLine("serverNonce " + innerData.ServerNonce.ToArray().Length);
+            sb.AppendLine("newNonce " + innerData.NewNonce.ToArray().Length);
             sb.AppendLine("innerData length " + innerDataBytes.Length);
 
             TLUtils.WriteLog(sb.ToString());

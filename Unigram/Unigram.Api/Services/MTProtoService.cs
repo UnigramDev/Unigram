@@ -649,7 +649,7 @@ namespace Telegram.Api.Services
 #if LOG_REGISTRATION
                         TLUtils.WriteLog(
                             string.Format("OnReceivedBytes by {0} AuthKey==null: invoke historyItem {1} with result {2} (data length={3})",
-                                transport.Id, historyItem.Caption, message.Data.GetType(), e.Data.Length));
+                                transport.Id, historyItem.Caption, message.Query.GetType(), e.Data.Length));
 #endif
                         historyItem.Callback?.Invoke(message.Query);
                     }
@@ -658,7 +658,7 @@ namespace Telegram.Api.Services
 #if LOG_REGISTRATION
                         TLUtils.WriteLog(
                             string.Format("OnReceivedBytes by {0} AuthKey==null: cannot find historyItem {1} with result {2} (data length={3})",
-                                transport.Id, string.Empty, message.Data.GetType(), e.Data.Length));
+                                transport.Id, string.Empty, message.Query.GetType(), e.Data.Length));
 #endif
                     }
 
