@@ -338,7 +338,7 @@ namespace Unigram.Views
             }
             else
             {
-                UpdateListViewsSelectedItem(GetPeerFromBackStack());
+                //UpdateListViewsSelectedItem(GetPeerFromBackStack());
             }
 
             if (listView.SelectedItem != null && _lastSelected != listView.SelectedItem)

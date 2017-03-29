@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using Unigram.Common;
 using System.Linq;
 using Unigram.Controls.Views;
+using Unigram.Views.Users;
 
 namespace Unigram.ViewModels.Users
 {
@@ -151,19 +152,27 @@ namespace Unigram.ViewModels.Users
         public RelayCommand SendMessageCommand =>new RelayCommand(SendMessageExecute);
         private void SendMessageExecute()
         {
-            if (Item != null)
+            if (Item is TLUser user)
             {
-                NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = Item.Id });
+                NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
             }
         }
 
         public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
         private void MediaExecute()
         {
-            var user = Item as TLUser;
-            if (user != null)
+            if (Item is TLUser user && user.HasAccessHash)
             {
                 NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
+            }
+        }
+
+        public RelayCommand CommonChatsCommand => new RelayCommand(CommonChatsExecute);
+        private void CommonChatsExecute()
+        {
+            if (Item is TLUser user && user.HasAccessHash)
+            {
+                NavigationService.Navigate(typeof(UserCommonChatsPage), new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
             }
         }
 

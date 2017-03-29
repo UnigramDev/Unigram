@@ -13,5 +13,6 @@ namespace Telegram.Api.TL
         string DisplayName { get; }
 
         TLInputPeerBase ToInputPeer();
+        TLPeerBase ToPeer();
     }
 }

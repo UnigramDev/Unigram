@@ -239,6 +239,11 @@ namespace Telegram.Api.TL
             throw new NotImplementedException();
         }
 
+        public virtual TLPeerBase ToPeer()
+        {
+            throw new NotImplementedException();
+        }
+
         //public override void ReadFromCache(TLBinaryReader from)
         //{
         //    ReadInboxMaxId = from.ReadInt32();

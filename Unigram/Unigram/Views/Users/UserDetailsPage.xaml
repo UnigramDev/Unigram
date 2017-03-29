@@ -277,10 +277,14 @@
                                                IsOn="{Binding AreNotificationsEnabled}"
                                                Style="{ThemeResource CheckButtonStyle}"/>
 
-                    <controls:HyperButton Content="Groups in common"
+                    <!--<controls:HyperButton Content="Groups in common"
                                           Command="{Binding MediaCommand}"
                                           Style="{StaticResource HyperButtonStyle}"
-                                          Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                                          Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>-->
+                    <controls:BadgeButton Content="Groups in common"
+                                          Command="{x:Bind ViewModel.CommonChatsCommand}"
+                                          Badge="{x:Bind ViewModel.Full.CommonChatsCount, Mode=OneWay}"
+                                          Visibility="{x:Bind ViewModel.Full.CommonChatsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </local:TableStackPanel>
 
                 <local:TableStackPanel x:Name="Group4"

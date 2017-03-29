@@ -194,7 +194,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadNextSliceAsync()
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
             _isLoadingNextSlice = true;
 
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
@@ -253,7 +253,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadPreviousSliceAsync()
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
             _isLoadingPreviousSlice = true;
 
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
@@ -324,7 +324,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadMessageSliceAsync(int? previousId, int maxId)
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
 
@@ -373,7 +373,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadFirstSliceAsync()
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
 
@@ -428,7 +428,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadFirstSliceAsyncASDFASRFHJNDKDFKJFD()
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
 

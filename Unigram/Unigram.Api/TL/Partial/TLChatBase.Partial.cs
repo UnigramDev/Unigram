@@ -74,6 +74,11 @@ namespace Telegram.Api.TL
         {
             throw new NotImplementedException();
         }
+
+        public virtual TLPeerBase ToPeer()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public partial class TLChat
@@ -84,6 +89,16 @@ namespace Telegram.Api.TL
             {
                 return Title;
             }
+        }
+
+        public override TLInputPeerBase ToInputPeer()
+        {
+            return new TLInputPeerChat { ChatId = Id };
+        }
+
+        public override TLPeerBase ToPeer()
+        {
+            return new TLPeerChat { ChatId = Id };
         }
     }
 
@@ -96,6 +111,16 @@ namespace Telegram.Api.TL
                 return Title;
             }
         }
+
+        public override TLInputPeerBase ToInputPeer()
+        {
+            return new TLInputPeerChat { ChatId = Id };
+        }
+
+        public override TLPeerBase ToPeer()
+        {
+            return new TLPeerChat { ChatId = Id };
+        }
     }
 
     public partial class TLChannel
@@ -107,6 +132,16 @@ namespace Telegram.Api.TL
                 return Title;
             }
         }
+
+        public override TLInputPeerBase ToInputPeer()
+        {
+            return new TLInputPeerChannel { ChannelId = Id, AccessHash = AccessHash.Value };
+        }
+
+        public override TLPeerBase ToPeer()
+        {
+            return new TLPeerChannel { ChannelId = Id };
+        }
     }
 
     public partial class TLChannelForbidden
@@ -117,6 +152,16 @@ namespace Telegram.Api.TL
             {
                 return Title;
             }
+        }
+
+        public override TLInputPeerBase ToInputPeer()
+        {
+            return new TLInputPeerChannel { ChannelId = Id, AccessHash = AccessHash };
+        }
+
+        public override TLPeerBase ToPeer()
+        {
+            return new TLPeerChannel { ChannelId = Id };
         }
     }
 }

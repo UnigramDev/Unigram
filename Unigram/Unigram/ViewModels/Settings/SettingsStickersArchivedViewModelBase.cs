@@ -27,7 +27,7 @@ namespace Unigram.ViewModels.Settings
             _stickersService = stickersService;
             _stickersService.NeedReloadArchivedStickers += OnNeedReloadArchivedStickers;
 
-            Items = new SettingsStickersArchivedCollection(protoService, type);
+            Items = new ItemsCollection(protoService, type);
         }
 
         private void OnNeedReloadArchivedStickers(object sender, NeedReloadArchivedStickersEventArgs e)
@@ -38,21 +38,21 @@ namespace Unigram.ViewModels.Settings
                 {
                     Items.HasMoreItems = false;
                     Items.Clear();
-                    Items = new SettingsStickersArchivedCollection(ProtoService, _type);
 
+                    Items = new ItemsCollection(ProtoService, _type);
                     RaisePropertyChanged(() => Items);
                 });
             }
         }
 
-        public SettingsStickersArchivedCollection Items { get; private set; }
+        public ItemsCollection Items { get; private set; }
 
-        public class SettingsStickersArchivedCollection : IncrementalCollection<TLMessagesStickerSet>
+        public class ItemsCollection : IncrementalCollection<TLMessagesStickerSet>
         {
             private readonly IMTProtoService _protoService;
             private readonly StickerType _type;
 
-            public SettingsStickersArchivedCollection(IMTProtoService protoService, StickerType type)
+            public ItemsCollection(IMTProtoService protoService, StickerType type)
             {
                 _protoService = protoService;
                 _type = type;
@@ -63,6 +63,7 @@ namespace Unigram.ViewModels.Settings
                 var offset = Count == 0 ? 0 : this[Count - 1].Set.Id;
                 var limit = 15;
                 var masks = _type == StickerType.Mask;
+
                 var response = await _protoService.GetArchivedStickersAsync(offset, limit, masks);
                 if (response.IsSucceeded)
                 {

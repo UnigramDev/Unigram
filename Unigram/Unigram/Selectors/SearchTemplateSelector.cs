@@ -13,6 +13,8 @@ namespace Unigram.Selectors
     {
         public DataTemplate UserTemplate { get; set; }
 
+        public DataTemplate ChatTemplate { get; set; }
+
         public DataTemplate ChannelTemplate { get; set; }
 
         public DataTemplate ChannelForbiddenTemplate { get; set; }
@@ -21,26 +23,27 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            var user = item as TLUser;
-            if (user != null)
+            if (item is TLUser user)
             {
                 return UserTemplate;
             }
 
-            var channel = item as TLChannel;
-            if (channel != null)
+            if (item is TLChat chat)
+            {
+                return ChatTemplate;
+            }
+
+            if (item is TLChannel channel)
             {
                 return ChannelTemplate;
             }
 
-            var channelForbidden = item as TLChannelForbidden;
-            if( channelForbidden != null)
+            if (item is TLChannelForbidden channelForbidden)
             {
                 return ChannelForbiddenTemplate;
             }
 
-            var dialog = item as TLDialog;
-            if (dialog != null)
+            if (item is TLDialog dialog)
             {
                 return MessageTemplate;
             }
