@@ -13,9 +13,9 @@ using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels.Login
 {
-    public class LoginWelcomeViewModel : UnigramViewModelBase
+    public class SignInWelcomeViewModel : UnigramViewModelBase
     {
-        public LoginWelcomeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public SignInWelcomeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
             Items = new ObservableCollection<WelcomeTour>();
@@ -35,7 +35,7 @@ namespace Unigram.ViewModels.Login
         public RelayCommand ContinueCommand => _continueCommand = (_continueCommand ?? new RelayCommand(ContinueExecute, () => SelectedItem == Items.Last()));
         private void ContinueExecute()
         {
-            NavigationService.Navigate(typeof(LoginSignInPage));
+            NavigationService.Navigate(typeof(SignInPage));
         }
 
         private WelcomeTour _selectedItem;

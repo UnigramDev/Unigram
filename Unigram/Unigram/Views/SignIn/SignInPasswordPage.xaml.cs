@@ -16,21 +16,26 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Unigram.Views.Login
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LoginSignUpPage : Page
+    public sealed partial class SignInPasswordPage : Page
     {
-        public LoginSignUpViewModel ViewModel => DataContext as LoginSignUpViewModel;
+        public SignInPasswordViewModel ViewModel => DataContext as SignInPasswordViewModel;
 
-        public LoginSignUpPage()
+        public SignInPasswordPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<LoginSignUpViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<SignInPasswordViewModel>();
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            ((PasswordBox)sender).GetBindingExpression(PasswordBox.PasswordProperty)?.UpdateSource();
         }
 
         public class NavigationParameters
@@ -38,6 +43,7 @@ namespace Unigram.Views.Login
             public string PhoneNumber { get; set; }
             public string PhoneCode { get; set; }
             public TLAuthSentCode Result { get; set; }
+            public TLAccountPassword Password { get; set; }
         }
     }
 }

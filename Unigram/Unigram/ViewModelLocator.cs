@@ -75,11 +75,11 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
 
             // ViewModels
-            container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();
-            container.ContainerBuilder.RegisterType<LoginSignInViewModel>();
-            container.ContainerBuilder.RegisterType<LoginSignUpViewModel>();
-            container.ContainerBuilder.RegisterType<LoginSentCodeViewModel>();
-            container.ContainerBuilder.RegisterType<LoginPasswordViewModel>();
+            container.ContainerBuilder.RegisterType<SignInWelcomeViewModel>();
+            container.ContainerBuilder.RegisterType<SignInViewModel>();
+            container.ContainerBuilder.RegisterType<SignUpViewModel>();
+            container.ContainerBuilder.RegisterType<SignInSentCodeViewModel>();
+            container.ContainerBuilder.RegisterType<SignInPasswordViewModel>();
             container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogViewModel>();
@@ -181,7 +181,7 @@ namespace Unigram
                     if (type.Name.StartsWith("Login")) { }
                     else
                     {
-                        App.Current.NavigationService.Navigate(typeof(LoginWelcomePage));
+                        App.Current.NavigationService.Navigate(typeof(SignInWelcomePage));
                         App.Current.NavigationService.Frame.BackStack.Clear();
                     }
                 });

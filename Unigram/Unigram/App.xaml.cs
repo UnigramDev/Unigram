@@ -200,7 +200,7 @@ namespace Unigram
             }
             else
             {
-                NavigationService.Navigate(typeof(LoginWelcomePage));
+                NavigationService.Navigate(typeof(SignInWelcomePage));
             }
 
             // Remove borders on Xbox

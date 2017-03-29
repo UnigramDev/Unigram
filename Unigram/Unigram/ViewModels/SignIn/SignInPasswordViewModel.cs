@@ -21,18 +21,18 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Login
 {
-    public class LoginPasswordViewModel : UnigramViewModelBase
+    public class SignInPasswordViewModel : UnigramViewModelBase
     {
-        private LoginPasswordPage.NavigationParameters _parameters;
+        private SignInPasswordPage.NavigationParameters _parameters;
 
-        public LoginPasswordViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public SignInPasswordViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var parameters = parameter as LoginPasswordPage.NavigationParameters;
+            var parameters = parameter as SignInPasswordPage.NavigationParameters;
             if (parameters != null)
             {
                 _parameters = parameters;
@@ -196,14 +196,14 @@ namespace Unigram.ViewModels.Login
                 {
                     var logout = await ProtoService.LogOutAsync();
 
-                    var state = new LoginSignUpPage.NavigationParameters
+                    var state = new SignUpPage.NavigationParameters
                     {
                         PhoneNumber = _parameters.PhoneNumber,
                         PhoneCode = _parameters.PhoneCode,
                         Result = _parameters.Result,
                     };
 
-                    NavigationService.Navigate(typeof(LoginSignUpPage), state);
+                    NavigationService.Navigate(typeof(SignUpPage), state);
                 }
                 else if (response.Error != null)
                 {

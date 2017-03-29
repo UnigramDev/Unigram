@@ -19,9 +19,9 @@ using Unigram.Controls;
 namespace Unigram.ViewModels.Login
 {
 
-    public class LoginSignInViewModel : UnigramViewModelBase
+    public class SignInViewModel : UnigramViewModelBase
     {
-        public LoginSignInViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public SignInViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             var alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -176,13 +176,13 @@ namespace Unigram.ViewModels.Login
             var response = await ProtoService.SendCodeAsync(_phoneCode + _phoneNumber, /* TODO: Verify */ null);
             if (response.IsSucceeded)
             {
-                var state = new LoginSentCodePage.NavigationParameters
+                var state = new SignInSentCodePage.NavigationParameters
                 {
                     PhoneNumber = PhoneCode.TrimStart('+') + PhoneNumber,
                     Result = response.Result,
                 };
 
-                NavigationService.Navigate(typeof(LoginSentCodePage), state);
+                NavigationService.Navigate(typeof(SignInSentCodePage), state);
             }
             else if (response.Error != null)
             {

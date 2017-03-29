@@ -18,18 +18,18 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Login
 {
-    public class LoginSentCodeViewModel : UnigramViewModelBase
+    public class SignInSentCodeViewModel : UnigramViewModelBase
     {
         private string _phoneNumber;
 
-        public LoginSentCodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public SignInSentCodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var param = parameter as LoginSentCodePage.NavigationParameters;
+            var param = parameter as SignInSentCodePage.NavigationParameters;
             if (param != null)
             {
                 _phoneNumber = param.PhoneNumber;
@@ -148,14 +148,14 @@ namespace Unigram.ViewModels.Login
                     //this._callTimer.Stop();
                     //this.StateService.ClearNavigationStack = true;
                     //this.NavigationService.UriFor<SignUpViewModel>().Navigate();
-                    var state = new LoginSignUpPage.NavigationParameters
+                    var state = new SignUpPage.NavigationParameters
                     {
                         PhoneNumber = _phoneNumber,
                         PhoneCode = _phoneCode,
                         Result = _sentCode,
                     };
 
-                    NavigationService.Navigate(typeof(LoginSignUpPage), state);
+                    NavigationService.Navigate(typeof(SignUpPage), state);
                 }
                 else if (result.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
                 {
@@ -175,7 +175,7 @@ namespace Unigram.ViewModels.Login
                     var password = await ProtoService.GetPasswordAsync();
                     if (password.IsSucceeded && password.Result is TLAccountPassword)
                     {
-                        var state = new LoginPasswordPage.NavigationParameters
+                        var state = new SignInPasswordPage.NavigationParameters
                         {
                             PhoneNumber = _phoneNumber,
                             PhoneCode = _phoneCode,
@@ -183,7 +183,7 @@ namespace Unigram.ViewModels.Login
                             Password = password.Result as TLAccountPassword
                         };
 
-                        NavigationService.Navigate(typeof(LoginPasswordPage), state);
+                        NavigationService.Navigate(typeof(SignInPasswordPage), state);
                     }
                     else
                     {
@@ -218,7 +218,7 @@ namespace Unigram.ViewModels.Login
                 {
                     if (response.Result.Type is TLAuthSentCodeTypeSms || response.Result.Type is TLAuthSentCodeTypeApp)
                     {
-                        NavigationService.Navigate(typeof(LoginSentCodePage), new LoginSentCodePage.NavigationParameters
+                        NavigationService.Navigate(typeof(SignInSentCodePage), new SignInSentCodePage.NavigationParameters
                         {
                             PhoneNumber = _phoneNumber,
                             Result = response.Result

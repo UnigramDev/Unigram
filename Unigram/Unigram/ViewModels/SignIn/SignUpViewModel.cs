@@ -18,20 +18,20 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Login
 {
-    public class LoginSignUpViewModel : UnigramViewModelBase
+    public class SignUpViewModel : UnigramViewModelBase
     {
         private string _phoneNumber;
         private string _phoneCode;
         private TLAuthSentCode _sentCode;
 
-        public LoginSignUpViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public SignUpViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var param = parameter as LoginSignUpPage.NavigationParameters;
+            var param = parameter as SignUpPage.NavigationParameters;
             if (param != null)
             {
                 _phoneNumber = param.PhoneNumber;
