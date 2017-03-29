@@ -182,11 +182,6 @@ namespace Unigram.Views
             _anchors[block.Name] = child;
         }
 
-        private void ProcessPullquote(TLPageBase page, TLPageBlockPullquote block)
-        {
-
-        }
-
         private void ProcessEmbed(TLPageBase page, TLPageBlockEmbed block)
         {
             if (block.Caption.TypeId != TLType.TextEmpty)
@@ -516,6 +511,22 @@ namespace Unigram.Views
             _containers.Peek().Children.Add(panel);
         }
 
+        private void ProcessPullquote(TLPageBase page, TLPageBlockPullquote block)
+        {
+            _containers.Push(new StackPanel
+            {
+                //BorderBrush = new SolidColorBrush(Colors.Black),
+                //BorderThickness = new Thickness(2, 0, 0, 0),
+                Margin = new Thickness(0, 0, 0, 12)
+            });
+
+            ProcessTextBlock(page, block, false);
+            ProcessTextBlock(page, block, true);
+
+            var panel = _containers.Pop();
+            _containers.Peek().Children.Add(panel);
+        }
+
         private void ProcessTextBlock(TLPageBase page, TLPageBlockBase block, bool caption)
         {
             TLRichTextBase text = null;
@@ -558,7 +569,7 @@ namespace Unigram.Views
                     text = caption ? ((TLPageBlockBlockquote)block).Caption : ((TLPageBlockBlockquote)block).Text;
                     break;
                 case TLType.PageBlockPullquote:
-                    text = caption ? ((TLPageBlockBlockquote)block).Caption : ((TLPageBlockBlockquote)block).Text;
+                    text = caption ? ((TLPageBlockPullquote)block).Caption : ((TLPageBlockPullquote)block).Text;
                     break;
             }
 
@@ -619,7 +630,9 @@ namespace Unigram.Views
                         break;
                     case TLType.PageBlockPullquote:
                         var pullquoteBlock = block as TLPageBlockPullquote;
-                        textBlock.FontSize = caption ? 14 : 15;
+                        textBlock.FontSize = caption ? 14 : 18;
+                        textBlock.FontFamily = new FontFamily("Times New Roman");
+                        textBlock.TextAlignment = TextAlignment.Center;
                         break;
                 }
 
