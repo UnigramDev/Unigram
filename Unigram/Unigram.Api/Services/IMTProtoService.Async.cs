@@ -14,7 +14,7 @@ namespace Telegram.Api.Services
     {
         Task<MTProtoResponse<bool>> ClearSavedInfoAsync(bool info, bool credentials);
         Task<MTProtoResponse<TLPaymentsPaymentForm>> GetPaymentFormAsync(int msgId);
-        Task<MTProtoResponse<TLPaymentsPaymentReceipt>> GetPaymentReceiptCAsync(int msgId);
+        Task<MTProtoResponse<TLPaymentsPaymentReceipt>> GetPaymentReceiptAsync(int msgId);
         Task<MTProtoResponse<TLPaymentsSavedInfo>> GetSavedInfoAsync();
 
         Task<MTProtoResponse<TLMessagesChatsBase>> GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit);

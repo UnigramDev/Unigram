@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -684,7 +685,15 @@ namespace Unigram.ViewModels
         //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand => new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);
         public async void KeyboardButtonExecute(TLKeyboardButtonBase button, TLMessage message)
         {
-            if (button is TLKeyboardButtonSwitchInline switchInlineButton)
+            if (button is TLKeyboardButtonBuy buyButton)
+            {
+                var response = await ProtoService.GetPaymentFormAsync(message.Id);
+                if (response.IsSucceeded)
+                {
+                    Debugger.Break();
+                }
+            }
+            else if (button is TLKeyboardButtonSwitchInline switchInlineButton)
             {
                 var bot = GetBot(message);
                 if (bot != null)

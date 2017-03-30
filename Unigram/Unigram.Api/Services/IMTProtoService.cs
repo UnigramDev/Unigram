@@ -274,5 +274,11 @@ namespace Telegram.Api.Services
         // background task
         void SendActionsAsync(List<TLObject> actions, Action<TLObject, object> callback, Action<TLRPCError> faultCallback = null);
         void ClearQueue();
+
+        // payments
+        void ClearSavedInfoAsync(bool info, bool credentials, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void GetPaymentFormAsync(int msgId, Action<TLPaymentsPaymentForm> callback, Action<TLRPCError> faultCallback = null);
+        void GetPaymentReceiptAsync(int msgId, Action<TLPaymentsPaymentReceipt> callback, Action<TLRPCError> faultCallback = null);
+        void GetSavedInfoAsync(Action<TLPaymentsSavedInfo> callback, Action<TLRPCError> faultCallback = null);
     }
 }
