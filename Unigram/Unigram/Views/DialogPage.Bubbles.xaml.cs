@@ -197,7 +197,7 @@ namespace Unigram.Views
 
             if (e.IsIntermediate == false)
             {
-                await Task.Delay(2000);
+                await Task.Delay(4000);
                 DateHeader.Visibility = Visibility.Collapsed;
             }
         }

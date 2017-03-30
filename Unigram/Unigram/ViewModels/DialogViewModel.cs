@@ -217,7 +217,7 @@ namespace Unigram.ViewModels
 
             //return;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, maxId, 50);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, maxId, 50);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -275,7 +275,7 @@ namespace Unigram.ViewModels
 
             maxId = Messages.LastOrDefault()?.Id ?? 1;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit, maxId, limit);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit, 0, maxId, limit);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -344,7 +344,7 @@ namespace Unigram.ViewModels
             var offset = -50;
             var limit = 50;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, maxId, limit);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -373,6 +373,28 @@ namespace Unigram.ViewModels
             _isLoadingPreviousSlice = false;
         }
 
+        public async Task LoadDateSliceAsync(int dateOffset)
+        {
+            var offset = -1;
+            var limit = 1;
+
+            var obj = new TLMessagesGetHistory { Peer = Peer, OffsetId = 0, OffsetDate = dateOffset - 1, AddOffset = offset, Limit = limit, MaxId = 0, MinId = 0 };
+            ProtoService.SendRequestCallback<TLMessagesMessagesBase>(obj, result =>
+            {
+                Execute.BeginOnUIThread(async () =>
+                {
+                    await LoadMessageSliceAsync(null, result.Messages[0].Id);
+                });
+            });
+
+            //var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, dateOffset, 0, limit);
+            //if (result.IsSucceeded)
+            //{
+            //    await LoadMessageSliceAsync(null, result.Result.Messages[0].Id);
+            //}
+        }
+
+
         public async Task LoadFirstSliceAsync()
         {
             if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
@@ -389,7 +411,7 @@ namespace Unigram.ViewModels
             var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -51 : 0;
             var limit = 50;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, maxId, limit);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -457,7 +479,7 @@ namespace Unigram.ViewModels
 
             while (already.Count < 250 || lastId < int.MaxValue)
             {
-                var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, lastId, 100);
+                var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, lastId, 100);
                 if (result.IsSucceeded)
                 {
                     foreach (var message in result.Result.Messages.OfType<TLMessage>())

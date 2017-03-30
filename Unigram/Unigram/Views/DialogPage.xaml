@@ -894,8 +894,13 @@
                     <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                 </Grid>
 
-                <Border x:Name="DateHeader" Visibility="Collapsed" Background="#7F89A0B4" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="12,5,12,6" Margin="0,12,0,2" Grid.ColumnSpan="2">
-                    <RichTextBlock x:Name="DateHeaderLabel" IsTextSelectionEnabled="False" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
+                <Border x:Name="DateHeader" Visibility="Collapsed" Background="#7F89A0B4" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,12,0,2" Grid.ColumnSpan="2">
+                    <Button Padding="12,5,12,6" Style="{StaticResource EmptyButtonStyle}">
+                        <Button.Flyout>
+                            <DatePickerFlyout DatePicked="DatePickerFlyout_DatePicked" Placement="Bottom" />
+                        </Button.Flyout>
+                        <RichTextBlock x:Name="DateHeaderLabel" IsTextSelectionEnabled="False" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
+                    </Button>
                 </Border>
             </StackPanel>
 

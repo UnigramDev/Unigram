@@ -728,6 +728,12 @@ namespace Unigram.Views
                 }
             }
         }
+
+        private async void DatePickerFlyout_DatePicked(DatePickerFlyout sender, DatePickedEventArgs args)
+        {
+            var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, args.NewDate.Date);
+            await ViewModel.LoadDateSliceAsync(offset);
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading

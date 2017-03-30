@@ -1385,10 +1385,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit)
+        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            GetHistoryCallback(inputPeer, peer, sync, offset, maxId, limit, (callback) =>
+            GetHistoryCallback(inputPeer, peer, sync, offset, offsetDate, maxId, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
             }, (faultCallback) =>

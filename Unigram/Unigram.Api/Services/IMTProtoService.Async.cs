@@ -109,7 +109,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLUpdatesBase>> KickFromChannelAsync(TLChannel channel, TLInputUserBase userId, bool kicked);
         Task<MTProtoResponse<TLMessage>> SendMessageAsync(TLMessage message, Action fastCallback);
         Task<MTProtoResponse<TLPong>> PingAsync(long pingId);
-        Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit);
+        Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit);
         Task<MTProtoResponse<bool>> ResetAuthorizationAsync(long hash);
         Task<MTProtoResponse<TLUpdatesBase>> MigrateChatAsync(int chatId);
         Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage);
