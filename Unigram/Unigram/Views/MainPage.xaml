@@ -56,10 +56,10 @@
                                             <AdaptiveTrigger MinWindowWidth="820"/>
                                         </VisualState.StateTriggers>
                                         <VisualState.Setters>
-                                            <Setter Target="MasterColumn.Width" Value="280*" />
-                                            <Setter Target="DetailColumn.Width" Value="520*" />
-                                            <Setter Target="MasterColumn.MinWidth" Value="280" />
-                                            <Setter Target="MasterColumn.MaxWidth" Value="520" />
+                                            <Setter Target="MasterColumn.Width" Value="260*" />
+                                            <Setter Target="DetailColumn.Width" Value="540*" />
+                                            <Setter Target="MasterColumn.MinWidth" Value="260" />
+                                            <Setter Target="MasterColumn.MaxWidth" Value="540" />
                                             <Setter Target="DetailPresenter.(Grid.Column)" Value="1" />
                                         </VisualState.Setters>
                                     </VisualState>
