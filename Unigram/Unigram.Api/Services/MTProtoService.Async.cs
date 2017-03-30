@@ -13,6 +13,62 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<bool>> ClearSavedInfoAsync(bool info, bool credentials)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
+            ClearSavedInfoAsync(info, credentials, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLPaymentsPaymentForm>> GetPaymentFormAsync(int msgId)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLPaymentsPaymentForm>>();
+            GetPaymentFormAsync(msgId, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPaymentsPaymentForm>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPaymentsPaymentForm>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLPaymentsPaymentReceipt>> GetPaymentReceiptAsync(int msgId)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLPaymentsPaymentReceipt>>();
+            GetPaymentReceiptAsync(msgId, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPaymentsPaymentReceipt>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPaymentsPaymentReceipt>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLPaymentsSavedInfo>> GetSavedInfoAsync()
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLPaymentsSavedInfo>>();
+            GetSavedInfoAsync((callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPaymentsSavedInfo>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPaymentsSavedInfo>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesChatsBase>> GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatsBase>>();

@@ -12,6 +12,11 @@ namespace Telegram.Api.Services
 {
     public partial interface IMTProtoService
     {
+        Task<MTProtoResponse<bool>> ClearSavedInfoAsync(bool info, bool credentials);
+        Task<MTProtoResponse<TLPaymentsPaymentForm>> GetPaymentFormAsync(int msgId);
+        Task<MTProtoResponse<TLPaymentsPaymentReceipt>> GetPaymentReceiptCAsync(int msgId);
+        Task<MTProtoResponse<TLPaymentsSavedInfo>> GetSavedInfoAsync();
+
         Task<MTProtoResponse<TLMessagesChatsBase>> GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit);
         Task<MTProtoResponse<TLMessagesChatsBase>> GetAdminedPublicChannelsAsync();
         Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber, bool? currentNumber, Action<int> attemptFailed = null);

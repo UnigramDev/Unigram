@@ -735,15 +735,11 @@
                                      UpdatingScrollMode="{Binding UpdatingScrollMode, Mode=TwoWay}"
                                      ItemsSource="{Binding Messages}"
                                      ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
+                                     ItemContainerTransitions="{x:Null}"
                                      ShowsScrollingPlaceholders="False"
                                      SelectionMode="None"
                                      SelectionChanged="List_SelectionChanged"
                                      Grid.ColumnSpan="2">
-                <ListView.ItemContainerTransitions>
-                    <TransitionCollection>
-                        <AddDeleteThemeTransition />
-                    </TransitionCollection>
-                </ListView.ItemContainerTransitions>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel ItemsUpdatingScrollMode="KeepItemsInView"
