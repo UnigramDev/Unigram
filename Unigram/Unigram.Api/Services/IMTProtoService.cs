@@ -264,7 +264,7 @@ namespace Telegram.Api.Services
         void SendConfirmPhoneCodeCallback(string hash, bool currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
 
         // help
-        void GetAppChangelogCallback(string deviceModel, string systemVersion, string appVersion, string langCode, Action<TLHelpAppChangelogBase> callback, Action<TLRPCError> faultCallback = null); 
+        void GetAppChangelogCallback(string deviceModel, string systemVersion, string appVersion, string langCode, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null); 
         void GetTermsOfServiceCallback(string langCode, Action<TLHelpTermsOfService> callback, Action<TLRPCError> faultCallback = null);
 
 
