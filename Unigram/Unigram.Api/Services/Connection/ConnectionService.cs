@@ -313,7 +313,7 @@ namespace Telegram.Api.Services.Connection
                     pingIdHash);
 
                 TLUtils.WriteLine(debugString, LogSeverity.Error);
-                _mtProtoService.PingCallback(pingId, //35,
+                _mtProtoService.PingAsync(pingId, //35,
                     result =>
                     {
                         var resultDebugString = string.Format("{0} pong t{1} ({2}, {3}) [{4}]",

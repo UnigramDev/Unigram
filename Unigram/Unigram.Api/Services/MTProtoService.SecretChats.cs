@@ -12,7 +12,7 @@ namespace Telegram.Api.Services
             //GetGA()
         }
 
-        public void GetDHConfigCallback(int version, int randomLength, Action<TLMessagesDHConfig> callback, Action<TLRPCError> faultCallback = null)
+        public void GetDHConfigAsync(int version, int randomLength, Action<TLMessagesDHConfig> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetDHConfig { Version = version, RandomLength = randomLength };
 

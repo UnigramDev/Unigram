@@ -7,7 +7,7 @@ namespace Telegram.Api.Services
 {
 	public partial class MTProtoService
 	{
-        public void GetUsersCallback(TLVector<TLInputUserBase> id, Action<TLVector<TLUserBase>> callback, Action<TLRPCError> faultCallback = null)
+        public void GetUsersAsync(TLVector<TLInputUserBase> id, Action<TLVector<TLUserBase>> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUsersGetUsers { Id = id };
 
@@ -18,7 +18,7 @@ namespace Telegram.Api.Services
             faultCallback);
         }
 
-        public void GetFullUserCallback(TLInputUserBase id, Action<TLUserFull> callback, Action<TLRPCError> faultCallback = null)
+        public void GetFullUserAsync(TLInputUserBase id, Action<TLUserFull> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUsersGetFullUser { Id = id };
 

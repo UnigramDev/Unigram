@@ -212,7 +212,7 @@ namespace Unigram.ViewModels.Settings
 
         private async Task UpdateAsync()
         {
-            ProtoService.GetNotifySettingsCallback(new TLInputNotifyUsers(), result =>
+            ProtoService.GetNotifySettingsAsync(new TLInputNotifyUsers(), result =>
             {
 
                 var settings = result as TLPeerNotifySettings;
@@ -232,7 +232,7 @@ namespace Unigram.ViewModels.Settings
                 //this.SaveSettings();
             });
 
-            ProtoService.GetNotifySettingsCallback(new TLInputNotifyChats(), result =>
+            ProtoService.GetNotifySettingsAsync(new TLInputNotifyChats(), result =>
             {
 
                 var settings = result as TLPeerNotifySettings;

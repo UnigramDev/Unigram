@@ -158,17 +158,17 @@ namespace Unigram
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             cacheService.Init();
             updatesService.GetCurrentUserId = () => protoService.CurrentUserId;
-            updatesService.GetStateAsync = protoService.GetStateCallback;
-            updatesService.GetDHConfigAsync = protoService.GetDHConfigCallback;
-            updatesService.GetDifferenceAsync = protoService.GetDifferenceCallback;
+            updatesService.GetStateAsync = protoService.GetStateAsync;
+            updatesService.GetDHConfigAsync = protoService.GetDHConfigAsync;
+            updatesService.GetDifferenceAsync = protoService.GetDifferenceAsync;
             //updatesService.AcceptEncryptionAsync = protoService.AcceptEncryptionCallback;
             //updatesService.SendEncryptedServiceAsync = protoService.SendEncryptedServiceCallback;
             updatesService.SetMessageOnTimeAsync = protoService.SetMessageOnTime;
-            updatesService.UpdateChannelAsync = protoService.UpdateChannelCallback;
-            updatesService.GetParticipantAsync = protoService.GetParticipantCallback;
-            updatesService.GetFullUserAsync = protoService.GetFullUserCallback;
-            updatesService.GetFullChatAsync = protoService.GetFullChatCallback;
-            updatesService.GetChannelMessagesAsync = protoService.GetMessagesCallback;
+            updatesService.UpdateChannelAsync = protoService.UpdateChannelAsync;
+            updatesService.GetParticipantAsync = protoService.GetParticipantAsync;
+            updatesService.GetFullUserAsync = protoService.GetFullUserAsync;
+            updatesService.GetFullChatAsync = protoService.GetFullChatAsync;
+            updatesService.GetChannelMessagesAsync = protoService.GetMessagesAsync;
             updatesService.LoadStateAndUpdate(() => { });
 
             protoService.AuthorizationRequired += (s, e) =>

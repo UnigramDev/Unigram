@@ -379,7 +379,7 @@ namespace Unigram.ViewModels
             var limit = 1;
 
             var obj = new TLMessagesGetHistory { Peer = Peer, OffsetId = 0, OffsetDate = dateOffset - 1, AddOffset = offset, Limit = limit, MaxId = 0, MinId = 0 };
-            ProtoService.SendRequestCallback<TLMessagesMessagesBase>(obj, result =>
+            ProtoService.SendRequestAsync<TLMessagesMessagesBase>(obj, result =>
             {
                 Execute.BeginOnUIThread(async () =>
                 {

@@ -14,7 +14,7 @@ namespace Telegram.Api.Services
 	        _cacheService.ClearAsync(callback);
 
             //try to close session
-            LogOutCallback(null, null);
+            LogOutAsync(null, null);
 	    }
 
         public void CheckPhoneAsync(string phoneNumber, Action<TLAuthCheckedPhone> callback, Action<TLRPCError> faultCallback = null)
@@ -24,7 +24,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("auth.checkPhone", obj, callback, faultCallback);
 	    }
 
-        public void SendCodeCallback(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null)
+        public void SendCodeAsync(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthSendCode
             {
@@ -38,14 +38,14 @@ namespace Telegram.Api.Services
             SendInformativeMessage("auth.sendCode", obj, callback, faultCallback, 3);
         }
 
-        public void ResendCodeCallback(string phoneNumber, string phoneCodeHash, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
+        public void ResendCodeAsync(string phoneNumber, string phoneCodeHash, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthResendCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
             SendInformativeMessage("auth.resendCode", obj, callback, faultCallback);
         }
 
-        public void CancelCodeCallback(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void CancelCodeAsync(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthCancelCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
@@ -60,7 +60,7 @@ namespace Telegram.Api.Services
         //    SendInformativeMessage("auth.sendCall", obj, callback, faultCallback);
         //}
 
-        public void SignUpCallback(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
+        public void SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAuthSignUp { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode, FirstName = firstName, LastName = lastName };
 
@@ -73,7 +73,7 @@ namespace Telegram.Api.Services
                 faultCallback);
 	    }
 
-        public void SignInCallback(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
+        public void SignInAsync(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthSignIn { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode};
 
@@ -91,7 +91,7 @@ namespace Telegram.Api.Services
 	        CancelDelayedItemsAsync(true);
 	    }
 
-        public void LogOutCallback(Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void LogOutAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthLogOut();
 
@@ -138,7 +138,7 @@ namespace Telegram.Api.Services
             SendInformativeMessageByTransport(transport, "auth.importAuthorization dc_id=" + transport.DCId, obj, callback, faultCallback);
         }
 
-        public void ResetAuthorizationsCallback(Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ResetAuthorizationsAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthResetAuthorizations();
 

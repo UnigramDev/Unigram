@@ -7,7 +7,7 @@ namespace Telegram.Api.Services
 {
 	public partial class MTProtoService
 	{
-        public void GetStateCallback(Action<TLUpdatesState> callback, Action<TLRPCError> faultCallback = null)
+        public void GetStateAsync(Action<TLUpdatesState> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUpdatesGetState();
 
@@ -21,14 +21,14 @@ namespace Telegram.Api.Services
             SendInformativeMessage("updates.getState", obj, callback, faultCallback);
         }
 
-        public void GetDifferenceCallback(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetDifferenceAsync(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUpdatesGetDifference { Date = date, Pts = pts, Qts = qts };
 
             SendInformativeMessage("updates.getDifference", obj, callback, faultCallback);
         }
 
-        public void GetDifferenceWithoutUpdatesCallback(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetDifferenceWithoutUpdatesAsync(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUpdatesGetDifference { Date = date, Pts = pts, Qts = qts };
 
