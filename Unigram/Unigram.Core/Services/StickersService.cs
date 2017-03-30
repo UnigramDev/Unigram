@@ -310,7 +310,7 @@ namespace Unigram.Services
         public void RemoveRecentGif(TLDocument document)
         {
             recentGifs.Remove(document);
-            _protoService.SaveGifCallback(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, true, null);
+            _protoService.SaveGifAsync(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, true, null);
 
             try
             {
@@ -565,7 +565,7 @@ namespace Unigram.Services
                 if (gif)
                 {
                     var hash = CalculateDocumentsHash(recentGifs);
-                    _protoService.GetSavedGifsCallback(hash, result =>
+                    _protoService.GetSavedGifsAsync(hash, result =>
                     {
                         List<TLDocument> arrayList = null;
                         if (result is TLMessagesSavedGifs)
@@ -581,7 +581,7 @@ namespace Unigram.Services
                 {
                     var hash = CalculateDocumentsHash(recentStickers[type]);
                     var attached = stickerType == StickerType.Mask;
-                    _protoService.GetRecentStickersCallback(attached, hash, result =>
+                    _protoService.GetRecentStickersAsync(attached, hash, result =>
                     {
                         List<TLDocument> arrayList = null;
                         if (result is TLMessagesRecentStickers)
@@ -806,7 +806,7 @@ namespace Unigram.Services
                 var req = new TLMessagesGetArchivedStickers();
                 req.Limit = 0;
                 req.IsMasks = stickerType == StickerType.Mask;
-                _protoService.SendRequestCallback<TLMessagesArchivedStickers>(req, result =>
+                _protoService.SendRequestAsync<TLMessagesArchivedStickers>(req, result =>
                 {
                     archivedStickersCount[type] = result.Count;
                     ApplicationSettings.Current.AddOrUpdateValue("archivedStickersCount" + type, result.Count);
@@ -871,7 +871,7 @@ namespace Unigram.Services
             else
             {
                 var hash = force ? 0 : loadFeaturedHash;
-                _protoService.GetFeaturedStickersCallback(hash, result =>
+                _protoService.GetFeaturedStickersAsync(hash, result =>
                 {
                     if (result is TLMessagesFeaturedStickers res)
                     {
@@ -905,7 +905,7 @@ namespace Unigram.Services
                                 newStickerArray.Add(null);
                                 int index = i;
 
-                                _protoService.GetStickerSetCallback(new TLInputStickerSetID { Id = stickerSet.Set.Id, AccessHash = stickerSet.Set.AccessHash }, callback =>
+                                _protoService.GetStickerSetAsync(new TLInputStickerSetID { Id = stickerSet.Set.Id, AccessHash = stickerSet.Set.AccessHash }, callback =>
                                 {
                                     newStickerArray[index] = callback;
                                     newStickerSets[stickerSet.Set.Id] = callback;
@@ -1107,7 +1107,7 @@ namespace Unigram.Services
             if (query)
             {
 
-                _protoService.ReadFeaturedStickersCallback(null, null);
+                _protoService.ReadFeaturedStickersAsync(null, null);
             }
         }
 
@@ -1118,7 +1118,7 @@ namespace Unigram.Services
                 return;
             }
             readingStickerSets.Add(id);
-            _protoService.ReadFeaturedStickersCallback(new TLVector<long> { id }, null);
+            _protoService.ReadFeaturedStickersAsync(new TLVector<long> { id }, null);
 
             //AndroidUtilities.runOnUIThread(new Runnable()
             //{
@@ -1193,7 +1193,7 @@ namespace Unigram.Services
                     hash = ((TLMessagesGetMaskStickers)req).Hash = force ? 0 : loadHash[type];
                 }
 
-                _protoService.SendRequestCallback<TLMessagesAllStickersBase>(req, result =>
+                _protoService.SendRequestAsync<TLMessagesAllStickersBase>(req, result =>
                 {
                     if (result is TLMessagesAllStickers res)
                     {
@@ -1227,7 +1227,7 @@ namespace Unigram.Services
                                 newStickerArray.Add(null);
                                 int index = i;
 
-                                _protoService.GetStickerSetCallback(new TLInputStickerSetID { Id = stickerSet.Id, AccessHash = stickerSet.AccessHash }, callback =>
+                                _protoService.GetStickerSetAsync(new TLInputStickerSetID { Id = stickerSet.Id, AccessHash = stickerSet.AccessHash }, callback =>
                                 {
                                     newStickerArray[index] = callback;
                                     newStickerSets[stickerSet.Id] = callback;
@@ -1532,7 +1532,7 @@ namespace Unigram.Services
                 TLMessagesInstallStickerSet req = new TLMessagesInstallStickerSet();
                 req.StickerSet = stickerSetID;
                 req.Archived = hide == 1;
-                _protoService.SendRequestCallback<TLMessagesStickerSetInstallResultBase>(req, result =>
+                _protoService.SendRequestAsync<TLMessagesStickerSetInstallResultBase>(req, result =>
                 {
                     if (result is TLMessagesStickerSetInstallResultArchive)
                     {
@@ -1553,7 +1553,7 @@ namespace Unigram.Services
             {
                 TLMessagesUninstallStickerSet req = new TLMessagesUninstallStickerSet();
                 req.StickerSet = stickerSetID;
-                _protoService.SendRequestCallback<bool>(req, result =>
+                _protoService.SendRequestAsync<bool>(req, result =>
                 {
                     //try
                     //{

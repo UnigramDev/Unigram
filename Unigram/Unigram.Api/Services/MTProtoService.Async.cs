@@ -72,7 +72,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesChatsBase>> GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatsBase>>();
-            GetCommonChatsCallback(id, maxId, limit, (callback) =>
+            GetCommonChatsAsync(id, maxId, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesChatsBase>(callback));
             }, (faultCallback) =>
@@ -86,7 +86,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ReorderPinnedDialogsAsync(TLVector<TLInputPeerBase> order, bool force)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ReorderPinnedDialogsCallback(order, force, (callback) =>
+            ReorderPinnedDialogsAsync(order, force, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -100,7 +100,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ToggleDialogPinAsync(TLInputPeerBase peer, bool pin)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ToggleDialogPinCallback(peer, pin, (callback) =>
+            ToggleDialogPinAsync(peer, pin, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -114,7 +114,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber, bool? currentNumber, Action<int> attemptFailed = null)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthSentCode>>();
-            SendCodeCallback(phoneNumber, currentNumber, (callback) =>
+            SendCodeAsync(phoneNumber, currentNumber, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAuthSentCode>(callback));
             }, attemptFailed, (faultCallback) =>
@@ -128,7 +128,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesRecentStickersBase>> GetRecentStickersAsync(bool attached, int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesRecentStickersBase>>();
-            GetRecentStickersCallback(attached, hash, (callback) =>
+            GetRecentStickersAsync(attached, hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesRecentStickersBase>(callback));
             }, (faultCallback) =>
@@ -142,7 +142,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesAffectedMessages>> ReadMessageContentsAsync(TLVector<int> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedMessages>>();
-            ReadMessageContentsCallback(id, (callback) =>
+            ReadMessageContentsAsync(id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedMessages>(callback));
             }, (faultCallback) =>
@@ -156,7 +156,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> JoinChannelAsync(TLChannel channel)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            JoinChannelCallback(channel, (callback) =>
+            JoinChannelAsync(channel, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -170,7 +170,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesBotCallbackAnswer>> GetBotCallbackAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, bool game)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesBotCallbackAnswer>>();
-            GetBotCallbackAnswerCallback(peer, messageId, data, game, (callback) =>
+            GetBotCallbackAnswerAsync(peer, messageId, data, game, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesBotCallbackAnswer>(callback));
             }, (faultCallback) =>
@@ -184,7 +184,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id, bool revoke)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedMessages>>();
-            DeleteMessagesCallback(id, revoke, (callback) =>
+            DeleteMessagesAsync(id, revoke, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedMessages>(callback));
             }, (faultCallback) =>
@@ -198,7 +198,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLHelpTermsOfService>> GetTermsOfServiceAsync(string langCode)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLHelpTermsOfService>>();
-            GetTermsOfServiceCallback(langCode, (callback) =>
+            GetTermsOfServiceAsync(langCode, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLHelpTermsOfService>(callback));
             }, (faultCallback) =>
@@ -212,7 +212,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLChannelsChannelParticipant>> GetParticipantAsync(TLInputChannelBase inputChannel, TLInputUserBase userId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsChannelParticipant>>();
-            GetParticipantCallback(inputChannel, userId, (callback) =>
+            GetParticipantAsync(inputChannel, userId, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLChannelsChannelParticipant>(callback));
             }, (faultCallback) =>
@@ -226,7 +226,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            GetMessagesCallback(inputChannel, id, (callback) =>
+            GetMessagesAsync(inputChannel, id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
             }, (faultCallback) =>
@@ -240,7 +240,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> AddChatUserAsync(int chatId, TLInputUserBase userId, int fwdLimit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            AddChatUserCallback(chatId, userId, fwdLimit, (callback) =>
+            AddChatUserAsync(chatId, userId, fwdLimit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -254,7 +254,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> ForwardMessagesAsync(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            ForwardMessagesCallback(toPeer, fromPeer, id, messages, withMyScore, (callback) =>
+            ForwardMessagesAsync(toPeer, fromPeer, id, messages, withMyScore, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -268,7 +268,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ReorderStickerSetsAsync(bool masks, TLVector<long> order)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ReorderStickerSetsCallback(masks, order, (callback) =>
+            ReorderStickerSetsAsync(masks, order, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -282,7 +282,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessage>> SendInlineBotResultAsync(TLMessage message, Action fastCallback)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessage>>();
-            SendInlineBotResultCallback(message, (callback) =>
+            SendInlineBotResultAsync(message, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessage>(callback));
             }, fastCallback, (faultCallback) =>
@@ -296,7 +296,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> GetAllDraftsAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            GetAllDraftsCallback((callback) =>
+            GetAllDraftsAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -310,7 +310,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAccountPrivacyRules>> GetPrivacyAsync(TLInputPrivacyKeyBase key)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountPrivacyRules>>();
-            GetPrivacyCallback(key, (callback) =>
+            GetPrivacyAsync(key, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAccountPrivacyRules>(callback));
             }, (faultCallback) =>
@@ -324,7 +324,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLNearestDC>> GetNearestDCAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLNearestDC>>();
-            GetNearestDCCallback((callback) =>
+            GetNearestDCAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLNearestDC>(callback));
             }, (faultCallback) =>
@@ -338,7 +338,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesAffectedMessages>> ReadHistoryAsync(TLInputPeerBase peer, int maxId, int offset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedMessages>>();
-            ReadHistoryCallback(peer, maxId, offset, (callback) =>
+            ReadHistoryAsync(peer, maxId, offset, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedMessages>(callback));
             }, (faultCallback) =>
@@ -352,7 +352,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAccountPasswordSettings>> GetPasswordSettingsAsync(byte[] currentPasswordHash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountPasswordSettings>>();
-            GetPasswordSettingsCallback(currentPasswordHash, (callback) =>
+            GetPasswordSettingsAsync(currentPasswordHash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAccountPasswordSettings>(callback));
             }, (faultCallback) =>
@@ -366,7 +366,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteUserHistoryAsync(TLChannel channel, TLInputUserBase userId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedHistory>>();
-            DeleteUserHistoryCallback(channel, userId, (callback) =>
+            DeleteUserHistoryAsync(channel, userId, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedHistory>(callback));
             }, (faultCallback) =>
@@ -380,7 +380,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLExportedMessageLink>> ExportMessageLinkAsync(TLInputChannelBase channel, int id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLExportedMessageLink>>();
-            ExportMessageLinkCallback(channel, id, (callback) =>
+            ExportMessageLinkAsync(channel, id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLExportedMessageLink>(callback));
             }, (faultCallback) =>
@@ -394,7 +394,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            EditAdminCallback(channel, userId, role, (callback) =>
+            EditAdminAsync(channel, userId, role, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -408,7 +408,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLPeerSettings>> GetPeerSettingsAsync(TLInputPeerBase peer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPeerSettings>>();
-            GetPeerSettingsCallback(peer, (callback) =>
+            GetPeerSettingsAsync(peer, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLPeerSettings>(callback));
             }, (faultCallback) =>
@@ -422,7 +422,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesStickerSet>> GetStickerSetAsync(TLInputStickerSetBase stickerset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesStickerSet>>();
-            GetStickerSetCallback(stickerset, (callback) =>
+            GetStickerSetAsync(stickerset, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesStickerSet>(callback));
             }, (faultCallback) =>
@@ -436,7 +436,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> SaveGifAsync(TLInputDocumentBase id, bool unsave)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            SaveGifCallback(id, unsave, (callback) =>
+            SaveGifAsync(id, unsave, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -450,7 +450,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLHelpSupport>> GetSupportAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLHelpSupport>>();
-            GetSupportCallback((callback) =>
+            GetSupportAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLHelpSupport>(callback));
             }, (faultCallback) =>
@@ -464,7 +464,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesDHConfig>> GetDHConfigAsync(int version, int randomLength)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesDHConfig>>();
-            GetDHConfigCallback(version, randomLength, (callback) =>
+            GetDHConfigAsync(version, randomLength, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesDHConfig>(callback));
             }, (faultCallback) =>
@@ -478,7 +478,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ResetNotifySettingsAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ResetNotifySettingsCallback((callback) =>
+            ResetNotifySettingsAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -492,7 +492,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> UnblockAsync(TLInputUserBase id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            UnblockCallback(id, (callback) =>
+            UnblockAsync(id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -506,7 +506,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, TLSendMessageActionBase action)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            SetTypingCallback(peer, action, (callback) =>
+            SetTypingAsync(peer, action, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -520,7 +520,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesDifferenceBase>> GetDifferenceWithoutUpdatesAsync(int pts, int date, int qts)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesDifferenceBase>>();
-            GetDifferenceWithoutUpdatesCallback(pts, date, qts, (callback) =>
+            GetDifferenceWithoutUpdatesAsync(pts, date, qts, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesDifferenceBase>(callback));
             }, (faultCallback) =>
@@ -534,7 +534,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> UpdatePasswordSettingsAsync(byte[] currentPasswordHash, TLAccountPasswordInputSettings newSettings)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            UpdatePasswordSettingsCallback(currentPasswordHash, newSettings, (callback) =>
+            UpdatePasswordSettingsAsync(currentPasswordHash, newSettings, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -548,7 +548,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ReadHistoryAsync(TLChannel channel, int maxId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ReadHistoryCallback(channel, maxId, (callback) =>
+            ReadHistoryAsync(channel, maxId, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -562,7 +562,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLContactsTopPeersBase>> GetTopPeersAsync(TLContactsGetTopPeers.Flag flags, int offset, int limit, int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsTopPeersBase>>();
-            GetTopPeersCallback(flags, offset, limit, hash, (callback) =>
+            GetTopPeersAsync(flags, offset, limit, hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLContactsTopPeersBase>(callback));
             }, (faultCallback) =>
@@ -576,7 +576,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> EditChatTitleAsync(int chatId, string title)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            EditChatTitleCallback(chatId, title, (callback) =>
+            EditChatTitleAsync(chatId, title, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -590,7 +590,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> CheckUsernameAsync(string username)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            CheckUsernameCallback(username, (callback) =>
+            CheckUsernameAsync(username, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -604,7 +604,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ResetAuthorizationsAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ResetAuthorizationsCallback((callback) =>
+            ResetAuthorizationsAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -618,7 +618,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLPhotosPhotosBase>> GetUserPhotosAsync(TLInputUserBase userId, int offset, long maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPhotosPhotosBase>>();
-            GetUserPhotosCallback(userId, offset, maxId, limit, (callback) =>
+            GetUserPhotosAsync(userId, offset, maxId, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLPhotosPhotosBase>(callback));
             }, (faultCallback) =>
@@ -632,7 +632,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLPhotosPhoto>> UploadProfilePhotoAsync(TLInputFile file)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPhotosPhoto>>();
-            UploadProfilePhotoCallback(file, (callback) =>
+            UploadProfilePhotoAsync(file, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLPhotosPhoto>(callback));
             }, (faultCallback) =>
@@ -646,7 +646,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> UpdateNotifySettingsAsync(TLInputNotifyPeerBase peer, TLInputPeerNotifySettings settings)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            UpdateNotifySettingsCallback(peer, settings, (callback) =>
+            UpdateNotifySettingsAsync(peer, settings, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -660,7 +660,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUploadFile>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFile>>();
-            GetFileCallback(dcId, location, offset, limit, (callback) =>
+            GetFileAsync(dcId, location, offset, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUploadFile>(callback));
             }, (faultCallback) =>
@@ -674,7 +674,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUserBase>> UpdateProfileAsync(string firstName, string lastName, string about)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUserBase>>();
-            UpdateProfileCallback(firstName, lastName, about, (callback) =>
+            UpdateProfileAsync(firstName, lastName, about, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUserBase>(callback));
             }, (faultCallback) =>
@@ -688,7 +688,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLContactsImportedContacts>> ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsImportedContacts>>();
-            ImportContactsCallback(contacts, replace, (callback) =>
+            ImportContactsAsync(contacts, replace, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLContactsImportedContacts>(callback));
             }, (faultCallback) =>
@@ -702,7 +702,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, bool typing)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            SetTypingCallback(peer, typing, (callback) =>
+            SetTypingAsync(peer, typing, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -716,7 +716,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> RegisterDeviceAsync(int tokenType, string token)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            RegisterDeviceCallback(tokenType, token, (callback) =>
+            RegisterDeviceAsync(tokenType, token, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -730,7 +730,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> LogOutAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            LogOutCallback((callback) =>
+            LogOutAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -744,7 +744,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> ToggleSignaturesAsync(TLInputChannelBase channel, bool enabled)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            ToggleSignaturesCallback(channel, enabled, (callback) =>
+            ToggleSignaturesAsync(channel, enabled, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -758,7 +758,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLChannelsChannelParticipants>> GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsChannelParticipants>>();
-            GetParticipantsCallback(inputChannel, filter, offset, limit, (callback) =>
+            GetParticipantsAsync(inputChannel, filter, offset, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLChannelsChannelParticipants>(callback));
             }, (faultCallback) =>
@@ -772,7 +772,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesMessagesBase>> GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            GetChannelHistoryCallback(debugInfo, inputPeer, peer, sync, offset, maxId, limit, (callback) =>
+            GetChannelHistoryAsync(debugInfo, inputPeer, peer, sync, offset, maxId, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
             }, (faultCallback) =>
@@ -786,7 +786,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> DeleteChatUserAsync(int chatId, TLInputUserBase userId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            DeleteChatUserCallback(chatId, userId, (callback) =>
+            DeleteChatUserAsync(chatId, userId, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -800,7 +800,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> ForwardMessageAsync(TLInputPeerBase peer, int fwdMessageId, TLMessage message)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            ForwardMessageCallback(peer, fwdMessageId, message, (callback) =>
+            ForwardMessageAsync(peer, fwdMessageId, message, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -814,7 +814,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesMessagesBase>> SearchGlobalAsync(string query, int offsetDate, TLInputPeerBase offsetPeer, int offsetId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            SearchGlobalCallback(query, offsetDate, offsetPeer, offsetId, limit, (callback) =>
+            SearchGlobalAsync(query, offsetDate, offsetPeer, offsetId, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
             }, (faultCallback) =>
@@ -828,7 +828,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesFoundGifs>> SearchGifsAsync(string q, int offset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesFoundGifs>>();
-            SearchGifsCallback(q, offset, (callback) =>
+            SearchGifsAsync(q, offset, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesFoundGifs>(callback));
             }, (faultCallback) =>
@@ -842,7 +842,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesBotResults>> GetInlineBotResultsAsync(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesBotResults>>();
-            GetInlineBotResultsCallback(bot, peer, geoPoint, query, offset, (callback) =>
+            GetInlineBotResultsAsync(bot, peer, geoPoint, query, offset, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesBotResults>(callback));
             }, (faultCallback) =>
@@ -856,7 +856,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesFeaturedStickersBase>> GetFeaturedStickersAsync(int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesFeaturedStickersBase>>();
-            GetFeaturedStickersCallback(hash, (callback) =>
+            GetFeaturedStickersAsync(hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesFeaturedStickersBase>(callback));
             }, (faultCallback) =>
@@ -870,7 +870,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLVector<TLUserBase>>> GetUsersAsync(TLVector<TLInputUserBase> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLUserBase>>>();
-            GetUsersCallback(id, (callback) =>
+            GetUsersAsync(id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLVector<TLUserBase>>(callback));
             }, (faultCallback) =>
@@ -884,7 +884,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> UnregisterDeviceAsync(int tokenType, string token)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            UnregisterDeviceCallback(tokenType, token, (callback) =>
+            UnregisterDeviceAsync(tokenType, token, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -898,7 +898,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ConfirmPhoneAsync(string phoneCodeHash, string phoneCode)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ConfirmPhoneCallback(phoneCodeHash, phoneCode, (callback) =>
+            ConfirmPhoneAsync(phoneCodeHash, phoneCode, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -912,7 +912,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> UpdateUsernameAsync(TLInputChannelBase channel, string username)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            UpdateUsernameCallback(channel, username, (callback) =>
+            UpdateUsernameAsync(channel, username, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -926,7 +926,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesStickerSetInstallResultBase>> InstallStickerSetAsync(TLInputStickerSetBase stickerset, bool archived)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesStickerSetInstallResultBase>>();
-            InstallStickerSetCallback(stickerset, archived, (callback) =>
+            InstallStickerSetAsync(stickerset, archived, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesStickerSetInstallResultBase>(callback));
             }, (faultCallback) =>
@@ -940,7 +940,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLChatInviteBase>> CheckChatInviteAsync(string hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLChatInviteBase>>();
-            CheckChatInviteCallback(hash, (callback) =>
+            CheckChatInviteAsync(hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLChatInviteBase>(callback));
             }, (faultCallback) =>
@@ -954,7 +954,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLDocumentBase>> GetDocumentByHashAsync(byte[] sha256, int size, string mimeType)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLDocumentBase>>();
-            GetDocumentByHashCallback(sha256, size, mimeType, (callback) =>
+            GetDocumentByHashAsync(sha256, size, mimeType, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLDocumentBase>(callback));
             }, (faultCallback) =>
@@ -968,7 +968,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> SaveDraftAsync(TLInputPeerBase peer, TLDraftMessageBase draft)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            SaveDraftCallback(peer, draft, (callback) =>
+            SaveDraftAsync(peer, draft, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -982,7 +982,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLPhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPhotoBase>>();
-            UpdateProfilePhotoCallback(id, (callback) =>
+            UpdateProfilePhotoAsync(id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLPhotoBase>(callback));
             }, (faultCallback) =>
@@ -996,7 +996,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLContactsBlockedBase>> GetBlockedAsync(int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsBlockedBase>>();
-            GetBlockedCallback(offset, limit, (callback) =>
+            GetBlockedAsync(offset, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLContactsBlockedBase>(callback));
             }, (faultCallback) =>
@@ -1010,7 +1010,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(string hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsContactsBase>>();
-            GetContactsCallback(hash, (callback) =>
+            GetContactsAsync(hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLContactsContactsBase>(callback));
             }, (faultCallback) =>
@@ -1024,7 +1024,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUserFull>> GetFullUserAsync(TLInputUserBase id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUserFull>>();
-            GetFullUserCallback(id, (callback) =>
+            GetFullUserAsync(id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUserFull>(callback));
             }, (faultCallback) =>
@@ -1038,7 +1038,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesDifferenceBase>> GetDifferenceAsync(int pts, int date, int qts)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesDifferenceBase>>();
-            GetDifferenceCallback(pts, date, qts, (callback) =>
+            GetDifferenceAsync(pts, date, qts, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesDifferenceBase>(callback));
             }, (faultCallback) =>
@@ -1052,7 +1052,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAuthAuthorization>> CheckPasswordAsync(byte[] passwordHash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthAuthorization>>();
-            CheckPasswordCallback(passwordHash, (callback) =>
+            CheckPasswordAsync(passwordHash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAuthAuthorization>(callback));
             }, (faultCallback) =>
@@ -1066,7 +1066,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ResetTopPeerRatingAsync(TLTopPeerCategoryBase category, TLInputPeerBase peer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ResetTopPeerRatingCallback(category, peer, (callback) =>
+            ResetTopPeerRatingAsync(category, peer, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1080,7 +1080,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessageMediaBase>> GetWebPagePreviewAsync(string message)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessageMediaBase>>();
-            GetWebPagePreviewCallback(message, (callback) =>
+            GetWebPagePreviewAsync(message, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessageMediaBase>(callback));
             }, (faultCallback) =>
@@ -1094,7 +1094,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLWebPageBase>> GetWebPageAsync(string url, int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLWebPageBase>>();
-            GetWebPageCallback(url, hash, (callback) =>
+            GetWebPageAsync(url, hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLWebPageBase>(callback));
             }, (faultCallback) =>
@@ -1108,7 +1108,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> EditChatPhotoAsync(int chatId, TLInputChatPhotoBase photo)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            EditChatPhotoCallback(chatId, photo, (callback) =>
+            EditChatPhotoAsync(chatId, photo, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1122,7 +1122,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUserBase>> UpdateUsernameAsync(string username)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUserBase>>();
-            UpdateUsernameCallback(username, (callback) =>
+            UpdateUsernameAsync(username, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUserBase>(callback));
             }, (faultCallback) =>
@@ -1136,7 +1136,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAuthSentCode>> SendConfirmPhoneCodeAsync(string hash, bool currentNumber)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthSentCode>>();
-            SendConfirmPhoneCodeCallback(hash, currentNumber, (callback) =>
+            SendConfirmPhoneCodeAsync(hash, currentNumber, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAuthSentCode>(callback));
             }, (faultCallback) =>
@@ -1150,7 +1150,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> EditAboutAsync(TLChannel channel, string about)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            EditAboutCallback(channel, about, (callback) =>
+            EditAboutAsync(channel, about, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1164,7 +1164,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ClearRecentStickersAsync(bool attached)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ClearRecentStickersCallback(attached, (callback) =>
+            ClearRecentStickersAsync(attached, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1178,7 +1178,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> HideReportSpamAsync(TLInputPeerBase peer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            HideReportSpamCallback(peer, (callback) =>
+            HideReportSpamAsync(peer, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1192,7 +1192,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> ImportChatInviteAsync(string hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            ImportChatInviteCallback(hash, (callback) =>
+            ImportChatInviteAsync(hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1206,7 +1206,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAuthSentCode>> SendChangePhoneCodeAsync(string phoneNumber, bool? currentNumber)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthSentCode>>();
-            SendChangePhoneCodeCallback(phoneNumber, currentNumber, (callback) =>
+            SendChangePhoneCodeAsync(phoneNumber, currentNumber, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAuthSentCode>(callback));
             }, (faultCallback) =>
@@ -1220,7 +1220,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAccountPrivacyRules>> SetPrivacyAsync(TLInputPrivacyKeyBase key, TLVector<TLInputPrivacyRuleBase> rules)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountPrivacyRules>>();
-            SetPrivacyCallback(key, rules, (callback) =>
+            SetPrivacyAsync(key, rules, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAccountPrivacyRules>(callback));
             }, (faultCallback) =>
@@ -1234,7 +1234,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> SetAccountTTLAsync(TLAccountDaysTTL ttl)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            SetAccountTTLCallback(ttl, (callback) =>
+            SetAccountTTLAsync(ttl, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1248,7 +1248,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLContactsFound>> SearchAsync(string q, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsFound>>();
-            SearchCallback(q, limit, (callback) =>
+            SearchAsync(q, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLContactsFound>(callback));
             }, (faultCallback) =>
@@ -1262,7 +1262,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesChatFull>> GetFullChatAsync(int chatId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatFull>>();
-            GetFullChatCallback(chatId, (callback) =>
+            GetFullChatAsync(chatId, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesChatFull>(callback));
             }, (faultCallback) =>
@@ -1276,7 +1276,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesChatFull>> UpdateChannelAsync(int? channelId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatFull>>();
-            UpdateChannelCallback(channelId, (callback) =>
+            UpdateChannelAsync(channelId, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesChatFull>(callback));
             }, (faultCallback) =>
@@ -1290,7 +1290,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLExportedChatInviteBase>> ExportChatInviteAsync(int chatId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLExportedChatInviteBase>>();
-            ExportChatInviteCallback(chatId, (callback) =>
+            ExportChatInviteAsync(chatId, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLExportedChatInviteBase>(callback));
             }, (faultCallback) =>
@@ -1304,7 +1304,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ReportSpamAsync(TLInputPeerBase peer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ReportSpamCallback(peer, (callback) =>
+            ReportSpamAsync(peer, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1318,7 +1318,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesState>> GetStateAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesState>>();
-            GetStateCallback((callback) =>
+            GetStateAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesState>(callback));
             }, (faultCallback) =>
@@ -1332,7 +1332,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> GetAppChangelogAsync(string prevAppVersion)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            GetAppChangelogCallback(prevAppVersion, (callback) =>
+            GetAppChangelogAsync(prevAppVersion, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1346,7 +1346,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAuthPasswordRecovery>> RequestPasswordRecoveryAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthPasswordRecovery>>();
-            RequestPasswordRecoveryCallback((callback) =>
+            RequestPasswordRecoveryAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAuthPasswordRecovery>(callback));
             }, (faultCallback) =>
@@ -1360,7 +1360,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAccountPasswordBase>> GetPasswordAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountPasswordBase>>();
-            GetPasswordCallback((callback) =>
+            GetPasswordAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAccountPasswordBase>(callback));
             }, (faultCallback) =>
@@ -1374,7 +1374,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> UpdatePinnedMessageAsync(bool silent, TLInputChannelBase channel, int id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            UpdatePinnedMessageCallback(silent, channel, id, (callback) =>
+            UpdatePinnedMessageAsync(silent, channel, id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1388,7 +1388,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> EditPhotoAsync(TLChannel channel, TLInputChatPhotoBase photo)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            EditPhotoCallback(channel, photo, (callback) =>
+            EditPhotoAsync(channel, photo, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1402,7 +1402,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> KickFromChannelAsync(TLChannel channel, TLInputUserBase userId, bool kicked)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            KickFromChannelCallback(channel, userId, kicked, (callback) =>
+            KickFromChannelAsync(channel, userId, kicked, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1416,7 +1416,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessage>> SendMessageAsync(TLMessage message, Action fastCallback)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessage>>();
-            SendMessageCallback(message, (callback) =>
+            SendMessageAsync(message, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessage>(callback));
             }, fastCallback, (faultCallback) =>
@@ -1430,7 +1430,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLPong>> PingAsync(long pingId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPong>>();
-            PingCallback(pingId, (callback) =>
+            PingAsync(pingId, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLPong>(callback));
             }, (faultCallback) =>
@@ -1444,7 +1444,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            GetHistoryCallback(inputPeer, peer, sync, offset, offsetDate, maxId, limit, (callback) =>
+            GetHistoryAsync(inputPeer, peer, sync, offset, offsetDate, maxId, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
             }, (faultCallback) =>
@@ -1458,7 +1458,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ResetAuthorizationAsync(long hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ResetAuthorizationCallback(hash, (callback) =>
+            ResetAuthorizationAsync(hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1472,7 +1472,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> MigrateChatAsync(int chatId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            MigrateChatCallback(chatId, (callback) =>
+            MigrateChatAsync(chatId, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1486,7 +1486,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            EditMessageCallback(peer, id, message, entities, replyMarkup, noWebPage, (callback) =>
+            EditMessageAsync(peer, id, message, entities, replyMarkup, noWebPage, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1500,7 +1500,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLInputChannelBase channel, TLVector<int> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedMessages>>();
-            DeleteMessagesCallback(channel, id, (callback) =>
+            DeleteMessagesAsync(channel, id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedMessages>(callback));
             }, (faultCallback) =>
@@ -1514,7 +1514,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> CreateChannelAsync(TLChannelsCreateChannel.Flag flags, string title, string about)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            CreateChannelCallback(flags, title, about, (callback) =>
+            CreateChannelAsync(flags, title, about, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1528,7 +1528,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLVector<int> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            GetMessagesCallback(id, (callback) =>
+            GetMessagesAsync(id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
             }, (faultCallback) =>
@@ -1542,7 +1542,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> CancelCodeAsync(string phoneNumber, string phoneCodeHash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            CancelCodeCallback(phoneNumber, phoneCodeHash, (callback) =>
+            CancelCodeAsync(phoneNumber, phoneCodeHash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1556,7 +1556,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> EditTitleAsync(TLChannel channel, string title)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            EditTitleCallback(channel, title, (callback) =>
+            EditTitleAsync(channel, title, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1570,7 +1570,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> UninstallStickerSetAsync(TLInputStickerSetBase stickerset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            UninstallStickerSetCallback(stickerset, (callback) =>
+            UninstallStickerSetAsync(stickerset, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1584,7 +1584,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> CreateChatAsync(TLVector<TLInputUserBase> users, string title)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            CreateChatCallback(users, title, (callback) =>
+            CreateChatAsync(users, title, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1598,7 +1598,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> StartBotAsync(TLInputUserBase bot, string startParam, TLMessage message)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            StartBotCallback(bot, startParam, message, (callback) =>
+            StartBotAsync(bot, startParam, message, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1612,7 +1612,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int offset)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedHistory>>();
-            DeleteHistoryCallback(justClear, peer, offset, (callback) =>
+            DeleteHistoryAsync(justClear, peer, offset, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedHistory>(callback));
             }, (faultCallback) =>
@@ -1626,7 +1626,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAccountAuthorizations>> GetAuthorizationsAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountAuthorizations>>();
-            GetAuthorizationsCallback((callback) =>
+            GetAuthorizationsAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAccountAuthorizations>(callback));
             }, (faultCallback) =>
@@ -1640,7 +1640,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> EditChatAdminAsync(int chatId, TLInputUserBase userId, bool isAdmin)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            EditChatAdminCallback(chatId, userId, isAdmin, (callback) =>
+            EditChatAdminAsync(chatId, userId, isAdmin, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1654,7 +1654,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> InviteToChannelAsync(TLInputChannelBase channel, TLVector<TLInputUserBase> users)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            InviteToChannelCallback(channel, users, (callback) =>
+            InviteToChannelAsync(channel, users, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1668,7 +1668,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesArchivedStickers>> GetArchivedStickersAsync(bool full, long offsetId, int limit, bool masks)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesArchivedStickers>>();
-            GetArchivedStickersCallback(full, offsetId, limit, masks, (callback) =>
+            GetArchivedStickersAsync(full, offsetId, limit, masks, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesArchivedStickers>(callback));
             }, (faultCallback) =>
@@ -1682,7 +1682,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesArchivedStickers>> GetArchivedStickersAsync(long offsetId, int limit, bool masks)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesArchivedStickers>>();
-            GetArchivedStickersCallback(offsetId, limit, masks, (callback) =>
+            GetArchivedStickersAsync(offsetId, limit, masks, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesArchivedStickers>(callback));
             }, (faultCallback) =>
@@ -1696,7 +1696,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> UpdateDeviceLockedAsync(int period)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            UpdateDeviceLockedCallback(period, (callback) =>
+            UpdateDeviceLockedAsync(period, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1710,7 +1710,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLContactsLink>> DeleteContactAsync(TLInputUserBase id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsLink>>();
-            DeleteContactCallback(id, (callback) =>
+            DeleteContactAsync(id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLContactsLink>(callback));
             }, (faultCallback) =>
@@ -1724,7 +1724,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesDialogsBase>> GetDialogsAsync(int offsetDate, int offsetId, TLInputPeerBase offsetPeer, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesDialogsBase>>();
-            GetDialogsCallback(offsetDate, offsetId, offsetPeer, limit, (callback) =>
+            GetDialogsAsync(offsetDate, offsetId, offsetPeer, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesDialogsBase>(callback));
             }, (faultCallback) =>
@@ -1738,7 +1738,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ReportPeerAsync(TLInputPeerBase peer, TLReportReasonBase reason)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ReportPeerCallback(peer, reason, (callback) =>
+            ReportPeerAsync(peer, reason, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1752,7 +1752,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ReportSpamAsync(TLInputChannelBase channel, TLInputUserBase userId, TLVector<int> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ReportSpamCallback(channel, userId, id, (callback) =>
+            ReportSpamAsync(channel, userId, id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1766,7 +1766,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> ToggleInvitesAsync(TLInputChannelBase channel, bool enabled)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            ToggleInvitesCallback(channel, enabled, (callback) =>
+            ToggleInvitesAsync(channel, enabled, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1780,7 +1780,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLExportedChatInviteBase>> ExportInviteAsync(TLInputChannelBase channel)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLExportedChatInviteBase>>();
-            ExportInviteCallback(channel, (callback) =>
+            ExportInviteAsync(channel, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLExportedChatInviteBase>(callback));
             }, (faultCallback) =>
@@ -1794,7 +1794,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> SaveBigFilePartAsync(long fileId, int filePart, int fileTotalParts, byte[] bytes)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            SaveBigFilePartCallback(fileId, filePart, fileTotalParts, bytes, (callback) =>
+            SaveBigFilePartAsync(fileId, filePart, fileTotalParts, bytes, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1808,7 +1808,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> UpdateStatusAsync(bool offline)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            UpdateStatusCallback(offline, (callback) =>
+            UpdateStatusAsync(offline, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1822,7 +1822,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> BlockAsync(TLInputUserBase id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            BlockCallback(id, (callback) =>
+            BlockAsync(id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1836,7 +1836,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAuthAuthorization>> SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthAuthorization>>();
-            SignUpCallback(phoneNumber, phoneCodeHash, phoneCode, firstName, lastName, (callback) =>
+            SignUpAsync(phoneNumber, phoneCodeHash, phoneCode, firstName, lastName, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAuthAuthorization>(callback));
             }, (faultCallback) =>
@@ -1850,7 +1850,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> ToggleChatAdminsAsync(int chatId, bool enabled)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            ToggleChatAdminsCallback(chatId, enabled, (callback) =>
+            ToggleChatAdminsAsync(chatId, enabled, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1864,7 +1864,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesMessageEditData>> GetMessageEditDataAsync(TLInputPeerBase peer, int id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessageEditData>>();
-            GetMessageEditDataCallback(peer, id, (callback) =>
+            GetMessageEditDataAsync(peer, id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesMessageEditData>(callback));
             }, (faultCallback) =>
@@ -1878,7 +1878,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> CheckUsernameAsync(TLInputChannelBase channel, string username)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            CheckUsernameCallback(channel, username, (callback) =>
+            CheckUsernameAsync(channel, username, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1892,7 +1892,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesChatFull>> GetFullChannelAsync(TLInputChannelBase channel)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatFull>>();
-            GetFullChannelCallback(channel, (callback) =>
+            GetFullChannelAsync(channel, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesChatFull>(callback));
             }, (faultCallback) =>
@@ -1906,7 +1906,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> DeleteChannelAsync(TLChannel channel)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            DeleteChannelCallback(channel, (callback) =>
+            DeleteChannelAsync(channel, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1920,7 +1920,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesPeerDialogs>> GetPeerDialogsAsync(TLVector<TLInputPeerBase> peers)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesPeerDialogs>>();
-            GetPeerDialogsCallback(peers, (callback) =>
+            GetPeerDialogsAsync(peers, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesPeerDialogs>(callback));
             }, (faultCallback) =>
@@ -1934,7 +1934,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> SendMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            SendMediaCallback(inputPeer, inputMedia, message, (callback) =>
+            SendMediaAsync(inputPeer, inputMedia, message, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1948,7 +1948,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesSavedGifsBase>> GetSavedGifsAsync(int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesSavedGifsBase>>();
-            GetSavedGifsCallback(hash, (callback) =>
+            GetSavedGifsAsync(hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesSavedGifsBase>(callback));
             }, (faultCallback) =>
@@ -1962,7 +1962,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> SetInlineBotResultsAsync(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            SetInlineBotResultsCallback(gallery, pr, queryId, results, cacheTime, nextOffset, switchPM, (callback) =>
+            SetInlineBotResultsAsync(gallery, pr, queryId, results, cacheTime, nextOffset, switchPM, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1976,7 +1976,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> ReadFeaturedStickersAsync(TLVector<long> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            ReadFeaturedStickersCallback(id, (callback) =>
+            ReadFeaturedStickersAsync(id, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -1990,7 +1990,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickersAsync(byte[] hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAllStickersBase>>();
-            GetAllStickersCallback(hash, (callback) =>
+            GetAllStickersAsync(hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAllStickersBase>(callback));
             }, (faultCallback) =>
@@ -2004,7 +2004,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickersAsync(int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAllStickersBase>>();
-            GetAllStickersCallback(hash, (callback) =>
+            GetAllStickersAsync(hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAllStickersBase>(callback));
             }, (faultCallback) =>
@@ -2018,7 +2018,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLVector<TLWallPaperBase>>> GetWallpapersAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLWallPaperBase>>>();
-            GetWallpapersCallback((callback) =>
+            GetWallpapersAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLVector<TLWallPaperBase>>(callback));
             }, (faultCallback) =>
@@ -2032,7 +2032,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLContactsResolvedPeer>> ResolveUsernameAsync(string username)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsResolvedPeer>>();
-            ResolveUsernameCallback(username, (callback) =>
+            ResolveUsernameAsync(username, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLContactsResolvedPeer>(callback));
             }, (faultCallback) =>
@@ -2046,7 +2046,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAccountDaysTTL>> GetAccountTTLAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountDaysTTL>>();
-            GetAccountTTLCallback((callback) =>
+            GetAccountTTLAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAccountDaysTTL>(callback));
             }, (faultCallback) =>
@@ -2060,7 +2060,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLPong>> PingDelayDisconnectAsync(long pingId, int disconnectDelay)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPong>>();
-            PingDelayDisconnectCallback(pingId, disconnectDelay, (callback) =>
+            PingDelayDisconnectAsync(pingId, disconnectDelay, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLPong>(callback));
             }, (faultCallback) =>
@@ -2074,7 +2074,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesChatsBase>> GetAdminedPublicChannelsAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesChatsBase>>();
-            GetAdminedPublicChannelsCallback((callback) =>
+            GetAdminedPublicChannelsAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesChatsBase>(callback));
             }, (faultCallback) =>
@@ -2088,7 +2088,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUploadFile>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFile>>();
-            GetFileCallback(location, offset, limit, (callback) =>
+            GetFileAsync(location, offset, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUploadFile>(callback));
             }, (faultCallback) =>
@@ -2102,7 +2102,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLMessagesMessagesBase>> SearchAsync(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            SearchCallback(peer, query, filter, minDate, maxDate, offset, maxId, limit, (callback) =>
+            SearchAsync(peer, query, filter, minDate, maxDate, offset, maxId, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
             }, (faultCallback) =>
@@ -2116,7 +2116,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> DeleteAccountAsync(string reason)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            DeleteAccountCallback(reason, (callback) =>
+            DeleteAccountAsync(reason, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -2130,7 +2130,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesChannelDifferenceBase>> GetChannelDifferenceAsync(TLInputChannelBase inputChannel, TLChannelMessagesFilterBase filter, int pts, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesChannelDifferenceBase>>();
-            GetChannelDifferenceCallback(inputChannel, filter, pts, limit, (callback) =>
+            GetChannelDifferenceAsync(inputChannel, filter, pts, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesChannelDifferenceBase>(callback));
             }, (faultCallback) =>
@@ -2144,7 +2144,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUpdatesBase>> LeaveChannelAsync(TLChannel channel)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            LeaveChannelCallback(channel, (callback) =>
+            LeaveChannelAsync(channel, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -2158,7 +2158,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLUserBase>> ChangePhoneAsync(string phoneNumber, string phoneCodeHash, string phoneCode)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUserBase>>();
-            ChangePhoneCallback(phoneNumber, phoneCodeHash, phoneCode, (callback) =>
+            ChangePhoneAsync(phoneNumber, phoneCodeHash, phoneCode, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUserBase>(callback));
             }, (faultCallback) =>
@@ -2172,7 +2172,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLVector<TLContactStatus>>> GetStatusesAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLContactStatus>>>();
-            GetStatusesCallback((callback) =>
+            GetStatusesAsync((callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLVector<TLContactStatus>>(callback));
             }, (faultCallback) =>
@@ -2186,7 +2186,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> DeleteAccountTTLAsync(string reason)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            DeleteAccountTTLCallback(reason, (callback) =>
+            DeleteAccountTTLAsync(reason, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -2200,7 +2200,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLPeerNotifySettingsBase>> GetNotifySettingsAsync(TLInputNotifyPeerBase peer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPeerNotifySettingsBase>>();
-            GetNotifySettingsCallback(peer, (callback) =>
+            GetNotifySettingsAsync(peer, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLPeerNotifySettingsBase>(callback));
             }, (faultCallback) =>
@@ -2214,7 +2214,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<bool>> SaveFilePartAsync(long fileId, int filePart, byte[] bytes)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
-            SaveFilePartCallback(fileId, filePart, bytes, (callback) =>
+            SaveFilePartAsync(fileId, filePart, bytes, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(callback));
             }, (faultCallback) =>
@@ -2228,7 +2228,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAuthAuthorization>> SignInAsync(string phoneNumber, string phoneCodeHash, string phoneCode)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthAuthorization>>();
-            SignInCallback(phoneNumber, phoneCodeHash, phoneCode, (callback) =>
+            SignInAsync(phoneNumber, phoneCodeHash, phoneCode, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAuthAuthorization>(callback));
             }, (faultCallback) =>
@@ -2242,7 +2242,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAuthAuthorization>> RecoverPasswordAsync(string code)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthAuthorization>>();
-            RecoverPasswordCallback(code, (callback) =>
+            RecoverPasswordAsync(code, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAuthAuthorization>(callback));
             }, (faultCallback) =>
@@ -2256,7 +2256,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLAuthSentCode>> ResendCodeAsync(string phoneNumber, string phoneCodeHash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLAuthSentCode>>();
-            ResendCodeCallback(phoneNumber, phoneCodeHash, (callback) =>
+            ResendCodeAsync(phoneNumber, phoneCodeHash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAuthSentCode>(callback));
             }, (faultCallback) =>
@@ -4083,7 +4083,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<TLVector<TLStickerSetCoveredBase>>> GetAttachedStickersAsync(TLInputStickeredMediaBase media)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLStickerSetCoveredBase>>>();
-            GetAttachedStickersCallback(media, (callback) =>
+            GetAttachedStickersAsync(media, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLVector<TLStickerSetCoveredBase>>(callback));
             }, (faultCallback) =>
