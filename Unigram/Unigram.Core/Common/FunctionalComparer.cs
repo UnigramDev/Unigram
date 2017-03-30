@@ -39,12 +39,12 @@ namespace Unigram.Core.Common
 
         public bool Equals(T x, T y)
         {
-            throw new NotImplementedException();
+            return _equals(x, y);
         }
 
         public int GetHashCode(T obj)
         {
-            throw new NotImplementedException();
+            return _hash(obj);
         }
     }
 }
