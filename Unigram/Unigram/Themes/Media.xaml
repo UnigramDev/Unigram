@@ -9,6 +9,7 @@
     xmlns:models="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:messages="using:Unigram.Controls.Messages"
     mc:Ignorable="d">
 
     <DataTemplate x:Key="MediaDocumentTemplate">
@@ -440,10 +441,7 @@
                     <TextBlock Text="{Binding Media.Description}" Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding Media, Converter={StaticResource InvoiceToAmountConverter}}" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <TextBlock Visibility="{Binding Media.IsTest, Converter={StaticResource BooleanToVisibilityConverter}}" Text="TEST INVOICE" Style="{StaticResource CaptionTextBlockStyle}" Margin="8,0,0,0"/>
-                </StackPanel>
+                <messages:InvoiceStatusControl/>
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -471,10 +469,7 @@
                                         MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-                    <StackPanel Background="{ThemeResource MessageOverlayBackgroundBrush}" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                        <TextBlock Text="{Binding Media, Converter={StaticResource InvoiceToAmountConverter}}" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White"/>
-                        <TextBlock Visibility="{Binding Media.IsTest, Converter={StaticResource BooleanToVisibilityConverter}}" Text="TEST INVOICE" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" Margin="8,0,0,0"/>
-                    </StackPanel>
+                    <messages:InvoiceStatusControl Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4"/>
                 </Grid>
             </StackPanel>
         </Grid>

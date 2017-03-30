@@ -173,6 +173,22 @@ namespace Unigram.Common
 
                 return null;
             });
+            _actionsCache.Add(typeof(TLMessageActionPaymentSent), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            {
+                if (message is TLMessageService serviceMessage && action is TLMessageActionPaymentSent paymentSentAction)
+                {
+                    if (serviceMessage.Reply is TLMessage replied && replied.Media is TLMessageMediaInvoice invoiceMedia)
+                    {
+                        var amount = BindConvert.Current.FormatAmount(paymentSentAction.TotalAmount, paymentSentAction.Currency);
+                        var userName = replied.From?.FullName ?? "User";
+                        var userId = replied.FromId ?? fromUserId;
+
+                        return ReplaceLinks("You have just successfully transferred {0} to {1} for {2}", new[] { amount, userName, invoiceMedia.Title }, new[] { "tg-bold://", "tg-user://" + userId, "tg-bold://" }, useActiveLinks);
+                    }
+                }
+
+                return null;
+            });
         }
 
         #region Message
@@ -504,6 +520,21 @@ namespace Unigram.Common
                 if (gameMedia != null)
                 {
                     return gameMedia.Game;
+                }
+            }
+
+            return null;
+        }
+
+        public static TLMessageMediaInvoice GetInvoice(TLMessageService message)
+        {
+            var reply = message.Reply as TLMessage;
+            if (reply != null)
+            {
+                var invoiceMedia = reply.Media as TLMessageMediaInvoice;
+                if (invoiceMedia != null)
+                {
+                    return invoiceMedia;
                 }
             }
 

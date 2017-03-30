@@ -111,6 +111,9 @@
       <DependentUpon>DialogSearchBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\GlyphRadioButton.cs" />
+    <Compile Include="Controls\Messages\InvoiceStatusControl.xaml.cs">
+      <DependentUpon>InvoiceStatusControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\PhoneCallMessageBubble.cs" />
     <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">
       <DependentUpon>HistoryCallMessageControl.xaml</DependentUpon>
@@ -615,6 +618,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\HistoryCallMessageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\InvoiceStatusControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

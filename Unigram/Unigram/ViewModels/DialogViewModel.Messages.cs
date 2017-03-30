@@ -693,6 +693,18 @@ namespace Unigram.ViewModels
                     Debugger.Break();
                 }
             }
+            else if (button is TLKeyboardButtonReceipt receiptButton)
+            {
+                // WARNING: TLKeyboardButtonReceipt is a CORE type: this means that is is not included in the scheme, but it is used to semplificate the code
+                if (message.Media is TLMessageMediaInvoice invoiceMedia && invoiceMedia.HasReceiptMsgId)
+                {
+                    var response = await ProtoService.GetPaymentReceiptAsync(invoiceMedia.ReceiptMsgId.Value);
+                    if (response.IsSucceeded)
+                    {
+                        Debugger.Break();
+                    }
+                }
+            }
             else if (button is TLKeyboardButtonSwitchInline switchInlineButton)
             {
                 var bot = GetBot(message);

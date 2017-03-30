@@ -61,6 +61,25 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region HasReceiptMsgId
+
+        public bool HasReceiptMsgId
+        {
+            get { return (bool)GetValue(HasReceiptMsgIdProperty); }
+            set { SetValue(HasReceiptMsgIdProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for HasReceiptMsgId.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty HasReceiptMsgIdProperty =
+            DependencyProperty.Register("HasReceiptMsgId", typeof(bool), typeof(ReplyMarkupPanel), new PropertyMetadata(false, OnHasReceiptMsgIdChanged));
+
+        private static void OnHasReceiptMsgIdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ReplyMarkupPanel)d).OnReplyMarkupChanged(((ReplyMarkupPanel)d).ReplyMarkup, ((ReplyMarkupPanel)d).ReplyMarkup);
+        }
+
+        #endregion
+
         private void OnIsInlineChanged(bool newValue, bool oldValue)
         {
             //if (newValue)
@@ -109,7 +128,7 @@ namespace Unigram.Controls
             if (newValue is TLReplyInlineMarkup && IsInline)
             {
                 rows = ((TLReplyInlineMarkup)newValue).Rows;
-                
+
                 //if (!double.IsNaN(Height))
                 //{
                 //    Height = double.NaN;
@@ -120,8 +139,44 @@ namespace Unigram.Controls
             Children.Clear();
             RowDefinitions.Clear();
 
+            if (HasReceiptMsgId)
+            {
+                var panel = new Grid();
+                panel.HorizontalAlignment = HorizontalAlignment.Stretch;
+                panel.VerticalAlignment = VerticalAlignment.Stretch;
+                panel.Margin = new Thickness(-2, 0, -2, 0);
+
+                var button = new GlyphButton();
+                button.DataContext = new TLKeyboardButtonReceipt();
+                button.Content = "Receipt";
+                button.Margin = new Thickness(2, 2, 2, 0);
+                button.HorizontalAlignment = HorizontalAlignment.Stretch;
+                button.VerticalAlignment = VerticalAlignment.Stretch;
+                button.Click += Button_Click;
+                button.Style = App.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
+
+                panel.Children.Add(button);
+                Children.Add(panel);
+
+                return;
+            }
+
             if (rows != null && ((IsInline && newValue is TLReplyInlineMarkup) || (!IsInline && newValue is TLReplyKeyboardMarkup)))
             {
+                if (HasReceiptMsgId)
+                {
+                    rows = new TLVector<TLKeyboardButtonRow>
+                    {
+                        new TLKeyboardButtonRow
+                        {
+                            Buttons = new TLVector<TLKeyboardButtonBase>
+                            {
+                                new TLKeyboardButtonReceipt { Text = "Receipt" }
+                            }
+                        }
+                    };
+                }
+
                 for (int j = 0; j < rows.Count; j++)
                 {
                     var row = rows[j];
@@ -136,7 +191,7 @@ namespace Unigram.Controls
                         var button = new GlyphButton();
                         button.DataContext = row.Buttons[i];
                         button.Content = row.Buttons[i].Text;
-                        button.Margin = new Thickness(2);
+                        button.Margin = new Thickness(2, 2, 2, j == rows.Count - 1 ? 0 : 2);
                         button.HorizontalAlignment = HorizontalAlignment.Stretch;
                         button.VerticalAlignment = VerticalAlignment.Stretch;
                         button.Click += Button_Click;

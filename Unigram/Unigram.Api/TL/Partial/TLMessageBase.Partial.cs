@@ -459,6 +459,13 @@ namespace Telegram.Api.TL
                 {
                     captionOld.Caption = captionNew.Caption;
                 }
+
+                var invoiceNew = message.Media as TLMessageMediaInvoice;
+                var invoiceOld = Media as TLMessageMediaInvoice;
+                if (invoiceOld != null && invoiceNew != null)
+                {
+                    Media = invoiceNew;
+                }
             }
         }
 
