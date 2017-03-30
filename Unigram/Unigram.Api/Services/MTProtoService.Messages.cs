@@ -1198,9 +1198,9 @@ namespace Telegram.Api.Services
             }
         }
 
-        public void GetHistoryCallback(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetHistoryCallback(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = 0, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
+            var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = offsetDate, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
 
             //Debug.WriteLine("UpdateItems start request elapsed=" + (timer != null? timer.Elapsed.ToString() : null));
 
