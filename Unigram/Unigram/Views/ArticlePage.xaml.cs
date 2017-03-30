@@ -587,25 +587,25 @@ namespace Unigram.Views
                     case TLType.PageBlockTitle:
                         textBlock.FontSize = 24;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 0, 12, 12);
+                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubtitle:
                         textBlock.FontSize = 21;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 0, 12, 12);
+                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockHeader:
                         textBlock.FontSize = 21;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 0, 12, 12);
+                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubheader:
                         textBlock.FontSize = 18;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 0, 12, 12);
+                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockFooter:

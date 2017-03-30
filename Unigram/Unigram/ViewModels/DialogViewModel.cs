@@ -68,6 +68,7 @@ namespace Unigram.ViewModels
 
         private readonly DialogStickersViewModel _stickers;
         private readonly IStickersService _stickersService;
+        private readonly ILocationService _locationService;
         private readonly IUploadFileManager _uploadFileManager;
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
@@ -76,7 +77,7 @@ namespace Unigram.ViewModels
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, DialogStickersViewModel stickers)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, DialogStickersViewModel stickers)
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
@@ -84,6 +85,7 @@ namespace Unigram.ViewModels
             _uploadDocumentManager = uploadDocumentManager;
             _uploadVideoManager = uploadVideoManager;
             _stickersService = stickersService;
+            _locationService = locationService;
 
             _stickers = stickers;
         }
@@ -1931,6 +1933,57 @@ namespace Unigram.ViewModels
 
             return tsc.Task;
         }
+
+        public Task<bool> SendGeoPointAsync(double latitude, double longitude)
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var media = new TLMessageMediaGeo
+            {
+                Geo = new TLGeoPoint
+                {
+                    Lat = latitude,
+                    Long = longitude
+                }
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var inputMedia = new TLInputMediaGeoPoint
+                {
+                    GeoPoint = new TLInputGeoPoint
+                    {
+                        Lat = latitude,
+                        Long = longitude
+                    }
+                };
+
+                var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                if (result.IsSucceeded)
+                {
+                    tsc.SetResult(true);
+                }
+                else
+                {
+                    tsc.SetResult(false);
+                }
+            });
+
+            return tsc.Task;
+        }
+
 
         private TLMessageBase InsertSendingMessage(TLMessage message, bool useReplyMarkup = false)
         {

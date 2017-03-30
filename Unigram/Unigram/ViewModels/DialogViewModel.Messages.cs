@@ -691,14 +691,13 @@ namespace Unigram.ViewModels
                 {
                     if (switchInlineButton.IsSamePeer)
                     {
-                        _text = string.Format("@{0} {1}", bot.Username, switchInlineButton.Query);
+                        Text = string.Format("@{0} {1}", bot.Username, switchInlineButton.Query);
+                        ResolveInlineBot(bot.Username, switchInlineButton.Query);
 
                         if (With is TLChatBase)
                         {
                             Reply = message;
                         }
-
-                        await SendMessageAsync(null, true);
                     }
                     else
                     {
@@ -821,7 +820,15 @@ namespace Unigram.ViewModels
             }
             else if (button is TLKeyboardButtonRequestGeoLocation requestGeoButton)
             {
-                // TODO
+                var confirm = await TLMessageDialog.ShowAsync("This will send your current location to the bot.", "Share your location?", "OK", "Cancel");
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var location = await _locationService.GetPositionAsync();
+                    if (location != null)
+                    {
+                        await SendGeoPointAsync(location.Point.Position.Latitude, location.Point.Position.Longitude);
+                    }
+                }
             }
             else if (button is TLKeyboardButton keyboardButton)
             {
