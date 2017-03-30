@@ -1273,10 +1273,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUpdatesBase>> GetAppChangelogAsync(string deviceModel, string systemVersion, string appVersion, string langCode)
+        public Task<MTProtoResponse<TLUpdatesBase>> GetAppChangelogAsync(string prevAppVersion)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            GetAppChangelogCallback(deviceModel, systemVersion, appVersion, langCode, (callback) =>
+            GetAppChangelogCallback(prevAppVersion, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>

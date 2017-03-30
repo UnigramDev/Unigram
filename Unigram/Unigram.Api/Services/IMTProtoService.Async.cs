@@ -101,7 +101,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLExportedChatInviteBase>> ExportChatInviteAsync(int chatId);
         Task<MTProtoResponse<bool>> ReportSpamAsync(TLInputPeerBase peer);
         Task<MTProtoResponse<TLUpdatesState>> GetStateAsync();
-        Task<MTProtoResponse<TLUpdatesBase>> GetAppChangelogAsync(string deviceModel, string systemVersion, string appVersion, string langCode);
+        Task<MTProtoResponse<TLUpdatesBase>> GetAppChangelogAsync(string prevAppVersion);
         Task<MTProtoResponse<TLAuthPasswordRecovery>> RequestPasswordRecoveryAsync();
         Task<MTProtoResponse<TLAccountPasswordBase>> GetPasswordAsync();
         Task<MTProtoResponse<TLUpdatesBase>> UpdatePinnedMessageAsync(bool silent, TLInputChannelBase channel, int id);
