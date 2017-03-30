@@ -147,15 +147,9 @@
                 </Pivot.LeftHeader>
                 <Pivot.RightHeader>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="{ThemeResource AppBarExpandButtonThemeWidthGridLength}"/>
-                            <ColumnDefinition Width="{ThemeResource AppBarExpandButtonThemeWidthGridLength}"/>
-                        </Grid.ColumnDefinitions>
-
                         <Button x:Name="btnOptions"
                                 Padding="16,23,16,0"
-                                Style="{StaticResource EllipsisButton}"
-                                Grid.Column="1">
+                                Style="{StaticResource EllipsisButton}">
                             <FontIcon x:Name="EllipsisIcon"
                                       VerticalAlignment="Center"
                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -187,7 +181,6 @@
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>
-
                     </Grid>
                 </Pivot.RightHeader>
                 <PivotItem Header="Chats">
