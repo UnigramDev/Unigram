@@ -7,7 +7,7 @@
     <ProjectGuid>{B1979F0B-11E6-4759-A54D-853B13139AA0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Unigram.Api</RootNamespace>
+    <RootNamespace>Telegram.Api</RootNamespace>
     <AssemblyName>Unigram.Api</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
@@ -134,7 +134,7 @@
     <Compile Include="TL\Core\ITLChannelInviter.cs" />
     <Compile Include="TL\Core\ITLDialogWith.cs" />
     <Compile Include="TL\Core\ITLInputPeer.cs" />
-    <Compile Include="TL\Core\ITLMediaCaption.cs" />
+    <Compile Include="TL\Core\ITLMessageMediaCaption.cs" />
     <Compile Include="TL\Core\ITLMultiChannelPts.cs" />
     <Compile Include="TL\Core\ITLRandomId.cs" />
     <Compile Include="TL\Core\ITLReadMaxId.cs" />
@@ -372,6 +372,7 @@
     <Compile Include="TL\Partial\TLInputPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaContact.Partial.cs" />
+    <Compile Include="TL\Partial\TLMessageMediaInvoice.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesAllStickers.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesArchivedStickers.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesFeaturedStickers.Partial.cs" />

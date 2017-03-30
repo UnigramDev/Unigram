@@ -19,6 +19,8 @@ namespace Unigram.Selectors
         public DataTemplate GameTemplate { get; set; }
         public DataTemplate GeoPointTemplate { get; set; }
         public DataTemplate GifTemplate { get; set; }
+        public DataTemplate InvoiceTemplate { get; set; }
+        public DataTemplate InvoicePhotoTemplate { get; set; }
         public DataTemplate PhotoTemplate { get; set; }
         public DataTemplate UnsupportedTemplate { get; set; }
         public DataTemplate VenueTemplate { get; set; }
@@ -41,23 +43,36 @@ namespace Unigram.Selectors
             {
                 return EmptyTemplate;
             }
-
-            if (item is TLMessageMediaContact)
+            else if (item is TLMessageMediaContact)
             {
                 return ContactTemplate;
             }
-
-            if (item is TLMessageMediaPhoto)
+            else if (item is TLMessageMediaPhoto)
             {
                 return PhotoTemplate;
             }
-
-            if (item is TLMessageMediaGame)
+            else if (item is TLMessageMediaGame)
             {
                 return GameTemplate;
             }
+            else if (item is TLMessageMediaVenue)
+            {
+                return VenueTemplate;
+            }
+            else if (item is TLMessageMediaGeo)
+            {
+                return GeoPointTemplate;
+            }
+            else if (item is TLMessageMediaInvoice invoiceMedia)
+            {
+                if (invoiceMedia.HasPhoto && invoiceMedia.Photo != null)
+                {
+                    return InvoicePhotoTemplate;
+                }
 
-            if (item is TLMessageMediaDocument documentMedia)
+                return InvoiceTemplate;
+            }
+            else if (item is TLMessageMediaDocument documentMedia)
             {
                 if (documentMedia.Document is TLDocument document)
                 {
@@ -89,47 +104,17 @@ namespace Unigram.Selectors
 
                 return DocumentTemplate;
             }
-            else
+            else if (item is TLMessageMediaWebPage webpageMedia)
             {
-                //var videoMedia = item as TLMessageMediaVideo;
-                //if (videoMedia != null)
-                //{
-                //    return VideoTemplate;
-                //}
-
-                if (item is TLMessageMediaVenue)
-                {
-                    return VenueTemplate;
-                }
-
-                if (item is TLMessageMediaGeo)
-                {
-                    return GeoPointTemplate;
-                }
-
-                //var audioMedia = item as TLMessageMediaAudio;
-                //if (audioMedia != null)
-                //{
-                //    return AudioTemplate;
-                //}
-
-                var webpageMedia = item as TLMessageMediaWebPage;
-                if (webpageMedia == null)
-                {
-                    return UnsupportedTemplate;
-                }
-
                 if (webpageMedia.WebPage is TLWebPageEmpty)
                 {
                     return EmptyTemplate;
                 }
-
-                if (webpageMedia.WebPage is TLWebPagePending)
+                else if (webpageMedia.WebPage is TLWebPagePending)
                 {
                     return EmptyTemplate;
                 }
-
-                if (webpageMedia.WebPage is TLWebPage webpage)
+                else if (webpageMedia.WebPage is TLWebPage webpage)
                 {
                     if (TLMessage.IsGif(webpage.Document))
                     {
@@ -152,6 +137,8 @@ namespace Unigram.Selectors
                 }
                 return WebPageTemplate;
             }
+
+            return UnsupportedTemplate;
         }
 
         public static bool IsWebPagePhotoTemplate(TLWebPage webPage)

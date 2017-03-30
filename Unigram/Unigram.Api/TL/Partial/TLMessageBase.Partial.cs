@@ -453,8 +453,8 @@ namespace Telegram.Api.TL
                     Media = (TLMessageMediaBase)webpageNew ?? new TLMessageMediaEmpty();
                 }
 
-                var captionNew = message.Media as ITLMediaCaption;
-                var captionOld = Media as ITLMediaCaption;
+                var captionNew = message.Media as ITLMessageMediaCaption;
+                var captionOld = Media as ITLMessageMediaCaption;
                 if (captionOld != null && captionNew != null)
                 {
                     captionOld.Caption = captionNew.Caption;

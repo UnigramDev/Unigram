@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLInputMediaUploadedThumbDocument : TLInputMediaBase, ITLMediaCaption 
+	public partial class TLInputMediaUploadedThumbDocument : TLInputMediaBase, ITLMessageMediaCaption 
 	{
 		[Flags]
 		public enum Flag : Int32

@@ -9,6 +9,7 @@ using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Unigram.Strings;
 using Windows.Globalization.DateTimeFormatting;
+using Windows.Globalization.NumberFormatting;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -78,6 +79,90 @@ namespace Unigram.Converters
         //            return Application.Current.Resources["ListViewItemPlaceholderBackgroundThemeBrush"] as SolidColorBrush;
         //    }
         //}
+
+        private Dictionary<string, CurrencyFormatter> _currencyCache = new Dictionary<string, CurrencyFormatter>();
+
+        public string FormatAmount(long amount, string currency)
+        {
+            bool discount;
+            string customFormat;
+            double doubleAmount;
+
+            currency = currency.ToUpper();
+
+            if (amount < 0)
+            {
+                discount = true;
+            }
+            else
+            {
+                discount = false;
+            }
+
+            amount = Math.Abs(amount);
+
+            switch (currency)
+            {
+                case "CLF":
+                    customFormat = " {0:N4}";
+                    doubleAmount = ((double)amount) / 10000.0d;
+                    break;
+                case "BHD":
+                case "IQD":
+                case "JOD":
+                case "KWD":
+                case "LYD":
+                case "OMR":
+                case "TND":
+                    customFormat = " {0:N3}";
+                    doubleAmount = ((double)amount) / 1000.0d;
+                    break;
+                case "BIF":
+                case "BYR":
+                case "CLP":
+                case "CVE":
+                case "DJF":
+                case "GNF":
+                case "ISK":
+                case "JPY":
+                case "KMF":
+                case "KRW":
+                case "MGA":
+                case "PYG":
+                case "RWF":
+                case "UGX":
+                case "UYI":
+                case "VND":
+                case "VUV":
+                case "XAF":
+                case "XOF":
+                case "XPF":
+                    customFormat = " {0:N0}";
+                    doubleAmount = (double)amount;
+                    break;
+                case "MRO":
+                    customFormat = " {0:N1}";
+                    doubleAmount = ((double)amount) / 10.0d;
+                    break;
+                default:
+                    customFormat = " {0:N2}";
+                    doubleAmount = ((double)amount) / 100.0d;
+                    break;
+            }
+
+            if (_currencyCache.TryGetValue(currency, out CurrencyFormatter formatter) == false)
+            {
+                formatter = new CurrencyFormatter(currency, Windows.System.UserProfile.GlobalizationPreferences.Languages, Windows.System.UserProfile.GlobalizationPreferences.HomeGeographicRegion);
+                _currencyCache[currency] = formatter;
+            }
+
+            if (formatter != null)
+            {
+                return (discount ? "-" : string.Empty) + formatter.Format(doubleAmount);
+            }
+
+            return (discount ? "-" : string.Empty) + string.Format(currency + customFormat, doubleAmount);
+        }
 
         public string CallDuration(int seconds)
         {

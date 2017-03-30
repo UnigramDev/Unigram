@@ -140,6 +140,7 @@
     <Compile Include="Controls\ZoomableGridViewPopup.xaml.cs">
       <DependentUpon>ZoomableGridViewPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\InvoiceToAmountConverter.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />

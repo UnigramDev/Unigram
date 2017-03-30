@@ -35,7 +35,7 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
-            <!-- Temp -->
+            <converters:InvoiceToAmountConverter x:Key="InvoiceToAmountConverter"/>
             <converters:PhoneNumberFormatConverter x:Key="PhoneNumberFormatConverter"/>
             <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />
             <converters:BubblePlaceholderConverter x:Key="BubblePlaceholderConverter" />

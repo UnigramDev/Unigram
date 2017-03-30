@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Telegram.Api.TL
 {
-    public interface ITLMediaCaption
+    public partial class TLMessageMediaInvoice
     {
-        String Caption { get; set; }
+
     }
 }

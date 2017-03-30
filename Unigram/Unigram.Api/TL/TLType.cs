@@ -591,7 +591,7 @@ namespace Telegram.Api.TL
 		InputPhoneCall = 0x1E36FDED,
 		PhoneCallEmpty = 0x5366C915,
 		PhoneCallWaiting = 0x1B8F4AD1,
-		PhoneCallRequested = 0x6C448AE8,
+		PhoneCallRequested = 0x83761CE4,
 		PhoneCall = 0xFFE6AB67,
 		PhoneCallDiscarded = 0x50CA4DE1,
 		PhoneConnection = 0x9D4C17C0,

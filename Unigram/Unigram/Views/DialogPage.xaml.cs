@@ -528,7 +528,7 @@ namespace Unigram.Views
                 if (message != null)
                 {
                     var channel = ViewModel.With as TLChannel;
-                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
                     {
                         var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
                         var config = ViewModel.CacheService.GetConfig();
@@ -603,7 +603,7 @@ namespace Unigram.Views
                         return;
                     }
 
-                    var mediaCaption = message.Media as ITLMediaCaption;
+                    var mediaCaption = message.Media as ITLMessageMediaCaption;
                     if (mediaCaption != null && !string.IsNullOrEmpty(mediaCaption.Caption))
                     {
                         element.Visibility = Visibility.Visible;

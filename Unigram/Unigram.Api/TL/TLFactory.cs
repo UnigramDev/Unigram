@@ -820,4 +820,5 @@ namespace Telegram.Api.TL
 				default: throw new InvalidOperationException();
 			}
 		}
-	}}
+	}
+}

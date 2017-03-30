@@ -333,7 +333,7 @@ namespace Unigram.ViewModels
 
             string text = null;
 
-            var media = message.Media as ITLMediaCaption;
+            var media = message.Media as ITLMessageMediaCaption;
             if (media != null && !string.IsNullOrWhiteSpace(media.Caption))
             {
                 text = media.Caption;
@@ -458,7 +458,7 @@ namespace Unigram.ViewModels
         {
             if (editData.IsCaption)
             {
-                var mediaCaption = message.Media as ITLMediaCaption;
+                var mediaCaption = message.Media as ITLMessageMediaCaption;
                 if (mediaCaption != null)
                 {
                     return mediaCaption.Caption ?? string.Empty;

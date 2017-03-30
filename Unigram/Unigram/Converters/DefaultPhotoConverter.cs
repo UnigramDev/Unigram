@@ -451,6 +451,18 @@ namespace Unigram.Converters
                 }
             }
 
+            var invoiceMedia = value as TLMessageMediaInvoice;
+            if (invoiceMedia != null)
+            {
+                value = invoiceMedia.Photo;
+            }
+
+            var webDocument = value as TLWebDocument;
+            if (webDocument != null)
+            {
+                return webDocument.Url;
+            }
+
             return null;
         }
 

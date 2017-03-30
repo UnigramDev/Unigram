@@ -92,9 +92,9 @@ namespace Unigram.Controls.Messages
                     }
 
                     var caption = false;
-                    if (message.Media is ITLMediaCaption)
+                    if (message.Media is ITLMessageMediaCaption captionMedia)
                     {
-                        caption = !string.IsNullOrWhiteSpace(((ITLMediaCaption)message.Media).Caption);
+                        caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                     }
 
                     if (caption)
@@ -118,12 +118,20 @@ namespace Unigram.Controls.Messages
                     Grid.SetRow(StatusControl, 4);
                     Grid.SetRow(MessageControl, 2);
                 }
+                else if (message.Media is TLMessageMediaInvoice invoiceMedia)
+                {
+                    var caption = !invoiceMedia.HasPhoto;
+
+                    MediaControl.Margin = new Thickness(0);
+                    StatusToDefault();
+                    Grid.SetRow(StatusControl, caption ? 3 : 4);
+                }
                 else /*if (IsInlineMedia(message.Media))*/
                 {
                     var caption = false;
-                    if (message.Media is ITLMediaCaption)
+                    if (message.Media is ITLMessageMediaCaption captionMedia)
                     {
-                        caption = !string.IsNullOrWhiteSpace(((ITLMediaCaption)message.Media).Caption);
+                        caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                     }
 
                     MediaControl.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);

@@ -33,7 +33,7 @@ namespace Telegram.Api.TL
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x6C448AE8);
+			to.Write(0x83761CE4);
 			to.Write(Id);
 			to.Write(AccessHash);
 			to.Write(Date);

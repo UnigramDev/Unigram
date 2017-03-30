@@ -106,7 +106,9 @@ namespace Unigram.Controls
             var width = 0.0;
             var height = 0.0;
 
-            if (Constraint is TLMessageMediaGeo || Constraint is TLMessageMediaVenue)
+            var constraint = Constraint;
+
+            if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaVenue)
             {
                 width = 320;
                 height = 240;
@@ -114,7 +116,7 @@ namespace Unigram.Controls
                 goto Calculate;
             }
 
-            if (Constraint is TLPhoto photo)
+            if (constraint is TLPhoto photo)
             {
                 //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
                 var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
@@ -127,9 +129,19 @@ namespace Unigram.Controls
                 }
             }
 
-            if (Constraint is TLDocument document)
+            if (constraint is TLDocument document)
             {
-                var imageSize = document.Attributes.OfType<TLDocumentAttributeImageSize>().FirstOrDefault();
+                constraint = document.Attributes;
+            }
+
+            if (constraint is TLWebDocument webDocument)
+            {
+                constraint = webDocument.Attributes;
+            }
+
+            if (constraint is TLVector<TLDocumentAttributeBase> attributes)
+            { 
+                var imageSize = attributes.OfType<TLDocumentAttributeImageSize>().FirstOrDefault();
                 if (imageSize != null)
                 {
                     width = imageSize.W;
@@ -138,7 +150,7 @@ namespace Unigram.Controls
                     goto Calculate;
                 }
 
-                var video = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+                var video = attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 if (video != null)
                 {
                     width = video.W;
@@ -148,7 +160,7 @@ namespace Unigram.Controls
                 }
             }
 
-            if (Constraint is TLBotInlineResult inlineResult)
+            if (constraint is TLBotInlineResult inlineResult)
             {
                 width = inlineResult.HasW ? inlineResult.W.Value : 0;
                 height = inlineResult.HasH ? inlineResult.H.Value : 0;
