@@ -32,6 +32,7 @@ namespace Unigram
 				static void UpdateBadge(int badgeNumber);
 				static void UpdateTile(String^ caption, String^ message);
 				static void UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
+				static void UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
 			};
 		}
 	}

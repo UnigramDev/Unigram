@@ -20,38 +20,46 @@
         </Grid>
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                  ItemTemplate="{StaticResource StickerSetItemTemplate}"
+                  ItemClick="ListView_ItemClick"
+                  IsItemClickEnabled="True"
+                  SelectionMode="None"
                   Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
-                    <Button Content="Featured stickers" Click="FeaturedStickers_Click"/>
+                    <Button Click="FeaturedStickers_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Trending stickers" VerticalAlignment="Center"/>
+                            <ContentControl Content="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}" Visibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                                <ContentControl.ContentTransitions>
+                                    <TransitionCollection>
+                                        <EntranceThemeTransition/>
+                                    </TransitionCollection>
+                                </ContentControl.ContentTransitions>
+                                <ContentControl.Clip>
+                                    <RectangleGeometry Rect="0,0,200,32"/>
+                                </ContentControl.Clip>
+                            </ContentControl>
+                        </StackPanel>
+                    </Button>
+                    <Button Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Click="ArchivedStickers_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Archived stickers" VerticalAlignment="Center"/>
+                            <ContentControl Content="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                                <ContentControl.ContentTransitions>
+                                    <TransitionCollection>
+                                        <EntranceThemeTransition/>
+                                    </TransitionCollection>
+                                </ContentControl.ContentTransitions>
+                                <ContentControl.Clip>
+                                    <RectangleGeometry Rect="0,0,200,32"/>
+                                </ContentControl.Clip>
+                            </ContentControl>
+                        </StackPanel>
+                    </Button>
+                    <Button Content="Masks" Click="Masks_Click"/>
                 </StackPanel>
             </ListView.Header>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="tl:TLStickerSetCovered">
-                    <Grid Margin="0,6" Background="Transparent">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="48"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <Image Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
-
-                        <TextBlock Text="{x:Bind Set.Title}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                        <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1">
-                            <Run Text="{x:Bind Set.Count}"/>
-                            <Run Text="stickers"/>
-                        </TextBlock>
-
-                        <controls:GlyphButton Foreground="{ThemeResource TelegramForegroundAccentBrush}" Glyph="&#xE109;" Grid.Column="2" Grid.RowSpan="2"/>
-                        <FontIcon Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Glyph="&#xE10B;" Grid.Column="2" Grid.RowSpan="2"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -59,6 +67,5 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-
     </Grid>
 </Page>

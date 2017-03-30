@@ -68,8 +68,7 @@ namespace Unigram.Controls.Messages
         {
             if (item == null)
             {
-                Visibility = Visibility.Collapsed;
-                return false;
+                return SetUnsupportedTemplate(null, null);
             }
 
             var replyInfo = item as ReplyInfo;
@@ -142,7 +141,7 @@ namespace Unigram.Controls.Messages
                     {
                         if (!string.IsNullOrEmpty(forwardMessage.Message) && (forwardMessage.Media == null || forwardMessage.Media is TLMessageMediaEmpty || forwardMessage.Media is TLMessageMediaWebPage))
                         {
-                            return SetTextTemplate(forwardMessage, Title);
+                            return SetTextTemplate(forwardMessage, "forward");
                         }
 
                         var media = container.FwdMessages[0].Media;
@@ -151,40 +150,40 @@ namespace Unigram.Controls.Messages
                             switch (media.TypeId)
                             {
                                 case TLType.MessageMediaPhoto:
-                                    return SetPhotoTemplate(forwardMessage, null);
+                                    return SetPhotoTemplate(forwardMessage, "forward");
                                 case TLType.MessageMediaGeo:
-                                    return SetGeoPointTemplate(forwardMessage, null);
+                                    return SetGeoPointTemplate(forwardMessage, "forward");
                                 case TLType.MessageMediaVenue:
-                                    return SetVenueTemplate(forwardMessage, null);
+                                    return SetVenueTemplate(forwardMessage, "forward");
                                 case TLType.MessageMediaContact:
-                                    return SetContactTemplate(forwardMessage, null);
+                                    return SetContactTemplate(forwardMessage, "forward");
                                 case TLType.MessageMediaGame:
-                                    return SetGameTemplate(forwardMessage, null);
+                                    return SetGameTemplate(forwardMessage, "forward");
                                 case TLType.MessageMediaEmpty:
-                                    return SetUnsupportedTemplate(forwardMessage, null);
+                                    return SetUnsupportedTemplate(forwardMessage, "forward");
                                 case TLType.MessageMediaDocument:
                                     if (forwardMessage.IsSticker())
                                     {
-                                        return SetStickerTemplate(forwardMessage, null);
+                                        return SetStickerTemplate(forwardMessage, "forward");
                                     }
                                     else if (forwardMessage.IsGif())
                                     {
-                                        return SetGifTemplate(forwardMessage, null);
+                                        return SetGifTemplate(forwardMessage, "forward");
                                     }
                                     else if (forwardMessage.IsVoice())
                                     {
-                                        return SetVoiceMessageTemplate(forwardMessage, null);
+                                        return SetVoiceMessageTemplate(forwardMessage, "forward");
                                     }
                                     else if (forwardMessage.IsVideo())
                                     {
-                                        return SetVideoTemplate(forwardMessage, null);
+                                        return SetVideoTemplate(forwardMessage, "forward");
                                     }
                                     else if (forwardMessage.IsAudio())
                                     {
-                                        return SetAudioTemplate(forwardMessage, null);
+                                        return SetAudioTemplate(forwardMessage, "forward");
                                     }
 
-                                    return SetDocumentTemplate(forwardMessage, null);
+                                    return SetDocumentTemplate(forwardMessage, "forward");
                             }
                         }
                     }
@@ -331,7 +330,7 @@ namespace Unigram.Controls.Messages
                 var emptyMessage = obj as TLMessageEmpty;
                 if (emptyMessage != null)
                 {
-                    return SetEmptyTemplate(message, Title);
+                    return SetEmptyTemplate(emptyMessage, Title);
                 }
 
                 return SetUnsupportedTemplate(message, Title);
@@ -749,15 +748,29 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetEmptyTemplate(TLMessage message, string title)
+        private bool SetEmptyTemplate(TLMessageBase message, string title)
         {
-            Visibility = Visibility.Collapsed;
-            return false;
+            Visibility = Visibility.Visible;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = string.Empty;
+            ServiceLabel.Text = message is TLMessageEmpty ? "Deleted message" : string.Empty;
+            MessageLabel.Text = string.Empty;
+            return true;
         }
 
-        private bool SetUnsupportedTemplate(TLMessage message, string title)
+        private bool SetUnsupportedTemplate(TLMessageBase message, string title)
         {
             Visibility = Visibility.Collapsed;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = string.Empty;
+            ServiceLabel.Text = string.Empty;
+            MessageLabel.Text = string.Empty;
             return false;
         }
 
@@ -767,16 +780,43 @@ namespace Unigram.Controls.Messages
         {
             if (!string.IsNullOrWhiteSpace(title))
             {
-                return title;
+                if (title.Equals("forward"))
+                {
+                    if (message.HasFwdFrom && message.FwdFrom.HasChannelId)
+                    {
+                        if (InMemoryCacheService.Current.GetChat(message.FwdFrom.ChannelId) is TLChannel channel)
+                        {
+                            return channel.Title;
+                        }
+                    }
+                    else if (message.HasFwdFrom && message.FwdFrom.HasFromId)
+                    {
+                        if (InMemoryCacheService.Current.GetUser(message.FwdFrom.FromId) is TLUser user)
+                        {
+                            return user.FullName;
+                        }
+                    }
+                }
+                else
+                {
+                    return title;
+                }
             }
 
-            var from = message.From?.FullName ?? string.Empty;
-            if (message.ViaBot != null)
+            if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
             {
-                from += $" via @{message.ViaBot.Username}";
+                return message.Parent?.DisplayName ?? string.Empty;
             }
+            else
+            {
+                var from = message.From?.FullName ?? string.Empty;
+                if (message.ViaBot != null)
+                {
+                    from += $" via @{message.ViaBot.Username}";
+                }
 
-            return from;
+                return from;
+            }
         }
 
         private string GetFromLabel(TLMessageService message, string title)
@@ -786,8 +826,14 @@ namespace Unigram.Controls.Messages
                 return Title;
             }
 
-            var from = message.From?.FullName ?? string.Empty;
-            return from;
+            if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+            {
+                return message.Parent?.DisplayName ?? string.Empty;
+            }
+            else
+            {
+                return message.From?.FullName ?? string.Empty;
+            }
         }
 
         //#region Cursor

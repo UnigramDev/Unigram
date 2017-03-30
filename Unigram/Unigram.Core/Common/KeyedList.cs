@@ -1,31 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Unigram.Common
 {
-    public class KeyedList<TKey, T> : ObservableCollection<T>
+    public class KeyedList<TKey, T> : ObservableCollection<T>, INotifyPropertyChanged
     {
-        public TKey Key { get; private set; }
+        private TKey _key;
+        public TKey Key
+        {
+            get
+            {
+                return _key;
+            }
+            set
+            {
+                _key = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Key"));
+            }
+        }
 
         public KeyedList(TKey key)
         {
-            Key = key;
+            _key = key;
         }
 
         public KeyedList(TKey key, IEnumerable<T> source)
             : base(source)
         {
-            Key = key;
+            _key = key;
         }
 
         public KeyedList(IGrouping<TKey, T> source)
             : base(source)
         {
-            Key = source.Key;
+            _key = source.Key;
         }
+
+        public new event PropertyChangedEventHandler PropertyChanged;
     }
 }

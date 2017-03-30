@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class TransferButton : GlyphButton
+    public class TransferButton : GlyphHyperlinkButton
     {
         #region Media
 
@@ -79,6 +79,14 @@ namespace Unigram.Controls
                         }
 
                         return "\uE160";
+                    }
+                    else if (documentMedia.DownloadingProgress > 0 && documentMedia.DownloadingProgress < 1)
+                    {
+                        return "\uE10A";
+                    }
+                    else if (documentMedia.UploadingProgress > 0 && documentMedia.DownloadingProgress < 1)
+                    {
+                        return "\uE10A";
                     }
 
                     return "\uE118";

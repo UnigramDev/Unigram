@@ -270,7 +270,7 @@ namespace Telegram.Api.TL
             }
         }
 
-        public int Index
+        public int Id
         {
             get { return Peer != null && Peer.Id != null ? Peer.Id : default(int); }
         }
@@ -294,6 +294,23 @@ namespace Telegram.Api.TL
         public int PinnedIndex { get; set; }
 
         public bool IsSearchResult { get; set; }
+
+        public Visibility ChatBaseVisibility
+        {
+            get
+            {
+                var chatType = Peer as TLPeerBase;
+                if (Peer.TypeId == TLType.PeerChat ||
+                    Peer.TypeId == TLType.PeerChannel)
+                {
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    return Visibility.Collapsed;
+                }
+            }
+        }
 
         public Visibility VerifiedVisibility
         {

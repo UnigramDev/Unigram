@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,15 +15,18 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.Core.Models;
+using Unigram.Core.Services;
 using Unigram.ViewModels;
 using Unigram.Views.Chats;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
@@ -30,6 +34,7 @@ using Windows.Storage.Search;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.System.Profile;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
@@ -37,6 +42,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -44,7 +50,6 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-
     public sealed partial class DialogPage : Page
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
@@ -61,7 +66,69 @@ namespace Unigram.Views
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
 
+            ViewModel.PropertyChanged += OnPropertyChanged;
+
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+
+            //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
+            //{
+            //    var visual = ElementCompositionPreview.GetElementVisual(Header);
+            //    visual.Clip = Window.Current.Compositor.CreateInsetClip();
+
+            //    var showShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    showShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
+            //    showShowAnimation.InsertKeyFrame(1.0f, new Vector3());
+            //    showShowAnimation.Target = nameof(Visual.Offset);
+            //    showShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+            //    var showHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    showHideAnimation.InsertKeyFrame(0.0f, new Vector3());
+            //    showHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0));
+            //    showHideAnimation.Target = nameof(Visual.Offset);
+            //    showHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+            //    var hideHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    hideHideAnimation.InsertKeyFrame(0.0f, new Vector3());
+            //    hideHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0));
+            //    hideHideAnimation.Target = nameof(Visual.Offset);
+            //    hideHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+            //    var hideShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    hideShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0));
+            //    hideShowAnimation.InsertKeyFrame(1.0f, new Vector3());
+            //    hideShowAnimation.Target = nameof(Visual.Offset);
+            //    hideShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+            //    ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, showShowAnimation);
+            //    ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
+            //    ElementCompositionPreview.SetImplicitShowAnimation(btnDialogInfo, hideShowAnimation);
+            //    ElementCompositionPreview.SetImplicitHideAnimation(btnDialogInfo, showHideAnimation);
+            //}
+        }
+
+        //protected override async void OnNavigatedTo(NavigationEventArgs e)
+        //{
+        //    if (MainPage.TryGetPeerFromParameter(e.Parameter, out TLPeerBase peer))
+        //    {
+        //        DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>(peer);
+
+        //        CheckMessageBoxEmpty();
+
+        //        ViewModel.PropertyChanged -= OnPropertyChanged;
+        //        ViewModel.PropertyChanged += OnPropertyChanged;
+
+        //        await ViewModel.OnNavigatedToAsync(TLSerializationService.Current.Deserialize((string)e.Parameter), e.NavigationMode, null);
+        //    }
+
+        //    base.OnNavigatedTo(e);
+        //}
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("Reply"))
+            {
+                CheckMessageBoxEmpty();
+            }
         }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
@@ -69,10 +136,12 @@ namespace Unigram.Views
             if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
             {
                 ManagePanel.Visibility = Visibility.Collapsed;
+                btnDialogInfo.Visibility = Visibility.Visible;
             }
             else
             {
                 ManagePanel.Visibility = Visibility.Visible;
+                btnDialogInfo.Visibility = Visibility.Collapsed;
             }
 
             ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
@@ -126,7 +195,13 @@ namespace Unigram.Views
 
         private void CheckMessageBoxEmpty()
         {
-            if (txtMessage.IsEmpty)
+            var forwarding = false;
+            if (ViewModel.Reply is TLMessagesContainter container)
+            {
+                forwarding = container.FwdMessages != null && container.FwdMessages.Count > 0;
+            }
+
+            if (txtMessage.IsEmpty && !forwarding)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnStickers.Visibility = Visibility.Visible;
@@ -184,6 +259,8 @@ namespace Unigram.Views
                 flyout.ShowAt(Attach, new Point(8, -8));
             }
         }
+
+        private void SendShrug() => txtMessage.InsertText("¯\\_(ツ)_/¯");
 
         private void AttachPickerFlyout_ItemClick(object sender, MediaSelectedEventArgs e)
         {
@@ -351,6 +428,11 @@ namespace Unigram.Views
             if (StickersPanel.Visibility == Visibility.Visible)
             {
                 ViewModel.OpenStickersCommand.Execute(null);
+                InputPane.GetForCurrentView().TryHide();
+            }
+            else
+            {
+                InputPane.GetForCurrentView().TryShow();
             }
         }
 
@@ -370,6 +452,16 @@ namespace Unigram.Views
         }
 
         #region Context menu
+
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            var flyout = sender as MenuFlyout;
+
+            foreach (var item in flyout.Items)
+            {
+                item.Visibility = Visibility.Visible;
+            }
+        }
 
         private void MessageReply_Loaded(object sender, RoutedEventArgs e)
         {
@@ -566,8 +658,44 @@ namespace Unigram.Views
                 {
                     if (message.Media is TLMessageMediaDocument || message.Media is TLMessageMediaPhoto)
                     {
-                        // TOOD: check if file exists
+                        Visibility = Visibility.Visible;
+                        return;
+                    }
+                }
 
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void MessageSaveGIF_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var message = element.DataContext as TLMessage;
+                if (message != null)
+                {
+                    if (message.IsGif())
+                    {
+                        Visibility = Visibility.Visible;
+                        return;
+                    }
+                }
+
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void MessageCallAgain_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var message = element.DataContext as TLMessageService;
+                if (message != null)
+                {
+                    if (message.Action is TLMessageActionPhoneCall)
+                    {
                         Visibility = Visibility.Visible;
                         return;
                     }
@@ -584,6 +712,27 @@ namespace Unigram.Views
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
             ViewModel.StickerPack = null;
             txtMessage.Text = null;
+        }
+
+        private async void StickerSet_Click(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                var stickerAttribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
+                {
+                    await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet, Stickers_ItemClick);
+                }
+            }
+        }
+
+        private async void DatePickerFlyout_DatePicked(DatePickerFlyout sender, DatePickedEventArgs args)
+        {
+            var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, args.NewDate.Date);
+            await ViewModel.LoadDateSliceAsync(offset);
         }
     }
 

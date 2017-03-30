@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 #if WINDOWS_PHONE
 using System.Globalization;
@@ -375,6 +376,11 @@ namespace Telegram.Api.Services
                     });
                 });
 	    }
+
+        public void SendRequestCallback<T>(TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null)
+        {
+            SendInformativeMessage<T>("manual.Sent", obj, callback, faultCallback);
+        }
 
 	    private void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null, 
             int? maxAttempt = null,                 // to send delayed items

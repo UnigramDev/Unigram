@@ -50,34 +50,34 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaPhotoTemplate">
-        <Grid Background="Black" 
-              MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+        <Grid Background="Black"
+              MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
-                                Constraint="{Binding Media.Photo}" 
-                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                Constraint="{Binding Media.Photo}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Tapped="ImageView_Tapped"/>
+                                Click="Photo_Click"/>
 
             <controls:ProgressBarRing Value="{Binding Media.Progress}"/>
 
-            <!--<controls:ProgressBarRing 
-                    SmoothValue="{Binding UploadingProgress}"
-                    common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
-                    Maximum="1" 
-                    Visibility="Collapsed"/>-->
+            <!--<controls:ProgressBarRing
+                 SmoothValue="{Binding UploadingProgress}"
+                 common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
+                 Maximum="1"
+                 Visibility="Collapsed"/>-->
         </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="MediaVideoTemplate">
-        <Grid Background="Black" 
-              MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+        <Grid Background="Black"
+              MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                Constraint="{Binding Media.Document}" 
-                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                Constraint="{Binding Media.Document}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
             <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
@@ -89,21 +89,21 @@
                 <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
             </Grid>
 
-            <!--<controls:ProgressBarRing 
-                    SmoothValue="{Binding UploadingProgress}"
-                    common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
-                    Maximum="1" 
-                    Visibility="Collapsed"/>-->
+            <!--<controls:ProgressBarRing
+                 SmoothValue="{Binding UploadingProgress}"
+                 common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
+                 Maximum="1"
+                 Visibility="Collapsed"/>-->
         </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="MediaGifTemplate">
-        <Grid Background="Black" 
-              MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+        <Grid Background="Black"
+              MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                Constraint="{Binding Media.Document}" 
-                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                Constraint="{Binding Media.Document}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
             <!--<Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="320" MaxHeight="320"/>-->
@@ -121,21 +121,21 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <!--<Grid Background="{Binding Media.UserId, Converter={StaticResource BubblePlaceholderConverter}}" Width="48" Height="48" CornerRadius="24" Margin="0,0,12,0" Grid.RowSpan="2">
-                <TextBlock Foreground="White" Text="{Binding Media.User, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
-                <Ellipse>
-                    <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding Media.User.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                    </Ellipse.Fill>
-                </Ellipse>
-                <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
-            </Grid>-->
+                 <TextBlock Foreground="White" Text="{Binding Media.User, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
+                 <Ellipse>
+                 <Ellipse.Fill>
+                 <ImageBrush ImageSource="{Binding Media.User.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                 </Ellipse.Fill>
+                 </Ellipse>
+                 <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
+                 </Grid>-->
 
             <Ellipse Width="48" Height="48" Margin="0,0,12,0" Grid.RowSpan="2">
                 <Ellipse.Fill>
                     <ImageBrush ImageSource="{Binding Media.User, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
                 </Ellipse.Fill>
             </Ellipse>
-            
+
             <TextBlock Text="{Binding Media.FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
             <TextBlock Text="{Binding Media.PhoneNumber, Converter={StaticResource PhoneNumberFormatConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
         </Grid>
@@ -149,8 +149,13 @@
 
     <DataTemplate x:Key="MediaGeoPointTemplate">
         <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-            <controls:ImageView Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" Constraint="{Binding Media}" MaxWidth="320" MaxHeight="240"/>
-            <Border Width="20" Height="20" CornerRadius="10" Background="#54000000">
+            <controls:ImageView
+                Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}"
+                Constraint="{Binding Media}"
+                Click="GeoPoint_Click"
+                MaxWidth="320"
+                MaxHeight="240"/>
+            <Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
                 <Border CornerRadius="10" Margin="1" Background="White">
                     <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
                 </Border>
@@ -165,8 +170,13 @@
                 <TextBlock Text="{Binding Media.Address}" Style="{StaticResource BodyTextBlockStyle}"/>
             </StackPanel>
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                <controls:ImageView Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}" Constraint="{Binding Media}" MaxWidth="320" MaxHeight="240"/>
-                <Border Width="20" Height="20" CornerRadius="10" Background="#54000000">
+                <controls:ImageView
+                    Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}"
+                    Constraint="{Binding Media}"
+                    Click="Venue_Click"
+                    MaxWidth="320"
+                    MaxHeight="240"/>
+                <Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
                     <Border CornerRadius="10" Margin="1" Background="White">
                         <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
                     </Border>
@@ -190,9 +200,9 @@
                     <TextBlock Text="{Binding Media.WebPage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BaseTextBlockStyle}"/>
                     <TextBlock Text="{Binding Media.WebPage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource BodyTextBlockStyle}"/>
                 </StackPanel>
-                
-                <Button Click="InstantView_Click" 
-                        Margin="0,6,0,0" 
+
+                <Button Click="InstantView_Click"
+                        Margin="0,6,0,0"
                         Background="Transparent"
                         BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
                         Foreground="{ThemeResource MessageHeaderForegroundBrush}"
@@ -231,8 +241,8 @@
                     <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" MaxWidth="88" MaxHeight="88" Margin="12,0,0,0" VerticalAlignment="Bottom" Grid.Column="1"/>
                 </Grid>
 
-                <Button Click="InstantView_Click" 
-                        Margin="0,6,0,0" 
+                <Button Click="InstantView_Click"
+                        Margin="0,6,0,0"
                         Background="Transparent"
                         BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
                         Foreground="{ThemeResource MessageHeaderForegroundBrush}"
@@ -264,18 +274,18 @@
                 </StackPanel>
 
                 <!-- TODO: video timing -->
-                <Grid Background="Black" 
-                      MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+                <Grid Background="Black"
+                      MinWidth="{ThemeResource TelegramMediaMinWidth}"
                       MinHeight="{ThemeResource TelegramMediaMinHeight}"
                       HorizontalAlignment="Left">
                     <controls:ImageView Source="{Binding Media.WebPage.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
-                                        Constraint="{Binding Media.WebPage.Photo}" 
-                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                        Constraint="{Binding Media.WebPage.Photo}"
+                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
                 </Grid>
 
-                <Button Click="InstantView_Click" 
-                        Margin="0,6,0,0" 
+                <Button Click="InstantView_Click"
+                        Margin="0,6,0,0"
                         Background="Transparent"
                         BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
                         Foreground="{ThemeResource MessageHeaderForegroundBrush}"
@@ -307,18 +317,18 @@
                 </StackPanel>
 
                 <!-- TODO: video timing -->
-                <Grid Background="Black" 
-                      MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+                <Grid Background="Black"
+                      MinWidth="{ThemeResource TelegramMediaMinWidth}"
                       MinHeight="{ThemeResource TelegramMediaMinHeight}"
                       HorizontalAlignment="Left">
                     <controls:ImageView Source="{Binding Media.WebPage.Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                        Constraint="{Binding Media.WebPage.Document}" 
-                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                        Constraint="{Binding Media.WebPage.Document}"
+                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
                 </Grid>
 
-                <Button Click="InstantView_Click" 
-                        Margin="0,6,0,0" 
+                <Button Click="InstantView_Click"
+                        Margin="0,6,0,0"
                         Background="Transparent"
                         BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
                         Foreground="{ThemeResource MessageHeaderForegroundBrush}"
@@ -332,7 +342,7 @@
             </StackPanel>
         </Grid>
     </DataTemplate>
-    
+
     <DataTemplate x:Key="WebPageDocumentMediaTemplate">
         <Grid Margin="0,8,0,6">
             <Grid.ColumnDefinitions>
@@ -365,8 +375,8 @@
                     </StackPanel>
                 </Grid>
 
-                <Button Click="InstantView_Click" 
-                        Margin="0,6,0,0" 
+                <Button Click="InstantView_Click"
+                        Margin="0,6,0,0"
                         Background="Transparent"
                         BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
                         Foreground="{ThemeResource MessageHeaderForegroundBrush}"
@@ -399,13 +409,13 @@
                     </RichTextBlock>
                 </StackPanel>
 
-                <Grid Background="Black" 
-                      MinWidth="{ThemeResource TelegramMediaMinWidth}" 
+                <Grid Background="Black"
+                      MinWidth="{ThemeResource TelegramMediaMinWidth}"
                       MinHeight="{ThemeResource TelegramMediaMinHeight}"
                       HorizontalAlignment="Left">
                     <controls:ImageView Source="{Binding Media.Game.Document, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
-                                        Constraint="{Binding Media.Game.Document}" 
-                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}" 
+                                        Constraint="{Binding Media.Game.Document}"
+                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
                     <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,2,8,4" Margin="4">
@@ -420,21 +430,21 @@
 
 
     <selectors:MediaTemplateSelector x:Key="MediaTemplateSelector"
-        EmptyTemplate="{StaticResource MediaEmptyTemplate}"
-        AudioTemplate="{StaticResource MediaAudioTemplate}"
-        ContactTemplate="{StaticResource ContactMediaTemplate}"
-        DocumentTemplate="{StaticResource MediaDocumentTemplate}"
-        DocumentThumbTemplate="{StaticResource MediaDocumentThumbTemplate}"
-        GameTemplate="{StaticResource GameMediaTemplate}"
-        GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
-        GifTemplate="{StaticResource MediaGifTemplate}"
-        PhotoTemplate="{StaticResource MediaPhotoTemplate}"
-        VideoTemplate="{StaticResource MediaVideoTemplate}"
-        VenueTemplate="{StaticResource MediaVenueTemplate}"
-        WebPageTemplate="{StaticResource WebPageMediaTemplate}"
-        WebPageGifTemplate="{StaticResource WebPageGifMediaTemplate}"
-        WebPageDocumentTemplate="{StaticResource WebPageDocumentMediaTemplate}"
-        WebPagePhotoTemplate="{StaticResource WebPagePhotoMediaTemplate}"
-        WebPageSmallPhotoTemplate="{StaticResource WebPageSmallPhotoMediaTemplate}"/>
+                                     EmptyTemplate="{StaticResource MediaEmptyTemplate}"
+                                     AudioTemplate="{StaticResource MediaAudioTemplate}"
+                                     ContactTemplate="{StaticResource ContactMediaTemplate}"
+                                     DocumentTemplate="{StaticResource MediaDocumentTemplate}"
+                                     DocumentThumbTemplate="{StaticResource MediaDocumentThumbTemplate}"
+                                     GameTemplate="{StaticResource GameMediaTemplate}"
+                                     GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
+                                     GifTemplate="{StaticResource MediaGifTemplate}"
+                                     PhotoTemplate="{StaticResource MediaPhotoTemplate}"
+                                     VideoTemplate="{StaticResource MediaVideoTemplate}"
+                                     VenueTemplate="{StaticResource MediaVenueTemplate}"
+                                     WebPageTemplate="{StaticResource WebPageMediaTemplate}"
+                                     WebPageGifTemplate="{StaticResource WebPageGifMediaTemplate}"
+                                     WebPageDocumentTemplate="{StaticResource WebPageDocumentMediaTemplate}"
+                                     WebPagePhotoTemplate="{StaticResource WebPagePhotoMediaTemplate}"
+                                     WebPageSmallPhotoTemplate="{StaticResource WebPageSmallPhotoMediaTemplate}"/>
 
 </ResourceDictionary>

@@ -9,11 +9,11 @@ namespace Telegram.Api.TL
 		public enum Flag : Int32
 		{
 			Broadcast = (1 << 5),
-			Megagroup = (1 << 8),
+			MegaGroup = (1 << 8),
 		}
 
 		public bool IsBroadcast { get { return Flags.HasFlag(Flag.Broadcast); } set { Flags = value ? (Flags | Flag.Broadcast) : (Flags & ~Flag.Broadcast); } }
-		public bool IsMegagroup { get { return Flags.HasFlag(Flag.Megagroup); } set { Flags = value ? (Flags | Flag.Megagroup) : (Flags & ~Flag.Megagroup); } }
+		public bool IsMegaGroup { get { return Flags.HasFlag(Flag.MegaGroup); } set { Flags = value ? (Flags | Flag.MegaGroup) : (Flags & ~Flag.MegaGroup); } }
 
 		public Flag Flags { get; set; }
 		public Int64 AccessHash { get; set; }

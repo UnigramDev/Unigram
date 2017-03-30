@@ -65,9 +65,6 @@ namespace Telegram.Api.TL
         //    to.Write(ReadOutboxMaxId);
         //}
 
-        public TLInputPeerBase ToInputPeer()
-        {
-            return new TLInputPeerChat { ChatId = Id };
-        }
+        
     }
 }

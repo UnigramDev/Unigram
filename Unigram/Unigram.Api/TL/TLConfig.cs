@@ -8,11 +8,11 @@ namespace Telegram.Api.TL
 		[Flags]
 		public enum Flag : Int32
 		{
-			PhonecallsEnabled = (1 << 1),
+			PhoneCallsEnabled = (1 << 1),
 			TmpSessions = (1 << 0),
 		}
 
-		public bool IsPhonecallsEnabled { get { return Flags.HasFlag(Flag.PhonecallsEnabled); } set { Flags = value ? (Flags | Flag.PhonecallsEnabled) : (Flags & ~Flag.PhonecallsEnabled); } }
+		public bool IsPhoneCallsEnabled { get { return Flags.HasFlag(Flag.PhoneCallsEnabled); } set { Flags = value ? (Flags | Flag.PhoneCallsEnabled) : (Flags & ~Flag.PhoneCallsEnabled); } }
 		public bool HasTmpSessions { get { return Flags.HasFlag(Flag.TmpSessions); } set { Flags = value ? (Flags | Flag.TmpSessions) : (Flags & ~Flag.TmpSessions); } }
 
 		public Flag Flags { get; set; }
@@ -22,7 +22,7 @@ namespace Telegram.Api.TL
 		public Int32 ThisDC { get; set; }
 		public TLVector<TLDCOption> DCOptions { get; set; }
 		public Int32 ChatSizeMax { get; set; }
-		public Int32 MegagroupSizeMax { get; set; }
+		public Int32 MegaGroupSizeMax { get; set; }
 		public Int32 ForwardedCountMax { get; set; }
 		public Int32 OnlineUpdatePeriodMs { get; set; }
 		public Int32 OfflineBlurTimeoutMs { get; set; }
@@ -43,6 +43,7 @@ namespace Telegram.Api.TL
 		public Int32 CallRingTimeoutMs { get; set; }
 		public Int32 CallConnectTimeoutMs { get; set; }
 		public Int32 CallPacketTimeoutMs { get; set; }
+		public String MeUrlPrefix { get; set; }
 		public TLVector<TLDisabledFeature> DisabledFeatures { get; set; }
 
 		public TLConfig() { }
@@ -62,7 +63,7 @@ namespace Telegram.Api.TL
 			ThisDC = from.ReadInt32();
 			DCOptions = TLFactory.Read<TLVector<TLDCOption>>(from);
 			ChatSizeMax = from.ReadInt32();
-			MegagroupSizeMax = from.ReadInt32();
+			MegaGroupSizeMax = from.ReadInt32();
 			ForwardedCountMax = from.ReadInt32();
 			OnlineUpdatePeriodMs = from.ReadInt32();
 			OfflineBlurTimeoutMs = from.ReadInt32();
@@ -83,6 +84,7 @@ namespace Telegram.Api.TL
 			CallRingTimeoutMs = from.ReadInt32();
 			CallConnectTimeoutMs = from.ReadInt32();
 			CallPacketTimeoutMs = from.ReadInt32();
+			MeUrlPrefix = from.ReadString();
 			DisabledFeatures = TLFactory.Read<TLVector<TLDisabledFeature>>(from);
 		}
 
@@ -90,7 +92,7 @@ namespace Telegram.Api.TL
 		{
 			UpdateFlags();
 
-			to.Write(0x3AF6FB5F);
+			to.Write(0xCB601684);
 			to.Write((Int32)Flags);
 			to.Write(Date);
 			to.Write(Expires);
@@ -98,7 +100,7 @@ namespace Telegram.Api.TL
 			to.Write(ThisDC);
 			to.WriteObject(DCOptions);
 			to.Write(ChatSizeMax);
-			to.Write(MegagroupSizeMax);
+			to.Write(MegaGroupSizeMax);
 			to.Write(ForwardedCountMax);
 			to.Write(OnlineUpdatePeriodMs);
 			to.Write(OfflineBlurTimeoutMs);
@@ -119,6 +121,7 @@ namespace Telegram.Api.TL
 			to.Write(CallRingTimeoutMs);
 			to.Write(CallConnectTimeoutMs);
 			to.Write(CallPacketTimeoutMs);
+			to.Write(MeUrlPrefix);
 			to.WriteObject(DisabledFeatures);
 		}
 

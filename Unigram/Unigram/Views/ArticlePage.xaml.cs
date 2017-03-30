@@ -44,6 +44,7 @@ namespace Unigram.Views
     public sealed partial class ArticlePage : Page
     {
         public ArticleViewModel ViewModel => DataContext as ArticleViewModel;
+
         private readonly string _injectedJs;
 
         public ArticlePage()
@@ -60,6 +61,7 @@ namespace Unigram.Views
             LayoutRoot.Children.Clear();
             _containers.Clear();
             _containers.Push(LayoutRoot);
+            _anchors.Clear();
 
             var parameter = TLSerializationService.Current.Deserialize((string)e.Parameter);
 
@@ -72,6 +74,8 @@ namespace Unigram.Views
             var webpage = parameter as TLWebPage;
             if (webpage != null && webpage.HasCachedPage)
             {
+                _webpageId = webpage.Id;
+
                 if (webpage.HasPhoto && !webpage.CachedPage.Photos.Any(x => x.Id == webpage.Photo.Id))
                 {
                     webpage.CachedPage.Photos.Insert(0, webpage.Photo);
@@ -106,8 +110,12 @@ namespace Unigram.Views
             base.OnNavigatedTo(e);
         }
 
+        private long _webpageId;
+
         private Stack<Panel> _containers = new Stack<Panel>();
         private Stack<TLPageBlockBase> _parents = new Stack<TLPageBlockBase>();
+
+        private Dictionary<string, Border> _anchors = new Dictionary<string, Border>();
 
         private void ProcessBlock(TLPageBase page, TLPageBlockBase block)
         {
@@ -154,14 +162,24 @@ namespace Unigram.Views
                 case TLType.PageBlockEmbed:
                     ProcessEmbed(page, (TLPageBlockEmbed)block);
                     break;
-                case TLType.PageBlockPreformatted:
                 case TLType.PageBlockPullquote:
+                    ProcessPullquote(page, (TLPageBlockPullquote)block);
+                    break;
+                case TLType.PageBlockAnchor:
+                    ProcessAnchor(page, (TLPageBlockAnchor)block);
+                    break;
+                case TLType.PageBlockPreformatted:
                 case TLType.PageBlockUnsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
                     break;
-                case TLType.PageBlockAnchor:
-                    break;
             }
+        }
+
+        private void ProcessAnchor(TLPageBase page, TLPageBlockAnchor block)
+        {
+            var child = new Border();
+            _containers.Peek().Children.Add(child);
+            _anchors[block.Name] = child;
         }
 
         private void ProcessEmbed(TLPageBase page, TLPageBlockEmbed block)
@@ -493,6 +511,22 @@ namespace Unigram.Views
             _containers.Peek().Children.Add(panel);
         }
 
+        private void ProcessPullquote(TLPageBase page, TLPageBlockPullquote block)
+        {
+            _containers.Push(new StackPanel
+            {
+                //BorderBrush = new SolidColorBrush(Colors.Black),
+                //BorderThickness = new Thickness(2, 0, 0, 0),
+                Margin = new Thickness(0, 0, 0, 12)
+            });
+
+            ProcessTextBlock(page, block, false);
+            ProcessTextBlock(page, block, true);
+
+            var panel = _containers.Pop();
+            _containers.Peek().Children.Add(panel);
+        }
+
         private void ProcessTextBlock(TLPageBase page, TLPageBlockBase block, bool caption)
         {
             TLRichTextBase text = null;
@@ -535,7 +569,7 @@ namespace Unigram.Views
                     text = caption ? ((TLPageBlockBlockquote)block).Caption : ((TLPageBlockBlockquote)block).Text;
                     break;
                 case TLType.PageBlockPullquote:
-                    text = caption ? ((TLPageBlockBlockquote)block).Caption : ((TLPageBlockBlockquote)block).Text;
+                    text = caption ? ((TLPageBlockPullquote)block).Caption : ((TLPageBlockPullquote)block).Text;
                     break;
             }
 
@@ -553,25 +587,25 @@ namespace Unigram.Views
                     case TLType.PageBlockTitle:
                         textBlock.FontSize = 24;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 0, 12, 12);
+                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubtitle:
                         textBlock.FontSize = 21;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 0, 12, 12);
+                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockHeader:
                         textBlock.FontSize = 21;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 0, 12, 12);
+                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubheader:
                         textBlock.FontSize = 18;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 0, 12, 12);
+                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockFooter:
@@ -596,7 +630,9 @@ namespace Unigram.Views
                         break;
                     case TLType.PageBlockPullquote:
                         var pullquoteBlock = block as TLPageBlockPullquote;
-                        textBlock.FontSize = caption ? 14 : 15;
+                        textBlock.FontSize = caption ? 14 : 18;
+                        textBlock.FontFamily = new FontFamily("Times New Roman");
+                        textBlock.TextAlignment = TextAlignment.Center;
                         break;
                 }
 
@@ -755,7 +791,22 @@ namespace Unigram.Views
 
         private async void Hyperlink_Click(TLTextUrl urlText)
         {
-            if (urlText.WebPageId != 0)
+            if (urlText.WebPageId == _webpageId)
+            {
+                var fragmentStart = urlText.Url.IndexOf('#');
+                if (fragmentStart > 0)
+                {
+                    var name = urlText.Url.Substring(fragmentStart + 1);
+                    if (_anchors.TryGetValue(name, out Border anchor))
+                    {
+                        var transform = anchor.TransformToVisual(LayoutRoot);
+                        var position = transform.TransformPoint(new Point());
+
+                        ScrollingHost.ChangeView(null, Math.Max(0, position.Y - 12), null);
+                    }
+                }
+            }
+            else if (urlText.WebPageId != 0)
             {
                 var protoService = (MTProtoService)MTProtoService.Current;
                 protoService.SendInformativeMessageInternal<TLWebPageBase>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
@@ -773,9 +824,15 @@ namespace Unigram.Views
             }
             else
             {
-                if (Uri.TryCreate(urlText.Url, UriKind.Absolute, out Uri uri))
+                var url = urlText.Url;
+                if (url.StartsWith("http") == false)
                 {
-                    if (uri.Host.Equals("t.me") || uri.Host.Equals("telegram.me"))
+                    url = "http://" + url;
+                }
+
+                if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                {
+                    if (Constants.TelegramHosts.Contains(uri.Host))
                     {
                         MessageHelper.HandleTelegramUrl(urlText.Url);
                     }

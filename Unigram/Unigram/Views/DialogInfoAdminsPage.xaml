@@ -18,27 +18,27 @@
                     <ColumnDefinition Width="48" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                
+
                 <!-- User image -->
-                <Ellipse x:Name="Placeholder" 
-                         Width="48" 
+                <Ellipse x:Name="Placeholder"
+                         Width="48"
                          Height="48"
-                         VerticalAlignment="Top" 
+                         VerticalAlignment="Top"
                          Grid.RowSpan="2"/>
-                <Ellipse Width="48" 
+                <Ellipse Width="48"
                          Height="48"
-                         VerticalAlignment="Top" 
+                         VerticalAlignment="Top"
                          Grid.RowSpan="2">
                     <Ellipse.Fill>
                         <ImageBrush ImageSource="ms-appx:///Assets/Mockups/UserIcons/user_batman.png"
-                                    Stretch="UniformToFill" 
-                                    AlignmentX="Center" 
+                                    Stretch="UniformToFill"
+                                    AlignmentX="Center"
                                     AlignmentY="Center" />
                     </Ellipse.Fill>
                 </Ellipse>
 
                 <!-- Username -->
-                <TextBlock Text="Batman" 
+                <TextBlock Text="Batman"
                            MaxLines="1"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"
@@ -48,7 +48,7 @@
                            Grid.Column="1"/>
 
                 <!-- User status -->
-                <TextBlock Text="Last seen just now" 
+                <TextBlock Text="Last seen just now"
                            MaxLines="1"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"
@@ -57,26 +57,26 @@
                            Margin="8,0"
                            Grid.Row="1"
                            Grid.Column="1"/>
-                
+
                 <!-- Flyout -->
                 <FlyoutBase.AttachedFlyout>
                     <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem x:Name="fbtnDeleteAdmin" 
+                        <MenuFlyoutItem x:Name="fbtnDeleteAdmin"
                                         x:Uid="FBTN-Delete"
                                         Text="Delete" />
                     </MenuFlyout>
                 </FlyoutBase.AttachedFlyout>
             </Grid>
         </DataTemplate>
-        
-        
-        
+
+
+
     </Page.Resources>
-    
-    
-    
-    
-    
+
+
+
+
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <RelativePanel>
             <!-- Titlebar -->
@@ -92,7 +92,7 @@
             </RelativePanel>
 
             <!--  Main content -->
-            <RelativePanel x:Name="rpContent"                           
+            <RelativePanel x:Name="rpContent"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignRightWithPanel="True"
                            RelativePanel.Below="rpTitlebar"
@@ -124,7 +124,7 @@
 
                         <!-- Admin description -->
                         <TextBlock x:Uid="DialogPage-Info-Admin-Description"
-                                   Text="You can add administrators to help you manage you group." 
+                                   Text="You can add administrators to help you manage you group."
                                    Margin="0,0,0,12"
                                    Style="{StaticResource BodyTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"

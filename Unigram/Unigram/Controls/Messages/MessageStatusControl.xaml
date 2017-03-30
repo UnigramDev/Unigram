@@ -10,7 +10,7 @@
     d:DesignWidth="400"
     Background="Transparent"
     Foreground="{ThemeResource MessageSubtleLabelBrush}"
-    VerticalAlignment="Bottom" 
+    VerticalAlignment="Bottom"
     HorizontalAlignment="Right"
     Padding="0,0,6,0">
 

@@ -1,0 +1,95 @@
+﻿<local:MessageBubbleBase
+    x:Class="Unigram.Controls.Messages.MessageBubble"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Messages"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:common="using:Unigram.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vmc="using:Telegram.Api.TL"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
+    MaxWidth="432">
+
+    <!-- TODO: not the right way -->
+    <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
+
+    <UserControl x:Name="LayoutRoot">
+        <Grid x:Name="ContentPanel"
+              Margin="{ThemeResource MessageContentMargin}"
+              Padding="{ThemeResource MessageContentPadding}"
+              CornerRadius="{ThemeResource MessageCornerRadius}"
+              Background="{ThemeResource MessageBackgroundBrush}"
+              BorderBrush="{ThemeResource MessageBorderBrush}"
+              BorderThickness="0,0,0,2">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState x:Name="FullMedia">
+                        <VisualState.Setters>
+                            <Setter Target="StatusControl.Padding" Value="6,4,6,4"/>
+                            <Setter Target="StatusControl.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                            <Setter Target="StatusControl.Foreground" Value="White"/>
+                            <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Default"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="HeaderLabel"
+                       Margin="0,0,0,2"
+                       Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                       RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                       Style="{ThemeResource CaptionTextBlockStyle}"
+                       FontWeight="SemiBold"
+                       Visibility="Collapsed"
+                       Grid.Row="0"/>
+
+            <local:MessageReference
+                Message="{x:Bind ViewModel.Reply, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
+                Click="Reply_Click"
+                Grid.Row="1"/>
+
+            <RichTextBlock
+                x:Name="MessageControl"
+                common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
+                Style="{ThemeResource BodyRichTextBlockStyle}"
+                Foreground="{ThemeResource MessageForegroundBrush}"
+                ContextRequested="MessageControl_ContextRequested"
+                Grid.Row="2">
+                <RichTextBlock.Resources>
+                    <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
+                </RichTextBlock.Resources>
+            </RichTextBlock>
+
+            <controls:MediaControl
+                x:Name="MediaControl"
+                Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                ContentChanged="OnMediaChanged"
+                ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
+                Grid.Row="3"/>
+
+            <local:MessageStatusControl
+                x:Name="StatusControl"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Margin="0,0,-6,-2"
+                Grid.Row="4"/>
+        </Grid>
+    </UserControl>
+
+    <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick"/>
+
+</local:MessageBubbleBase>

@@ -18,6 +18,7 @@ namespace Telegram.Api.TL
         PHONE_CODE_INVALID,
         PHONE_NUMBER_OCCUPIED,
         PHONE_NUMBER_UNOCCUPIED,
+        PHONE_NUMBER_FLOOD,
         FLOOD_WAIT,
         PEER_FLOOD,
         FIRSTNAME_INVALID,

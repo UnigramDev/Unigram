@@ -4,9 +4,31 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Themes"
     xmlns:common="using:Unigram.Common"
-    xmlns:models="using:Telegram.Api.TL"
+    xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+
+    <DataTemplate x:Key="StickerSetItemTemplate" x:DataType="tl:TLMessagesStickerSet">
+        <Grid Margin="0,6" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Image x:Phase="3" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+
+            <TextBlock Text="{x:Bind Set.Title}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+            <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1">
+                            <Run Text="{x:Bind Set.Count}"/>
+                            <Run Text="stickers"/>
+            </TextBlock>
+        </Grid>
+    </DataTemplate>
+
 
 </ResourceDictionary>

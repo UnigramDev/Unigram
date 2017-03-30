@@ -25,7 +25,7 @@ namespace Unigram.ViewModels.Chats
             var config = CacheService.GetConfig();
             if (config != null)
             {
-                _maximum = config.MegagroupSizeMax;
+                _maximum = config.MegaGroupSizeMax;
             }
         }
 

@@ -19,8 +19,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Margin="12,0" VerticalAlignment="Center">
-                <TextBlock x:Name="tblDialogName" Style="{StaticResource BaseTextBlockStyle}"/>
-                <TextBlock x:Name="tblDialogStatus" Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" />
+                <TextBlock x:Name="TitleLabel" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock x:Name="UsernameLabel" Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" />
             </StackPanel>
             <controls:GlyphButton Glyph="&#xE72D;" Grid.Column="1"/>
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>

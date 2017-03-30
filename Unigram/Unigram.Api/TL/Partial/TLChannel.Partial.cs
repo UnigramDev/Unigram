@@ -68,26 +68,36 @@ namespace Telegram.Api.TL
             }
         }
 
-        //public override void ReadFromCache(TLBinaryReader from)
-        //{
-        //    ((ITLReadMaxId)this).ReadInboxMaxId = from.ReadInt32();
-        //    ((ITLReadMaxId)this).ReadOutboxMaxId = from.ReadInt32();
-        //}
-
-        //public override void WriteToCache(TLBinaryWriter to)
-        //{
-        //    to.Write(((ITLReadMaxId)this).ReadInboxMaxId);
-        //    to.Write(((ITLReadMaxId)this).ReadOutboxMaxId);
-        //}
-
-        public TLInputPeerBase ToInputPeer()
-        {
-            return new TLInputPeerChannel { ChannelId = Id, AccessHash = AccessHash.Value };
-        }
-
         public TLInputChannelBase ToInputChannel()
         {
             return new TLInputChannel { ChannelId = Id, AccessHash = AccessHash.Value };
+        }
+
+        public string ExtractRestrictionReason()
+        {
+            if (HasRestrictionReason)
+            {
+                var fullTypeEnd = RestrictionReason.IndexOf(':');
+                if (fullTypeEnd <= 0)
+                {
+                    return null;
+                }
+
+                // {fulltype} is in "{type}-{tag}-{tag}-{tag}" format
+                // if we find "all" tag we return the restriction string
+                var typeTags = RestrictionReason.Substring(0, fullTypeEnd).Split('-')[1];
+#if STORE_RESTRICTIVE
+                var restrictionApplies = typeTags.Contains("all") || typeTags.Contains("ios");
+#else
+                var restrictionApplies = typeTags.Contains("all");
+#endif
+                if (restrictionApplies)
+                {
+                    return RestrictionReason.Substring(fullTypeEnd + 1).Trim();
+                }
+            }
+
+            return null;
         }
     }
 }

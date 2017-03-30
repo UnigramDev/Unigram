@@ -282,6 +282,12 @@
   <data name="MESSAGE_VIDEO" xml:space="preserve">
     <value>hat dir ein Video gesendet</value>
   </data>
+  <data name="PHONE_CALL_MISSED" xml:space="preserve">
+    <value>Anruf in Abwesenheit</value>
+  </data>
+  <data name="PHONE_CALL_REQUEST" xml:space="preserve">
+    <value>{0} ruft dich an</value>
+  </data>
   <data name="PINNED_AUDIO" xml:space="preserve">
     <value>hat eine Sprachnachricht angeheftet</value>
   </data>

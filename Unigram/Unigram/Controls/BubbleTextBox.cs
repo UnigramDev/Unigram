@@ -54,23 +54,29 @@ namespace Unigram.Controls
         public BubbleTextBox()
         {
             DefaultStyleKey = typeof(BubbleTextBox);
+
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
             ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
 
-            _flyout = new MenuFlyout();
-            _flyout.Items.Add(new MenuFlyoutItem { Text = "Bold" });
-            _flyout.Items.Add(new MenuFlyoutItem { Text = "Italic" });
-            _flyout.AllowFocusOnInteraction = false;
-            _flyout.AllowFocusWhenDisabled = false;
+            //_flyout = new MenuFlyout();
+            //_flyout.Items.Add(new MenuFlyoutItem { Text = "Bold" });
+            //_flyout.Items.Add(new MenuFlyoutItem { Text = "Italic" });
+            //_flyout.AllowFocusOnInteraction = false;
+            //_flyout.AllowFocusWhenDisabled = false;
 
-            ((MenuFlyoutItem)_flyout.Items[0]).Click += Bold_Click;
-            ((MenuFlyoutItem)_flyout.Items[1]).Click += Italic_Click;
-            ((MenuFlyoutItem)_flyout.Items[1]).Loaded += Italic_Loaded;
+            //((MenuFlyoutItem)_flyout.Items[0]).Click += Bold_Click;
+            //((MenuFlyoutItem)_flyout.Items[1]).Click += Italic_Click;
+            //((MenuFlyoutItem)_flyout.Items[1]).Loaded += Italic_Loaded;
 
-#if DEBUG
-            // To test hyperlinks (Used for mention name => to tag people that has no username)
-            _flyout.Items.Add(new MenuFlyoutItem { Text = "Hyperlink" });
-            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
-#endif
+//#if DEBUG
+//            // To test hyperlinks (Used for mention name => to tag people that has no username)
+//            _flyout.Items.Add(new MenuFlyoutItem { Text = "Hyperlink" });
+//            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
+//#endif
 
             Paste += OnPaste;
             Clipboard.ContentChanged += Clipboard_ContentChanged;
@@ -167,6 +173,23 @@ namespace Unigram.Controls
             OnSelectionChanged();
         }
 
+        public void InsertText(string text)
+        {
+            var start = Document.Selection.StartPosition;
+            var end = Document.Selection.EndPosition;
+
+            var preceding = start > 0 && !char.IsWhiteSpace(Document.GetRange(start - 1, start).Character);
+            var trailing = !char.IsWhiteSpace(Document.GetRange(end, end + 1).Character);
+
+            var block = string.Format("{0}{1}{2}",
+                preceding ? " " : "",
+                text,
+                trailing ? " " : "");
+
+            Document.Selection.SetText(TextSetOptions.None, block);
+            Document.Selection.StartPosition = Document.Selection.EndPosition;
+        }
+
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
             // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
@@ -255,15 +278,15 @@ namespace Unigram.Controls
 
         private void OnSelectionChanged()
         {
-            if (Document.Selection.Length != 0)
-            {
-                Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out int hit);
-                _flyout.ShowAt(this, new Point(rect.X + 12, rect.Y - _presenter?.ActualHeight ?? 0));
-            }
-            else
-            {
-                _flyout.Hide();
-            }
+            //if (Document.Selection.Length != 0)
+            //{
+            //    Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out int hit);
+            //    _flyout.ShowAt(this, new Point(rect.X + 12, rect.Y - _presenter?.ActualHeight ?? 0));
+            //}
+            //else
+            //{
+            //    _flyout.Hide();
+            //}
         }
 
         //protected override async void OnKeyDown(KeyRoutedEventArgs e)
@@ -385,10 +408,9 @@ namespace Unigram.Controls
 
                 if (fast)
                 {
-                    // TODO: verify if it is actually a sticker
-                    if (text.Length < 14 && !string.IsNullOrWhiteSpace(text))
+                    if (text.Trim().Length <= 14 && !string.IsNullOrWhiteSpace(text))
                     {
-                        ViewModel.StickerPack = DatabaseContext.Current.SelectStickerPack(text.Trim());
+                        ViewModel.StickerPack = ViewModel.Stickers.StickersService.LoadStickersForEmoji(text.Trim());
                     }
                     else
                     {
@@ -802,12 +824,20 @@ namespace Unigram.Controls
 
                 _isDirty = true;
                 Document.SetText(TextSetOptions.FormatRtf, document.Render());
+                Document.GetRange(0, text.Length).CharacterFormat.ForegroundColor = Document.GetDefaultCharacterFormat().ForegroundColor;
                 Document.Selection.SetRange(text.Length, text.Length);
             }
             else
             {
-                Document.SetText(TextSetOptions.None, text);
-                Document.Selection.SetRange(text.Length, text.Length);
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
+                }
+                else
+                {
+                    Document.SetText(TextSetOptions.None, text);
+                    Document.Selection.SetRange(text.Length, text.Length);
+                }
             }
         }
 

@@ -14,15 +14,15 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        
+
         <!-- User photo -->
-        <Ellipse x:Name="Placeholder" 
-                 Width="36" 
-                 Height="36" 
-                 VerticalAlignment="Top" 
+        <Ellipse x:Name="Placeholder"
+                 Width="36"
+                 Height="36"
+                 VerticalAlignment="Top"
                  Fill="Red"/>
-        <Ellipse Width="36" 
-                 Height="36" 
+        <Ellipse Width="36"
+                 Height="36"
                  VerticalAlignment="Top">
             <Ellipse.Fill>
                 <ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
@@ -34,7 +34,7 @@
                     VerticalAlignment="Center"
                     Margin="8,0"
                     Grid.Column="1">
-            <FontIcon Glyph="&#xE125;" 
+            <FontIcon Glyph="&#xE125;"
                       Visibility="{Binding GroupChat}"
                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                       VerticalAlignment="Bottom"

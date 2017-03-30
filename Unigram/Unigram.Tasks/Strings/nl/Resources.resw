@@ -282,6 +282,12 @@
   <data name="MESSAGE_VIDEO" xml:space="preserve">
     <value>heeft je een video gestuurd</value>
   </data>
+  <data name="PHONE_CALL_MISSED" xml:space="preserve">
+    <value>Gemiste oproep</value>
+  </data>
+  <data name="PHONE_CALL_REQUEST" xml:space="preserve">
+    <value>{0} belt je</value>
+  </data>
   <data name="PINNED_AUDIO" xml:space="preserve">
     <value>heeft een spraakbericht vastgezet</value>
   </data>

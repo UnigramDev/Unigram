@@ -612,10 +612,10 @@ namespace Unigram.Converters
                 var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
+                    await manager.DownloadFileAsync(filename, document.DCId, document.ToInputFileLocation(), document.Size);
                     Execute.BeginOnUIThread(async () =>
                     {
-                        await renderer.SetSourceAsync(FileUtils.GetTempFileUri(filename));
+                            await renderer.SetSourceAsync(FileUtils.GetTempFileUri(filename));
                     });
                 });
 
@@ -986,7 +986,7 @@ namespace Unigram.Converters
                 var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
+                    await manager.DownloadFileAsync(filename, document.DCId, document.ToInputFileLocation(), document.Size);
                     var buffer = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(filename)));
                     Execute.BeginOnUIThread(() =>
                     {

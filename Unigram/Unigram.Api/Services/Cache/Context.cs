@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Telegram.Api.Services.Cache
 {
-    public class Context<T> : Dictionary<long, T>
+    public class Context<T> : ConcurrentDictionary<long, T>
     {
         public Context()
         {
@@ -29,6 +30,11 @@ namespace Telegram.Api.Services.Cache
             {
                 base[index] = value;
             }
+        }
+
+        public void Remove(long key)
+        {
+            TryRemove(key, out T value);
         }
     }
 }

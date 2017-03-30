@@ -55,6 +55,8 @@ namespace Telegram.Api.Services
 
         void MessageAcknowledgments(TLVector<long> ids);
 
+        void SendRequestCallback<T>(TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null);
+
         // auth
         void SendCodeCallback(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null);
         void ResendCodeCallback(string phoneNumber, string phoneCodeHash, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
@@ -69,7 +71,7 @@ namespace Telegram.Api.Services
        
         void SearchCallback(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void GetDialogsCallback(int offsetDate, int offsetId, TLInputPeerBase offsetPeer, int limit, Action<TLMessagesDialogsBase> callback, Action<TLRPCError> faultCallback = null);
-        void GetHistoryCallback(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetHistoryCallback(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void DeleteMessagesCallback(TLVector<int> id, bool revoke, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null);
         void DeleteHistoryCallback(bool justClear, TLInputPeerBase peer, int offset, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null);
         void DeleteContactCallback(TLInputUserBase id, Action<TLContactsLink> callback, Action<TLRPCError> faultCallback = null);
@@ -78,6 +80,7 @@ namespace Telegram.Api.Services
         void GetFullChatCallback(int chatId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null);
         void GetFullUserCallback(TLInputUserBase id, Action<TLUserFull> callback, Action<TLRPCError> faultCallback = null);
         void GetUsersCallback(TLVector<TLInputUserBase> id, Action<TLVector<TLUserBase>> callback, Action<TLRPCError> faultCallback = null);
+        void GetCommonChatsCallback(TLInputUserBase id, int maxId, int limit, Action<TLMessagesChatsBase> callback, Action<TLRPCError> faultCallback = null);
 
         void SetTypingCallback(TLInputPeerBase peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SetTypingCallback(TLInputPeerBase peer, TLSendMessageActionBase action, Action<bool> callback, Action<TLRPCError> faultCallback = null);
@@ -154,8 +157,9 @@ namespace Telegram.Api.Services
         void GetMessagesCallback(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
 
         // messages
-        void GetFeaturedStickersCallback(bool full, int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null);
-        void GetArchivedStickersCallback(bool full, long offsetId, int limit, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null);
+        void GetFeaturedStickersCallback(int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetArchivedStickersCallback(bool full, long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null);
+        void GetArchivedStickersCallback(long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null);
         void ReadFeaturedStickersCallback(TLVector<long> id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void GetAllDraftsCallback(Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void SaveDraftCallback(TLInputPeerBase peer, TLDraftMessageBase draft, Action<bool> callback, Action<TLRPCError> faultCallback = null);
@@ -173,7 +177,7 @@ namespace Telegram.Api.Services
         void SendMediaCallback(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void StartBotCallback(TLInputUserBase bot, string startParam, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void ForwardMessageCallback(TLInputPeerBase peer, int fwdMessageId, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
-        void ForwardMessagesCallback(TLInputPeerBase toPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void ForwardMessagesCallback(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void CreateChatCallback(TLVector<TLInputUserBase> users, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void EditChatTitleCallback(int chatId, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void EditChatPhotoCallback(int chatId, TLInputChatPhotoBase photo, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
@@ -260,7 +264,7 @@ namespace Telegram.Api.Services
         void SendConfirmPhoneCodeCallback(string hash, bool currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
 
         // help
-        void GetAppChangelogCallback(string deviceModel, string systemVersion, string appVersion, string langCode, Action<TLHelpAppChangelogBase> callback, Action<TLRPCError> faultCallback = null); 
+        void GetAppChangelogCallback(string prevAppVersion, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null); 
         void GetTermsOfServiceCallback(string langCode, Action<TLHelpTermsOfService> callback, Action<TLRPCError> faultCallback = null);
 
 

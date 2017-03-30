@@ -22,27 +22,27 @@ namespace Telegram.Api.Services.Cache
 
         private Context<TLUserBase> UsersContext
         {
-            get { return _database != null ? _database.UsersContext : null; }
+            get { return _database?.UsersContext; }
         }
 
         private Context<TLChatBase> ChatsContext
         {
-            get { return _database != null ? _database.ChatsContext : null; }
+            get { return _database?.ChatsContext; }
         }
 
         private Context<TLEncryptedChatBase> EncryptedChatsContext
         {
-            get { return _database != null ? _database.EncryptedChatsContext : null; }
+            get { return _database?.EncryptedChatsContext; }
         } 
 
         private Context<TLMessageBase> MessagesContext
         {
-            get { return _database != null ? _database.MessagesContext : null; }
+            get { return _database?.MessagesContext; }
         }
 
         private Context<Context<TLMessageBase>> ChannelsContext
         {
-            get { return _database != null ? _database.ChannelsContext : null; }
+            get { return _database?.ChannelsContext; }
         }
 
         // TODO: Encrypted 
@@ -53,12 +53,12 @@ namespace Telegram.Api.Services.Cache
 
         private Context<TLMessageBase> RandomMessagesContext
         {
-            get { return _database != null ? _database.RandomMessagesContext : null; }
+            get { return _database?.RandomMessagesContext; }
         }
 
         private Context<TLDialog> DialogsContext
         {
-            get { return _database != null ? _database.DialogsContext : null; }
+            get { return _database?.DialogsContext; }
         } 
 
         public void Init()
@@ -387,7 +387,12 @@ namespace Telegram.Api.Services.Cache
                 Init();
             }
 
-            return ChatsContext[id.Value];
+            if (id.HasValue)
+            {
+                return ChatsContext[id.Value];
+            }
+
+            return null;
         }
 
         // TODO: Encrypted 
@@ -408,7 +413,12 @@ namespace Telegram.Api.Services.Cache
                 Init();
             }
 
-            return UsersContext[id.Value];
+            if (id.HasValue)
+            {
+                return UsersContext[id.Value];
+            }
+
+            return null;
         }
 
         public TLUserBase GetUser(TLUserProfilePhoto photo)
@@ -919,8 +929,7 @@ namespace Telegram.Api.Services.Cache
 
         private TLMessageBase GetCachedMessage(TLMessageBase message)
         {
-            TLPeerChannel peerChannel;
-            var isChannelMessage = TLUtils.IsChannelMessage(message, out peerChannel);
+            var isChannelMessage = TLUtils.IsChannelMessage(message, out TLPeerChannel peerChannel);
             if (isChannelMessage)
             {
                 if (message.Id != 0 && ChannelsContext != null && ChannelsContext.ContainsKey(peerChannel.Id))
@@ -1687,7 +1696,7 @@ namespace Telegram.Api.Services.Cache
                 TLDialog cachedDialog = null;
                 if (DialogsContext != null)
                 {
-                    cachedDialog = DialogsContext[dialog.Index] as TLDialog;
+                    cachedDialog = DialogsContext[dialog.Id] as TLDialog;
                 }
                 //Debug.WriteLine("messages.getDialogs sync dialogs stop get cached elapsed=" + stopwatch.Elapsed);
 
@@ -1737,7 +1746,7 @@ namespace Telegram.Api.Services.Cache
                 TLDialog cachedDialog = null;
                 if (DialogsContext != null)
                 {
-                    cachedDialog = DialogsContext[dialog.Index] as TLDialog;
+                    cachedDialog = DialogsContext[dialog.Id] as TLDialog;
                 }
 
                 if (cachedDialog != null)
@@ -1857,24 +1866,21 @@ namespace Telegram.Api.Services.Cache
                 {
                     if (dialog.Peer is TLPeerChannel)
                     {
-                        TLChatBase chat;
-                        if (chatsIndex.TryGetValue(dialog.Index, out chat))
+                        if (chatsIndex.TryGetValue(dialog.Id, out TLChatBase chat))
                         {
                             chat.NotifySettings = dialog.NotifySettings;
                         }
                     }
                     else if (dialog.Peer is TLPeerChat)
                     {
-                        TLChatBase chat;
-                        if (chatsIndex.TryGetValue(dialog.Index, out chat))
+                        if (chatsIndex.TryGetValue(dialog.Id, out TLChatBase chat))
                         {
                             chat.NotifySettings = dialog.NotifySettings;
                         }
                     }
                     else if (dialog.Peer is TLPeerUser)
                     {
-                        TLUserBase user;
-                        if (usersIndex.TryGetValue(dialog.Index, out user))
+                        if (usersIndex.TryGetValue(dialog.Id, out TLUserBase user))
                         {
                             user.NotifySettings = dialog.NotifySettings;
                         }
@@ -1886,8 +1892,7 @@ namespace Telegram.Api.Services.Cache
                 {
                     if (dialog.Peer is TLPeerChannel)
                     {
-                        TLChatBase chatBase;
-                        if (chatsIndex.TryGetValue(dialog.Index, out chatBase))
+                        if (chatsIndex.TryGetValue(dialog.Id, out TLChatBase chatBase))
                         {
                             var chat = chatBase as ITLReadMaxId;
                             if (chat != null)
@@ -1899,8 +1904,7 @@ namespace Telegram.Api.Services.Cache
                     }
                     else if (dialog.Peer is TLPeerChat)
                     {
-                        TLChatBase chatBase;
-                        if (chatsIndex.TryGetValue(dialog.Index, out chatBase))
+                        if (chatsIndex.TryGetValue(dialog.Id, out TLChatBase chatBase))
                         {
                             var chat = chatBase as ITLReadMaxId;
                             if (chat != null)
@@ -1912,8 +1916,7 @@ namespace Telegram.Api.Services.Cache
                     }
                     else if (dialog.Peer is TLPeerUser)
                     {
-                        TLUserBase userBase;
-                        if (usersIndex.TryGetValue(dialog.Index, out userBase))
+                        if (usersIndex.TryGetValue(dialog.Id, out TLUserBase userBase))
                         {
                             var user = userBase as ITLReadMaxId;
                             if (user != null)
@@ -1952,8 +1955,7 @@ namespace Telegram.Api.Services.Cache
                         var peerId = message.ToId is TLPeerUser && !message.IsOut? message.FromId.Value : message.ToId.Id;
                         if (!message.IsOut)
                         {
-                            TLDialog dialog;
-                            if (dialogsCache.TryGetValue(peerId, out dialog))
+                            if (dialogsCache.TryGetValue(peerId, out TLDialog dialog))
                             {
                                 var dialogChannel = dialog as TLDialog; // TODO: TLDialogChannel;
                                 if (dialogChannel != null && dialogChannel.ReadInboxMaxId < message.Id)
@@ -2077,10 +2079,9 @@ namespace Telegram.Api.Services.Cache
 
             var timer = Stopwatch.StartNew();
 
-            TLUserBase result;
             if (_database == null) Init();
 
-            SyncUserInternal(link.User, out result);
+            SyncUserInternal(link.User, out TLUserBase result);
             link.User = result;
 
             _database.Commit();
@@ -2099,10 +2100,9 @@ namespace Telegram.Api.Services.Cache
 
             var timer = Stopwatch.StartNew();
 
-            TLUserBase result;
             if (_database == null) Init();
 
-            SyncUserInternal(userFull.ToUser(), out result);
+            SyncUserInternal(userFull.ToUser(), out TLUserBase result);
             userFull.User = result;
 
             var dialog = GetDialog(new TLPeerUser { Id = userFull.User.Id });
@@ -2129,10 +2129,9 @@ namespace Telegram.Api.Services.Cache
 
             var timer = Stopwatch.StartNew();
 
-            TLUserBase result;
             if (_database == null) Init();
 
-            SyncUserInternal(user, out result);
+            SyncUserInternal(user, out TLUserBase result);
 
             _database.Commit();
 
@@ -2703,7 +2702,6 @@ namespace Telegram.Api.Services.Cache
             var usersResult = new TLVector<TLUserBase>(messagesChatFull.Users.Count);
             var chatsResult = new TLVector<TLChatBase>(messagesChatFull.Chats.Count);
             var currentChat = messagesChatFull.Chats.First(x => x.Id == messagesChatFull.FullChat.Id);
-            TLChatBase chatResult;
             if (_database == null) Init();
 
             SyncUsersInternal(messagesChatFull.Users, usersResult);
@@ -2712,7 +2710,7 @@ namespace Telegram.Api.Services.Cache
             SyncChatsInternal(messagesChatFull.Chats, chatsResult);
             messagesChatFull.Chats = chatsResult;
 
-            SyncChatInternal(messagesChatFull.FullChat.ToChat(currentChat), out chatResult);
+            SyncChatInternal(messagesChatFull.FullChat.ToChat(currentChat), out TLChatBase chatResult);
 
             var channel = currentChat as TLChannel;
             var dialog = GetDialog(channel != null ? (TLPeerBase)new TLPeerChannel { Id = messagesChatFull.FullChat.Id } : new TLPeerChat { Id = messagesChatFull.FullChat.Id });
@@ -3347,18 +3345,24 @@ namespace Telegram.Api.Services.Cache
         }
 
         private TLConfig _config;
+        public TLConfig Config
+        {
+            get
+            {
+                if (_config == null)
+                    _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
+
+                return _config;
+            }
+        }
 
         public TLConfig GetConfig()
         {
-#if SILVERLIGHT || WIN_RT
             if (_config == null)
-            {
                 _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
-            }
-#endif
+
             return _config;
         }
-
 
         public void GetConfigAsync(Action<TLConfig> callback)
         {

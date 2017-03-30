@@ -8,10 +8,12 @@ namespace Telegram.Api.TL
 		[Flags]
 		public enum Flag : Int32
 		{
+			NeedRating = (1 << 2),
 			Reason = (1 << 0),
 			Duration = (1 << 1),
 		}
 
+		public bool IsNeedRating { get { return Flags.HasFlag(Flag.NeedRating); } set { Flags = value ? (Flags | Flag.NeedRating) : (Flags & ~Flag.NeedRating); } }
 		public bool HasReason { get { return Flags.HasFlag(Flag.Reason); } set { Flags = value ? (Flags | Flag.Reason) : (Flags & ~Flag.Reason); } }
 		public bool HasDuration { get { return Flags.HasFlag(Flag.Duration); } set { Flags = value ? (Flags | Flag.Duration) : (Flags & ~Flag.Duration); } }
 

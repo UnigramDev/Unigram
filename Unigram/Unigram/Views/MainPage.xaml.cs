@@ -38,6 +38,7 @@ using Unigram.ViewModels.Chats;
 using Unigram.Views.Chats;
 using Windows.System.Profile;
 using Windows.ApplicationModel.Core;
+using Unigram.Core.Services;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -51,7 +52,6 @@ namespace Unigram.Views
         public MainViewModel ViewModel => DataContext as MainViewModel;
 
         private object _lastSelected;
-        private object _lastSelectedContact;
 
         public MainPage()
         {
@@ -59,27 +59,25 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
             DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
 
-            _logicalDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-
             Loaded += OnLoaded;
 
-            Theme.RegisterPropertyChangedCallback(Border.BackgroundProperty, OnThemeChanged);
+            //Theme.RegisterPropertyChangedCallback(Border.BackgroundProperty, OnThemeChanged);
 
             searchInit();
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
         }
 
-        private async void OnThemeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            if (_canvas != null)
-            {
-                _backgroundImage = await CanvasBitmap.LoadAsync(_canvas, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
-                _backgroundBrush = new CanvasImageBrush(_canvas, _backgroundImage);
-                _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
-                _canvas.Invalidate();
-            }
-        }
+        //private async void OnThemeChanged(DependencyObject sender, DependencyProperty dp)
+        //{
+        //    if (_canvas != null)
+        //    {
+        //        _backgroundImage = await CanvasBitmap.LoadAsync(_canvas, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
+        //        _backgroundBrush = new CanvasImageBrush(_canvas, _backgroundImage);
+        //        _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
+        //        _canvas.Invalidate();
+        //    }
+        //}
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -100,10 +98,9 @@ namespace Unigram.Views
 
             if (e.Parameter is string)
             {
-                var parameter = SerializationService.Json.Deserialize((string)e.Parameter) as string;
-                if (parameter != null)
+                if (SerializationService.Json.Deserialize((string)e.Parameter) is string parameter)
                 {
-                    var data = Toast.SplitArguments((string)parameter);
+                    var data = Toast.SplitArguments(parameter);
                     if (data.ContainsKey("from_id"))
                     {
                         var user = ViewModel.CacheService.GetUser(int.Parse(data["from_id"]));
@@ -133,6 +130,19 @@ namespace Unigram.Views
                     }
                 }
             }
+
+            var config = ViewModel.CacheService.GetConfig();
+            if (config != null)
+            {
+                if (config.IsPhoneCallsEnabled)
+                {
+
+                }
+                else if (rpMasterTitlebar.Items.Count > 2)
+                {
+                    rpMasterTitlebar.Items.RemoveAt(2);
+                }
+            }
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)
@@ -146,33 +156,91 @@ namespace Unigram.Views
                     parameter = tuple.Item1;
                 }
 
-                var dialog = ViewModel.Dialogs.Items.FirstOrDefault(x => x.Peer.Equals(parameter));
-                if (dialog != null)
-                {
-                    _lastSelected = dialog;
-                    DialogsListView.SelectedItem = dialog;
-                }
-                else
-                {
-                    _lastSelected = null;
-                    DialogsListView.SelectedItem = null;
-                }
+                UpdateListViewsSelectedItem(parameter as TLPeerBase);
+            }
+            else
+            {
+                UpdateListViewsSelectedItem(GetPeerFromBackStack());
+            }
+        }
 
-                if (parameter is TLPeerUser)
+        private void UpdateListViewsSelectedItem(TLPeerBase peer)
+        {
+            if (peer == null)
+            {
+                _lastSelected = null;
+                DialogsListView.SelectedItem = null;
+
+                _lastSelected = null;
+                UsersListView.SelectedItem = null;
+                return;
+            }
+
+            var dialog = ViewModel.Dialogs.Items.FirstOrDefault(x => x.Peer.Equals(peer));
+            if (dialog != null)
+            {
+                _lastSelected = dialog;
+                DialogsListView.SelectedItem = dialog;
+            }
+            else
+            {
+                _lastSelected = null;
+                DialogsListView.SelectedItem = null;
+            }
+
+            var user = ViewModel.Contacts.Items.FirstOrDefault(x => x.Id == peer.Id);
+            if (user != null)
+            {
+                _lastSelected = user;
+                UsersListView.SelectedItem = user;
+            }
+            else
+            {
+                _lastSelected = null;
+                UsersListView.SelectedItem = null;
+            }
+        }
+
+        private TLPeerBase GetPeerFromBackStack()
+        {
+            if (MasterDetail.NavigationService.CurrentPageType == typeof(DialogPage))
+            {
+                if (TryGetPeerFromParameter(MasterDetail.NavigationService.CurrentPageParam, out TLPeerBase peer))
                 {
-                    var user = ViewModel.Contacts.Items.FirstOrDefault(x => x.Id == ((TLPeerUser)parameter).UserId);
-                    if (user != null)
+                    return peer;
+                }
+            }
+
+            for (int i = MasterDetail.NavigationService.Frame.BackStackDepth - 1; i >= 0; i--)
+            {
+                var entry = MasterDetail.NavigationService.Frame.BackStack[i];
+                if (entry.SourcePageType == typeof(DialogPage))
+                {
+                    if (TryGetPeerFromParameter(entry.Parameter, out TLPeerBase peer))
                     {
-                        _lastSelectedContact = user;
-                        UsersListView.SelectedItem = user;
-                    }
-                    else
-                    {
-                        _lastSelected = null;
-                        UsersListView.SelectedItem = null;
+                        return peer;
                     }
                 }
             }
+
+            return null;
+        }
+
+        public static bool TryGetPeerFromParameter(object parameter, out TLPeerBase peer)
+        {
+            if (parameter is string)
+            {
+                parameter = TLSerializationService.Current.Deserialize((string)parameter);
+            }
+
+            var tuple = parameter as Tuple<TLPeerBase, int>;
+            if (tuple != null)
+            {
+                parameter = tuple.Item1;
+            }
+
+            peer = parameter as TLPeerBase;
+            return peer != null;
         }
 
         private void ClearNavigation()
@@ -198,22 +266,28 @@ namespace Unigram.Views
 
             if (MasterDetail.CurrentState == MasterDetailState.Narrow)
             {
-                DialogsListView.IsItemClickEnabled = true;
+                //DialogsListView.IsItemClickEnabled = true;
                 DialogsListView.SelectionMode = ListViewSelectionMode.None;
                 DialogsListView.SelectedItem = null;
-                DialogsSearchListView.IsItemClickEnabled = true;
+                //DialogsSearchListView.IsItemClickEnabled = true;
                 DialogsSearchListView.SelectionMode = ListViewSelectionMode.None;
                 DialogsSearchListView.SelectedItem = null;
+                //UsersListView.IsItemClickEnabled = true;
+                UsersListView.SelectionMode = ListViewSelectionMode.None;
+                UsersListView.SelectedItem = null;
                 Separator.BorderThickness = new Thickness(0);
             }
             else
             {
-                DialogsListView.IsItemClickEnabled = false;
+                //DialogsListView.IsItemClickEnabled = false;
                 DialogsListView.SelectionMode = ListViewSelectionMode.Single;
                 DialogsListView.SelectedItem = _lastSelected;
-                DialogsSearchListView.IsItemClickEnabled = false;
+                //DialogsSearchListView.IsItemClickEnabled = false;
                 DialogsSearchListView.SelectionMode = ListViewSelectionMode.Single;
                 DialogsSearchListView.SelectedItem = _lastSelected;
+                //UsersListView.IsItemClickEnabled = false;
+                UsersListView.SelectionMode = ListViewSelectionMode.Single;
+                UsersListView.SelectedItem = _lastSelected;
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
             }
         }
@@ -225,40 +299,7 @@ namespace Unigram.Views
             {
                 _lastSelected = e.ClickedItem;
 
-                var dialog = e.ClickedItem as TLDialog;
-                if (dialog != null)
-                {
-                    MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), dialog.Peer);
-                }
-
-                var user = e.ClickedItem as TLUser;
-                if (user != null)
-                {
-                    MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), new TLPeerUser { UserId = user.Id });
-                }
-
-                var channel = e.ClickedItem as TLChannel;
-                if (channel != null)
-                {
-                    MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), new TLPeerChannel { ChannelId = channel.Id });
-                }
-            }
-        }
-
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var listView = sender as ListView;
-            if (listView.SelectedItem != null)
-            {
-                listView.ScrollIntoView(listView.SelectedItem);
-            }
-
-            if (listView.SelectedItem != null && _lastSelected != listView.SelectedItem)
-            {
-                _lastSelected = listView.SelectedItem;
-
-                var dialog = listView.SelectedItem as TLDialog;
-                if (dialog != null)
+                if (e.ClickedItem is TLDialog dialog)
                 {
                     if (dialog.IsSearchResult)
                     {
@@ -266,22 +307,74 @@ namespace Unigram.Views
                     }
                     else
                     {
-                        MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), dialog.Peer);
+                        MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
                     }
                 }
 
-                var user = listView.SelectedItem as TLUser;
-                if (user != null)
+                if (e.ClickedItem is TLMessageCommonBase message)
+                {
+                    var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
+                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(peer, message.Id));
+                }
+
+                if (e.ClickedItem is TLUser user)
                 {
                     MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), new TLPeerUser { UserId = user.Id });
                 }
 
-                var channel = listView.SelectedItem as TLChannel;
-                if (channel != null)
+                if (e.ClickedItem is TLChannel channel)
                 {
                     MasterDetail.NavigationService.Navigate(typeof(ChatPageHost), new TLPeerChannel { ChannelId = channel.Id });
                 }
             }
+        }
+
+        private async void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var listView = sender as ListView;
+            if (listView.SelectedItem != null)
+            {
+                listView.ScrollIntoView(listView.SelectedItem);
+            }
+            else
+            {
+                // Find another solution
+                await Task.Delay(500);
+                UpdateListViewsSelectedItem(GetPeerFromBackStack());
+            }
+
+            //if (listView.SelectedItem != null && _lastSelected != listView.SelectedItem)
+            //{
+            //    _lastSelected = listView.SelectedItem;
+
+            //    if (listView.SelectedItem is TLDialog dialog)
+            //    {
+            //        if (dialog.IsSearchResult)
+            //        {
+            //            MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(dialog.Peer, dialog.TopMessage));
+            //        }
+            //        else
+            //        {
+            //            MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+            //        }
+            //    }
+
+            //    if (listView.SelectedItem is TLMessageCommonBase message)
+            //    {
+            //        var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
+            //        MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(peer, message.Id));
+            //    }
+
+            //    if (listView.SelectedItem is TLUser user)
+            //    {
+            //        MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+            //    }
+
+            //    if (listView.SelectedItem is TLChannel channel)
+            //    {
+            //        MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
+            //    }
+            //}
         }
 
         private void cbtnMasterSelect_Click(object sender, RoutedEventArgs e)
@@ -339,7 +432,7 @@ namespace Unigram.Views
         private void searchInit()
         {
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchDialogs, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x => 
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x =>
             {
                 if (string.IsNullOrWhiteSpace(SearchDialogs.Text))
                 {
@@ -370,51 +463,18 @@ namespace Unigram.Views
             catch { }
         }
 
-        private void UsersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (UsersListView.SelectedItem != null && _lastSelectedContact != UsersListView.SelectedItem && UsersListView.SelectionMode != ListViewSelectionMode.Multiple)
-            {
-                var user = UsersListView.SelectedItem as TLUser;
-                MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
-            }
-        }
-
         private void Self_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self?.Id ?? 0 });
+            if (ViewModel.Contacts.Self != null)
+            {
+                MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self.Id });
+            }
         }
 
         private void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPage));
         }
-
-        #region Background
-
-        private float _logicalDpi;
-        private CanvasBitmap _backgroundImage;
-        private CanvasImageBrush _backgroundBrush;
-
-        private CanvasControl _canvas;
-
-        private void BackgroundCanvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
-        {
-            _canvas = sender;
-
-            args.TrackAsyncAction(Task.Run(async () =>
-            {
-                _backgroundImage = await CanvasBitmap.LoadAsync(sender, new Uri("ms-appx:///Assets/Images/DefaultBackground.png"));
-                _backgroundBrush = new CanvasImageBrush(sender, _backgroundImage);
-                _backgroundBrush.ExtendX = _backgroundBrush.ExtendY = CanvasEdgeBehavior.Wrap;
-            }).AsAsyncAction());
-        }
-
-        private void BackgroundCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
-        {
-            args.DrawingSession.FillRectangle(new Rect(new Point(), sender.RenderSize), _backgroundBrush);
-        }
-
-        #endregion
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -431,6 +491,16 @@ namespace Unigram.Views
         }
 
         #region Context menu
+
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            var flyout = sender as MenuFlyout;
+
+            foreach (var item in flyout.Items)
+            {
+                item.Visibility = Visibility.Visible;
+            }
+        }
 
         private void DialogPin_Loaded(object sender, RoutedEventArgs e)
         {
@@ -474,11 +544,11 @@ namespace Unigram.Views
                         {
                             if (channel.IsCreator)
                             {
-                                element.Text = channel.IsMegagroup ? "Delete group" : "Delete channel";
+                                element.Text = channel.IsMegaGroup ? "Delete group" : "Delete channel";
                             }
                             else
                             {
-                                element.Text = channel.IsMegagroup ? "Leave group" : "Leave channel";
+                                element.Text = channel.IsMegaGroup ? "Leave group" : "Leave channel";
                             }
                         }
 

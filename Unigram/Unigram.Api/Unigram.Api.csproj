@@ -153,6 +153,7 @@
     <Compile Include="TL\Methods\Account\TLAccountGetPassword.cs" />
     <Compile Include="TL\Methods\Account\TLAccountGetPasswordSettings.cs" />
     <Compile Include="TL\Methods\Account\TLAccountGetPrivacy.cs" />
+    <Compile Include="TL\Methods\Account\TLAccountGetTmpPassword.cs" />
     <Compile Include="TL\Methods\Account\TLAccountGetWallPapers.cs" />
     <Compile Include="TL\Methods\Account\TLAccountRegisterDevice.cs" />
     <Compile Include="TL\Methods\Account\TLAccountReportPeer.cs" />
@@ -186,6 +187,8 @@
     <Compile Include="TL\Methods\Auth\TLAuthSendInvites.cs" />
     <Compile Include="TL\Methods\Auth\TLAuthSignIn.cs" />
     <Compile Include="TL\Methods\Auth\TLAuthSignUp.cs" />
+    <Compile Include="TL\Methods\Bots\TLBotsAnswerWebhookJSONQuery.cs" />
+    <Compile Include="TL\Methods\Bots\TLBotsSendCustomRequest.cs" />
     <Compile Include="TL\Methods\Channels\TLChannelsCheckUsername.cs" />
     <Compile Include="TL\Methods\Channels\TLChannelsCreateChannel.cs" />
     <Compile Include="TL\Methods\Channels\TLChannelsDeleteChannel.cs" />
@@ -311,6 +314,8 @@
     <Compile Include="TL\Methods\Messages\TLMessagesSendMedia.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSendMessage.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSetBotCallbackAnswer.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesSetBotPrecheckoutResults.cs" />
+    <Compile Include="TL\Methods\Messages\TLMessagesSetBotShippingResults.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSetEncryptedTyping.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSetGameScore.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesSetInlineBotResults.cs" />
@@ -320,10 +325,18 @@
     <Compile Include="TL\Methods\Messages\TLMessagesToggleChatAdmins.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesToggleDialogPin.cs" />
     <Compile Include="TL\Methods\Messages\TLMessagesUninstallStickerSet.cs" />
+    <Compile Include="TL\Methods\Payments\TLPaymentsClearSavedInfo.cs" />
+    <Compile Include="TL\Methods\Payments\TLPaymentsGetPaymentForm.cs" />
+    <Compile Include="TL\Methods\Payments\TLPaymentsGetPaymentReceipt.cs" />
+    <Compile Include="TL\Methods\Payments\TLPaymentsGetSavedInfo.cs" />
+    <Compile Include="TL\Methods\Payments\TLPaymentsSendPaymentForm.cs" />
+    <Compile Include="TL\Methods\Payments\TLPaymentsValidateRequestedInfo.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneAcceptCall.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneDiscardCall.cs" />
+    <Compile Include="TL\Methods\Phone\TLPhoneGetCallConfig.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneReceivedCall.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneRequestCall.cs" />
+    <Compile Include="TL\Methods\Phone\TLPhoneSetCallRating.cs" />
     <Compile Include="TL\Methods\Photos\TLPhotosDeletePhotos.cs" />
     <Compile Include="TL\Methods\Photos\TLPhotosGetUserPhotos.cs" />
     <Compile Include="TL\Methods\Photos\TLPhotosUpdateProfilePhoto.cs" />
@@ -346,6 +359,7 @@
     <Compile Include="TL\Methods\Updates\TLUpdatesGetDifference.cs" />
     <Compile Include="TL\Methods\Updates\TLUpdatesGetState.cs" />
     <Compile Include="TL\Methods\Upload\TLUploadGetFile.cs" />
+    <Compile Include="TL\Methods\Upload\TLUploadGetWebFile.cs" />
     <Compile Include="TL\Methods\Upload\TLUploadSaveBigFilePart.cs" />
     <Compile Include="TL\Methods\Upload\TLUploadSaveFilePart.cs" />
     <Compile Include="TL\Methods\Users\TLUsersGetFullUser.cs" />
@@ -360,6 +374,7 @@
     <Compile Include="TL\Partial\TLMessagesAllStickers.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesArchivedStickers.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesFeaturedStickers.Partial.cs" />
+    <Compile Include="TL\Partial\TLMessagesStickerSet.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesStickerSetInstallResultArchive.Partial.cs" />
     <Compile Include="TL\Partial\TLPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannel.Partial.cs" />
@@ -379,6 +394,7 @@
     <Compile Include="TL\Partial\TLMessagesDialogsBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesMessagesBase.Partial.cs" />
     <Compile Include="TL\Partial\TLPhoto.Partial.cs" />
+    <Compile Include="TL\Partial\TLRPCError.Partial.cs" />
     <Compile Include="TL\Partial\TLStickerSet.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdateBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdatesBase.Partial.cs" />
@@ -396,7 +412,6 @@
     <Compile Include="Extensions\TLObjectExtensions.cs" />
     <Compile Include="Helpers\Execute.cs" />
     <Compile Include="Helpers\FileUtils.cs" />
-    <Compile Include="Helpers\RequestHelper.cs" />
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Logs\Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -473,6 +488,7 @@
     <Compile Include="TL\TLAccountPasswordInputSettings.cs" />
     <Compile Include="TL\TLAccountPasswordSettings.cs" />
     <Compile Include="TL\TLAccountPrivacyRules.cs" />
+    <Compile Include="TL\TLAccountTmpPassword.cs" />
     <Compile Include="TL\TLAuthAuthorization.cs" />
     <Compile Include="TL\TLAuthCheckedPhone.cs" />
     <Compile Include="TL\TLAuthCodeTypeBase.cs" />
@@ -573,6 +589,7 @@
     <Compile Include="TL\TLContactsTopPeers.cs" />
     <Compile Include="TL\TLContactsTopPeersBase.cs" />
     <Compile Include="TL\TLContactsTopPeersNotModified.cs" />
+    <Compile Include="TL\TLDataJSON.cs" />
     <Compile Include="TL\TLDCOption.cs" />
     <Compile Include="TL\TLDestroyAuthKeyFail.cs" />
     <Compile Include="TL\TLDestroyAuthKeyNone.cs" />
@@ -628,9 +645,6 @@
     <Compile Include="TL\TLGeoPoint.cs" />
     <Compile Include="TL\TLGeoPointBase.cs" />
     <Compile Include="TL\TLGeoPointEmpty.cs" />
-    <Compile Include="TL\TLHelpAppChangelog.cs" />
-    <Compile Include="TL\TLHelpAppChangelogBase.cs" />
-    <Compile Include="TL\TLHelpAppChangelogEmpty.cs" />
     <Compile Include="TL\TLHelpAppUpdate.cs" />
     <Compile Include="TL\TLHelpAppUpdateBase.cs" />
     <Compile Include="TL\TLHelpInviteText.cs" />
@@ -693,6 +707,7 @@
     <Compile Include="TL\TLInputMediaGame.cs" />
     <Compile Include="TL\TLInputMediaGeoPoint.cs" />
     <Compile Include="TL\TLInputMediaGifExternal.cs" />
+    <Compile Include="TL\TLInputMediaInvoice.cs" />
     <Compile Include="TL\TLInputMediaPhoto.cs" />
     <Compile Include="TL\TLInputMediaPhotoExternal.cs" />
     <Compile Include="TL\TLInputMediaUploadedDocument.cs" />
@@ -717,6 +732,9 @@
     <Compile Include="TL\TLInputNotifyPeer.cs" />
     <Compile Include="TL\TLInputNotifyPeerBase.cs" />
     <Compile Include="TL\TLInputNotifyUsers.cs" />
+    <Compile Include="TL\TLInputPaymentCredentials.cs" />
+    <Compile Include="TL\TLInputPaymentCredentialsBase.cs" />
+    <Compile Include="TL\TLInputPaymentCredentialsSaved.cs" />
     <Compile Include="TL\TLInputPeerBase.cs" />
     <Compile Include="TL\TLInputPeerChannel.cs" />
     <Compile Include="TL\TLInputPeerChat.cs" />
@@ -758,8 +776,12 @@
     <Compile Include="TL\TLInputUserBase.cs" />
     <Compile Include="TL\TLInputUserEmpty.cs" />
     <Compile Include="TL\TLInputUserSelf.cs" />
+    <Compile Include="TL\TLInputWebDocument.cs" />
+    <Compile Include="TL\TLInputWebFileLocation.cs" />
+    <Compile Include="TL\TLInvoice.cs" />
     <Compile Include="TL\TLKeyboardButton.cs" />
     <Compile Include="TL\TLKeyboardButtonBase.cs" />
+    <Compile Include="TL\TLKeyboardButtonBuy.cs" />
     <Compile Include="TL\TLKeyboardButtonCallback.cs" />
     <Compile Include="TL\TLKeyboardButtonGame.cs" />
     <Compile Include="TL\TLKeyboardButtonRequestGeoLocation.cs" />
@@ -767,6 +789,7 @@
     <Compile Include="TL\TLKeyboardButtonRow.cs" />
     <Compile Include="TL\TLKeyboardButtonSwitchInline.cs" />
     <Compile Include="TL\TLKeyboardButtonUrl.cs" />
+    <Compile Include="TL\TLLabeledPrice.cs" />
     <Compile Include="TL\TLMaskCoords.cs" />
     <Compile Include="TL\TLMessage.cs" />
     <Compile Include="TL\TLMessageActionBase.cs" />
@@ -783,6 +806,8 @@
     <Compile Include="TL\TLMessageActionEmpty.cs" />
     <Compile Include="TL\TLMessageActionGameScore.cs" />
     <Compile Include="TL\TLMessageActionHistoryClear.cs" />
+    <Compile Include="TL\TLMessageActionPaymentSent.cs" />
+    <Compile Include="TL\TLMessageActionPaymentSentMe.cs" />
     <Compile Include="TL\TLMessageActionPhoneCall.cs" />
     <Compile Include="TL\TLMessageActionPinMessage.cs" />
     <Compile Include="TL\TLMessageBase.cs" />
@@ -808,6 +833,7 @@
     <Compile Include="TL\TLMessageMediaEmpty.cs" />
     <Compile Include="TL\TLMessageMediaGame.cs" />
     <Compile Include="TL\TLMessageMediaGeo.cs" />
+    <Compile Include="TL\TLMessageMediaInvoice.cs" />
     <Compile Include="TL\TLMessageMediaPhoto.cs" />
     <Compile Include="TL\TLMessageMediaUnsupported.cs" />
     <Compile Include="TL\TLMessageMediaVenue.cs" />
@@ -901,6 +927,17 @@
     <Compile Include="TL\TLPageBlockVideo.cs" />
     <Compile Include="TL\TLPageFull.cs" />
     <Compile Include="TL\TLPagePart.cs" />
+    <Compile Include="TL\TLPaymentCharge.cs" />
+    <Compile Include="TL\TLPaymentRequestedInfo.cs" />
+    <Compile Include="TL\TLPaymentSavedCredentialsBase.cs" />
+    <Compile Include="TL\TLPaymentSavedCredentialsCard.cs" />
+    <Compile Include="TL\TLPaymentsPaymentForm.cs" />
+    <Compile Include="TL\TLPaymentsPaymentReceipt.cs" />
+    <Compile Include="TL\TLPaymentsPaymentResult.cs" />
+    <Compile Include="TL\TLPaymentsPaymentResultBase.cs" />
+    <Compile Include="TL\TLPaymentsPaymentVerficationNeeded.cs" />
+    <Compile Include="TL\TLPaymentsSavedInfo.cs" />
+    <Compile Include="TL\TLPaymentsValidatedRequestedInfo.cs" />
     <Compile Include="TL\TLPeerBase.cs" />
     <Compile Include="TL\TLPeerChannel.cs" />
     <Compile Include="TL\TLPeerChat.cs" />
@@ -938,6 +975,7 @@
     <Compile Include="TL\TLPhotosPhotosBase.cs" />
     <Compile Include="TL\TLPhotosPhotosSlice.cs" />
     <Compile Include="TL\TLPong.cs" />
+    <Compile Include="TL\TLPostAddress.cs" />
     <Compile Include="TL\TLPQInnerData.cs" />
     <Compile Include="TL\TLPrivacyKeyBase.cs" />
     <Compile Include="TL\TLPrivacyKeyChatInvite.cs" />
@@ -981,6 +1019,7 @@
     <Compile Include="TL\TLServerDHParamsFail.cs" />
     <Compile Include="TL\TLServerDHParamsOk.cs" />
     <Compile Include="TL\TLSetClientDHParamsAnswerBase.cs" />
+    <Compile Include="TL\TLShippingOption.cs" />
     <Compile Include="TL\TLStickerPack.cs" />
     <Compile Include="TL\TLStickerSet.cs" />
     <Compile Include="TL\TLStickerSetCovered.cs" />
@@ -1021,6 +1060,10 @@
     <Compile Include="TL\TLUpdateBotCallbackQuery.cs" />
     <Compile Include="TL\TLUpdateBotInlineQuery.cs" />
     <Compile Include="TL\TLUpdateBotInlineSend.cs" />
+    <Compile Include="TL\TLUpdateBotPrecheckoutQuery.cs" />
+    <Compile Include="TL\TLUpdateBotShippingQuery.cs" />
+    <Compile Include="TL\TLUpdateBotWebhookJSON.cs" />
+    <Compile Include="TL\TLUpdateBotWebhookJSONQuery.cs" />
     <Compile Include="TL\TLUpdateChannel.cs" />
     <Compile Include="TL\TLUpdateChannelMessageViews.cs" />
     <Compile Include="TL\TLUpdateChannelPinnedMessage.cs" />
@@ -1093,6 +1136,7 @@
     <Compile Include="TL\TLUpdateUserTyping.cs" />
     <Compile Include="TL\TLUpdateWebPage.cs" />
     <Compile Include="TL\TLUploadFile.cs" />
+    <Compile Include="TL\TLUploadWebFile.cs" />
     <Compile Include="TL\TLUser.cs" />
     <Compile Include="TL\TLUserBase.cs" />
     <Compile Include="TL\TLUserEmpty.cs" />
@@ -1110,6 +1154,7 @@
     <Compile Include="TL\TLWallPaper.cs" />
     <Compile Include="TL\TLWallPaperBase.cs" />
     <Compile Include="TL\TLWallPaperSolid.cs" />
+    <Compile Include="TL\TLWebDocument.cs" />
     <Compile Include="TL\TLWebPage.cs" />
     <Compile Include="TL\TLWebPageBase.cs" />
     <Compile Include="TL\TLWebPageEmpty.cs" />

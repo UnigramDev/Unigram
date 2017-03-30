@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 02/04/2017 16:49:32
+// 	Generated: 03/14/2017 17:17:00
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -25,10 +25,40 @@ namespace Unigram.Strings
     using Windows.ApplicationModel.Resources;
     
     
-    public partial class Resources
+    public partial class AppResources
     {
         
         private static ResourceLoader resourceLoader;
+        
+        static AppResources()
+        {
+            string executingAssemblyName;
+            executingAssemblyName = Windows.UI.Xaml.Application.Current.GetType().AssemblyQualifiedName;
+            string[] executingAssemblySplit;
+            executingAssemblySplit = executingAssemblyName.Split(',');
+            executingAssemblyName = executingAssemblySplit[1];
+            string currentAssemblyName;
+            currentAssemblyName = typeof(AppResources).AssemblyQualifiedName;
+            string[] currentAssemblySplit;
+            currentAssemblySplit = currentAssemblyName.Split(',');
+            currentAssemblyName = currentAssemblySplit[1];
+            if (executingAssemblyName.Equals(currentAssemblyName))
+            {
+                resourceLoader = ResourceLoader.GetForViewIndependentUse("Resources");
+            }
+            else
+            {
+                resourceLoader = ResourceLoader.GetForViewIndependentUse(currentAssemblyName + "/Resources");
+            }
+        }
+        
+        public static ResourceLoader Loader
+        {
+            get
+            {
+                return resourceLoader;
+            }
+        }
         
         /// <summary>
         /// Localized resource similar to "{0} created the broadcast "{1}""
@@ -37,7 +67,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} created the broadcast \"{1}\"";
+                return resourceLoader.GetString("MessageActionBroadcastCreate");
             }
         }
         
@@ -48,7 +78,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Channel created";
+                return resourceLoader.GetString("MessageActionChannelCreate");
             }
         }
         
@@ -59,7 +89,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Channel photo removed";
+                return resourceLoader.GetString("MessageActionChannelDeletePhoto");
             }
         }
         
@@ -70,7 +100,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Channel photo updated";
+                return resourceLoader.GetString("MessageActionChannelEditPhoto");
             }
         }
         
@@ -81,7 +111,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Channel name changed to \"{0}\"";
+                return resourceLoader.GetString("MessageActionChannelEditTitle");
             }
         }
         
@@ -92,7 +122,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "This group was upgraded to a supergroup.";
+                return resourceLoader.GetString("MessageActionChannelMigrateFrom");
             }
         }
         
@@ -103,7 +133,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Chat was activated";
+                return resourceLoader.GetString("MessageActionChatActivate");
             }
         }
         
@@ -114,7 +144,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} joined the group";
+                return resourceLoader.GetString("MessageActionChatAddSelf");
             }
         }
         
@@ -125,7 +155,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} added {1}";
+                return resourceLoader.GetString("MessageActionChatAddUser");
             }
         }
         
@@ -136,7 +166,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} created the group \"{1}\"";
+                return resourceLoader.GetString("MessageActionChatCreate");
             }
         }
         
@@ -147,7 +177,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Chat was deactivated";
+                return resourceLoader.GetString("MessageActionChatDeactivate");
             }
         }
         
@@ -158,7 +188,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} removed group photo";
+                return resourceLoader.GetString("MessageActionChatDeletePhoto");
             }
         }
         
@@ -169,7 +199,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} removed {1}";
+                return resourceLoader.GetString("MessageActionChatDeleteUser");
             }
         }
         
@@ -180,7 +210,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} updated group photo";
+                return resourceLoader.GetString("MessageActionChatEditPhoto");
             }
         }
         
@@ -191,7 +221,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} changed group name to \"{1}\"";
+                return resourceLoader.GetString("MessageActionChatEditTitle");
             }
         }
         
@@ -202,7 +232,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} joined the group";
+                return resourceLoader.GetString("MessageActionChatJoin");
             }
         }
         
@@ -213,7 +243,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} joined the group via invite link";
+                return resourceLoader.GetString("MessageActionChatJoinedByLink");
             }
         }
         
@@ -224,7 +254,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "You joined the group";
+                return resourceLoader.GetString("MessageActionChatJoinSelf");
             }
         }
         
@@ -235,7 +265,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Chat migrated to channel \"{0}\"";
+                return resourceLoader.GetString("MessageActionChatMigrateTo");
             }
         }
         
@@ -246,7 +276,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} disabled the self-destruct timer";
+                return resourceLoader.GetString("MessageActionDisableMessageTTL");
             }
         }
         
@@ -257,7 +287,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Empty service message";
+                return resourceLoader.GetString("MessageActionEmpty");
             }
         }
         
@@ -268,7 +298,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "You left the group";
+                return resourceLoader.GetString("MessageActionLeftGroupSelf");
             }
         }
         
@@ -279,7 +309,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned a contact";
+                return resourceLoader.GetString("MessageActionPinContact");
             }
         }
         
@@ -290,7 +320,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned a file";
+                return resourceLoader.GetString("MessageActionPinFile");
             }
         }
         
@@ -301,7 +331,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned a game";
+                return resourceLoader.GetString("MessageActionPinGame");
             }
         }
         
@@ -312,7 +342,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned a GIF";
+                return resourceLoader.GetString("MessageActionPinGif");
             }
         }
         
@@ -323,7 +353,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned a map";
+                return resourceLoader.GetString("MessageActionPinMap");
             }
         }
         
@@ -334,7 +364,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned a message";
+                return resourceLoader.GetString("MessageActionPinMessage");
             }
         }
         
@@ -345,7 +375,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned a photo";
+                return resourceLoader.GetString("MessageActionPinPhoto");
             }
         }
         
@@ -356,7 +386,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned a {1}sticker";
+                return resourceLoader.GetString("MessageActionPinSticker");
             }
         }
         
@@ -367,7 +397,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned \"{1}\"";
+                return resourceLoader.GetString("MessageActionPinText");
             }
         }
         
@@ -378,7 +408,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned a track";
+                return resourceLoader.GetString("MessageActionPinTrack");
             }
         }
         
@@ -389,7 +419,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned a video";
+                return resourceLoader.GetString("MessageActionPinVideo");
             }
         }
         
@@ -400,7 +430,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} pinned a voice message";
+                return resourceLoader.GetString("MessageActionPinVoiceMessage");
             }
         }
         
@@ -411,7 +441,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} took a screenshot!";
+                return resourceLoader.GetString("MessageActionScreenshotMessages");
             }
         }
         
@@ -422,7 +452,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} set the self-destruct timer to {1}";
+                return resourceLoader.GetString("MessageActionSetMessageTTL");
             }
         }
         
@@ -433,7 +463,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} left the group";
+                return resourceLoader.GetString("MessageActionUserLeftGroup");
             }
         }
         
@@ -444,7 +474,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "You disabled the self-destruct timer";
+                return resourceLoader.GetString("MessageActionYouDisableMessageTTL");
             }
         }
         
@@ -455,7 +485,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "You took a screenshot!";
+                return resourceLoader.GetString("MessageActionYouScreenshotMessages");
             }
         }
         
@@ -466,7 +496,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "You set the self-destruct timer to {0}";
+                return resourceLoader.GetString("MessageActionYouSetMessageTTL");
             }
         }
         
@@ -477,7 +507,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} scored {1}";
+                return resourceLoader.GetString("UserScored");
             }
         }
         
@@ -488,7 +518,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} scored {1} at {2}";
+                return resourceLoader.GetString("UserScoredAtGame");
             }
         }
         
@@ -499,7 +529,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} scored {1} at {2}";
+                return resourceLoader.GetString("UserScoredAtGamePlural");
             }
         }
         
@@ -510,7 +540,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} scored {1}";
+                return resourceLoader.GetString("UserScoredPlural");
             }
         }
         
@@ -521,7 +551,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Users";
+                return resourceLoader.GetString("UserNominativePlural");
             }
         }
         
@@ -532,7 +562,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "User";
+                return resourceLoader.GetString("UserNominativeSingular");
             }
         }
         
@@ -543,7 +573,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "You scored {0}";
+                return resourceLoader.GetString("YourScored");
             }
         }
         
@@ -554,7 +584,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "You scored {0} at {1}";
+                return resourceLoader.GetString("YourScoredAtGame");
             }
         }
         
@@ -565,7 +595,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "You scored {0} at {1}";
+                return resourceLoader.GetString("YourScoredAtGamePlural");
             }
         }
         
@@ -576,7 +606,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "You scored {0}";
+                return resourceLoader.GetString("YourScoredPlural");
             }
         }
         
@@ -587,7 +617,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} are typing";
+                return resourceLoader.GetString("AreTyping");
             }
         }
         
@@ -598,7 +628,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} is playing a game";
+                return resourceLoader.GetString("IsPlayingGame");
             }
         }
         
@@ -609,7 +639,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} is recording a voice message";
+                return resourceLoader.GetString("IsRecordingAudio");
             }
         }
         
@@ -620,7 +650,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} is recording a video";
+                return resourceLoader.GetString("IsRecordingVideo");
             }
         }
         
@@ -631,7 +661,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} is sending a audio";
+                return resourceLoader.GetString("IsSendingAudio");
             }
         }
         
@@ -642,7 +672,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} is sending a file";
+                return resourceLoader.GetString("IsSendingFile");
             }
         }
         
@@ -653,7 +683,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} is sending a photo";
+                return resourceLoader.GetString("IsSendingPhoto");
             }
         }
         
@@ -664,7 +694,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} is sending a video";
+                return resourceLoader.GetString("IsSendingVideo");
             }
         }
         
@@ -675,7 +705,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "{0} is typing";
+                return resourceLoader.GetString("IsTyping");
             }
         }
         
@@ -686,7 +716,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Playing a game";
+                return resourceLoader.GetString("PlayingGame");
             }
         }
         
@@ -697,7 +727,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Recording a video";
+                return resourceLoader.GetString("RecordingVideo");
             }
         }
         
@@ -708,7 +738,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Recording a voice message";
+                return resourceLoader.GetString("RecordingVoiceMessage");
             }
         }
         
@@ -719,7 +749,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Sending an audio";
+                return resourceLoader.GetString("SendingAudio");
             }
         }
         
@@ -730,7 +760,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Sending a file";
+                return resourceLoader.GetString("SendingFile");
             }
         }
         
@@ -741,7 +771,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Sending a photo";
+                return resourceLoader.GetString("SendingPhoto");
             }
         }
         
@@ -752,7 +782,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Sending a video";
+                return resourceLoader.GetString("SendingVideo");
             }
         }
         
@@ -763,7 +793,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Typing";
+                return resourceLoader.GetString("Typing");
             }
         }
         
@@ -774,7 +804,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "";
+                return resourceLoader.GetString("CompanyGenitivePlural");
             }
         }
         
@@ -785,7 +815,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "";
+                return resourceLoader.GetString("CompanyGenitiveSingular");
             }
         }
         
@@ -796,7 +826,7 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Members";
+                return resourceLoader.GetString("CompanyNominativePlural");
             }
         }
         
@@ -807,7 +837,238 @@ namespace Unigram.Strings
         {
             get
             {
-                return "Member";
+                return resourceLoader.GetString("CompanyNominativeSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minute"
+        /// </summary>
+        public static string CallMinutes_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minutes"
+        /// </summary>
+        public static string CallMinutes_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minutes"
+        /// </summary>
+        public static string CallMinutes_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minutes"
+        /// </summary>
+        public static string CallMinutes_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} second"
+        /// </summary>
+        public static string CallSeconds_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} seconds"
+        /// </summary>
+        public static string CallSeconds_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} seconds"
+        /// </summary>
+        public static string CallSeconds_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} seconds"
+        /// </summary>
+        public static string CallSeconds_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancelled Call"
+        /// </summary>
+        public static string CallCanceled
+        {
+            get
+            {
+                return resourceLoader.GetString("CallCanceled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Incoming Call"
+        /// </summary>
+        public static string CallIncoming
+        {
+            get
+            {
+                return resourceLoader.GetString("CallIncoming");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Missed Call"
+        /// </summary>
+        public static string CallMissed
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMissed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Outgoing Call"
+        /// </summary>
+        public static string CallOutgoing
+        {
+            get
+            {
+                return resourceLoader.GetString("CallOutgoing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} ({1})"
+        /// </summary>
+        public static string CallTimeFormat
+        {
+            get
+            {
+                return resourceLoader.GetString("CallTimeFormat");
             }
         }
     }

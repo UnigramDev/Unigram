@@ -518,6 +518,17 @@ namespace Telegram.Api.Helpers
             return (dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
         }
 
+        public static long CurrentTimestamp
+        {
+            get
+            {
+                var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                DateTime.SpecifyKind(dtDateTime, DateTimeKind.Utc);
+
+                return (long)(DateTime.Now.ToUniversalTime() - dtDateTime).TotalMilliseconds;
+            }
+        }
+
         public static DateTime UnixTimestampToDateTime(double unixTimeStamp)
         {
             // From UTC0 UnixTime to local DateTime

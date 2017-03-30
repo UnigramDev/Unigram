@@ -41,13 +41,16 @@ namespace Unigram.ViewModels
 
             //Dialogs = new DialogCollection(protoService, cacheService);
             SearchDialogs = new ObservableCollection<TLDialog>();
-            Dialogs = new DialogsViewModel(ProtoService, cacheService, aggregator);
-            Contacts = new ContactsViewModel(ProtoService, cacheService, aggregator, contactsService);
+            Dialogs = new DialogsViewModel(protoService, cacheService, aggregator);
+            Contacts = new ContactsViewModel(protoService, cacheService, aggregator, contactsService);
+            Calls = new CallsViewModel(protoService, cacheService, aggregator);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             Task.Run(() => _pushService.RegisterAsync());
+
+            Execute.BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
             //Execute.BeginOnUIThread(() => Dialogs.LoadFirstSlice());
             //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
             //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
@@ -63,5 +66,7 @@ namespace Unigram.ViewModels
         public DialogsViewModel Dialogs { get; private set; }
 
         public ContactsViewModel Contacts { get; private set; }
+
+        public CallsViewModel Calls { get; private set; }
     }
 }

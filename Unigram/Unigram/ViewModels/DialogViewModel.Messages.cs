@@ -151,6 +151,10 @@ namespace Unigram.ViewModels
                 {
                     dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
                 }
+                else if (Peer is TLInputPeerChannel)
+                {
+                    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
+                }
 
                 var result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
@@ -238,6 +242,11 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
         private void MessageForwardExecute(TLMessageBase message)
         {
+            if (message is TLMessage)
+            {
+                App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
+                NavigationService.GoBack();
+            }
         }
 
         #endregion
@@ -298,6 +307,13 @@ namespace Unigram.ViewModels
 
         private void MessagesForwardExecute()
         {
+            var messages = SelectedMessages.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
+            if (messages.Count > 0)
+            {
+                App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
+                NavigationService.GoBack();
+            }
+
             //_stateService.ForwardMessages = Messages.Where(x => x.IsSelected).ToList();
             //_stateService.ForwardMessages.Reverse();
 
@@ -406,7 +422,14 @@ namespace Unigram.ViewModels
             Reply = new TLMessagesContainter
             {
                 EditMessage = _editedMessage,
-                EditUntil = editUntil
+                EditUntil = editUntil,
+                // TODO: setup original content
+                PreviousMessage = new TLMessage
+                {
+                    ToId = message.ToId,
+                    FromId = message.FromId,
+                    IsOut = message.IsOut
+                }
             };
 
             Aggregator.Publish(new EditMessageEventArgs(_editedMessage, text));
@@ -437,7 +460,7 @@ namespace Unigram.ViewModels
                 var mediaCaption = message.Media as ITLMediaCaption;
                 if (mediaCaption != null)
                 {
-                    return mediaCaption.Caption;
+                    return mediaCaption.Caption ?? string.Empty;
                 }
             }
             else
@@ -661,70 +684,111 @@ namespace Unigram.ViewModels
         //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand => new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);
         public async void KeyboardButtonExecute(TLKeyboardButtonBase button, TLMessage message)
         {
-            var switchInlineButton = button as TLKeyboardButtonSwitchInline;
-            if (switchInlineButton != null)
+            if (button is TLKeyboardButtonSwitchInline switchInlineButton)
             {
-                return;
-            }
-
-            var urlButton = button as TLKeyboardButtonUrl;
-            if (urlButton != null)
-            {
-                if (urlButton.Url.Contains("telegram.me") || urlButton.Url.Contains("t.me"))
+                var bot = GetBot(message);
+                if (bot != null)
                 {
-                    MessageHelper.HandleTelegramUrl(urlButton.Url);
+                    if (switchInlineButton.IsSamePeer)
+                    {
+                        Text = string.Format("@{0} {1}", bot.Username, switchInlineButton.Query);
+                        ResolveInlineBot(bot.Username, switchInlineButton.Query);
+
+                        if (With is TLChatBase)
+                        {
+                            Reply = message;
+                        }
+                    }
+                    else
+                    {
+
+                    }
                 }
-                else
+            }
+            else if (button is TLKeyboardButtonUrl urlButton)
+            {
+                var url = urlButton.Url;
+                if (url.StartsWith("http") == false)
                 {
-                    var navigation = urlButton.Url;
-                    var dialog = new MessageDialog(navigation, "Open this link?");
-                    dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
-                    dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
-                    dialog.DefaultCommandIndex = 0;
-                    dialog.CancelCommandIndex = 1;
+                    url = "http://" + url;
+                }
 
-                    var result = await dialog.ShowAsync();
-                    if (result == null || (int)result?.Id == 1)
+                if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                {
+                    if (Constants.TelegramHosts.Contains(uri.Host))
                     {
-                        return;
+                        MessageHelper.HandleTelegramUrl(urlButton.Url);
                     }
-
-                    if (!navigation.StartsWith("http"))
+                    else
                     {
-                        navigation = "http://" + navigation;
-                    }
+                        var dialog = new MessageDialog(urlButton.Url, "Open this link?");
+                        dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
+                        dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
+                        dialog.DefaultCommandIndex = 0;
+                        dialog.CancelCommandIndex = 1;
 
-                    if (Uri.TryCreate(navigation, UriKind.Absolute, out Uri uri))
-                    {
+                        var result = await dialog.ShowQueuedAsync();
+                        if (result == null || (int)result?.Id == 1)
+                        {
+                            return;
+                        }
+
                         await Launcher.LaunchUriAsync(uri);
                     }
                 }
-
-                return;
             }
-
-            var callbackButton = button as TLKeyboardButtonCallback;
-            if (callbackButton != null)
+            else if (button is TLKeyboardButtonCallback callbackButton)
             {
                 var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, false);
                 if (response.IsSucceeded && response.Result.HasMessage)
                 {
-                    if (response.Result.IsAlert)
+                    if (response.Result.HasMessage)
                     {
-                        await new MessageDialog(response.Result.Message).ShowAsync();
+                        if (response.Result.IsAlert)
+                        {
+                            await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                        }
+                        else
+                        {
+                            // TODO:
+                            await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                        }
                     }
-                    else
+                    else if (response.Result.HasUrl && response.Result.IsHasUrl /* ??? */)
                     {
-                        // TODO:
-                        await new MessageDialog(response.Result.Message).ShowAsync();
+                        var url = response.Result.Url;
+                        if (url.StartsWith("http") == false)
+                        {
+                            url = "http://" + url;
+                        }
+
+                        if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                        {
+                            if (Constants.TelegramHosts.Contains(uri.Host))
+                            {
+                                MessageHelper.HandleTelegramUrl(response.Result.Url);
+                            }
+                            else
+                            {
+                                var dialog = new MessageDialog(response.Result.Url, "Open this link?");
+                                dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
+                                dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
+                                dialog.DefaultCommandIndex = 0;
+                                dialog.CancelCommandIndex = 1;
+
+                                var result = await dialog.ShowQueuedAsync();
+                                if (result == null || (int)result?.Id == 1)
+                                {
+                                    return;
+                                }
+
+                                await Launcher.LaunchUriAsync(uri);
+                            }
+                        }
                     }
                 }
-
-                return;
             }
-
-            var gameButton = button as TLKeyboardButtonGame;
-            if (gameButton != null)
+            else if (button is TLKeyboardButtonGame gameButton)
             {
                 var gameMedia = message.Media as TLMessageMediaGame;
                 if (gameMedia != null)
@@ -732,34 +796,44 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, null, true);
                     if (response.IsSucceeded && response.Result.IsHasUrl && response.Result.HasUrl)
                     {
-                        var user = CacheService.GetUser(message.ViaBotId) as TLUser;
-                        if (user != null)
+                        if (CacheService.GetUser(message.ViaBotId) is TLUser user)
                         {
-                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Username = user.Username, Title = gameMedia.Game.Title });
+                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Title = gameMedia.Game.Title, Username = user.Username });
+                        }
+                        else
+                        {
+                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Title = gameMedia.Game.Title });
                         }
                     }
                 }
-
-                return;
             }
-
-            var requestPhoneButton = button as TLKeyboardButtonRequestPhone;
-            if (requestPhoneButton != null)
+            else if (button is TLKeyboardButtonRequestPhone requestPhoneButton)
             {
-                return;
+                if (CacheService.GetUser(SettingsHelper.UserId) is TLUser cached)
+                {
+                    var confirm = await TLMessageDialog.ShowAsync("The bot will know your phone number. This can be useful for integration with other services.", "Share your phone number?", "OK", "Cancel");
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        await SendContactAsync(cached);
+                    }
+                }
             }
-
-            var requestGeoButton = button as TLKeyboardButtonRequestGeoLocation;
-            if (requestGeoButton != null)
+            else if (button is TLKeyboardButtonRequestGeoLocation requestGeoButton)
             {
-                return;
+                var confirm = await TLMessageDialog.ShowAsync("This will send your current location to the bot.", "Share your location?", "OK", "Cancel");
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var location = await _locationService.GetPositionAsync();
+                    if (location != null)
+                    {
+                        await SendGeoPointAsync(location.Point.Position.Latitude, location.Point.Position.Longitude);
+                    }
+                }
             }
-
-            var keyboardButton = button as TLKeyboardButton;
-            if (keyboardButton != null)
+            else if (button is TLKeyboardButton keyboardButton)
             {
                 _text = keyboardButton.Text;
-                await SendMessageAsync(null, false, true);
+                await SendMessageAsync(null, true);
             }
         }
 
@@ -783,55 +857,47 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessage> MessageSaveStickerCommand => new RelayCommand<TLMessage>(MessageSaveStickerExecute);
         private async void MessageSaveStickerExecute(TLMessage message)
         {
-            if (message != null)
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
             {
-                var documentMedia = message.Media as TLMessageMediaDocument;
-                if (documentMedia != null)
+                var fileName = document.GetFileName();
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    var document = documentMedia.Document as TLDocument;
-                    if (document != null)
+                    var picker = new FileSavePicker();
+                    picker.FileTypeChoices.Add("WebP image", new[] { ".webp" });
+                    picker.FileTypeChoices.Add("PNG image", new[] { ".png" });
+                    picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                    picker.SuggestedFileName = "sticker.webp";
+
+                    var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
+                    if (fileNameAttribute != null)
                     {
-                        var fileName = document.GetFileName();
-                        if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                        picker.SuggestedFileName = fileNameAttribute.FileName;
+                    }
+
+                    var file = await picker.PickSaveFileAsync();
+                    if (file != null)
+                    {
+                        var sticker = await FileUtils.GetTempFileAsync(fileName);
+
+                        if (Path.GetExtension(file.Name).Equals(".webp"))
                         {
-                            var picker = new FileSavePicker();
-                            picker.FileTypeChoices.Add("WebP image", new[] { ".webp" });
-                            picker.FileTypeChoices.Add("PNG image", new[] { ".png" });
-                            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                            picker.SuggestedFileName = "sticker.webp";
+                            await sticker.CopyAndReplaceAsync(file);
+                        }
+                        else if (Path.GetExtension(file.Name).Equals(".png"))
+                        {
+                            var buffer = await FileIO.ReadBufferAsync(sticker);
+                            var bitmap = WebPImage.DecodeFromBuffer(buffer);
 
-                            var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
-                            if (fileNameAttribute != null)
+                            using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                             {
-                                picker.SuggestedFileName = fileNameAttribute.FileName;
-                            }
+                                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                                var pixelStream = bitmap.PixelBuffer.AsStream();
+                                var pixels = new byte[pixelStream.Length];
 
-                            var file = await picker.PickSaveFileAsync();
-                            if (file != null)
-                            {
-                                var sticker = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
+                                await pixelStream.ReadAsync(pixels, 0, pixels.Length);
 
-                                if (Path.GetExtension(file.Name).Equals(".webp"))
-                                {
-                                    await sticker.CopyAndReplaceAsync(file);
-                                }
-                                else if (Path.GetExtension(file.Name).Equals(".png"))
-                                {
-                                    var buffer = await FileIO.ReadBufferAsync(sticker);
-                                    var bitmap = WebPImage.DecodeFromBuffer(buffer);
-
-                                    using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
-                                    {
-                                        var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
-                                        var pixelStream = bitmap.PixelBuffer.AsStream();
-                                        var pixels = new byte[pixelStream.Length];
-
-                                        await pixelStream.ReadAsync(pixels, 0, pixels.Length);
-
-                                        encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, (uint)bitmap.PixelWidth, (uint)bitmap.PixelHeight, 96.0, 96.0, pixels);
-                                        await encoder.FlushAsync();
-                                    }
-                                }
+                                encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, (uint)bitmap.PixelWidth, (uint)bitmap.PixelHeight, 96.0, 96.0, pixels);
+                                await encoder.FlushAsync();
                             }
                         }
                     }
@@ -846,67 +912,67 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessage> MessageSaveMediaCommand => new RelayCommand<TLMessage>(MessageSaveMediaExecute);
         private async void MessageSaveMediaExecute(TLMessage message)
         {
-            if (message != null)
+            if (message?.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
             {
-                var photoMedia = message.Media as TLMessageMediaPhoto;
-                if (photoMedia != null)
+                var location = photoSize.Location;
+                var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    var photo = photoMedia.Photo as TLPhoto;
-                    if (photo != null)
-                    {
-                        var photoSize = photo.Full as TLPhotoSize;
-                        if (photoSize != null)
-                        {
-                            var location = photoSize.Location;
-                            var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
-                            if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                            {
-                                var picker = new FileSavePicker();
-                                picker.FileTypeChoices.Add("JPEG Image", new[] { ".jpg" });
-                                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                                picker.SuggestedFileName = BindConvert.Current.DateTime(message.Date).ToString("photo_yyyyMMdd_HH_mm_ss") + ".jpg";
+                    var picker = new FileSavePicker();
+                    picker.FileTypeChoices.Add("JPEG Image", new[] { ".jpg" });
+                    picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                    picker.SuggestedFileName = BindConvert.Current.DateTime(message.Date).ToString("photo_yyyyMMdd_HH_mm_ss") + ".jpg";
 
-                                var file = await picker.PickSaveFileAsync();
-                                if (file != null)
-                                {
-                                    var result = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
-                                    await result.CopyAndReplaceAsync(file);
-                                }
-                            }
-                        }
+                    var file = await picker.PickSaveFileAsync();
+                    if (file != null)
+                    {
+                        var result = await FileUtils.GetTempFileAsync(fileName);
+                        await result.CopyAndReplaceAsync(file);
                     }
                 }
+            }
 
-                var documentMedia = message.Media as TLMessageMediaDocument;
-                if (documentMedia != null)
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                var fileName = document.GetFileName();
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    var document = documentMedia.Document as TLDocument;
-                    if (document != null)
+                    var extension = document.GetFileExtension();
+
+                    var picker = new FileSavePicker();
+                    picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { document.GetFileExtension() });
+                    picker.SuggestedStartLocation = PickerLocationId.Downloads;
+                    picker.SuggestedFileName = BindConvert.Current.DateTime(message.Date).ToString("photo_yyyyMMdd_HH_mm_ss") + extension;
+
+                    var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
+                    if (fileNameAttribute != null)
                     {
-                        var fileName = document.GetFileName();
-                        if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                        {
-                            var extension = document.GetFileExtension();
-
-                            var picker = new FileSavePicker();
-                            picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { document.GetFileExtension() });
-                            picker.SuggestedStartLocation = PickerLocationId.Downloads;
-                            picker.SuggestedFileName = BindConvert.Current.DateTime(message.Date).ToString("photo_yyyyMMdd_HH_mm_ss") + extension;
-
-                            var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
-                            if (fileNameAttribute != null)
-                            {
-                                picker.SuggestedFileName = fileNameAttribute.FileName;
-                            }
-
-                            var file = await picker.PickSaveFileAsync();
-                            if (file != null)
-                            {
-                                var result = await ApplicationData.Current.LocalFolder.GetFileAsync("temp\\" + fileName);
-                                await result.CopyAndReplaceAsync(file);
-                            }
-                        }
+                        picker.SuggestedFileName = fileNameAttribute.FileName;
                     }
+
+                    var file = await picker.PickSaveFileAsync();
+                    if (file != null)
+                    {
+                        var result = await FileUtils.GetTempFileAsync(fileName);
+                        await result.CopyAndReplaceAsync(file);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Save to GIFs
+
+        public RelayCommand<TLMessage> MessageSaveGIFCommand => new RelayCommand<TLMessage>(MessageSaveGIFExecute);
+        private async void MessageSaveGIFExecute(TLMessage message)
+        {
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                var response = await ProtoService.SaveGifAsync(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, false);
+                if (response.IsSucceeded)
+                {
+                    _stickers.SyncGifs();
                 }
             }
         }

@@ -93,7 +93,7 @@ namespace Telegram.Api.TL
         }
 
         // TODO
-        public TLInputPeerBase ToInputPeer()
+        public override TLInputPeerBase ToInputPeer()
         {
             if (HasAccessHash)
             {
@@ -178,6 +178,11 @@ namespace Telegram.Api.TL
 
             return new TLInputUser { UserId = Id };
             //return null;
+        }
+
+        public override TLPeerBase ToPeer()
+        {
+            return new TLPeerUser { UserId = Id };
         }
     }
 }

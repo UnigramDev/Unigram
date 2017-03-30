@@ -11,16 +11,17 @@ namespace Unigram.Selectors
 {
     public class InlineBotResultTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate AudioResultTemplate { get; set; }
+        public DataTemplate AudioMediaTemplate { get; set; }
+        public DataTemplate AudioTemplate { get; set; }
         public DataTemplate ContactResultTemplate { get; set; }
-        public DataTemplate GameResultTemplate { get; set; }
+        public DataTemplate GameMediaTemplate { get; set; }
         public DataTemplate GeoResultTemplate { get; set; }
-        public DataTemplate GifResultTemplate { get; set; }
         public DataTemplate GifTemplate { get; set; }
-        public DataTemplate PhotoResultTemplate { get; set; }
+        public DataTemplate GifMediaTemplate { get; set; }
         public DataTemplate PhotoTemplate { get; set; }
+        public DataTemplate PhotoMediaTemplate { get; set; }
         public DataTemplate ResultTemplate { get; set; }
-        public DataTemplate StickerResultTemplate { get; set; }
+        public DataTemplate StickerMediaTemplate { get; set; }
         public DataTemplate VenueResultTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
@@ -47,27 +48,27 @@ namespace Unigram.Selectors
             {
                 if (mediaResult.Type.Equals("photo", StringComparison.OrdinalIgnoreCase))
                 {
-                    return PhotoTemplate;
+                    return PhotoMediaTemplate;
                 }
                 else if (mediaResult.Type.Equals("sticker", StringComparison.OrdinalIgnoreCase))
                 {
-                    return StickerResultTemplate;
+                    return StickerMediaTemplate;
                 }
                 else if (mediaResult.Type.Equals("gif", StringComparison.OrdinalIgnoreCase))
                 {
-                    return GifTemplate;
+                    return GifMediaTemplate;
                 }
                 else if (mediaResult.Type.Equals("audio", StringComparison.OrdinalIgnoreCase))
                 {
-                    return AudioResultTemplate;
+                    return AudioMediaTemplate;
                 }
                 else if (mediaResult.Type.Equals("voice", StringComparison.OrdinalIgnoreCase))
                 {
-                    return AudioResultTemplate;
+                    return AudioMediaTemplate;
                 }
                 else if (mediaResult.Type.Equals("game", StringComparison.OrdinalIgnoreCase))
                 {
-                    return GameResultTemplate;
+                    return GameMediaTemplate;
                 }
             }
 
@@ -76,19 +77,19 @@ namespace Unigram.Selectors
             {
                 if (result.Type.Equals("photo", StringComparison.OrdinalIgnoreCase))
                 {
-                    return PhotoResultTemplate;
+                    return PhotoTemplate;
                 }
                 else if (result.Type.Equals("gif", StringComparison.OrdinalIgnoreCase))
                 {
-                    return GifResultTemplate;
+                    return GifTemplate;
                 }
                 else if (result.Type.Equals("audio", StringComparison.OrdinalIgnoreCase))
                 {
-                    return AudioResultTemplate;
+                    return AudioTemplate;
                 }
                 else if (result.Type.Equals("voice", StringComparison.OrdinalIgnoreCase))
                 {
-                    return AudioResultTemplate;
+                    return AudioTemplate;
                 }
             }
 

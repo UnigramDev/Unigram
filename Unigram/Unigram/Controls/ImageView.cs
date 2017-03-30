@@ -8,10 +8,11 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.Foundation;
 using Telegram.Api.TL;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls
 {
-    public class ImageView : Control
+    public class ImageView : HyperlinkButton
     {
         private Image Holder;
 
@@ -25,6 +26,12 @@ namespace Unigram.Controls
             Holder = (Image)GetTemplateChild("Holder");
             Holder.ImageFailed += Holder_ImageFailed;
             Holder.ImageOpened += Holder_ImageOpened;
+            Holder.Loaded += Holder_Loaded;
+        }
+
+        private void Holder_Loaded(object sender, RoutedEventArgs e)
+        {
+            OnSourceChanged(Source, null);
         }
 
         private void Holder_ImageFailed(object sender, ExceptionRoutedEventArgs e)
@@ -46,7 +53,20 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(ImageSource), typeof(ImageView), new PropertyMetadata(null));
+            DependencyProperty.Register("Source", typeof(ImageSource), typeof(ImageView), new PropertyMetadata(null, OnSourceChanged));
+
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ImageView)d).OnSourceChanged((ImageSource)e.NewValue, (ImageSource)e.OldValue);
+        }
+
+        private void OnSourceChanged(ImageSource newValue, ImageSource oldValue)
+        {
+            if (newValue is WriteableBitmap bitmap && bitmap.PixelWidth > 0 && bitmap.PixelHeight > 0)
+            {
+                ImageOpened?.Invoke(this, null);
+            }
+        }
 
         #endregion
 
@@ -63,9 +83,14 @@ namespace Unigram.Controls
 
         private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            ((ImageView)d).OnConstraintChanged(e.NewValue, e.OldValue);
             ((ImageView)d).InvalidateMeasure();
         }
 
+        protected virtual void OnConstraintChanged(object newValue, object oldValue)
+        {
+
+        }
         #endregion
 
         protected override Size MeasureOverride(Size availableSize)
@@ -89,8 +114,7 @@ namespace Unigram.Controls
                 goto Calculate;
             }
 
-            var photo = Constraint as TLPhoto;
-            if (photo != null)
+            if (Constraint is TLPhoto photo)
             {
                 //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
                 var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
@@ -103,8 +127,7 @@ namespace Unigram.Controls
                 }
             }
 
-            var document = Constraint as TLDocument;
-            if (document != null)
+            if (Constraint is TLDocument document)
             {
                 var imageSize = document.Attributes.OfType<TLDocumentAttributeImageSize>().FirstOrDefault();
                 if (imageSize != null)
@@ -125,8 +148,7 @@ namespace Unigram.Controls
                 }
             }
 
-            var inlineResult = Constraint as TLBotInlineResult;
-            if (inlineResult != null)
+            if (Constraint is TLBotInlineResult inlineResult)
             {
                 width = inlineResult.HasW ? inlineResult.W.Value : 0;
                 height = inlineResult.HasH ? inlineResult.H.Value : 0;

@@ -36,6 +36,11 @@ using Windows.UI.Core;
 using Unigram.Converters;
 using Windows.Foundation.Metadata;
 using Windows.ApplicationModel.Core;
+using System.Collections;
+using Telegram.Api.TL;
+using System.Collections.Generic;
+using Unigram.Core.Services;
+using Template10.Controls;
 
 namespace Unigram
 {
@@ -46,6 +51,8 @@ namespace Unigram
     {
         public static ShareOperation ShareOperation { get; private set; }
         public static AppServiceConnection Connection { get; private set; }
+
+        public static AppInMemoryState InMemoryState { get; } = new AppInMemoryState();
 
         public ViewModelLocator Locator
         {
@@ -76,20 +83,18 @@ namespace Unigram
             UnhandledException += async (s, args) =>
             {
                 args.Handled = true;
-                await new MessageDialog(args.Message ?? "Error", args.Exception?.ToString() ?? "Error").ShowAsync();
+                await new MessageDialog(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
             };
 
-#if RELEASE
+#if !DEBUG
 
-            Microsoft.HockeyApp.HockeyClient.Current.Configure("f914027fdbf04179b2a84bb0ab6ff0b9",
+            HockeyClient.Current.Configure("7d36a4260af54125bbf6db407911ed3b",
                 new TelemetryConfiguration()
                 {
                     EnableDiagnostics = true,
-                    Collectors = Microsoft.HockeyApp.WindowsCollectors.Metadata |
-                                    Microsoft.HockeyApp.WindowsCollectors.PageView |
-                                    Microsoft.HockeyApp.WindowsCollectors.Session |
-                                    Microsoft.HockeyApp.WindowsCollectors.UnhandledException |
-                                    Microsoft.HockeyApp.WindowsCollectors.WatsonData
+                    Collectors = WindowsCollectors.Metadata |
+                                 WindowsCollectors.Session |
+                                 WindowsCollectors.UnhandledException
                 });
 
 #endif
@@ -121,6 +126,17 @@ namespace Unigram
         ////    }
         ////}
 
+        public override UIElement CreateRootElement(IActivatedEventArgs e)
+        {
+            var navigationFrame = new Frame();
+            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame);
+            return new ModalDialog
+            {
+                DisableBackButtonWhenModal = false,
+                Content = navigationFrame
+            };
+        }
+
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             Execute.Initialize();
@@ -130,10 +146,10 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(BlankPage1));
+            //NavigationService.Navigate(typeof(PlaygroundPage));
             //return Task.CompletedTask;
 
-            ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
+            //ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
             ModalDialog.ModalBackground = new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
             ModalDialog.CanBackButtonDismiss = true;
             ModalDialog.DisableBackButtonWhenModal = false;
@@ -150,7 +166,7 @@ namespace Unigram
                 if (share != null)
                 {
                     ShareOperation = share.ShareOperation;
-                    NavigationService.Navigate(typeof(Views.ShareTargetPage));
+                    NavigationService.Navigate(typeof(ShareTargetPage));
                 }
                 else if (voice != null)
                 {
@@ -159,16 +175,16 @@ namespace Unigram
 
                     if (command == "ShowAllDialogs")
                     {
-                        NavigationService.Navigate(typeof(Views.MainPage));
+                        NavigationService.Navigate(typeof(MainPage));
                     }
                     if (command == "ShowSpecificDialog")
                     {
                         //#TODO: Fix that this'll open a specific dialog
-                        NavigationService.Navigate(typeof(Views.MainPage));
+                        NavigationService.Navigate(typeof(MainPage));
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(Views.MainPage));
+                        NavigationService.Navigate(typeof(MainPage));
                     }
                 }
                 else
@@ -176,7 +192,7 @@ namespace Unigram
                     var activate = args as ToastNotificationActivatedEventArgs;
                     var launch = activate?.Argument ?? null;
 
-                    NavigationService.Navigate(typeof(Views.MainPage), launch);
+                    NavigationService.Navigate(typeof(MainPage), launch);
 
                     timer.Stop();
                     Debug.WriteLine($"LAUNCH TIME: {timer.Elapsed}");
@@ -184,12 +200,21 @@ namespace Unigram
             }
             else
             {
-                NavigationService.Navigate(typeof(Views.Login.LoginWelcomePage));
+                NavigationService.Navigate(typeof(SignInWelcomePage));
+            }
+
+            // Remove borders on Xbox
+            var device = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
+            bool isXbox = (device.ContainsKey("DeviceFamily") && device["DeviceFamily"] == "Xbox");
+
+            if (isXbox == true)
+            {
+                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
             }
 
             ShowStatusBar();
             ColourTitleBar();
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(330, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Task.Run(() => OnStartSync());
@@ -203,6 +228,11 @@ namespace Unigram
             BadgeUpdateManager.CreateBadgeUpdaterForApplication().Clear();
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
             ToastNotificationManager.History.Clear();
+
+            Execute.BeginOnThreadPool(async () =>
+            {
+                await new AppUpdateService().CheckForUpdatesAsync();
+            });
 
             try
             {
@@ -284,8 +314,8 @@ namespace Unigram
                 titlebar.InactiveBackgroundColor = subtitleBrush.Color;
                 titlebar.ButtonInactiveBackgroundColor = subtitleBrush.Color;
 
-                titlebar.ButtonHoverBackgroundColor = Helpers.ColorHelper.ChangeShade(titleBrush.Color, -0.06f);
-                titlebar.ButtonPressedBackgroundColor = Helpers.ColorHelper.ChangeShade(titleBrush.Color, -0.09f);
+                titlebar.ButtonHoverBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.06f);
+                titlebar.ButtonPressedBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.09f);
 
                 // Branding colours
                 //titlebar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);
@@ -298,5 +328,12 @@ namespace Unigram
                 Debug.WriteLine("Device does not have a Titlebar");
             }
         }
+    }
+
+    public class AppInMemoryState
+    {
+        public IEnumerable<TLMessage> ForwardMessages { get; set; }
+
+        public TLMessage SwitchInline { get; set; }
     }
 }

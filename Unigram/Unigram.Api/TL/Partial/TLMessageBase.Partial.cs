@@ -84,7 +84,7 @@ namespace Telegram.Api.TL
                 {
                     var instance = InMemoryCacheService.Current;
                     var channel = instance.GetChat(ToId.Id) as TLChannel;
-                    if (channel != null && channel.IsMegagroup)
+                    if (channel != null && channel.IsMegaGroup)
                     {
                         return true;
                     }
@@ -107,6 +107,28 @@ namespace Telegram.Api.TL
                     _from = InMemoryCacheService.Current.GetUser(FromId) as TLUser;
 
                 return _from;
+            }
+        }
+
+        private ITLDialogWith _parent;
+        public ITLDialogWith Parent
+        {
+            get
+            {
+                if (_parent == null)
+                {
+                    if (this is TLMessageCommonBase messageCommon)
+                    {
+                        var peer = messageCommon.IsOut || messageCommon.ToId is TLPeerChannel || messageCommon.ToId is TLPeerChat ? messageCommon.ToId : new TLPeerUser { UserId = messageCommon.FromId.Value };
+                        if (peer is TLPeerUser)
+                            _parent = InMemoryCacheService.Current.GetUser(peer.Id);
+                        if (peer is TLPeerChat || ToId is TLPeerChannel)
+                            _parent = InMemoryCacheService.Current.GetChat(peer.Id);
+                    }
+
+                }
+
+                return _parent;
             }
         }
 
@@ -210,20 +232,25 @@ namespace Telegram.Api.TL
     public partial class TLMessage
     {
         #region Gif
-        public bool IsGif()
+        public bool IsGif(bool real = false)
         {
             var documentMedia = Media as TLMessageMediaDocument;
-            return documentMedia != null && IsGif(documentMedia.Document as TLDocument);
+            return documentMedia != null && IsGif(documentMedia.Document as TLDocument, real);
         }
 
-        public static bool IsGif(TLDocumentBase documentBase)
+        public static bool IsGif(TLDocumentBase documentBase, bool real = false)
         {
             var document = documentBase as TLDocument;
-            return document != null && IsGif(document);
+            return document != null && IsGif(document, real);
         }
 
-        public static bool IsGif(TLDocument document)
+        public static bool IsGif(TLDocument document, bool real = false)
         {
+            if (real == false)
+            {
+                return false;
+            }
+
             if (document != null && document.MimeType.Equals("video/mp4", StringComparison.OrdinalIgnoreCase))
             {
                 return IsGif(document.Attributes, document.Size);
@@ -296,7 +323,7 @@ namespace Telegram.Api.TL
             {
                 var videoAttribute = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 var animatedAttribute = document.Attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
-                if (videoAttribute != null && animatedAttribute == null)
+                if (videoAttribute != null /*&& animatedAttribute == null*/)
                 {
                     return true;
                 }
@@ -457,7 +484,7 @@ namespace Telegram.Api.TL
 
             if (m.Views != null)
             {
-                var currentViews = Views != null ? Views : 0;
+                var currentViews = Views ?? 0;
                 if (currentViews < m.Views)
                 {
                     Views = m.Views;
@@ -694,5 +721,29 @@ namespace Telegram.Api.TL
             }
         }
 
+    }
+
+    public partial class TLMessage
+    {
+        public TLMessage Clone()
+        {
+            var clone = new TLMessage();
+            clone.Flags = Flags;
+            clone.Id = Id;
+            clone.FromId = FromId;
+            clone.ToId = ToId;
+            clone.FwdFrom = FwdFrom;
+            clone.ViaBotId = ViaBotId;
+            clone.ReplyToMsgId = ReplyToMsgId;
+            clone.Date = Date;
+            clone.Message = Message;
+            clone.Media = Media;
+            clone.ReplyMarkup = ReplyMarkup;
+            clone.Entities = Entities;
+            clone.Views = Views;
+            clone.EditDate = EditDate;
+
+            return clone;
+        }
     }
 }

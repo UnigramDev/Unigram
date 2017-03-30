@@ -13,9 +13,11 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Dependency;
 using Unigram.Native;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.Calls;
 using Windows.Devices.Enumeration;
@@ -31,6 +33,7 @@ using Windows.Phone.Media.Devices;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -102,6 +105,10 @@ namespace Unigram.Views
         private void Slide_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             //BackgroundCanvas.Invalidate();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
         }
     }
 

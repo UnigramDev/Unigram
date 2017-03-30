@@ -52,8 +52,10 @@ namespace Unigram.Controls
         {
             ScrollViewer.SetVerticalScrollBarVisibility(this, newValue ? ScrollBarVisibility.Disabled : ScrollBarVisibility.Auto);
             ScrollViewer.SetVerticalScrollMode(this, newValue ? ScrollMode.Disabled : ScrollMode.Auto);
+            ScrollViewer.SetIsVerticalRailEnabled(this, newValue ? false : true);
             ScrollViewer.SetHorizontalScrollBarVisibility(this, newValue ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled);
             ScrollViewer.SetHorizontalScrollMode(this, newValue ? ScrollMode.Auto : ScrollMode.Disabled);
+            ScrollViewer.SetIsHorizontalRailEnabled(this, newValue ? true : false);
 
             var root = ItemsPanelRoot as ItemsStackPanel;
             if (root != null)

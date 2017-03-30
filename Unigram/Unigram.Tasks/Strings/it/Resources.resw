@@ -282,6 +282,12 @@
   <data name="MESSAGE_VIDEO" xml:space="preserve">
     <value>ti ha inviato un video</value>
   </data>
+  <data name="PHONE_CALL_MISSED" xml:space="preserve">
+    <value>Chiamata senza risposta</value>
+  </data>
+  <data name="PHONE_CALL_REQUEST" xml:space="preserve">
+    <value>{0} ti sta chiamando</value>
+  </data>
   <data name="PINNED_AUDIO" xml:space="preserve">
     <value>ha fissato un messaggio vocale</value>
   </data>

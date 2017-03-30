@@ -22,7 +22,11 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 
 	if (details != nullptr && details->Content != nullptr)
 	{
-		UpdateToastAndTiles(details->Content);
+		try
+		{
+			UpdateToastAndTiles(details->Content);
+		}
+		catch (Exception^ ex) { }
 	}
 
 	deferral->Complete();
@@ -45,8 +49,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		ToastNotificationManager::History->RemoveGroup(group);
 		return;
 	}
-
-
+	
 	bool muted = false;
 	if (data->HasKey("mute"))
 	{
@@ -63,17 +66,30 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		auto message = GetMessage(loc_args, loc_key);
 		auto sound = data->GetNamedString("sound", "Default");
 		auto launch = GetLaunch(custom, loc_key);
-		auto tag = GetTag(custom);
 		auto group = GetGroup(custom);
 		auto picture = GetPicture(custom, group);
 		auto date = GetDate(notification);
 
-		UpdateToast(caption, message, sound, launch, tag, group, picture, date, loc_key);
-		UpdateBadge(data->GetNamedNumber("badge"));
-
-		if (loc_key != L"DC_UPDATE")
+		if (loc_key->Equals(L"PHONE_CALL_MISSED"))
 		{
-			UpdateTile(caption, message);
+			//ToastNotificationManager::History->Remove(L"phoneCall");
+		}
+
+		if (loc_key->Equals(L"PHONE_CALL_REQUEST")) 
+		{
+			//UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
+		}
+		else
+		{
+			auto tag = GetTag(custom);
+
+			UpdateToast(caption, message, sound, launch, tag, group, picture, date, loc_key);
+			UpdateBadge(data->GetNamedNumber("badge"));
+
+			if (loc_key != L"DC_UPDATE")
+			{
+				UpdateTile(caption, message);
+			}
 		}
 	}
 }
@@ -95,6 +111,10 @@ String^ NotificationTask::GetCaption(JsonArray^ loc_args, String^ loc_key)
 		return loc_args->GetStringAt(0);
 	}
 	else if (key.find(L"PINNED") == 0)
+	{
+		return loc_args->GetStringAt(0);
+	}
+	else if (key.find(L"PHONE_CALL") == 0)
 	{
 		return loc_args->GetStringAt(0);
 	}
@@ -198,6 +218,10 @@ String^ NotificationTask::GetGroup(JsonObject^ custom)
 		else if (custom->HasKey("from_id"))
 		{
 			return String::Concat("u", custom->GetNamedString("from_id"));
+		}
+		else if (custom->HasKey("contact_id"))
+		{
+			return String::Concat("u", custom->GetNamedString("contact_id"));
 		}
 	}
 
@@ -370,6 +394,52 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	xml += message->Data();
 	//xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
 	xml += L"]]></text></binding></visual>";
+	xml += actions;
+	xml += L"</toast>";
+
+	auto notifier = ToastNotificationManager::CreateToastNotifier();
+
+	auto document = ref new XmlDocument();
+	document->LoadXml(ref new String(xml.c_str()));
+
+	auto notification = ref new ToastNotification(document);
+
+	if (tag != nullptr) notification->Tag = tag;
+	if (group != nullptr) notification->Group = group;
+
+	notifier->Show(notification);
+}
+
+void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
+{
+	std::wstring key = loc_key->Data();
+	std::wstring actions = L"";
+	if (group != nullptr && key.find(L"CHANNEL"))
+	{
+		actions = L"<actions>";
+		actions += L"<action content='Ignore' imageUri='Assets/Icons/cancel.png' activationType='background' arguments='action=ignore&amp;callId=938163'/>";
+		actions += L"<action content='Answer' imageUri='Assets/Icons/telephone.png' arguments='action=answer&amp;callId=938163'/>";
+		actions += L"</actions>";
+	}
+
+	std::wstring xml = L"<toast launch='";
+	xml += launch->Data();
+	xml += L"' scenario='incomingCall'><visual><binding template='ToastGeneric'>";
+
+	xml += L"<text><![CDATA[";
+	xml += caption->Data();
+	xml += L"]]></text><text><![CDATA[";
+	xml += message->Data();
+	xml += L"]]></text>";
+
+	if (picture != nullptr)
+	{
+		xml += L"<image hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
+	}
+
+	xml += L"</binding></visual>";
 	xml += actions;
 	xml += L"</toast>";
 

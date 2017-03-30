@@ -638,4 +638,67 @@
   <data name="CompanyNominativeSingular" xml:space="preserve">
     <value>Member</value>
   </data>
+  <data name="CallMinutes_1" xml:space="preserve">
+    <value>{0} minute</value>
+  </data>
+  <data name="CallMinutes_2" xml:space="preserve">
+    <value>{0} minutes</value>
+  </data>
+  <data name="CallMinutes_3_10" xml:space="preserve">
+    <value>{0} minutes</value>
+  </data>
+  <data name="CallMinutes_any" xml:space="preserve">
+    <value>{0} minutes</value>
+  </data>
+  <data name="CallSeconds_1" xml:space="preserve">
+    <value>{0} second</value>
+  </data>
+  <data name="CallSeconds_2" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="CallSeconds_3_10" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="CallSeconds_any" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="CallShortMinutes_1" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="CallShortMinutes_2" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="CallShortMinutes_3_10" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="CallShortMinutes_any" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="CallShortSeconds_1" xml:space="preserve">
+    <value>{0} sec</value>
+  </data>
+  <data name="CallShortSeconds_2" xml:space="preserve">
+    <value>{0} sec</value>
+  </data>
+  <data name="CallShortSeconds_3_10" xml:space="preserve">
+    <value>{0} sec</value>
+  </data>
+  <data name="CallShortSeconds_any" xml:space="preserve">
+    <value>{0} sec</value>
+  </data>
+  <data name="CallCanceled" xml:space="preserve">
+    <value>Cancelled Call</value>
+  </data>
+  <data name="CallIncoming" xml:space="preserve">
+    <value>Incoming Call</value>
+  </data>
+  <data name="CallMissed" xml:space="preserve">
+    <value>Missed Call</value>
+  </data>
+  <data name="CallOutgoing" xml:space="preserve">
+    <value>Outgoing Call</value>
+  </data>
+  <data name="CallTimeFormat" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
 </root>

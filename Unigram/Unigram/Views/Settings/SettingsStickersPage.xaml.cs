@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.TL;
+using Unigram.Controls.Views;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
@@ -42,7 +44,22 @@ namespace Unigram.Views.Settings
 
         private void FeaturedStickers_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsFeaturedStickersPage));
+            Frame.Navigate(typeof(SettingsStickersFeaturedPage));
+        }
+
+        private void ArchivedStickers_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsStickersArchivedPage));
+        }
+
+        private void Masks_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsMasksPage));
+        }
+
+        private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            await StickerSetView.Current.ShowAsync((TLMessagesStickerSet)e.ClickedItem);
         }
     }
 }

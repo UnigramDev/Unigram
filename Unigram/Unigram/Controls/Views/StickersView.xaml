@@ -5,7 +5,12 @@
     xmlns:local="using:Unigram.Controls.Views"
     xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:viewModels="using:Unigram.ViewModels"
     xmlns:tl="using:Telegram.Api.TL"
+    xmlns:wuxdata="using:Windows.UI.Xaml.Data"
+    xmlns:behaviors="using:Unigram.Behaviors"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -13,7 +18,8 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <CollectionViewSource x:Key="Stickers" Source="{Binding StickerSets}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="FeaturedSource" Source="{x:Bind ViewModel.Stickers.FeaturedStickers}" ItemsPath="Covers" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="StickersSource" Source="{x:Bind ViewModel.Stickers.SavedStickers}" ItemsPath="Documents" IsSourceGrouped="True"/>
     </UserControl.Resources>
 
     <Grid>
@@ -56,25 +62,27 @@
             </Grid.RowDefinitions>
             <Pivot x:Name="Pivot" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
                 <PivotItem Margin="0,-48,0,0">
-                    <GridView x:Name="GifsView"
-                              ItemsSource="{Binding SavedGifs}"
-                              common:FluidGridView.OrientationOnly="False"
-                              IsItemClickEnabled="True"
-                              SelectionMode="None"
-                              ItemClick="Gifs_ItemClick"
-                              Loaded="Gifs_Loaded"
-                              Padding="10,0,10,10">
+                    <controls:ZoomableGridView
+                        x:Name="GifsView"
+                        ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
+                        common:FluidGridView.OrientationOnly="False"
+                        IsItemClickEnabled="True"
+                        SelectionMode="None"
+                        ItemClick="Gifs_ItemClick"
+                        Padding="10,0,10,10">
                         <common:FluidGridView.Triggers>
                             <common:FluidGridViewTrigger RowsOrColumns="5"/>
                         </common:FluidGridView.Triggers>
                         <GridView.Header>
-                            <Border x:Name="StickyHeader" Padding="12,8,0,9" Margin="-10,0" Canvas.ZIndex="1000">
-                                <TextBlock Text="Saved GIFs" Style="{StaticResource BaseTextBlockStyle}"/>
+                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12,8,0,8" Height="32" Margin="-10,0">
+                                <TextBlock Text="Saved GIFs" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </Border>
                         </GridView.Header>
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="tl:TLDocument">
-                                <Image x:Phase="3" Margin="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Stretch="UniformToFill"/>
+                                <Border Margin="2">
+                                    <Image x:Phase="3" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill"/>
+                                </Border>
                             </DataTemplate>
                         </GridView.ItemTemplate>
                         <GridView.ItemContainerStyle>
@@ -88,25 +96,55 @@
                         <GridView.ItemContainerTransitions>
                             <TransitionCollection/>
                         </GridView.ItemContainerTransitions>
-                    </GridView>
+                        <!--<GridView.ItemsPanel>
+                             <ItemsPanelTemplate>
+                             <local:ItemsTestPanel/>
+                             </ItemsPanelTemplate>
+                             </GridView.ItemsPanel>-->
+                    </controls:ZoomableGridView>
                 </PivotItem>
                 <PivotItem Margin="0,-48,0,0">
-                    <GridView x:Name="Stickers"
-                              ItemsSource="{Binding Source={StaticResource Stickers}}"
-                              common:FluidGridView.OrientationOnly="False"
-                              IsItemClickEnabled="True"
-                              SelectionMode="None"
-                              ItemClick="Stickers_ItemClick"
-                              Loaded="Stickers_Loaded"
-                              Padding="12,0">
+                    <controls:ZoomableGridView
+                        x:Name="FeaturedView"
+                        ItemsSource="{x:Bind FeaturedSource.View}"
+                        common:FluidGridView.OrientationOnly="False"
+                        IsItemClickEnabled="True"
+                        SelectionMode="None"
+                        ItemClick="Featured_ItemClick"
+                        Padding="12,0">
                         <common:FluidGridView.Triggers>
                             <common:FluidGridViewTrigger RowsOrColumns="5"/>
                         </common:FluidGridView.Triggers>
+                        <GridView.Header>
+                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="0,8,0,8" Height="32">
+                                <TextBlock Text="Trending stickers" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </Border>
+                        </GridView.Header>
                         <GridView.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Key.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                    <DataTemplate x:DataType="viewModels:TLFeaturedStickerSet">
+                                        <Grid Padding="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}">
+                                                <Run Text="{x:Bind Set.Title}"/>
+                                                <Run Text="{x:Bind Unread, Mode=OneWay}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                                            </TextBlock>
+                                            <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1">
+                                                <Run Text="{x:Bind Set.Count}"/>
+                                                <Run Text="stickers"/>
+                                            </TextBlock>
+
+                                            <controls:GlyphButton Foreground="{ThemeResource TelegramForegroundAccentBrush}" Glyph="&#xE109;" Margin="0,0,-12,0" Grid.Column="1" Grid.RowSpan="2"/>
+                                        </Grid>
                                     </DataTemplate>
                                 </GroupStyle.HeaderTemplate>
                                 <GroupStyle.HeaderContainerStyle>
@@ -115,7 +153,7 @@
                                         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                         <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                         <Setter Property="Margin" Value="0,0,0,0"/>
-                                        <Setter Property="Padding" Value="0,8,0,9"/>
+                                        <Setter Property="Padding" Value="0"/>
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                         <Setter Property="VerticalContentAlignment" Value="Top" />
                                         <Setter Property="MinHeight" Value="0"/>
@@ -141,11 +179,6 @@
                                 </GroupStyle.HeaderContainerStyle>
                             </GroupStyle>
                         </GridView.GroupStyle>
-                        <!--<GridView.ItemsPanel>
-                             <ItemsPanelTemplate>
-                             <ItemsWrapGrid Orientation="Horizontal" ItemWidth="66.8" ItemHeight="66.8"/>
-                             </ItemsPanelTemplate>
-                             </GridView.ItemsPanel>-->
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="tl:TLDocument">
                                 <Image x:Phase="3" Margin="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
@@ -165,14 +198,114 @@
                         <GridView.ItemContainerTransitions>
                             <TransitionCollection/>
                         </GridView.ItemContainerTransitions>
-                    </GridView>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" GroupPadding="0,0,0,20" AreStickyGroupHeadersEnabled="False"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                    </controls:ZoomableGridView>
+                </PivotItem>
+                <PivotItem Margin="0,-48,0,0">
+                    <SemanticZoom>
+                        <SemanticZoom.ZoomedInView>
+                            <controls:ZoomableGridView
+                                x:Name="Stickers"
+                                ItemsSource="{x:Bind StickersSource.View}"
+                                common:FluidGridView.OrientationOnly="False"
+                                IsItemClickEnabled="True"
+                                SelectionMode="None"
+                                ItemClick="Stickers_ItemClick"
+                                Loaded="Stickers_Loaded"
+                                Padding="12,0">
+                                <common:FluidGridView.Triggers>
+                                    <common:FluidGridViewTrigger RowsOrColumns="5"/>
+                                </common:FluidGridView.Triggers>
+                                <GridView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                                                <TextBlock Text="{x:Bind Set.Title}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                        <GroupStyle.HeaderContainerStyle>
+                                            <Style TargetType="GridViewHeaderItem">
+                                                <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
+                                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                                <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                                <Setter Property="Margin" Value="0,0,0,0"/>
+                                                <Setter Property="Padding" Value="0,8,0,8"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                <Setter Property="VerticalContentAlignment" Value="Top" />
+                                                <Setter Property="MinHeight" Value="32"/>
+                                                <Setter Property="Height" Value="32"/>
+                                                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="GridViewHeaderItem">
+                                                            <Border Background="{TemplateBinding Background}"
+                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                                                <ContentPresenter x:Name="ContentPresenter"
+                                                                                  Margin="{TemplateBinding Padding}"
+                                                                                  Content="{TemplateBinding Content}"
+                                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.HeaderContainerStyle>
+                                    </GroupStyle>
+                                </GridView.GroupStyle>
+                                <GridView.ItemTemplate>
+                                    <DataTemplate x:DataType="tl:TLDocument">
+                                        <Image x:Phase="3" Margin="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
+                                    </DataTemplate>
+                                </GridView.ItemTemplate>
+                                <GridView.Footer>
+                                    <Border Height="12"/>
+                                </GridView.Footer>
+                                <GridView.ItemContainerStyle>
+                                    <Style TargetType="GridViewItem">
+                                        <Setter Property="Margin" Value="0"/>
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                    </Style>
+                                </GridView.ItemContainerStyle>
+                                <GridView.ItemContainerTransitions>
+                                    <TransitionCollection/>
+                                </GridView.ItemContainerTransitions>
+                                <GridView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsWrapGrid Orientation="Horizontal" AreStickyGroupHeadersEnabled="False"/>
+                                    </ItemsPanelTemplate>
+                                </GridView.ItemsPanel>
+                            </controls:ZoomableGridView>
+                        </SemanticZoom.ZoomedInView>
+                        <SemanticZoom.ZoomedOutView>
+                            <ListView ItemsSource="{x:Bind StickersSource.View.CollectionGroups}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="wuxdata:ICollectionViewGroup">
+                                        <TextBlock Text="{x:Bind Group.(tl:TLMessagesStickerSet.Set).Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <!--<TextBlock Text="{Binding Group.Set.Title}" Style="{StaticResource BaseTextBlockStyle}"/>-->
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </SemanticZoom.ZoomedOutView>
+                    </SemanticZoom>
                 </PivotItem>
             </Pivot>
             <ListView x:Name="Toolbar"
-                      ItemsSource="{Binding StickerSets}"
+                      ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
                       Height="{ThemeResource AppBarThemeCompactHeight}"
                       Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                      SelectionChanged="ListView_SelectionChanged"
+                      IsItemClickEnabled="True"
+                      ItemClick="Toolbar_ItemClick"
+                      SelectionChanged="Toolbar_SelectionChanged"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                       ScrollViewer.HorizontalScrollMode="Auto"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"
@@ -195,23 +328,52 @@
                         <Setter Property="MinHeight" Value="0"/>
                     </Style>
                 </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Image Margin="4" Source="{Binding [0], Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
+                <ListView.ItemTemplateSelector>
+                    <selectors:StickerSetTemplateSelector>
+                        <selectors:StickerSetTemplateSelector.ItemTemplate>
+                            <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                                <Image Margin="4" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}"/>
+                            </DataTemplate>
+                        </selectors:StickerSetTemplateSelector.ItemTemplate>
+                        <selectors:StickerSetTemplateSelector.RecentsTemplate>
+                            <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                                <Border ToolTipService.ToolTip="{x:Bind Set.Title}" Background="Transparent">
+                                    <FontIcon Glyph="&#xE121;" Margin="0,0,0,2"/>
+                                </Border>
+                            </DataTemplate>
+                        </selectors:StickerSetTemplateSelector.RecentsTemplate>
+                    </selectors:StickerSetTemplateSelector>
+                </ListView.ItemTemplateSelector>
                 <ListView.Header>
                     <StackPanel Orientation="Horizontal">
-                        <controls:GlyphButton Glyph="&#xE608;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
-                        <controls:GlyphButton Glyph="&#xE82F;"/>
+                        <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.SavedGifs.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="0" Glyph="&#xE608;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
+                        <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" FontFamily="{ThemeResource TelegramThemeFontFamily}" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Padding="4">
+                            <Grid Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                                  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                                  CornerRadius="10"
+                                  MinWidth="20"
+                                  Height="20">
+                                <TextBlock Text="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay}"
+                                           Style="{ThemeResource CaptionTextBlockStyle}"
+                                           Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                           TextAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           TextLineBounds="TrimToBaseline,TrimToCapHeight"
+                                           Margin="5,0,5,0"/>
+                            </Grid>
+                        </controls:PivotRadioButton>
+                        <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="2" Glyph="&#xE121;" Visibility="Collapsed"/>
                     </StackPanel>
                 </ListView.Header>
                 <ListView.Footer>
                     <StackPanel Orientation="Horizontal">
-                        <controls:GlyphButton Glyph="&#xE82F;"/>
+                        <controls:GlyphButton Glyph="&#xE60D;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
                         <controls:GlyphButton Glyph="&#xE115;"/>
                     </StackPanel>
                 </ListView.Footer>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection/>
+                </ListView.ItemContainerTransitions>
             </ListView>
 
             <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.Row="2"/>

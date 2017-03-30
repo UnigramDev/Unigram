@@ -15,6 +15,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Dependency;
 using Unigram.ViewModels;
@@ -624,12 +625,12 @@ namespace Unigram.Common
                             return;
                         }
 
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
                     else
                     {
                         // TODO
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
                 }
             }
@@ -643,47 +644,48 @@ namespace Unigram.Common
                 var navigation = (string)data;
                 if (type == TLType.MessageEntityUrl || type == TLType.MessageEntityTextUrl)
                 {
-                    if (navigation.Contains("telegram.me") || navigation.Contains("t.me"))
+                    var url = navigation;
+                    if (url.StartsWith("http") == false)
                     {
-                        HandleTelegramUrl(navigation);
+                        url = "http://" + url;
                     }
-                    else
+
+                    if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                     {
-                        if (message?.Media is TLMessageMediaWebPage webpageMedia)
+                        if (Constants.TelegramHosts.Contains(uri.Host))
                         {
-                            if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
+                            HandleTelegramUrl(navigation);
+                        }
+                        else
+                        {
+                            if (message?.Media is TLMessageMediaWebPage webpageMedia)
                             {
-                                var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                                if (service != null)
+                                if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
                                 {
-                                    service.Navigate(typeof(ArticlePage), webpageMedia);
+                                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                                    if (service != null)
+                                    {
+                                        service.Navigate(typeof(ArticlePage), webpageMedia);
+                                        return;
+                                    }
+                                }
+                            }
+
+                            if (type == TLType.MessageEntityTextUrl)
+                            {
+                                var dialog = new TLMessageDialog(navigation, "Open this link?");
+                                dialog.Title = "Open this link?";
+                                dialog.Message = navigation;
+                                dialog.PrimaryButtonText = "Open";
+                                dialog.SecondaryButtonText = "Cancel";
+
+                                var result = await dialog.ShowAsync();
+                                if (result != ContentDialogResult.Primary)
+                                {
                                     return;
                                 }
                             }
-                        }
 
-                        if (type == TLType.MessageEntityTextUrl)
-                        {
-                            var dialog = new TLMessageDialog(navigation, "Open this link?");
-                            dialog.Title = "Open this link?";
-                            dialog.Message = navigation;
-                            dialog.PrimaryButtonText = "Open";
-                            dialog.SecondaryButtonText = "Cancel";
-
-                            var result = await dialog.ShowAsync();
-                            if (result != ContentDialogResult.Primary)
-                            {
-                                return;
-                            }
-                        }
-
-                        if (!navigation.StartsWith("http"))
-                        {
-                            navigation = "http://" + navigation;
-                        }
-
-                        if (Uri.TryCreate(navigation, UriKind.Absolute, out Uri uri))
-                        {
                             await Launcher.LaunchUriAsync(uri);
                         }
                     }
@@ -782,7 +784,7 @@ namespace Unigram.Common
                 var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
                 if (index != -1)
                 {
-                    string text = url.Substring(index).Replace("/", string.Empty);
+                    var text = url.Substring(index).Replace("/", string.Empty);
                     if (!string.IsNullOrEmpty(text))
                     {
                         NavigateToInviteLink(text);
@@ -794,10 +796,10 @@ namespace Unigram.Common
                 var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
                 if (index != -1)
                 {
-                    string text = url.Substring(index).Replace("/", string.Empty);
+                    var text = url.Substring(index).Replace("/", string.Empty);
                     if (!string.IsNullOrEmpty(text))
                     {
-                        //NavigateToStickerSet(text);
+                        NavigateToStickerSet(text);
                     }
                 }
             }
@@ -807,7 +809,7 @@ namespace Unigram.Common
 
                 var accessToken = GetAccessToken(query, out PageKind pageKind);
                 var post = GetPost(query);
-                var result = url.StartsWith("https://") ? url : ("https://" + url);
+                var result = url.StartsWith("http") ? url : ("https://" + url);
 
                 if (Uri.TryCreate(result, UriKind.Absolute, out Uri uri))
                 {
@@ -827,6 +829,11 @@ namespace Unigram.Common
             }
         }
 
+        private static async void NavigateToStickerSet(string text)
+        {
+            await StickerSetView.Current.ShowAsync(new TLInputStickerSetShortName { ShortName = text });
+        }
+
         private static async void NavigateToUsername(IMTProtoService mtProtoService, string username, string accessToken, string post, string game)
         {
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
@@ -842,7 +849,16 @@ namespace Unigram.Common
                     //}
                     //TelegramViewBase.NavigateToUser(user, accessToken, pageKind);
 
-                    service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
+                    service.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+
+                    //if (user.IsBot)
+                    //{
+                    //    service.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                    //}
+                    //else
+                    //{
+                    //    service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
+                    //}
 
                     return;
                 }
@@ -868,7 +884,16 @@ namespace Unigram.Common
                         var peerUser = response.Result.Peer as TLPeerUser;
                         if (peerUser != null)
                         {
-                            service.Navigate(typeof(UserDetailsPage), peerUser);
+                            service.Navigate(typeof(DialogPage), peerUser);
+
+                            //if (user.IsBot)
+                            //{
+                            //    service.Navigate(typeof(DialogPage), peerUser);
+                            //}
+                            //else
+                            //{
+                            //    service.Navigate(typeof(UserDetailsPage), peerUser);
+                            //}
                             return;
                         }
 
@@ -886,12 +911,12 @@ namespace Unigram.Common
                             return;
                         }
 
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
                     else
                     {
                         // TODO
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
 
                     //mtProtoService.ResolveUsernameAsync(new TLString(username), delegate (TLResolvedPeer result)
@@ -976,20 +1001,9 @@ namespace Unigram.Common
                 var invite = response.Result as TLChatInvite;
                 if (invite != null)
                 {
-                    var content = "AppResources.JoinGroupConfirmation";
-                    if (invite.IsChannel && !invite.IsMegagroup)
-                    {
-                        content = "AppResources.JoinChannelConfirmation";
-                    }
-
-                    var dialog = new TLMessageDialog(content, invite.Title);
-                    dialog.Title = invite.Title;
-                    dialog.Content = content;
-                    dialog.PrimaryButtonText = "OK";
-                    dialog.SecondaryButtonText = "Cancel";
-
+                    var dialog = new JoinChatView { DataContext = invite };
                     var result = await dialog.ShowAsync();
-                    if (result == ContentDialogResult.Primary)
+                    if (result == ContentDialogBaseResult.OK)
                     {
                         var import = await protoService.ImportChatInviteAsync(link);
                         if (import.IsSucceeded)
@@ -1065,6 +1079,7 @@ namespace Unigram.Common
                 if (response.Error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || response.Error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || response.Error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
                 {
                     //MessageBox.Show(AppResources.GroupNotExistsError, AppResources.Error, 0);
+                    await TLMessageDialog.ShowAsync("This invite link is broken or has expired.", "Warning", "OK");
                     return;
                 }
 

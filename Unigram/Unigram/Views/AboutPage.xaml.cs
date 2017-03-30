@@ -68,7 +68,7 @@
 
         private async void btnCoreMateiTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            var uriTwitter = new Uri(@"https://twitter.com/Mapei92");
+            var uriTwitter = new Uri(@"https://twitter.com/matei_dev");
             var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
         }
 
@@ -81,6 +81,12 @@
         private async void btnCoreAbdelTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             var uriTwitter = new Uri(@"https://twitter.com/ADeltaXForce");
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
+        }
+
+        private async void btnCoreLorenzoTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var uriTwitter = new Uri(@"https://twitter.com/LorenzRox");
             var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
         }
 
@@ -123,6 +129,12 @@
         {
             var url = new Uri(@"https://adeltax.com/");
             var success = await Windows.System.Launcher.LaunchUriAsync(url);
+        }
+
+        private async void btnUnigramTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var uriTwitter = new Uri(@"https://twitter.com/UnigramApp");
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);            
         }
     }
 }

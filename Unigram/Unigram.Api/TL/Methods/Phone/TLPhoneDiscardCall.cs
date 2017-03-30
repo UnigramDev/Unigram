@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Phone
 {
 	/// <summary>
 	/// RCP method phone.discardCall.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLUpdatesBase"/>
 	/// </summary>
 	public partial class TLPhoneDiscardCall : TLObject
 	{
@@ -32,7 +32,7 @@ namespace Telegram.Api.TL.Methods.Phone
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x5DFBCDDC);
+			to.Write(0x78D413A6);
 			to.WriteObject(Peer);
 			to.Write(Duration);
 			to.WriteObject(Reason);

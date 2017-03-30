@@ -29,7 +29,7 @@ namespace Unigram.Controls
         #endregion
     }
 
-    public class GlyphHyperlinkButton : SimpleButton
+    public class GlyphHyperlinkButton : SimpleHyperlinkButton
     {
         public GlyphHyperlinkButton()
         {

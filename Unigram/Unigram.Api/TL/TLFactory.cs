@@ -13,6 +13,8 @@ using Telegram.Api.TL.Methods.Upload;
 using Telegram.Api.TL.Methods.Help;
 using Telegram.Api.TL.Methods.Channels;
 using Telegram.Api.TL.Methods.Phone;
+using Telegram.Api.TL.Methods.Bots;
+using Telegram.Api.TL.Methods.Payments;
 
 namespace Telegram.Api.TL
 {
@@ -80,6 +82,7 @@ namespace Telegram.Api.TL
 				case TLType.AccountUpdatePasswordSettings: return (T)(Object)new TLAccountUpdatePasswordSettings(from);
 				case TLType.AccountSendConfirmPhoneCode: return (T)(Object)new TLAccountSendConfirmPhoneCode(from);
 				case TLType.AccountConfirmPhone: return (T)(Object)new TLAccountConfirmPhone(from);
+				case TLType.AccountGetTmpPassword: return (T)(Object)new TLAccountGetTmpPassword(from);
 				case TLType.UsersGetUsers: return (T)(Object)new TLUsersGetUsers(from);
 				case TLType.UsersGetFullUser: return (T)(Object)new TLUsersGetFullUser(from);
 				case TLType.ContactsGetStatuses: return (T)(Object)new TLContactsGetStatuses(from);
@@ -179,6 +182,8 @@ namespace Telegram.Api.TL
 				case TLType.MessagesToggleDialogPin: return (T)(Object)new TLMessagesToggleDialogPin(from);
 				case TLType.MessagesReorderPinnedDialogs: return (T)(Object)new TLMessagesReorderPinnedDialogs(from);
 				case TLType.MessagesGetPinnedDialogs: return (T)(Object)new TLMessagesGetPinnedDialogs(from);
+				case TLType.MessagesSetBotShippingResults: return (T)(Object)new TLMessagesSetBotShippingResults(from);
+				case TLType.MessagesSetBotPrecheckoutResults: return (T)(Object)new TLMessagesSetBotPrecheckoutResults(from);
 				case TLType.UpdatesGetState: return (T)(Object)new TLUpdatesGetState(from);
 				case TLType.UpdatesGetDifference: return (T)(Object)new TLUpdatesGetDifference(from);
 				case TLType.UpdatesGetChannelDifference: return (T)(Object)new TLUpdatesGetChannelDifference(from);
@@ -189,6 +194,7 @@ namespace Telegram.Api.TL
 				case TLType.UploadSaveFilePart: return (T)(Object)new TLUploadSaveFilePart(from);
 				case TLType.UploadGetFile: return (T)(Object)new TLUploadGetFile(from);
 				case TLType.UploadSaveBigFilePart: return (T)(Object)new TLUploadSaveBigFilePart(from);
+				case TLType.UploadGetWebFile: return (T)(Object)new TLUploadGetWebFile(from);
 				case TLType.HelpGetConfig: return (T)(Object)new TLHelpGetConfig(from);
 				case TLType.HelpGetNearestDC: return (T)(Object)new TLHelpGetNearestDC(from);
 				case TLType.HelpGetAppUpdate: return (T)(Object)new TLHelpGetAppUpdate(from);
@@ -229,6 +235,16 @@ namespace Telegram.Api.TL
 				case TLType.PhoneAcceptCall: return (T)(Object)new TLPhoneAcceptCall(from);
 				case TLType.PhoneDiscardCall: return (T)(Object)new TLPhoneDiscardCall(from);
 				case TLType.PhoneReceivedCall: return (T)(Object)new TLPhoneReceivedCall(from);
+				case TLType.PhoneSetCallRating: return (T)(Object)new TLPhoneSetCallRating(from);
+				case TLType.PhoneGetCallConfig: return (T)(Object)new TLPhoneGetCallConfig(from);
+				case TLType.BotsSendCustomRequest: return (T)(Object)new TLBotsSendCustomRequest(from);
+				case TLType.BotsAnswerWebhookJSONQuery: return (T)(Object)new TLBotsAnswerWebhookJSONQuery(from);
+				case TLType.PaymentsGetPaymentForm: return (T)(Object)new TLPaymentsGetPaymentForm(from);
+				case TLType.PaymentsGetPaymentReceipt: return (T)(Object)new TLPaymentsGetPaymentReceipt(from);
+				case TLType.PaymentsValidateRequestedInfo: return (T)(Object)new TLPaymentsValidateRequestedInfo(from);
+				case TLType.PaymentsSendPaymentForm: return (T)(Object)new TLPaymentsSendPaymentForm(from);
+				case TLType.PaymentsGetSavedInfo: return (T)(Object)new TLPaymentsGetSavedInfo(from);
+				case TLType.PaymentsClearSavedInfo: return (T)(Object)new TLPaymentsClearSavedInfo(from);
 				case TLType.ResPQ: return (T)(Object)new TLResPQ(from);
 				case TLType.PQInnerData: return (T)(Object)new TLPQInnerData(from);
 				case TLType.ServerDHParamsFail: return (T)(Object)new TLServerDHParamsFail(from);
@@ -289,6 +305,7 @@ namespace Telegram.Api.TL
 				case TLType.InputMediaPhotoExternal: return (T)(Object)new TLInputMediaPhotoExternal(from);
 				case TLType.InputMediaDocumentExternal: return (T)(Object)new TLInputMediaDocumentExternal(from);
 				case TLType.InputMediaGame: return (T)(Object)new TLInputMediaGame(from);
+				case TLType.InputMediaInvoice: return (T)(Object)new TLInputMediaInvoice(from);
 				case TLType.InputChatPhotoEmpty: return (T)(Object)new TLInputChatPhotoEmpty(from);
 				case TLType.InputChatUploadedPhoto: return (T)(Object)new TLInputChatUploadedPhoto(from);
 				case TLType.InputChatPhoto: return (T)(Object)new TLInputChatPhoto(from);
@@ -304,13 +321,13 @@ namespace Telegram.Api.TL
 				case TLType.PeerChat: return (T)(Object)new TLPeerChat(from);
 				case TLType.PeerChannel: return (T)(Object)new TLPeerChannel(from);
 				case TLType.StorageFileUnknown: return (T)(Object)new TLStorageFileUnknown(from);
+				case TLType.StorageFilePartial: return (T)(Object)new TLStorageFilePartial(from);
 				case TLType.StorageFileJpeg: return (T)(Object)new TLStorageFileJpeg(from);
 				case TLType.StorageFileGif: return (T)(Object)new TLStorageFileGif(from);
 				case TLType.StorageFilePng: return (T)(Object)new TLStorageFilePng(from);
 				case TLType.StorageFilePdf: return (T)(Object)new TLStorageFilePdf(from);
 				case TLType.StorageFileMp3: return (T)(Object)new TLStorageFileMp3(from);
 				case TLType.StorageFileMov: return (T)(Object)new TLStorageFileMov(from);
-				case TLType.StorageFilePartial: return (T)(Object)new TLStorageFilePartial(from);
 				case TLType.StorageFileMp4: return (T)(Object)new TLStorageFileMp4(from);
 				case TLType.StorageFileWebp: return (T)(Object)new TLStorageFileWebp(from);
 				case TLType.FileLocationUnavailable: return (T)(Object)new TLFileLocationUnavailable(from);
@@ -349,6 +366,7 @@ namespace Telegram.Api.TL
 				case TLType.MessageMediaWebPage: return (T)(Object)new TLMessageMediaWebPage(from);
 				case TLType.MessageMediaVenue: return (T)(Object)new TLMessageMediaVenue(from);
 				case TLType.MessageMediaGame: return (T)(Object)new TLMessageMediaGame(from);
+				case TLType.MessageMediaInvoice: return (T)(Object)new TLMessageMediaInvoice(from);
 				case TLType.MessageActionEmpty: return (T)(Object)new TLMessageActionEmpty(from);
 				case TLType.MessageActionChatCreate: return (T)(Object)new TLMessageActionChatCreate(from);
 				case TLType.MessageActionChatEditTitle: return (T)(Object)new TLMessageActionChatEditTitle(from);
@@ -364,6 +382,8 @@ namespace Telegram.Api.TL
 				case TLType.MessageActionHistoryClear: return (T)(Object)new TLMessageActionHistoryClear(from);
 				case TLType.MessageActionGameScore: return (T)(Object)new TLMessageActionGameScore(from);
 				case TLType.MessageActionPhoneCall: return (T)(Object)new TLMessageActionPhoneCall(from);
+				case TLType.MessageActionPaymentSentMe: return (T)(Object)new TLMessageActionPaymentSentMe(from);
+				case TLType.MessageActionPaymentSent: return (T)(Object)new TLMessageActionPaymentSent(from);
 				case TLType.Dialog: return (T)(Object)new TLDialog(from);
 				case TLType.PhotoEmpty: return (T)(Object)new TLPhotoEmpty(from);
 				case TLType.Photo: return (T)(Object)new TLPhoto(from);
@@ -482,6 +502,10 @@ namespace Telegram.Api.TL
 				case TLType.UpdatePhoneCall: return (T)(Object)new TLUpdatePhoneCall(from);
 				case TLType.UpdateDialogPinned: return (T)(Object)new TLUpdateDialogPinned(from);
 				case TLType.UpdatePinnedDialogs: return (T)(Object)new TLUpdatePinnedDialogs(from);
+				case TLType.UpdateBotWebhookJSON: return (T)(Object)new TLUpdateBotWebhookJSON(from);
+				case TLType.UpdateBotWebhookJSONQuery: return (T)(Object)new TLUpdateBotWebhookJSONQuery(from);
+				case TLType.UpdateBotShippingQuery: return (T)(Object)new TLUpdateBotShippingQuery(from);
+				case TLType.UpdateBotPrecheckoutQuery: return (T)(Object)new TLUpdateBotPrecheckoutQuery(from);
 				case TLType.UpdatesState: return (T)(Object)new TLUpdatesState(from);
 				case TLType.UpdatesDifferenceEmpty: return (T)(Object)new TLUpdatesDifferenceEmpty(from);
 				case TLType.UpdatesDifference: return (T)(Object)new TLUpdatesDifference(from);
@@ -611,13 +635,12 @@ namespace Telegram.Api.TL
 				case TLType.KeyboardButtonRequestGeoLocation: return (T)(Object)new TLKeyboardButtonRequestGeoLocation(from);
 				case TLType.KeyboardButtonSwitchInline: return (T)(Object)new TLKeyboardButtonSwitchInline(from);
 				case TLType.KeyboardButtonGame: return (T)(Object)new TLKeyboardButtonGame(from);
+				case TLType.KeyboardButtonBuy: return (T)(Object)new TLKeyboardButtonBuy(from);
 				case TLType.KeyboardButtonRow: return (T)(Object)new TLKeyboardButtonRow(from);
 				case TLType.ReplyKeyboardHide: return (T)(Object)new TLReplyKeyboardHide(from);
 				case TLType.ReplyKeyboardForceReply: return (T)(Object)new TLReplyKeyboardForceReply(from);
 				case TLType.ReplyKeyboardMarkup: return (T)(Object)new TLReplyKeyboardMarkup(from);
 				case TLType.ReplyInlineMarkup: return (T)(Object)new TLReplyInlineMarkup(from);
-				case TLType.HelpAppChangelogEmpty: return (T)(Object)new TLHelpAppChangelogEmpty(from);
-				case TLType.HelpAppChangelog: return (T)(Object)new TLHelpAppChangelog(from);
 				case TLType.MessageEntityUnknown: return (T)(Object)new TLMessageEntityUnknown(from);
 				case TLType.MessageEntityMention: return (T)(Object)new TLMessageEntityMention(from);
 				case TLType.MessageEntityHashtag: return (T)(Object)new TLMessageEntityHashtag(from);
@@ -767,6 +790,27 @@ namespace Telegram.Api.TL
 				case TLType.PhoneCallDiscardReasonDisconnect: return (T)(Object)new TLPhoneCallDiscardReasonDisconnect(from);
 				case TLType.PhoneCallDiscardReasonHangup: return (T)(Object)new TLPhoneCallDiscardReasonHangup(from);
 				case TLType.PhoneCallDiscardReasonBusy: return (T)(Object)new TLPhoneCallDiscardReasonBusy(from);
+				case TLType.DataJSON: return (T)(Object)new TLDataJSON(from);
+				case TLType.LabeledPrice: return (T)(Object)new TLLabeledPrice(from);
+				case TLType.Invoice: return (T)(Object)new TLInvoice(from);
+				case TLType.PaymentCharge: return (T)(Object)new TLPaymentCharge(from);
+				case TLType.PostAddress: return (T)(Object)new TLPostAddress(from);
+				case TLType.PaymentRequestedInfo: return (T)(Object)new TLPaymentRequestedInfo(from);
+				case TLType.PaymentSavedCredentialsCard: return (T)(Object)new TLPaymentSavedCredentialsCard(from);
+				case TLType.WebDocument: return (T)(Object)new TLWebDocument(from);
+				case TLType.InputWebDocument: return (T)(Object)new TLInputWebDocument(from);
+				case TLType.InputWebFileLocation: return (T)(Object)new TLInputWebFileLocation(from);
+				case TLType.UploadWebFile: return (T)(Object)new TLUploadWebFile(from);
+				case TLType.PaymentsPaymentForm: return (T)(Object)new TLPaymentsPaymentForm(from);
+				case TLType.PaymentsValidatedRequestedInfo: return (T)(Object)new TLPaymentsValidatedRequestedInfo(from);
+				case TLType.PaymentsPaymentResult: return (T)(Object)new TLPaymentsPaymentResult(from);
+				case TLType.PaymentsPaymentVerficationNeeded: return (T)(Object)new TLPaymentsPaymentVerficationNeeded(from);
+				case TLType.PaymentsPaymentReceipt: return (T)(Object)new TLPaymentsPaymentReceipt(from);
+				case TLType.PaymentsSavedInfo: return (T)(Object)new TLPaymentsSavedInfo(from);
+				case TLType.InputPaymentCredentialsSaved: return (T)(Object)new TLInputPaymentCredentialsSaved(from);
+				case TLType.InputPaymentCredentials: return (T)(Object)new TLInputPaymentCredentials(from);
+				case TLType.AccountTmpPassword: return (T)(Object)new TLAccountTmpPassword(from);
+				case TLType.ShippingOption: return (T)(Object)new TLShippingOption(from);
 				case TLType.Message: return (T)(Object)new TLMessage(from);
 				case TLType.MessageService: return (T)(Object)new TLMessageService(from);
 				case TLType.RPCResult: return (T)(Object)new TLRPCResult(from);

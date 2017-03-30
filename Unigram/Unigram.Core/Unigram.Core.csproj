@@ -108,7 +108,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DisposableMutex.cs" />
+    <Compile Include="Common\ApplicationSettings.cs" />
+    <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\FunctionalComparer.cs" />
     <Compile Include="Common\KeyedList.cs" />
+    <Compile Include="Common\ObservableCollectionEx.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Dependency\UnigramContainerBuilder.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
@@ -141,6 +145,7 @@
     <Compile Include="Rtf\Write\RtfTable.cs" />
     <Compile Include="Rtf\Write\RtfTableCell.cs" />
     <Compile Include="Rtf\Write\RtfUtility.cs" />
+    <Compile Include="Services\AppUpdateService.cs" />
     <Compile Include="Services\ContactsService.cs" />
     <Compile Include="Services\DialogsService.cs" />
     <Compile Include="Services\GifsService.cs" />

@@ -40,6 +40,8 @@ namespace Unigram
             container = UnigramContainer.Current;
         }
 
+        public IHardwareService HardwareService => container.ResolveType<IHardwareService>();
+
         public void Configure()
         {
             InitializeLayer();
@@ -69,17 +71,22 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();
             container.ContainerBuilder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
             container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
 
             // ViewModels
-            container.ContainerBuilder.RegisterType<LoginWelcomeViewModel>();
-            container.ContainerBuilder.RegisterType<LoginPhoneNumberViewModel>();
-            container.ContainerBuilder.RegisterType<LoginPhoneCodeViewModel>();
-            container.ContainerBuilder.RegisterType<LoginPasswordViewModel>();
+            container.ContainerBuilder.RegisterType<SignInWelcomeViewModel>();
+            container.ContainerBuilder.RegisterType<SignInViewModel>();
+            container.ContainerBuilder.RegisterType<SignUpViewModel>();
+            container.ContainerBuilder.RegisterType<SignInSentCodeViewModel>();
+            container.ContainerBuilder.RegisterType<SignInPasswordViewModel>();
             container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogViewModel>();
             container.ContainerBuilder.RegisterType<ChatPageHostViewModel>();//.SingleInstance();
+            container.ContainerBuilder.RegisterType<DialogStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
+            container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
             container.ContainerBuilder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
             container.ContainerBuilder.RegisterType<UsersSelectionViewModel>(); //.SingleInstance();
@@ -96,10 +103,14 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsSessionsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsBlockUserViewModel>();
-            container.ContainerBuilder.RegisterType<SettingsFeaturedStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsAccountsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsStickersFeaturedViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsStickersArchivedViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsMasksViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<StickerSetViewModel>();
 
             container.Build();
 
@@ -164,7 +175,7 @@ namespace Unigram
             protoService.AuthorizationRequired += (s, e) =>
             {
                 SettingsHelper.IsAuthorized = false;
-                Debugger.Break();
+                Debug.WriteLine("!!!UNAUTHORIZED!!!");
 
                 Execute.BeginOnUIThread(() =>
                 {
@@ -172,7 +183,7 @@ namespace Unigram
                     if (type.Name.StartsWith("Login")) { }
                     else
                     {
-                        App.Current.NavigationService.Navigate(typeof(LoginWelcomePage));
+                        App.Current.NavigationService.Navigate(typeof(SignInWelcomePage));
                         App.Current.NavigationService.Frame.BackStack.Clear();
                     }
                 });

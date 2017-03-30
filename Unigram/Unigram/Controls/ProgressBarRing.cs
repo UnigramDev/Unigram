@@ -85,11 +85,11 @@ namespace Unigram.Controls
                 return;
 
             double value;
-            if (oldValue > 0.0 && oldValue < 1.0 && newValue == 0.0)
-            {
-                value = 359.0;
-            }
-            else
+            //if (oldValue > 0.0 && oldValue < 1.0 && newValue == 0.0)
+            //{
+            //    value = 359.0;
+            //}
+            //else
             {
                 value = newValue * 359.0;
                 if (value < 0.0)

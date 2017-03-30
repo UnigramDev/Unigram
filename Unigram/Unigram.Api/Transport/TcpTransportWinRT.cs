@@ -102,7 +102,7 @@ namespace Telegram.Api.Transport
                 int bytesTransferred = 0;
                 try
                 {
-                    bytesTransferred = (int) await _dataReader.LoadAsync(60); //WithTimeout(timeout);
+                    bytesTransferred = (int)await _dataReader.LoadAsync(60); //.WithTimeout(timeout);
                 }
                 catch (Exception ex)
                 {
@@ -113,6 +113,10 @@ namespace Telegram.Api.Transport
                     if (ex is ObjectDisposedException)
                     {
                         return;
+                    }
+                    else if (ex is TaskCanceledException)
+                    {
+                        _dataReader.Dispose();
                     }
                 }
 

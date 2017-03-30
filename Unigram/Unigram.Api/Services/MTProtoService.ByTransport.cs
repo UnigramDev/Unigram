@@ -216,7 +216,7 @@ namespace Telegram.Api.Services
                                     if (dhGenOk == null)
                                     {
                                         var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "Incorrect dhGen " + dhGen.GetType() };
-                                        if (faultCallback != null) faultCallback(error);
+                                        faultCallback?.Invoke(error);
                                         TLUtils.WriteLine(error.ToString());
 #if LOG_REGISTRATION
                                         TLUtils.WriteLog("DHGen result " + serverDHParams);
@@ -604,8 +604,7 @@ namespace Telegram.Api.Services
 
                 if (dcOption == null) return null;
 
-                bool isCreated;
-                transport = _transportService.GetFileTransport(dcOption.IpAddress, dcOption.Port, Type, out isCreated);
+                transport = _transportService.GetFileTransport(dcOption.IpAddress, dcOption.Port, Type, out bool isCreated);
                 if (isCreated)
                 {
                     transport.DCId = dcId;
@@ -667,8 +666,7 @@ namespace Telegram.Api.Services
                     var transportSessionId = transport.SessionId;
                     var transportSequenceNumber = transport.SequenceNumber;
                     var transportClientTicksDelta = transport.ClientTicksDelta;
-                    bool isCreated;
-                    transport = _transportService.GetFileTransport(transport.Host, transport.Port, Type, out isCreated);
+                    transport = _transportService.GetFileTransport(transport.Host, transport.Port, Type, out bool isCreated);
                     if (isCreated)
                     {
                         transport.DCId = transportDCId;
@@ -1144,7 +1142,7 @@ namespace Telegram.Api.Services
                             Debug.WriteLine("@{0} {1} result {2}", string.Format("{0}: {1}", historyItem.Caption, "seqNo"), transportMessage.MsgId, result);
 
                         },//ReceiveBytesAsync(result, authKey)}, 
-                        error => { if (faultCallback != null) faultCallback(null); });
+                        error => { faultCallback?.Invoke(null); });
 
                     break;
             }
@@ -1259,7 +1257,7 @@ namespace Telegram.Api.Services
                     Debug.WriteLine("@{0} {1} result {2}", historyItem.Caption, transportMessage.MsgId, result);
 
                 },//ReceiveBytesAsync(result, authKey)}, 
-                error => { if (faultCallback != null) faultCallback(new TLRPCError()); });
+                error => { faultCallback?.Invoke(new TLRPCError()); });
         }
 
         private void ProcessRPCErrorByTransport(ITransport transport, TLRPCError error, HistoryItem historyItem, long keyId)
@@ -1508,9 +1506,9 @@ namespace Telegram.Api.Services
                     }
                 }
             }
-            else if (historyItem.FaultCallback != null)
+            else
             {
-                historyItem.FaultCallback(error);
+                historyItem.FaultCallback?.Invoke(error);
             }
         }
 

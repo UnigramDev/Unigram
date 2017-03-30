@@ -1,0 +1,65 @@
+﻿<local:PhoneCallMessageBubbleBase
+    x:Class="Unigram.Controls.Messages.PhoneCallMessageBubble"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Messages"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:common="using:Unigram.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vmc="using:Telegram.Api.TL"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
+    MaxWidth="430"
+    MinWidth="260">
+
+    <!-- TODO: not the right way -->
+    <Border Height="6" Visibility="{x:Bind (Visibility)ViewModel.IsFirst, Mode=OneWay}"/>
+
+    <UserControl x:Name="LayoutRoot">
+        <Grid Margin="{ThemeResource MessageContentMargin}"
+              Padding="{ThemeResource MessageContentPadding}"
+              CornerRadius="{ThemeResource MessageCornerRadius}"
+              Background="{ThemeResource MessageBackgroundBrush}"
+              BorderBrush="{ThemeResource MessageBorderBrush}"
+              BorderThickness="0,0,0,2">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState x:Name="Missed">
+                        <VisualState.Setters>
+                            <Setter Target="ReasonGlyph.Foreground" Value="{ThemeResource MessageCallMissedForegroundBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Default"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="{x:Bind ConvertTitle(ViewModel)}"
+                       Foreground="{ThemeResource MessageForegroundBrush}"
+                       Style="{StaticResource BaseTextBlockStyle}"/>
+
+            <TextBlock Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       Margin="0,6,0,-2"
+                       Grid.Row="1">
+                <ToolTipService.ToolTip>
+                    <ToolTip Opened="ToolTip_Opened"/>
+                </ToolTipService.ToolTip>
+                <Run x:Name="ReasonGlyph" Text="{x:Bind ConvertReason(ViewModel)}" FontSize="10" Foreground="{ThemeResource MessageCallForegroundBrush}" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                <Run Text="{x:Bind Convert.Date(ViewModel.Date)}"/><Run Text="{x:Bind ConvertDuration(ViewModel.Action)}"/>
+            </TextBlock>
+
+            <controls:GlyphButton Glyph="&#xE13A;" Height="Auto" VerticalAlignment="Stretch" Margin="0,-4,-12,-6" Grid.Column="1" Grid.RowSpan="2"/>
+        </Grid>
+    </UserControl>
+
+</local:PhoneCallMessageBubbleBase>

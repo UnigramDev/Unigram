@@ -1,0 +1,55 @@
+﻿<Page
+    x:Class="Unigram.Views.Settings.SettingsMasksPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:tl="using:Telegram.Api.TL"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+            <TextBlock Text="Masks" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+        </Grid>
+
+        <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                  ItemTemplate="{StaticResource StickerSetItemTemplate}"
+                  ItemClick="ListView_ItemClick"
+                  IsItemClickEnabled="True"
+                  SelectionMode="None"
+                  Grid.Row="1">
+            <ListView.Header>
+                <StackPanel>
+                    <Button Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Click="ArchivedStickers_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Archived stickers" VerticalAlignment="Center"/>
+                            <ContentControl Content="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                                <ContentControl.ContentTransitions>
+                                    <TransitionCollection>
+                                        <EntranceThemeTransition/>
+                                    </TransitionCollection>
+                                </ContentControl.ContentTransitions>
+                                <ContentControl.Clip>
+                                    <RectangleGeometry Rect="0,0,200,32"/>
+                                </ContentControl.Clip>
+                            </ContentControl>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </ListView.Header>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="12,0,0,0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </Grid>
+</Page>

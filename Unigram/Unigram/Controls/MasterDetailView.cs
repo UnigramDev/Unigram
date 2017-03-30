@@ -11,6 +11,8 @@ using Template10.Common;
 using Windows.UI.Xaml.Media;
 using Unigram.Core.Services;
 using Unigram.Views.Users;
+using System.Diagnostics;
+using Windows.UI.ViewManagement;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -101,6 +103,8 @@ namespace Unigram.Controls
         protected override void OnApplyTemplate()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
+
+            VisualStateManager.GoToState(this, "ResetState", false);
 
             MasterPresenter = (ContentPresenter)GetTemplateChild("MasterFrame");
             DetailPresenter = (Grid)GetTemplateChild("DetailPresenter");

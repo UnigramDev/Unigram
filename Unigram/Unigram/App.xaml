@@ -7,7 +7,7 @@
     xmlns:views="using:Unigram.Views"
     xmlns:converters="using:Unigram.Converters"
     xmlns:local="using:Unigram">
-    
+
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -55,7 +55,7 @@
             <converters:EditToVisibilityConverter x:Key="EditToVisibilityConverter"/>
             <converters:FileSizeConverter x:Key="FileSizeConverter"/>
             <converters:LastSeenConverter x:Key="LastSeenConverter"/>
-            
+
             <SolidColorBrush x:Key="Placeholder0Brush" Color="#ff516a"/>
             <SolidColorBrush x:Key="Placeholder1Brush" Color="#ffa85c"/>
             <SolidColorBrush x:Key="Placeholder2Brush" Color="#54cb68"/>

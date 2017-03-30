@@ -47,5 +47,77 @@ namespace Telegram.Api.TL
         {
             return Id.GetHashCode();
         }
+
+        //#region User equality
+
+        //public static bool operator ==(TLPeerBase peer, TLUserBase user)
+        //{
+        //    if (((object)peer == null) || ((object)peer == null))
+        //    {
+        //        return false;
+        //    }
+
+        //    if (peer is TLPeerUser userPeer && userPeer.UserId == user.Id)
+        //    {
+        //        return true;
+        //    }
+
+        //    return false;
+        //}
+
+        //public static bool operator !=(TLPeerBase peer, TLUserBase user)
+        //{
+        //    return !(peer == user);
+        //}
+
+        //#endregion
+
+        //#region Chat equality
+
+        //public static bool operator ==(TLPeerBase peer, TLChat chat)
+        //{
+        //    if (((object)peer == null) || ((object)peer == null))
+        //    {
+        //        return false;
+        //    }
+
+        //    if (peer is TLPeerChat chatPeer && chatPeer.ChatId == chat.Id)
+        //    {
+        //        return true;
+        //    }
+
+        //    return false;
+        //}
+
+        //public static bool operator !=(TLPeerBase peer, TLChat chat)
+        //{
+        //    return !(peer == chat);
+        //}
+
+        //#endregion
+
+        //#region Channel equality
+
+        //public static bool operator ==(TLPeerBase peer, TLChannel channel)
+        //{
+        //    if (((object)peer == null) || ((object)peer == null))
+        //    {
+        //        return false;
+        //    }
+
+        //    if (peer is TLPeerChannel channelPeer && channelPeer.ChannelId == channel.Id)
+        //    {
+        //        return true;
+        //    }
+
+        //    return false;
+        //}
+
+        //public static bool operator !=(TLPeerBase peer, TLChannel channel)
+        //{
+        //    return !(peer == channel);
+        //}
+
+        //#endregion
     }
 }

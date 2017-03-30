@@ -21,46 +21,6 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Common
 {
-    public static class LazyBitmapImage
-    {
-        public static async void SetSource(this BitmapSource bitmap, Uri uri)
-        {
-            var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
-            using (var stream = await file.OpenReadAsync())
-            {
-                try
-                {
-                    await bitmap.SetSourceAsync(stream);
-                }
-                catch
-                {
-                    Debug.Write("AGGRESSIVE");
-                }
-            }
-        }
-
-        public static async void SetSource(this BitmapSource bitmap, byte[] data)
-        {
-            using (var stream = new InMemoryRandomAccessStream())
-            {
-                using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
-                {
-                    writer.WriteBytes(data);
-                    await writer.StoreAsync();
-                }
-
-                try
-                {
-                    await bitmap.SetSourceAsync(stream);
-                }
-                catch
-                {
-                    Debug.Write("AGGRESSIVE");
-                }
-            }
-        }
-    }
-
     public class TLBitmapSource
     {
         private static readonly IDownloadFileManager _downloadFileManager;
@@ -76,7 +36,7 @@ namespace Unigram.Common
 
         public int Phase { get; private set; }
 
-        public BitmapImage Image { get; private set; } = new BitmapImage();
+        public BitmapImage Image { get; private set; } = new BitmapImage { DecodePixelType = DecodePixelType.Logical };
 
         public TLBitmapSource() { }
 
@@ -158,16 +118,24 @@ namespace Unigram.Common
             {
                 Phase = PHASE_PLACEHOLDER;
 
-                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(SettingsHelper.SessionGuid + "\\temp\\placeholders\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
-                using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                var fileName = FileUtils.GetTempFileName("placeholders\\" + group + "_placeholder.png");
+                if (File.Exists(fileName))
                 {
-                    if (stream.Size == 0)
+                    Image.UriSource = FileUtils.GetTempFileUri("placeholders//" + group + "_placeholder.png");
+                }
+                else
+                {
+                    var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(SettingsHelper.SessionGuid + "\\temp\\placeholders\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
+                    using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                     {
-                        PlaceholderImageSource.Draw(BindConvert.Current.Bubble(id).Color, InitialNameStringConverter.Convert(value), stream);
-                        stream.Seek(0);
-                    }
+                        if (stream.Size == 0)
+                        {
+                            PlaceholderImageSource.Draw(BindConvert.Current.Bubble(id).Color, InitialNameStringConverter.Convert(value), stream);
+                            stream.Seek(0);
+                        }
 
-                    Image.SetSource(stream);
+                        Image.SetSource(stream);
+                    }
                 }
             }
         }
@@ -222,7 +190,8 @@ namespace Unigram.Common
                 {
                     Phase = phase;
 
-                    Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    //Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    Image.UriSource = FileUtils.GetTempFileUri(fileName);
                     return true;
                 }
             }
@@ -239,7 +208,8 @@ namespace Unigram.Common
                 var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    //Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    Image.UriSource = FileUtils.GetTempFileUri(fileName);
                 }
                 else
                 {
@@ -261,10 +231,51 @@ namespace Unigram.Common
                         {
                             Execute.BeginOnUIThread(() =>
                             {
-                                Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                                //Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                                Image.UriSource = FileUtils.GetTempFileUri(fileName);
                             });
                         }
                     });
+                }
+            }
+        }
+    }
+
+    public static class LazyBitmapImage
+    {
+        public static async void SetSource(this BitmapSource bitmap, Uri uri)
+        {
+            var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
+            using (var stream = await file.OpenReadAsync())
+            {
+                try
+                {
+                    await bitmap.SetSourceAsync(stream);
+                }
+                catch
+                {
+                    Debug.Write("AGGRESSIVE");
+                }
+            }
+        }
+
+        public static async void SetSource(this BitmapSource bitmap, byte[] data)
+        {
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                {
+                    writer.WriteBytes(data);
+                    await writer.StoreAsync();
+                }
+
+                try
+                {
+                    await bitmap.SetSourceAsync(stream);
+                }
+                catch
+                {
+                    Debug.Write("AGGRESSIVE");
                 }
             }
         }

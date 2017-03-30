@@ -11,5 +11,8 @@ namespace Telegram.Api.TL
     {
         object PhotoSelf { get; }
         string DisplayName { get; }
+
+        TLInputPeerBase ToInputPeer();
+        TLPeerBase ToPeer();
     }
 }

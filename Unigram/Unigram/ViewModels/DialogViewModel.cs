@@ -43,6 +43,7 @@ using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Popups;
 using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api;
 
 namespace Unigram.ViewModels
 {
@@ -65,7 +66,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        private readonly IGifsService _gifsService;
+        private readonly DialogStickersViewModel _stickers;
+        private readonly IStickersService _stickersService;
+        private readonly ILocationService _locationService;
         private readonly IUploadFileManager _uploadFileManager;
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
@@ -74,29 +77,27 @@ namespace Unigram.ViewModels
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IGifsService gifsService, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, FeaturedStickersViewModel featuredStickers)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, DialogStickersViewModel stickers)
             : base(protoService, cacheService, aggregator)
         {
-            _gifsService = gifsService;
             _uploadFileManager = uploadFileManager;
             _uploadAudioManager = uploadAudioManager;
             _uploadDocumentManager = uploadDocumentManager;
             _uploadVideoManager = uploadVideoManager;
+            _stickersService = stickersService;
+            _locationService = locationService;
 
-            FeaturedStickers = featuredStickers;
-            SavedGifs = new ObservableCollection<TLDocument>();
+            _stickers = stickers;
         }
 
-        public FeaturedStickersViewModel FeaturedStickers { get; private set; }
-
-
+        public DialogStickersViewModel Stickers { get { return _stickers; } }
 
 
 
         private TLDialog _currentDialog;
 
-        private TLObject _with;
-        public TLObject With
+        private ITLDialogWith _with;
+        public ITLDialogWith With
         {
             get
             {
@@ -195,7 +196,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadNextSliceAsync()
         {
-            if (_isLoadingNextSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
             _isLoadingNextSlice = true;
 
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
@@ -216,7 +217,7 @@ namespace Unigram.ViewModels
 
             //return;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, maxId, 50);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, maxId, 50);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -254,7 +255,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadPreviousSliceAsync()
         {
-            if (_isLoadingPreviousSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
             _isLoadingPreviousSlice = true;
 
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
@@ -262,6 +263,7 @@ namespace Unigram.ViewModels
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
             var maxId = int.MaxValue;
+            var limit = 50;
 
             //for (int i = 0; i < Messages.Count; i++)
             //{
@@ -273,7 +275,7 @@ namespace Unigram.ViewModels
 
             maxId = Messages.LastOrDefault()?.Id ?? 1;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -50, maxId, 50);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit, 0, maxId, limit);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -301,6 +303,8 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
+
+                IsFirstSliceLoaded = result.Result.Messages.Count < limit;
             }
 
             _isLoadingPreviousSlice = false;
@@ -322,7 +326,7 @@ namespace Unigram.ViewModels
 
         public async Task LoadMessageSliceAsync(int? previousId, int maxId)
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
 
@@ -340,7 +344,7 @@ namespace Unigram.ViewModels
             var offset = -50;
             var limit = 50;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, maxId, limit);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -369,9 +373,31 @@ namespace Unigram.ViewModels
             _isLoadingPreviousSlice = false;
         }
 
+        public async Task LoadDateSliceAsync(int dateOffset)
+        {
+            var offset = -1;
+            var limit = 1;
+
+            var obj = new TLMessagesGetHistory { Peer = Peer, OffsetId = 0, OffsetDate = dateOffset - 1, AddOffset = offset, Limit = limit, MaxId = 0, MinId = 0 };
+            ProtoService.SendRequestCallback<TLMessagesMessagesBase>(obj, result =>
+            {
+                Execute.BeginOnUIThread(async () =>
+                {
+                    await LoadMessageSliceAsync(null, result.Messages[0].Id);
+                });
+            });
+
+            //var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, dateOffset, 0, limit);
+            //if (result.IsSucceeded)
+            //{
+            //    await LoadMessageSliceAsync(null, result.Result.Messages[0].Id);
+            //}
+        }
+
+
         public async Task LoadFirstSliceAsync()
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
 
@@ -382,10 +408,10 @@ namespace Unigram.ViewModels
             var lastRead = true;
 
             var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
-            var offset = _currentDialog?.UnreadCount > 0 ? -51 : 0;
+            var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -51 : 0;
             var limit = 50;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, maxId, limit);
+            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
             if (result.IsSucceeded)
             {
                 ProcessReplies(result.Result.Messages);
@@ -417,11 +443,122 @@ namespace Unigram.ViewModels
                     Messages.Add(item);
                 }
 
+                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                {
+                    var message = item as TLMessage;
+                    if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                    {
+                        var user = CacheService.GetUser(message.FromId) as TLUser;
+                        if (user != null && user.IsBot)
+                        {
+                            SetReplyMarkup(message);
+                        }
+                    }
+                }
+
                 IsFirstSliceLoaded = result.Result.Messages.Count < limit;
             }
 
             _isLoadingNextSlice = false;
             _isLoadingPreviousSlice = false;
+        }
+
+        public async Task LoadFirstSliceAsyncASDFASRFHJNDKDFKJFD()
+        {
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
+            _isLoadingNextSlice = true;
+            _isLoadingPreviousSlice = true;
+
+            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+
+            Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
+
+            var already = new List<long>();
+            var sets = new Dictionary<long, TLInputStickerSetBase>();
+            var lastId = 0;
+
+            while (already.Count < 250 || lastId < int.MaxValue)
+            {
+                var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, lastId, 100);
+                if (result.IsSucceeded)
+                {
+                    foreach (var message in result.Result.Messages.OfType<TLMessage>())
+                    {
+                        if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && message.IsSticker())
+                        {
+                            var set = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().StickerSet as TLInputStickerSetID;
+
+                            already.Add(documentMedia.Document.Id);
+
+                            if (sets.ContainsKey(set.Id))
+                            {
+                                await ProtoService.DeleteMessagesAsync(((TLChannel)With).ToInputChannel(), new TLVector<int> { message.Id });
+                            }
+
+                            sets[set.Id] = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().StickerSet;
+                        }
+                    }
+
+                    lastId = result.Result.Messages.LastOrDefault()?.Id ?? int.MaxValue;
+
+                    if (result.Result.Messages.Count == 0)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            foreach (var set in sets)
+            {
+                await ProtoService.InstallStickerSetAsync(set.Value, false);
+                await Task.Delay(200);
+            }
+
+            return;
+
+            var response = await ProtoService.GetAllStickersAsync(new byte[0]);
+            if (response.IsSucceeded)
+            {
+                if (response.Result is TLMessagesAllStickers stickers)
+                {
+                    foreach (var set in stickers.Sets)
+                    {
+                        if (already.Count == 200)
+                        {
+                            return;
+                        }
+
+                        var send = false;
+                        var documents = stickers.Documents.OfType<TLDocument>().Where(y => ((TLInputStickerSetID)y.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().StickerSet).Id == set.Id).ToList();
+                        var first = documents.FirstOrDefault(x => already.Contains(x.Id));
+                        if (first == null)
+                        {
+                            send = true;
+                        }
+
+                        if (send)
+                        {
+                            var media = new TLMessageMediaDocument { Document = documents[0] };
+                            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+                            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+                            var input = new TLInputMediaDocument
+                            {
+                                Id = new TLInputDocument
+                                {
+                                    Id = documents[0].Id,
+                                    AccessHash = documents[0].AccessHash
+                                }
+                            };
+
+                            already.Add(documents[0].Id);
+
+                            await ProtoService.SendMediaAsync(Peer, input, message);
+                            await Task.Delay(500);
+                        }
+                    }
+                }
+            }
         }
 
         public async void ProcessReplies(IList<TLMessageBase> messages)
@@ -526,6 +663,8 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            Messages.Clear();
+
             var tuple = parameter as Tuple<TLPeerBase, int>;
             if (tuple != null)
             {
@@ -544,11 +683,11 @@ namespace Unigram.ViewModels
                 With = user;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
 
-                // test calls
+                //test calls
                 //var config = await ProtoService.GetDHConfigAsync(0, 0);
                 //if (config.IsSucceeded)
                 //{
-                //    var dh = config.Value;
+                //    var dh = config.Result;
                 //    if (!TLUtils.CheckPrime(dh.P, dh.G))
                 //    {
                 //        return;
@@ -569,7 +708,13 @@ namespace Unigram.ViewModels
                 //        UserId = new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 },
                 //        RandomId = TLInt.Random(),
                 //        GA = ga,
-                //        Protocol = new TLPhoneCallProtocol()
+                //        Protocol = new TLPhoneCallProtocol
+                //        {
+                //            IsUdpP2p = true,
+                //            IsUdpReflector = true,
+                //            MinLayer = 65,
+                //            MaxLayer = 65,
+                //        }
                 //    };
 
                 //    var proto = (MTProtoService)ProtoService;
@@ -586,6 +731,18 @@ namespace Unigram.ViewModels
             }
             else if (channel != null)
             {
+                if (channel.IsRestricted)
+                {
+                    var reason = channel.ExtractRestrictionReason();
+                    if (reason != null)
+                    {
+                        NavigationService.GoBack();
+
+                        await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
+                        return;
+                    }
+                }
+
                 With = channel;
                 Peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 };
 
@@ -713,6 +870,11 @@ namespace Unigram.ViewModels
 
             //var file = await KnownFolders.SavedPictures.CreateFileAsync("TEST.TXT", CreationCollisionOption.GenerateUniqueName);
             //await FileIO.WriteTextAsync(file, DateTime.Now.ToString());
+
+            if (App.InMemoryState.ForwardMessages != null)
+            {
+                Reply = new TLMessagesContainter { FwdMessages = new TLVector<TLMessage>(App.InMemoryState.ForwardMessages) };
+            }
         }
 
         private async void ShowPinnedMessage(TLChannel channel)
@@ -750,50 +912,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async void StickersRecent()
-        {
-            var response = await ProtoService.GetRecentStickersAsync(false, 0);
-            if (response.IsSucceeded)
-            {
-                if (response.Result is TLMessagesRecentStickers recent)
-                {
-                    await StickersAll(recent);
-                }
-            }
-        }
-
-        private async Task StickersAll(TLMessagesRecentStickers recent)
-        {
-            var response = await ProtoService.GetAllStickersAsync(new byte[0]);
-            if (response.IsSucceeded)
-            {
-                var result = response.Result as TLMessagesAllStickers;
-                if (result != null)
-                {
-                    //var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, Extensions.Buffered<TLDocument>(x.Count)));
-                    var stickerSets = result.Sets.Select(x => new KeyedList<TLStickerSet, TLDocument>(x, result.Documents.OfType<TLDocument>().Where(y => ((TLInputStickerSetID)y.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().StickerSet).Id == x.Id)));
-                    StickerSets = new List<KeyedList<TLStickerSet, TLDocument>>(stickerSets);
-                    StickerSets.Insert(0, new KeyedList<TLStickerSet, TLDocument>(new TLStickerSet { Title = "Frequently used", ShortName = "tlg/recentlyUsed" }, recent.Stickers.OfType<TLDocument>()));
-                    RaisePropertyChanged(() => StickerSets);
-
-                    //await Task.Delay(1000);
-
-                    //var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = StickerSets[1].Key.ShortName });
-                    //if (set.IsSucceeded)
-                    //{
-                    //    for (int i = 0; i < set.Value.Documents.Count; i++)
-                    //    {
-                    //        StickerSets[1][i] = set.Value.Documents[i] as TLDocument;
-                    //    }
-                    //}
-
-                    Debug.WriteLine("Done");
-
-                    //var boh = result.Documents.OfType<TLDocument>().GroupBy(x => ((TLInputStickerSetID)x.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault().Stickerset).Id).ToList();
-                }
-            }
-        }
-
         private List<TLDocument> _stickerPack;
         public List<TLDocument> StickerPack
         {
@@ -806,11 +924,6 @@ namespace Unigram.ViewModels
                 Set(ref _stickerPack, value);
             }
         }
-
-        public List<KeyedList<TLStickerSet, TLDocument>> StickerSets { get; set; }
-
-        public int SavedGifsHash { get; private set; }
-        public ObservableCollection<TLDocument> SavedGifs { get; private set; }
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
@@ -948,6 +1061,11 @@ namespace Unigram.ViewModels
             {
                 if (_reply != value)
                 {
+                    if (_reply is TLMessagesContainter container && container.FwdMessages != null && value == null)
+                    {
+                        App.InMemoryState.ForwardMessages = null;
+                    }
+
                     _reply = value;
                     RaisePropertyChanged();
                     RaisePropertyChanged(() => ReplyInfo);
@@ -972,7 +1090,16 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand ClearReplyCommand => new RelayCommand(() => { Reply = null; });
+        public RelayCommand ClearReplyCommand => new RelayCommand(ClearReplyExecute);
+        private void ClearReplyExecute()
+        {
+            if (Reply is TLMessagesContainter container && container.EditMessage != null)
+            {
+                Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
+            }
+
+            Reply = null;
+        }
 
         #endregion
 
@@ -991,34 +1118,11 @@ namespace Unigram.ViewModels
             await SendMessageAsync(null, args != null);
         }
 
-        public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool sticker, bool useReplyMarkup = false)
+        public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool useReplyMarkup = false)
         {
-            var messageText = Text?.Replace('\r', '\n');
-
-            TLDocument document = null;
-            TLMessageMediaBase media = null;
-            if (sticker)
-            {
-                messageText = string.Empty;
-
-                var set = await ProtoService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = "unigramstickers" });
-                if (set.IsSucceeded)
-                {
-                    document = set.Result.Documents.FirstOrDefault(x => x.Id == 200980520715159710) as TLDocument;
-                }
-            }
-
-            if (document != null)
-            {
-                media = new TLMessageMediaDocument { Document = document };
-            }
-            else
-            {
-                media = new TLMessageMediaEmpty();
-            }
-
+            var messageText = Text?.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
-            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, messageText, media, TLLong.Random(), null);
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
 
             message.Entities = entities != null ? new TLVector<TLMessageEntityBase>(entities) : null;
             message.HasEntities = entities != null;
@@ -1031,10 +1135,11 @@ namespace Unigram.ViewModels
                 message.IsSilent = IsSilent;
             }
 
+            IEnumerable<TLMessage> forwardMessages = null;
+
             if (Reply != null)
             {
-                var container = Reply as TLMessagesContainter;
-                if (container != null)
+                if (Reply is TLMessagesContainter container)
                 {
                     if (container.EditMessage != null)
                     {
@@ -1050,8 +1155,13 @@ namespace Unigram.ViewModels
                         Reply = null;
                         return;
                     }
+                    else if (container.FwdMessages != null)
+                    {
+                        forwardMessages = container.FwdMessages;
+                        Reply = null;
+                    }
                 }
-                else
+                else if (Reply != null)
                 {
                     message.HasReplyToMsgId = true;
                     message.ReplyToMsgId = Reply.Id;
@@ -1060,37 +1170,169 @@ namespace Unigram.ViewModels
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(messageText))
+            if (string.IsNullOrWhiteSpace(messageText) == false)
             {
-                return;
-            }
-
-            var previousMessage = InsertSendingMessage(message, useReplyMarkup);
-            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
-            {
-                if (document != null)
+                var previousMessage = InsertSendingMessage(message, useReplyMarkup);
+                CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
                 {
-                    var input = new TLInputMediaDocument
-                    {
-                        Id = new TLInputDocument
-                        {
-                            Id = document.Id,
-                            AccessHash = document.AccessHash
-                        }
-                    };
-                    await ProtoService.SendMediaAsync(Peer, input, message);
-                }
-                else
-                {
-                    var response = await ProtoService.SendMessageAsync(message, () =>
-                    {
-                        message.State = TLMessageState.Confirmed;
-                    });
+                    var response = await ProtoService.SendMessageAsync(message, () => { message.State = TLMessageState.Confirmed; });
                     if (response.IsSucceeded)
                     {
                         message.RaisePropertyChanged(() => message.Media);
                     }
+                    else
+                    {
+                        if (response.Error.TypeEquals(TLErrorType.PEER_FLOOD))
+                        {
+                            var dialog = new TLMessageDialog();
+                            dialog.Title = "Telegram";
+                            dialog.Message = "Sorry, you can only send messages to mutual contacts at the moment.";
+                            dialog.PrimaryButtonText = "More info";
+                            dialog.SecondaryButtonText = "OK";
+
+                            var confirm = await dialog.ShowAsync();
+                            if (confirm == ContentDialogResult.Primary)
+                            {
+                                MessageHelper.HandleTelegramUrl("t.me/SpamBot");
+                            }
+                        }
+
+                        return;
+                    }
+
+                    if (forwardMessages != null)
+                    {
+                        App.InMemoryState.ForwardMessages = null;
+                        await ForwardMessagesAsync(forwardMessages);
+                    }
+                });
+            }
+            else
+            {
+                if (forwardMessages != null)
+                {
+                    App.InMemoryState.ForwardMessages = null;
+                    await ForwardMessagesAsync(forwardMessages);
                 }
+            }
+        }
+
+        public async Task ForwardMessagesAsync(IEnumerable<TLMessage> forwardMessages)
+        {
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            TLInputPeerBase fromPeer = null;
+            var msgs = new TLVector<TLMessage>();
+            var msgIds = new TLVector<int>();
+
+            foreach (var fwdMessage in forwardMessages)
+            {
+                var clone = fwdMessage.Clone();
+                clone.Id = 0;
+                clone.HasReplyToMsgId = false;
+                clone.ReplyToMsgId = null;
+                clone.Date = date;
+                clone.ToId = Peer.ToPeer();
+                clone.RandomId = TLLong.Random();
+                clone.IsOut = true;
+                clone.IsPost = false;
+                clone.FromId = SettingsHelper.UserId;
+                clone.IsMediaUnread = Peer is TLInputPeerChannel ? true : false;
+                clone.IsUnread = true;
+                clone.State = TLMessageState.Sending;
+
+                if (clone.Media == null)
+                {
+                    clone.HasMedia = true;
+                    clone.Media = new TLMessageMediaEmpty();
+                }
+
+                if (With is TLChannel channel)
+                {
+                    if (channel.IsBroadcast)
+                    {
+                        if (!channel.IsSignatures)
+                        {
+                            clone.HasFromId = false;
+                            clone.FromId = null;
+                        }
+
+                        if (IsSilent)
+                        {
+                            clone.IsSilent = true;
+                        }
+
+                        clone.HasViews = true;
+                        clone.Views = 1;
+                    }
+                }
+
+                if (clone.Media is TLMessageMediaGame gameMedia)
+                {
+                    clone.HasEntities = false;
+                    clone.Entities = null;
+                    clone.Message = null;
+                }
+
+                if (fromPeer == null)
+                {
+                    fromPeer = fwdMessage.Parent.ToInputPeer();
+                }
+
+                if (clone.FwdFrom == null)
+                {
+                    if (fwdMessage.ToId is TLPeerChannel)
+                    {
+                        var fwdChannel = CacheService.GetChat(fwdMessage.ToId.Id) as TLChannel;
+                        if (fwdChannel != null && fwdChannel.IsMegaGroup)
+                        {
+                            clone.HasFwdFrom = true;
+                            clone.FwdFrom = new TLMessageFwdHeader
+                            {
+                                HasFromId = true,
+                                FromId = fwdMessage.FromId,
+                                Date = fwdMessage.Date
+                            };
+                        }
+                        else
+                        {
+                            clone.HasFwdFrom = true;
+                            clone.FwdFrom = new TLMessageFwdHeader
+                            {
+                                HasFromId = fwdMessage.HasFromId,
+                                FromId = fwdMessage.FromId,
+                                Date = fwdMessage.Date
+                            };
+
+                            if (fwdChannel.IsBroadcast)
+                            {
+                                clone.FwdFrom.HasChannelId = clone.FwdFrom.HasChannelPost = true;
+                                clone.FwdFrom.ChannelId = fwdChannel.Id;
+                                clone.FwdFrom.ChannelPost = fwdMessage.Id;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        clone.HasFwdFrom = true;
+                        clone.FwdFrom = new TLMessageFwdHeader
+                        {
+                            HasFromId = true,
+                            FromId = fwdMessage.FromId,
+                            Date = fwdMessage.Date
+                        };
+                    }
+                }
+
+                msgs.Add(clone);
+                msgIds.Add(fwdMessage.Id);
+
+                Messages.Add(clone);
+            }
+
+            CacheService.SyncSendingMessages(msgs, null, async (_) =>
+            {
+                await ProtoService.ForwardMessagesAsync(Peer, fromPeer, msgIds, msgs, false);
             });
         }
 
@@ -1249,18 +1491,12 @@ namespace Unigram.ViewModels
                 CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
                 {
                     var fileId = TLLong.Random();
-                    var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Upload());
+                    var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileName, false).AsTask(media.Upload());
                     if (upload != null)
                     {
                         var inputMedia = new TLInputMediaUploadedDocument
                         {
-                            File = new TLInputFile
-                            {
-                                Id = upload.FileId,
-                                Md5Checksum = string.Empty,
-                                Name = fileName,
-                                Parts = upload.Parts.Count,
-                            },
+                            File = upload.ToInputFile(),
                             MimeType = document.MimeType,
                             Caption = media.Caption,
                             Attributes = new TLVector<TLDocumentAttributeBase>
@@ -1347,20 +1583,8 @@ namespace Unigram.ViewModels
                     {
                         var inputMedia = new TLInputMediaUploadedThumbDocument
                         {
-                            File = new TLInputFile
-                            {
-                                Id = upload.FileId,
-                                Md5Checksum = string.Empty,
-                                Name = fileName,
-                                Parts = upload.Parts.Count,
-                            },
-                            Thumb = new TLInputFile
-                            {
-                                Id = thumbUpload.FileId,
-                                Md5Checksum = string.Empty,
-                                Name = desiredName,
-                                Parts = thumbUpload.Parts.Count
-                            },
+                            File = upload.ToInputFile(),
+                            Thumb = thumbUpload.ToInputFile(),
                             MimeType = document.MimeType,
                             Caption = media.Caption,
                             Attributes = new TLVector<TLDocumentAttributeBase>
@@ -1525,13 +1749,7 @@ namespace Unigram.ViewModels
                     var inputMedia = new TLInputMediaUploadedPhoto
                     {
                         Caption = media.Caption,
-                        File = new TLInputFile
-                        {
-                            Id = upload.FileId,
-                            Name = "file.jpg",
-                            Parts = upload.Parts.Count,
-                            Md5Checksum = string.Empty
-                        }
+                        File = upload.ToInputFile()
                     };
 
                     var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
@@ -1584,13 +1802,7 @@ namespace Unigram.ViewModels
                 {
                     var inputMedia = new TLInputMediaUploadedDocument
                     {
-                        File = new TLInputFile
-                        {
-                            Id = upload.FileId,
-                            Md5Checksum = string.Empty,
-                            Name = fileName,
-                            Parts = upload.Parts.Count
-                        },
+                        File = upload.ToInputFile(),
                         MimeType = "image/gif",
                         Caption = media.Caption,
                         Attributes = new TLVector<TLDocumentAttributeBase>
@@ -1677,13 +1889,7 @@ namespace Unigram.ViewModels
                 {
                     var inputMedia = new TLInputMediaUploadedDocument
                     {
-                        File = new TLInputFile
-                        {
-                            Id = upload.FileId,
-                            Md5Checksum = string.Empty,
-                            Name = fileName,
-                            Parts = upload.Parts.Count
-                        },
+                        File = upload.ToInputFile(),
                         MimeType = "audio/ogg",
                         Caption = media.Caption,
                         Attributes = new TLVector<TLDocumentAttributeBase>
@@ -1702,6 +1908,104 @@ namespace Unigram.ViewModels
                 }
             });
         }
+
+        public Task<bool> SendContactAsync(TLUser user)
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var media = new TLMessageMediaContact
+            {
+                PhoneNumber = user.Phone,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserId = user.Id,
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var inputMedia = new TLInputMediaContact
+                {
+                    PhoneNumber = user.Phone,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                };
+
+                var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                if (result.IsSucceeded)
+                {
+                    tsc.SetResult(true);
+                }
+                else
+                {
+                    tsc.SetResult(false);
+                }
+            });
+
+            return tsc.Task;
+        }
+
+        public Task<bool> SendGeoPointAsync(double latitude, double longitude)
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var media = new TLMessageMediaGeo
+            {
+                Geo = new TLGeoPoint
+                {
+                    Lat = latitude,
+                    Long = longitude
+                }
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var inputMedia = new TLInputMediaGeoPoint
+                {
+                    GeoPoint = new TLInputGeoPoint
+                    {
+                        Lat = latitude,
+                        Long = longitude
+                    }
+                };
+
+                var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                if (result.IsSucceeded)
+                {
+                    tsc.SetResult(true);
+                }
+                else
+                {
+                    tsc.SetResult(false);
+                }
+            });
+
+            return tsc.Task;
+        }
+
 
         private TLMessageBase InsertSendingMessage(TLMessage message, bool useReplyMarkup = false)
         {
@@ -1965,219 +2269,8 @@ namespace Unigram.ViewModels
         public RelayCommand OpenStickersCommand => new RelayCommand(OpenStickersExecute);
         private void OpenStickersExecute()
         {
-            Execute.BeginOnThreadPool(async () =>
-            {
-                var watch = Stopwatch.StartNew();
-
-                var response = await ProtoService.GetAllStickersAsync(0);
-                if (response.IsSucceeded)
-                {
-                    var old = DatabaseContext.Current.SelectStickerSets();
-
-                    var allStickers = response.Result as TLMessagesAllStickers;
-                    if (allStickers != null)
-                    {
-                        var needData = new Dictionary<long, TLStickerSet>();
-                        var ready = new Dictionary<long, TLStickerSet>();
-                        var removed = new List<TLStickerSet>();
-
-                        foreach (var set in allStickers.Sets)
-                        {
-                            var cached = old.FirstOrDefault(x => x.Id == set.Id);
-                            if (cached != null)
-                            {
-                                if (cached.Hash == set.Hash)
-                                {
-                                    ready[set.Id] = cached;
-                                }
-                                else
-                                {
-                                    needData[set.Id] = set;
-                                }
-                            }
-                            else
-                            {
-                                needData[set.Id] = set;
-                            }
-                        }
-
-                        foreach (var set in old)
-                        {
-                            if (needData.ContainsKey(set.Id) || ready.ContainsKey(set.Id)) { }
-                            else
-                            {
-                                removed.Add(set);
-                            }
-                        }
-
-                        if (removed.Count > 0)
-                        {
-                            DatabaseContext.Current.RemoveStickerSets(removed);
-                        }
-
-                        if (needData.Count > 0)
-                        {
-                            var results = new List<TLMessagesStickerSet>();
-                            var resultsSyncRoot = new object();
-                            ProtoService.GetStickerSetsAsync(new TLMessagesAllStickers { Sets = new TLVector<TLStickerSet>(needData.Values) },
-                                result =>
-                                {
-                                    Debugger.Break();
-                                    //DatabaseContext.Current.InsertStickerSets(needData.Values);
-                                },
-                                stickerSetResult =>
-                                {
-                                    var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
-                                    if (messagesStickerSet != null)
-                                    {
-                                        bool processStickerSets;
-                                        lock (resultsSyncRoot)
-                                        {
-                                            results.Add(messagesStickerSet);
-                                            processStickerSets = results.Count == needData.Values.Count;
-                                        }
-
-                                        if (processStickerSets)
-                                        {
-                                            DatabaseContext.Current.InsertStickerSets(results);
-                                            DatabaseContext.Current.UpdateStickerSetsOrder(allStickers.Sets);
-
-                                            //foreach (var item in ready)
-                                            //{
-                                            //    var items = DatabaseContext.Current.SelectDocuments("Stickers", item.Key);
-                                            //}
-
-                                            watch.Stop();
-                                            Execute.BeginOnUIThread(async () =>
-                                            {
-                                                await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
-                                            });
-                                        }
-                                    }
-                                },
-                                failure =>
-                                {
-                                    Debugger.Break();
-                                });
-                        }
-                        else
-                        {
-                            DatabaseContext.Current.UpdateStickerSetsOrder(allStickers.Sets);
-                        }
-                    }
-                }
-            });
-
-            Execute.BeginOnThreadPool(async () =>
-            {
-                var gifs = await _gifsService.GetSavedGifs();
-                if (gifs.Key != SavedGifsHash || SavedGifs.Count == 0)
-                {
-                    Execute.BeginOnUIThread(() =>
-                    {
-                        SavedGifsHash = gifs.Key;
-                        //SavedGifs.Clear();
-                        //SavedGifs.AddRange(gifs);
-
-                        if (SavedGifs.Count > 0)
-                        {
-                            for (int i = 0; i < gifs.Count; i++)
-                            {
-                                var user = gifs[i];
-                                var index = -1;
-
-                                for (int j = 0; j < SavedGifs.Count; j++)
-                                {
-                                    if (SavedGifs[j].Id == user.Id)
-                                    {
-                                        index = j;
-                                        break;
-                                    }
-                                }
-
-                                if (index > -1 && index != i)
-                                {
-                                    SavedGifs.RemoveAt(index);
-                                    SavedGifs.Insert(Math.Min(i, SavedGifs.Count), user);
-                                }
-                                else if (index == -1)
-                                {
-                                    SavedGifs.Insert(Math.Min(i, SavedGifs.Count), user);
-                                }
-                            }
-
-                            for (int i = 0; i < SavedGifs.Count; i++)
-                            {
-                                var user = SavedGifs[i];
-                                var index = -1;
-
-                                for (int j = 0; j < gifs.Count; j++)
-                                {
-                                    if (gifs[j].Id == user.Id)
-                                    {
-                                        index = j;
-                                        break;
-                                    }
-                                }
-
-                                if (index == -1)
-                                {
-                                    SavedGifs.Remove(user);
-                                    i--;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            SavedGifs.Clear();
-                            SavedGifs.AddRange(gifs);
-                        }
-
-                        //var old = SavedGifs.ToArray();
-                        //if (old.Length > 0)
-                        //{
-                        //    var order = new Dictionary<int, int>();
-                        //    for (int i = 0; i < old.Length; i++)
-                        //    {
-                        //        order[i] = -1;
-
-                        //        for (int j = 0; j < gifs.Count; j++)
-                        //        {
-                        //            if (old[i].Id == gifs[j].Id)
-                        //            {
-                        //                order[i] = j;
-                        //                break;
-                        //            }
-                        //        }
-                        //    }
-
-                        //    //for (int j = 0; j < order.First().Value; j++)
-                        //    //{
-                        //    //    if (order.ContainsKey(j) == false)
-                        //    //    {
-                        //    //        order[j] = j;
-                        //    //    }
-                        //    //}
-
-                        //    foreach (var item in order)
-                        //    {
-                        //        if (item.Key != item.Value)
-                        //        {
-                        //            SavedGifs.RemoveAt(item.Key);
-                        //            SavedGifs.Insert(item.Value, gifs[item.Value]);
-                        //        }
-                        //    }
-
-                        //    //Debugger.Break();
-                        //}
-                        //else
-                        //{
-                        //    SavedGifs.Clear();
-                        //    SavedGifs.AddRange(gifs);
-                        //}
-                    });
-                }
-            });
+            _stickers.SyncStickers();
+            _stickers.SyncGifs();
         }
 
         #endregion
@@ -2296,7 +2389,7 @@ namespace Unigram.ViewModels
                     if (previous is TLMessage) isPreviousPost = ((TLMessage)previous).IsPost;
 
                     attach = !isPreviousPost &&
-                             !(previous is TLMessageService) &&
+                             !(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
                              !(previous is TLMessageEmpty) &&
                              previous.FromId == item.FromId &&
                              item.Date - previous.Date < 900;

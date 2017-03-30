@@ -29,6 +29,34 @@ namespace Telegram.Api.TL
             }
         }
 
+        public string Emoticon
+        {
+            get
+            {
+                var attribute = Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                if (attribute != null && !attribute.IsMask)
+                {
+                    return attribute.Alt;
+                }
+
+                return string.Empty;
+            }
+        }
+
+        public TLInputStickerSetBase StickerSet
+        {
+            get
+            {
+                var attribute = Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                if (attribute != null && !attribute.IsMask)
+                {
+                    return attribute.StickerSet;
+                }
+
+                return null;
+            }
+        }
+
         public string Duration
         {
             get

@@ -93,6 +93,7 @@ namespace Telegram.Api.Services.Cache
         void CheckDisabledFeature(string featureKey, Action callback, Action<TLDisabledFeature> faultCallback = null);
         void CheckDisabledFeature(TLObject with, string featurePMMessage, string featureChatMessage, string featureBigChatMessage, Action callback, Action<TLDisabledFeature> faultCallback);
         void GetConfigAsync(Action<TLConfig> config);
+        TLConfig Config { get; }
         TLConfig GetConfig();
         void SetConfig(TLConfig config);
         void ClearConfigImportAsync();

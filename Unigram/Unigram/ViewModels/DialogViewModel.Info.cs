@@ -79,5 +79,25 @@ namespace Unigram.ViewModels
                 });
             }
         }
+
+        private TLUser GetBot(TLMessage message)
+        {
+            var user = With as TLUser;
+            if (user == null || !user.IsBot)
+            {
+                user = (message.ViaBot as TLUser);
+            }
+
+            if (user == null || !user.IsBot)
+            {
+                var tLMessage = message as TLMessage;
+                if (tLMessage != null)
+                {
+                    user = (tLMessage.From as TLUser);
+                }
+            }
+
+            return user;
+        }
     }
 }

@@ -1,6 +1,3 @@
-[submodule "Unigram/Libraries/Unigram.Rtf"]
-	path = Unigram/Libraries/Unigram.Rtf
-	url = https://github.com/UnigramDev/Unigram.Rtf.git
 [submodule "Unigram/Unigram.Core/Unidecode/UpdateScript/unidecode"]
 	path = Unigram/Unigram.Core/Unidecode/UpdateScript/unidecode
 	url = https://www.tablix.org/~avian/git/unidecode.git
