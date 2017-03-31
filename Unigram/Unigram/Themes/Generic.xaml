@@ -3,7 +3,43 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls">
 
+    <Style TargetType="local:ButtonPageHeader">
+        <Setter Property="Background" Value="{ThemeResource TelegramBackgroundTitlebarBrush}"/>
+        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ButtonPageHeader">
+                    <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{TemplateBinding Title}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                        <local:GlyphButton Glyph="{TemplateBinding Glyph}" Command="{TemplateBinding Command}" CommandParameter="{TemplateBinding CommandParameter}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
+                        <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
+    <Style TargetType="local:PageHeader">
+        <Setter Property="Background" Value="{ThemeResource TelegramBackgroundTitlebarBrush}"/>
+        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PageHeader">
+                    <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+                        <TextBlock Text="{TemplateBinding Title}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                        <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
+                        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <Style TargetType="local:BadgeButton">
         <Setter Property="Background" Value="{ThemeResource ButtonBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />

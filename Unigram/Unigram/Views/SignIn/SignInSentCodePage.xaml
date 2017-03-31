@@ -26,7 +26,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock x:Uid="Login-Code-Title" Text="Your code" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-            <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;" Grid.Column="1"/>
+            <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE10B;" Grid.Column="1"/>
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 

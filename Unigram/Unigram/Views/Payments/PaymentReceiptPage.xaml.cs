@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
 using Unigram.Converters;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.ViewModels.Payments;
 using Windows.Foundation;
 using Windows.Foundation.Collections;

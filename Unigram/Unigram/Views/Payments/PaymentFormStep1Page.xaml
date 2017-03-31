@@ -1,0 +1,48 @@
+﻿<Page
+    x:Class="Unigram.Views.Payments.PaymentFormStep1Page"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Payments"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:ButtonPageHeader Title="Shipping informations" Glyph="&#xE10B;"/>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>
+                <StackPanel>
+                    <TextBox Header="Shipping address"
+                         PlaceholderText="Address 1 (Street)"
+                         Margin="12,12,12,4"/>
+                    <TextBox PlaceholderText="Address 2 (Street)" Margin="12,8,12,4"/>
+                    <TextBox PlaceholderText="City" Margin="12,8,12,4"/>
+                    <TextBox PlaceholderText="State" Margin="12,8,12,4"/>
+                    <ComboBox PlaceholderText="Country" HorizontalAlignment="Stretch" Margin="12,8,12,4"/>
+                    <TextBox PlaceholderText="Postcode" Margin="12,8,12,4"/>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBox Header="Receiver"
+                         PlaceholderText="Full Name"
+                         Margin="12,12,12,4"/>
+                    <TextBox PlaceholderText="E-Mail" Margin="12,8,12,4"/>
+                    <TextBox PlaceholderText="Phone number" Margin="12,8,12,4"/>
+                </StackPanel>
+
+                <StackPanel Padding="12,12,12,24">
+                    <CheckBox Content="Save Shipping Information" IsChecked="True"/>
+                    <TextBlock Text="You can save your shipping info for future use." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

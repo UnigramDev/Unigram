@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Views;
-using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Payments;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -15,21 +15,21 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Unigram.Views.Channels
+namespace Unigram.Views.Payments
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class CreateChannelStep1Page : Page
+    public sealed partial class PaymentFormStep1Page : Page
     {
-        public CreateChannelStep1ViewModel ViewModel => DataContext as CreateChannelStep1ViewModel;
+        public PaymentFormStep1ViewModel ViewModel => DataContext as PaymentFormStep1ViewModel;
 
-        public CreateChannelStep1Page()
+        public PaymentFormStep1Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<CreateChannelStep1ViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<PaymentFormStep1ViewModel>();
         }
     }
 }

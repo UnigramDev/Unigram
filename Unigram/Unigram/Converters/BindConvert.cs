@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Helpers;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
@@ -50,6 +51,16 @@ namespace Unigram.Converters
         public SolidColorBrush Bubble(int uid)
         {
             return PlaceholderColors[(uid + SettingsHelper.UserId) % PlaceholderColors.Count];
+        }
+
+        public string PhoneNumber(string number)
+        {
+            if (number == null)
+            {
+                return null;
+            }
+
+            return Telegram.Helpers.PhoneNumber.Format(number);
         }
 
 

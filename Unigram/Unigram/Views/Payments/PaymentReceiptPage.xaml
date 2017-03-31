@@ -69,7 +69,7 @@
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasPhone, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.Receipt.Info.Phone, FallbackValue=Empty}"/>
+                    <TextBlock Text="{x:Bind Convert.PhoneNumber(ViewModel.Receipt.Info.Phone), FallbackValue=Empty}"/>
                     <TextBlock Text="Phone number" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 

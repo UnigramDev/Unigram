@@ -99,6 +99,7 @@
     <Compile Include="Common\RatioControl.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
+    <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
     <Compile Include="Controls\DebugToolbar.xaml.cs">
@@ -153,6 +154,7 @@
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
+    <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
@@ -176,6 +178,9 @@
     </Compile>
     <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
       <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Payments\PaymentFormStep1Page.xaml.cs">
+      <DependentUpon>PaymentFormStep1Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Payments\PaymentReceiptPage.xaml.cs">
       <DependentUpon>PaymentReceiptPage.xaml</DependentUpon>
@@ -774,6 +779,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\GamePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Payments\PaymentFormStep1Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

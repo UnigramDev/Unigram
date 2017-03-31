@@ -15,7 +15,7 @@ using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.ViewModels;

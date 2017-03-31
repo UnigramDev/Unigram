@@ -18,7 +18,7 @@ using Telegram.Api.Services.FileManager;
 using Telegram.Api;
 using System.IO;
 using Windows.Storage;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Login;

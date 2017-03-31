@@ -13,7 +13,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Models;
 using Unigram.Core.Rtf;
 using Unigram.Core.Rtf.Write;

@@ -10,7 +10,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Unigram.Common;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Views;
 using Windows.Storage;
 using Windows.UI.Xaml.Navigation;

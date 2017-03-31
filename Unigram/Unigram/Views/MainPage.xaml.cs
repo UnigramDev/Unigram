@@ -17,7 +17,7 @@ using Template10.Services.SerializationService;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Notifications;
 using Unigram.ViewModels;
 using Unigram.Views.Settings;

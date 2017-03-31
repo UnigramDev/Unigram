@@ -58,5 +58,18 @@ namespace Unigram.ViewModels
                 return _aggregator;
             }
         }
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get
+            {
+                return _isLoading;
+            }
+            set
+            {
+                Set(ref _isLoading, value);
+            }
+        }
     }
 }

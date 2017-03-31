@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Hosting;
 using System.Numerics;
 using Windows.Foundation.Metadata;
 using LinqToVisualTree;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.ViewModels;
 using Windows.Services.Maps;
 

@@ -688,21 +688,20 @@ namespace Unigram.ViewModels
         {
             if (button is TLKeyboardButtonBuy buyButton)
             {
-                var response = await ProtoService.GetPaymentFormAsync(message.Id);
-                if (response.IsSucceeded)
-                {
-                    Debugger.Break();
-                }
-            }
-            else if (button is TLKeyboardButtonReceipt receiptButton)
-            {
-                // WARNING: TLKeyboardButtonReceipt is a CORE type: this means that is is not included in the scheme, but it is used to semplificate the code
                 if (message.Media is TLMessageMediaInvoice invoiceMedia && invoiceMedia.HasReceiptMsgId)
                 {
                     var response = await ProtoService.GetPaymentReceiptAsync(invoiceMedia.ReceiptMsgId.Value);
                     if (response.IsSucceeded)
                     {
                         NavigationService.Navigate(typeof(PaymentReceiptPage), TLTuple.Create(message, response.Result));
+                    }
+                }
+                else
+                {
+                    var response = await ProtoService.GetPaymentFormAsync(message.Id);
+                    if (response.IsSucceeded)
+                    {
+                        Debugger.Break();
                     }
                 }
             }

@@ -13,7 +13,7 @@ using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Notifications;
 using Windows.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.ViewModels;
 using Unigram.Views.Settings;
 using Windows.UI.Core;

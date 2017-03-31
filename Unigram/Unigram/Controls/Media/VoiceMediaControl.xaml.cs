@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Media.Audio;

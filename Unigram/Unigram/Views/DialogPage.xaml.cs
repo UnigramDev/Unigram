@@ -17,7 +17,7 @@ using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Models;
 using Unigram.Core.Services;
 using Unigram.ViewModels;

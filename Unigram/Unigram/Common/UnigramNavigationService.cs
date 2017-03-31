@@ -9,7 +9,7 @@ using Template10.Services.LoggingService;
 using Template10.Services.NavigationService;
 using Template10.Services.SerializationService;
 using Template10.Services.ViewService;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Views;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;

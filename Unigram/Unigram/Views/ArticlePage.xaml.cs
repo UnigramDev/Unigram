@@ -12,7 +12,7 @@ using Telegram.Api.TL.Methods.Messages;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
 using Windows.ApplicationModel;

@@ -147,7 +147,7 @@ namespace Unigram.Controls
                 panel.Margin = new Thickness(-2, 0, -2, 0);
 
                 var button = new GlyphButton();
-                button.DataContext = new TLKeyboardButtonReceipt();
+                button.DataContext = new TLKeyboardButtonBuy();
                 button.Content = "Receipt";
                 button.Margin = new Thickness(2, 2, 2, 0);
                 button.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -163,20 +163,6 @@ namespace Unigram.Controls
 
             if (rows != null && ((IsInline && newValue is TLReplyInlineMarkup) || (!IsInline && newValue is TLReplyKeyboardMarkup)))
             {
-                if (HasReceiptMsgId)
-                {
-                    rows = new TLVector<TLKeyboardButtonRow>
-                    {
-                        new TLKeyboardButtonRow
-                        {
-                            Buttons = new TLVector<TLKeyboardButtonBase>
-                            {
-                                new TLKeyboardButtonReceipt { Text = "Receipt" }
-                            }
-                        }
-                    };
-                }
-
                 for (int j = 0; j < rows.Count; j++)
                 {
                     var row = rows[j];
@@ -216,6 +202,10 @@ namespace Unigram.Controls
                         else if (row.Buttons[i] is TLKeyboardButton && IsInline)
                         {
                             button.Glyph = "\uE15F";
+                        }
+                        else if (row.Buttons[i] is TLKeyboardButtonBuy && HasReceiptMsgId)
+                        {
+                            button.Content = "Receipt";
                         }
 
                         Grid.SetColumn(button, i);

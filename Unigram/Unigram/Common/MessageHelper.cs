@@ -17,7 +17,7 @@ using Template10.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Users;

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Updates;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;

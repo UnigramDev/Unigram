@@ -6,7 +6,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Helpers;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;

@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Telegram.Api.Services.FileManager;
 using Windows.Storage;
 using Windows.System;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Views;
 using Telegram.Api.Helpers;
 using Unigram.Controls;
