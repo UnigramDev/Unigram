@@ -101,6 +101,12 @@
                 <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
             </Style>
 
+            <Style x:Key="DisabledBodyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
+                <Setter Property="TextWrapping" Value="NoWrap"/>
+                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 

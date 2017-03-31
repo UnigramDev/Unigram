@@ -215,7 +215,8 @@ namespace Telegram.Api.Services.Connection
 //            Microsoft.Devices.VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
 //#endif
 
-            if (Debugger.IsAttached) return;
+            //if (Debugger.IsAttached) return;
+            // TODO: Disabled
 //#if DEBUG
 //            return;
 //#endif

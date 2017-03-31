@@ -163,8 +163,7 @@ namespace Telegram.Api.Transport
 
         protected virtual void RaiseTransportConnecting(ITransport transport)
         {
-            var handler = TransportConnecting;
-            if (handler != null) handler(this, new TransportEventArgs{Transport = transport});
+            TransportConnecting?.Invoke(this, new TransportEventArgs { Transport = transport });
         }
 
         public void OnConnecting(object sender, EventArgs args)
@@ -183,8 +182,7 @@ namespace Telegram.Api.Transport
 
         protected virtual void RaiseTransportConnected(ITransport transport)
         {
-            var handler = TransportConnected;
-            if (handler != null) handler(this, new TransportEventArgs{Transport = transport});
+            TransportConnected?.Invoke(this, new TransportEventArgs { Transport = transport });
         }
 
         public void OnConnected(object sender, EventArgs args)

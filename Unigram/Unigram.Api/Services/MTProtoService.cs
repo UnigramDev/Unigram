@@ -303,10 +303,11 @@ namespace Telegram.Api.Services
         private void CheckTimeouts(object state)
         {
 #if DEBUG
-            if (Debugger.IsAttached)
-            {
-                return;
-            }
+            // TODO: disabled
+            //if (Debugger.IsAttached)
+            //{
+            //    return;
+            //}
 #endif
 
             const double timeout = Constants.TimeoutInterval;

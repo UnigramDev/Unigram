@@ -16,6 +16,7 @@ using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Native;
 using Unigram.Views;
+using Unigram.Views.Payments;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -701,7 +702,7 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.GetPaymentReceiptAsync(invoiceMedia.ReceiptMsgId.Value);
                     if (response.IsSucceeded)
                     {
-                        Debugger.Break();
+                        NavigationService.Navigate(typeof(PaymentReceiptPage), TLTuple.Create(message, response.Result));
                     }
                 }
             }
