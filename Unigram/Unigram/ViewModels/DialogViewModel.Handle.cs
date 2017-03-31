@@ -50,8 +50,7 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(() =>
             {
-                var user = With as TLUser;
-                if (user != null)
+                if (With is TLUser user)
                 {
                     LastSeen = LastSeenHelper.GetLastSeenTime(user);
                 }
@@ -69,14 +68,12 @@ namespace Unigram.ViewModels
 
         private async Task<string> GetSubtitle()
         {
-            var user = With as TLUser;
-            if (user != null && user.HasStatus)
+            if (With is TLUser user)
             {
                 return LastSeenHelper.GetLastSeenTime(user);
             }
 
-            var channel = With as TLChannel;
-            if (channel != null && channel.HasAccessHash && channel.AccessHash.HasValue)
+            if (With is TLChannel channel && channel.HasAccessHash && channel.AccessHash.HasValue)
             {
                 var response = await ProtoService.GetFullChannelAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value });
                 if (response.IsSucceeded)

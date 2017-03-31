@@ -84,6 +84,11 @@ namespace Unigram.Converters
 
         public string FormatAmount(long amount, string currency)
         {
+            if (currency == null)
+            {
+                return string.Empty;
+            }
+
             bool discount;
             string customFormat;
             double doubleAmount;

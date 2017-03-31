@@ -173,6 +173,8 @@ namespace Unigram.Views
         {
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+
+            DataContext = null;
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -180,7 +182,7 @@ namespace Unigram.Views
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
             StickersPanel.Height = args.OccludedRect.Height;
-            ReplyMarkupPanel.Height = args.OccludedRect.Height;
+            ReplyMarkupPanel.MaxHeight = args.OccludedRect.Height;
             //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
         }
 

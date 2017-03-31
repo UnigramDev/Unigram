@@ -29,13 +29,14 @@ namespace Unigram.ViewModels.Payments
 
                     Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
                     Receipt = tuple.Item2;
+                    Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
                 }
             }
 
             return Task.CompletedTask;
         }
 
-        private TLMessageMediaInvoice _invoice;
+        private TLMessageMediaInvoice _invoice = new TLMessageMediaInvoice();
         public TLMessageMediaInvoice Invoice
         {
             get
@@ -48,7 +49,7 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        private TLPaymentsPaymentReceipt _receipt;
+        private TLPaymentsPaymentReceipt _receipt = new TLPaymentsPaymentReceipt { Info = new TLPaymentRequestedInfo() };
         public TLPaymentsPaymentReceipt Receipt
         {
             get
@@ -58,6 +59,19 @@ namespace Unigram.ViewModels.Payments
             set
             {
                 Set(ref _receipt, value);
+            }
+        }
+
+        private TLUser _bot;
+        public TLUser Bot
+        {
+            get
+            {
+                return _bot;
+            }
+            set
+            {
+                Set(ref _bot, value);
             }
         }
     }

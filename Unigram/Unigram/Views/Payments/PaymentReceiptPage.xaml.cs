@@ -28,10 +28,53 @@ namespace Unigram.Views.Payments
     {
         public PaymentReceiptViewModel ViewModel => DataContext as PaymentReceiptViewModel;
 
+        public BindConvert Convert => BindConvert.Current;
+
         public PaymentReceiptPage()
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<PaymentReceiptViewModel>();
+        }
+
+        private string ConvertTitle(bool test)
+        {
+            return test ? "Test receipt" : "Receipt";
+        }
+
+        private string ConvertAddress(TLPostAddress address)
+        {
+            if (address == null)
+            {
+                return string.Empty;
+            }
+
+            var result = string.Empty;
+            if (!string.IsNullOrEmpty(address.StreetLine1))
+            {
+                result += address.StreetLine1 + ", ";
+            }
+            if (!string.IsNullOrEmpty(address.StreetLine2))
+            {
+                result += address.StreetLine2 + ", ";
+            }
+            if (!string.IsNullOrEmpty(address.City))
+            {
+                result += address.City + ", ";
+            }
+            if (!string.IsNullOrEmpty(address.State))
+            {
+                result += address.State + ", ";
+            }
+            if (!string.IsNullOrEmpty(address.CountryIso2))
+            {
+                result += address.CountryIso2 + ", ";
+            }
+            if (!string.IsNullOrEmpty(address.PostCode))
+            {
+                result += address.PostCode + ", ";
+            }
+
+            return result.Trim(',', ' ');
         }
     }
 
@@ -77,20 +120,21 @@ namespace Unigram.Views.Payments
             {
                 Children.Clear();
                 RowDefinitions.Clear();
-                ColumnDefinitions.Clear();
 
                 for (int i = 0; i < _prices.Count; i++)
                 {
-                    var price = _prices[0];
+                    var price = _prices[i];
 
                     var label = new TextBlock();
                     label.Style = App.Current.Resources["DisabledBodyTextBlockStyle"] as Style;
                     label.Text = price.Label;
+                    label.Margin = new Thickness(12, 4, 0, 4);
 
                     var amount = new TextBlock();
                     amount.Style = App.Current.Resources["DisabledBodyTextBlockStyle"] as Style;
                     amount.Text = BindConvert.Current.FormatAmount(price.Amount, _currency);
-                    amount.Margin = new Thickness(8, 8, 0, 8);
+                    amount.Margin = new Thickness(8, 4, 12, 4);
+                    amount.TextAlignment = TextAlignment.Right;
 
                     Grid.SetRow(label, i);
                     Grid.SetRow(amount, i);
@@ -98,6 +142,7 @@ namespace Unigram.Views.Payments
 
                     Children.Add(label);
                     Children.Add(amount);
+                    RowDefinitions.Add(new RowDefinition { Height = new GridLength(0, GridUnitType.Auto) });
                 }
             }
         }

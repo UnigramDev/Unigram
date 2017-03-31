@@ -23,7 +23,14 @@ namespace Telegram.Api.Services
             var obj = new TLPaymentsGetPaymentForm { MsgId = msgId };
 
             const string caption = "payments.getPaymentForm";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage<TLPaymentsPaymentForm>(caption, obj, result =>
+            {
+                _cacheService.SyncUsersAndChats(result.Users, new TLVector<TLChatBase>(), tuple =>
+                {
+                    result.Users = tuple.Item1;
+                    callback?.Invoke(result);
+                });
+            }, faultCallback);
         }
 
         public void GetPaymentReceiptAsync(int msgId, Action<TLPaymentsPaymentReceipt> callback, Action<TLRPCError> faultCallback = null)
@@ -31,7 +38,14 @@ namespace Telegram.Api.Services
             var obj = new TLPaymentsGetPaymentReceipt { MsgId = msgId };
 
             const string caption = "payments.getPaymentReceipt";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage<TLPaymentsPaymentReceipt>(caption, obj, result =>
+            {
+                _cacheService.SyncUsersAndChats(result.Users, new TLVector<TLChatBase>(), tuple =>
+                {
+                    result.Users = tuple.Item1;
+                    callback?.Invoke(result);
+                });
+            }, faultCallback);
         }
 
         public void GetSavedInfoAsync(Action<TLPaymentsSavedInfo> callback, Action<TLRPCError> faultCallback = null)

@@ -7,10 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Page.Resources>
-
-    </Page.Resources>
-
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -18,7 +14,7 @@
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}">
-            <TextBlock Text="Receipt"
+            <TextBlock Text="{x:Bind ConvertTitle(ViewModel.Receipt.Invoice.IsTest), FallbackValue=Receipt}"
                        Style="{StaticResource BaseTextBlockStyle}"
                        VerticalAlignment="Center"
                        Margin="12,0"/>
@@ -29,23 +25,63 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Padding="12">
+                <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Padding="12" Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
-                    <Image Source="{Binding Invoice.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="80" Height="80" Margin="0,0,12,0" Stretch="UniformToFill" Grid.RowSpan="3"/>
+                    <Image Source="{Binding Invoice.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="80" Height="80" Margin="0,0,12,0" Stretch="UniformToFill" VerticalAlignment="Top" Grid.RowSpan="3"/>
 
                     <StackPanel Grid.Column="1">
-                        <TextBlock Text="{x:Bind ViewModel.Invoice.Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind ViewModel.Invoice.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind ViewModel.Receipt.BotId}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Invoice.Title, FallbackValue=Empty}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Invoice.Description, FallbackValue=Empty}" MaxLines="3" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Bot.FullName, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                     </StackPanel>
                 </Grid>
 
                 <local:LabeledPricesPanel Currency="{x:Bind ViewModel.Receipt.Invoice.Currency}"
                                           Prices="{x:Bind ViewModel.Receipt.Invoice.Prices}"/>
+                <local:LabeledPricesPanel Currency="{x:Bind ViewModel.Receipt.Currency}"
+                                          Prices="{x:Bind ViewModel.Receipt.Shipping.Prices}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Total" Margin="12,4,0,8" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind Convert.FormatAmount(ViewModel.Receipt.TotalAmount, ViewModel.Receipt.Currency), FallbackValue=Empty}" Margin="8,4,12,8" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+                </Grid>
+
+                <StackPanel Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Receipt.CredentialsTitle, FallbackValue=Empty}"/>
+                    <TextBlock Text="Payment method" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasShippingAddress, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ConvertAddress(ViewModel.Receipt.Info.ShippingAddress), FallbackValue=Empty}"/>
+                    <TextBlock Text="Shipping address" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasName, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Receipt.Info.Name, FallbackValue=Empty}"/>
+                    <TextBlock Text="Name" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasPhone, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Receipt.Info.Phone, FallbackValue=Empty}"/>
+                    <TextBlock Text="Phone number" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasEmail, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Receipt.Info.Email, FallbackValue=Empty}"/>
+                    <TextBlock Text="Contact address" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.HasShipping, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Receipt.Shipping.Title, FallbackValue=Empty}"/>
+                    <TextBlock Text="Shipping method" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>
