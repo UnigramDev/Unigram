@@ -111,6 +111,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsMasksViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep1ViewModel>();
             container.ContainerBuilder.RegisterType<PaymentReceiptViewModel>();
 
             container.Build();

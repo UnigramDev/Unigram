@@ -939,10 +939,6 @@
             </ListView>
         </Grid>
 
-        <Grid x:Name="KeyboardItems" Grid.Row="4">
-            <views:StickersView x:Name="StickersPanel" Visibility="Collapsed" MaxHeight="360" MinHeight="260"/>
-        </Grid>
-
         <ScrollViewer x:Name="ReplyMarkupPanel"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
@@ -952,6 +948,10 @@
                       Grid.Row="4">
             <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick"/>
         </ScrollViewer>
+
+        <Grid x:Name="KeyboardItems" Grid.Row="4">
+            <views:StickersView x:Name="StickersPanel" Visibility="Collapsed" MaxHeight="360" MinHeight="260"/>
+        </Grid>
 
         <!-- Input pane -->
         <Grid x:Name="TextArea" 

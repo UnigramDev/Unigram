@@ -68,6 +68,22 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
+
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLPaymentsValidatedRequestedInfo>> ValidateRequestedInfoAsync(bool save, int msgId, TLPaymentRequestedInfo info)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLPaymentsValidatedRequestedInfo>>();
+            ValidateRequestedInfoAsync(save, msgId, info, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPaymentsValidatedRequestedInfo>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPaymentsValidatedRequestedInfo>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
         [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesChatsBase>> GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit)
         {

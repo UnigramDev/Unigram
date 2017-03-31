@@ -13,6 +13,8 @@ namespace Unigram.ViewModels.Payments
 {
     public class PaymentReceiptViewModel : UnigramViewModelBase
     {
+        private TLMessage _message;
+
         public PaymentReceiptViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
@@ -27,6 +29,7 @@ namespace Unigram.ViewModels.Payments
                 {
                     var tuple = new TLTuple<TLMessage, TLPaymentsPaymentReceipt>(from);
 
+                    _message = tuple.Item1;
                     Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
                     Receipt = tuple.Item2;
                     Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;

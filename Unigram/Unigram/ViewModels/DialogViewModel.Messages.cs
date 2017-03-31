@@ -701,7 +701,14 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.GetPaymentFormAsync(message.Id);
                     if (response.IsSucceeded)
                     {
-                        Debugger.Break();
+                        if (response.Result.Invoice.IsEmailRequested || response.Result.Invoice.IsNameRequested || response.Result.Invoice.IsPhoneRequested || response.Result.Invoice.IsShippingAddressRequested)
+                        {
+                            NavigationService.Navigate(typeof(PaymentFormStep1Page), TLTuple.Create(message, response.Result));
+                        }
+                        else
+                        {
+                            // TODO: navigate to step 3 directly
+                        }
                     }
                 }
             }

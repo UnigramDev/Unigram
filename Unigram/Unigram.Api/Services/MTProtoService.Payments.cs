@@ -57,6 +57,13 @@ namespace Telegram.Api.Services
         }
 
         // TODO: public void SendPaymentFormCallback()
-        // TODO: public void ValidateRequestedInfo()
+        
+        public void ValidateRequestedInfoAsync(bool save, int msgId, TLPaymentRequestedInfo info, Action<TLPaymentsValidatedRequestedInfo> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLPaymentsValidateRequestedInfo { IsSave = save, MsgId = msgId, Info = info };
+
+            const string caption = "payments.validateRequestedInfo";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
     }
 }

@@ -145,20 +145,6 @@ namespace Unigram.ViewModels.Login
             }
         }
 
-        private bool _isLoading;
-        public bool IsLoading
-        {
-            get
-            {
-                return _isLoading;
-            }
-            set
-            {
-                Set(ref _isLoading, value);
-                SendCommand.RaiseCanExecuteChanged();
-            }
-        }
-
         public List<KeyedList<string, Country>> Countries { get; private set; }
 
         private RelayCommand _sendCommand;

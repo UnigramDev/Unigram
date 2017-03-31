@@ -19,27 +19,25 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <StackPanel>
-                    <TextBox Header="Shipping address"
-                         PlaceholderText="Address 1 (Street)"
-                         Margin="12,12,12,4"/>
-                    <TextBox PlaceholderText="Address 2 (Street)" Margin="12,8,12,4"/>
-                    <TextBox PlaceholderText="City" Margin="12,8,12,4"/>
-                    <TextBox PlaceholderText="State" Margin="12,8,12,4"/>
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsShippingAddressRequested}">
+                    <TextBlock Text="Shipping address" Margin="12,12,0,0"/>
+                    <TextBox Text="{x:Bind ViewModel.Info.ShippingAddress.StreetLine1, Mode=TwoWay}" PlaceholderText="Address 1 (Street)" Margin="12,8,12,4"/>
+                    <TextBox Text="{x:Bind ViewModel.Info.ShippingAddress.StreetLine2, Mode=TwoWay}" PlaceholderText="Address 2 (Street)" Margin="12,8,12,4"/>
+                    <TextBox Text="{x:Bind ViewModel.Info.ShippingAddress.City, Mode=TwoWay}" PlaceholderText="City" Margin="12,8,12,4"/>
+                    <TextBox Text="{x:Bind ViewModel.Info.ShippingAddress.State, Mode=TwoWay}" PlaceholderText="State" Margin="12,8,12,4"/>
                     <ComboBox PlaceholderText="Country" HorizontalAlignment="Stretch" Margin="12,8,12,4"/>
-                    <TextBox PlaceholderText="Postcode" Margin="12,8,12,4"/>
+                    <TextBox Text="{x:Bind ViewModel.Info.ShippingAddress.PostCode, Mode=TwoWay}" PlaceholderText="Postcode" Margin="12,8,12,4"/>
                 </StackPanel>
 
-                <StackPanel>
-                    <TextBox Header="Receiver"
-                         PlaceholderText="Full Name"
-                         Margin="12,12,12,4"/>
-                    <TextBox PlaceholderText="E-Mail" Margin="12,8,12,4"/>
-                    <TextBox PlaceholderText="Phone number" Margin="12,8,12,4"/>
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.IsAnyUserInfoRequested}">
+                    <TextBlock Text="Receiver" Margin="12,12,0,0"/>
+                    <TextBox Text="{x:Bind ViewModel.Info.Name, Mode=TwoWay}" Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsNameRequested}" PlaceholderText="Full Name" Margin="12,8,12,4"/>
+                    <TextBox Text="{x:Bind ViewModel.Info.Email, Mode=TwoWay}" Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsEmailRequested}" PlaceholderText="E-Mail" Margin="12,8,12,4"/>
+                    <TextBox Text="{x:Bind ViewModel.Info.Phone, Mode=TwoWay}" Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsPhoneRequested}" PlaceholderText="Phone number" Margin="12,8,12,4"/>
                 </StackPanel>
 
                 <StackPanel Padding="12,12,12,24">
-                    <CheckBox Content="Save Shipping Information" IsChecked="True"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsSave, Mode=TwoWay}" Content="Save Shipping Information"/>
                     <TextBlock Text="You can save your shipping info for future use." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>

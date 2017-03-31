@@ -280,5 +280,7 @@ namespace Telegram.Api.Services
         void GetPaymentFormAsync(int msgId, Action<TLPaymentsPaymentForm> callback, Action<TLRPCError> faultCallback = null);
         void GetPaymentReceiptAsync(int msgId, Action<TLPaymentsPaymentReceipt> callback, Action<TLRPCError> faultCallback = null);
         void GetSavedInfoAsync(Action<TLPaymentsSavedInfo> callback, Action<TLRPCError> faultCallback = null);
+
+        void ValidateRequestedInfoAsync(bool save, int msgId, TLPaymentRequestedInfo info, Action<TLPaymentsValidatedRequestedInfo> callback, Action<TLRPCError> faultCallback = null);
     }
 }

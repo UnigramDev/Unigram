@@ -65,19 +65,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        private bool _isLoading = true;
-        public bool IsLoading
-        {
-            get
-            {
-                return _isLoading;
-            }
-            set
-            {
-                Set(ref _isLoading, value);
-            }
-        }
-
         private TLStickerSet _stickerSet = new TLStickerSet();
         public TLStickerSet StickerSet
         {
