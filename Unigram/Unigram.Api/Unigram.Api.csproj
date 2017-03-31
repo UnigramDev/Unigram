@@ -335,10 +335,12 @@
     <Compile Include="TL\Methods\Payments\TLPaymentsSendPaymentForm.cs" />
     <Compile Include="TL\Methods\Payments\TLPaymentsValidateRequestedInfo.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneAcceptCall.cs" />
+    <Compile Include="TL\Methods\Phone\TLPhoneConfirmCall.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneDiscardCall.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneGetCallConfig.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneReceivedCall.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneRequestCall.cs" />
+    <Compile Include="TL\Methods\Phone\TLPhoneSaveCallDebug.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneSetCallRating.cs" />
     <Compile Include="TL\Methods\Photos\TLPhotosDeletePhotos.cs" />
     <Compile Include="TL\Methods\Photos\TLPhotosGetUserPhotos.cs" />
@@ -954,6 +956,7 @@
     <Compile Include="TL\TLPeerSettings.cs" />
     <Compile Include="TL\TLPeerUser.cs" />
     <Compile Include="TL\TLPhoneCall.cs" />
+    <Compile Include="TL\TLPhoneCallAccepted.cs" />
     <Compile Include="TL\TLPhoneCallBase.cs" />
     <Compile Include="TL\TLPhoneCallDiscarded.cs" />
     <Compile Include="TL\TLPhoneCallDiscardReasonBase.cs" />

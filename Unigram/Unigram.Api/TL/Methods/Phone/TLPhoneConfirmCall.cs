@@ -4,35 +4,38 @@ using System;
 namespace Telegram.Api.TL.Methods.Phone
 {
 	/// <summary>
-	/// RCP method phone.acceptCall.
+	/// RCP method phone.confirmCall.
 	/// Returns <see cref="Telegram.Api.TL.TLPhonePhoneCall"/>
 	/// </summary>
-	public partial class TLPhoneAcceptCall : TLObject
+	public partial class TLPhoneConfirmCall : TLObject
 	{
 		public TLInputPhoneCall Peer { get; set; }
-		public Byte[] GB { get; set; }
+		public Byte[] GA { get; set; }
+		public Int64 KeyFingerprint { get; set; }
 		public TLPhoneCallProtocol Protocol { get; set; }
 
-		public TLPhoneAcceptCall() { }
-		public TLPhoneAcceptCall(TLBinaryReader from)
+		public TLPhoneConfirmCall() { }
+		public TLPhoneConfirmCall(TLBinaryReader from)
 		{
 			Read(from);
 		}
 
-		public override TLType TypeId { get { return TLType.PhoneAcceptCall; } }
+		public override TLType TypeId { get { return TLType.PhoneConfirmCall; } }
 
 		public override void Read(TLBinaryReader from)
 		{
 			Peer = TLFactory.Read<TLInputPhoneCall>(from);
-			GB = from.ReadByteArray();
+			GA = from.ReadByteArray();
+			KeyFingerprint = from.ReadInt64();
 			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x3BD2B4A0);
+			to.Write(0x2EFE1722);
 			to.WriteObject(Peer);
-			to.WriteByteArray(GB);
+			to.WriteByteArray(GA);
+			to.Write(KeyFingerprint);
 			to.WriteObject(Protocol);
 		}
 	}

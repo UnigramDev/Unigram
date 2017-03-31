@@ -10,6 +10,7 @@ namespace Telegram.Api.TL
 		{
 			Blocked = (1 << 0),
 			PhoneCallsAvailable = (1 << 4),
+			PhoneCallsPrivate = (1 << 5),
 			About = (1 << 1),
 			ProfilePhoto = (1 << 2),
 			BotInfo = (1 << 3),
@@ -17,6 +18,7 @@ namespace Telegram.Api.TL
 
 		public bool IsBlocked { get { return Flags.HasFlag(Flag.Blocked); } set { Flags = value ? (Flags | Flag.Blocked) : (Flags & ~Flag.Blocked); } }
 		public bool IsPhoneCallsAvailable { get { return Flags.HasFlag(Flag.PhoneCallsAvailable); } set { Flags = value ? (Flags | Flag.PhoneCallsAvailable) : (Flags & ~Flag.PhoneCallsAvailable); } }
+		public bool IsPhoneCallsPrivate { get { return Flags.HasFlag(Flag.PhoneCallsPrivate); } set { Flags = value ? (Flags | Flag.PhoneCallsPrivate) : (Flags & ~Flag.PhoneCallsPrivate); } }
 		public bool HasAbout { get { return Flags.HasFlag(Flag.About); } set { Flags = value ? (Flags | Flag.About) : (Flags & ~Flag.About); } }
 		public bool HasProfilePhoto { get { return Flags.HasFlag(Flag.ProfilePhoto); } set { Flags = value ? (Flags | Flag.ProfilePhoto) : (Flags & ~Flag.ProfilePhoto); } }
 		public bool HasBotInfo { get { return Flags.HasFlag(Flag.BotInfo); } set { Flags = value ? (Flags | Flag.BotInfo) : (Flags & ~Flag.BotInfo); } }
