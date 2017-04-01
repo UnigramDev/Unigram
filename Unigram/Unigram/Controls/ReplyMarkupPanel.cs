@@ -61,25 +61,6 @@ namespace Unigram.Controls
 
         #endregion
 
-        #region HasReceiptMsgId
-
-        public bool HasReceiptMsgId
-        {
-            get { return (bool)GetValue(HasReceiptMsgIdProperty); }
-            set { SetValue(HasReceiptMsgIdProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for HasReceiptMsgId.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty HasReceiptMsgIdProperty =
-            DependencyProperty.Register("HasReceiptMsgId", typeof(bool), typeof(ReplyMarkupPanel), new PropertyMetadata(false, OnHasReceiptMsgIdChanged));
-
-        private static void OnHasReceiptMsgIdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ReplyMarkupPanel)d).OnReplyMarkupChanged(((ReplyMarkupPanel)d).ReplyMarkup, ((ReplyMarkupPanel)d).ReplyMarkup);
-        }
-
-        #endregion
-
         private void OnIsInlineChanged(bool newValue, bool oldValue)
         {
             //if (newValue)
@@ -139,7 +120,13 @@ namespace Unigram.Controls
             Children.Clear();
             RowDefinitions.Clear();
 
-            if (HasReceiptMsgId)
+            var receipt = false;
+            if (DataContext is TLMessage message && message.Media is TLMessageMediaInvoice invoiceMedia)
+            {
+                receipt = invoiceMedia.HasReceiptMsgId;
+            }
+
+            if (receipt)
             {
                 var panel = new Grid();
                 panel.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -203,7 +190,7 @@ namespace Unigram.Controls
                         {
                             button.Glyph = "\uE15F";
                         }
-                        else if (row.Buttons[i] is TLKeyboardButtonBuy && HasReceiptMsgId)
+                        else if (row.Buttons[i] is TLKeyboardButtonBuy && receipt)
                         {
                             button.Content = "Receipt";
                         }

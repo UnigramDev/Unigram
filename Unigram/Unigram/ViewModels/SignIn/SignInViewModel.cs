@@ -24,25 +24,6 @@ namespace Unigram.ViewModels.Login
         public SignInViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            var alphabet = "abcdefghijklmnopqrstuvwxyz";
-            var list = new List<KeyedList<string, Country>>(alphabet.Length);
-            var dictionary = new Dictionary<string, KeyedList<string, Country>>();
-            for (int i = 0; i < alphabet.Length; i++)
-            {
-                var key = alphabet[i].ToString();
-                var group = new KeyedList<string, Country>(key);
-
-                list.Add(group);
-                dictionary[key] = group;
-            }
-
-            foreach (var country in Country.CountriesSource)
-            {
-                dictionary[country.GetKey()].Add(country);
-            }
-
-            Countries = list;
-
             ProtoService.GotUserCountry += GotUserCountry;
 
             if (!string.IsNullOrEmpty(ProtoService.Country))
@@ -60,7 +41,7 @@ namespace Unigram.ViewModels.Login
         private void GotUserCountry(object sender, CountryEventArgs e)
         {
             Country country = null;
-            foreach (var local in Country.CountriesSource)
+            foreach (var local in Country.Countries)
             {
                 if (string.Equals(local.Code, e.Country, StringComparison.OrdinalIgnoreCase))
                 {
@@ -109,7 +90,7 @@ namespace Unigram.ViewModels.Login
                 Set(ref _phoneCode, value);
 
                 Country country = null;
-                foreach (var c in Country.CountriesSource)
+                foreach (var c in Country.Countries)
                 {
                     if (c.PhoneCode == PhoneCode)
                     {
@@ -145,7 +126,7 @@ namespace Unigram.ViewModels.Login
             }
         }
 
-        public List<KeyedList<string, Country>> Countries { get; private set; }
+        public List<KeyedList<string, Country>> Countries { get; } = Country.GroupedCountries;
 
         private RelayCommand _sendCommand;
         public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);

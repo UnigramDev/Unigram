@@ -211,15 +211,15 @@ namespace Telegram.Api.Services.Connection
 
         private void CheckConnectionState(object state)
         {
-//#if !WIN_RT && DEBUG
-//            Microsoft.Devices.VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
-//#endif
+            //#if !WIN_RT && DEBUG
+            //            Microsoft.Devices.VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
+            //#endif
 
-            //if (Debugger.IsAttached) return;
             // TODO: Disabled
-//#if DEBUG
-//            return;
-//#endif
+            if (Debugger.IsAttached)
+            {
+                return;
+            }
 
             if (_mtProtoService == null) return;
             

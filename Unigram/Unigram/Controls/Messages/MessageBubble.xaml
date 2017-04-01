@@ -90,6 +90,6 @@
         </Grid>
     </UserControl>
 
-    <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" HasReceiptMsgId="{Binding Media.HasReceiptMsgId}" ButtonClick="ReplyMarkup_ButtonClick"/>
+    <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick"/>
 
 </local:MessageBubbleBase>

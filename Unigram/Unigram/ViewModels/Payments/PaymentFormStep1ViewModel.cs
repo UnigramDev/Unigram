@@ -8,6 +8,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Core.Models;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments
@@ -33,7 +34,15 @@ namespace Unigram.ViewModels.Payments
                     _message = tuple.Item1;
                     Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
                     PaymentForm = tuple.Item2;
-                    Info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo { ShippingAddress = new TLPostAddress() };
+
+                    var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
+                    if (info.ShippingAddress == null)
+                    {
+                        info.ShippingAddress = new TLPostAddress();
+                    }
+
+                    Info = info;
+                    SelectedCountry = Country.Countries.FirstOrDefault(x => x.Code.Equals(info.ShippingAddress.CountryIso2, StringComparison.OrdinalIgnoreCase));
                 }
             }
 
@@ -77,6 +86,21 @@ namespace Unigram.ViewModels.Payments
             set
             {
                 Set(ref _info, value);
+            }
+        }
+
+        public List<KeyedList<string, Country>> Countries { get; } = Country.GroupedCountries;
+
+        private Country _selectedCountry = Country.Countries[0];
+        public Country SelectedCountry
+        {
+            get
+            {
+                return _selectedCountry;
+            }
+            set
+            {
+                Set(ref _selectedCountry, value);
             }
         }
 
@@ -124,11 +148,14 @@ namespace Unigram.ViewModels.Payments
             if (_paymentForm.Invoice.IsShippingAddressRequested)
             {
                 info.ShippingAddress = _info.ShippingAddress;
+                info.ShippingAddress.CountryIso2 = _selectedCountry?.Code;
             }
 
             var response = await ProtoService.ValidateRequestedInfoAsync(save, _message.Id, info);
             if (response.IsSucceeded)
             {
+                IsLoading = false;
+
                 if (_paymentForm.HasSavedInfo && !save)
                 {
                     ProtoService.ClearSavedInfoAsync(true, false, null, null);

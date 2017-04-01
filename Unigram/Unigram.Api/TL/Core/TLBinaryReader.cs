@@ -41,8 +41,7 @@ namespace Telegram.Api.TL
 
         public override string ReadString()
         {
-            var result = Encoding.UTF8.GetString(ReadByteArray());
-            return result;
+            return Encoding.UTF8.GetString(ReadByteArray());
         }
 
         public byte[] ReadByteArray()

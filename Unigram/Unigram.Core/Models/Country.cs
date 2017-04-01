@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Common;
 
 namespace Unigram.Core.Models
 {
@@ -21,7 +22,31 @@ namespace Unigram.Core.Models
 
         #region Static
 
-        public static readonly IList<Country> CountriesSource = new List<Country>
+        static Country()
+        {
+            var alphabet = "abcdefghijklmnopqrstuvwxyz";
+            var list = new List<KeyedList<string, Country>>(alphabet.Length);
+            var dictionary = new Dictionary<string, KeyedList<string, Country>>();
+            for (int i = 0; i < alphabet.Length; i++)
+            {
+                var key = alphabet[i].ToString();
+                var group = new KeyedList<string, Country>(key);
+
+                list.Add(group);
+                dictionary[key] = group;
+            }
+
+            foreach (var country in Countries)
+            {
+                dictionary[country.GetKey()].Add(country);
+            }
+
+            GroupedCountries = list;
+        }
+
+        public static readonly List<KeyedList<string, Country>> GroupedCountries;
+
+        public static readonly IList<Country> Countries = new List<Country>
         {
             new Country { Code = "af", PhoneCode = "93", Name = "Afghanistan" },
             new Country { Code = "al", PhoneCode = "355", Name = "Albania" },

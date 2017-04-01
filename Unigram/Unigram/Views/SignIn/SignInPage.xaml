@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Views"
     xmlns:cv="using:Unigram.Converters"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:models="using:Unigram.Core.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -14,7 +15,6 @@
             <EntranceThemeTransition FromHorizontalOffset="75"/>
         </TransitionCollection>
     </Page.Transitions>
-
 
     <Page.Resources>
         <CollectionViewSource x:Name="Countries" Source="{Binding Countries}" IsSourceGrouped="True"/>
@@ -60,8 +60,11 @@
                       HorizontalAlignment="Stretch"
                       Grid.Row="2">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}"/>
+                    <DataTemplate x:DataType="models:Country">
+                        <TextBlock Style="{StaticResource BodyTextBlockStyle}">
+                            <Run Text="{x:Bind Name}"/>
+                            <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                        </TextBlock>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>

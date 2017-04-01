@@ -215,6 +215,8 @@
     </Style>
 
     <Style TargetType="local:ImageView">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ImageView">

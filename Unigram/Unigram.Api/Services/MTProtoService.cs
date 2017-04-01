@@ -304,10 +304,10 @@ namespace Telegram.Api.Services
         {
 #if DEBUG
             // TODO: disabled
-            //if (Debugger.IsAttached)
-            //{
-            //    return;
-            //}
+            if (Debugger.IsAttached)
+            {
+                return;
+            }
 #endif
 
             const double timeout = Constants.TimeoutInterval;
