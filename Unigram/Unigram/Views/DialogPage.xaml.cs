@@ -173,8 +173,6 @@ namespace Unigram.Views
         {
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
-
-            DataContext = null;
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
