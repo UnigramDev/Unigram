@@ -451,7 +451,7 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
-                                            <controls:ProfilePictureView x:Phase="3" Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="48" Height="48" Margin="12" Grid.RowSpan="2"/>
+                                            <controls:ProfilePictureView x:Phase="3" Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="64" Height="64" Margin="12" Grid.RowSpan="2"/>
 
                                             <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
                                             <TextBlock Text="{x:Bind Phone, Converter={StaticResource PhoneNumberFormatConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>

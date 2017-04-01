@@ -10,6 +10,10 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
+using Windows.Foundation.Collections;
 
 namespace Unigram.Views
 {
@@ -119,6 +123,33 @@ namespace Unigram.Views
         private void Accounts_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsAccountsPage));
+        }
+
+        private async void EditPhoto_Click(object sender, RoutedEventArgs e)
+        {
+            // Source: https://gist.github.com/FrayxRulez/c2f1bbfa996ad5751b87
+
+            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("Cropped.jpg", CreationCollisionOption.ReplaceExisting);
+            var token = SharedStorageAccessManager.AddFile(file);
+
+            var options = new LauncherOptions();
+            options.TargetApplicationPackageFamilyName = "Microsoft.Windows.Photos_8wekyb3d8bbwe";
+
+            var parameters = new ValueSet();
+            parameters.Add("CropWidthPixels", 640);
+            parameters.Add("CropHeightPixels", 640);
+            parameters.Add("EllipticalCrop", true);
+            parameters.Add("ShowCamera", true);
+            parameters.Add("DestinationToken", token);
+
+            var result = await Launcher.LaunchUriForResultsAsync(new Uri("microsoft.windows.photos.crop:"), options, parameters);
+            if (result.Status == LaunchUriStatus.Success && result.Result != null)
+            {
+                if (result.Result.TryGetValue("Status", out object value) && (string)value != "ERROR")
+                {
+                    ViewModel.EditPhotoCommand.Execute(file);
+                }
+            }
         }
     }
 

@@ -178,7 +178,7 @@
     <comment>Settings - Settings - ToggleSwitch - Sync with People Hub</comment>
   </data>
   <data name="Settings-Titlebar-Title.Text" xml:space="preserve">
-    <value>SETTINGS</value>
+    <value>Settings</value>
     <comment>Settings - Titlebar - Page Title</comment>
   </data>
   <data name="BTN-CodeNotRecieved.Content" xml:space="preserve">

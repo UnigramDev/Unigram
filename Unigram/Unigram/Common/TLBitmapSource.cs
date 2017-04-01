@@ -42,8 +42,8 @@ namespace Unigram.Common
 
         public TLBitmapSource(TLUser user)
         {
-            Image.DecodePixelWidth = 48;
-            Image.DecodePixelHeight = 48;
+            Image.DecodePixelWidth = 64;
+            Image.DecodePixelHeight = 64;
 
             var userProfilePhoto = user.Photo as TLUserProfilePhoto;
             if (userProfilePhoto != null)
@@ -62,8 +62,8 @@ namespace Unigram.Common
 
         public TLBitmapSource(TLChatBase chatBase)
         {
-            Image.DecodePixelWidth = 48;
-            Image.DecodePixelHeight = 48;
+            Image.DecodePixelWidth = 64;
+            Image.DecodePixelHeight = 64;
 
             TLChatPhotoBase chatPhotoBase = null;
 
