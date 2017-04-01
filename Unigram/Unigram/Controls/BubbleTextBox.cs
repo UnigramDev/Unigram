@@ -72,11 +72,11 @@ namespace Unigram.Controls
             //((MenuFlyoutItem)_flyout.Items[1]).Click += Italic_Click;
             //((MenuFlyoutItem)_flyout.Items[1]).Loaded += Italic_Loaded;
 
-//#if DEBUG
-//            // To test hyperlinks (Used for mention name => to tag people that has no username)
-//            _flyout.Items.Add(new MenuFlyoutItem { Text = "Hyperlink" });
-//            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
-//#endif
+            //#if DEBUG
+            //            // To test hyperlinks (Used for mention name => to tag people that has no username)
+            //            _flyout.Items.Add(new MenuFlyoutItem { Text = "Hyperlink" });
+            //            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
+            //#endif
 
             Paste += OnPaste;
             Clipboard.ContentChanged += Clipboard_ContentChanged;
