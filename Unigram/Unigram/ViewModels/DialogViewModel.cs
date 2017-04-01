@@ -407,8 +407,11 @@ namespace Unigram.ViewModels
 
             var lastRead = true;
 
-            var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
-            var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -51 : 0;
+            //var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
+            var readMaxId = With as ITLReadMaxId;
+
+            var maxId = readMaxId.ReadInboxMaxId > 0 ? readMaxId.ReadInboxMaxId : int.MaxValue;
+            var offset = readMaxId.ReadInboxMaxId > 0 && maxId > 0 ? -51 : 0;
             var limit = 50;
 
             var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
