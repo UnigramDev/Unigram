@@ -183,7 +183,7 @@ namespace Unigram.Common
                         var userName = replied.From?.FullName ?? "User";
                         var userId = replied.FromId ?? fromUserId;
 
-                        return ReplaceLinks("You have just successfully transferred {0} to {1} for {2}", new[] { amount, userName, invoiceMedia.Title }, new[] { "tg-bold://", "tg-user://" + userId, "tg-bold://" }, useActiveLinks);
+                        return ReplaceLinks("You have just successfully transferred {0} to {1} for {2}", new[] { amount, userName, invoiceMedia.Title }, new[] { "tg-bold://", "tg-user://" + userId, "tg-message://" + replied.Id }, useActiveLinks);
                     }
                 }
 

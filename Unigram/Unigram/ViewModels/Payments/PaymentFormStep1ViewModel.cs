@@ -9,6 +9,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Models;
+using Unigram.Views.Payments;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments
@@ -161,7 +162,14 @@ namespace Unigram.ViewModels.Payments
                     ProtoService.ClearSavedInfoAsync(true, false, null, null);
                 }
 
+                if (_paymentForm.Invoice.IsFlexible)
+                {
+                    NavigationService.Navigate(typeof(PaymentFormStep2Page));
+                }
+                else
+                {
 
+                }
             }
         }
     }

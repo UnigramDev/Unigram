@@ -58,7 +58,7 @@
                 <Run Text="{x:Bind Convert.Date(ViewModel.Date)}"/><Run Text="{x:Bind ConvertDuration(ViewModel.Action)}"/>
             </TextBlock>
 
-            <controls:GlyphButton Glyph="&#xE13A;" Height="Auto" VerticalAlignment="Stretch" Margin="0,-4,-12,-6" Grid.Column="1" Grid.RowSpan="2"/>
+            <controls:GlyphButton Glyph="&#xE13A;" Height="Auto" VerticalAlignment="Stretch" Margin="0,-4,-10,-6" Grid.Column="1" Grid.RowSpan="2"/>
         </Grid>
     </UserControl>
 
