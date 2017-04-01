@@ -73,5 +73,19 @@ namespace Unigram.Common
                 return _current;
             }
         }
+
+
+
+        public bool IsSendByEnterEnabled
+        {
+            get
+            {
+                return GetValueOrDefault("IsSendByEnterEnabled", true);
+            }
+            set
+            {
+                AddOrUpdateValue("IsSendByEnterEnabled", value);
+            }
+        }
     }
 }

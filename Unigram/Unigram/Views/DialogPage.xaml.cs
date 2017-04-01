@@ -203,7 +203,7 @@ namespace Unigram.Views
                 forwarding = container.FwdMessages != null && container.FwdMessages.Count > 0;
             }
 
-            if (txtMessage.IsEmpty && !forwarding)
+            if (ViewModel != null && txtMessage.IsEmpty && !forwarding)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnStickers.Visibility = Visibility.Visible;

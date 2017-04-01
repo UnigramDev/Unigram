@@ -175,91 +175,9 @@
                             </VisualStateManager.VisualStateGroups>
                             <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Content="{TemplateBinding Tag}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
 
-                            <ToggleSwitch IsOn="{TemplateBinding IsOn}" OnContent="{x:Null}" OffContent="{x:Null}" MinWidth="0" Grid.Column="1"/>
+                            <ToggleSwitch IsOn="{Binding IsOn, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}" OnContent="{x:Null}" OffContent="{x:Null}" MinWidth="0" Grid.Column="1"/>
 
                             <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="12,0,0,0" Grid.Row="1" Grid.ColumnSpan="3"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="Yolo" TargetType="controls:ProfilePictureView">
-            <Setter Property="Background" Value="{ThemeResource HyperlinkButtonBackground}" />
-            <Setter Property="Foreground" Value="{ThemeResource HyperlinkButtonForeground}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource HyperlinkButtonBorderBrush}" />
-            <Setter Property="BorderThickness" Value="{ThemeResource HyperlinkButtonBorderThemeThickness}" />
-            <Setter Property="Padding" Value="0,6,0,6" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-            <Setter Property="UseSystemFocusVisuals" Value="True" />
-            <Setter Property="FocusVisualMargin" Value="-3" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:ProfilePictureView">
-                        <Grid x:Name="RootGrid">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBackgroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBorderBrushPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBackgroundPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBorderBrushPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBackgroundDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonBorderBrushDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Ellipse>
-                                <Ellipse.Fill>
-                                    <ImageBrush ImageSource="{Binding Source, RelativeSource={RelativeSource Mode=TemplatedParent}}" AlignmentY="Center" AlignmentX="Center" Stretch="UniformToFill"/>
-                                </Ellipse.Fill>
-                            </Ellipse>
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              Background="{TemplateBinding Background}"
-                                              BorderBrush="{TemplateBinding BorderBrush}"
-                                              BorderThickness="{TemplateBinding BorderThickness}"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              Padding="{TemplateBinding Padding}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              AutomationProperties.AccessibilityView="Raw" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -290,8 +208,8 @@
             </Grid>
 
             <ScrollViewer VerticalScrollBarVisibility="Auto"
-                            VerticalScrollMode="Auto"
-                            Grid.Row="1">
+                          VerticalScrollMode="Auto"
+                          Grid.Row="1">
                 <StackPanel>
                     <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                         <Grid.RowDefinitions>
@@ -308,78 +226,82 @@
                         <TextBlock Text="online" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
                     </Grid>
                     <controls:HyperButton Content="Set profile photo"
-                                            Click="EditPhoto_Click"
-                                            Style="{StaticResource HyperButtonStyle}"
-                                            Grid.Row="1"/>
+                                          Click="EditPhoto_Click"
+                                          Style="{StaticResource HyperButtonStyle}"
+                                          Grid.Row="1"/>
 
                             
                             
                     <local:TableStackPanel x:Name="SwitchGroup1"
-                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                            Margin="0,24,0,0">
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                           Margin="0,24,0,0">
+                        <controls:HyperCheckButton Tag="Send by Enter"
+                                                   IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
+                                                   Style="{ThemeResource CheckButtonStyle}"/>
+                        
                         <!-- Manually hidden -->
                         <controls:HyperCheckButton Content="Enabled"
-                                                    Visibility="Collapsed"
-                                                    IsEnabled="False"
-                                                    Tag="Enable Location Services"
-                                                    Style="{ThemeResource CheckButtonStyle}"/>
+                                                   Visibility="Collapsed"
+                                                   IsEnabled="False"
+                                                   Tag="Enable Location Services"
+                                                   Style="{ThemeResource CheckButtonStyle}"/>
                         <!-- Manually hidden -->
                         <controls:HyperCheckButton Content="Enabled"
-                                                    Visibility="Collapsed"
-                                                    IsEnabled="False"
-                                                    Tag="Sync with People Hub"
-                                                    Style="{ThemeResource CheckButtonStyle}"/>
+                                                   Visibility="Collapsed"
+                                                   IsEnabled="False"
+                                                   Tag="Sync with People Hub"
+                                                   Style="{ThemeResource CheckButtonStyle}"/>
                     </local:TableStackPanel>
                     <local:TableStackPanel x:Name="OptionsGroup1"
-                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                            Margin="0,24,0,0">
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                           Margin="0,24,0,0">
                         <!-- Manually hidden -->
                         <controls:HyperButton Content="Notifications and sounds"
-                                                Click="Notifications_Click"
-                                                Style="{StaticResource HyperButtonStyle}"/>
+                                              Click="Notifications_Click"
+                                              Style="{StaticResource HyperButtonStyle}"/>
                         <controls:HyperButton Content="Privacy and security"
-                                                Click="Privacy_Click"
-                                                Style="{StaticResource HyperButtonStyle}"/>
+                                              Click="Privacy_Click"
+                                              Style="{StaticResource HyperButtonStyle}"/>
                         <controls:HyperButton Content="Data and storage"
-                                                Click="Data_Click"
-                                                Style="{StaticResource HyperButtonStyle}"/>
+                                              Click="Data_Click"
+                                              Style="{StaticResource HyperButtonStyle}"/>
                         <controls:HyperButton Content="Stickers"
-                                                Click="Stickers_Click"
-                                                Style="{StaticResource HyperButtonStyle}"/>
+                                              Click="Stickers_Click"
+                                              Style="{StaticResource HyperButtonStyle}"/>
                         <!-- Manually hidden -->
                         <controls:HyperButton Content="Chat wallpaper"
-                                                Visibility="Collapsed"
-                                                Command="{x:Bind WallpaperPageCommand}"
-                                                Style="{StaticResource HyperButtonStyle}"/>
+                                              Visibility="Collapsed"
+                                              Command="{x:Bind WallpaperPageCommand}"
+                                              Style="{StaticResource HyperButtonStyle}"/>
                     </local:TableStackPanel>
                     <local:TableStackPanel x:Name="OptionsGroup2"
-                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                            Margin="0,24,0,0">
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                           Margin="0,24,0,0">
                         <!-- Manually hidden -->
                         <controls:HyperButton Content="Phone"
-                                                Visibility="Collapsed"
-                                                IsEnabled="False"
-                                                Style="{StaticResource HyperButtonStyle}"/>
+                                              Visibility="Collapsed"
+                                              IsEnabled="False"
+                                              Style="{StaticResource HyperButtonStyle}"/>
                         <controls:HyperButton Content="Username"
-                                                Click="Username_Click"
-                                                Style="{StaticResource HyperButtonStyle}"/>
+                                              Click="Username_Click"
+                                              Style="{StaticResource HyperButtonStyle}"/>
                     </local:TableStackPanel>
                     <local:TableStackPanel x:Name="OptionsGroup3"
-                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                            Margin="0,24,0,0">
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                           Margin="0,24,0,0">
                         <controls:HyperButton Content="Accounts management"
-                                                Visibility="Collapsed"
-                                                Click="Accounts_Click"
-                                                Style="{StaticResource HyperButtonStyle}"/>
+                                              Visibility="Collapsed"
+                                              Click="Accounts_Click"
+                                              Style="{StaticResource HyperButtonStyle}"/>
                     </local:TableStackPanel>
                     <local:TableStackPanel x:Name="OptionsGroup4"
-                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                            Margin="0,24,0,0">
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                           Margin="0,24,0,0">
                     </local:TableStackPanel>
                 </StackPanel>
             </ScrollViewer>

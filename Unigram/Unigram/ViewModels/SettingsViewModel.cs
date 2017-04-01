@@ -63,6 +63,18 @@ namespace Unigram.ViewModels
             }
         }
 
+        public bool IsSendByEnterEnabled
+        {
+            get
+            {
+                return ApplicationSettings.Current.IsSendByEnterEnabled;
+            }
+            set
+            {
+                ApplicationSettings.Current.IsSendByEnterEnabled = value;
+            }
+        }
+
         public RelayCommand<StorageFile> EditPhotoCommand => new RelayCommand<StorageFile>(EditPhotoExecute);
         private async void EditPhotoExecute(StorageFile file)
         {
