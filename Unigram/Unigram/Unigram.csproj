@@ -146,6 +146,7 @@
     </Compile>
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
+    <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />

@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Controls.Views"
     xmlns:behaviors="using:Unigram.Behaviors"
     xmlns:common="using:Unigram.Common"
+    xmlns:selectors="using:Unigram.Selectors"
     xmlns:controls="using:Unigram.Controls"
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -38,14 +39,25 @@
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="5"/>
             </common:FluidGridView.Triggers>
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="tl:TLDocument">
-                    <Grid Margin="2">
-                        <Image x:Phase="3" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
-                        <TextBlock Text="{x:Bind Emoticon}" FontSize="20" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
-                    </Grid>
-                </DataTemplate>
-            </GridView.ItemTemplate>
+            <GridView.ItemTemplateSelector>
+                <selectors:StickerSetItemTemplateSelector IsMasks="{x:Bind ViewModel.StickerSet.IsMasks}">
+                    <selectors:StickerSetItemTemplateSelector.ImageTemplate>
+                        <DataTemplate x:DataType="tl:TLDocument">
+                            <Grid Margin="2">
+                                <Image x:Phase="3" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
+                                <TextBlock Text="{x:Bind Emoticon}" FontSize="20" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:StickerSetItemTemplateSelector.ImageTemplate>
+                    <selectors:StickerSetItemTemplateSelector.MaskTemplate>
+                        <DataTemplate x:DataType="tl:TLDocument">
+                            <Border Margin="2">
+                                <Image x:Phase="3" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
+                            </Border>
+                        </DataTemplate>
+                    </selectors:StickerSetItemTemplateSelector.MaskTemplate>
+                </selectors:StickerSetItemTemplateSelector>
+            </GridView.ItemTemplateSelector>
             <GridView.Header>
                 <Border x:Name="Header" Background="Transparent" Tapped="LightDismiss_Tapped"/>
             </GridView.Header>
