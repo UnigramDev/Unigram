@@ -33,13 +33,13 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Ellipse Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2">
+            <Ellipse Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2">
                 <Ellipse.Fill>
                     <ImageBrush ImageSource="{x:Bind ViewModel.Parent.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
                 </Ellipse.Fill>
             </Ellipse>
 
-            <Grid Margin="8,3,0,0" Grid.Column="1">
+            <Grid Margin="12,0,0,0" Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -58,14 +58,11 @@
             </Grid>
 
             <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       Margin="8,0,0,0"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       Margin="12,0,0,0"
                        Grid.Column="1"
                        Grid.Row="1">
-                <ToolTipService.ToolTip>
-                    <ToolTip Opened="ToolTip_Opened"/>
-                </ToolTipService.ToolTip>
-                <Run x:Name="ReasonGlyph" Text="{x:Bind ConvertReason(ViewModel)}" FontSize="12" Foreground="{ThemeResource MessageCallForegroundBrush}" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                <Run x:Name="ReasonGlyph" Text="{x:Bind ConvertReason(ViewModel)}" FontSize="10" Foreground="{ThemeResource MessageCallForegroundBrush}" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
                 <Run Text="{x:Bind ConvertTitle(ViewModel)}"/>
             </TextBlock>
 

@@ -131,18 +131,18 @@ namespace Unigram.Views
                 }
             }
 
-            var config = ViewModel.CacheService.GetConfig();
-            if (config != null)
-            {
-                if (config.IsPhoneCallsEnabled)
-                {
+            //var config = ViewModel.CacheService.GetConfig();
+            //if (config != null)
+            //{
+            //    if (config.IsPhoneCallsEnabled)
+            //    {
 
-                }
-                else if (rpMasterTitlebar.Items.Count > 2)
-                {
-                    rpMasterTitlebar.Items.RemoveAt(2);
-                }
-            }
+            //    }
+            //    else if (rpMasterTitlebar.Items.Count > 2)
+            //    {
+            //        rpMasterTitlebar.Items.RemoveAt(2);
+            //    }
+            //}
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)

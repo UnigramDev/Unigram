@@ -209,6 +209,8 @@
                                                       ItemClick="ListView_ItemClick"
                                                       SelectionChanged="ListView_SelectionChanged"
                                                       Grid.Row="1">
+                                                      <!--CanDragItems="True" 
+                                                      AllowDrop="True"-->
                                 <ListView.Header>
                                     <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                                         <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8">

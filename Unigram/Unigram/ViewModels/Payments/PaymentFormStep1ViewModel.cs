@@ -164,7 +164,7 @@ namespace Unigram.ViewModels.Payments
 
                 if (_paymentForm.Invoice.IsFlexible)
                 {
-                    NavigationService.Navigate(typeof(PaymentFormStep2Page));
+                    NavigationService.Navigate(typeof(PaymentFormStep2Page), TLTuple.Create(_message, _paymentForm, response.Result));
                 }
                 else
                 {

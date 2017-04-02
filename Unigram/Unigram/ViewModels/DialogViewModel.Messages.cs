@@ -705,9 +705,9 @@ namespace Unigram.ViewModels
                         {
                             NavigationService.Navigate(typeof(PaymentFormStep1Page), TLTuple.Create(message, response.Result));
                         }
-                        else
+                        else if (response.Result.HasSavedCredentials)
                         {
-                            // TODO: navigate to step 3 directly
+                            
                         }
                     }
                 }

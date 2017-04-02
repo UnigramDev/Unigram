@@ -356,6 +356,12 @@ namespace Unigram.Common
                     paragraph.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
                 }
 
+                if (entity.Length + entity.Offset > text.Length)
+                {
+                    previous = entity.Offset + entity.Length;
+                    continue;
+                }
+
                 var type = entity.TypeId;
                 if (type == TLType.MessageEntityBold)
                 {

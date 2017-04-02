@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -175,6 +176,15 @@ namespace Unigram.Controls
 
                     _currentContainer.RenderTransform = new TranslateTransform();
                     Canvas.SetZIndex(_currentContainer, 100000);
+
+                    //var transform = _currentContainer.TransformToVisual(Window.Current.Content);
+                    //var point = transform.TransformPoint(new Point());
+
+                    //var center = _currentContainer.ActualHeight / 2d;
+                    //var difference = (Window.Current.CoreWindow.PointerPosition.Y - Window.Current.CoreWindow.Bounds.Y) - (point.Y + center);
+
+                    //var translate = _currentContainer.RenderTransform as TranslateTransform;
+                    //translate.Y += difference;
 
                     _rows = new ObservableCollection<TLDialog>(ViewModel.Dialogs.Items.Where(x => x.IsPinned));
                 }
