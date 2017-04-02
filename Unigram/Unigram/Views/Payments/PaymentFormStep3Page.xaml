@@ -66,5 +66,7 @@
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
+
+        <WebView x:Name="View" NavigationStarting="View_NavigationStarting" Grid.Row="1"/>
     </Grid>
 </Page>

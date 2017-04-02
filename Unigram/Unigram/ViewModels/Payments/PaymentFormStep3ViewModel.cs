@@ -38,6 +38,8 @@ namespace Unigram.ViewModels.Payments
                     Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
                     PaymentForm = tuple.Item2;
 
+                    RaisePropertyChanged("Navigate");
+
                     if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && _paymentForm.NativeProvider.Equals("stripe"))
                     {
                         var json = JsonObject.Parse(_paymentForm.NativeParams.Data);

@@ -88,6 +88,12 @@ namespace Telegram.Api.TL
 
         public static void Write(TLBinaryWriter to, object value)
         {
+            if (value == null)
+            {
+                to.Write(0x56730BCC);
+                return;
+            }
+
             var type = value.GetType();
             if (type == typeof(UInt32)) to.Write((uint)value);
             else if (type == typeof(Int32)) to.Write((int)value);

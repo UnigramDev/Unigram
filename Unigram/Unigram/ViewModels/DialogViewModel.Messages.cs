@@ -720,7 +720,7 @@ namespace Unigram.ViewModels
                         }
                         else
                         {
-                            NavigationService.Navigate(typeof(PaymentFormStep3Page));
+                            NavigationService.Navigate(typeof(PaymentFormStep3Page), TLTuple.Create(message, response.Result, null as object));
                         }
                     }
                 }

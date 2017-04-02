@@ -962,6 +962,10 @@
       <Project>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</Project>
       <Name>Unigram.Native</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Unigram.WebView\Unigram.Webview.csproj">
+      <Project>{ac06b3e5-5174-4381-a167-8f912d61f3de}</Project>
+      <Name>Unigram.Webview</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">

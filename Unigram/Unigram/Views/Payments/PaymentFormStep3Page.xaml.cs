@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.ViewModels.Payments;
+using Unigram.Webview;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -29,6 +30,21 @@ namespace Unigram.Views.Payments
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<PaymentFormStep3ViewModel>();
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("Navigate"))
+            {
+                View.Navigate(new Uri(ViewModel.PaymentForm.Url));
+            }
+        }
+
+        private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
+        {
+            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramWebviewProxy());
         }
     }
 }
