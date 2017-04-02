@@ -164,6 +164,7 @@
     <Compile Include="Stripe\StripeClient.cs" />
     <Compile Include="Stripe\StripeNetworkUtils.cs" />
     <Compile Include="Stripe\StripeTextUtils.cs" />
+    <Compile Include="Stripe\StripeToken.cs" />
     <Compile Include="Unidecode\Characters.cs" />
     <Compile Include="Unidecode\Unidecoder.cs" />
     <EmbeddedResource Include="Properties\Unigram.Core.rd.xml" />

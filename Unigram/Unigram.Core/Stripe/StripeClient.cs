@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Data.Json;
 
 namespace Unigram.Core.Stripe
 {
@@ -19,7 +20,7 @@ namespace Unigram.Core.Stripe
             _client = new HttpClient();
         }
 
-        public async Task<string> CreateTokenAsync(Card card)
+        public async Task<StripeToken> CreateTokenAsync(Card card)
         {
             if (card == null)
             {
@@ -40,8 +41,14 @@ namespace Unigram.Core.Stripe
 
                     var response = await _client.SendAsync(request);
                     var content = await response.Content.ReadAsStringAsync();
+                    var json = JsonObject.Parse(content);
 
-                    return content;
+                    var token = new StripeToken();
+                    token.Id = json.GetNamedString("id", string.Empty);
+                    token.Type = json.GetNamedString("type", string.Empty);
+                    token.Content = content;
+
+                    return token;
                 }
                 catch
                 {

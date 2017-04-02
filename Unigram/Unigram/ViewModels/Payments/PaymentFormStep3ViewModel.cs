@@ -10,6 +10,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Models;
+using Unigram.Core.Stripe;
 using Windows.Data.Json;
 using Windows.UI.Xaml.Navigation;
 
@@ -114,30 +115,22 @@ namespace Unigram.ViewModels.Payments
         {
             IsLoading = true;
 
-            //var myToken = new StripeTokenCreateOptions();
+            var card = new Card(
+                "4242424242424242",
+                01,
+                22,
+                "424",
+                "Name Surname",
+                null, null, null, null,
+                "16043",
+                "IT",
+                null);
 
-            //// if you need this...
-            //myToken.Card = new StripeCreditCardOptions()
-            //{
-            //    // set these properties if passing full card details (do not
-            //    // set these properties if you set TokenId)
-            //    Number = "4242424242424242",
-            //    ExpirationYear = "2022",
-            //    ExpirationMonth = "10",
-            //    AddressCountry = "US",                // optional
-            //    AddressLine1 = "24 Beef Flank St",    // optional
-            //    AddressLine2 = "Apt 24",              // optional
-            //    AddressCity = "Biggie Smalls",        // optional
-            //    AddressState = "NC",                  // optional
-            //    AddressZip = "27617",                 // optional
-            //    Name = "Joe Meatballs",               // optional
-            //    Cvc = "1223"                          // optional
-            //};
-
-            //var tokenService = new StripeTokenService(_publishableKey);
-            //var stripeToken = await tokenService.CreateAsync(myToken);
-
-            Debugger.Break();
+            using (var stripe = new StripeClient(_publishableKey))
+            {
+                var token = await stripe.CreateTokenAsync(card);
+                Debugger.Break();
+            }
 
             //var save = _isSave ?? false;
             //var info = new TLPaymentRequestedInfo();
