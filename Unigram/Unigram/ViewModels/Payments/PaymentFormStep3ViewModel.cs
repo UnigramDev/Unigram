@@ -9,9 +9,9 @@ using Telegram.Api.Services.Cache;
 
 namespace Unigram.ViewModels.Payments
 {
-    public class PaymentFormStep2ViewModel : PaymentFormViewModelBase
+    public class PaymentFormStep3ViewModel : PaymentFormViewModelBase
     {
-        public PaymentFormStep2ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public PaymentFormStep3ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
         }

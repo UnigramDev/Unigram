@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.ViewModels.Payments;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -22,9 +23,12 @@ namespace Unigram.Views.Payments
     /// </summary>
     public sealed partial class PaymentFormStep5Page : Page
     {
+        public PaymentFormStep5ViewModel ViewModel => DataContext as PaymentFormStep5ViewModel;
+
         public PaymentFormStep5Page()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+            DataContext = UnigramContainer.Current.ResolveType<PaymentFormStep5ViewModel>();
         }
     }
 }

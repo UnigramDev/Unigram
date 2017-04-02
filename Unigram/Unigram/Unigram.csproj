@@ -157,6 +157,10 @@
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep2ViewModel.cs" />
+    <Compile Include="ViewModels\Payments\PaymentFormStep3ViewModel.cs" />
+    <Compile Include="ViewModels\Payments\PaymentFormStep4ViewModel.cs" />
+    <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
+    <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />

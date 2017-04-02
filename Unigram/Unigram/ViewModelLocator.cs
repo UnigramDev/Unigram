@@ -113,6 +113,9 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
             container.ContainerBuilder.RegisterType<PaymentFormStep1ViewModel>();
             container.ContainerBuilder.RegisterType<PaymentFormStep2ViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep3ViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep4ViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep5ViewModel>();
             container.ContainerBuilder.RegisterType<PaymentReceiptViewModel>();
 
             container.Build();

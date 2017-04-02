@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -14,10 +15,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments
 {
-    public class PaymentFormStep1ViewModel : UnigramViewModelBase
+    public class PaymentFormStep1ViewModel : PaymentFormViewModelBase
     {
-        private TLMessage _message;
-
         public PaymentFormStep1ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
@@ -32,7 +31,7 @@ namespace Unigram.ViewModels.Payments
                 {
                     var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm>(from);
 
-                    _message = tuple.Item1;
+                    Message = tuple.Item1;
                     Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
                     PaymentForm = tuple.Item2;
 
@@ -48,33 +47,6 @@ namespace Unigram.ViewModels.Payments
             }
 
             return Task.CompletedTask;
-        }
-
-        private TLMessageMediaInvoice _invoice = new TLMessageMediaInvoice();
-        public TLMessageMediaInvoice Invoice
-        {
-            get
-            {
-                return _invoice;
-            }
-            set
-            {
-                Set(ref _invoice, value);
-            }
-        }
-
-        private TLPaymentsPaymentForm _paymentForm;
-        public TLPaymentsPaymentForm PaymentForm
-        {
-            get
-            {
-                return _paymentForm;
-            }
-            set
-            {
-                Set(ref _paymentForm, value);
-                RaisePropertyChanged(() => IsAnyUserInfoRequested);
-            }
         }
 
         private TLPaymentRequestedInfo _info = new TLPaymentRequestedInfo { ShippingAddress = new TLPostAddress() };
@@ -183,6 +155,16 @@ namespace Unigram.ViewModels.Payments
                 {
                     NavigationService.Navigate(typeof(PaymentFormStep3Page));
                 }
+            }
+        }
+
+        public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.RaisePropertyChanged(propertyName);
+
+            if (propertyName.Equals("PaymentForm"))
+            {
+                RaisePropertyChanged(() => IsAnyUserInfoRequested);
             }
         }
     }
