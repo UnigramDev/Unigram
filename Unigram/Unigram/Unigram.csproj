@@ -187,6 +187,15 @@
     <Compile Include="Views\Payments\PaymentFormStep2Page.xaml.cs">
       <DependentUpon>PaymentFormStep2Page.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Payments\PaymentFormStep3Page.xaml.cs">
+      <DependentUpon>PaymentFormStep3Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Payments\PaymentFormStep4Page.xaml.cs">
+      <DependentUpon>PaymentFormStep4Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Payments\PaymentFormStep5Page.xaml.cs">
+      <DependentUpon>PaymentFormStep5Page.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Payments\PaymentReceiptPage.xaml.cs">
       <DependentUpon>PaymentReceiptPage.xaml</DependentUpon>
     </Compile>
@@ -792,6 +801,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Payments\PaymentFormStep2Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Payments\PaymentFormStep3Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Payments\PaymentFormStep4Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Payments\PaymentFormStep5Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

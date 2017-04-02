@@ -707,7 +707,20 @@ namespace Unigram.ViewModels
                         }
                         else if (response.Result.HasSavedCredentials)
                         {
-                            
+                            // TODO: Is password expired?
+                            var expired = true;
+                            if (expired)
+                            {
+                                NavigationService.Navigate(typeof(PaymentFormStep4Page));
+                            }
+                            else
+                            {
+                                NavigationService.Navigate(typeof(PaymentFormStep5Page));
+                            }
+                        }
+                        else
+                        {
+                            NavigationService.Navigate(typeof(PaymentFormStep3Page));
                         }
                     }
                 }

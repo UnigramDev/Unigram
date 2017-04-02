@@ -167,7 +167,7 @@ namespace Unigram.Controls.Items
                     {
                         return text + "\uD83C\uDFAE " + ((TLMessageMediaGame)message.Media).Game.Title;
                     }
-                    if (message.Media is TLMessageMediaDocument)
+                    else if (message.Media is TLMessageMediaDocument)
                     {
                         var caption = string.Empty;
                         if (!string.IsNullOrEmpty(((TLMessageMediaDocument)message.Media).Caption))
@@ -241,45 +241,46 @@ namespace Unigram.Controls.Items
                         //return text + Resources.Document;
                         return text + "Document" + caption;
                     }
-                    else
+                    else if (message.Media is TLMessageMediaInvoice invoiceMedia)
                     {
-                        if (message.Media is TLMessageMediaContact)
+                        return text + invoiceMedia.Title;
+                    }
+                    else if (message.Media is TLMessageMediaContact)
+                    {
+                        //return text + Resources.Contact;
+                        return text + "Contact";
+                    }
+                    else if (message.Media is TLMessageMediaGeo)
+                    {
+                        //return text + Resources.GeoPoint;
+                        return text + "GeoPoint";
+                    }
+                    else if (message.Media is TLMessageMediaVenue)
+                    {
+                        return text + "Venue";
+                    }
+                    else if (message.Media is TLMessageMediaPhoto)
+                    {
+                        if (!string.IsNullOrEmpty(((TLMessageMediaPhoto)message.Media).Caption))
                         {
-                            //return text + Resources.Contact;
-                            return text + "Contact";
+                            return text + "Photo, " + ((TLMessageMediaPhoto)message.Media).Caption.Replace("\r\n", "\n").Replace("\n", " ");
                         }
-                        else if (message.Media is TLMessageMediaGeo)
-                        {
-                            //return text + Resources.GeoPoint;
-                            return text + "GeoPoint";
-                        }
-                        else if (message.Media is TLMessageMediaVenue)
-                        {
-                            return text + "Venue";
-                        }
-                        else if (message.Media is TLMessageMediaPhoto)
-                        {
-                            if (!string.IsNullOrEmpty(((TLMessageMediaPhoto)message.Media).Caption))
-                            {
-                                return text + "Photo, " + ((TLMessageMediaPhoto)message.Media).Caption.Replace("\r\n", "\n").Replace("\n", " ");
-                            }
 
-                            //return text + Resources.Photo;
-                            return text + "Photo";
-                        }
-                        //else if (message.Media is TLMessageMediaVideo)
-                        //{
-                        //    return text + Resources.Video;
-                        //}
-                        //else if (message.Media is TLMessageMediaAudio)
-                        //{
-                        //    return text + Resources.Audio;
-                        //}
-                        else if (message.Media is TLMessageMediaUnsupported)
-                        {
-                            //return text + Resources.UnsupportedMedia;
-                            return text + "Unsupported media";
-                        }
+                        //return text + Resources.Photo;
+                        return text + "Photo";
+                    }
+                    //else if (message.Media is TLMessageMediaVideo)
+                    //{
+                    //    return text + Resources.Video;
+                    //}
+                    //else if (message.Media is TLMessageMediaAudio)
+                    //{
+                    //    return text + Resources.Audio;
+                    //}
+                    else if (message.Media is TLMessageMediaUnsupported)
+                    {
+                        //return text + Resources.UnsupportedMedia;
+                        return text + "Unsupported media";
                     }
                 }
 

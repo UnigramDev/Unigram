@@ -166,9 +166,22 @@ namespace Unigram.ViewModels.Payments
                 {
                     NavigationService.Navigate(typeof(PaymentFormStep2Page), TLTuple.Create(_message, _paymentForm, response.Result));
                 }
+                else if (_paymentForm.HasSavedCredentials)
+                {
+                    // TODO: Is password expired?
+                    var expired = true;
+                    if (expired)
+                    {
+                        NavigationService.Navigate(typeof(PaymentFormStep4Page));
+                    }
+                    else
+                    {
+                        NavigationService.Navigate(typeof(PaymentFormStep5Page));
+                    }
+                }
                 else
                 {
-
+                    NavigationService.Navigate(typeof(PaymentFormStep3Page));
                 }
             }
         }
