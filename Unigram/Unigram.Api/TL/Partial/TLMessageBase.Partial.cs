@@ -72,6 +72,10 @@ namespace Telegram.Api.TL
                 {
                     return false;
                 }
+                if (this is TLMessageCommonBase messageCommon && messageCommon.IsOut)
+                {
+                    return true;
+                }
                 if (FromId == null || FromId.Value <= 0)
                 {
                     return false;

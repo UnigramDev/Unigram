@@ -138,149 +138,38 @@ namespace Unigram.Controls.Items
                 return draft.Message;
             }
 
-            var messageEmpty = value as TLMessageEmpty;
-            if (messageEmpty != null)
+            if (value is TLMessageEmpty messageEmpty)
             {
                 return "Resources.EmptyMessage";
             }
 
-            var messageService = value as TLMessageService;
-            if (messageService != null)
+            if (value is TLMessageService messageService)
             {
-                return ServiceHelper.Convert(messageService);
+                return string.Empty;
             }
 
-            var message = value as TLMessage;
-            if (message != null)
+            if (value is TLMessage message)
             {
-                var text = string.Empty;
-                if (message.State == TLMessageState.Failed)
-                {
-                    //text = string.Format("{0}: ", Resources.SendingFailed);
-                    //text = $"{Resources.SendingFailed}: ";
-                    text = "Failed: ";
-                }
-
+                var result = string.Empty;
                 if (message.Media != null)
                 {
-                    if (message.Media is TLMessageMediaGame)
+                    if (message.Media is TLMessageMediaDocument documentMedia)
                     {
-                        return text + "\uD83C\uDFAE " + ((TLMessageMediaGame)message.Media).Game.Title;
-                    }
-                    else if (message.Media is TLMessageMediaDocument)
-                    {
-                        var caption = string.Empty;
-                        if (!string.IsNullOrEmpty(((TLMessageMediaDocument)message.Media).Caption))
+                        if (string.IsNullOrEmpty(documentMedia.Caption))
                         {
-                            caption = ", " + ((TLMessageMediaDocument)message.Media).Caption.Replace("\r\n", "\n").Replace("\n", " ");
+                            return result;
                         }
 
-                        if (message.IsVoice())
+                        return result + documentMedia.Caption.Replace("\r\n", "\n").Replace("\n", " ");
+                    }
+                    else if (message.Media is TLMessageMediaPhoto photoMedia)
+                    {
+                        if (string.IsNullOrEmpty(photoMedia.Caption))
                         {
-                            return text + "Voice" + caption;
-                        }
-                        else if (message.IsVideo())
-                        {
-                            return text + "Video" + caption;
-                        }
-                        else if (message.IsGif())
-                        {
-                            return text + "GIF" + caption;
-                        }
-                        else if (message.IsSticker())
-                        {
-                            var documentSticker = (message.Media as TLMessageMediaDocument).Document as TLDocument;
-                            if (documentSticker != null)
-                            {
-                                var attribute = documentSticker.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
-                                if (attribute != null)
-                                {
-                                    //return $"{text}{attribute.Alt} ({Resources.Sticker.ToLower()})";
-                                    return $"{text}{attribute.Alt} Sticker";
-                                }
-                            }
-
-                            //return text + Resources.Sticker;
-                            return text + "Sticker";
-                        }
-                        else if (message.IsAudio())
-                        {
-                            var documentAudio = (message.Media as TLMessageMediaDocument).Document as TLDocument;
-                            if (documentAudio != null)
-                            {
-                                var audioAttribute = documentAudio.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
-                                if (audioAttribute != null)
-                                {
-                                    if (audioAttribute.HasPerformer && audioAttribute.HasTitle)
-                                    {
-                                        return $"{text}{audioAttribute.Performer} - {audioAttribute.Title}";
-                                    }
-                                    else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
-                                    {
-                                        return $"{text}{audioAttribute.Performer} - Unknown Track";
-                                    }
-                                    else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
-                                    {
-                                        return $"{text}{audioAttribute.Title}";
-                                    }
-                                }
-                            }
+                            return result;
                         }
 
-                        var document = ((TLMessageMediaDocument)message.Media).Document as TLDocument;
-                        if (document != null)
-                        {
-                            var attribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
-                            if (attribute != null)
-                            {
-                                //return $"{text}{attribute.Alt} ({Resources.Sticker.ToLower()})";
-                                return text + attribute.FileName + caption;
-                            }
-                        }
-
-                        //return text + Resources.Document;
-                        return text + "Document" + caption;
-                    }
-                    else if (message.Media is TLMessageMediaInvoice invoiceMedia)
-                    {
-                        return text + invoiceMedia.Title;
-                    }
-                    else if (message.Media is TLMessageMediaContact)
-                    {
-                        //return text + Resources.Contact;
-                        return text + "Contact";
-                    }
-                    else if (message.Media is TLMessageMediaGeo)
-                    {
-                        //return text + Resources.GeoPoint;
-                        return text + "GeoPoint";
-                    }
-                    else if (message.Media is TLMessageMediaVenue)
-                    {
-                        return text + "Venue";
-                    }
-                    else if (message.Media is TLMessageMediaPhoto)
-                    {
-                        if (!string.IsNullOrEmpty(((TLMessageMediaPhoto)message.Media).Caption))
-                        {
-                            return text + "Photo, " + ((TLMessageMediaPhoto)message.Media).Caption.Replace("\r\n", "\n").Replace("\n", " ");
-                        }
-
-                        //return text + Resources.Photo;
-                        return text + "Photo";
-                    }
-                    //else if (message.Media is TLMessageMediaVideo)
-                    //{
-                    //    return text + Resources.Video;
-                    //}
-                    //else if (message.Media is TLMessageMediaAudio)
-                    //{
-                    //    return text + Resources.Audio;
-                    //}
-                    else if (message.Media is TLMessageMediaUnsupported)
-                    {
-                        //return text + Resources.UnsupportedMedia;
-                        return text + "Unsupported media";
+                        return result + photoMedia.Caption.Replace("\r\n", "\n").Replace("\n", " ");
                     }
                 }
 
@@ -288,11 +177,11 @@ namespace Unigram.Controls.Items
                 {
                     if (showContent)
                     {
-                        return text + message.Message.Replace("\r\n", "\n").Replace("\n", " ");
+                        return result + message.Message.Replace("\r\n", "\n").Replace("\n", " ");
                     }
 
                     //return text + Resources.Message;
-                    return text + "Message";
+                    return result + "Message";
                 }
             }
 
@@ -301,64 +190,172 @@ namespace Unigram.Controls.Items
 
         private string UpdateFromLabel(TLDialog dialog)
         {
-            var topMessage = dialog.TopMessageItem as TLMessageBase;
-            if (topMessage != null)
+            if (dialog.Draft is TLDraftMessage draft)
             {
-                var message = topMessage as TLMessage;
-                if (message != null)
+                FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelDraftBrush"] as SolidColorBrush;
+                return "Draft: ";
+            }
+
+            if (dialog.TopMessageItem is TLMessage message)
+            {
+                var result = string.Empty;
+
+                if (message.ShowFrom)
                 {
+                    FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelFromBrush"] as SolidColorBrush;
 
-                    var draft = ViewModel.Draft as TLDraftMessage;
-                    if (draft != null)
+                    var from = message.FromId;
+                    if (from != null)
                     {
-                        FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelDraftBrush"] as SolidColorBrush;
-                        return "Draft: ";
-                    }
-
-                    if (message.ShowFrom || IsOut(dialog))
-                    {
-                        FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelFromBrush"] as SolidColorBrush;
-
-                        var from = message.FromId;
-                        if (from != null)
+                        int currentUserId = MTProtoService.Current.CurrentUserId;
+                        if (currentUserId == from)
                         {
-                            int currentUserId = MTProtoService.Current.CurrentUserId;
-                            if (currentUserId == from)
+                            if (dialog.Id != from && !message.IsPost)
                             {
-                                if (dialog.Id != from && !message.IsPost)
-                                {
-                                    return "You: ";
-                                }
-
-                                return string.Empty;
-                                //return Resources.You + ": ";
+                                result = "You: ";
                             }
-                            else
+                        }
+                        else
+                        {
+                            if (InMemoryCacheService.Current.GetUser(from.Value) is TLUser user)
                             {
-                                var user = InMemoryCacheService.Current.GetUser(from.Value) as TLUser;
-                                if (user != null)
+                                if (user.HasFirstName)
                                 {
-                                    if (user.HasFirstName)
-                                    {
-                                        return $"{user.FirstName.Trim()}: ";
-                                    }
-                                    else if (user.HasLastName)
-                                    {
-                                        return $"{user.LastName.Trim()}: ";
-                                    }
-                                    else if (user.HasUsername)
-                                    {
-                                        return $"{user.Username.Trim()}: ";
-                                    }
-                                    else
-                                    {
-                                        return $"{user.Id}: ";
-                                    }
+                                    result = $"{user.FirstName.Trim()}: ";
+                                }
+                                else if (user.HasLastName)
+                                {
+                                    result = $"{user.LastName.Trim()}: ";
+                                }
+                                else if (user.HasUsername)
+                                {
+                                    result = $"{user.Username.Trim()}: ";
+                                }
+                                else
+                                {
+                                    result = $"{user.Id}: ";
                                 }
                             }
                         }
                     }
                 }
+
+                if (message.State == TLMessageState.Failed && message.IsOut)
+                {
+                    result = "Failed: ";
+                }
+
+                if (message.Media != null)
+                {
+                    if (message.Media is TLMessageMediaGame gameMedia)
+                    {
+                        return result + "\uD83C\uDFAE " + gameMedia.Game.Title;
+                    }
+                    else if (message.Media is TLMessageMediaDocument documentMedia)
+                    {
+                        var caption = string.Empty;
+                        if (!string.IsNullOrEmpty(documentMedia.Caption))
+                        {
+                            caption = ", ";
+                        }
+
+                        if (message.IsVoice())
+                        {
+                            return result + "Voice" + caption;
+                        }
+                        else if (message.IsVideo())
+                        {
+                            return result + "Video" + caption;
+                        }
+                        else if (message.IsGif())
+                        {
+                            return result + "GIF" + caption;
+                        }
+                        else if (message.IsSticker())
+                        {
+                            if (documentMedia.Document is TLDocument documentSticker)
+                            {
+                                var attribute = documentSticker.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                                if (attribute != null)
+                                {
+                                    return result + $"{attribute.Alt} Sticker";
+                                }
+                            }
+
+                            return result + "Sticker";
+                        }
+                        else if (message.IsAudio())
+                        {
+                            if (documentMedia.Document is TLDocument documentAudio)
+                            {
+                                var audioAttribute = documentAudio.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+                                if (audioAttribute != null)
+                                {
+                                    if (audioAttribute.HasPerformer && audioAttribute.HasTitle)
+                                    {
+                                        return $"{result}{audioAttribute.Performer} - {audioAttribute.Title}";
+                                    }
+                                    else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
+                                    {
+                                        return $"{result}{audioAttribute.Performer} - Unknown Track";
+                                    }
+                                    else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
+                                    {
+                                        return $"{result}{audioAttribute.Title}";
+                                    }
+                                }
+                            }
+                        }
+
+                        if (documentMedia.Document is TLDocument document)
+                        {
+                            var attribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
+                            if (attribute != null)
+                            {
+                                //return $"{text}{attribute.Alt} ({Resources.Sticker.ToLower()})";
+                                return result + attribute.FileName + caption;
+                            }
+                        }
+
+                        return result + "Document" + caption;
+                    }
+                    else if (message.Media is TLMessageMediaInvoice invoiceMedia)
+                    {
+                        return result + invoiceMedia.Title;
+                    }
+                    else if (message.Media is TLMessageMediaContact)
+                    {
+                        return result + "Contact";
+                    }
+                    else if (message.Media is TLMessageMediaGeo)
+                    {
+                        return result + "GeoPoint";
+                    }
+                    else if (message.Media is TLMessageMediaVenue)
+                    {
+                        return result + "Venue";
+                    }
+                    else if (message.Media is TLMessageMediaPhoto photoMedia)
+                    {
+                        if (string.IsNullOrEmpty(photoMedia.Caption))
+                        {
+                            return result + "Photo";
+                        }
+
+                        return result + "Photo, ";
+                    }
+                    else if (message.Media is TLMessageMediaUnsupported)
+                    {
+                        return result + "Unsupported media";
+                    }
+                }
+
+                return result;
+            }
+            else if (dialog.TopMessageItem is TLMessageService messageService)
+            {
+                FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelFromBrush"] as SolidColorBrush;
+                return ServiceHelper.Convert(messageService);
             }
 
             return string.Empty;
