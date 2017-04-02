@@ -158,6 +158,12 @@
     <Compile Include="Services\PushService.cs" />
     <Compile Include="Services\StickersService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
+    <Compile Include="Stripe\Card.cs" />
+    <Compile Include="Stripe\CardUtils.cs" />
+    <Compile Include="Stripe\DateUtils.cs" />
+    <Compile Include="Stripe\StripeClient.cs" />
+    <Compile Include="Stripe\StripeNetworkUtils.cs" />
+    <Compile Include="Stripe\StripeTextUtils.cs" />
     <Compile Include="Unidecode\Characters.cs" />
     <Compile Include="Unidecode\Unidecoder.cs" />
     <EmbeddedResource Include="Properties\Unigram.Core.rd.xml" />
@@ -168,9 +174,7 @@
       <Name>Unigram.Api</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Stripe\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

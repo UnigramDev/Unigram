@@ -701,4 +701,7 @@
   <data name="CallTimeFormat" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
+  <data name="MessageActionPinInvoice" xml:space="preserve">
+    <value>{0} pinned an invoice</value>
+  </data>
 </root>
