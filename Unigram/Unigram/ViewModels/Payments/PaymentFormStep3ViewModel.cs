@@ -1,5 +1,4 @@
-﻿using Stripe;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -115,28 +114,28 @@ namespace Unigram.ViewModels.Payments
         {
             IsLoading = true;
 
-            var myToken = new StripeTokenCreateOptions();
+            //var myToken = new StripeTokenCreateOptions();
 
-            // if you need this...
-            myToken.Card = new StripeCreditCardOptions()
-            {
-                // set these properties if passing full card details (do not
-                // set these properties if you set TokenId)
-                Number = "4242424242424242",
-                ExpirationYear = "2022",
-                ExpirationMonth = "10",
-                AddressCountry = "US",                // optional
-                AddressLine1 = "24 Beef Flank St",    // optional
-                AddressLine2 = "Apt 24",              // optional
-                AddressCity = "Biggie Smalls",        // optional
-                AddressState = "NC",                  // optional
-                AddressZip = "27617",                 // optional
-                Name = "Joe Meatballs",               // optional
-                Cvc = "1223"                          // optional
-            };
+            //// if you need this...
+            //myToken.Card = new StripeCreditCardOptions()
+            //{
+            //    // set these properties if passing full card details (do not
+            //    // set these properties if you set TokenId)
+            //    Number = "4242424242424242",
+            //    ExpirationYear = "2022",
+            //    ExpirationMonth = "10",
+            //    AddressCountry = "US",                // optional
+            //    AddressLine1 = "24 Beef Flank St",    // optional
+            //    AddressLine2 = "Apt 24",              // optional
+            //    AddressCity = "Biggie Smalls",        // optional
+            //    AddressState = "NC",                  // optional
+            //    AddressZip = "27617",                 // optional
+            //    Name = "Joe Meatballs",               // optional
+            //    Cvc = "1223"                          // optional
+            //};
 
-            var tokenService = new StripeTokenService(_publishableKey);
-            var stripeToken = await tokenService.CreateAsync(myToken);
+            //var tokenService = new StripeTokenService(_publishableKey);
+            //var stripeToken = await tokenService.CreateAsync(myToken);
 
             Debugger.Break();
 
