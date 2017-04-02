@@ -42,18 +42,21 @@
                     <TextBox Text="" 
                              PlaceholderText="MM/YY"/>
                     <TextBox Text=""
+                             Visibility="{x:Bind (Visibility)ViewModel.NeedCardholderName}"
                              PlaceholderText="Name Surname"/>
                     <TextBox Text="" 
                              PlaceholderText="Security Code (CVV)"/>
                 </StackPanel>
 
-                <StackPanel>
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.NeedZipOrCountry}">
                     <TextBlock Text="Billing address" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                     <ComboBox ItemsSource="{x:Bind Countries.View}"
                               SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
+                              Visibility="{x:Bind (Visibility)ViewModel.NeedCountry}"
                               DisplayMemberPath="Name"
                               PlaceholderText="Country"/>
                     <TextBox Text=""
+                             Visibility="{x:Bind (Visibility)ViewModel.NeedZip}"
                              PlaceholderText="Postcode"/>
                 </StackPanel>
 

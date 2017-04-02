@@ -153,7 +153,7 @@ namespace Unigram.ViewModels.Payments
                 }
                 else
                 {
-                    NavigationService.Navigate(typeof(PaymentFormStep3Page));
+                    NavigationService.Navigate(typeof(PaymentFormStep3Page), TLTuple.Create(_message, _paymentForm, response.Result));
                 }
             }
         }
