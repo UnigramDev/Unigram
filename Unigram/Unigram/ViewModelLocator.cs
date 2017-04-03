@@ -29,6 +29,7 @@ using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Users;
 using Unigram.ViewModels.Payments;
+using Windows.Foundation.Metadata;
 
 namespace Unigram
 {
@@ -74,6 +75,17 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
             container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
+
+            if (ApiInformation.IsTypePresent("Windows.Devices.Haptics.VibrationDevice") || ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
+            {
+                // Introduced in Creators Update
+                container.ContainerBuilder.RegisterType<VibrationService>().As<IVibrationService>().SingleInstance();
+            }
+            else if (ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
+            {
+                // To keep vibration compatibility with Anniversary Update
+                container.ContainerBuilder.RegisterType<WindowsPhoneVibrationService>().As<IVibrationService>().SingleInstance();
+            }
 
             // ViewModels
             container.ContainerBuilder.RegisterType<SignInWelcomeViewModel>();

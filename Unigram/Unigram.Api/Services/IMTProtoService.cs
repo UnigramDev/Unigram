@@ -250,6 +250,7 @@ namespace Telegram.Api.Services
 
 
         // account
+        void GetTmpPasswordAsync(byte[] hash, int period, Action<TLAccountTmpPassword> callback, Action<TLRPCError> faultCallback = null);
         void ReportPeerAsync(TLInputPeerBase peer, TLReportReasonBase reason, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void DeleteAccountAsync(string reason, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void GetAuthorizationsAsync(Action<TLAccountAuthorizations> callback, Action<TLRPCError> faultCallback = null);
@@ -280,7 +281,7 @@ namespace Telegram.Api.Services
         void GetPaymentFormAsync(int msgId, Action<TLPaymentsPaymentForm> callback, Action<TLRPCError> faultCallback = null);
         void GetPaymentReceiptAsync(int msgId, Action<TLPaymentsPaymentReceipt> callback, Action<TLRPCError> faultCallback = null);
         void GetSavedInfoAsync(Action<TLPaymentsSavedInfo> callback, Action<TLRPCError> faultCallback = null);
-
-        void ValidateRequestedInfoAsync(bool save, int msgId, TLPaymentRequestedInfo info, Action<TLPaymentsValidatedRequestedInfo> callback, Action<TLRPCError> faultCallback = null);
+        void SendPaymentFormAsync(int msgId, string infoId, string optionId, TLInputPaymentCredentialsBase credentials, Action<TLPaymentsPaymentResultBase> callback, Action<TLRPCError> faultCallback = null);
+        void ValidateRequestedInfoAsync(int msgId, TLPaymentRequestedInfo info, bool save, Action<TLPaymentsValidatedRequestedInfo> callback, Action<TLRPCError> faultCallback = null);
     }
 }

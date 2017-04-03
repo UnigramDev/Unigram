@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Common;
 using Unigram.ViewModels.Payments;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -29,6 +30,18 @@ namespace Unigram.Views.Payments
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<PaymentFormStep4ViewModel>();
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "PASSWORD_HASH_INVALID":
+                    VisualUtilities.ShakeView(FieldPassword);
+                    break;
+            }
         }
     }
 }

@@ -7,7 +7,152 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style x:Key="SendButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{ThemeResource TelegramForegroundAccentBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckedStates">
+                                    <VisualState x:Name="Unchecked"/>
+                                    <VisualState x:Name="Checked">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Indicator">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="RootGrid">
+                                <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+              Height="{ThemeResource AppBarThemeCompactHeight}">
+            <TextBlock Text="{x:Bind ConvertTitle(ViewModel.PaymentForm.Invoice.IsTest), FallbackValue=Checkout}"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       VerticalAlignment="Center"
+                       Margin="12,0"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+        </Grid>
 
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>
+                <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Padding="12" Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Source="{Binding Invoice.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="80" Height="80" Margin="0,0,12,0" Stretch="UniformToFill" VerticalAlignment="Top" Grid.RowSpan="3"/>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="{x:Bind ViewModel.Invoice.Title, FallbackValue=Empty}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Invoice.Description, FallbackValue=Empty}" MaxLines="3" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Bot.FullName, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                    </StackPanel>
+                </Grid>
+
+                <local:LabeledPricesPanel Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
+                                          Prices="{x:Bind ViewModel.PaymentForm.Invoice.Prices}"/>
+                <local:LabeledPricesPanel Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
+                                          Prices="{x:Bind ViewModel.Shipping.Prices}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Total" Margin="12,4,0,8" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind Convert.FormatAmount(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), FallbackValue=Empty}" Margin="8,4,12,8" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+                </Grid>
+
+                <StackPanel Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.CredentialsTitle, FallbackValue=Empty}"/>
+                    <TextBlock Text="Payment method" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Info.HasShippingAddress, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ConvertAddress(ViewModel.Info.ShippingAddress), FallbackValue=Empty}"/>
+                    <TextBlock Text="Shipping address" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Info.HasName, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Info.Name, FallbackValue=Empty}"/>
+                    <TextBlock Text="Name" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Info.HasPhone, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind Convert.PhoneNumber(ViewModel.Info.Phone), FallbackValue=Empty}"/>
+                    <TextBlock Text="Phone number" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Info.HasEmail, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Info.Email, FallbackValue=Empty}"/>
+                    <TextBlock Text="Contact address" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <!--<StackPanel Visibility="{x:Bind (Visibility)ViewModel.HasShipping, FallbackValue=Collapsed}" Padding="12,8">-->
+                <StackPanel Visibility="{x:Bind ViewModel.Shipping, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Shipping.Title, FallbackValue=Empty}"/>
+                    <TextBlock Text="Shipping method" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+              Height="{ThemeResource AppBarThemeCompactHeight}"
+              Grid.Row="3">
+            <Button Command="{x:Bind ViewModel.SendCommand}" Style="{StaticResource SendButtonStyle}">
+                <TextBlock>
+                    <Run Text="PAY"/>
+                    <Run Text="{x:Bind Convert.FormatAmount(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), FallbackValue=Empty}"/>
+                </TextBlock>
+            </Button>
+            <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+        </Grid>
     </Grid>
 </Page>

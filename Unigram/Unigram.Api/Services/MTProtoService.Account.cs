@@ -26,6 +26,14 @@ namespace Telegram.Api.Services
             RaiseCheckDeviceLocked();
         }
 
+        public void GetTmpPasswordAsync(byte[] hash, int period, Action<TLAccountTmpPassword> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLAccountGetTmpPassword { PasswordHash = hash, Period = period };
+
+            const string caption = "account.getTmpPassword";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
         public void ReportPeerAsync(TLInputPeerBase peer, TLReportReasonBase reason, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAccountReportPeer { Peer = peer, Reason = reason };

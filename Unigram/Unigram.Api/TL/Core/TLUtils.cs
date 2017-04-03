@@ -965,6 +965,14 @@ namespace Telegram.Api.TL
             return currentIndex - 1;
         }
 
+        public static int Now
+        {
+            get
+            {
+                return TLUtils.DateToUniversalTimeTLInt(MTProtoService.Current.ClientTicksDelta, DateTime.Now);
+            }
+        }
+
         public static int DateToUniversalTimeTLInt(long clientDelta, DateTime date)
         {
             clientDelta = MTProtoService.Current.ClientTicksDelta;

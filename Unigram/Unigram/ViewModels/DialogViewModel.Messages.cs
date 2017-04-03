@@ -703,24 +703,30 @@ namespace Unigram.ViewModels
                     {
                         if (response.Result.Invoice.IsEmailRequested || response.Result.Invoice.IsNameRequested || response.Result.Invoice.IsPhoneRequested || response.Result.Invoice.IsShippingAddressRequested)
                         {
-                            NavigationService.Navigate(typeof(PaymentFormStep1Page), TLTuple.Create(message, response.Result));
+                            NavigationService.NavigateToPaymentFormStep1(message, response.Result);
                         }
                         else if (response.Result.HasSavedCredentials)
                         {
-                            // TODO: Is password expired?
-                            var expired = true;
-                            if (expired)
+                            if (ApplicationSettings.Current.TmpPassword != null)
                             {
-                                NavigationService.Navigate(typeof(PaymentFormStep4Page));
+                                if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
+                                {
+                                    ApplicationSettings.Current.TmpPassword = null;
+                                }
+                            }
+
+                            if (ApplicationSettings.Current.TmpPassword != null)
+                            {
+                                NavigationService.NavigateToPaymentFormStep5(message, response.Result, null, null, null, null, null);
                             }
                             else
                             {
-                                NavigationService.Navigate(typeof(PaymentFormStep5Page));
+                                NavigationService.NavigateToPaymentFormStep4(message, response.Result, null, null, null);
                             }
                         }
                         else
                         {
-                            NavigationService.Navigate(typeof(PaymentFormStep3Page), TLTuple.Create(message, response.Result, null as object));
+                            NavigationService.NavigateToPaymentFormStep3(message, response.Result, null, null, null);
                         }
                     }
                 }

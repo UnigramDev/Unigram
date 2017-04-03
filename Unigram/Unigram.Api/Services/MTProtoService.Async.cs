@@ -68,13 +68,39 @@ namespace Telegram.Api.Services
             return tsc.Task;
         }
 
-
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLPaymentsPaymentResultBase>> SendPaymentFormAsync(int msgId, string infoId, string optionId, TLInputPaymentCredentialsBase credentials)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLPaymentsPaymentResultBase>>();
+            SendPaymentFormAsync(msgId, infoId, optionId, credentials, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPaymentsPaymentResultBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPaymentsPaymentResultBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLPaymentsValidatedRequestedInfo>> ValidateRequestedInfoAsync(bool save, int msgId, TLPaymentRequestedInfo info)
+        public Task<MTProtoResponse<TLAccountTmpPassword>> GetTmpPasswordAsync(byte[] hash, int period)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountTmpPassword>>();
+            GetTmpPasswordAsync(hash, period, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLAccountTmpPassword>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLAccountTmpPassword>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLPaymentsValidatedRequestedInfo>> ValidateRequestedInfoAsync(int msgId, TLPaymentRequestedInfo info, bool save)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPaymentsValidatedRequestedInfo>>();
-            ValidateRequestedInfoAsync(save, msgId, info, (callback) =>
+            ValidateRequestedInfoAsync(msgId, info, save, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLPaymentsValidatedRequestedInfo>(callback));
             }, (faultCallback) =>

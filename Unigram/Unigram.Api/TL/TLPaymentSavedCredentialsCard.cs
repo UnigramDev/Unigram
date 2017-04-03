@@ -5,9 +5,6 @@ namespace Telegram.Api.TL
 {
 	public partial class TLPaymentSavedCredentialsCard : TLPaymentSavedCredentialsBase 
 	{
-		public String Id { get; set; }
-		public String Title { get; set; }
-
 		public TLPaymentSavedCredentialsCard() { }
 		public TLPaymentSavedCredentialsCard(TLBinaryReader from)
 		{

@@ -99,6 +99,7 @@
     <Compile Include="Common\RatioControl.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
+    <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
@@ -266,7 +267,7 @@
     <Compile Include="Common\Emoji.cs" />
     <Compile Include="Common\LambdaComparer.cs" />
     <Compile Include="Common\RelayCommand.cs" />
-    <Compile Include="Common\UnigramNavigationService.cs" />
+    <Compile Include="Common\NavigationService.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controls\AttachPickerFlyout.xaml.cs">
       <DependentUpon>AttachPickerFlyout.xaml</DependentUpon>

@@ -14,6 +14,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Hosting;
+using Unigram.Common;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -30,6 +33,42 @@ namespace Unigram.Views.Payments
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<PaymentFormStep1ViewModel>();
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "REQ_INFO_NAME_INVALID":
+                    VisualUtilities.ShakeView(FieldName);
+                    break;
+                case "REQ_INFO_PHONE_INVALID":
+                    VisualUtilities.ShakeView(FieldPhone);
+                    break;
+                case "REQ_INFO_EMAIL_INVALID":
+                    VisualUtilities.ShakeView(FieldEmail);
+                    break;
+                case "ADDRESS_COUNTRY_INVALID":
+                    VisualUtilities.ShakeView(FieldCountry);
+                    break;
+                case "ADDRESS_CITY_INVALID":
+                    VisualUtilities.ShakeView(FieldCity);
+                    break;
+                case "ADDRESS_POSTCODE_INVALID":
+                    VisualUtilities.ShakeView(FieldPostcode);
+                    break;
+                case "ADDRESS_STATE_INVALID":
+                    VisualUtilities.ShakeView(FieldState);
+                    break;
+                case "ADDRESS_STREET_LINE1_INVALID":
+                    VisualUtilities.ShakeView(FieldStreet1);
+                    break;
+                case "ADDRESS_STREET_LINE2_INVALID":
+                    VisualUtilities.ShakeView(FieldStreet2);
+                    break;
+            }
         }
     }
 }

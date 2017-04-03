@@ -89,5 +89,17 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region CommandVisibility
+
+        public Visibility CommandVisibility
+        {
+            get { return (Visibility)GetValue(CommandVisibilityProperty); }
+            set { SetValue(CommandVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty CommandVisibilityProperty =
+            DependencyProperty.Register("CommandVisibility", typeof(Visibility), typeof(ButtonPageHeader), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
     }
 }

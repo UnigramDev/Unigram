@@ -121,10 +121,10 @@ namespace Unigram.ViewModels.Payments
             if (_paymentForm.Invoice.IsShippingAddressRequested)
             {
                 info.ShippingAddress = _info.ShippingAddress;
-                info.ShippingAddress.CountryIso2 = _selectedCountry?.Code;
+                info.ShippingAddress.CountryIso2 = _selectedCountry?.Code?.ToUpper();
             }
 
-            var response = await ProtoService.ValidateRequestedInfoAsync(save, _message.Id, info);
+            var response = await ProtoService.ValidateRequestedInfoAsync(_message.Id, info, save);
             if (response.IsSucceeded)
             {
                 IsLoading = false;
@@ -136,24 +136,52 @@ namespace Unigram.ViewModels.Payments
 
                 if (_paymentForm.Invoice.IsFlexible)
                 {
-                    NavigationService.Navigate(typeof(PaymentFormStep2Page), TLTuple.Create(_message, _paymentForm, response.Result));
+                    NavigationService.NavigateToPaymentFormStep2(_message, _paymentForm, info, response.Result);
                 }
                 else if (_paymentForm.HasSavedCredentials)
                 {
-                    // TODO: Is password expired?
-                    var expired = true;
-                    if (expired)
+                    if (ApplicationSettings.Current.TmpPassword != null)
                     {
-                        NavigationService.Navigate(typeof(PaymentFormStep4Page));
+                        if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
+                        {
+                            ApplicationSettings.Current.TmpPassword = null;
+                        }
+                    }
+
+                    if (ApplicationSettings.Current.TmpPassword != null)
+                    {
+                        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, info, response.Result, null, null, null);
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(PaymentFormStep5Page));
+                        NavigationService.NavigateToPaymentFormStep4(_message, _paymentForm, info, response.Result, null);
                     }
                 }
                 else
                 {
-                    NavigationService.Navigate(typeof(PaymentFormStep3Page), TLTuple.Create(_message, _paymentForm, response.Result));
+                    NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, info, response.Result, null);
+                }
+            }
+            else if (response.Error != null)
+            {
+                IsLoading = false;
+
+                switch (response.Error.ErrorMessage)
+                {
+                    case "REQ_INFO_NAME_INVALID":
+                    case "REQ_INFO_PHONE_INVALID":
+                    case "REQ_INFO_EMAIL_INVALID":
+                    case "ADDRESS_COUNTRY_INVALID":
+                    case "ADDRESS_CITY_INVALID":
+                    case "ADDRESS_POSTCODE_INVALID":
+                    case "ADDRESS_STATE_INVALID":
+                    case "ADDRESS_STREET_LINE1_INVALID":
+                    case "ADDRESS_STREET_LINE2_INVALID":
+                        RaisePropertyChanged(response.Error.ErrorMessage);
+                        break;
+                    default:
+                        //AlertsCreator.processError(error, PaymentFormActivity.this, req);
+                        break;
                 }
             }
         }
@@ -165,6 +193,10 @@ namespace Unigram.ViewModels.Payments
             if (propertyName.Equals("PaymentForm"))
             {
                 RaisePropertyChanged(() => IsAnyUserInfoRequested);
+            }
+            else if (propertyName.Equals("IsLoading"))
+            {
+                SendCommand.RaiseCanExecuteChanged();
             }
         }
     }

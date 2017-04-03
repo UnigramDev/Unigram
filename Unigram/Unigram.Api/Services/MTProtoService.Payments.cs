@@ -56,9 +56,33 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        // TODO: public void SendPaymentFormCallback()
+        public void SendPaymentFormAsync(int msgId, string infoId, string optionId, TLInputPaymentCredentialsBase credentials, Action<TLPaymentsPaymentResultBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLPaymentsSendPaymentForm { MsgId = msgId, RequestedInfoId = infoId, ShippingOptionId = optionId, Credentials = credentials };
+
+            const string caption = "payments.sendPaymentForm";
+            SendInformativeMessage<TLPaymentsPaymentResultBase>(caption, obj,
+                result =>
+                {
+                    if (result is TLPaymentsPaymentResult paymentResult)
+                    {
+                        var multiPts = paymentResult as ITLMultiPts;
+                        if (multiPts != null)
+                        {
+                            _updatesService.SetState(multiPts, caption);
+                        }
+                        else
+                        {
+                            _updatesService.ProcessUpdates(paymentResult.Updates, true);
+                        }
+                    }
+
+                    callback?.Invoke(result);
+                },
+                faultCallback);
+        }
         
-        public void ValidateRequestedInfoAsync(bool save, int msgId, TLPaymentRequestedInfo info, Action<TLPaymentsValidatedRequestedInfo> callback, Action<TLRPCError> faultCallback = null)
+        public void ValidateRequestedInfoAsync(int msgId, TLPaymentRequestedInfo info, bool save, Action<TLPaymentsValidatedRequestedInfo> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLPaymentsValidateRequestedInfo { IsSave = save, MsgId = msgId, Info = info };
 

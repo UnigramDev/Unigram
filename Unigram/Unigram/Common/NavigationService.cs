@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.TL;
 using Template10.Common;
 using Template10.Services.LoggingService;
 using Template10.Services.NavigationService;
@@ -11,6 +12,7 @@ using Template10.Services.SerializationService;
 using Template10.Services.ViewService;
 using Unigram.Views;
 using Unigram.Views;
+using Unigram.Views.Payments;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
@@ -79,5 +81,53 @@ namespace Unigram.Common
         }
 
         public static Queue<Type> ViewModels { get; } = new Queue<Type>();
+
+
+
+
+
+        public static void GoBackAt(this INavigationService service, int index)
+        {
+            while (service.Frame.BackStackDepth > index + 1)
+            {
+                service.Frame.BackStack.RemoveAt(index + 1);
+            }
+
+            if (service.Frame.CanGoBack)
+            {
+                service.Frame.GoBack();
+            }
+        }
+
+
+
+
+
+
+
+        public static void NavigateToPaymentFormStep1(this INavigationService service, TLMessage message, TLPaymentsPaymentForm paymentForm)
+        {
+            service.Navigate(typeof(PaymentFormStep1Page), TLTuple.Create(message, paymentForm));
+        }
+
+        public static void NavigateToPaymentFormStep2(this INavigationService service, TLMessage message, TLPaymentsPaymentForm paymentForm, TLPaymentRequestedInfo info, TLPaymentsValidatedRequestedInfo validatedInfo)
+        {
+            service.Navigate(typeof(PaymentFormStep2Page), TLTuple.Create(message, paymentForm, info, validatedInfo));
+        }
+
+        public static void NavigateToPaymentFormStep3(this INavigationService service, TLMessage message, TLPaymentsPaymentForm paymentForm, TLPaymentRequestedInfo info, TLPaymentsValidatedRequestedInfo validatedInfo, TLShippingOption shipping)
+        {
+            service.Navigate(typeof(PaymentFormStep3Page), TLTuple.Create(message, paymentForm, info, validatedInfo, shipping));
+        }
+
+        public static void NavigateToPaymentFormStep4(this INavigationService service, TLMessage message, TLPaymentsPaymentForm paymentForm, TLPaymentRequestedInfo info, TLPaymentsValidatedRequestedInfo validatedInfo, TLShippingOption shipping)
+        {
+            service.Navigate(typeof(PaymentFormStep4Page), TLTuple.Create(message, paymentForm, info, validatedInfo, shipping));
+        }
+
+        public static void NavigateToPaymentFormStep5(this INavigationService service, TLMessage message, TLPaymentsPaymentForm paymentForm, TLPaymentRequestedInfo info, TLPaymentsValidatedRequestedInfo validatedInfo, TLShippingOption shipping, string title, string credentials)
+        {
+            service.Navigate(typeof(PaymentFormStep5Page), TLTuple.Create(message, paymentForm, info, validatedInfo, shipping, title ?? string.Empty, credentials ?? string.Empty));
+        }
     }
 }

@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Threading;
 using Windows.Storage;
+using Telegram.Api.TL;
+using Unigram.Core.Services;
 
 namespace Unigram.Common
 {
@@ -85,6 +87,30 @@ namespace Unigram.Common
             set
             {
                 AddOrUpdateValue("IsSendByEnterEnabled", value);
+            }
+        }
+
+        private TLAccountTmpPassword _tmpPassword;
+        public TLAccountTmpPassword TmpPassword
+        {
+            get
+            {
+                if (_tmpPassword == null)
+                {
+                    var payload = GetValueOrDefault<string>("TmpPassword", null);
+                    var data = TLSerializationService.Current.Deserialize<TLAccountTmpPassword>(payload);
+
+                    _tmpPassword = data;
+                }
+
+                return _tmpPassword;
+            }
+            set
+            {
+                var payload = value != null ? TLSerializationService.Current.Serialize(value) : null;
+                var data = AddOrUpdateValue("TmpPassword", payload);
+
+                _tmpPassword = value;
             }
         }
     }

@@ -26,7 +26,7 @@ using Unigram.Tasks;
 using Windows.UI.Notifications;
 using Windows.Storage;
 using Windows.UI.Popups;
-using Unigram.Views;
+using Unigram.Common;
 using Windows.Media;
 using System.IO;
 using Template10.Services.NavigationService;

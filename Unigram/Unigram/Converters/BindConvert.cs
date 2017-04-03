@@ -180,6 +180,17 @@ namespace Unigram.Converters
             return (discount ? "-" : string.Empty) + string.Format(currency + customFormat, doubleAmount);
         }
 
+        public string ShippingOptiopn(TLShippingOption option, string currency)
+        {
+            var amount = 0L;
+            foreach (var price in option.Prices)
+            {
+                amount += price.Amount;
+            }
+
+            return $"{FormatAmount(amount, currency)} - {option.Title}";
+        }
+
         public string CallDuration(int seconds)
         {
             if (seconds < 60)

@@ -10,8 +10,8 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Core.Services;
 using Windows.Foundation.Metadata;
-using Windows.Phone.Devices.Notification;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -19,17 +19,22 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsNotificationsViewModel : UnigramViewModelBase, IHandle<TLUpdateNotifySettings>, IHandle
     {
+        private readonly IVibrationService _vibrationService;
+
         private bool _suppressUpdating;
 
-        public SettingsNotificationsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public SettingsNotificationsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IVibrationService vibrationService) 
             : base(protoService, cacheService, aggregator)
         {
+            _vibrationService = vibrationService;
+
             Aggregator.Subscribe(this);
             PropertyChanged += OnPropertyChanged;
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            IsVibrationAvailable = await _vibrationService.GetAvailabilityAsync();
             await UpdateAsync();
         }
 
@@ -42,7 +47,7 @@ namespace Unigram.ViewModels.Settings
 
             if (e.PropertyName.Equals(nameof(InAppVibrate)) && InAppVibrate && IsVibrationAvailable)
             {
-                VibrationDevice.GetDefault().Vibrate(TimeSpan.FromMilliseconds(300));
+                await _vibrationService.VibrateAsync();
             }
 
             if (e.PropertyName.Equals(nameof(PrivateAlert)) || e.PropertyName.Equals(nameof(PrivatePreview)) || e.PropertyName.Equals(nameof(PrivateSound)))
@@ -161,11 +166,16 @@ namespace Unigram.ViewModels.Settings
 
         #region InApp
 
+        private bool _isVibrationAvailable;
         public bool IsVibrationAvailable
         {
             get
             {
-                return ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice") && VibrationDevice.GetDefault() != null;
+                return _isVibrationAvailable;
+            }
+            set
+            {
+                Set(ref _isVibrationAvailable, value);
             }
         }
 

@@ -44,7 +44,10 @@ namespace Unigram.Views.Payments
 
         private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
-            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramWebviewProxy());
+            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramWebviewProxy((title, credentials) =>
+            {
+                ViewModel.NavigateToNextStep(title, credentials);
+            }));
         }
     }
 }

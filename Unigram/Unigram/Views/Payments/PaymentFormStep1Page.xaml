@@ -15,6 +15,10 @@
             <Setter Property="Margin" Value="12,8,12,4"/>
         </Style>
 
+        <Style TargetType="PasswordBox">
+            <Setter Property="Margin" Value="12,8,12,4"/>
+        </Style>
+
         <Style TargetType="ComboBox">
             <Setter Property="Margin" Value="12,8,12,4"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -37,31 +41,40 @@
             <StackPanel>
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsShippingAddressRequested}">
                     <TextBlock Text="Shipping address" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                    <TextBox Text="{x:Bind ViewModel.Info.ShippingAddress.StreetLine1, Mode=TwoWay}" 
+                    <TextBox x:Name="FieldStreet1"
+                             Text="{x:Bind ViewModel.Info.ShippingAddress.StreetLine1, Mode=TwoWay}" 
                              PlaceholderText="Address 1 (Street)"/>
-                    <TextBox Text="{x:Bind ViewModel.Info.ShippingAddress.StreetLine2, Mode=TwoWay}" 
+                    <TextBox x:Name="FieldStreet2"
+                             Text="{x:Bind ViewModel.Info.ShippingAddress.StreetLine2, Mode=TwoWay}" 
                              PlaceholderText="Address 2 (Street)"/>
-                    <TextBox Text="{x:Bind ViewModel.Info.ShippingAddress.City, Mode=TwoWay}"
+                    <TextBox x:Name="FieldCity"
+                             Text="{x:Bind ViewModel.Info.ShippingAddress.City, Mode=TwoWay}"
                              PlaceholderText="City"/>
-                    <TextBox Text="{x:Bind ViewModel.Info.ShippingAddress.State, Mode=TwoWay}" 
+                    <TextBox x:Name="FieldState"
+                             Text="{x:Bind ViewModel.Info.ShippingAddress.State, Mode=TwoWay}" 
                              PlaceholderText="State"/>
-                    <ComboBox ItemsSource="{x:Bind Countries.View}"
+                    <ComboBox x:Name="FieldCountry"
+                              ItemsSource="{x:Bind Countries.View}"
                               SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
                               DisplayMemberPath="Name"
                               PlaceholderText="Country"/>
-                    <TextBox Text="{x:Bind ViewModel.Info.ShippingAddress.PostCode, Mode=TwoWay}"
+                    <TextBox x:Name="FieldPostcode"
+                             Text="{x:Bind ViewModel.Info.ShippingAddress.PostCode, Mode=TwoWay}"
                              PlaceholderText="Postcode"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.IsAnyUserInfoRequested}">
                     <TextBlock Text="Receiver" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                    <TextBox Text="{x:Bind ViewModel.Info.Name, Mode=TwoWay}"
+                    <TextBox x:Name="FieldName"
+                             Text="{x:Bind ViewModel.Info.Name, Mode=TwoWay}"
                              Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsNameRequested}" 
                              PlaceholderText="Full Name"/>
-                    <TextBox Text="{x:Bind ViewModel.Info.Email, Mode=TwoWay}"
+                    <TextBox x:Name="FieldEmail"
+                             Text="{x:Bind ViewModel.Info.Email, Mode=TwoWay}"
                              Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsEmailRequested}"
                              PlaceholderText="E-Mail"/>
-                    <TextBox Text="{x:Bind ViewModel.Info.Phone, Mode=TwoWay}"
+                    <TextBox x:Name="FieldPhone"
+                             Text="{x:Bind ViewModel.Info.Phone, Mode=TwoWay}"
                              Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsPhoneRequested}"
                              PlaceholderText="Phone number"/>
                 </StackPanel>

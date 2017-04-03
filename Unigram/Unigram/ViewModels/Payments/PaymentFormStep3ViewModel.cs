@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -11,6 +12,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Models;
 using Unigram.Core.Stripe;
+using Unigram.Views.Payments;
 using Windows.Data.Json;
 using Windows.UI.Xaml.Navigation;
 
@@ -18,6 +20,10 @@ namespace Unigram.ViewModels.Payments
 {
     public class PaymentFormStep3ViewModel : PaymentFormViewModelBase
     {
+        private TLPaymentRequestedInfo _info;
+        private TLPaymentsValidatedRequestedInfo _requestedInfo;
+        private TLShippingOption _shipping;
+
         private string _publishableKey;
 
         public PaymentFormStep3ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
@@ -32,16 +38,21 @@ namespace Unigram.ViewModels.Payments
             {
                 using (var from = new TLBinaryReader(buffer))
                 {
-                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentsValidatedRequestedInfo>(from);
+                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
 
                     Message = tuple.Item1;
                     Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
                     PaymentForm = tuple.Item2;
 
-                    RaisePropertyChanged("Navigate");
+                    _info = tuple.Item3;
+                    _requestedInfo = tuple.Item4;
+                    _shipping = tuple.Item5;
 
-                    if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && _paymentForm.NativeProvider.Equals("stripe"))
+                    if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && !_paymentForm.NativeProvider.Equals("stripe"))
                     {
+                        IsNativeUsed = true;
+                        SelectedCountry = null;
+
                         var json = JsonObject.Parse(_paymentForm.NativeParams.Data);
 
                         NeedCountry = json.GetNamedBoolean("need_country", false);
@@ -52,7 +63,8 @@ namespace Unigram.ViewModels.Payments
                     }
                     else
                     {
-                        // TODO: webview
+                        IsNativeUsed = false;
+                        RaisePropertyChanged("Navigate");
                     }
 
                     //var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
@@ -67,6 +79,19 @@ namespace Unigram.ViewModels.Payments
             }
 
             return Task.CompletedTask;
+        }
+
+        private bool _isNativeUsed;
+        public bool IsNativeUsed
+        {
+            get
+            {
+                return _isNativeUsed;
+            }
+            set
+            {
+                Set(ref _isNativeUsed, value);
+            }
         }
 
         public bool NeedCountry { get; private set; }
@@ -186,6 +211,21 @@ namespace Unigram.ViewModels.Payments
             //        NavigationService.Navigate(typeof(PaymentFormStep3Page));
             //    }
             //}
+        }
+
+        public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.RaisePropertyChanged(propertyName);
+
+            if (propertyName.Equals("IsLoading"))
+            {
+                SendCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public void NavigateToNextStep(string title, string credentials)
+        {
+            NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, title, credentials);
         }
     }
 }
