@@ -247,7 +247,7 @@ namespace Unigram.ViewModels
             if (message is TLMessage)
             {
                 App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
-                NavigationService.GoBack();
+                NavigationService.GoBackAt(0);
             }
         }
 
@@ -313,7 +313,7 @@ namespace Unigram.ViewModels
             if (messages.Count > 0)
             {
                 App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
-                NavigationService.GoBack();
+                NavigationService.GoBackAt(0);
             }
 
             //_stateService.ForwardMessages = Messages.Where(x => x.IsSelected).ToList();

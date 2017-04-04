@@ -11,6 +11,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Windows.System;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments
@@ -158,10 +159,12 @@ namespace Unigram.ViewModels.Payments
             var response = await ProtoService.SendPaymentFormAsync(_message.Id, _requestedInfo?.Id, _shipping?.Id, credentials);
             if (response.IsSucceeded)
             {
-                var verificatioNeeded = response.Result as TLPaymentsPaymentVerficationNeeded;
-                if (verificatioNeeded != null)
+                if (response.Result is TLPaymentsPaymentVerficationNeeded verificationNeeded)
                 {
-
+                    if (Uri.TryCreate(verificationNeeded.Url, UriKind.Absolute, out Uri uri))
+                    {
+                        await Launcher.LaunchUriAsync(uri);
+                    }
                 }
 
                 NavigationService.GoBackAt(1);
