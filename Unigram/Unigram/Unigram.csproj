@@ -100,6 +100,8 @@
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
+    <Compile Include="Controls\GroupedGridView.cs" />
+    <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />

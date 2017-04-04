@@ -767,7 +767,7 @@ namespace Unigram.Views
             });
         }
 
-        public override async Task<IEnumerable<StorageMedia>> LoadDataAsync()
+        public override async Task<IList<StorageMedia>> LoadDataAsync()
         {
             var items = new List<StorageMedia>();
             uint resultCount = 0;

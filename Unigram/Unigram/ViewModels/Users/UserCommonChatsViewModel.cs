@@ -50,7 +50,7 @@ namespace Unigram.ViewModels.Users
                 _userId = userId;
             }
 
-            public override async Task<IEnumerable<TLChatBase>> LoadDataAsync()
+            public override async Task<IList<TLChatBase>> LoadDataAsync()
             {
                 var offset = Count == 0 ? 0 : this[Count - 1].Id;
                 var limit = Count == 0 ? 50 : 100;

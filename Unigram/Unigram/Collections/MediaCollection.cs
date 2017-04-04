@@ -47,7 +47,7 @@ namespace Unigram.Collections
             }
         }
 
-        public override async Task<IEnumerable<KeyedList<DateTime, TLMessage>>> LoadDataAsync()
+        public override async Task<IList<KeyedList<DateTime, TLMessage>>> LoadDataAsync()
         {
             try
             {
@@ -68,7 +68,7 @@ namespace Unigram.Collections
 
                         return new DateTime(dateTime.Year, dateTime.Month, 1);
 
-                    }).Select(x => new KeyedList<DateTime, TLMessage>(x));
+                    }).Select(x => new KeyedList<DateTime, TLMessage>(x)).ToList();
                 }
             }
             catch { }
@@ -76,7 +76,7 @@ namespace Unigram.Collections
             return new KeyedList<DateTime, TLMessage>[0];
         }
 
-        protected override void Merge(IEnumerable<KeyedList<DateTime, TLMessage>> result)
+        protected override void Merge(IList<KeyedList<DateTime, TLMessage>> result)
         {
             var last = this.LastOrDefault();
 
@@ -91,7 +91,10 @@ namespace Unigram.Collections
                 }
                 else
                 {
-                    Add(group);
+                    //if (Count < 1)
+                    {
+                        Add(group);
+                    }
                 }
             }
         }

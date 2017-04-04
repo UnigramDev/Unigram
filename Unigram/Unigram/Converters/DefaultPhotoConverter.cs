@@ -190,6 +190,28 @@ namespace Unigram.Converters
                 value = photoMedia.Photo;
             }
 
+            var photoSizeBase2 = value as TLPhotoSizeBase;
+            if (photoSizeBase2 != null)
+            {
+                var photoSize = photoSizeBase2 as TLPhotoSize;
+                if (photoSize != null)
+                {
+                    var fileLocation = photoSize.Location as TLFileLocation;
+                    if (fileLocation != null /*&& (photoMedia == null || !photoMedia.IsCanceled)*/)
+                    {
+                        return ReturnOrEnqueueImage(false, fileLocation, null, photoSize.Size, photoMedia);
+                    }
+                }
+
+                var photoCachedSize = photoSizeBase2 as TLPhotoCachedSize;
+                if (photoCachedSize != null)
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.SetSource(photoCachedSize.Bytes);
+                    return bitmap;
+                }
+            }
+
             var photo = value as TLPhoto;
             if (photo != null)
             {

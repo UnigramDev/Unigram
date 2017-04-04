@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Core;
@@ -16,7 +17,7 @@ namespace Unigram.Common
 
     }
 
-    public abstract class IncrementalCollection<T> : ObservableCollection<T>, ISupportIncrementalLoading, INotifyPropertyChanged
+    public abstract class IncrementalCollection<T> : ObservableCollection<T>, IGroupSupportIncrementalLoading, INotifyPropertyChanged
     {
         private bool _hasMoreItems = true;
         public bool HasMoreItems
@@ -52,50 +53,60 @@ namespace Unigram.Common
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            var dispatcher = Window.Current.Dispatcher;
+            //var dispatcher = Window.Current.Dispatcher;
 
-            return Task.Run(async () =>
+            //return Task.Run(async () =>
+            //{
+            //    if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            //        return new LoadMoreItemsResult() { Count = 0 };
+
+            //    await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //    {
+            //        IsLoading = true;
+            //    });
+
+            //    IEnumerable<T> result;
+
+            //    try
+            //    {
+            //        result = await LoadDataAsync();
+            //    }
+            //    catch
+            //    {
+            //        result = new T[0];
+            //    }
+
+            //    await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //    {
+            //        var oldCount = Count;
+            //        Merge(result);
+            //        HasMoreItems = Count > 0 && Count > oldCount && GetHasMoreItems();
+            //        IsLoading = false;
+            //    });
+
+            //    return new LoadMoreItemsResult() { Count = (uint)result.Count() };
+
+            //}).AsAsyncOperation();
+
+            return AsyncInfo.Run(async token =>
             {
-                if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
-                    return new LoadMoreItemsResult() { Count = 0 };
+                var result = await LoadDataAsync();
+                var oldCount = Count;
+                Merge(result);
+                HasMoreItems = Count > 0 && Count > oldCount && GetHasMoreItems();
 
-                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    IsLoading = true;
-                });
-
-                IEnumerable<T> result;
-
-                try
-                {
-                    result = await LoadDataAsync();
-                }
-                catch
-                {
-                    result = new T[0];
-                }
-
-                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    var oldCount = Count;
-                    Merge(result);
-                    HasMoreItems = Count > 0 && Count > oldCount && GetHasMoreItems();
-                    IsLoading = false;
-                });
-
-                return new LoadMoreItemsResult() { Count = (uint)result.Count() };
-
-            }).AsAsyncOperation();
+                return new LoadMoreItemsResult { Count = (uint)result.Count };
+            });
         }
 
-        public abstract Task<IEnumerable<T>> LoadDataAsync();
+        public abstract Task<IList<T>> LoadDataAsync();
 
         protected virtual bool GetHasMoreItems()
         {
             return true;
         }
 
-        protected virtual void Merge(IEnumerable<T> result)
+        protected virtual void Merge(IList<T> result)
         {
             foreach (T item in result)
             {
