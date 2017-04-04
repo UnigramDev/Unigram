@@ -1044,78 +1044,43 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
         private async void DialogDeleteExecute(TLDialog dialog)
         {
-            var peer = dialog.ToInputPeer();
-            var message = "Are you sure you want to delete the group?";
-            var which = 0;
-
-            var user = dialog.With as TLUser;
-            if (user != null)
+            if (dialog.With is TLUser || dialog.With is TLChat)
             {
-                which = 1;
-                message = "Are you sure you want to delete the conversation?";
+                await ClearHistoryAsync(dialog, false);
             }
-
-            var channel = dialog.With as TLChannel;
-            if (channel != null)
+            else if (dialog.With is TLChannel channel)
             {
-                if (channel.IsBroadcast) message = "Are you sure you want to delete the channel?";
-                which = (channel.IsCreator) ? 2 : 3;
-            }
-
-            var chat = dialog.With as TLChat;
-            if (chat != null)
-            {
-                which = 4;
-            }
-
-            var question = new TLMessageDialog();
-            question.Title = "Delete";
-            question.Message = message;
-            question.PrimaryButtonText = "Yes";
-            question.SecondaryButtonText = "No";
-
-            var failNotification = new TLMessageDialog();
-            failNotification.Title = "Error";
-            failNotification.Message = "Chat could not be deleted!";
-            failNotification.PrimaryButtonText = "Okay";
-            failNotification.SecondaryButtonText = "";
-            failNotification.IsSecondaryButtonEnabled = false;
-
-            var result = await question.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                switch (which)
+                var message = string.Empty;
+                var title = string.Empty;
+                if (channel.IsBroadcast)
                 {
-                    case 1:
-                        var delResultUser = await ProtoService.DeleteHistoryAsync(false, peer, 0);
-                        if (delResultUser.IsSucceeded) { CacheService.DeleteDialog(dialog); }
-                        else { await failNotification.ShowAsync(); return; }
-                        break;
-                    case 2:
-                        var delResultChannel = await ProtoService.DeleteChannelAsync(channel);
-                        if (delResultChannel.IsSucceeded) { CacheService.DeleteDialog(dialog); }
-                        else { await failNotification.ShowAsync(); return; }
-                        break;
-                    case 3:
-                        var leaveResultChat = await ProtoService.LeaveChannelAsync(channel);
-                        if (leaveResultChat.IsSucceeded) { CacheService.DeleteDialog(dialog); }
-                        else { await failNotification.ShowAsync(); return; }
-                        break;
-                    case 4:
-                        // TODO: Make normal chats deletable
-                        break;
-                    default:
-                        Debug.WriteLine("Dialog is nothing");
-                        break;
+                    message = channel.IsCreator ? "Are you sure, you want to delete this channel?\r\n\r\nThis action cannot be undone." : "Are you sure you want to leave this channel?";
+                    title = channel.IsCreator ? "Delete" : "Leave";
+                }
+                else if (channel.IsMegaGroup)
+                {
+                    message = channel.IsCreator ? "Are you sure, you want to delete this group? All members will be removed and all messages will be lost.\r\n\r\nThis action cannot be undone." : "Are you sure you want to leave this group?";
+                    title = channel.IsCreator ? "Delete" : "Leave";
                 }
 
-                for (int i = 0; i < Items.Count; i++)
+                var confirm = await TLMessageDialog.ShowAsync(message, "Delete", "Delete", "Cancel");
+                if (confirm == ContentDialogResult.Primary)
                 {
-                    if (Items[i].Id == dialog.Id)
+                    Task<MTProtoResponse<TLUpdatesBase>> task;
+                    if (channel.IsCreator)
                     {
-                        dialog = (Items[i] as TLDialog);
-                        Items.RemoveAt(i);
-                        break;
+                        task = ProtoService.DeleteChannelAsync(channel);
+                    }
+                    else
+                    {
+                        task = ProtoService.LeaveChannelAsync(channel);
+                    }
+
+                    var response = await task;
+                    if (response.IsSucceeded)
+                    {
+                        CacheService.DeleteDialog(dialog);
+                        Items.Remove(dialog);
                     }
                 }
             }
@@ -1124,15 +1089,38 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogClearCommand => new RelayCommand<TLDialog>(DialogClearExecute);
         private async void DialogClearExecute(TLDialog dialog)
         {
-            var clear = await TLMessageDialog.ShowAsync("Do you really want to clear the chat?", "Delete", "Yes", "No");
-            if (clear == ContentDialogResult.Primary)
+            await ClearHistoryAsync(dialog, true);
+        }
+
+        private async Task ClearHistoryAsync(TLDialog dialog, bool justClear)
+        {
+            var message = string.Empty;
+            if (dialog.With is TLUser)
+            {
+                message = string.Format("Are you sure, you want to delete all message history with {0}?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName);
+            }
+            else if (dialog.With is TLChat)
+            {
+                message = justClear ? string.Format("Are you sure, you want to delete all message history in \"{0}\"?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName) : string.Format("Are you sure, you want to delete all message history and leave \"{0}\"?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName);
+            }
+
+            var confirm = await TLMessageDialog.ShowAsync(message, "Delete", "Delete", "Cancel");
+            if (confirm == ContentDialogResult.Primary)
             {
                 var peer = dialog.ToInputPeer();
-                var result = await ProtoService.DeleteHistoryAsync(true, peer, 0);
-                if (result.IsSucceeded)
+                var response = await ProtoService.DeleteHistoryAsync(justClear, peer, 0);
+                if (response.IsSucceeded)
                 {
-                    CacheService.ClearDialog(dialog.Peer);
-                    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+                    if (justClear)
+                    {
+                        CacheService.ClearDialog(dialog.Peer);
+                        dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+                    }
+                    else
+                    {
+                        CacheService.DeleteDialog(dialog);
+                        Items.Remove(dialog);
+                    }
                 }
                 else
                 {

@@ -1053,15 +1053,6 @@ namespace Telegram.Api.Services.Updates
                 return true;
             }
 
-            // TODO: Layer 56, when available check if exists
-            //var updateChannelGroup = update as TLUpdateChannelGroup;
-            //if (updateChannelGroup != null)
-            //{
-            //    Execute.ShowDebugMessage(string.Format("updateChannelGroup channel_id={0} min_id={1} max_id={2} count={3} date={4}", updateChannelGroup.ChannelId, updateChannelGroup.Group.MinId, updateChannelGroup.Group.MaxId, updateChannelGroup.Group.Count, updateChannelGroup.Group.Date));
-
-            //    return true;
-            //}
-
             var updateChannelPinnedMessage = update as TLUpdateChannelPinnedMessage;
             if (updateChannelPinnedMessage != null)
             {
