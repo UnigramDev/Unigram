@@ -150,7 +150,7 @@ namespace Unigram.ViewModels.Payments
 
                     if (ApplicationSettings.Current.TmpPassword != null)
                     {
-                        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, info, response.Result, null, null, null);
+                        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, info, response.Result, null, null, null, true);
                     }
                     else
                     {

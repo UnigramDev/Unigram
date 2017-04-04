@@ -81,7 +81,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel>
+            <StackPanel Padding="0,0,0,48">
                 <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Padding="12" Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>

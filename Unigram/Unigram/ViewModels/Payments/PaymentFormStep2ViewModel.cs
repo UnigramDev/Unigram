@@ -87,7 +87,7 @@ namespace Unigram.ViewModels.Payments
 
                     if (ApplicationSettings.Current.TmpPassword != null)
                     {
-                        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null);
+                        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
                     }
                     else
                     {

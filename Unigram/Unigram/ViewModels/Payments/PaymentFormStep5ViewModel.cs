@@ -19,6 +19,7 @@ namespace Unigram.ViewModels.Payments
     {
         private TLPaymentsValidatedRequestedInfo _requestedInfo;
         private string _credentials;
+        private bool _save;
 
         public PaymentFormStep5ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
@@ -32,7 +33,7 @@ namespace Unigram.ViewModels.Payments
             {
                 using (var from = new TLBinaryReader(buffer))
                 {
-                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption, string, string>(from);
+                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption, string, string, bool>(from);
 
                     Message = tuple.Item1;
                     Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
@@ -60,6 +61,7 @@ namespace Unigram.ViewModels.Payments
 
                     _requestedInfo = tuple.Item4;
                     _credentials = tuple.Item7;
+                    _save = tuple.Item8;
                 }
             }
 
@@ -150,7 +152,7 @@ namespace Unigram.ViewModels.Payments
             }
             else
             {
-                credentials = new TLInputPaymentCredentials { Data = new TLDataJSON { Data = _credentials } };
+                credentials = new TLInputPaymentCredentials { Data = new TLDataJSON { Data = _credentials }, IsSave = _save };
             }
 
             var response = await ProtoService.SendPaymentFormAsync(_message.Id, _requestedInfo?.Id, _shipping?.Id, credentials);
@@ -159,7 +161,7 @@ namespace Unigram.ViewModels.Payments
                 var verificatioNeeded = response.Result as TLPaymentsPaymentVerficationNeeded;
                 if (verificatioNeeded != null)
                 {
-                    
+
                 }
 
                 NavigationService.GoBackAt(1);

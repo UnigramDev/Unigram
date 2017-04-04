@@ -223,11 +223,11 @@ namespace Unigram.Core.Stripe
         {
             if (CVC == null)
             {
-                return ValidateNumber() && ValidateExpiryDate();
+                return ValidateNumber() && ValidateExpireDate();
             }
             else
             {
-                return ValidateNumber() && ValidateExpiryDate() && ValidateCVC();
+                return ValidateNumber() && ValidateExpireDate() && ValidateCVC();
             }
         }
 
@@ -244,7 +244,7 @@ namespace Unigram.Core.Stripe
         /// Checks whether or not the <see cref="ExpiryMonth"/> and <see cref="ExpiryYear"/> properties represent a valid
         /// </summary>
         /// <returns><see langword="true"> if valid, <see langword="false"> otherwise</returns>
-        public bool ValidateExpiryDate()
+        public bool ValidateExpireDate()
         {
             if (!ValidateExpiryMonth())
             {

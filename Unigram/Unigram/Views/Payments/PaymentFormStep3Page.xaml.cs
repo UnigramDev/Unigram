@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Common;
 using Unigram.ViewModels.Payments;
 using Unigram.Webview;
 using Windows.Foundation;
@@ -36,6 +37,28 @@ namespace Unigram.Views.Payments
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            switch (e.PropertyName)
+            {
+                case "CARD_NUMBER_INVALID":
+                    VisualUtilities.ShakeView(FieldCard);
+                    break;
+                case "CARD_EXPIRE_DATE_INVALID":
+                    VisualUtilities.ShakeView(FieldDate);
+                    break;
+                case "CARD_HOLDER_NAME_INVALID":
+                    VisualUtilities.ShakeView(FieldCardName);
+                    break;
+                case "CARD_CVC_INVALID":
+                    VisualUtilities.ShakeView(FieldCVC);
+                    break;
+                case "CARD_COUNTRY_INVALID":
+                    VisualUtilities.ShakeView(FieldCountry);
+                    break;
+                case "CARD_ZIP_INVALID":
+                    VisualUtilities.ShakeView(FieldPostcode);
+                    break;
+            }
+
             if (e.PropertyName.Equals("Navigate"))
             {
                 View.Navigate(new Uri(ViewModel.PaymentForm.Url));
@@ -46,7 +69,7 @@ namespace Unigram.Views.Payments
         {
             sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramWebviewProxy((title, credentials) =>
             {
-                ViewModel.NavigateToNextStep(title, credentials);
+                ViewModel.NavigateToNextStep(title, credentials, false);
             }));
         }
     }

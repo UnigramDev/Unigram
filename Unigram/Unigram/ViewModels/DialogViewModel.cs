@@ -1640,7 +1640,7 @@ namespace Unigram.ViewModels
                 var files = await picker.PickMultipleFilesAsync();
                 if (files != null)
                 {
-                    storages = new ObservableCollection<StorageMedia>(files.Select(x => new StoragePhoto(x)));
+                    storages = new ObservableCollection<StorageMedia>(files.Select(x => x.Name.EndsWith(".mp4") ? new StorageVideo(x) : (StorageMedia)new StoragePhoto(x)));
                 }
             }
             else
@@ -1656,7 +1656,10 @@ namespace Unigram.ViewModels
                 {
                     foreach (var storage in dialog.Items)
                     {
-                        await SendPhotoAsync(storage.File, storage.Caption);
+                        if (storage is StoragePhoto)
+                        {
+                            await SendPhotoAsync(storage.File, storage.Caption);
+                        }
                     }
                 }
             }

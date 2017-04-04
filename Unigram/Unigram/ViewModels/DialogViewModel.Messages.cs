@@ -717,7 +717,7 @@ namespace Unigram.ViewModels
 
                             if (ApplicationSettings.Current.TmpPassword != null)
                             {
-                                NavigationService.NavigateToPaymentFormStep5(message, response.Result, null, null, null, null, null);
+                                NavigationService.NavigateToPaymentFormStep5(message, response.Result, null, null, null, null, null, true);
                             }
                             else
                             {

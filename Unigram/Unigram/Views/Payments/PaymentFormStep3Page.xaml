@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Payments"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:payments="using:Unigram.Controls.Payments"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -16,6 +17,14 @@
         </Style>
 
         <Style TargetType="PasswordBox">
+            <Setter Property="Margin" Value="12,8,12,4"/>
+        </Style>
+
+        <Style TargetType="payments:CardTextBox">
+            <Setter Property="Margin" Value="12,8,12,4"/>
+        </Style>
+
+        <Style TargetType="payments:DateTextBox">
             <Setter Property="Margin" Value="12,8,12,4"/>
         </Style>
 
@@ -43,27 +52,39 @@
             <StackPanel>
                 <StackPanel>
                     <TextBlock Text="Payment card" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                    <TextBox Text="" 
-                             PlaceholderText="Cart Number"/>
-                    <TextBox Text="" 
-                             PlaceholderText="MM/YY"/>
-                    <TextBox Text=""
+                    <payments:CardTextBox x:Name="FieldCard"
+                                          Text="{x:Bind ViewModel.Card, Mode=TwoWay}"
+                                          PlaceholderText="Cart Number"
+                                          InputScope="Number"/>
+                    <payments:DateTextBox x:Name="FieldDate"
+                                          Text="{x:Bind ViewModel.Date, Mode=TwoWay}"
+                                          PlaceholderText="MM/YY"
+                                          InputScope="Number"/>
+                    <TextBox x:Name="FieldCardName"
+                             Text="{x:Bind ViewModel.CardName, Mode=TwoWay}"
                              Visibility="{x:Bind (Visibility)ViewModel.NeedCardholderName}"
-                             PlaceholderText="Name Surname"/>
-                    <TextBox Text="" 
-                             PlaceholderText="Security Code (CVC)"/>
+                             PlaceholderText="Name Surname"
+                             InputScope="PersonalFullName"/>
+                    <PasswordBox x:Name="FieldCVC"
+                                 Password="{x:Bind ViewModel.CVC, Mode=TwoWay}" 
+                                 PlaceholderText="Security Code (CVC)"
+                                 InputScope="Number"
+                                 MaxLength="3"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.NeedZipOrCountry}">
                     <TextBlock Text="Billing address" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                    <ComboBox ItemsSource="{x:Bind Countries.View}"
+                    <ComboBox x:Name="FieldCountry"
+                              ItemsSource="{x:Bind Countries.View}"
                               SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
                               Visibility="{x:Bind (Visibility)ViewModel.NeedCountry}"
                               DisplayMemberPath="Name"
                               PlaceholderText="Country"/>
-                    <TextBox Text=""
+                    <TextBox x:Name="FieldPostcode"
+                             Text="{x:Bind ViewModel.Postcode, Mode=TwoWay}"
                              Visibility="{x:Bind (Visibility)ViewModel.NeedZip}"
-                             PlaceholderText="Postcode"/>
+                             PlaceholderText="Postcode"
+                             InputScope="Number"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.IsCanSaveCredentials, FallbackValue=Collapsed}" Padding="12,12,12,24">

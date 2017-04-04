@@ -43,7 +43,7 @@
                              IsReadOnly="True"/>
                     <PasswordBox x:Name="FieldPassword"
                                  Password="{x:Bind ViewModel.Password, Mode=TwoWay}" 
-                                 PlaceholderText="Password"/>
+                                 PlaceholderText="{x:Bind ViewModel.PasswordHint}"/>
                     <TextBlock Margin="12,4,12,24" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
                         <Run Text="Your card"/>
                         <Run Text="{x:Bind ViewModel.PaymentForm.SavedCredentials.Title}"/>

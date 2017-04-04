@@ -40,6 +40,9 @@ namespace Unigram.ViewModels.Payments
                     Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
                     PaymentForm = tuple.Item2;
 
+                    // TODO: real hint
+                    PasswordHint = "Password";
+
                     _info = tuple.Item3;
                     _requestedInfo = tuple.Item4;
                     _shipping = tuple.Item5;
@@ -47,6 +50,19 @@ namespace Unigram.ViewModels.Payments
             }
 
             return Task.CompletedTask;
+        }
+
+        private string _passwordHint;
+        public string PasswordHint
+        {
+            get
+            {
+                return _passwordHint;
+            }
+            set
+            {
+                Set(ref _passwordHint, value);
+            }
         }
 
         private string _password;
@@ -85,7 +101,7 @@ namespace Unigram.ViewModels.Payments
                     if (response.IsSucceeded)
                     {
                         ApplicationSettings.Current.TmpPassword = response.Result;
-                        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null);
+                        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
                     }
                     else if (response.Error != null)
                     {

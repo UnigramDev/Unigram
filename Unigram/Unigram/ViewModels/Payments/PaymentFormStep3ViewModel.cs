@@ -48,7 +48,7 @@ namespace Unigram.ViewModels.Payments
                     _requestedInfo = tuple.Item4;
                     _shipping = tuple.Item5;
 
-                    if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && !_paymentForm.NativeProvider.Equals("stripe"))
+                    if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && _paymentForm.NativeProvider.Equals("stripe"))
                     {
                         IsNativeUsed = true;
                         SelectedCountry = null;
@@ -94,6 +94,8 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
+        #region Native
+
         public bool NeedCountry { get; private set; }
 
         public bool NeedZip { get; private set; }
@@ -105,6 +107,71 @@ namespace Unigram.ViewModels.Payments
             get
             {
                 return NeedZip || NeedCountry;
+            }
+        }
+
+        private string _card;
+        public string Card
+        {
+            get
+            {
+                return _card;
+            }
+            set
+            {
+                Set(ref _card, value);
+            }
+        }
+
+        private string _date;
+        public string Date
+        {
+            get
+            {
+                return _date;
+            }
+            set
+            {
+                Set(ref _date, value);
+            }
+        }
+
+        private string _cardName;
+        public string CardName
+        {
+            get
+            {
+                return _cardName;
+            }
+            set
+            {
+                Set(ref _cardName, value);
+            }
+        }
+
+        private string _cvc;
+        public string CVC
+        {
+            get
+            {
+                return _cvc;
+            }
+            set
+            {
+                Set(ref _cvc, value);
+            }
+        }
+
+        private string _postcode;
+        public string Postcode
+        {
+            get
+            {
+                return _postcode;
+            }
+            set
+            {
+                Set(ref _postcode, value);
             }
         }
 
@@ -123,6 +190,8 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
+        #endregion
+
         private bool? _isSave = true;
         public bool? IsSave
         {
@@ -140,23 +209,84 @@ namespace Unigram.ViewModels.Payments
         public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
-            IsLoading = true;
+            var save = _isSave ?? false;
+            if (_paymentForm.HasSavedCredentials && !save && _paymentForm.IsCanSaveCredentials)
+            {
+                _paymentForm.HasSavedCredentials = false;
+                _paymentForm.SavedCredentials = null;
+
+                ApplicationSettings.Current.TmpPassword = null;
+                ProtoService.ClearSavedInfoAsync(false, true, null, null);
+            }
+
+            var month = 0;
+            var year = 0;
+
+            var args = _date.Split('/');
+            if (args.Length == 2)
+            {
+                month = int.Parse(args[0]);
+                year = int.Parse(args[1]);
+            }
 
             var card = new Card(
-                "4242424242424242",
-                01,
-                22,
-                "424",
-                "Name Surname",
+                _card,
+                month,
+                year,
+                _cvc,
+                _cardName,
                 null, null, null, null,
-                "16043",
-                "IT",
+                _postcode,
+                _selectedCountry?.Code?.ToUpper(),
                 null);
+
+            if (!card.ValidateNumber())
+            {
+                RaisePropertyChanged("CARD_NUMBER_INVALID");
+                return;
+            }
+            if (!card.ValidateExpireDate())
+            {
+                RaisePropertyChanged("CARD_EXPIRE_DATE_INVALID");
+                return;
+            }
+            if (NeedCardholderName && string.IsNullOrWhiteSpace(_cardName))
+            {
+                RaisePropertyChanged("CARD_HOLDER_NAME_INVALID");
+                return;
+            }
+            if (!card.ValidateCVC())
+            {
+                RaisePropertyChanged("CARD_CVC_INVALID");
+                return;
+            }
+            if (NeedCountry && _selectedCountry == null)
+            {
+                RaisePropertyChanged("CARD_COUNTRY_INVALID");
+                return;
+            }
+            if (NeedZip && string.IsNullOrWhiteSpace(_postcode))
+            {
+                RaisePropertyChanged("CARD_ZIP_INVALID");
+                return;
+            }
+
+            IsLoading = true;
 
             using (var stripe = new StripeClient(_publishableKey))
             {
                 var token = await stripe.CreateTokenAsync(card);
-                Debugger.Break();
+                if (token != null)
+                {
+                    var title = card.GetBrand() + " *" + card.GetLast4();
+                    var credentials = string.Format("{{\"type\":\"{0}\", \"id\":\"{1}\"}}", token.Type, token.Id);
+
+                    NavigateToNextStep(title, credentials, _isSave ?? false);
+                }
+                else
+                {
+                    IsLoading = false;
+                }
             }
 
             //var save = _isSave ?? false;
@@ -223,9 +353,9 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        public void NavigateToNextStep(string title, string credentials)
+        public void NavigateToNextStep(string title, string credentials, bool save)
         {
-            NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, title, credentials);
+            NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, title, credentials, save);
         }
     }
 }

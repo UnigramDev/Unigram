@@ -736,7 +736,7 @@ namespace Unigram.Views
         }
     }
 
-    public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading
+    public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
     {
         public StorageFileQueryResult Query { get; private set; }
 
@@ -767,9 +767,9 @@ namespace Unigram.Views
             });
         }
 
-        public override async Task<IEnumerable<StoragePhoto>> LoadDataAsync()
+        public override async Task<IEnumerable<StorageMedia>> LoadDataAsync()
         {
-            var items = new List<StoragePhoto>();
+            var items = new List<StorageMedia>();
             uint resultCount = 0;
             var result = await Query.GetFilesAsync(StartIndex, 10);
             StartIndex += (uint)result.Count;
@@ -778,7 +778,14 @@ namespace Unigram.Views
 
             foreach (var file in result)
             {
-                items.Add(new StoragePhoto(file));
+                if (Path.GetExtension(file.Name).Equals(".mp4"))
+                {
+                    items.Add(new StorageVideo(file));
+                }
+                else
+                {
+                    items.Add(new StoragePhoto(file));
+                }
             }
 
             return items;
