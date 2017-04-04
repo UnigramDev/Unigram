@@ -27,21 +27,11 @@
                   Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
-                    <Button Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Click="ArchivedStickers_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Archived stickers" VerticalAlignment="Center"/>
-                            <ContentControl Content="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
-                                <ContentControl.ContentTransitions>
-                                    <TransitionCollection>
-                                        <EntranceThemeTransition/>
-                                    </TransitionCollection>
-                                </ContentControl.ContentTransitions>
-                                <ContentControl.Clip>
-                                    <RectangleGeometry Rect="0,0,200,32"/>
-                                </ContentControl.Clip>
-                            </ContentControl>
-                        </StackPanel>
-                    </Button>
+                    <controls:BadgeButton
+                        Content="Archived stickers"
+                        Click="ArchivedStickers_Click"
+                        Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>
