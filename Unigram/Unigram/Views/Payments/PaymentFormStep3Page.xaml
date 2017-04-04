@@ -54,7 +54,7 @@
                     <TextBlock Text="Payment card" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                     <payments:CardTextBox x:Name="FieldCard"
                                           Text="{x:Bind ViewModel.Card, Mode=TwoWay}"
-                                          PlaceholderText="Cart Number"
+                                          PlaceholderText="Card Number"
                                           InputScope="Number"/>
                     <payments:DateTextBox x:Name="FieldDate"
                                           Text="{x:Bind ViewModel.Date, Mode=TwoWay}"
