@@ -6,6 +6,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Converters;
 using Unigram.Strings;
+using Unigram.ViewModels;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -21,12 +22,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class HistoryCallMessageControl : PhoneCallMessageBubbleBase
+    public sealed partial class HistoryCallMessageControl : HistoryCallMessageControlBase
     {
         public HistoryCallMessageControl()
         {
             InitializeComponent();
-            _layoutRoot = LayoutRoot;
 
             DataContextChanged += (s, args) =>
             {
@@ -37,53 +37,13 @@ namespace Unigram.Controls.Messages
             };
         }
 
-        private ImageSource ConvertFromPhoto(TLMessageService message)
+        private string ConvertCount(TLCallGroup call, int count)
         {
-            if (message.IsOut)
+            VisualStateManager.GoToState(LayoutRoot, call.Failed ? "Missed" : "Default", false);
+
+            if (count > 1)
             {
-                var user = InMemoryCacheService.Current.GetUser(message.ToId.Id);
-                if (user != null)
-                {
-                    return DefaultPhotoConverter.Convert(user, true) as ImageSource;
-                }
-            }
-
-            return DefaultPhotoConverter.Convert(message.From, true) as ImageSource;
-        }
-
-        private string ConvertFromName(TLMessageService message)
-        {
-            if (message.IsOut)
-            {
-                var user = InMemoryCacheService.Current.GetUser(message.ToId.Id);
-                if (user != null)
-                {
-                    return user.DisplayName;
-                }
-            }
-
-            return message.From?.DisplayName;
-        }
-
-        private string ConvertTitle(TLMessageService message)
-        {
-            if (message.Action is TLMessageActionPhoneCall phoneCallAction)
-            {
-                var loader = ResourceLoader.GetForCurrentView("Resources");
-                var text = string.Empty;
-
-                var outgoing = message.IsOut;
-                var missed = phoneCallAction.Reason is TLPhoneCallDiscardReasonMissed || phoneCallAction.Reason is TLPhoneCallDiscardReasonBusy;
-
-                var type = loader.GetString(missed ? (outgoing ? "CallCanceled" : "CallMissed") : (outgoing ? "CallOutgoing" : "CallIncoming"));
-                var duration = string.Empty;
-
-                if (!missed)
-                {
-                    duration = base.Convert.CallDuration(phoneCallAction.Duration ?? 0);
-                }
-
-                return missed ? type : string.Format(Unigram.Strings.AppResources.CallTimeFormat, type, duration);
+                return $"({count})";
             }
 
             return string.Empty;

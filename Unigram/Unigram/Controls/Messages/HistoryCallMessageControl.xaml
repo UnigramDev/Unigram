@@ -1,4 +1,4 @@
-﻿<local:PhoneCallMessageBubbleBase
+﻿<local:HistoryCallMessageControlBase
     x:Class="Unigram.Controls.Messages.HistoryCallMessageControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -18,7 +18,7 @@
                 <VisualStateGroup>
                     <VisualState x:Name="Missed">
                         <VisualState.Setters>
-                            <Setter Target="ReasonGlyph.Foreground" Value="{ThemeResource MessageCallMissedForegroundBrush}"/>
+                            <Setter Target="DisplayLabel.Foreground" Value="{ThemeResource MessageCallMissedForegroundBrush}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Default"/>
@@ -35,7 +35,7 @@
             </Grid.RowDefinitions>
             <Ellipse Width="36" Height="36" VerticalAlignment="Top" Grid.RowSpan="2">
                 <Ellipse.Fill>
-                    <ImageBrush ImageSource="{x:Bind ViewModel.Parent.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                    <ImageBrush ImageSource="{x:Bind ViewModel.Peer.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
                 </Ellipse.Fill>
             </Ellipse>
 
@@ -44,30 +44,32 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{x:Bind ViewModel.Parent.DisplayName}"
-                           Foreground="{ThemeResource MessageForegroundBrush}"
-                           Style="{StaticResource BaseTextBlockStyle}"
+                <TextBlock Foreground="{ThemeResource MessageForegroundBrush}"
+                           Style="{StaticResource BodyTextBlockStyle}"
                            TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis"/>
-                <TextBlock Text="{x:Bind Convert.Date(ViewModel.Date)}"
+                           TextTrimming="CharacterEllipsis">
+                    <Run x:Name="DisplayLabel" Text="{x:Bind ViewModel.Peer.DisplayName}"/>
+                    <Run Text="{x:Bind ConvertCount(ViewModel, ViewModel.Items.Count)}"/>
+                </TextBlock>
+                <TextBlock Text="{x:Bind Convert.Date(ViewModel.Message.Date)}"
                            Style="{ThemeResource CaptionTextBlockStyle}"
                            Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
                            VerticalAlignment="Bottom"
                            Margin="0,0,0,2"
-                           Grid.Column="1"/>
+                           Grid.Column="1">
+                    <ToolTipService.ToolTip>
+                        <ToolTip Opened="ToolTip_Opened"/>
+                    </ToolTipService.ToolTip>
+                </TextBlock>
             </Grid>
 
-            <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+            <TextBlock Text="{x:Bind ViewModel.DisplayType}"
+                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                        Style="{StaticResource CaptionTextBlockStyle}"
                        Margin="12,0,0,0"
                        Grid.Column="1"
-                       Grid.Row="1">
-                <Run x:Name="ReasonGlyph" Text="{x:Bind ConvertReason(ViewModel)}" FontSize="10" Foreground="{ThemeResource MessageCallForegroundBrush}" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-                <Run Text="{x:Bind ConvertTitle(ViewModel)}"/>
-            </TextBlock>
-
-            <!--<controls:GlyphButton Glyph="&#xE13A;" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,-12,0" Grid.Column="2" Grid.RowSpan="2"/>-->
+                       Grid.Row="1"/>
         </Grid>
     </UserControl>
 
-</local:PhoneCallMessageBubbleBase>
+</local:HistoryCallMessageControlBase>

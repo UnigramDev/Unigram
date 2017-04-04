@@ -210,7 +210,7 @@ namespace Unigram.Converters
                     format = AppResources.CallSeconds_3_10;
                 }
 
-                return string.Format(format, seconds);
+                return string.Format(format, number);
             }
             else
             {
@@ -229,7 +229,7 @@ namespace Unigram.Converters
                     format = AppResources.CallMinutes_3_10;
                 }
 
-                return string.Format(format, seconds);
+                return string.Format(format, number);
             }
         }
 
@@ -252,7 +252,7 @@ namespace Unigram.Converters
                     format = AppResources.CallShortSeconds_3_10;
                 }
 
-                return string.Format(format, seconds);
+                return string.Format(format, number);
             }
             else
             {
@@ -271,7 +271,7 @@ namespace Unigram.Converters
                     format = AppResources.CallShortMinutes_3_10;
                 }
 
-                return string.Format(format, seconds);
+                return string.Format(format, number);
             }
         }
 

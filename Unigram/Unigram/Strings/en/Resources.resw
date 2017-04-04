@@ -704,4 +704,16 @@
   <data name="MessageActionPinInvoice" xml:space="preserve">
     <value>{0} pinned an invoice</value>
   </data>
+  <data name="CallCanceledShort" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="CallIncomingShort" xml:space="preserve">
+    <value>Incoming</value>
+  </data>
+  <data name="CallMissedShort" xml:space="preserve">
+    <value>Missed</value>
+  </data>
+  <data name="CallOutgoingShort" xml:space="preserve">
+    <value>Outgoing</value>
+  </data>
 </root>
