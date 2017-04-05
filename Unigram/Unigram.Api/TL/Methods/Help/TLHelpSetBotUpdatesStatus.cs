@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Help
 {
 	/// <summary>
 	/// RCP method help.setBotUpdatesStatus.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
 	/// </summary>
 	public partial class TLHelpSetBotUpdatesStatus : TLObject
 	{

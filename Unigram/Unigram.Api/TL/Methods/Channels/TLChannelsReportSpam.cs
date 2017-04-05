@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Channels
 {
 	/// <summary>
 	/// RCP method channels.reportSpam.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
 	/// </summary>
 	public partial class TLChannelsReportSpam : TLObject
 	{

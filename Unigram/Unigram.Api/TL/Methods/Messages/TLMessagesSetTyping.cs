@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Messages
 {
 	/// <summary>
 	/// RCP method messages.setTyping.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
 	/// </summary>
 	public partial class TLMessagesSetTyping : TLObject
 	{

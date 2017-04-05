@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Phone
 {
 	/// <summary>
 	/// RCP method phone.receivedCall.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
 	/// </summary>
 	public partial class TLPhoneReceivedCall : TLObject
 	{

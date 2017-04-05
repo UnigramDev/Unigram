@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Contest
 {
 	/// <summary>
 	/// RCP method contest.saveDeveloperInfo.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
 	/// </summary>
 	public partial class TLContestSaveDeveloperInfo : TLObject
 	{

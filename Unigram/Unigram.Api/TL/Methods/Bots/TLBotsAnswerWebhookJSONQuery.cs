@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Bots
 {
 	/// <summary>
 	/// RCP method bots.answerWebhookJSONQuery.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
 	/// </summary>
 	public partial class TLBotsAnswerWebhookJSONQuery : TLObject
 	{

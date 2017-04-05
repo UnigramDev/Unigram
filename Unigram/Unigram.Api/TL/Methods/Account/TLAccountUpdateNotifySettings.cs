@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Account
 {
 	/// <summary>
 	/// RCP method account.updateNotifySettings.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
 	/// </summary>
 	public partial class TLAccountUpdateNotifySettings : TLObject
 	{
