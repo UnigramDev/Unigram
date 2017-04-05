@@ -39,7 +39,7 @@
             <StackPanel>
                 <StackPanel>
                     <TextBlock Text="Payment card" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                    <TextBox Text="{x:Bind ViewModel.PaymentForm.SavedCredentials.Title}" 
+                    <TextBox Text="{x:Bind ViewModel.CredentialsTitle}" 
                              IsReadOnly="True"/>
                     <PasswordBox x:Name="FieldPassword"
                                  Password="{x:Bind ViewModel.Password, Mode=TwoWay}" 

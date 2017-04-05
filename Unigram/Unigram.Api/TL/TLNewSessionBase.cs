@@ -5,8 +5,5 @@ namespace Telegram.Api.TL
 {
 	public abstract partial class TLNewSessionBase : TLObject
 	{
-		public Int64 FirstMsgId { get; set; }
-		public Int64 UniqueId { get; set; }
-		public Int64 ServerSalt { get; set; }
 	}
 }

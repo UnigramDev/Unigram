@@ -512,9 +512,6 @@
     <Compile Include="TL\TLBadMsgNotification.cs" />
     <Compile Include="TL\TLBadMsgNotificationBase.cs" />
     <Compile Include="TL\TLBadServerSalt.cs" />
-    <Compile Include="TL\TLBoolBase.cs" />
-    <Compile Include="TL\TLBoolFalse.cs" />
-    <Compile Include="TL\TLBoolTrue.cs" />
     <Compile Include="TL\TLBotCommand.cs" />
     <Compile Include="TL\TLBotInfo.cs" />
     <Compile Include="TL\TLBotInlineMediaResult.cs" />
@@ -1060,7 +1057,6 @@
     <Compile Include="TL\TLTopPeerCategoryCorrespondents.cs" />
     <Compile Include="TL\TLTopPeerCategoryGroups.cs" />
     <Compile Include="TL\TLTopPeerCategoryPeers.cs" />
-    <Compile Include="TL\TLTrue.cs" />
     <Compile Include="TL\TLType.cs" />
     <Compile Include="TL\TLUpdateBase.cs" />
     <Compile Include="TL\TLUpdateBotCallbackQuery.cs" />

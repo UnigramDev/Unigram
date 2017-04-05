@@ -41,8 +41,13 @@ namespace Unigram.ViewModels.Payments
                     PaymentForm = tuple.Item2;
                     Info = tuple.Item3;
                     Shipping = tuple.Item5;
-                    CredentialsTitle = string.IsNullOrEmpty(tuple.Item7) ? _paymentForm.SavedCredentials.Title : tuple.Item6;
+                    CredentialsTitle = string.IsNullOrEmpty(tuple.Item7) ? null : tuple.Item7;
                     Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
+
+                    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard && _credentialsTitle == null)
+                    {
+                        CredentialsTitle = savedCard.Title;
+                    }
 
                     var amount = 0L;
                     foreach (var price in _paymentForm.Invoice.Prices)
@@ -147,9 +152,9 @@ namespace Unigram.ViewModels.Payments
             IsLoading = true;
 
             TLInputPaymentCredentialsBase credentials;
-            if (string.IsNullOrEmpty(_credentials))
+            if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
             {
-                credentials = new TLInputPaymentCredentialsSaved { Id = _paymentForm.SavedCredentials.Id, TmpPassword = ApplicationSettings.Current.TmpPassword.TmpPassword };
+                credentials = new TLInputPaymentCredentialsSaved { Id = savedCard.Id, TmpPassword = ApplicationSettings.Current.TmpPassword.TmpPassword };
             }
             else
             {

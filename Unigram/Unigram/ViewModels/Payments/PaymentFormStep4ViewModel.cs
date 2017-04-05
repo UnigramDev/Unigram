@@ -43,6 +43,11 @@ namespace Unigram.ViewModels.Payments
                     // TODO: real hint
                     PasswordHint = "Password";
 
+                    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
+                    {
+                        CredentialsTitle = savedCard.Title;
+                    }
+
                     _info = tuple.Item3;
                     _requestedInfo = tuple.Item4;
                     _shipping = tuple.Item5;
@@ -50,6 +55,19 @@ namespace Unigram.ViewModels.Payments
             }
 
             return Task.CompletedTask;
+        }
+
+        private string _credentialsTitle;
+        public string CredentialsTitle
+        {
+            get
+            {
+                return _credentialsTitle;
+            }
+            set
+            {
+                Set(ref _credentialsTitle, value);
+            }
         }
 
         private string _passwordHint;

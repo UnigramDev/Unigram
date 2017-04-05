@@ -184,6 +184,8 @@ namespace Unigram.Controls.Messages
                                     }
 
                                     return SetDocumentTemplate(forwardMessage, "forward");
+                                case TLType.MessageMediaUnsupported:
+                                    return SetUnsupportedMediaTemplate(forwardMessage, "forward");
                             }
                         }
                     }
@@ -242,6 +244,8 @@ namespace Unigram.Controls.Messages
                                 }
 
                                 return SetDocumentTemplate(editMessage, "Edit message");
+                            case TLType.MessageMediaUnsupported:
+                                return SetUnsupportedMediaTemplate(editMessage, "Edit message");
                         }
                     }
                 }
@@ -310,6 +314,8 @@ namespace Unigram.Controls.Messages
                             }
 
                             return SetDocumentTemplate(message, Title);
+                        case TLType.MessageMediaUnsupported:
+                            return SetUnsupportedMediaTemplate(message, Title);
                     }
                 }
             }
@@ -758,6 +764,20 @@ namespace Unigram.Controls.Messages
             TitleLabel.Text = string.Empty;
             ServiceLabel.Text = message is TLMessageEmpty ? "Deleted message" : string.Empty;
             MessageLabel.Text = string.Empty;
+            return true;
+        }
+
+        private bool SetUnsupportedMediaTemplate(TLMessage message, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = "Unsupported media";
+            MessageLabel.Text = string.Empty;
+
             return true;
         }
 
