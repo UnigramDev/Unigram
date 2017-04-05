@@ -475,6 +475,16 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="UnsupportedMediaTemplate">
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}">
+            <Run Text="This message is not supported on your version of Unigram. Update the app to view:"/>
+            <LineBreak/>
+            <Hyperlink Click="Unsupported_Click">
+                <Run Text="@unigramchannel"/>
+            </Hyperlink>
+        </TextBlock>
+    </DataTemplate>
+    
     <DataTemplate x:Key="MediaEmptyTemplate"/>
 
 
@@ -496,6 +506,7 @@
                                      WebPagePhotoTemplate="{StaticResource WebPagePhotoMediaTemplate}"
                                      WebPageSmallPhotoTemplate="{StaticResource WebPageSmallPhotoMediaTemplate}"
                                      InvoiceTemplate="{StaticResource InvoiceMediaTemplate}"
-                                     InvoicePhotoTemplate="{StaticResource InvoicePhotoMediaTemplate}"/>
+                                     InvoicePhotoTemplate="{StaticResource InvoicePhotoMediaTemplate}"
+                                     UnsupportedTemplate="{StaticResource UnsupportedMediaTemplate}"/>
 
 </ResourceDictionary>

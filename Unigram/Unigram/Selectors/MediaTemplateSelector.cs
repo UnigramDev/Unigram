@@ -137,8 +137,12 @@ namespace Unigram.Selectors
                 }
                 return WebPageTemplate;
             }
+            else if (item is TLMessageMediaUnsupported)
+            {
+                return UnsupportedTemplate;
+            }
 
-            return UnsupportedTemplate;
+            return null;
         }
 
         public static bool IsWebPagePhotoTemplate(TLWebPage webPage)
