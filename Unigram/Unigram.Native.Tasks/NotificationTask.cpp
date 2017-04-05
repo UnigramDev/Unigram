@@ -64,7 +64,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 
 		auto caption = GetCaption(loc_args, loc_key);
 		auto message = GetMessage(loc_args, loc_key);
-		auto sound = data->GetNamedString("sound", "Default");
+		auto sound = data->GetNamedString("sound", "silent");
 		auto launch = GetLaunch(custom, loc_key);
 		auto group = GetGroup(custom);
 		auto picture = GetPicture(custom, group);
@@ -375,6 +375,12 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 		actions += L"' hint-inputId='QuickMessage' content='Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
 	}
 
+	std::wstring audio = L"";
+	if (sound->Equals("silent"))
+	{
+		audio = L"<audio silent='true'/>";
+	}
+
 	std::wstring xml = L"<toast launch='";
 	xml += launch->Data();
 	xml += L"' displaytimestamp='";
@@ -395,6 +401,7 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	//xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
 	xml += L"]]></text></binding></visual>";
 	xml += actions;
+	xml += audio;
 	xml += L"</toast>";
 
 	auto notifier = ToastNotificationManager::CreateToastNotifier();

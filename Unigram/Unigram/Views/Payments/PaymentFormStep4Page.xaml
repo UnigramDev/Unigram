@@ -46,7 +46,7 @@
                                  PlaceholderText="{x:Bind ViewModel.PasswordHint}"/>
                     <TextBlock Margin="12,4,12,24" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
                         <Run Text="Your card"/>
-                        <Run Text="{x:Bind ViewModel.PaymentForm.SavedCredentials.Title}"/>
+                        <Run Text="{x:Bind ViewModel.CredentialsTitle}"/>
                         <Run Text="is on file. To pay with this card please enter your 2-Step-Verification password."/>
                     </TextBlock>
                 </StackPanel>
