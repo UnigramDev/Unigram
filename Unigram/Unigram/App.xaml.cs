@@ -78,6 +78,12 @@ namespace Unigram
             m_mediaExtensionManager = new MediaExtensionManager();
             m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
 
+            if (SettingsHelper.SwitchGuid != null)
+            {
+                SettingsHelper.SessionGuid = SettingsHelper.SwitchGuid;
+                SettingsHelper.SwitchGuid = null;
+            }
+
             FileUtils.CreateTemporaryFolder();
 
             UnhandledException += async (s, args) =>

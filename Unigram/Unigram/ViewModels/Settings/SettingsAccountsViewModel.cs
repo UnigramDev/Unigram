@@ -62,14 +62,17 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand NewAccountCommand => new RelayCommand(NewAccountExecute);
         private void NewAccountExecute()
         {
-            App.Current.NavigationService.Navigate(typeof(SwitchAccountPage));
+            SettingsHelper.SwitchGuid = Guid.NewGuid().ToString();
+            SettingsHelper.IsAuthorized = false;
+            App.Current.Exit();
         }
 
         private void SwitchAccount()
         {
             if (_selectedItem != SettingsHelper.SessionGuid)
             {
-                App.Current.NavigationService.Navigate(typeof(SwitchAccountPage), _selectedItem);
+                SettingsHelper.SwitchGuid = _selectedItem;
+                App.Current.Exit();
             }
         }
     }

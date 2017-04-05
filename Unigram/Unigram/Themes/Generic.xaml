@@ -3,6 +3,74 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls">
 
+    <Style TargetType="local:ImageCropper">
+        <Setter Property="Padding" Value="48" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ImageCropper">
+                    <Grid x:Name="LayoutRoot" Margin="{TemplateBinding Padding}">
+                        <Grid.Resources>
+                            <Style x:Key="CircularThumbStyle" TargetType="local:ImageCropperThumb">
+                                <Setter Property="Background" Value="White" />
+                                <Setter Property="BorderBrush" Value="Black" />
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="local:ImageCropperThumb">
+                                            <Grid Background="Transparent">
+                                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="{TemplateBinding BorderThickness}" />
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                            <Style x:Key="SideThumbStyle" TargetType="local:ImageCropperThumb">
+                                <Setter Property="Background" Value="White" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="local:ImageCropperThumb">
+                                            <Grid Background="Transparent" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                            <Style x:Key="HorizontalSideThumbStyle" BasedOn="{StaticResource SideThumbStyle}" TargetType="local:ImageCropperThumb">
+                                <Setter Property="Height" Value="20" />
+                                <Setter Property="Padding" Value="0,9" />
+                            </Style>
+                            <Style x:Key="VerticalSideThumbStyle" BasedOn="{StaticResource SideThumbStyle}" TargetType="local:ImageCropperThumb">
+                                <Setter Property="Width" Value="20" />
+                                <Setter Property="Padding" Value="9,0" />
+                            </Style>
+                        </Grid.Resources>
+
+                        <Canvas>
+                            <Image x:Name="ImageThumb" Stretch="None" Source="{TemplateBinding Source}" RenderTransformOrigin="0.5,0.5" ManipulationMode="Rotate,Scale,TranslateX,TranslateY">
+                                <Image.RenderTransform>
+                                    <CompositeTransform x:Name="ImageThumbTransform" />
+                                </Image.RenderTransform>
+                            </Image>
+
+                            <Grid x:Name="ThumbsContainer">
+                                <Rectangle Stroke="White" StrokeThickness="2" Margin="-2" />
+
+                                <local:ImageCropperThumb x:Name="LeftThumb" Style="{StaticResource VerticalSideThumbStyle}" Margin="-11,-11,-10,-11" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
+                                <local:ImageCropperThumb x:Name="TopThumb" Style="{StaticResource HorizontalSideThumbStyle}" Margin="-11,-11,-11,-10" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+                                <local:ImageCropperThumb x:Name="RightThumb" Style="{StaticResource VerticalSideThumbStyle}" Margin="-10,-11,-11,-11" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
+                                <local:ImageCropperThumb x:Name="BottomThumb" Style="{StaticResource HorizontalSideThumbStyle}" Margin="-11,-10,-11,-11" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+
+                                <local:ImageCropperThumb x:Name="TopLeftThumb" Style="{StaticResource CircularThumbStyle}" Margin="-11,-11,-10,-10" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                                <local:ImageCropperThumb x:Name="TopRightThumb" Style="{StaticResource CircularThumbStyle}" Margin="-10,-11,-11,-10" HorizontalAlignment="Right" VerticalAlignment="Top" />
+                                <local:ImageCropperThumb x:Name="BottomLeftThumb" Style="{StaticResource CircularThumbStyle}" Margin="-11,-10,-10,-11" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                <local:ImageCropperThumb x:Name="BottomRightThumb" Style="{StaticResource CircularThumbStyle}" Margin="-10,-10,-11,-11" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+                            </Grid>
+                        </Canvas>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:ButtonPageHeader">
         <Setter Property="Background" Value="{ThemeResource TelegramBackgroundTitlebarBrush}"/>
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>

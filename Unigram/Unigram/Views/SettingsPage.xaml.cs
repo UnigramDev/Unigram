@@ -14,6 +14,8 @@ using Windows.Storage;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.Foundation.Collections;
+using Windows.Storage.Pickers;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views
 {
@@ -127,29 +129,57 @@ namespace Unigram.Views
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
         {
-            // Source: https://gist.github.com/FrayxRulez/c2f1bbfa996ad5751b87
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
 
-            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("Cropped.jpg", CreationCollisionOption.ReplaceExisting);
-            var token = SharedStorageAccessManager.AddFile(file);
-
-            var options = new LauncherOptions();
-            options.TargetApplicationPackageFamilyName = "Microsoft.Windows.Photos_8wekyb3d8bbwe";
-
-            var parameters = new ValueSet();
-            parameters.Add("CropWidthPixels", 640);
-            parameters.Add("CropHeightPixels", 640);
-            parameters.Add("EllipticalCrop", true);
-            parameters.Add("ShowCamera", true);
-            parameters.Add("DestinationToken", token);
-
-            var result = await Launcher.LaunchUriForResultsAsync(new Uri("microsoft.windows.photos.crop:"), options, parameters);
-            if (result.Status == LaunchUriStatus.Success && result.Result != null)
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
             {
-                if (result.Result.TryGetValue("Status", out object value) && (string)value != "ERROR")
+                var bitmap = new BitmapImage();
+                using (var stream = await file.OpenReadAsync())
                 {
-                    ViewModel.EditPhotoCommand.Execute(file);
+                    await bitmap.SetSourceAsync(stream);
+                }
+
+                var dialog = new EditYourPhotoView(bitmap);
+                var dialogResult = await dialog.ShowAsync();
+                if (dialogResult == ContentDialogBaseResult.OK)
+                {
+                    //foreach (var storage in dialog.Items)
+                    //{
+                    //    if (storage is StoragePhoto)
+                    //    {
+                    //        await SendPhotoAsync(storage.File, storage.Caption);
+                    //    }
+                    //}
                 }
             }
+
+            // Source: https://gist.github.com/FrayxRulez/c2f1bbfa996ad5751b87
+
+            //var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("Cropped.jpg", CreationCollisionOption.ReplaceExisting);
+            //var token = SharedStorageAccessManager.AddFile(file);
+
+            //var options = new LauncherOptions();
+            //options.TargetApplicationPackageFamilyName = "Microsoft.Windows.Photos_8wekyb3d8bbwe";
+
+            //var parameters = new ValueSet();
+            //parameters.Add("CropWidthPixels", 640);
+            //parameters.Add("CropHeightPixels", 640);
+            //parameters.Add("EllipticalCrop", true);
+            //parameters.Add("ShowCamera", true);
+            //parameters.Add("DestinationToken", token);
+
+            //var result = await Launcher.LaunchUriForResultsAsync(new Uri("microsoft.windows.photos.crop:"), options, parameters);
+            //if (result.Status == LaunchUriStatus.Success && result.Result != null)
+            //{
+            //    if (result.Result.TryGetValue("Status", out object value) && (string)value != "ERROR")
+            //    {
+            //        ViewModel.EditPhotoCommand.Execute(file);
+            //    }
+            //}
         }
     }
 
