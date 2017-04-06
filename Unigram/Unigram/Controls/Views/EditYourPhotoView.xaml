@@ -19,8 +19,8 @@
         <controls:ImageCropper x:Name="Cropper" x:FieldModifier="public" Proportions="Square"/>
 
         <CommandBar Grid.Row="1">
-            <AppBarButton Icon="Accept"/>
-            <AppBarButton Icon="Cancel"/>
+            <AppBarButton Click="Accept_Click" Icon="Accept"/>
+            <AppBarButton Click="Cancel_Click" Icon="Cancel"/>
         </CommandBar>
     </Grid>
 </controls:ContentDialogBase>

@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -43,13 +47,17 @@ namespace Unigram.Controls
     public sealed class ImageCropper : Control
     {
         #region fields
-        private static readonly DependencyProperty s_sourceProperty = DependencyProperty.Register("Source", typeof(ImageSource), typeof(ImageCropper), null);
         private static readonly DependencyProperty s_proportionsProperty = DependencyProperty.Register("Proportions", typeof(ImageCroppingProportions), typeof(ImageCropper),
             new PropertyMetadata(ImageCroppingProportions.Original, new PropertyChangedCallback(ProportionsProperty_Changed)));
         private static readonly DependencyProperty s_cropRectangleProperty = DependencyProperty.Register("CropRectangle", typeof(Rect), typeof(ImageCropper),
             new PropertyMetadata(default(Rect), new PropertyChangedCallback(CropRectangleProperty_Changed)));
         private static readonly DependencyProperty s_rotationAngleProperty = DependencyProperty.Register("RotationAngle", typeof(double), typeof(ImageCropper),
             new PropertyMetadata(0.0, new PropertyChangedCallback(RotationAngleProperty_Changed)));
+
+        private StorageFile m_imageSource;
+        private SoftwareBitmapSource m_imagePreview;
+
+        private bool m_loaded;
 
         private Grid m_layoutRoot;
         private Image m_imageThumb;
@@ -64,17 +72,6 @@ namespace Unigram.Controls
         #endregion
 
         #region properties
-        public static DependencyProperty SourceProperty
-        {
-            get { return s_sourceProperty; }
-        }
-
-        public ImageSource Source
-        {
-            get { return (ImageSource)GetValue(s_sourceProperty); }
-            set { SetValue(s_sourceProperty, value); }
-        }
-
         public static DependencyProperty ProportionsProperty
         {
             get { return s_proportionsProperty; }
@@ -115,7 +112,8 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(ImageCropper);
 
             m_pointerPositions = new Dictionary<uint, Point>();
-            SizeChanged += ImageCropper_SizeChanged;
+
+            SizeChanged += OnSizeChanged;
         }
         #endregion
 
@@ -124,7 +122,7 @@ namespace Unigram.Controls
         {
             m_layoutRoot = (Grid)GetTemplateChild("LayoutRoot");
             m_imageThumb = (Image)GetTemplateChild("ImageThumb");
-            m_imageThumb.ImageOpened += ImageThumb_ImageOpened;
+            //m_imageThumb.ImageOpened += ImageThumb_ImageOpened;
             m_imageThumb.ManipulationDelta += ImageThumb_ManipulationDelta;
 
             m_thumbsContainer = (Grid)GetTemplateChild("ThumbsContainer");
@@ -208,15 +206,6 @@ namespace Unigram.Controls
                 bottomRightThumb.PointerPressed += Thumb_PointerPressed;
                 bottomRightThumb.PointerReleased += Thumb_PointerReleased;
                 bottomRightThumb.PointerMoved += BottomRightThumb_PointerMoved;
-            }
-
-            if (Source != null)
-            {
-                var size = GetImageSourceSize(Source);
-                if (size != Size.Empty)
-                {
-                    ImageThumb_ImageOpened(null, null);
-                }
             }
         }
 
@@ -712,7 +701,7 @@ namespace Unigram.Controls
             }
         }
 
-        private void ImageCropper_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
             Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
@@ -721,9 +710,63 @@ namespace Unigram.Controls
             SetCropRectangle(CropRectangle, false);
         }
 
-        private void ImageThumb_ImageOpened(object sender, RoutedEventArgs e)
+        public async void SetSource(StorageFile file)
         {
-            m_imageSize = GetImageSourceSize(Source);
+            await SetSourceAsync(file);
+        }
+
+        public async Task<StorageFile> CropAsync()
+        {
+            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
+
+            using (var fileStream = await m_imageSource.OpenAsync(FileAccessMode.Read))
+            using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                var decoder = await BitmapDecoder.CreateAsync(fileStream);
+                var bounds = new BitmapBounds();
+                bounds.X = (uint)CropRectangle.X;
+                bounds.Y = (uint)CropRectangle.Y;
+                bounds.Width = (uint)CropRectangle.Width;
+                bounds.Height = (uint)CropRectangle.Height;
+
+                var transform = new BitmapTransform();
+                transform.Bounds = bounds;
+
+                var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+                var propertySet = new BitmapPropertySet();
+                var qualityValue = new BitmapTypedValue(0.77, Windows.Foundation.PropertyType.Single);
+                propertySet.Add("ImageQuality", qualityValue);
+
+                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
+                encoder.SetSoftwareBitmap(pixelData);
+                await encoder.FlushAsync();
+            }
+
+            return file;
+        }
+
+        public async Task SetSourceAsync(StorageFile file)
+        {
+            var props = await file.Properties.GetImagePropertiesAsync();
+
+            m_imageSource = file;
+            m_imageSize = new Size(props.Width, props.Height);
+
+            SoftwareBitmapSource source;
+            using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
+            {
+                var decoder = await BitmapDecoder.CreateAsync(fileStream);
+                //var transform = ComputeScalingTransformForSourceImage(decoder);
+                var transform = new BitmapTransform();
+
+                var software = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+                source = new SoftwareBitmapSource();
+                await source.SetBitmapAsync(software);
+            }
+
+            m_imagePreview = source;
+            m_imageThumb.Source = m_imagePreview;
 
             Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
             Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);

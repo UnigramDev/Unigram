@@ -137,16 +137,12 @@ namespace Unigram.Views
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var bitmap = new BitmapImage();
-                using (var stream = await file.OpenReadAsync())
-                {
-                    await bitmap.SetSourceAsync(stream);
-                }
-
-                var dialog = new EditYourPhotoView(bitmap);
+                var dialog = new EditYourPhotoView(file);
                 var dialogResult = await dialog.ShowAsync();
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
+                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
+
                     //foreach (var storage in dialog.Items)
                     //{
                     //    if (storage is StoragePhoto)

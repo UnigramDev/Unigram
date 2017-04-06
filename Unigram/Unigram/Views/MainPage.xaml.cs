@@ -131,7 +131,7 @@ namespace Unigram.Views
                 }
             }
 
-            //var config = ViewModel.CacheService.GetConfig();
+            var config = ViewModel.CacheService.GetConfig();
             //if (config != null)
             //{
             //    if (config.IsPhoneCallsEnabled)

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -20,11 +21,27 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class EditYourPhotoView : ContentDialogBase
     {
-        public EditYourPhotoView(BitmapImage bitmap)
+        public StorageFile Result { get; private set; }
+
+        public EditYourPhotoView(StorageFile file)
         {
             InitializeComponent();
 
-            Cropper.Source = bitmap;
+            Loaded += async (s, args) =>
+            {
+                await Cropper.SetSourceAsync(file);
+            };
+        }
+
+        private async void Accept_Click(object sender, RoutedEventArgs e)
+        {
+            Result = await Cropper.CropAsync();
+            Hide(ContentDialogBaseResult.OK);
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            Hide(ContentDialogBaseResult.Cancel);
         }
     }
 }
