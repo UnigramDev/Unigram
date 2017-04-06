@@ -750,23 +750,22 @@ namespace Unigram.Controls
         {
             var props = await file.Properties.GetImagePropertiesAsync();
 
-            m_imageSource = file;
-            m_imageSize = new Size(props.Width, props.Height);
 
             SoftwareBitmapSource source;
             using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                //var transform = ComputeScalingTransformForSourceImage(decoder);
-                var transform = new BitmapTransform();
+                var transform = ComputeScalingTransformForSourceImage(decoder);
 
                 var software = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
                 source = new SoftwareBitmapSource();
                 await source.SetBitmapAsync(software);
-            }
 
-            m_imagePreview = source;
-            m_imageThumb.Source = m_imagePreview;
+                m_imagePreview = source;
+                m_imageSource = file;
+                m_imageSize = new Size(software.PixelWidth, software.PixelHeight);
+                m_imageThumb.Source = m_imagePreview;
+            }
 
             Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
             Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
@@ -783,6 +782,21 @@ namespace Unigram.Controls
                 var cropWidth = m_imageSize.Height * cropScale;
                 SetCropRectangle(new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height), false);
             }
+        }
+
+        private BitmapTransform ComputeScalingTransformForSourceImage(BitmapDecoder sourceDecoder)
+        {
+            var transform = new BitmapTransform();
+
+            if (sourceDecoder.PixelHeight > 1280)
+            {
+                float scalingFactor = (float)1280 / (float)sourceDecoder.PixelHeight;
+
+                transform.ScaledWidth = (uint)Math.Floor(sourceDecoder.PixelWidth * scalingFactor);
+                transform.ScaledHeight = (uint)Math.Floor(sourceDecoder.PixelHeight * scalingFactor);
+            }
+
+            return transform;
         }
 
         private static void ProportionsProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)

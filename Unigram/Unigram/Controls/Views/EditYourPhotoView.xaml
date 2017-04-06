@@ -8,9 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     VerticalAlignment="Stretch"
-    HorizontalAlignment="Stretch">
+    HorizontalAlignment="Stretch"
+    RequestedTheme="Dark">
 
-    <Grid Background="Black" RequestedTheme="Dark">
+    <Grid Background="Black">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>

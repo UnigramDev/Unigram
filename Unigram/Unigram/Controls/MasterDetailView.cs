@@ -28,6 +28,7 @@ namespace Unigram.Controls
         private const string NarrowState = "NarrowState";
 
         public NavigationService NavigationService { get; private set; }
+        public Frame ParentFrame { get; private set; }
 
         public MasterDetailView()
         {
@@ -246,7 +247,7 @@ namespace Unigram.Controls
         }
 
         #region Initialize
-        public void Initialize(string key)
+        public void Initialize(string key, Frame parent)
         {
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId(key) as NavigationService;
             if (service == null)
@@ -263,11 +264,17 @@ namespace Unigram.Controls
                         DetailFrame.GoBack();
                         args.Handled = true;
                     }
+                    else if (ParentFrame.CanGoBack && ActualWidth > 0)
+                    {
+                        ParentFrame.GoBack();
+                        args.Handled = true;
+                    }
                 };
             }
 
             NavigationService = service;
             DetailFrame = NavigationService.Frame;
+            ParentFrame = parent;
         }
         #endregion
 

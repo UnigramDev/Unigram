@@ -90,7 +90,7 @@ namespace Unigram.Views
 
             if (MasterDetail.NavigationService == null)
             {
-                MasterDetail.Initialize("Main");
+                MasterDetail.Initialize("Main", Frame);
                 MasterDetail.NavigationService.Frame.Navigated += OnNavigated;
             }
 

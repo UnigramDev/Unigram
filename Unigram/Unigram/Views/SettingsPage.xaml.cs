@@ -86,7 +86,7 @@ namespace Unigram.Views
 
             if (MasterDetail.NavigationService == null)
             {
-                MasterDetail.Initialize("Settings");
+                MasterDetail.Initialize("Settings", Frame);
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
