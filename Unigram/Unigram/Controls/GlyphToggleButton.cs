@@ -42,13 +42,13 @@ namespace Unigram.Controls
 
         #endregion
 
-        protected override void OnToggle()
-        {
-            var binding = GetBindingExpression(IsCheckedProperty);
-            if (binding != null && binding.ParentBinding.Mode == BindingMode.TwoWay)
-            {
-                base.OnToggle();
-            }
-        }
+        //protected override void OnToggle()
+        //{
+        //    var binding = GetBindingExpression(IsCheckedProperty);
+        //    if (binding != null && binding.ParentBinding.Mode == BindingMode.TwoWay)
+        //    {
+        //        base.OnToggle();
+        //    }
+        //}
     }
 }

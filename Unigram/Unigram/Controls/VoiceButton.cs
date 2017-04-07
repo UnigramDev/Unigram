@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
 {
-    public class VoiceButton : GlyphHyperlinkButton
+    public class VoiceButton : GlyphToggleButton
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 

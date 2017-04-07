@@ -1028,8 +1028,7 @@
 
                 <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="2">
                     <controls:VoiceButton x:Name="btnVoiceMessage"
-                                          AllowFocusOnInteraction="False"
-                                          Glyph="&#xE720;"/>
+                                          AllowFocusOnInteraction="False"/>
                 </Border>
 
                 <controls:GlyphButton x:Name="btnSendMessage"

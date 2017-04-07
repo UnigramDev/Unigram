@@ -987,7 +987,8 @@
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
-        <Setter Property="Glyph" Value="&#xE700;" />
+        <Setter Property="UncheckedGlyph" Value="&#xE720;" />
+        <Setter Property="CheckedGlyph" Value="&#xE116;" />
         <Setter Property="Height" Value="48" />
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
@@ -995,16 +996,16 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:VoiceButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Normal"/>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="UncheckedContentPresenter">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -1014,20 +1015,69 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
-                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
-                                             </ObjectAnimationUsingKeyFrames>-->
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#FFFFFF"/>
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="TopBar">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="UncheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="UncheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="UncheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="CheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="UncheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="CheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="CheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="UncheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="CheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="CheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CheckedDisabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="UncheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="CheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="CheckedContentPresenter">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -1038,12 +1088,20 @@
                         <Ellipse x:Name="TopBar" Fill="{ThemeResource TelegramBackgroundAccentBrush}" Width="68" Height="68" Margin="-10" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
 
                         <TextBlock
-                            x:Name="ContentPresenter"
+                            x:Name="CheckedContentPresenter"
                             Margin="{TemplateBinding Padding}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             AutomationProperties.AccessibilityView="Raw"
-                            Text="{TemplateBinding Glyph}"/>
+                            Text="{TemplateBinding CheckedGlyph}"
+                            Visibility="Collapsed"/>
+                        <TextBlock
+                            x:Name="UncheckedContentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw"
+                            Text="{TemplateBinding UncheckedGlyph}"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
