@@ -54,6 +54,8 @@ namespace Unigram.Controls
         private static readonly DependencyProperty s_rotationAngleProperty = DependencyProperty.Register("RotationAngle", typeof(double), typeof(ImageCropper),
             new PropertyMetadata(0.0, new PropertyChangedCallback(RotationAngleProperty_Changed)));
 
+        private static Size s_minimumSize = new Size(100, 100);
+
         private StorageFile m_imageSource;
         private SoftwareBitmapSource m_imagePreview;
 
@@ -63,7 +65,6 @@ namespace Unigram.Controls
         private Image m_imageThumb;
         private CompositeTransform m_imageThumbTransform;
         private Grid m_thumbsContainer;
-
         private Size m_imageSize;
         private Dictionary<uint, Point> m_pointerPositions;
         private Rect m_thumbsRectangle;
@@ -390,8 +391,6 @@ namespace Unigram.Controls
 
             return animation;
         }
-
-        static Size s_minimumSize = new Size(100, 100);
         #endregion
 
         #region event methods
@@ -443,8 +442,23 @@ namespace Unigram.Controls
 
         private void ImageThumb_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            m_imageRectangle.X = Clamp(m_imageRectangle.Left + e.Delta.Translation.X, m_thumbsRectangle.Right - m_imageRectangle.Width, m_thumbsRectangle.Left);
-            m_imageRectangle.Y = Clamp(m_imageRectangle.Top + e.Delta.Translation.Y, m_thumbsRectangle.Bottom - m_imageRectangle.Height, m_thumbsRectangle.Top);
+            if (e.Delta.Scale != 1.0)
+            {
+#warning TODO: fix minimum scale to avoid an image rectangle smaller than the crop rectangle
+
+                var width = m_imageRectangle.Width * e.Delta.Scale;
+                var height = m_imageRectangle.Height * e.Delta.Scale;
+
+                m_imageRectangle.X = Clamp(m_imageRectangle.Left + (m_imageRectangle.Width - width) / 2.0, m_thumbsRectangle.Right - m_imageRectangle.Width, m_thumbsRectangle.Left);
+                m_imageRectangle.Y = Clamp(m_imageRectangle.Top + (m_imageRectangle.Height - height) / 2.0, m_thumbsRectangle.Bottom - m_imageRectangle.Height, m_thumbsRectangle.Top);
+                m_imageRectangle.Width = width;
+                m_imageRectangle.Height = height;
+            }
+            else if (e.Delta.Translation.X != 0.0 || e.Delta.Translation.Y != 0.0)
+            {
+                m_imageRectangle.X = Clamp(m_imageRectangle.Left + e.Delta.Translation.X, m_thumbsRectangle.Right - m_imageRectangle.Width, m_thumbsRectangle.Left);
+                m_imageRectangle.Y = Clamp(m_imageRectangle.Top + e.Delta.Translation.Y, m_thumbsRectangle.Bottom - m_imageRectangle.Height, m_thumbsRectangle.Top);
+            }
 
             UpdateCropRectangle(false);
 
@@ -486,7 +500,14 @@ namespace Unigram.Controls
                     m_currentThumbsRectangle.Height = height;
                 }
 
-                UpdateThumbs(m_currentThumbsRectangle);
+                if (m_currentThumbsRectangle.Left < m_thumbsRectangle.Left || m_currentThumbsRectangle.Top < m_thumbsRectangle.Top)
+                {
+                    UpdateCropRectangle(false);
+                }
+                else
+                {
+                    UpdateThumbs(m_currentThumbsRectangle);
+                }
 
                 e.Handled = true;
             }
@@ -525,7 +546,14 @@ namespace Unigram.Controls
                     m_currentThumbsRectangle.Height = height;
                 }
 
-                UpdateThumbs(m_currentThumbsRectangle);
+                if (m_currentThumbsRectangle.Left < m_thumbsRectangle.Left || m_currentThumbsRectangle.Right > m_thumbsRectangle.Right)
+                {
+                    UpdateCropRectangle(false);
+                }
+                else
+                {
+                    UpdateThumbs(m_currentThumbsRectangle);
+                }
 
                 e.Handled = true;
             }
@@ -564,7 +592,14 @@ namespace Unigram.Controls
                     m_currentThumbsRectangle.Height = height;
                 }
 
-                UpdateThumbs(m_currentThumbsRectangle);
+                if (m_currentThumbsRectangle.Bottom > m_thumbsRectangle.Bottom || m_currentThumbsRectangle.Left < m_thumbsRectangle.Left)
+                {
+                    UpdateCropRectangle(false);
+                }
+                else
+                {
+                    UpdateThumbs(m_currentThumbsRectangle);
+                }
 
                 e.Handled = true;
             }
@@ -601,7 +636,14 @@ namespace Unigram.Controls
                     m_currentThumbsRectangle.Height = height;
                 }
 
-                UpdateThumbs(m_currentThumbsRectangle);
+                if (m_currentThumbsRectangle.Bottom > m_thumbsRectangle.Bottom || m_currentThumbsRectangle.Right > m_thumbsRectangle.Right)
+                {
+                    UpdateCropRectangle(false);
+                }
+                else
+                {
+                    UpdateThumbs(m_currentThumbsRectangle);
+                }
 
                 e.Handled = true;
             }
@@ -624,7 +666,14 @@ namespace Unigram.Controls
                 m_currentThumbsRectangle.Width = cropWidth;
                 m_currentThumbsRectangle.Height = cropWidth / proportionalCropScale;
 
-                UpdateThumbs(m_currentThumbsRectangle);
+                if (m_currentThumbsRectangle.Bottom > m_thumbsRectangle.Bottom)
+                {
+                    UpdateCropRectangle(false);
+                }
+                else
+                {
+                    UpdateThumbs(m_currentThumbsRectangle);
+                }
 
                 e.Handled = true;
             }
@@ -647,7 +696,14 @@ namespace Unigram.Controls
                 m_currentThumbsRectangle.Width = cropHeight * proportionalCropScale;
                 m_currentThumbsRectangle.Height = cropHeight;
 
-                UpdateThumbs(m_currentThumbsRectangle);
+                if (m_currentThumbsRectangle.Right > m_thumbsRectangle.Right)
+                {
+                    UpdateCropRectangle(false);
+                }
+                else
+                {
+                    UpdateThumbs(m_currentThumbsRectangle);
+                }
 
                 e.Handled = true;
             }
@@ -671,7 +727,14 @@ namespace Unigram.Controls
                 m_currentThumbsRectangle.Width = cropWidth;
                 m_currentThumbsRectangle.Height = cropWidth / proportionalCropScale;
 
-                UpdateThumbs(m_currentThumbsRectangle);
+                if (m_currentThumbsRectangle.Top < m_thumbsRectangle.Top)
+                {
+                    UpdateCropRectangle(false);
+                }
+                else
+                {
+                    UpdateThumbs(m_currentThumbsRectangle);
+                }
 
                 e.Handled = true;
             }
@@ -695,7 +758,14 @@ namespace Unigram.Controls
                 m_currentThumbsRectangle.Width = cropHeight * proportionalCropScale;
                 m_currentThumbsRectangle.Height = cropHeight;
 
-                UpdateThumbs(m_currentThumbsRectangle);
+                if (m_currentThumbsRectangle.Left < m_thumbsRectangle.Left)
+                {
+                    UpdateCropRectangle(false);
+                }
+                else
+                {
+                    UpdateThumbs(m_currentThumbsRectangle);
+                }
 
                 e.Handled = true;
             }
@@ -750,7 +820,6 @@ namespace Unigram.Controls
         {
             var props = await file.Properties.GetImagePropertiesAsync();
 
-
             SoftwareBitmapSource source;
             using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
             {
@@ -790,7 +859,7 @@ namespace Unigram.Controls
 
             if (sourceDecoder.PixelHeight > 1280)
             {
-                float scalingFactor = (float)1280 / (float)sourceDecoder.PixelHeight;
+                float scalingFactor = (float)1280.0 / (float)sourceDecoder.PixelHeight;
 
                 transform.ScaledWidth = (uint)Math.Floor(sourceDecoder.PixelWidth * scalingFactor);
                 transform.ScaledHeight = (uint)Math.Floor(sourceDecoder.PixelHeight * scalingFactor);
