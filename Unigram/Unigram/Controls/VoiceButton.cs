@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Foundation.Collections;
@@ -11,6 +13,7 @@ using Windows.Media;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
@@ -25,6 +28,10 @@ namespace Unigram.Controls
         private bool _isPressed;
         private DateTime _start;
 
+        private ManualResetEvent _startReset = new ManualResetEvent(true);
+        private ManualResetEvent _stopReset = new ManualResetEvent(false);
+
+
         public VoiceButton()
         {
             DefaultStyleKey = typeof(VoiceButton);
@@ -32,10 +39,10 @@ namespace Unigram.Controls
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            base.OnPointerPressed(e);
             Start();
-
             CapturePointer(e.Pointer);
+
+            base.OnPointerPressed(e);
         }
 
         protected override void OnPointerReleased(PointerRoutedEventArgs e)
@@ -69,62 +76,91 @@ namespace Unigram.Controls
             }
         }
 
-        private async void Start()
+        private void Start()
         {
-            if (_recorder?.IsRecording == true)
+            Task.Run(async () =>
             {
-                if (_recorder.m_mediaCapture == null)
-                    throw new InvalidOperationException("Cannot stop while not recording");
+                _startReset.WaitOne();
+                _startReset.Reset();
 
-                await _recorder.m_mediaCapture.StopRecordAsync();
-                _recorder.Stop();
-            }
+                _file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\recording.ogg", CreationCollisionOption.ReplaceExisting);
+                _recorder = new OpusRecorder(_file);
 
-            _file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\recording.ogg", CreationCollisionOption.ReplaceExisting);
-            _recorder = new OpusRecorder(_file);
+                /* This following was moved from sub thread, because of a exception which comes from that device initializiation
+                 * is only allowed from UI thread!
+                 */
+                if (_recorder.m_mediaCapture != null)
+                {
+                    Debug.WriteLine("Cannot start while recording");
+                }
 
-            /* This following was moved from sub thread, because of a exception which comes from that device initializiation
-             * is only allowed from UI thread!
-             */
-            if (_recorder.m_mediaCapture != null)
-                throw new InvalidOperationException("Cannot start while recording");
-            try
-            {
-                _recorder.m_mediaCapture = new MediaCapture();
-                await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
-                await _recorder.StartAsync();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                await new Windows.UI.Popups.MessageDialog("The access to microphone was denied!").ShowAsync();
-                return;
-            }
-            catch(Exception)
-            {
-                await new Windows.UI.Popups.MessageDialog("The app couldn't initialize microphone!").ShowAsync();
-                return;
-            }
+                try
+                {
+                    _recorder.m_mediaCapture = new MediaCapture();
+                    await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
+                    await _recorder.StartAsync();
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    Debug.WriteLine("The access to microphone was denied!");
+                    return;
+                }
+                catch (Exception)
+                {
+                    Debug.WriteLine("The app couldn't initialize microphone!");
+                    return;
+                }
 
-            _isPressed = true;
-            _cancelOnRelease = false;
-            _start = DateTime.Now;
+                _isPressed = true;
+                _cancelOnRelease = false;
+                _start = DateTime.Now;
+                _stopReset.Set();
+
+                Debug.WriteLine("Start: " + _start);
+                Debug.WriteLine("Stop unlocked");
+            });
         }
 
-        private async void Stop()
+        private void Stop()
         {
-            if (_recorder?.IsRecording == true)
+            Task.Run(async () =>
             {
-                _recorder.Stop();
-            }
+                _stopReset.WaitOne();
+                _stopReset.Reset();
 
-            if (_cancelOnRelease)
-            {
-                await _file.DeleteAsync();
-            }
-            else if (_file != null)
-            {
-                await ViewModel.SendAudioAsync(_file, (int)(DateTime.Now - _start).TotalSeconds, true, null, null, null);
-            }
+                var now = DateTime.Now;
+                var elapsed = now - _start;
+
+                Debug.WriteLine("Stop reached");
+                Debug.WriteLine("Stop: " + now);
+
+                if (_recorder == null)
+                {
+                    _startReset.Set();
+                    return;
+                }
+
+                if (_recorder.IsRecording)
+                {
+                    _recorder.Stop();
+                }
+
+                if (_cancelOnRelease || elapsed < TimeSpan.FromSeconds(1))
+                {
+                    await _file.DeleteAsync();
+                }
+                else if (_file != null)
+                {
+                    Debug.WriteLine("Sending voice message");
+
+                    Execute.BeginOnUIThread(async () =>
+                    {
+                        await ViewModel.SendAudioAsync(_file, (int)elapsed.TotalSeconds, true, null, null, null);
+                    });
+                }
+
+                _startReset.Set();
+            });
         }
 
         internal sealed class OpusRecorder
