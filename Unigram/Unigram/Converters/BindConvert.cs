@@ -92,6 +92,7 @@ namespace Unigram.Converters
         //}
 
         private Dictionary<string, CurrencyFormatter> _currencyCache = new Dictionary<string, CurrencyFormatter>();
+        private Dictionary<string, DateTimeFormatter> _formatterCache = new Dictionary<string, DateTimeFormatter>();
 
         public string FormatAmount(long amount, string currency)
         {
@@ -273,6 +274,40 @@ namespace Unigram.Converters
 
                 return string.Format(format, number);
             }
+        }
+
+        public string DateExtended(int value)
+        {
+            var clientDelta = MTProtoService.Current.ClientTicksDelta;
+            var utc0SecsLong = value * 4294967296 - clientDelta;
+            var utc0SecsInt = utc0SecsLong / 4294967296.0;
+            var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
+
+            var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
+            var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
+
+            //Today
+            if (dateTime.Date == System.DateTime.Now.Date)
+            {
+                //TimeLabel.Text = dateTime.ToString(string.Format("{0}", shortTimePattern), cultureInfo);
+                return ShortTime.Format(dateTime);
+            }
+
+            //Week
+            if (dateTime.Date.AddDays(6) >= System.DateTime.Now.Date)
+            {
+                if (_formatterCache.TryGetValue("dayofweek.abbreviated", out DateTimeFormatter formatter) == false)
+                {
+                    formatter = new DateTimeFormatter("dayofweek.abbreviated", Windows.System.UserProfile.GlobalizationPreferences.Languages);
+                    _formatterCache["dayofweek.abbreviated"] = formatter;
+                }
+
+                return formatter.Format(dateTime);
+            }
+
+            //Long long time ago
+            //TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
+            return ShortDate.Format(dateTime);
         }
 
         public string Date(int value)

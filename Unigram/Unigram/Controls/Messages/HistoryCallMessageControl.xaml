@@ -51,7 +51,7 @@
                     <Run x:Name="DisplayLabel" Text="{x:Bind ViewModel.Peer.DisplayName}"/>
                     <Run Text="{x:Bind ConvertCount(ViewModel, ViewModel.Items.Count)}"/>
                 </TextBlock>
-                <TextBlock Text="{x:Bind Convert.Date(ViewModel.Message.Date)}"
+                <TextBlock Text="{x:Bind Convert.DateExtended(ViewModel.Message.Date)}"
                            Style="{ThemeResource CaptionTextBlockStyle}"
                            Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
                            VerticalAlignment="Bottom"

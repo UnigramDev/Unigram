@@ -31,6 +31,8 @@ namespace Unigram.ViewModels
             private readonly IMTProtoService _protoService;
             private readonly ICacheService _cacheService;
 
+            private int _lastMaxId;
+
             public ItemsCollection(IMTProtoService protoService, ICacheService cacheService)
             {
                 _protoService = protoService;
@@ -39,12 +41,14 @@ namespace Unigram.ViewModels
 
             public override async Task<IList<TLCallGroup>> LoadDataAsync()
             {
-                //var offset = Count == 0 ? 0 : this[Count - 1].Id;
-                //var limit = Count == 0 ? 50 : 100;
-
-                var response = await _protoService.SearchAsync(new TLInputPeerEmpty(), null, new TLInputMessagesFilterPhoneCalls(), 0, int.MaxValue, 0, 0, 50);
+                var response = await _protoService.SearchAsync(new TLInputPeerEmpty(), null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
                 if (response.IsSucceeded)
                 {
+                    if (response.Result.Messages.Count > 0)
+                    {
+                        _lastMaxId = response.Result.Messages.Min(x => x.Id);
+                    }
+
                     List<TLCallGroup> groups = new List<TLCallGroup>();
                     List<TLMessageService> currentMessages = null;
                     TLUser currentPeer = null;
@@ -81,11 +85,9 @@ namespace Unigram.ViewModels
                         currentTime = time;
                     }
 
-                    HasMoreItems = false;
                     return groups;
                 }
 
-                HasMoreItems = false;
                 return new TLCallGroup[0];
             }
         }

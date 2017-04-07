@@ -729,13 +729,13 @@ namespace Unigram.Controls
                 bounds.Width = (uint)CropRectangle.Width;
                 bounds.Height = (uint)CropRectangle.Height;
 
-                var transform = new BitmapTransform();
+                var transform = ComputeScalingTransformForSourceImage(decoder);
                 transform.Bounds = bounds;
 
                 var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
                 var propertySet = new BitmapPropertySet();
-                var qualityValue = new BitmapTypedValue(0.77, Windows.Foundation.PropertyType.Single);
+                var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
                 propertySet.Add("ImageQuality", qualityValue);
 
                 var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);

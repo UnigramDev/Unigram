@@ -425,32 +425,7 @@ namespace Unigram.Controls.Items
             var topMessage = ViewModel?.TopMessageItem as TLMessageBase;
             if (topMessage != null)
             {
-                var clientDelta = MTProtoService.Current.ClientTicksDelta;
-                var utc0SecsLong = topMessage.Date * 4294967296 - clientDelta;
-                var utc0SecsInt = utc0SecsLong / 4294967296.0;
-                var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
-
-                var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
-                var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
-
-                //Today
-                if (dateTime.Date == DateTime.Now.Date)
-                {
-                    //TimeLabel.Text = dateTime.ToString(string.Format("{0}", shortTimePattern), cultureInfo);
-                    TimeLabel.Text = BindConvert.Current.ShortTime.Format(dateTime);
-                    return;
-                }
-
-                //Week
-                if (dateTime.Date.AddDays(7) >= DateTime.Now.Date)
-                {
-                    TimeLabel.Text = dateTime.ToString(string.Format("ddd", shortTimePattern), cultureInfo);
-                    return;
-                }
-
-                //Long long time ago
-                //TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
-                TimeLabel.Text = BindConvert.Current.ShortDate.Format(dateTime);
+                TimeLabel.Text = BindConvert.Current.DateExtended(topMessage.Date);
             }
             else
             {
