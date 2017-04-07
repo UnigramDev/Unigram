@@ -244,6 +244,7 @@
       <DependentUpon>UsersSelectionPage.xaml</DependentUpon>
     </Compile>
     <Content Include="Assets\Fonts\Telegram.ttf" />
+    <Content Include="Assets\Fonts\PhtoMDL2.2.08.ttf" />
     <None Include="project.json" />
     <Compile Include="Common\Language.cs" />
     <Compile Include="Controls\BubbleActionButton.cs" />

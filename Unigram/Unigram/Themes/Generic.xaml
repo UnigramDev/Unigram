@@ -4,6 +4,7 @@
     xmlns:local="using:Unigram.Controls">
 
     <Style TargetType="local:ImageCropper">
+        <Setter Property="Background" Value="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}" />
         <Setter Property="Padding" Value="48" />
         <Setter Property="Template">
             <Setter.Value>
@@ -50,6 +51,15 @@
                                     <CompositeTransform x:Name="ImageThumbTransform" />
                                 </Image.RenderTransform>
                             </Image>
+
+                            <Path Fill="{TemplateBinding Background}" Stroke="Transparent" StrokeThickness="1">
+                                <Path.Data>
+                                    <GeometryGroup>
+                                        <RectangleGeometry x:Name="OuterClip"/>
+                                        <RectangleGeometry x:Name="InnerClip"/>
+                                    </GeometryGroup>
+                                </Path.Data>
+                            </Path>
 
                             <Grid x:Name="ThumbsContainer">
                                 <Rectangle Stroke="White" StrokeThickness="2" Margin="-2" />

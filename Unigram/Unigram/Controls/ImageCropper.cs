@@ -59,7 +59,8 @@ namespace Unigram.Controls
         private StorageFile m_imageSource;
         private SoftwareBitmapSource m_imagePreview;
 
-        private bool m_loaded;
+        private Geometry m_outerClip;
+        private Geometry m_innerClip;
 
         private Grid m_layoutRoot;
         private Image m_imageThumb;
@@ -125,6 +126,9 @@ namespace Unigram.Controls
             m_imageThumb = (Image)GetTemplateChild("ImageThumb");
             //m_imageThumb.ImageOpened += ImageThumb_ImageOpened;
             m_imageThumb.ManipulationDelta += ImageThumb_ManipulationDelta;
+
+            m_outerClip = (Geometry)GetTemplateChild("OuterClip");
+            m_innerClip = (Geometry)GetTemplateChild("InnerClip");
 
             m_thumbsContainer = (Grid)GetTemplateChild("ThumbsContainer");
             m_imageThumbTransform = (CompositeTransform)GetTemplateChild("ImageThumbTransform");
@@ -217,6 +221,18 @@ namespace Unigram.Controls
 
             m_thumbsContainer.Width = thumbsRectangle.Width;
             m_thumbsContainer.Height = thumbsRectangle.Height;
+
+            switch (m_innerClip)
+            {
+                case RectangleGeometry rectangle:
+                    rectangle.Rect = thumbsRectangle;
+                    break;
+                case EllipseGeometry ellipse:
+                    ellipse.Center = new Point(thumbsRectangle.Left + thumbsRectangle.Width / 2, thumbsRectangle.Top + thumbsRectangle.Height / 2);
+                    ellipse.RadiusX = thumbsRectangle.Width / 2;
+                    ellipse.RadiusY = thumbsRectangle.Height / 2;
+                    break;
+            }
         }
 
         private void UpdateCropRectangle(bool animate)
@@ -289,6 +305,28 @@ namespace Unigram.Controls
             storyboard.Children.Add(CreateAnimation(imageRectangle.Height / m_imageSize.Height, m_imageThumbTransform, "CompositeTransform.ScaleY", ease, false));
             storyboard.Children.Add(CreateAnimation((imageRectangle.Width - thumbsRectangle.Width) / 2.0 - thumbsRectangle.X + imageRectangle.X, m_imageThumbTransform, "CompositeTransform.TranslateX", ease, false));
             storyboard.Children.Add(CreateAnimation((imageRectangle.Height - thumbsRectangle.Height) / 2.0 - thumbsRectangle.Y + imageRectangle.Y, m_imageThumbTransform, "CompositeTransform.TranslateY", ease, false));
+
+            switch (m_innerClip)
+            {
+                case RectangleGeometry rectangle:
+                    rectangle.Rect = thumbsRectangle;
+                    break;
+                case EllipseGeometry ellipse:
+                    var centerAnimation = new PointAnimation();
+                    centerAnimation.To = new Point(thumbsRectangle.Left + thumbsRectangle.Width / 2, thumbsRectangle.Top + thumbsRectangle.Height / 2);
+                    centerAnimation.EasingFunction = ease;
+                    centerAnimation.Duration = TimeSpan.FromMilliseconds(300);
+                    centerAnimation.EnableDependentAnimation = true;
+
+                    Storyboard.SetTarget(centerAnimation, ellipse);
+                    Storyboard.SetTargetProperty(centerAnimation, "EllipseGeometry.Center");
+
+                    storyboard.Children.Add(centerAnimation);
+
+                    storyboard.Children.Add(CreateAnimation(thumbsRectangle.Width / 2.0, ellipse, "EllipseGeometry.RadiusX", ease, true));
+                    storyboard.Children.Add(CreateAnimation(thumbsRectangle.Height / 2.0, ellipse, "EllipseGeometry.RadiusY", ease, true));
+                    break;
+            }
 
             storyboard.Begin();
         }
@@ -775,7 +813,14 @@ namespace Unigram.Controls
         {
             Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
             Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
-            Clip = new RectangleGeometry() { Rect = new Rect(default(Point), e.NewSize) };
+            //Clip = new RectangleGeometry() { Rect = new Rect(default(Point), e.NewSize) };
+
+            switch (m_outerClip)
+            {
+                case RectangleGeometry rectangle:
+                    rectangle.Rect = new Rect(-Padding.Left, -Padding.Top, ActualWidth, ActualHeight);
+                    break;
+            }
 
             SetCropRectangle(CropRectangle, false);
         }
@@ -818,8 +863,6 @@ namespace Unigram.Controls
 
         public async Task SetSourceAsync(StorageFile file)
         {
-            var props = await file.Properties.GetImagePropertiesAsync();
-
             SoftwareBitmapSource source;
             using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
             {

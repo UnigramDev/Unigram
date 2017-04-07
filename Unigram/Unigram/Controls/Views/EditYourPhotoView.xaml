@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <controls:ImageCropper x:Name="Cropper" x:FieldModifier="public" Proportions="Square"/>
+        <controls:ImageCropper x:Name="Cropper" Proportions="Square" Style="{StaticResource RoundImageCropperStyle}"/>
 
         <CommandBar Grid.Row="1">
             <AppBarButton Click="Accept_Click" Icon="Accept"/>
