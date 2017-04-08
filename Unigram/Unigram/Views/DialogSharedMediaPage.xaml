@@ -6,11 +6,17 @@
     xmlns:common="using:Unigram.Common"
     xmlns:items="using:Unigram.Controls.Items"
     xmlns:controls ="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Page.Resources>
+        <CollectionViewSource x:Name="MediaSource" Source="{Binding Media}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="FilesSource" Source="{x:Bind ViewModel.Files}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="LinksSource" Source="{x:Bind ViewModel.Links}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="MusicSource" Source="{x:Bind ViewModel.Music}" IsSourceGrouped="True"/>
+
         <Style TargetType="PivotItem">
             <Setter Property="Margin" Value="0"/>
         </Style>
@@ -28,8 +34,15 @@
                     <PivotItem.Header>
                         <controls:TabHeaderStyle Glyph="&#xE114;" />
                     </PivotItem.Header>
-                    <GridView x:Name="ScrollingMedia"
-                              ItemsSource="{Binding MediaCollection}"
+                </PivotItem>
+                <PivotItem>
+                    <PivotItem.Header>
+                        <controls:TabHeaderStyle Glyph="&#xE114;" />
+                    </PivotItem.Header>
+                    <controls:GroupedGridView
+                        x:Name="ScrollingMedia"
+                              ItemsSource="{x:Bind MediaSource.View}"
+                        ViewSource="{x:Bind MediaSource}"
                               SelectionMode="None"
                               Padding="6,0,6,6"
                               common:FluidGridView.OrientationOnly="False">
@@ -45,7 +58,7 @@
                             </Style>
                         </GridView.ItemContainerStyle>
                         <GridView.Header>
-                            <controls:SearchTextBox Text="{Binding Media.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="6,8" InputScope="Search"/>
+                            <Border Height="6"/>
                         </GridView.Header>
                         <GridView.Footer>
                             <Border Height="6"/>
@@ -103,14 +116,30 @@
                                 </GroupStyle.HeaderTemplate>
                             </GroupStyle>
                         </GridView.GroupStyle>
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                                    <Image/>
-                                </Border>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
+                        <GridView.ItemTemplateSelector>
+                            <selectors:MediaTemplateSelector>
+                                <selectors:MediaTemplateSelector.PhotoTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                            <Image Source="{Binding Media.Photo.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </selectors:MediaTemplateSelector.PhotoTemplate>
+                                <selectors:MediaTemplateSelector.VideoTemplate>
+                                    <DataTemplate>
+                                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                            <Image Source="{Binding Media.Document.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </selectors:MediaTemplateSelector.VideoTemplate>
+                            </selectors:MediaTemplateSelector>
+                        </GridView.ItemTemplateSelector>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                    </controls:GroupedGridView>
                 </PivotItem>
                 <PivotItem>
                     <PivotItem.Header>
@@ -194,74 +223,94 @@
                     <PivotItem.Header>
                         <controls:TabHeaderStyle Glyph="&#xE71B;" />
                     </PivotItem.Header>
-                    <ListView x:Name="lbLinks" HorizontalContentAlignment="Stretch" Margin="0,15,0,0" SelectionMode="None">
+                    <controls:GroupedListView
+                        x:Name="lbLinks"
+                              ItemsSource="{x:Bind LinksSource.View}"
+                        ViewSource="{x:Bind LinksSource}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                             </Style>
                         </ListView.ItemContainerStyle>
-                        <!-- Chat Info -->
-                        <Grid x:Name="gridLinkInfo"
-                              RelativePanel.AlignVerticalCenterWithPanel="True"
-                              RelativePanel.AlignLeftWithPanel="True">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="tblLinkSenderName"
-                                       Grid.Column="0"
-                                       Grid.Row="0"
-                                       Grid.ColumnSpan="2"
-                                       Text="Superman"
-                                       TextWrapping="NoWrap"
-                                       FontWeight="SemiBold"
-                                       FontSize="20"
-                                       Margin="0,4"
-                                       VerticalAlignment="Center" />
-                            <TextBlock x:Name="tblLinkSentTime"
-                                       Grid.Column="2"
-                                       Grid.Row="0"
-                                       Text="10:11 pm"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                       Margin="8,6,0,6"
-                                       HorizontalAlignment="Right"
-                                       FontSize="14"/>
-                            <RelativePanel x:Name="rpLinkInfoData"
-                                           Grid.Row="1"
-                                           Grid.ColumnSpan="3">
-                                <TextBlock x:Name="tblLinkTitle" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                           Text="MSPoweruser - Unigram for UWP"
-                                           TextTrimming="WordEllipsis"
-                                           FontSize="18"
-                                           FontWeight="SemiBold"
-                                           VerticalAlignment="Center"
-                                           RelativePanel.AlignLeftWithPanel="True"
-                                           TextWrapping="WrapWholeWords"/>
-                                <HyperlinkButton x:Name="tblLinkName" Content="www.mspoweruser.com" NavigateUri="http://www.mspoweruser.com" Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                                 FontSize="16"
-                                                 Margin="0,0,0,4"
-                                                 VerticalAlignment="Center"
-                                                 RelativePanel.AlignLeftWithPanel="True"
-                                                 RelativePanel.Below="tblLinkTitle"/>
-                                <TextBlock x:Name="tblLinkDes"
-                                           Text="Lorem ipsum dolor sit amet, et consul adipiscing vix, ei vis tamquam propriae accommodare, meis patrioque duo ei. Qui tibique corrumpit eu, cu vel esse laoreet. In duo diam soleat facilisis, aliquid legimus et vis. At nullam iracundia vix. Vis ex legere adipisci assentior, eam cu illud dolorum, volutpat torquatos cu nec."
-                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                           TextTrimming="WordEllipsis"
-                                           FontSize="16"
-                                           Margin="0,0,0,4"
-                                           VerticalAlignment="Center"
-                                           RelativePanel.AlignLeftWithPanel="True"
-                                           RelativePanel.Below="tblLinkName" TextWrapping="WrapWholeWords"/>
-
-                            </RelativePanel>
-                        </Grid>
-                        <!-- End of one element -->
-                    </ListView>
+                        <ListView.Header>
+                            <controls:SearchTextBox Text="{Binding Links.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                        </ListView.Header>
+                        <ListView.Footer>
+                            <Border Height="6"/>
+                        </ListView.Footer>
+                        <ListView.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderContainerStyle>
+                                    <Style TargetType="ListViewHeaderItem">
+                                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
+                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                        <Setter Property="Margin" Value="0,0,0,0"/>
+                                        <Setter Property="Padding" Value="12,8,12,9"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="VerticalContentAlignment" Value="Top" />
+                                        <Setter Property="MinHeight" Value="0"/>
+                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListViewHeaderItem">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                                        <ContentPresenter x:Name="ContentPresenter"
+                                                                          Margin="{TemplateBinding Padding}"
+                                                                          Content="{TemplateBinding Content}"
+                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.HeaderContainerStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                                       VerticalAlignment="Bottom"
+                                                       Margin="0,0,0,1"
+                                                       Grid.Column="1">
+                                                <Run Text="{Binding Count}"/>
+                                                <Run Text="files"/>
+                                            </TextBlock>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ListView.GroupStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Background="Gray" VerticalAlignment="Top">
+                                        <Image Width="36" Height="36"/>
+                                    </Border>
+                                    <StackPanel Margin="12,0,0,8" Visibility="{Binding Media.WebPage.SummaryVisibility}" Grid.Column="1">
+                                        <TextBlock Text="{Binding Media.WebPage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <TextBlock Text="{Binding Media.WebPage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <TextBlock Text="{Binding Media.WebPage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <TextBlock Text="{Binding Media.WebPage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </controls:GroupedListView>
                 </PivotItem>
                 <PivotItem>
                     <PivotItem.Header>

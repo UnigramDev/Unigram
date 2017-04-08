@@ -9,7 +9,7 @@ namespace Telegram.Api.TL
 		public Int32 Date { get; set; }
 		public Int32 AdminId { get; set; }
 		public Int32 ParticipantId { get; set; }
-		public Byte[] GA { get; set; }
+		public Byte[] GAHash { get; set; }
 		public TLPhoneCallProtocol Protocol { get; set; }
 
 		public TLPhoneCallRequested() { }
@@ -27,19 +27,19 @@ namespace Telegram.Api.TL
 			Date = from.ReadInt32();
 			AdminId = from.ReadInt32();
 			ParticipantId = from.ReadInt32();
-			GA = from.ReadByteArray();
+			GAHash = from.ReadByteArray();
 			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x6C448AE8);
+			to.Write(0x83761CE4);
 			to.Write(Id);
 			to.Write(AccessHash);
 			to.Write(Date);
 			to.Write(AdminId);
 			to.Write(ParticipantId);
-			to.WriteByteArray(GA);
+			to.WriteByteArray(GAHash);
 			to.WriteObject(Protocol);
 		}
 	}

@@ -1,0 +1,93 @@
+﻿<Page
+    x:Class="Unigram.Views.Payments.PaymentFormStep1Page"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Payments"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <CollectionViewSource x:Name="Countries" Source="{Binding Countries}" IsSourceGrouped="True"/>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="12,8,12,4"/>
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Margin" Value="12,8,12,4"/>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="12,8,12,4"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:ButtonPageHeader Title="Shipping informations" 
+                                   Command="{x:Bind ViewModel.SendCommand}"
+                                   IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                                   Glyph="&#xE10B;"/>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsShippingAddressRequested}">
+                    <TextBlock Text="Shipping address" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    <TextBox x:Name="FieldStreet1"
+                             Text="{x:Bind ViewModel.Info.ShippingAddress.StreetLine1, Mode=TwoWay}" 
+                             PlaceholderText="Address 1 (Street)"/>
+                    <TextBox x:Name="FieldStreet2"
+                             Text="{x:Bind ViewModel.Info.ShippingAddress.StreetLine2, Mode=TwoWay}" 
+                             PlaceholderText="Address 2 (Street)"/>
+                    <TextBox x:Name="FieldCity"
+                             Text="{x:Bind ViewModel.Info.ShippingAddress.City, Mode=TwoWay}"
+                             PlaceholderText="City"/>
+                    <TextBox x:Name="FieldState"
+                             Text="{x:Bind ViewModel.Info.ShippingAddress.State, Mode=TwoWay}" 
+                             PlaceholderText="State"/>
+                    <ComboBox x:Name="FieldCountry"
+                              ItemsSource="{x:Bind Countries.View}"
+                              SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
+                              DisplayMemberPath="Name"
+                              PlaceholderText="Country"/>
+                    <TextBox x:Name="FieldPostcode"
+                             Text="{x:Bind ViewModel.Info.ShippingAddress.PostCode, Mode=TwoWay}"
+                             PlaceholderText="Postcode"
+                             InputScope="Number"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.IsAnyUserInfoRequested}">
+                    <TextBlock Text="Receiver" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    <TextBox x:Name="FieldName"
+                             Text="{x:Bind ViewModel.Info.Name, Mode=TwoWay}"
+                             Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsNameRequested}" 
+                             PlaceholderText="Full Name"
+                             InputScope="PersonalFullName"/>
+                    <TextBox x:Name="FieldEmail"
+                             Text="{x:Bind ViewModel.Info.Email, Mode=TwoWay}"
+                             Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsEmailRequested}"
+                             PlaceholderText="E-Mail"
+                             InputScope="EmailSmtpAddress"/>
+                    <TextBox x:Name="FieldPhone"
+                             Text="{x:Bind ViewModel.Info.Phone, Mode=TwoWay}"
+                             Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.Invoice.IsPhoneRequested}"
+                             PlaceholderText="Phone number"
+                             InputScope="TelephoneNumber"/>
+                </StackPanel>
+
+                <StackPanel Padding="12,12,12,24">
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsSave, Mode=TwoWay}" Content="Save Shipping Information"/>
+                    <TextBlock Text="You can save your shipping info for future use." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

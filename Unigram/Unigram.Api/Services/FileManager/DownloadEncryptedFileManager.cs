@@ -175,7 +175,7 @@ namespace Telegram.Api.Services.FileManager
             var manualResetEvent = new ManualResetEvent(false);
             TLUploadFile result = null;
 
-            _mtProtoService.GetFileCallback(dcId, location, offset, limit,
+            _mtProtoService.GetFileAsync(dcId, location, offset, limit,
                 file =>
                 {
                     result = file;

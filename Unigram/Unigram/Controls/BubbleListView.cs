@@ -103,7 +103,7 @@ namespace Unigram.Controls
         private int count;
         protected override DependencyObject GetContainerForItemOverride()
         {
-            Debug.WriteLine($"New listview item: {++count}");
+            //Debug.WriteLine($"New listview item: {++count}");
             return new BubbleListViewItem(this);
         }
 

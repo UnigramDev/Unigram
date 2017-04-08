@@ -68,20 +68,6 @@ namespace Unigram.ViewModels.Login
             }
         }
 
-        private bool _isLoading;
-        public bool IsLoading
-        {
-            get
-            {
-                return _isLoading;
-            }
-            set
-            {
-                Set(ref _isLoading, value);
-                SendCommand.RaiseCanExecuteChanged();
-            }
-        }
-
         private RelayCommand _sendCommand;
         public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()

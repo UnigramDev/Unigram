@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define TCP_OBFUSCATED_2
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,12 +8,16 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
+using Windows.Storage.Streams;
 using TransportType = Telegram.Api.Services.TransportType;
 
 namespace Telegram.Api.Transport
 {
     public abstract class TcpTransportBase : ITransport
     {
+        public long MinMessageId { get; set; }
+        public Dictionary<long, long> MessageIdDict { get; set; } 
+
         public bool Additional { get; set; }
 
         public string Host { get; protected set; }
@@ -21,6 +26,8 @@ namespace Telegram.Api.Transport
 
         protected TcpTransportBase(string host, int port)
         {
+            MessageIdDict = new Dictionary<long, long>();
+
             Host = host;
             Port = port;
 
@@ -156,7 +163,7 @@ namespace Telegram.Api.Transport
             return shortLength * 4;
         }
 
-        protected static byte[] GetInitBuffer()
+        protected virtual byte[] GetInitBuffer()
         {
             var buffer = new byte[64];
             var random = new Random();
@@ -249,12 +256,47 @@ namespace Telegram.Api.Transport
                         _packetLength = GetPacketLength(_previousTail, 0, out _packetLengthBytesRead);
                     }
                     _lastPacketLength = data.Length;
+
+                    
+
+                    if (MinMessageId == 0 && AuthKey != null)
+                    {
+                        SetMinMessageId(data);
+                    }
                     RaisePacketReceived(new DataEventArgs(data, PacketLength, LastReceiveTime));
                 }
             }
             else
             {
                 Execute.ShowDebugMessage("TCP bytesTransferred=" + bytesTransferred);
+            }
+        }
+
+        private void SetMinMessageId(byte[] bytes)
+        {
+            try
+            {
+                //var position = 0;
+                //var encryptedMessage = (TLEncryptedTransportMessage)new TLEncryptedTransportMessage().FromBytes(bytes, ref position);
+                //encryptedMessage.Decrypt(AuthKey);
+
+                var encryptedMessage = new TLEncryptedTransportMessage();
+                using (var reader = new TLBinaryReader(bytes))
+                {
+                    encryptedMessage.Read(reader, AuthKey);
+                }
+
+                //position = 0;
+                //TLTransportMessage transportMessage;
+                //transportMessage = TLObject.GetObject<TLTransportMessage>(encryptedMessage.Query, ref position);
+                var transportMessage = encryptedMessage.Query;
+
+                MinMessageId = transportMessage.MsgId;
+                System.Diagnostics.Debug.WriteLine("TCPTransport set min message_id={0} seq_no={1}", transportMessage.MsgId, transportMessage.SeqNo);
+            }
+            catch (Exception ex)
+            {
+                Execute.ShowDebugMessage("SetMessageId exception " + ex);
             }
         }
 
@@ -469,7 +511,12 @@ namespace Telegram.Api.Transport
             var handler = PacketReceived;
             if (handler != null)
             {
-                Execute.BeginOnThreadPool(() => handler(this, args));
+                Execute.BeginOnThreadPool(() =>
+                {
+
+
+                    handler(this, args);
+                });
             }
         }
 
@@ -525,5 +572,45 @@ namespace Telegram.Api.Transport
             var type = ex != null ? ex.GetType().Name : "null";
             WRITE_LOG(String.Format("{0} {1} {2}={3}", str, Id, type, ex));
         }
+
+#if TCP_OBFUSCATED_2
+        protected IBuffer EncryptKey;
+
+        protected byte[] EncryptIV;
+
+        protected IBuffer DecryptKey;
+
+        protected byte[] DecryptIV;
+
+        private byte[] EncryptCountBuf;
+
+        private uint EncryptNum;
+
+        public byte[] Encrypt(byte[] data)
+        {
+            if (EncryptCountBuf == null)
+            {
+                EncryptCountBuf = new byte[16];
+                EncryptNum = 0;
+            }
+
+            return Utils.AES_ctr128_encrypt(data, EncryptKey, ref EncryptIV, ref EncryptCountBuf, ref EncryptNum);
+        }
+
+        private byte[] DecryptCountBuf;
+
+        private uint DecryptNum;
+
+        public byte[] Decrypt(byte[] data)
+        {
+            if (DecryptCountBuf == null)
+            {
+                DecryptCountBuf = new byte[16];
+                DecryptNum = 0;
+            }
+
+            return Utils.AES_ctr128_encrypt(data, DecryptKey, ref DecryptIV, ref DecryptCountBuf, ref DecryptNum);
+        }
+#endif
     }
 }

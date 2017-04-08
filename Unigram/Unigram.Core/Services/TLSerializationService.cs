@@ -58,6 +58,11 @@ namespace Unigram.Core.Services
             for (int i = 0; i < length; i += 2)
                 bytes[i / 2] = Convert.ToByte(parameter.Substring(i, 2), 16);
 
+            if (parameter.StartsWith("0EFFFFFF"))
+            {
+                return (T)(object)bytes.Skip(4).ToArray();
+            }
+
             using (var from = new TLBinaryReader(bytes))
             {
                 return TLFactory.Read<T>(from);

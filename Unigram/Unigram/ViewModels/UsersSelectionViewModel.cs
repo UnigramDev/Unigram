@@ -12,7 +12,7 @@ using Telegram.Api.TL;
 using Template10.Services.NavigationService;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Views;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;

@@ -12,9 +12,9 @@ using Telegram.Api.TL.Methods.Photos;
 using Telegram.Api.TL.Methods.Upload;
 using Telegram.Api.TL.Methods.Help;
 using Telegram.Api.TL.Methods.Channels;
-using Telegram.Api.TL.Methods.Phone;
 using Telegram.Api.TL.Methods.Bots;
 using Telegram.Api.TL.Methods.Payments;
+using Telegram.Api.TL.Methods.Phone;
 
 namespace Telegram.Api.TL
 {
@@ -231,12 +231,6 @@ namespace Telegram.Api.TL
 				case TLType.ChannelsToggleSignatures: return (T)(Object)new TLChannelsToggleSignatures(from);
 				case TLType.ChannelsUpdatePinnedMessage: return (T)(Object)new TLChannelsUpdatePinnedMessage(from);
 				case TLType.ChannelsGetAdminedPublicChannels: return (T)(Object)new TLChannelsGetAdminedPublicChannels(from);
-				case TLType.PhoneRequestCall: return (T)(Object)new TLPhoneRequestCall(from);
-				case TLType.PhoneAcceptCall: return (T)(Object)new TLPhoneAcceptCall(from);
-				case TLType.PhoneDiscardCall: return (T)(Object)new TLPhoneDiscardCall(from);
-				case TLType.PhoneReceivedCall: return (T)(Object)new TLPhoneReceivedCall(from);
-				case TLType.PhoneSetCallRating: return (T)(Object)new TLPhoneSetCallRating(from);
-				case TLType.PhoneGetCallConfig: return (T)(Object)new TLPhoneGetCallConfig(from);
 				case TLType.BotsSendCustomRequest: return (T)(Object)new TLBotsSendCustomRequest(from);
 				case TLType.BotsAnswerWebhookJSONQuery: return (T)(Object)new TLBotsAnswerWebhookJSONQuery(from);
 				case TLType.PaymentsGetPaymentForm: return (T)(Object)new TLPaymentsGetPaymentForm(from);
@@ -245,6 +239,14 @@ namespace Telegram.Api.TL
 				case TLType.PaymentsSendPaymentForm: return (T)(Object)new TLPaymentsSendPaymentForm(from);
 				case TLType.PaymentsGetSavedInfo: return (T)(Object)new TLPaymentsGetSavedInfo(from);
 				case TLType.PaymentsClearSavedInfo: return (T)(Object)new TLPaymentsClearSavedInfo(from);
+				case TLType.PhoneGetCallConfig: return (T)(Object)new TLPhoneGetCallConfig(from);
+				case TLType.PhoneRequestCall: return (T)(Object)new TLPhoneRequestCall(from);
+				case TLType.PhoneAcceptCall: return (T)(Object)new TLPhoneAcceptCall(from);
+				case TLType.PhoneConfirmCall: return (T)(Object)new TLPhoneConfirmCall(from);
+				case TLType.PhoneReceivedCall: return (T)(Object)new TLPhoneReceivedCall(from);
+				case TLType.PhoneDiscardCall: return (T)(Object)new TLPhoneDiscardCall(from);
+				case TLType.PhoneSetCallRating: return (T)(Object)new TLPhoneSetCallRating(from);
+				case TLType.PhoneSaveCallDebug: return (T)(Object)new TLPhoneSaveCallDebug(from);
 				case TLType.ResPQ: return (T)(Object)new TLResPQ(from);
 				case TLType.PQInnerData: return (T)(Object)new TLPQInnerData(from);
 				case TLType.ServerDHParamsFail: return (T)(Object)new TLServerDHParamsFail(from);
@@ -277,9 +279,6 @@ namespace Telegram.Api.TL
 				case TLType.DestroySessionNone: return (T)(Object)new TLDestroySessionNone(from);
 				case TLType.NewSessionCreated: return (T)(Object)new TLNewSessionCreated(from);
 				case TLType.HttpWait: return (T)(Object)new TLHttpWait(from);
-				case TLType.BoolFalse: return (T)(Object)new TLBoolFalse(from);
-				case TLType.BoolTrue: return (T)(Object)new TLBoolTrue(from);
-				case TLType.True: return (T)(Object)new TLTrue(from);
 				case TLType.Error: return (T)(Object)new TLError(from);
 				case TLType.InputPeerEmpty: return (T)(Object)new TLInputPeerEmpty(from);
 				case TLType.InputPeerSelf: return (T)(Object)new TLInputPeerSelf(from);
@@ -381,9 +380,9 @@ namespace Telegram.Api.TL
 				case TLType.MessageActionPinMessage: return (T)(Object)new TLMessageActionPinMessage(from);
 				case TLType.MessageActionHistoryClear: return (T)(Object)new TLMessageActionHistoryClear(from);
 				case TLType.MessageActionGameScore: return (T)(Object)new TLMessageActionGameScore(from);
-				case TLType.MessageActionPhoneCall: return (T)(Object)new TLMessageActionPhoneCall(from);
 				case TLType.MessageActionPaymentSentMe: return (T)(Object)new TLMessageActionPaymentSentMe(from);
 				case TLType.MessageActionPaymentSent: return (T)(Object)new TLMessageActionPaymentSent(from);
+				case TLType.MessageActionPhoneCall: return (T)(Object)new TLMessageActionPhoneCall(from);
 				case TLType.Dialog: return (T)(Object)new TLDialog(from);
 				case TLType.PhotoEmpty: return (T)(Object)new TLPhotoEmpty(from);
 				case TLType.Photo: return (T)(Object)new TLPhoto(from);
@@ -499,13 +498,13 @@ namespace Telegram.Api.TL
 				case TLType.UpdateConfig: return (T)(Object)new TLUpdateConfig(from);
 				case TLType.UpdatePtsChanged: return (T)(Object)new TLUpdatePtsChanged(from);
 				case TLType.UpdateChannelWebPage: return (T)(Object)new TLUpdateChannelWebPage(from);
-				case TLType.UpdatePhoneCall: return (T)(Object)new TLUpdatePhoneCall(from);
 				case TLType.UpdateDialogPinned: return (T)(Object)new TLUpdateDialogPinned(from);
 				case TLType.UpdatePinnedDialogs: return (T)(Object)new TLUpdatePinnedDialogs(from);
 				case TLType.UpdateBotWebhookJSON: return (T)(Object)new TLUpdateBotWebhookJSON(from);
 				case TLType.UpdateBotWebhookJSONQuery: return (T)(Object)new TLUpdateBotWebhookJSONQuery(from);
 				case TLType.UpdateBotShippingQuery: return (T)(Object)new TLUpdateBotShippingQuery(from);
 				case TLType.UpdateBotPrecheckoutQuery: return (T)(Object)new TLUpdateBotPrecheckoutQuery(from);
+				case TLType.UpdatePhoneCall: return (T)(Object)new TLUpdatePhoneCall(from);
 				case TLType.UpdatesState: return (T)(Object)new TLUpdatesState(from);
 				case TLType.UpdatesDifferenceEmpty: return (T)(Object)new TLUpdatesDifferenceEmpty(from);
 				case TLType.UpdatesDifference: return (T)(Object)new TLUpdatesDifference(from);
@@ -777,15 +776,6 @@ namespace Telegram.Api.TL
 				case TLType.PageBlockSlideshow: return (T)(Object)new TLPageBlockSlideshow(from);
 				case TLType.PagePart: return (T)(Object)new TLPagePart(from);
 				case TLType.PageFull: return (T)(Object)new TLPageFull(from);
-				case TLType.InputPhoneCall: return (T)(Object)new TLInputPhoneCall(from);
-				case TLType.PhoneCallEmpty: return (T)(Object)new TLPhoneCallEmpty(from);
-				case TLType.PhoneCallWaiting: return (T)(Object)new TLPhoneCallWaiting(from);
-				case TLType.PhoneCallRequested: return (T)(Object)new TLPhoneCallRequested(from);
-				case TLType.PhoneCall: return (T)(Object)new TLPhoneCall(from);
-				case TLType.PhoneCallDiscarded: return (T)(Object)new TLPhoneCallDiscarded(from);
-				case TLType.PhoneConnection: return (T)(Object)new TLPhoneConnection(from);
-				case TLType.PhoneCallProtocol: return (T)(Object)new TLPhoneCallProtocol(from);
-				case TLType.PhonePhoneCall: return (T)(Object)new TLPhonePhoneCall(from);
 				case TLType.PhoneCallDiscardReasonMissed: return (T)(Object)new TLPhoneCallDiscardReasonMissed(from);
 				case TLType.PhoneCallDiscardReasonDisconnect: return (T)(Object)new TLPhoneCallDiscardReasonDisconnect(from);
 				case TLType.PhoneCallDiscardReasonHangup: return (T)(Object)new TLPhoneCallDiscardReasonHangup(from);
@@ -811,6 +801,16 @@ namespace Telegram.Api.TL
 				case TLType.InputPaymentCredentials: return (T)(Object)new TLInputPaymentCredentials(from);
 				case TLType.AccountTmpPassword: return (T)(Object)new TLAccountTmpPassword(from);
 				case TLType.ShippingOption: return (T)(Object)new TLShippingOption(from);
+				case TLType.InputPhoneCall: return (T)(Object)new TLInputPhoneCall(from);
+				case TLType.PhoneCallEmpty: return (T)(Object)new TLPhoneCallEmpty(from);
+				case TLType.PhoneCallWaiting: return (T)(Object)new TLPhoneCallWaiting(from);
+				case TLType.PhoneCallRequested: return (T)(Object)new TLPhoneCallRequested(from);
+				case TLType.PhoneCallAccepted: return (T)(Object)new TLPhoneCallAccepted(from);
+				case TLType.PhoneCall: return (T)(Object)new TLPhoneCall(from);
+				case TLType.PhoneCallDiscarded: return (T)(Object)new TLPhoneCallDiscarded(from);
+				case TLType.PhoneConnection: return (T)(Object)new TLPhoneConnection(from);
+				case TLType.PhoneCallProtocol: return (T)(Object)new TLPhoneCallProtocol(from);
+				case TLType.PhonePhoneCall: return (T)(Object)new TLPhonePhoneCall(from);
 				case TLType.Message: return (T)(Object)new TLMessage(from);
 				case TLType.MessageService: return (T)(Object)new TLMessageService(from);
 				case TLType.RPCResult: return (T)(Object)new TLRPCResult(from);
@@ -820,4 +820,5 @@ namespace Telegram.Api.TL
 				default: throw new InvalidOperationException();
 			}
 		}
-	}}
+	}
+}

@@ -108,9 +108,31 @@
             <controls:GlyphButton x:Name="Remove" Click="Remove_Click" Glyph="&#xE107;" Grid.Column="1"/>
         </Grid>
 
-        <CommandBar x:Name="Commands" Background="#FF1F1F1F" Grid.Row="3">
-            <AppBarButton Click="Accept_Click" Icon="Send" Content="Send" />
-            <AppBarButton Click="Cancel_Click" Icon="Cancel" Content="Cancel"/>
-        </CommandBar>
+        <Grid x:Name="Commands" Background="#FF1F1F1F" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <controls:GlyphButton Click="Cancel_Click" Glyph="&#xE10A;"/>
+            
+            <controls:GlyphButton Glyph="&#xE7A8;" IsEnabled="False" Grid.Column="2"/>
+            <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="3"/>
+            <controls:GlyphButton Glyph="&#xE78D;" IsEnabled="False" FontFamily="ms-appx:///Assets/PhtoMDL2.2.08.ttf#Photos MDL2 Assets" Grid.Column="4"/>
+
+            <controls:GlyphButton Click="Accept_Click"
+                                  Glyph="&#xE725;"
+                                  AllowFocusOnInteraction="False"
+                                  Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                  HorizontalAlignment="Right"
+                                  Padding="4,2,0,0"
+                                  Grid.Column="6"/>
+
+        </Grid>
     </Grid>
 </controls:ContentDialogBase>

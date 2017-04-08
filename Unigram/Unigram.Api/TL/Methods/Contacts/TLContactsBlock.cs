@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Contacts
 {
 	/// <summary>
 	/// RCP method contacts.block.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
 	/// </summary>
 	public partial class TLContactsBlock : TLObject
 	{

@@ -18,7 +18,7 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
-        public void GetAttachedStickersCallback(TLInputStickeredMediaBase media, Action<TLVector<TLStickerSetCoveredBase>> callback, Action<TLRPCError> faultCallback = null)
+        public void GetAttachedStickersAsync(TLInputStickeredMediaBase media, Action<TLVector<TLStickerSetCoveredBase>> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetAttachedStickers { Media = media };
 
@@ -26,7 +26,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void GetRecentStickersCallback(bool attached, int hash, Action<TLMessagesRecentStickersBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetRecentStickersAsync(bool attached, int hash, Action<TLMessagesRecentStickersBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetRecentStickers { Hash = hash };
             if (attached)
@@ -38,7 +38,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void ClearRecentStickersCallback(bool attached, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ClearRecentStickersAsync(bool attached, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesClearRecentStickers();
             if (attached)
@@ -50,7 +50,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void ReadFeaturedStickersCallback(TLVector<long> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ReadFeaturedStickersAsync(TLVector<long> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesReadFeaturedStickers { Id = id };
 
@@ -58,7 +58,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
-        public void GetAllDraftsCallback(Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetAllDraftsAsync(Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetAllDrafts();
 
@@ -81,7 +81,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void SaveDraftCallback(TLInputPeerBase peer, TLDraftMessageBase draft, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void SaveDraftAsync(TLInputPeerBase peer, TLDraftMessageBase draft, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = draft.ToSaveDraftObject(peer);
 
@@ -94,14 +94,14 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void GetPeerDialogsCallback(TLVector<TLInputPeerBase> peers, Action<TLMessagesPeerDialogs> callback, Action<TLRPCError> faultCallback = null)
+        public void GetPeerDialogsAsync(TLVector<TLInputPeerBase> peers, Action<TLMessagesPeerDialogs> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetPeerDialogs { Peers = peers };
 
             SendInformativeMessage<TLMessagesPeerDialogs>("messages.getPeerDialogs", obj, callback, faultCallback);
         }
 
-        public void GetInlineBotResultsCallback(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset, Action<TLMessagesBotResults> callback, Action<TLRPCError> faultCallback = null)
+        public void GetInlineBotResultsAsync(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset, Action<TLMessagesBotResults> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetInlineBotResults { Flags = 0, Bot = bot, Peer = peer, GeoPoint = geoPoint, Query = query, Offset = offset };
 
@@ -109,7 +109,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void SetInlineBotResultsCallback(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void SetInlineBotResultsAsync(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesSetInlineBotResults { Flags = 0, IsGallery = gallery, IsPrivate = pr, QueryId = queryId, Results = results, CacheTime = cacheTime, NextOffset = nextOffset, HasSwitchPm = switchPM != null, SwitchPm = switchPM };
 
@@ -117,7 +117,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void SendInlineBotResultCallback(TLMessage message, Action<TLMessageCommonBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
+        public void SendInlineBotResultAsync(TLMessage message, Action<TLMessageCommonBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
         {
             var inputPeer = PeerToInputPeer(message.ToId);
             var obj = new TLMessagesSendInlineBotResult { Flags = 0, Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, RandomId = message.RandomId ?? 0, QueryId = message.InlineBotResultQueryId, Id = message.InlineBotResultId };
@@ -229,7 +229,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void GetDocumentByHashCallback(byte[] sha256, int size, string mimeType, Action<TLDocumentBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetDocumentByHashAsync(byte[] sha256, int size, string mimeType, Action<TLDocumentBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetDocumentByHash { Sha256 = sha256, Size = size, MimeType = mimeType };
 
@@ -237,7 +237,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void SearchGifsCallback(string q, int offset, Action<TLMessagesFoundGifs> callback, Action<TLRPCError> faultCallback = null)
+        public void SearchGifsAsync(string q, int offset, Action<TLMessagesFoundGifs> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesSearchGifs { Q = q, Offset = offset };
 
@@ -245,7 +245,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void GetSavedGifsCallback(int hash, Action<TLMessagesSavedGifsBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetSavedGifsAsync(int hash, Action<TLMessagesSavedGifsBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetSavedGifs { Hash = hash };
 
@@ -253,7 +253,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void SaveGifCallback(TLInputDocumentBase id, bool unsave, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void SaveGifAsync(TLInputDocumentBase id, bool unsave, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesSaveGif { Id = id, Unsave = unsave };
 
@@ -261,7 +261,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void ReorderStickerSetsCallback(bool masks, TLVector<long> order, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ReorderStickerSetsAsync(bool masks, TLVector<long> order, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesReorderStickerSets { Order = order };
             if (masks)
@@ -273,7 +273,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void ReportSpamCallback(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ReportSpamAsync(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
 #if DEBUG
             Execute.BeginOnThreadPool(() => callback?.Invoke(true));
@@ -286,7 +286,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void GetWebPagePreviewCallback(string message, Action<TLMessageMediaBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetWebPagePreviewAsync(string message, Action<TLMessageMediaBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetWebPagePreview { Message = message };
 
@@ -294,7 +294,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void GetWebPageCallback(string url, int hash, Action<TLWebPageBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetWebPageAsync(string url, int hash, Action<TLWebPageBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetWebPage { Url = url, Hash = hash };
 
@@ -302,7 +302,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void GetFeaturedStickersCallback(int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetFeaturedStickersAsync(int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetFeaturedStickers { Hash = hash };
 
@@ -310,7 +310,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLMessagesFeaturedStickersBase>(caption, obj, callback, faultCallback);
         }
 
-        public void GetArchivedStickersCallback(bool full, long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null)
+        public void GetArchivedStickersAsync(bool full, long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetArchivedStickers { OffsetId = offsetId, Limit = limit, IsMasks = masks };
 
@@ -353,7 +353,7 @@ namespace Telegram.Api.Services
                 });
         }
 
-        public void GetArchivedStickersCallback(long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null)
+        public void GetArchivedStickersAsync(long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetArchivedStickers { OffsetId = offsetId, Limit = limit, IsMasks = masks };
 
@@ -361,7 +361,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLMessagesArchivedStickers>(caption, obj, callback, faultCallback);
         }
 
-        public void GetAllStickersCallback(int hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetAllStickersAsync(int hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetAllStickers { Hash = hash };
 
@@ -369,7 +369,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLMessagesAllStickersBase>(caption, obj, callback, faultCallback);
         }
 
-        public void GetAllStickersCallback(byte[] hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetAllStickersAsync(byte[] hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetAllStickers { Hash = TLUtils.ToTLInt(hash) ?? 0 };
 
@@ -528,7 +528,7 @@ namespace Telegram.Api.Services
             SendNonInformativeMessage<TLObject>("stickers.container", container, result => callback(null), faultCallback);
         }
 
-        public void GetStickerSetCallback(TLInputStickerSetBase stickerset, Action<TLMessagesStickerSet> callback, Action<TLRPCError> faultCallback = null)
+        public void GetStickerSetAsync(TLInputStickerSetBase stickerset, Action<TLMessagesStickerSet> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetStickerSet { StickerSet = stickerset };
 
@@ -536,7 +536,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void InstallStickerSetCallback(TLInputStickerSetBase stickerset, bool archived, Action<TLMessagesStickerSetInstallResultBase> callback, Action<TLRPCError> faultCallback = null)
+        public void InstallStickerSetAsync(TLInputStickerSetBase stickerset, bool archived, Action<TLMessagesStickerSetInstallResultBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesInstallStickerSet { StickerSet = stickerset, Archived = archived };
 
@@ -594,7 +594,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void UninstallStickerSetCallback(TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void UninstallStickerSetAsync(TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesUninstallStickerSet { StickerSet = stickerset };
 
@@ -681,7 +681,7 @@ namespace Telegram.Api.Services
             return new TLInputPeerEmpty();
         }
 
-        public void SendMessageCallback(TLMessage message, Action<TLMessageCommonBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
+        public void SendMessageAsync(TLMessage message, Action<TLMessageCommonBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
         {
             var inputPeer = PeerToInputPeer(message.ToId);
             var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Message = message.Message, RandomId = message.RandomId.Value };
@@ -920,7 +920,7 @@ namespace Telegram.Api.Services
             }
         }
 
-        public void GetBotCallbackAnswerCallback(TLInputPeerBase peer, int messageId, byte[] data, bool game, Action<TLMessagesBotCallbackAnswer> callback, Action<TLRPCError> faultCallback = null)
+        public void GetBotCallbackAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, bool game, Action<TLMessagesBotCallbackAnswer> callback, Action<TLRPCError> faultCallback = null)
         {
             // TODO: Layer 56
             var obj = new TLMessagesGetBotCallbackAnswer { Peer = peer, MsgId = messageId, Data = data, HasData = data != null, IsGame = game };
@@ -929,7 +929,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void StartBotCallback(TLInputUserBase bot, string startParam, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void StartBotAsync(TLInputUserBase bot, string startParam, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesStartBot { Bot = bot, Peer = PeerToInputPeer(message.ToId), RandomId = message.RandomId ?? 0, StartParam = startParam };
 
@@ -964,7 +964,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void SendMediaCallback(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void SendMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesSendMedia { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Media = inputMedia, RandomId = message.RandomId.Value };
 
@@ -1074,7 +1074,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("messages.setEncryptedTyping", obj, callback, faultCallback);
         }
 
-        public void SetTypingCallback(TLInputPeerBase peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void SetTypingAsync(TLInputPeerBase peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var action = typing ? (TLSendMessageActionBase)new TLSendMessageTypingAction() : new TLSendMessageCancelAction();
             var obj = new TLMessagesSetTyping { Peer = peer, Action = action };
@@ -1082,21 +1082,21 @@ namespace Telegram.Api.Services
             SendInformativeMessage("messages.setTyping", obj, callback, faultCallback);
         }
 
-        public void SetTypingCallback(TLInputPeerBase peer, TLSendMessageActionBase action, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void SetTypingAsync(TLInputPeerBase peer, TLSendMessageActionBase action, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesSetTyping { Peer = peer, Action = action ?? new TLSendMessageTypingAction() };
 
             SendInformativeMessage("messages.setTyping", obj, callback, faultCallback);
         }
 
-        public void GetMessagesCallback(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetMessagesAsync(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetMessages { Id = id };
 
             SendInformativeMessage("messages.getMessages", obj, callback, faultCallback);
         }
 
-        public void GetDialogsCallback(int offsetDate, int offsetId, TLInputPeerBase offsetPeer, int limit, Action<TLMessagesDialogsBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetDialogsAsync(int offsetDate, int offsetId, TLInputPeerBase offsetPeer, int limit, Action<TLMessagesDialogsBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetDialogs { OffsetDate = offsetDate, OffsetId = offsetId, OffsetPeer = offsetPeer, Limit = limit };
 
@@ -1198,7 +1198,7 @@ namespace Telegram.Api.Services
             }
         }
 
-        public void GetHistoryCallback(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = offsetDate, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
 
@@ -1240,7 +1240,7 @@ namespace Telegram.Api.Services
                     {
                         //Debug.WriteLine("UpdateItems start GetMessages elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
 
-                        GetMessagesCallback(
+                        GetMessagesAsync(
                             replyId,
                             messagesResult =>
                             {
@@ -1299,7 +1299,7 @@ namespace Telegram.Api.Services
         }
 
 
-        public void GetChannelHistoryCallback(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = 0, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
 
@@ -1331,7 +1331,7 @@ namespace Telegram.Api.Services
 
                     if (replyId.Count > 0)
                     {
-                        GetMessagesCallback(
+                        GetMessagesAsync(
                             replyId,
                             messagesResult =>
                             {
@@ -1383,7 +1383,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void SearchCallback(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void SearchAsync(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             //TLUtils.WriteLine(string.Format("{0} messages.search query={1} offset={2} limit={3}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), query, offset, limit), LogSeverity.Error);
             //Execute.ShowDebugMessage("messages.search filter=" + filter);
@@ -1398,7 +1398,7 @@ namespace Telegram.Api.Services
             }, faultCallback);
         }
 
-        public void SearchGlobalCallback(string query, int offsetDate, TLInputPeerBase offsetPeer, int offsetId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void SearchGlobalAsync(string query, int offsetDate, TLInputPeerBase offsetPeer, int offsetId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             TLUtils.WriteLine(string.Format("{0} messages.searchGlobal query={1} offset_date={2} offset_peer={3} offset_id={4} limit={5}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), query, offsetDate, offsetPeer, offsetId, limit), LogSeverity.Error);
 
@@ -1411,7 +1411,7 @@ namespace Telegram.Api.Services
             }, faultCallback);
         }
 
-        public void ReadHistoryCallback(TLInputPeerBase peer, int maxId, int offset, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
+        public void ReadHistoryAsync(TLInputPeerBase peer, int maxId, int offset, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesReadHistory { Peer = peer, MaxId = maxId };
 
@@ -1435,7 +1435,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ReadMessageContentsCallback(TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
+        public void ReadMessageContentsAsync(TLVector<int> id, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesReadMessageContents { Id = id };
 
@@ -1459,7 +1459,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void DeleteHistoryCallback(bool justClear, TLInputPeerBase peer, int offset, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null)
+        public void DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int offset, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesDeleteHistory { Flags = 0, Peer = peer, MaxId = int.MaxValue };
 
@@ -1488,7 +1488,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void DeleteMessagesCallback(TLVector<int> id, bool revoke, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
+        public void DeleteMessagesAsync(TLVector<int> id, bool revoke, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesDeleteMessages { Id = id, IsRevoke = revoke };
 
@@ -1526,7 +1526,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("messages.receivedMessages", obj, callback, faultCallback);
         }
 
-        public void ForwardMessageCallback(TLInputPeerBase peer, int fwdMessageId, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ForwardMessageAsync(TLInputPeerBase peer, int fwdMessageId, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesForwardMessage { Peer = peer, Id = fwdMessageId, RandomId = message.RandomId ?? 0 };
 
@@ -1560,7 +1560,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ForwardMessagesCallback(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ForwardMessagesAsync(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var randomId = new TLVector<long>();
             foreach (var message in messages)
@@ -1655,7 +1655,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage("messages.getChats", obj, callback, faultCallback);
         }
 
-        public void GetFullChatCallback(int chatId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null)
+        public void GetFullChatAsync(int chatId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetFullChat { ChatId = chatId };
 
@@ -1668,7 +1668,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void EditChatTitleCallback(int chatId, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void EditChatTitleAsync(int chatId, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesEditChatTitle { ChatId = chatId, Title = title };
 
@@ -1692,7 +1692,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void EditChatPhotoCallback(int chatId, TLInputChatPhotoBase photo, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void EditChatPhotoAsync(int chatId, TLInputChatPhotoBase photo, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesEditChatPhoto { ChatId = chatId, Photo = photo };
 
@@ -1716,7 +1716,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void AddChatUserCallback(int chatId, TLInputUserBase userId, int fwdLimit, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void AddChatUserAsync(int chatId, TLInputUserBase userId, int fwdLimit, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesAddChatUser { ChatId = chatId, UserId = userId, FwdLimit = fwdLimit };
 
@@ -1740,7 +1740,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void DeleteChatUserCallback(int chatId, TLInputUserBase userId, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void DeleteChatUserAsync(int chatId, TLInputUserBase userId, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesDeleteChatUser { ChatId = chatId, UserId = userId };
 
@@ -1764,7 +1764,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void CreateChatCallback(TLVector<TLInputUserBase> users, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void CreateChatAsync(TLVector<TLInputUserBase> users, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesCreateChat { Users = users, Title = title };
 
@@ -1788,14 +1788,14 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ExportChatInviteCallback(int chatId, Action<TLExportedChatInviteBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ExportChatInviteAsync(int chatId, Action<TLExportedChatInviteBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesExportChatInvite { ChatId = chatId };
 
             SendInformativeMessage("messages.exportChatInvite", obj, callback, faultCallback);
         }
 
-        public void CheckChatInviteCallback(string hash, Action<TLChatInviteBase> callback, Action<TLRPCError> faultCallback = null)
+        public void CheckChatInviteAsync(string hash, Action<TLChatInviteBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesCheckChatInvite { Hash = hash };
 
@@ -1826,7 +1826,7 @@ namespace Telegram.Api.Services
                 , faultCallback);
         }
 
-        public void ImportChatInviteCallback(string hash, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ImportChatInviteAsync(string hash, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesImportChatInvite { Hash = hash };
 
@@ -1914,7 +1914,7 @@ namespace Telegram.Api.Services
             SendNonInformativeMessage<TLObject>("messages.container", container, result => callback(null, result), faultCallback);
         }
 
-        public void ToggleChatAdminsCallback(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ToggleChatAdminsAsync(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesToggleChatAdmins { ChatId = chatId, Enabled = enabled };
 
@@ -1937,7 +1937,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void EditChatAdminCallback(int chatId, TLInputUserBase userId, bool isAdmin, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void EditChatAdminAsync(int chatId, TLInputUserBase userId, bool isAdmin, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesEditChatAdmin { ChatId = chatId, UserId = userId, IsAdmin = isAdmin };
 
@@ -1968,7 +1968,7 @@ namespace Telegram.Api.Services
         //        faultCallback);
         //}
 
-        public void GetCommonChatsCallback(TLInputUserBase id, int maxId, int limit, Action<TLMessagesChatsBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit, Action<TLMessagesChatsBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetCommonChats { UserId = id, MaxId = maxId, Limit = limit };
 
@@ -1986,7 +1986,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ToggleDialogPinCallback(TLInputPeerBase peer, bool pin, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ToggleDialogPinAsync(TLInputPeerBase peer, bool pin, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesToggleDialogPin { Peer = peer, IsPinned = pin };
 
@@ -2007,7 +2007,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ReorderPinnedDialogsCallback(TLVector<TLInputPeerBase> order, bool force, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ReorderPinnedDialogsAsync(TLVector<TLInputPeerBase> order, bool force, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesReorderPinnedDialogs { Order = order, IsForce = force };
 
@@ -2015,7 +2015,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
-        public void HideReportSpamCallback(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void HideReportSpamAsync(TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesHideReportSpam { Peer = peer };
 
@@ -2023,7 +2023,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
-        public void GetPeerSettingsCallback(TLInputPeerBase peer, Action<TLPeerSettings> callback, Action<TLRPCError> faultCallback = null)
+        public void GetPeerSettingsAsync(TLInputPeerBase peer, Action<TLPeerSettings> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetPeerSettings { Peer = peer };
 
@@ -2031,7 +2031,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLPeerSettings>(caption, obj, callback, faultCallback);
         }
 
-        public void MigrateChatCallback(int chatId, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void MigrateChatAsync(int chatId, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesMigrateChat { ChatId = chatId };
 

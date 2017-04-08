@@ -15,7 +15,7 @@ using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.ViewModels;
@@ -107,7 +107,7 @@ namespace Unigram.Views
             //BackgroundCanvas.Invalidate();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
         }
     }

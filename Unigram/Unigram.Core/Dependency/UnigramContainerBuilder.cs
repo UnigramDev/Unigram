@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Unigram.Core.Dependency
+namespace Unigram.Views
 {
     public class UnigramContainer
     {

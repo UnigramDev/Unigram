@@ -11,7 +11,7 @@ namespace Telegram.Api.TL.Methods.Phone
 	{
 		public TLInputUserBase UserId { get; set; }
 		public Int32 RandomId { get; set; }
-		public Byte[] GA { get; set; }
+		public Byte[] GAHash { get; set; }
 		public TLPhoneCallProtocol Protocol { get; set; }
 
 		public TLPhoneRequestCall() { }
@@ -26,16 +26,16 @@ namespace Telegram.Api.TL.Methods.Phone
 		{
 			UserId = TLFactory.Read<TLInputUserBase>(from);
 			RandomId = from.ReadInt32();
-			GA = from.ReadByteArray();
+			GAHash = from.ReadByteArray();
 			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0xA41AA5E4);
+			to.Write(0x5B95B3D4);
 			to.WriteObject(UserId);
 			to.Write(RandomId);
-			to.WriteByteArray(GA);
+			to.WriteByteArray(GAHash);
 			to.WriteObject(Protocol);
 		}
 	}

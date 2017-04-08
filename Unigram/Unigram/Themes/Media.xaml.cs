@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Telegram.Api.Services.FileManager;
 using Windows.Storage;
 using Windows.System;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Views;
 using Telegram.Api.Helpers;
 using Unigram.Controls;
@@ -30,6 +30,7 @@ using Windows.UI.Popups;
 using System.Threading.Tasks;
 using System.Globalization;
 using System.Net;
+using Unigram.Common;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -185,6 +186,11 @@ namespace Unigram.Themes
             }
 
             return Task.FromResult(true).AsAsyncOperation();
+        }
+
+        private void Unsupported_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        {
+            MessageHelper.HandleTelegramUrl("t.me/unigramchannel");
         }
     }
 }

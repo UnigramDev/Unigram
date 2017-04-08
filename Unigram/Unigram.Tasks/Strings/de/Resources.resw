@@ -201,6 +201,9 @@
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} hat ein GIF an die Gruppe gesendet</value>
   </data>
+  <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
+    <value>{0} hat eine Rechnung über {2} gesendet</value>
+  </data>
   <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
     <value>{0} hat eine Nachricht an die Gruppe gesendet</value>
   </data>
@@ -267,6 +270,9 @@
   <data name="MESSAGE_GIF" xml:space="preserve">
     <value>hat dir ein GIF gesendet</value>
   </data>
+  <data name="MESSAGE_INVOICE" xml:space="preserve">
+    <value>hat dir eine Rechnung über {1} gesendet</value>
+  </data>
   <data name="MESSAGE_NOTEXT" xml:space="preserve">
     <value>hat dir eine Nachricht gesendet</value>
   </data>
@@ -305,6 +311,9 @@
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
     <value>hat ein GIF angeheftet</value>
+  </data>
+  <data name="PINNED_INVOICE" xml:space="preserve">
+    <value>hat eine Rechnung angeheftet</value>
   </data>
   <data name="PINNED_NOTEXT" xml:space="preserve">
     <value>hat eine Nachricht angeheftet</value>

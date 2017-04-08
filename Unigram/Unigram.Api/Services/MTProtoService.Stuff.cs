@@ -81,7 +81,7 @@ namespace Telegram.Api.Services
 	    }
 
 
-        public void PingCallback(long pingId, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
+        public void PingAsync(long pingId, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
 	    {
 	        var obj = new TLPing{ PingId = pingId };
 
@@ -93,7 +93,7 @@ namespace Telegram.Api.Services
                 faultCallback);
 	    }
 
-        public void PingDelayDisconnectCallback(long pingId, int disconnectDelay, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
+        public void PingDelayDisconnectAsync(long pingId, int disconnectDelay, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLPingDelayDisconnect { PingId = pingId, DisconnectDelay = disconnectDelay };
 

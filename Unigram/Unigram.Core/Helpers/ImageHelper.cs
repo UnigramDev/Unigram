@@ -41,24 +41,17 @@ namespace Unigram.Core.Helpers
 
                     if (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide)
                     {
-                        double widthRatio = (double)requestedMinSide / originalPixelWidth;
-                        double heightRatio = (double)requestedMinSide / originalPixelHeight;
-                        uint aspectHeight = (uint)requestedMinSide;
-                        uint aspectWidth = (uint)requestedMinSide;
+                        double ratioX = (double)requestedMinSide / originalPixelWidth;
+                        double ratioY = (double)requestedMinSide / originalPixelHeight;
+                        double ratio = Math.Min(ratioX, ratioY);
 
-                        if (originalPixelWidth > originalPixelHeight)
-                        {
-                            aspectWidth = (uint)(heightRatio * originalPixelWidth);
-                        }
-                        else
-                        {
-                            aspectHeight = (uint)(widthRatio * originalPixelHeight);
-                        }
+                        uint width = (uint)(originalPixelWidth * ratio);
+                        uint height = (uint)(originalPixelHeight * ratio);
 
                         transform = new BitmapTransform
                         {
-                            ScaledHeight = aspectHeight,
-                            ScaledWidth = aspectWidth
+                            ScaledWidth = width,
+                            ScaledHeight = height
                         };
                     }
                     else
@@ -95,24 +88,17 @@ namespace Unigram.Core.Helpers
 
                     if (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide)
                     {
-                        double widthRatio = (double)requestedMinSide / originalPixelWidth;
-                        double heightRatio = (double)requestedMinSide / originalPixelHeight;
-                        uint aspectHeight = (uint)requestedMinSide;
-                        uint aspectWidth = (uint)requestedMinSide;
+                        double ratioX = (double)requestedMinSide / originalPixelWidth;
+                        double ratioY = (double)requestedMinSide / originalPixelHeight;
+                        double ratio = Math.Min(ratioX, ratioY);
 
-                        if (originalPixelWidth > originalPixelHeight)
-                        {
-                            aspectWidth = (uint)(heightRatio * originalPixelWidth);
-                        }
-                        else
-                        {
-                            aspectHeight = (uint)(widthRatio * originalPixelHeight);
-                        }
+                        uint width = (uint)(originalPixelWidth * ratio);
+                        uint height = (uint)(originalPixelHeight * ratio);
 
                         transform = new BitmapTransform
                         {
-                            ScaledHeight = aspectHeight,
-                            ScaledWidth = aspectWidth
+                            ScaledWidth = width,
+                            ScaledHeight = height
                         };
                     }
                     else

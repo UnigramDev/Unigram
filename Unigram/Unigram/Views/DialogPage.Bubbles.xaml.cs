@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Converters;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;

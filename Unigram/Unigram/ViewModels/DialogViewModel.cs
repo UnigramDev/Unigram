@@ -379,7 +379,7 @@ namespace Unigram.ViewModels
             var limit = 1;
 
             var obj = new TLMessagesGetHistory { Peer = Peer, OffsetId = 0, OffsetDate = dateOffset - 1, AddOffset = offset, Limit = limit, MaxId = 0, MinId = 0 };
-            ProtoService.SendRequestCallback<TLMessagesMessagesBase>(obj, result =>
+            ProtoService.SendRequestAsync<TLMessagesMessagesBase>(obj, result =>
             {
                 Execute.BeginOnUIThread(async () =>
                 {
@@ -406,6 +406,12 @@ namespace Unigram.ViewModels
             Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
 
             var lastRead = true;
+
+            //var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
+            var readMaxId = With as ITLReadMaxId;
+
+            //var maxId = readMaxId.ReadInboxMaxId > 0 ? readMaxId.ReadInboxMaxId : int.MaxValue;
+            //var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -51 : 0;
 
             var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
             var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -51 : 0;
@@ -1634,7 +1640,7 @@ namespace Unigram.ViewModels
                 var files = await picker.PickMultipleFilesAsync();
                 if (files != null)
                 {
-                    storages = new ObservableCollection<StorageMedia>(files.Select(x => new StoragePhoto(x)));
+                    storages = new ObservableCollection<StorageMedia>(files.Select(x => x.Name.EndsWith(".mp4") ? new StorageVideo(x) : (StorageMedia)new StoragePhoto(x)));
                 }
             }
             else
@@ -1650,7 +1656,10 @@ namespace Unigram.ViewModels
                 {
                     foreach (var storage in dialog.Items)
                     {
-                        await SendPhotoAsync(storage.File, storage.Caption);
+                        if (storage is StoragePhoto)
+                        {
+                            await SendPhotoAsync(storage.File, storage.Caption);
+                        }
                     }
                 }
             }

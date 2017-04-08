@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 03/14/2017 17:17:00
+// 	Generated: 04/04/2017 20:07:29
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -1069,6 +1069,61 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CallTimeFormat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned an invoice"
+        /// </summary>
+        public static string MessageActionPinInvoice
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinInvoice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancelled"
+        /// </summary>
+        public static string CallCanceledShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallCanceledShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Incoming"
+        /// </summary>
+        public static string CallIncomingShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallIncomingShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Missed"
+        /// </summary>
+        public static string CallMissedShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMissedShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Outgoing"
+        /// </summary>
+        public static string CallOutgoingShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallOutgoingShort");
             }
         }
     }

@@ -7,7 +7,7 @@
     <ProjectGuid>{B1979F0B-11E6-4759-A54D-853B13139AA0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Unigram.Api</RootNamespace>
+    <RootNamespace>Telegram.Api</RootNamespace>
     <AssemblyName>Unigram.Api</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
@@ -125,6 +125,7 @@
     <Compile Include="Services\FileManager\Worker.cs" />
     <Compile Include="Services\IMTProtoService.Async.cs" />
     <Compile Include="Services\MTProtoService.Async.cs" />
+    <Compile Include="Services\MTProtoService.Payments.cs" />
     <Compile Include="TLExtensions.cs" />
     <Compile Include="Hash\CRC32.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
@@ -133,7 +134,7 @@
     <Compile Include="TL\Core\ITLChannelInviter.cs" />
     <Compile Include="TL\Core\ITLDialogWith.cs" />
     <Compile Include="TL\Core\ITLInputPeer.cs" />
-    <Compile Include="TL\Core\ITLMediaCaption.cs" />
+    <Compile Include="TL\Core\ITLMessageMediaCaption.cs" />
     <Compile Include="TL\Core\ITLMultiChannelPts.cs" />
     <Compile Include="TL\Core\ITLRandomId.cs" />
     <Compile Include="TL\Core\ITLReadMaxId.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="TL\Core\TLActionInfo.cs" />
     <Compile Include="TL\Core\TLInt.cs" />
     <Compile Include="TL\Core\TLMessageActionUnreadMessages.cs" />
+    <Compile Include="TL\Core\TLTuple.cs" />
     <Compile Include="TL\Local\TLMessageActionDate.cs" />
     <Compile Include="TL\Local\TLMessagesContainer.cs" />
     <Compile Include="TL\Methods\Account\TLAccountChangePhone.cs" />
@@ -332,10 +334,12 @@
     <Compile Include="TL\Methods\Payments\TLPaymentsSendPaymentForm.cs" />
     <Compile Include="TL\Methods\Payments\TLPaymentsValidateRequestedInfo.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneAcceptCall.cs" />
+    <Compile Include="TL\Methods\Phone\TLPhoneConfirmCall.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneDiscardCall.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneGetCallConfig.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneReceivedCall.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneRequestCall.cs" />
+    <Compile Include="TL\Methods\Phone\TLPhoneSaveCallDebug.cs" />
     <Compile Include="TL\Methods\Phone\TLPhoneSetCallRating.cs" />
     <Compile Include="TL\Methods\Photos\TLPhotosDeletePhotos.cs" />
     <Compile Include="TL\Methods\Photos\TLPhotosGetUserPhotos.cs" />
@@ -371,6 +375,7 @@
     <Compile Include="TL\Partial\TLInputPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaContact.Partial.cs" />
+    <Compile Include="TL\Partial\TLMessageMediaInvoice.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesAllStickers.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesArchivedStickers.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesFeaturedStickers.Partial.cs" />
@@ -507,9 +512,6 @@
     <Compile Include="TL\TLBadMsgNotification.cs" />
     <Compile Include="TL\TLBadMsgNotificationBase.cs" />
     <Compile Include="TL\TLBadServerSalt.cs" />
-    <Compile Include="TL\TLBoolBase.cs" />
-    <Compile Include="TL\TLBoolFalse.cs" />
-    <Compile Include="TL\TLBoolTrue.cs" />
     <Compile Include="TL\TLBotCommand.cs" />
     <Compile Include="TL\TLBotInfo.cs" />
     <Compile Include="TL\TLBotInlineMediaResult.cs" />
@@ -950,6 +952,7 @@
     <Compile Include="TL\TLPeerSettings.cs" />
     <Compile Include="TL\TLPeerUser.cs" />
     <Compile Include="TL\TLPhoneCall.cs" />
+    <Compile Include="TL\TLPhoneCallAccepted.cs" />
     <Compile Include="TL\TLPhoneCallBase.cs" />
     <Compile Include="TL\TLPhoneCallDiscarded.cs" />
     <Compile Include="TL\TLPhoneCallDiscardReasonBase.cs" />
@@ -1054,7 +1057,6 @@
     <Compile Include="TL\TLTopPeerCategoryCorrespondents.cs" />
     <Compile Include="TL\TLTopPeerCategoryGroups.cs" />
     <Compile Include="TL\TLTopPeerCategoryPeers.cs" />
-    <Compile Include="TL\TLTrue.cs" />
     <Compile Include="TL\TLType.cs" />
     <Compile Include="TL\TLUpdateBase.cs" />
     <Compile Include="TL\TLUpdateBotCallbackQuery.cs" />

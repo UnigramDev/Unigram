@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLInputMediaPhotoExternal : TLInputMediaBase, ITLMediaCaption 
+	public partial class TLInputMediaPhotoExternal : TLInputMediaBase, ITLMessageMediaCaption 
 	{
 		public String Url { get; set; }
 		public String Caption { get; set; }

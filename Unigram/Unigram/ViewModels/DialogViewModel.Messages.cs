@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -15,6 +16,7 @@ using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Native;
 using Unigram.Views;
+using Unigram.Views.Payments;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -245,7 +247,7 @@ namespace Unigram.ViewModels
             if (message is TLMessage)
             {
                 App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
-                NavigationService.GoBack();
+                NavigationService.GoBackAt(0);
             }
         }
 
@@ -311,7 +313,7 @@ namespace Unigram.ViewModels
             if (messages.Count > 0)
             {
                 App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
-                NavigationService.GoBack();
+                NavigationService.GoBackAt(0);
             }
 
             //_stateService.ForwardMessages = Messages.Where(x => x.IsSelected).ToList();
@@ -332,7 +334,7 @@ namespace Unigram.ViewModels
 
             string text = null;
 
-            var media = message.Media as ITLMediaCaption;
+            var media = message.Media as ITLMessageMediaCaption;
             if (media != null && !string.IsNullOrWhiteSpace(media.Caption))
             {
                 text = media.Caption;
@@ -457,7 +459,7 @@ namespace Unigram.ViewModels
         {
             if (editData.IsCaption)
             {
-                var mediaCaption = message.Media as ITLMediaCaption;
+                var mediaCaption = message.Media as ITLMessageMediaCaption;
                 if (mediaCaption != null)
                 {
                     return mediaCaption.Caption ?? string.Empty;
@@ -684,7 +686,52 @@ namespace Unigram.ViewModels
         //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand => new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);
         public async void KeyboardButtonExecute(TLKeyboardButtonBase button, TLMessage message)
         {
-            if (button is TLKeyboardButtonSwitchInline switchInlineButton)
+            if (button is TLKeyboardButtonBuy buyButton)
+            {
+                if (message.Media is TLMessageMediaInvoice invoiceMedia && invoiceMedia.HasReceiptMsgId)
+                {
+                    var response = await ProtoService.GetPaymentReceiptAsync(invoiceMedia.ReceiptMsgId.Value);
+                    if (response.IsSucceeded)
+                    {
+                        NavigationService.Navigate(typeof(PaymentReceiptPage), TLTuple.Create(message, response.Result));
+                    }
+                }
+                else
+                {
+                    var response = await ProtoService.GetPaymentFormAsync(message.Id);
+                    if (response.IsSucceeded)
+                    {
+                        if (response.Result.Invoice.IsEmailRequested || response.Result.Invoice.IsNameRequested || response.Result.Invoice.IsPhoneRequested || response.Result.Invoice.IsShippingAddressRequested)
+                        {
+                            NavigationService.NavigateToPaymentFormStep1(message, response.Result);
+                        }
+                        else if (response.Result.HasSavedCredentials)
+                        {
+                            if (ApplicationSettings.Current.TmpPassword != null)
+                            {
+                                if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
+                                {
+                                    ApplicationSettings.Current.TmpPassword = null;
+                                }
+                            }
+
+                            if (ApplicationSettings.Current.TmpPassword != null)
+                            {
+                                NavigationService.NavigateToPaymentFormStep5(message, response.Result, null, null, null, null, null, true);
+                            }
+                            else
+                            {
+                                NavigationService.NavigateToPaymentFormStep4(message, response.Result, null, null, null);
+                            }
+                        }
+                        else
+                        {
+                            NavigationService.NavigateToPaymentFormStep3(message, response.Result, null, null, null);
+                        }
+                    }
+                }
+            }
+            else if (button is TLKeyboardButtonSwitchInline switchInlineButton)
             {
                 var bot = GetBot(message);
                 if (bot != null)

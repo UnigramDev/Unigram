@@ -17,7 +17,7 @@ using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Models;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
@@ -56,6 +56,14 @@ namespace Unigram.Views
 
         public BindConvert Convert => BindConvert.Current;
 
+        private DispatcherTimer _elapsedTimer;
+        private Visual _messageVisual;
+        private Visual _ellipseVisual;
+        private Visual _elapsedVisual;
+        private Visual _slideVisual;
+        private Visual _rootVisual;
+        private Compositor _compositor;
+
         public DialogPage()
         {
             InitializeComponent();
@@ -69,6 +77,25 @@ namespace Unigram.Views
             ViewModel.PropertyChanged += OnPropertyChanged;
 
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+
+            _messageVisual = ElementCompositionPreview.GetElementVisual(txtMessage);
+            _ellipseVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
+            _elapsedVisual = ElementCompositionPreview.GetElementVisual(ElapsedPanel);
+            _slideVisual = ElementCompositionPreview.GetElementVisual(SlidePanel);
+            _rootVisual = ElementCompositionPreview.GetElementVisual(TextArea);
+            _compositor = _slideVisual.Compositor;
+
+            _ellipseVisual.CenterPoint = new Vector3(48);
+            _ellipseVisual.Scale = new Vector3(0);
+
+            _rootVisual.Clip = _compositor.CreateInsetClip(0, -100, 0, 0);
+
+            _elapsedTimer = new DispatcherTimer();
+            _elapsedTimer.Interval = TimeSpan.FromMilliseconds(100);
+            _elapsedTimer.Tick += (s, args) =>
+            {
+                ElapsedLabel.Text = btnVoiceMessage.Elapsed.ToString("m\\:ss\\.ff");
+            };
 
             //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
             //{
@@ -180,7 +207,7 @@ namespace Unigram.Views
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
             StickersPanel.Height = args.OccludedRect.Height;
-            ReplyMarkupPanel.Height = args.OccludedRect.Height;
+            ReplyMarkupPanel.MaxHeight = args.OccludedRect.Height;
             //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
         }
 
@@ -201,7 +228,7 @@ namespace Unigram.Views
                 forwarding = container.FwdMessages != null && container.FwdMessages.Count > 0;
             }
 
-            if (txtMessage.IsEmpty && !forwarding)
+            if (ViewModel != null && txtMessage.IsEmpty && !forwarding)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnStickers.Visibility = Visibility.Visible;
@@ -243,7 +270,7 @@ namespace Unigram.Views
 
         private void Attach_Click(object sender, RoutedEventArgs e)
         {
-            var flyout = FlyoutBase.GetAttachedFlyout(Attach) as MenuFlyout;
+            var flyout = FlyoutBase.GetAttachedFlyout(ButtonAttach) as MenuFlyout;
             if (flyout != null)
             {
                 var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
@@ -256,7 +283,7 @@ namespace Unigram.Views
                     flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
                 }
 
-                flyout.ShowAt(Attach, new Point(8, -8));
+                flyout.ShowAt(ButtonAttach, new Point(8, -8));
             }
         }
 
@@ -264,7 +291,7 @@ namespace Unigram.Views
 
         private void AttachPickerFlyout_ItemClick(object sender, MediaSelectedEventArgs e)
         {
-            var flyout = FlyoutBase.GetAttachedFlyout(Attach) as MenuFlyout;
+            var flyout = FlyoutBase.GetAttachedFlyout(ButtonAttach) as MenuFlyout;
             if (flyout != null)
             {
                 flyout.Hide();
@@ -528,7 +555,7 @@ namespace Unigram.Views
                 if (message != null)
                 {
                     var channel = ViewModel.With as TLChannel;
-                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
                     {
                         var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
                         var config = ViewModel.CacheService.GetConfig();
@@ -603,7 +630,7 @@ namespace Unigram.Views
                         return;
                     }
 
-                    var mediaCaption = message.Media as ITLMediaCaption;
+                    var mediaCaption = message.Media as ITLMessageMediaCaption;
                     if (mediaCaption != null && !string.IsNullOrEmpty(mediaCaption.Caption))
                     {
                         element.Visibility = Visibility.Visible;
@@ -731,12 +758,187 @@ namespace Unigram.Views
 
         private async void DatePickerFlyout_DatePicked(DatePickerFlyout sender, DatePickedEventArgs args)
         {
-            var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, args.NewDate.Date);
-            await ViewModel.LoadDateSliceAsync(offset);
+            //var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, args.NewDate.Date);
+            //await ViewModel.LoadDateSliceAsync(offset);
+        }
+
+        private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _rootVisual.Size = new Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
+        }
+
+        private void ElapsedPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var point = _elapsedVisual.Offset;
+            point.X = (float)-e.NewSize.Width;
+
+            _elapsedVisual.Offset = point;
+            _elapsedVisual.Size = new Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
+        }
+
+        private void SlidePanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var point = _slideVisual.Offset;
+            point.X = (float)e.NewSize.Width + 36;
+
+            _slideVisual.Offset = point;
+            _slideVisual.Size = new Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
+        }
+
+        private void VoiceButton_RecordingStarted(object sender, EventArgs e)
+        {
+            var slideWidth = (float)SlidePanel.ActualWidth;
+            var elapsedWidth = (float)ElapsedPanel.ActualWidth;
+
+            var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+            var messageAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            messageAnimation.InsertKeyFrame(0, 0);
+            messageAnimation.InsertKeyFrame(1, 48);
+            messageAnimation.Duration = TimeSpan.FromMilliseconds(300);
+
+            AttachTextAreaExpression();
+
+            var slideAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            slideAnimation.InsertKeyFrame(0, slideWidth + 36);
+            slideAnimation.InsertKeyFrame(1, 0);
+            slideAnimation.Duration = TimeSpan.FromMilliseconds(300);
+
+            var elapsedAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            elapsedAnimation.InsertKeyFrame(0, -elapsedWidth);
+            elapsedAnimation.InsertKeyFrame(1, 0);
+            elapsedAnimation.Duration = TimeSpan.FromMilliseconds(300);
+
+            var ellipseAnimation = _compositor.CreateVector3KeyFrameAnimation();
+            ellipseAnimation.InsertKeyFrame(0, new Vector3(56f / 96f));
+            ellipseAnimation.InsertKeyFrame(1, new Vector3(1));
+            ellipseAnimation.Duration = TimeSpan.FromMilliseconds(200);
+
+            _messageVisual.StartAnimation("Offset.Y", messageAnimation);
+            _slideVisual.StartAnimation("Offset.X", slideAnimation);
+            _elapsedVisual.StartAnimation("Offset.X", elapsedAnimation);
+            _ellipseVisual.StartAnimation("Scale", ellipseAnimation);
+
+            batch.Completed += (s, args) =>
+            {
+                _elapsedTimer.Start();
+
+                AttachExpression();
+                //DetachTextAreaExpression();
+            };
+            batch.End();
+        }
+
+        private void VoiceButton_RecordingStopped(object sender, EventArgs e)
+        {
+            AttachExpression();
+            AttachTextAreaExpression();
+
+            var slidePosition = (float)(LayoutRoot.ActualWidth - 48 - 36);
+            var difference = (float)(slidePosition - ElapsedPanel.ActualWidth);
+
+            var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+            var slideAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            slideAnimation.InsertKeyFrame(0, _slideVisual.Offset.X);
+            slideAnimation.InsertKeyFrame(1, -slidePosition);
+            slideAnimation.Duration = TimeSpan.FromMilliseconds(200);
+
+            var messageAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            messageAnimation.InsertKeyFrame(0, 48);
+            messageAnimation.InsertKeyFrame(1, 0);
+            messageAnimation.Duration = TimeSpan.FromMilliseconds(200);
+
+            _slideVisual.StartAnimation("Offset.X", slideAnimation);
+            _messageVisual.StartAnimation("Offset.Y", messageAnimation);
+
+            batch.Completed += (s, args) =>
+            {
+                _elapsedTimer.Stop();
+
+                DetachExpression();
+                //DetachTextAreaExpression();
+
+                var point = _slideVisual.Offset;
+                point.X = _slideVisual.Size.X + 36;
+
+                _slideVisual.Offset = point;
+
+            };
+            batch.End();
+        }
+
+        private void VoiceButton_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            var cumulative = (float)e.Cumulative.Translation.X;
+            var point = _slideVisual.Offset;
+            point.X = Math.Min(0, cumulative);
+
+            _slideVisual.Offset = point;
+        }
+
+        private void AttachExpression()
+        {
+            var elapsedExpression = _compositor.CreateExpressionAnimation("min(0, slide.Offset.X + ((root.Size.X - 48 - 36 - slide.Size.X) - elapsed.Size.X))");
+            elapsedExpression.SetReferenceParameter("slide", _slideVisual);
+            elapsedExpression.SetReferenceParameter("elapsed", _elapsedVisual);
+            elapsedExpression.SetReferenceParameter("root", _rootVisual);
+
+            var ellipseExpression = _compositor.CreateExpressionAnimation("Vector3(max(0, 1 + slide.Offset.X / (root.Size.X - 48 - 36)), max(0, 1 + slide.Offset.X / (root.Size.X - 48 - 36)), 1)");
+            ellipseExpression.SetReferenceParameter("slide", _slideVisual);
+            ellipseExpression.SetReferenceParameter("elapsed", _elapsedVisual);
+            ellipseExpression.SetReferenceParameter("root", _rootVisual);
+
+            _elapsedVisual.StopAnimation("Offset.X");
+            _elapsedVisual.StartAnimation("Offset.X", elapsedExpression);
+
+            _ellipseVisual.StopAnimation("Scale");
+            _ellipseVisual.StartAnimation("Scale", ellipseExpression);
+        }
+
+        private void DetachExpression()
+        {
+            _elapsedVisual.StopAnimation("Offset.X");
+            _ellipseVisual.StopAnimation("Scale");
+        }
+
+        private void AttachTextAreaExpression()
+        {
+            AttachTextAreaExpression(ButtonAttach);
+            AttachTextAreaExpression(ButtonSilent);
+            AttachTextAreaExpression(btnStickers);
+            AttachTextAreaExpression(btnEditMessage);
+            AttachTextAreaExpression(btnSendMessage);
+        }
+
+        private void AttachTextAreaExpression(FrameworkElement element)
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+
+            var expression = _compositor.CreateExpressionAnimation("visual.Offset.Y");
+            expression.SetReferenceParameter("visual", _messageVisual);
+
+            visual.StopAnimation("Offset.Y");
+            visual.StartAnimation("Offset.Y", expression);
+        }
+
+        private void DetachTextAreaExpression()
+        {
+            DetachTextAreaExpression(ButtonAttach);
+            DetachTextAreaExpression(ButtonSilent);
+            DetachTextAreaExpression(btnStickers);
+            DetachTextAreaExpression(btnEditMessage);
+            DetachTextAreaExpression(btnSendMessage);
+        }
+
+        private void DetachTextAreaExpression(FrameworkElement element)
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+            visual.StopAnimation("Offset.Y");
         }
     }
 
-    public class MediaLibraryCollection : IncrementalCollection<StoragePhoto>, ISupportIncrementalLoading
+    public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
     {
         public StorageFileQueryResult Query { get; private set; }
 
@@ -767,9 +969,9 @@ namespace Unigram.Views
             });
         }
 
-        public override async Task<IEnumerable<StoragePhoto>> LoadDataAsync()
+        public override async Task<IList<StorageMedia>> LoadDataAsync()
         {
-            var items = new List<StoragePhoto>();
+            var items = new List<StorageMedia>();
             uint resultCount = 0;
             var result = await Query.GetFilesAsync(StartIndex, 10);
             StartIndex += (uint)result.Count;
@@ -778,7 +980,14 @@ namespace Unigram.Views
 
             foreach (var file in result)
             {
-                items.Add(new StoragePhoto(file));
+                if (Path.GetExtension(file.Name).Equals(".mp4"))
+                {
+                    items.Add(new StorageVideo(file));
+                }
+                else
+                {
+                    items.Add(new StoragePhoto(file));
+                }
             }
 
             return items;

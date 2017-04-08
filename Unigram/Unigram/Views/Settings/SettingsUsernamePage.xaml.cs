@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Controls;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.ViewModels.Settings;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;

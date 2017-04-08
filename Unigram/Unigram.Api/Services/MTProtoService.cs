@@ -186,7 +186,7 @@ namespace Telegram.Api.Services
 
             _statusSubscription = sendStatusEvents
                 .Throttle(TimeSpan.FromSeconds(Constants.UpdateStatusInterval))
-                .Subscribe(e => UpdateStatusCallback(e.EventArgs.Offline, result => { }));
+                .Subscribe(e => UpdateStatusAsync(e.EventArgs.Offline, result => { }));
 
             _cacheService = cacheService;
 
@@ -196,19 +196,19 @@ namespace Telegram.Api.Services
             {
                 _updatesService.DCOptionsUpdated += OnDCOptionsUpdated;
 
-                _updatesService.GetDifferenceAsync = GetDifferenceCallback;
-                _updatesService.GetStateAsync = GetStateCallback;
+                _updatesService.GetDifferenceAsync = GetDifferenceAsync;
+                _updatesService.GetStateAsync = GetStateAsync;
                 _updatesService.GetCurrentUserId = GetCurrentUserId;
-                _updatesService.GetDHConfigAsync = GetDHConfigCallback;
+                _updatesService.GetDHConfigAsync = GetDHConfigAsync;
                 //_updatesService.AcceptEncryptionAsync = AcceptEncryptionAsync;
                 _updatesService.SendEncryptedServiceAsync = SendEncryptedServiceAsync;
                 _updatesService.SetMessageOnTimeAsync = SetMessageOnTime;
                 _updatesService.RemoveFromQueue = RemoveFromQueue;
-                _updatesService.UpdateChannelAsync = UpdateChannelCallback;
-                _updatesService.GetParticipantAsync = GetParticipantCallback;
-                _updatesService.GetFullChatAsync = GetFullChatCallback;
-                _updatesService.GetFullUserAsync = GetFullUserCallback;
-                _updatesService.GetChannelMessagesAsync = GetMessagesCallback;
+                _updatesService.UpdateChannelAsync = UpdateChannelAsync;
+                _updatesService.GetParticipantAsync = GetParticipantAsync;
+                _updatesService.GetFullChatAsync = GetFullChatAsync;
+                _updatesService.GetFullUserAsync = GetFullUserAsync;
+                _updatesService.GetChannelMessagesAsync = GetMessagesAsync;
             }
 
             _transportService = transportService;
@@ -303,6 +303,7 @@ namespace Telegram.Api.Services
         private void CheckTimeouts(object state)
         {
 #if DEBUG
+            // TODO: disabled
             if (Debugger.IsAttached)
             {
                 return;
@@ -857,7 +858,7 @@ namespace Telegram.Api.Services
 
 
                                     var timer = Stopwatch.StartNew();
-                                    GetNearestDCCallback(nearestDC =>
+                                    GetNearestDCAsync(nearestDC =>
                                     {
 #if LOG_REGISTRATION
                                         TLUtils.WriteLog("Stop help.getNearestDc");
@@ -969,7 +970,7 @@ namespace Telegram.Api.Services
                                 if (getConfigRequired)
                                 {
                                     var timer = Stopwatch.StartNew();
-                                    GetNearestDCCallback(nearestDC =>
+                                    GetNearestDCAsync(nearestDC =>
                                     {
 #if LOG_REGISTRATION
                                         TLUtils.WriteLog("Stop help.getNearestDc");
@@ -1501,7 +1502,7 @@ namespace Telegram.Api.Services
             }
 
             // to bind authKey to current TCPTransport, get changes, etc...
-            UpdateStatusCallback(false, result => { });
+            UpdateStatusAsync(false, result => { });
         }
 
         public void ClearHistory(string caption, bool createNewSession, Exception e = null)

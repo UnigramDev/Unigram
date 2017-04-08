@@ -72,11 +72,11 @@ namespace Telegram.Api.TL
                     }
                 }
             }
-            else if ((TLType)type == TLType.BoolTrue)
+            else if (type == 0x997275b5 || type == 0x3fedd339)
             {
                 return (T)(Object)true;
             }
-            else if ((TLType)type == TLType.BoolFalse)
+            else if (type == 0xbc799737)
             {
                 return (T)(Object)false;
             }
@@ -88,6 +88,12 @@ namespace Telegram.Api.TL
 
         public static void Write(TLBinaryWriter to, object value)
         {
+            if (value == null)
+            {
+                to.Write(0x56730BCC);
+                return;
+            }
+
             var type = value.GetType();
             if (type == typeof(UInt32)) to.Write((uint)value);
             else if (type == typeof(Int32)) to.Write((int)value);

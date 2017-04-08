@@ -28,6 +28,7 @@ namespace Unigram.Controls
         private const string NarrowState = "NarrowState";
 
         public NavigationService NavigationService { get; private set; }
+        public Frame ParentFrame { get; private set; }
 
         public MasterDetailView()
         {
@@ -246,7 +247,7 @@ namespace Unigram.Controls
         }
 
         #region Initialize
-        public void Initialize(string key)
+        public void Initialize(string key, Frame parent)
         {
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId(key) as NavigationService;
             if (service == null)
@@ -256,9 +257,16 @@ namespace Unigram.Controls
                 service.FrameFacade.FrameId = key;
                 service.FrameFacade.BackRequested += (s, args) =>
                 {
-                    if (CanGoBack)
+                    // TODO: maybe checking for the actual width is not the perfect way,
+                    // but if it is 0 it means that the control is not loaded, and the event shouldn't be handled
+                    if (CanGoBack && ActualWidth > 0)
                     {
                         DetailFrame.GoBack();
+                        args.Handled = true;
+                    }
+                    else if (ParentFrame.CanGoBack && ActualWidth > 0)
+                    {
+                        ParentFrame.GoBack();
                         args.Handled = true;
                     }
                 };
@@ -266,6 +274,7 @@ namespace Unigram.Controls
 
             NavigationService = service;
             DetailFrame = NavigationService.Frame;
+            ParentFrame = parent;
         }
         #endregion
 

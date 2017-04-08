@@ -18,7 +18,7 @@ using Telegram.Api.Services.FileManager;
 using Telegram.Api;
 using System.IO;
 using Windows.Storage;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Login;
@@ -28,6 +28,9 @@ using Unigram.Services;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Users;
+using Unigram.ViewModels.Payments;
+using Windows.Foundation.Metadata;
+using Unigram.Common;
 
 namespace Unigram
 {
@@ -74,6 +77,17 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
             container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
 
+            if (ApiInformation.IsTypePresent("Windows.Devices.Haptics.VibrationDevice") || ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
+            {
+                // Introduced in Creators Update
+                container.ContainerBuilder.RegisterType<VibrationService>().As<IVibrationService>().SingleInstance();
+            }
+            else if (ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
+            {
+                // To keep vibration compatibility with Anniversary Update
+                container.ContainerBuilder.RegisterType<WindowsPhoneVibrationService>().As<IVibrationService>().SingleInstance();
+            }
+
             // ViewModels
             container.ContainerBuilder.RegisterType<SignInWelcomeViewModel>();
             container.ContainerBuilder.RegisterType<SignInViewModel>();
@@ -111,6 +125,12 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsMasksViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep1ViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep2ViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep3ViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep4ViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep5ViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentReceiptViewModel>();
 
             container.Build();
 
@@ -126,6 +146,14 @@ namespace Unigram
                     File.Delete(FileUtils.GetFileName(path));
                 }
             });
+
+            if (SettingsHelper.SupportedLayer < 65)
+            {
+                SettingsHelper.SupportedLayer = 65;
+                deleteIfExists("database.sqlite");
+                ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
+                ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
+            }
 
             //if (SettingsHelper.SupportedLayer != Constants.SupportedLayer ||
             //    SettingsHelper.DatabaseVersion != Constants.DatabaseVersion)
@@ -159,17 +187,17 @@ namespace Unigram
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             cacheService.Init();
             updatesService.GetCurrentUserId = () => protoService.CurrentUserId;
-            updatesService.GetStateAsync = protoService.GetStateCallback;
-            updatesService.GetDHConfigAsync = protoService.GetDHConfigCallback;
-            updatesService.GetDifferenceAsync = protoService.GetDifferenceCallback;
+            updatesService.GetStateAsync = protoService.GetStateAsync;
+            updatesService.GetDHConfigAsync = protoService.GetDHConfigAsync;
+            updatesService.GetDifferenceAsync = protoService.GetDifferenceAsync;
             //updatesService.AcceptEncryptionAsync = protoService.AcceptEncryptionCallback;
             //updatesService.SendEncryptedServiceAsync = protoService.SendEncryptedServiceCallback;
             updatesService.SetMessageOnTimeAsync = protoService.SetMessageOnTime;
-            updatesService.UpdateChannelAsync = protoService.UpdateChannelCallback;
-            updatesService.GetParticipantAsync = protoService.GetParticipantCallback;
-            updatesService.GetFullUserAsync = protoService.GetFullUserCallback;
-            updatesService.GetFullChatAsync = protoService.GetFullChatCallback;
-            updatesService.GetChannelMessagesAsync = protoService.GetMessagesCallback;
+            updatesService.UpdateChannelAsync = protoService.UpdateChannelAsync;
+            updatesService.GetParticipantAsync = protoService.GetParticipantAsync;
+            updatesService.GetFullUserAsync = protoService.GetFullUserAsync;
+            updatesService.GetFullChatAsync = protoService.GetFullChatAsync;
+            updatesService.GetChannelMessagesAsync = protoService.GetMessagesAsync;
             updatesService.LoadStateAndUpdate(() => { });
 
             protoService.AuthorizationRequired += (s, e) =>
@@ -180,7 +208,7 @@ namespace Unigram
                 Execute.BeginOnUIThread(() =>
                 {
                     var type = App.Current.NavigationService.CurrentPageType;
-                    if (type.Name.StartsWith("Login")) { }
+                    if (type.Name.StartsWith("SignIn") || type.Name.StartsWith("SignUp")) { }
                     else
                     {
                         App.Current.NavigationService.Navigate(typeof(SignInWelcomePage));

@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Payments
 {
 	/// <summary>
 	/// RCP method payments.clearSavedInfo.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
 	/// </summary>
 	public partial class TLPaymentsClearSavedInfo : TLObject
 	{

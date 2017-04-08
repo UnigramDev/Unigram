@@ -211,14 +211,15 @@ namespace Telegram.Api.Services.Connection
 
         private void CheckConnectionState(object state)
         {
-//#if !WIN_RT && DEBUG
-//            Microsoft.Devices.VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
-//#endif
+            //#if !WIN_RT && DEBUG
+            //            Microsoft.Devices.VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
+            //#endif
 
-            if (Debugger.IsAttached) return;
-//#if DEBUG
-//            return;
-//#endif
+            // TODO: Disabled
+            if (Debugger.IsAttached)
+            {
+                return;
+            }
 
             if (_mtProtoService == null) return;
             
@@ -313,7 +314,7 @@ namespace Telegram.Api.Services.Connection
                     pingIdHash);
 
                 TLUtils.WriteLine(debugString, LogSeverity.Error);
-                _mtProtoService.PingCallback(pingId, //35,
+                _mtProtoService.PingAsync(pingId, //35,
                     result =>
                     {
                         var resultDebugString = string.Format("{0} pong t{1} ({2}, {3}) [{4}]",

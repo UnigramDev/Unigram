@@ -201,7 +201,7 @@ namespace Telegram.Api.Services.FileManager
             var manualResetEvent = new ManualResetEvent(false);
             var result = false;
 
-            _mtProtoService.SaveBigFilePartCallback(fileId, filePart, fileTotalPars, bytes,
+            _mtProtoService.SaveBigFilePartAsync(fileId, filePart, fileTotalPars, bytes,
                 savingResult =>
                 {
                     result = true;
@@ -222,7 +222,7 @@ namespace Telegram.Api.Services.FileManager
             var manualResetEvent = new ManualResetEvent(false);
             var result = false;
 
-            _mtProtoService.SaveFilePartCallback(fileId, filePart, bytes,
+            _mtProtoService.SaveFilePartAsync(fileId, filePart, bytes,
                 savingResult =>
                 {
                     result = true;

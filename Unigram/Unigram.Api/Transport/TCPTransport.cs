@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define TCP_OBFUSCATED_2
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -13,6 +14,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Telegram.Logs;
+using Windows.Security.Cryptography;
 using Action = System.Action;
 using SocketError = System.Net.Sockets.SocketError;
 
@@ -20,11 +22,14 @@ namespace Telegram.Api.Transport
 {
     public class TcpTransport : TcpTransportBase
     {
+
         private readonly object _isConnectedSocketRoot = new object();
+
+        private readonly object _encryptedStreamSyncRoot = new object();
 
         private readonly Socket _socket;
 
-        private const int BufferSize = 60;
+        private const int BufferSize = 64;
 
         private readonly byte[] _buffer;
 
@@ -80,7 +85,6 @@ namespace Telegram.Api.Transport
             Execute.BeginOnThreadPool(() =>
             {
                 TLUtils.WriteLine("  TCP: Send " + caption);
-                var args = CreateArgs(data, callback);
 
                 lock (_isConnectedSocketRoot)
                 {
@@ -100,7 +104,11 @@ namespace Telegram.Api.Transport
 
                                 try
                                 {
-                                    _socket.SendAsync(args);
+                                    lock (_encryptedStreamSyncRoot)
+                                    {
+                                        var args = CreateArgs(data, callback);
+                                        _socket.SendAsync(args);
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -114,6 +122,7 @@ namespace Telegram.Api.Transport
                                 manualResetEvent.Set();
                                 faultCallback?.Invoke(error);
                             });
+
                         var connected = manualResetEvent.WaitOne(25000);
                         if (!connected)
                         {
@@ -124,7 +133,11 @@ namespace Telegram.Api.Transport
                     {
                         try
                         {
-                            _socket.SendAsync(args);
+                            lock (_encryptedStreamSyncRoot)
+                            {
+                                var args = CreateArgs(data, callback);
+                                _socket.SendAsync(args);
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -137,9 +150,13 @@ namespace Telegram.Api.Transport
             });
         }
 
-        private static SocketAsyncEventArgs CreateArgs(byte[] data, Action<bool> callback = null)
+        private SocketAsyncEventArgs CreateArgs(byte[] data, Action<bool> callback = null)
         {
             var packet = CreatePacket(data);
+
+#if TCP_OBFUSCATED_2
+            packet = Encrypt(packet);
+#endif
 
             var args = new SocketAsyncEventArgs();
             args.SetBuffer(packet, 0, packet.Length);
@@ -175,6 +192,52 @@ namespace Telegram.Api.Transport
             }
         }
 
+#if TCP_OBFUSCATED_2
+        protected override byte[] GetInitBuffer()
+        {
+            var buffer = new byte[64];
+            var random = new Random();
+            random.NextBytes(buffer);
+            while (buffer[0] == 0x44414548
+                   || buffer[0] == 0x54534f50
+                   || buffer[0] == 0x20544547
+                   || buffer[0] == 0x4954504f
+                   || buffer[0] == 0xeeeeeeee
+                   || buffer[0] == 0xef)
+            {
+                buffer[0] = (byte)random.Next();
+            }
+            while (buffer[1] == 0x00000000)
+            {
+                buffer[1] = (byte)random.Next();
+            }
+
+            var keyIvEncrypt = buffer.SubArray(8, 48);
+            EncryptKey = CryptographicBuffer.CreateFromByteArray(keyIvEncrypt.SubArray(0, 32));
+            EncryptIV = keyIvEncrypt.SubArray(32, 16);
+            //Array.Reverse(EncryptIV);
+
+            Array.Reverse(keyIvEncrypt);
+            DecryptKey = CryptographicBuffer.CreateFromByteArray(keyIvEncrypt.SubArray(0, 32));
+            DecryptIV = keyIvEncrypt.SubArray(32, 16);
+            //Array.Reverse(DecryptIV);
+
+            var shortStamp = BitConverter.GetBytes(0xefefefef);
+            for (var i = 0; i < shortStamp.Length; i++)
+            {
+                buffer[56 + i] = shortStamp[i];
+            }
+
+            var encryptedBuffer = Encrypt(buffer);
+            for (var i = 56; i < encryptedBuffer.Length; i++)
+            {
+                buffer[i] = encryptedBuffer[i];
+            }
+
+            return buffer;
+        }
+#endif
+
         private void OnConnected(SocketAsyncEventArgs args, Action callback = null, Action<TcpTransportResult> faultCallback = null)
         {
             WRITE_LOG(string.Format("Socket.OnConnected[#4] {0} socketError={1}", Id, args.SocketError));
@@ -189,16 +252,18 @@ namespace Telegram.Api.Transport
                 {
                     ReceiveAsync();
 
-                    var sendArgs = new SocketAsyncEventArgs();
-                    var buffer = GetInitBuffer();
-                    sendArgs.SetBuffer(buffer, 0, buffer.Length);
-                    
-                    //sendArgs.SetBuffer(new byte[] { 0xef }, 0, 1);
-                    sendArgs.Completed += (o, e) => callback?.Invoke();
-
                     try
                     {
-                        _socket.SendAsync(sendArgs);
+                        lock (_encryptedStreamSyncRoot)
+                        {
+                            var sendArgs = new SocketAsyncEventArgs();
+                            var buffer = GetInitBuffer();
+                            sendArgs.SetBuffer(buffer, 0, buffer.Length);
+
+                            //sendArgs.SetBuffer(new byte[] { 0xef }, 0, 1);
+                            sendArgs.Completed += (o, e) => callback?.Invoke();
+                            _socket.SendAsync(sendArgs);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -300,7 +365,14 @@ namespace Telegram.Api.Transport
 
                 LastReceiveTime = now;
 
+                // AES-CTR decrypt
+#if TCP_OBFUSCATED_2
+                var buffer = e.Buffer.SubArray(e.Offset, e.BytesTransferred);
+                buffer = Decrypt(buffer);
+                OnBufferReceived(buffer, 0, buffer.Length);
+#else
                 OnBufferReceived(e.Buffer, e.Offset, e.BytesTransferred);
+#endif
             }
             else
             {
@@ -319,7 +391,6 @@ namespace Telegram.Api.Transport
 
             if (_socket != null)
             {
-                // TODO: _socket.Close();
                 _socket.Dispose();
                 Closed = true;
             }

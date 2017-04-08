@@ -3,6 +3,111 @@
                     xmlns:local="using:Unigram.Common"
                     xmlns:controls="using:Unigram.Controls">
 
+    <Style x:Key="RoundImageCropperStyle" TargetType="controls:ImageCropper">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="Padding" Value="48" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ImageCropper">
+                    <Grid x:Name="LayoutRoot" Margin="{TemplateBinding Padding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition GeneratedDuration="0:0:0.3" To="Disabled">
+                                        <VisualTransition.GeneratedEasingFunction>
+                                            <CubicEase EasingMode="EaseInOut"/>
+                                        </VisualTransition.GeneratedEasingFunction>
+                                    </VisualTransition>
+                                    <VisualTransition GeneratedDuration="0:0:0.3" From="Disabled" >
+                                        <VisualTransition.GeneratedEasingFunction>
+                                            <CubicEase EasingMode="EaseInOut"/>
+                                        </VisualTransition.GeneratedEasingFunction>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ImageThumb.ManipulationMode" Value="None"/>
+                                        <Setter Target="ThumbsContainer.IsHitTestVisible" Value="False"/>
+                                        <Setter Target="Clip.IsHitTestVisible" Value="False"/>
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <DoubleAnimation From="0.6" To="1" Storyboard.TargetName="Clip" Storyboard.TargetProperty="Opacity"/>
+                                        <DoubleAnimation From="1.0" To="0" Storyboard.TargetName="ThumbsContainer" Storyboard.TargetProperty="Opacity"/>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.Resources>
+                            <Style x:Key="CircularThumbStyle" TargetType="controls:ImageCropperThumb">
+                                <Setter Property="Background" Value="White" />
+                                <Setter Property="BorderBrush" Value="Black" />
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="controls:ImageCropperThumb">
+                                            <Grid Background="Transparent">
+                                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="{TemplateBinding BorderThickness}" />
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                            <Style x:Key="SideThumbStyle" TargetType="controls:ImageCropperThumb">
+                                <Setter Property="Background" Value="White" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="controls:ImageCropperThumb">
+                                            <Grid Background="Transparent" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                            <Style x:Key="HorizontalSideThumbStyle" BasedOn="{StaticResource SideThumbStyle}" TargetType="controls:ImageCropperThumb">
+                                <Setter Property="Height" Value="20" />
+                                <Setter Property="Padding" Value="0,9" />
+                            </Style>
+                            <Style x:Key="VerticalSideThumbStyle" BasedOn="{StaticResource SideThumbStyle}" TargetType="controls:ImageCropperThumb">
+                                <Setter Property="Width" Value="20" />
+                                <Setter Property="Padding" Value="9,0" />
+                            </Style>
+                        </Grid.Resources>
+
+                        <Canvas>
+                            <Grid x:Name="ImageThumb" RenderTransformOrigin="0.5,0.5" ManipulationMode="Rotate,Scale,TranslateX,TranslateY">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform x:Name="ImageThumbTransform" />
+                                </Grid.RenderTransform>
+                                <Image x:Name="ImageViewer" Stretch="None"/>
+                                <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Grid>
+
+                            <Path x:Name="Clip" Fill="#000000" Opacity="0.6" Stroke="Transparent" StrokeThickness="1">
+                                <Path.Data>
+                                    <GeometryGroup>
+                                        <RectangleGeometry x:Name="OuterClip"/>
+                                        <EllipseGeometry x:Name="InnerClip"/>
+                                    </GeometryGroup>
+                                </Path.Data>
+                            </Path>
+
+                            <Grid x:Name="ThumbsContainer">
+                                <Ellipse Stroke="White" StrokeThickness="2" Margin="-2" />
+
+                                <controls:ImageCropperThumb x:Name="LeftThumb" Style="{StaticResource CircularThumbStyle}" Margin="-11,-10,-10,-10" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                <controls:ImageCropperThumb x:Name="TopThumb" Style="{StaticResource CircularThumbStyle}" Margin="-10,-11,-10,-10" HorizontalAlignment="Center" VerticalAlignment="Top" />
+                                <controls:ImageCropperThumb x:Name="RightThumb" Style="{StaticResource CircularThumbStyle}" Margin="-10,-10,-11,-10" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                <controls:ImageCropperThumb x:Name="BottomThumb" Style="{StaticResource CircularThumbStyle}" Margin="-10,-10,-10,-11" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
+                            </Grid>
+                        </Canvas>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Thickness x:Key="ContentDialogContentScrollViewerMargin">0,0,0,12</Thickness>
     <Thickness x:Key="ContentDialogTitleMargin">0,0,0,0</Thickness>
     <Thickness x:Key="ContentDialogPadding">12,18,12,12</Thickness>

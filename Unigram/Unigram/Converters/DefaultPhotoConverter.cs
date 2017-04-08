@@ -11,7 +11,7 @@ using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Native;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -188,6 +188,28 @@ namespace Unigram.Converters
             if (photoMedia != null)
             {
                 value = photoMedia.Photo;
+            }
+
+            var photoSizeBase2 = value as TLPhotoSizeBase;
+            if (photoSizeBase2 != null)
+            {
+                var photoSize = photoSizeBase2 as TLPhotoSize;
+                if (photoSize != null)
+                {
+                    var fileLocation = photoSize.Location as TLFileLocation;
+                    if (fileLocation != null /*&& (photoMedia == null || !photoMedia.IsCanceled)*/)
+                    {
+                        return ReturnOrEnqueueImage(false, fileLocation, null, photoSize.Size, photoMedia);
+                    }
+                }
+
+                var photoCachedSize = photoSizeBase2 as TLPhotoCachedSize;
+                if (photoCachedSize != null)
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.SetSource(photoCachedSize.Bytes);
+                    return bitmap;
+                }
             }
 
             var photo = value as TLPhoto;
@@ -449,6 +471,18 @@ namespace Unigram.Converters
                         }
                     }
                 }
+            }
+
+            var invoiceMedia = value as TLMessageMediaInvoice;
+            if (invoiceMedia != null)
+            {
+                value = invoiceMedia.Photo;
+            }
+
+            var webDocument = value as TLWebDocument;
+            if (webDocument != null)
+            {
+                return webDocument.Url;
             }
 
             return null;

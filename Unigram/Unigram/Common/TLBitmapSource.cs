@@ -10,7 +10,7 @@ using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Native;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -42,8 +42,8 @@ namespace Unigram.Common
 
         public TLBitmapSource(TLUser user)
         {
-            Image.DecodePixelWidth = 48;
-            Image.DecodePixelHeight = 48;
+            Image.DecodePixelWidth = 64;
+            Image.DecodePixelHeight = 64;
 
             var userProfilePhoto = user.Photo as TLUserProfilePhoto;
             if (userProfilePhoto != null)
@@ -62,8 +62,8 @@ namespace Unigram.Common
 
         public TLBitmapSource(TLChatBase chatBase)
         {
-            Image.DecodePixelWidth = 48;
-            Image.DecodePixelHeight = 48;
+            Image.DecodePixelWidth = 64;
+            Image.DecodePixelHeight = 64;
 
             TLChatPhotoBase chatPhotoBase = null;
 

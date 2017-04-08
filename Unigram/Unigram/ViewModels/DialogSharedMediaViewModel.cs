@@ -24,35 +24,20 @@ namespace Unigram.ViewModels
         {
             Media = new MediaCollection(ProtoService, (TLInputPeerBase)parameter, new TLInputMessagesFilterPhotoVideo());
             Files = new MediaCollection(ProtoService, (TLInputPeerBase)parameter, new TLInputMessagesFilterDocument());
+            Links = new MediaCollection(ProtoService, (TLInputPeerBase)parameter, new TLInputMessagesFilterUrl());
             Music = new MediaCollection(ProtoService, (TLInputPeerBase)parameter, new TLInputMessagesFilterMusic());
 
-
-
-            MediaCollection = new ListCollectionView(Media);
-            FilesCollection = new ListCollectionView(Files);
-            MusicCollection = new ListCollectionView(Music);
-
+            RaisePropertyChanged(() => Media);
             RaisePropertyChanged(() => Files);
-            RaisePropertyChanged(() => Files);
+            RaisePropertyChanged(() => Links);
             RaisePropertyChanged(() => Music);
-
-
-
-            RaisePropertyChanged(() => MediaCollection);
-            //RaisePropertyChanged(() => FilesCollection);
-            //RaisePropertyChanged(() => MusicCollection);
 
             return Task.CompletedTask;
         }
 
         public MediaCollection Media { get; private set; }
         public MediaCollection Files { get; private set; }
+        public MediaCollection Links { get; private set; }
         public MediaCollection Music { get; private set; }
-
-
-
-        public ListCollectionView MediaCollection { get; private set; }
-        public ListCollectionView FilesCollection { get; private set; }
-        public ListCollectionView MusicCollection { get; private set; }
     }
 }

@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Auth
 {
 	/// <summary>
 	/// RCP method auth.dropTempAuthKeys.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
 	/// </summary>
 	public partial class TLAuthDropTempAuthKeys : TLObject
 	{

@@ -64,19 +64,20 @@ namespace Unigram.Common
                     return null;
                 }
 
-                if (user.Photo == null)
+                var key = (object)user.Photo;
+                if (key == null)
                 {
-                    user.Photo = new TLUserProfilePhotoEmpty();
+                    key = user.Id;
                 }
 
-                if (_context.TryGetValue(user.Photo, out WeakReference<TLBitmapSource> reference) && 
+                if (_context.TryGetValue(key, out WeakReference<TLBitmapSource> reference) && 
                     reference.TryGetTarget(out TLBitmapSource target))
                 {
                     return target.Image;
                 }
 
                 target = new TLBitmapSource(user);
-                _context[user.Photo] = new WeakReference<TLBitmapSource>(target);
+                _context[key] = new WeakReference<TLBitmapSource>(target);
                 return target.Image;
             }
         }

@@ -534,7 +534,7 @@ namespace Unigram.ViewModels
             var sendMedia = resultBase.SendMessage as TLBotInlineMessageMediaAuto;
             if (sendMedia != null)
             {
-                var mediaCaption = message.Media as ITLMediaCaption;
+                var mediaCaption = message.Media as ITLMessageMediaCaption;
                 if (mediaCaption != null)
                 {
                     mediaCaption.Caption = sendMedia.Caption;

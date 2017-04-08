@@ -12,6 +12,7 @@ using System.Globalization;
 using Telegram.Api.Services;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
+using System.Diagnostics;
 
 namespace Telegram.Api.Helpers
 {
@@ -55,7 +56,7 @@ namespace Telegram.Api.Helpers
 
             do
             {
-                x = (x*x % N + c ) % N;
+                x = (x * x % N + c) % N;
                 xx = (xx * xx % N + c) % N;
                 xx = (xx * xx % N + c) % N;
                 divisor = Gcd(x - xx, N);
@@ -188,6 +189,49 @@ namespace Telegram.Api.Helpers
             return rsa;
         }
 
+        // Note: ivec - big-endian, but BigInterger.ctor and BigInteger.ToByteArray return little-endian
+        public static byte[] AES_ctr128_encrypt(byte[] input, IBuffer key, ref byte[] ivec, ref byte[] ecount_buf, ref uint num)
+        {
+            uint n;
+            var output = new byte[input.Length];
+            n = num;
+
+            var provider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
+            var keySymmetric = provider.CreateSymmetricKey(key);
+
+            for (uint i = 0; i < input.Length; i++)
+            {
+                if (n == 0)
+                {
+                    var ivecBuffer = CryptographicBuffer.CreateFromByteArray(ivec);
+                    var ecountBuffer = CryptographicEngine.Encrypt(keySymmetric, ivecBuffer, null);
+
+                    CryptographicBuffer.CopyToByteArray(ecountBuffer, out ecount_buf);
+                    Array.Reverse(ivec);
+                    var bi = new System.Numerics.BigInteger(TLUtils.Combine(ivec, new byte[] { 0x00 }));
+                    bi = (bi + 1);
+                    var biArray = bi.ToByteArray();
+                    var b = new byte[16];
+                    //for (var j = 0; j < biArray.Length && j < b.Length; j++)
+                    //{
+                    //    b[j] = biArray[j];
+                    //}
+
+                    System.Buffer.BlockCopy(biArray, 0, b, 0, Math.Min(biArray.Length, b.Length));
+
+                    //System.Diagnostics.Debug.WriteLine(bi);
+                    Array.Reverse(b);
+                    ivec = b;
+                }
+
+                output[i] = (byte)(input[i] ^ ecount_buf[n]);
+                n = (n + 1) % 16;
+            }
+
+            num = n;
+            return output;
+        }
+
         private static UInt64 GetP(UInt64 data)
         {
             var sqrt = (UInt64)Math.Sqrt(data);
@@ -229,7 +273,7 @@ namespace Telegram.Api.Helpers
             var first = FastFactor((long)pq);
             var second = (long)pq / first;
 
-            return first < second?
+            return first < second ?
                 new Tuple<UInt64, UInt64>((UInt64)first, (UInt64)second) :
                 new Tuple<UInt64, UInt64>((UInt64)second, (UInt64)first);
         }
@@ -319,7 +363,7 @@ namespace Telegram.Api.Helpers
             var bytes = new byte[16];
             for (int i = 0; i < bytes.Length; i++)
             {
-                bytes[i] = (byte) (first[i] ^ second[i]);
+                bytes[i] = (byte)(first[i] ^ second[i]);
             }
 
             return bytes;
@@ -413,12 +457,12 @@ namespace Telegram.Api.Helpers
                 var processedBytes = cipher.ProcessBytes(XorArrays(x, yOld));
                 byte[] y = XorArrays(processedBytes, xOld);
 
-                xOld = (byte[]) x.Clone();
+                xOld = (byte[])x.Clone();
                 //xOld = new byte[x.Length];
                 //Array.Copy(x, xOld, x.Length);
                 yOld = y;
 
-                outStream.Write(y, 0 , y.Length);
+                outStream.Write(y, 0, y.Length);
                 //outData = TLUtils.Combine(outData, y);
 
                 position += 16;

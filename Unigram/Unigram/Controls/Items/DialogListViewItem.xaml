@@ -102,7 +102,7 @@
                        MaxLines="1">
                 <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
             </TextBlock>
-            <Border Visibility="{x:Bind UpdateIsPinned(ViewModel.IsPinned, ViewModel.UnreadCount), Mode=OneWay}"
+            <Border Visibility="{x:Bind UpdateIsPinned(ViewModel.IsPinned, ViewModel.UnreadCount), Mode=OneWay, FallbackValue=Collapsed}"
                     Width="20"
                     Height="20"
                     VerticalAlignment="Top"

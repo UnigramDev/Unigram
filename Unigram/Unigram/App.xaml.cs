@@ -13,7 +13,7 @@ using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Notifications;
 using Windows.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
@@ -26,7 +26,7 @@ using Unigram.Tasks;
 using Windows.UI.Notifications;
 using Windows.Storage;
 using Windows.UI.Popups;
-using Unigram.Views;
+using Unigram.Common;
 using Windows.Media;
 using System.IO;
 using Template10.Services.NavigationService;
@@ -77,6 +77,12 @@ namespace Unigram
 
             m_mediaExtensionManager = new MediaExtensionManager();
             m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
+
+            if (SettingsHelper.SwitchGuid != null)
+            {
+                SettingsHelper.SessionGuid = SettingsHelper.SwitchGuid;
+                SettingsHelper.SwitchGuid = null;
+            }
 
             FileUtils.CreateTemporaryFolder();
 
@@ -214,7 +220,7 @@ namespace Unigram
 
             ShowStatusBar();
             ColourTitleBar();
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(330, 500));
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Task.Run(() => OnStartSync());

@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Methods.Upload
 {
 	/// <summary>
 	/// RCP method upload.saveBigFilePart.
-	/// Returns <see cref="Telegram.Api.TL.TLBoolBase"/>
+	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
 	/// </summary>
 	public partial class TLUploadSaveBigFilePart : TLObject
 	{

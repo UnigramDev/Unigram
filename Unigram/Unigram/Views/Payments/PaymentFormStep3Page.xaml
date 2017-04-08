@@ -1,0 +1,104 @@
+﻿<Page
+    x:Class="Unigram.Views.Payments.PaymentFormStep3Page"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Payments"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:payments="using:Unigram.Controls.Payments"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <CollectionViewSource x:Name="Countries" Source="{Binding Countries}" IsSourceGrouped="True"/>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="12,8,12,4"/>
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Margin" Value="12,8,12,4"/>
+        </Style>
+
+        <Style TargetType="payments:CardTextBox">
+            <Setter Property="Margin" Value="12,8,12,4"/>
+        </Style>
+
+        <Style TargetType="payments:DateTextBox">
+            <Setter Property="Margin" Value="12,8,12,4"/>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="12,8,12,4"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:ButtonPageHeader Title="Payment info" 
+                                   Command="{x:Bind ViewModel.SendCommand}"
+                                   CommandVisibility="{x:Bind ViewModel.IsNativeUsed, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                                   Glyph="&#xE10B;"/>
+
+        <ScrollViewer Visibility="{x:Bind ViewModel.IsNativeUsed, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Payment card" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    <payments:CardTextBox x:Name="FieldCard"
+                                          Text="{x:Bind ViewModel.Card, Mode=TwoWay}"
+                                          PlaceholderText="Card Number"
+                                          InputScope="Number"/>
+                    <payments:DateTextBox x:Name="FieldDate"
+                                          Text="{x:Bind ViewModel.Date, Mode=TwoWay}"
+                                          PlaceholderText="MM/YY"
+                                          InputScope="Number"/>
+                    <TextBox x:Name="FieldCardName"
+                             Text="{x:Bind ViewModel.CardName, Mode=TwoWay}"
+                             Visibility="{x:Bind (Visibility)ViewModel.NeedCardholderName}"
+                             PlaceholderText="Name Surname"
+                             InputScope="PersonalFullName"/>
+                    <PasswordBox x:Name="FieldCVC"
+                                 Password="{x:Bind ViewModel.CVC, Mode=TwoWay}" 
+                                 PlaceholderText="Security Code (CVC)"
+                                 InputScope="Number"
+                                 MaxLength="3"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.NeedZipOrCountry}">
+                    <TextBlock Text="Billing address" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    <ComboBox x:Name="FieldCountry"
+                              ItemsSource="{x:Bind Countries.View}"
+                              SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
+                              Visibility="{x:Bind (Visibility)ViewModel.NeedCountry}"
+                              DisplayMemberPath="Name"
+                              PlaceholderText="Country"/>
+                    <TextBox x:Name="FieldPostcode"
+                             Text="{x:Bind ViewModel.Postcode, Mode=TwoWay}"
+                             Visibility="{x:Bind (Visibility)ViewModel.NeedZip}"
+                             PlaceholderText="Postcode"
+                             InputScope="Number"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.IsCanSaveCredentials, FallbackValue=Collapsed}" Padding="12,12,12,24">
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsSave, Mode=TwoWay}" Content="Save Payment Information"/>
+                    <TextBlock Text="You can save your payment info for future use." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Visibility="{x:Bind ViewModel.IsNativeUsed, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                d:IsHidden="True"
+                Grid.Row="1">
+            <WebView x:Name="View" NavigationStarting="View_NavigationStarting"/>
+        </Border>
+    </Grid>
+</Page>

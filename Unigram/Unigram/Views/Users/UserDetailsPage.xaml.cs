@@ -9,7 +9,7 @@ using Template10.Common;
 using Template10.Controls;
 using Unigram.Controls;
 using Unigram.Controls.Views;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Users;
 using Windows.Foundation;

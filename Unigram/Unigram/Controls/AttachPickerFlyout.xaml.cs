@@ -78,7 +78,7 @@ namespace Unigram.Controls
             capture.VideoSettings.Format = CameraCaptureUIVideoFormat.Mp4;
             capture.VideoSettings.MaxResolution = CameraCaptureUIMaxVideoResolution.StandardDefinition;
 
-            var result = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo /*OrVideo*/ );
+            var result = await capture.CaptureFileAsync(CameraCaptureUIMode.PhotoOrVideo);
             if (result != null)
             {
                 await result.CopyAsync(KnownFolders.CameraRoll, DateTime.Now.ToString("WIN_yyyyMMdd_HH_mm_ss") + ".jpg", NameCollisionOption.GenerateUniqueName);

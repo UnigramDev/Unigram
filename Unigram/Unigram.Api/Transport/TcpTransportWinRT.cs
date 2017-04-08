@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define TCP_OBFUSCATED_2
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -8,11 +9,9 @@ using Windows.Foundation;
 using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
-using Org.BouncyCastle.Utilities.Net;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
-using Telegram.Logs;
-using System.Diagnostics;
+using Windows.Security.Cryptography;
 
 namespace Telegram.Api.Transport
 {
@@ -24,9 +23,11 @@ namespace Telegram.Api.Transport
 
         private bool _isConnected;
 
-        private DataReader _dataReader;
+        private readonly object _dataWriterSyncRoot = new object();
 
-        private DataWriter _dataWriter;
+        private readonly DataReader _dataReader;
+
+        private readonly DataWriter _dataWriter;
 
         private readonly double _timeout;
 
@@ -36,7 +37,67 @@ namespace Telegram.Api.Transport
             _socket = new StreamSocket();
             var control = _socket.Control;
             control.QualityOfService = SocketQualityOfService.LowLatency;
+
+            _dataReader = new DataReader(_socket.InputStream) { InputStreamOptions = InputStreamOptions.Partial };
+            _dataWriter = new DataWriter(_socket.OutputStream);
+
+            lock (_dataWriterSyncRoot)
+            {
+                var buffer = GetInitBufferInternal();
+                _dataWriter.WriteBytes(buffer);
+            }
         }
+
+#if TCP_OBFUSCATED_2
+        private byte[] GetInitBufferInternal()
+        {
+            var buffer = new byte[64];
+            var random = new Random();
+            random.NextBytes(buffer);
+            while (buffer[0] == 0x44414548
+                   || buffer[0] == 0x54534f50
+                   || buffer[0] == 0x20544547
+                   || buffer[0] == 0x4954504f
+                   || buffer[0] == 0xeeeeeeee
+                   || buffer[0] == 0xef)
+            {
+                buffer[0] = (byte)random.Next();
+            }
+            while (buffer[1] == 0x00000000)
+            {
+                buffer[1] = (byte)random.Next();
+            }
+
+            var keyIvEncrypt = buffer.SubArray(8, 48);
+            EncryptKey = CryptographicBuffer.CreateFromByteArray(keyIvEncrypt.SubArray(0, 32));
+            EncryptIV = keyIvEncrypt.SubArray(32, 16);
+            //Array.Reverse(EncryptIV);
+
+            Array.Reverse(keyIvEncrypt);
+            DecryptKey = CryptographicBuffer.CreateFromByteArray(keyIvEncrypt.SubArray(0, 32));
+            DecryptIV = keyIvEncrypt.SubArray(32, 16);
+            //Array.Reverse(DecryptIV);
+
+            var shortStamp = BitConverter.GetBytes(0xefefefef);
+            for (var i = 0; i < shortStamp.Length; i++)
+            {
+                buffer[56 + i] = shortStamp[i];
+            }
+
+            var encryptedBuffer = Encrypt(buffer);
+            for (var i = 56; i < encryptedBuffer.Length; i++)
+            {
+                buffer[i] = encryptedBuffer[i];
+            }
+
+            return buffer;
+        }
+
+        protected override byte[] GetInitBuffer()
+        {
+            return GetInitBufferInternal();
+        }
+#endif
 
         private async Task<bool> ConnectAsync(double timeout, Action<TcpTransportResult> faultCallback)
         {
@@ -46,10 +107,6 @@ namespace Telegram.Api.Transport
 
                 //var address = IPAddress.IsValidIPv6(Host);
                 await _socket.ConnectAsync(new HostName(Host), Port.ToString(CultureInfo.InvariantCulture)).WithTimeout(timeout);
-
-                _dataReader = new DataReader(_socket.InputStream);
-                _dataReader.InputStreamOptions = InputStreamOptions.Partial;
-                _dataWriter = new DataWriter(_socket.OutputStream);
 
                 lock (_isConnectedSyncRoot)
                 {
@@ -74,9 +131,22 @@ namespace Telegram.Api.Transport
         {
             try
             {
-                _dataWriter.WriteBytes(data);
+#if TCP_OBFUSCATED_2
+                lock(_dataWriterSyncRoot)
+                {
+                    data = Encrypt(data);
+                    _dataWriter.WriteBytes(data); 
+                    var result = _dataWriter.StoreAsync().AsTask().Result;
+                }
 
-                var storeResult = await _dataWriter.StoreAsync(); //.WithTimeout(timeout);
+                //var storeResult = await _dataWriter.StoreAsync().AsTask().Result;
+#else
+                lock (_dataWriterSyncRoot)
+                {
+                    _dataWriter.WriteBytes(data);
+                }
+                var storeResult = await _dataWriter.StoreAsync();//.WithTimeout(timeout);
+#endif
             }
             catch (Exception ex)
             {
@@ -102,7 +172,7 @@ namespace Telegram.Api.Transport
                 int bytesTransferred = 0;
                 try
                 {
-                    bytesTransferred = (int)await _dataReader.LoadAsync(60); //.WithTimeout(timeout);
+                    bytesTransferred = (int) await _dataReader.LoadAsync(64); //WithTimeout(timeout);
                 }
                 catch (Exception ex)
                 {
@@ -113,10 +183,6 @@ namespace Telegram.Api.Transport
                     if (ex is ObjectDisposedException)
                     {
                         return;
-                    }
-                    else if (ex is TaskCanceledException)
-                    {
-                        _dataReader.Dispose();
                     }
                 }
 
@@ -136,6 +202,10 @@ namespace Telegram.Api.Transport
 
                     var buffer = new byte[_dataReader.UnconsumedBufferLength];
                     _dataReader.ReadBytes(buffer);
+
+#if TCP_OBFUSCATED_2
+                    buffer = Decrypt(buffer);
+#endif
 
                     OnBufferReceived(buffer, 0, bytesTransferred);
                 }
@@ -192,9 +262,9 @@ namespace Telegram.Api.Transport
                         var connectResult = await ConnectAsync(_timeout, faultCallback);
                         if (!connectResult) return;
 
-                        var buffer = GetInitBuffer();
-                        var sendResult = await SendAsync(_timeout, buffer, faultCallback);
-                        if (!sendResult) return;
+                        //var buffer = GetInitBuffer();
+                        //var sendResult = await SendAsync(_timeout, buffer, faultCallback);
+                        //if (!sendResult) return;
                         
                         ReceiveAsync(_timeout);
 

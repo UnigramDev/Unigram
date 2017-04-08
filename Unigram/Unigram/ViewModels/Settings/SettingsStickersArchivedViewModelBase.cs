@@ -58,7 +58,7 @@ namespace Unigram.ViewModels.Settings
                 _type = type;
             }
 
-            public override async Task<IEnumerable<TLMessagesStickerSet>> LoadDataAsync()
+            public override async Task<IList<TLMessagesStickerSet>> LoadDataAsync()
             {
                 var offset = Count == 0 ? 0 : this[Count - 1].Set.Id;
                 var limit = 15;
@@ -87,7 +87,7 @@ namespace Unigram.ViewModels.Settings
                         }
 
                         return null;
-                    });
+                    }).ToList();
                 }
 
                 return new TLMessagesStickerSet[0];

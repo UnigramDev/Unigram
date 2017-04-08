@@ -213,7 +213,7 @@ namespace Telegram.Api.Services.FileManager
             TLUploadFile result = null;
             TLRPCError outError = null;
             var outIsCanceled = false;
-            _mtProtoService.GetFileCallback(location.DCId, location.ToInputFileLocation(), offset, limit,
+            _mtProtoService.GetFileAsync(location.DCId, location.ToInputFileLocation(), offset, limit,
                 file =>
                 {
                     result = file;

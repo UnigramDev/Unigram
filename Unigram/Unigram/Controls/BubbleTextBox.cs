@@ -13,7 +13,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Models;
 using Unigram.Core.Rtf;
 using Unigram.Core.Rtf.Write;
@@ -72,11 +72,11 @@ namespace Unigram.Controls
             //((MenuFlyoutItem)_flyout.Items[1]).Click += Italic_Click;
             //((MenuFlyoutItem)_flyout.Items[1]).Loaded += Italic_Loaded;
 
-//#if DEBUG
-//            // To test hyperlinks (Used for mention name => to tag people that has no username)
-//            _flyout.Items.Add(new MenuFlyoutItem { Text = "Hyperlink" });
-//            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
-//#endif
+            //#if DEBUG
+            //            // To test hyperlinks (Used for mention name => to tag people that has no username)
+            //            _flyout.Items.Add(new MenuFlyoutItem { Text = "Hyperlink" });
+            //            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
+            //#endif
 
             Paste += OnPaste;
             Clipboard.ContentChanged += Clipboard_ContentChanged;
@@ -318,7 +318,9 @@ namespace Unigram.Controls
                 var key = Window.Current.CoreWindow.GetKeyState(args.VirtualKey);
 
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                if (key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down))
+
+                var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                if (send && ApplicationSettings.Current.IsSendByEnterEnabled)
                 {
                     AcceptsReturn = false;
                     await SendAsync();

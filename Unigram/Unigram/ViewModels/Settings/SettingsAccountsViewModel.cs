@@ -10,7 +10,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Unigram.Common;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Views;
 using Windows.Storage;
 using Windows.UI.Xaml.Navigation;
@@ -62,14 +62,17 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand NewAccountCommand => new RelayCommand(NewAccountExecute);
         private void NewAccountExecute()
         {
-            App.Current.NavigationService.Navigate(typeof(SwitchAccountPage));
+            SettingsHelper.SwitchGuid = Guid.NewGuid().ToString();
+            SettingsHelper.IsAuthorized = false;
+            App.Current.Exit();
         }
 
         private void SwitchAccount()
         {
             if (_selectedItem != SettingsHelper.SessionGuid)
             {
-                App.Current.NavigationService.Navigate(typeof(SwitchAccountPage), _selectedItem);
+                SettingsHelper.SwitchGuid = _selectedItem;
+                App.Current.Exit();
             }
         }
     }

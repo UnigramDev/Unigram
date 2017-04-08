@@ -62,19 +62,6 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private bool _isLoading;
-        public bool IsLoading
-        {
-            get
-            {
-                return _isLoading;
-            }
-            set
-            {
-                Set(ref _isLoading, value);
-            }
-        }
-
         private bool _isValid;
         public bool IsValid
         {

@@ -80,14 +80,19 @@ namespace Telegram.Api.Helpers
             {
                 if (ApplicationData.Current.LocalSettings.Values.ContainsKey("UserId"))
                 {
-                    return (int)ApplicationData.Current.LocalSettings.Values["UserId"];
+                    UserId = (int)ApplicationData.Current.LocalSettings.Values["UserId"];
+                }
+
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SessionGuid + "UserId"))
+                {
+                    return (int)ApplicationData.Current.LocalSettings.Values[SessionGuid + "UserId"];
                 }
 
                 return 0;
             }
             set
             {
-                ApplicationData.Current.LocalSettings.Values["UserId"] = value;
+                ApplicationData.Current.LocalSettings.Values[SessionGuid + "UserId"] = value;
             }
         }
 
@@ -108,6 +113,24 @@ namespace Telegram.Api.Helpers
             set
             {
                 ApplicationData.Current.LocalSettings.Values["SessionGuid"] = value;
+            }
+        }
+
+        public static string SwitchGuid
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SwitchGuid"))
+                {
+                    return (string)ApplicationData.Current.LocalSettings.Values["SwitchGuid"];
+                }
+
+
+                return null;
+            }
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values["SwitchGuid"] = value;
             }
         }
 

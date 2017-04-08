@@ -11,7 +11,6 @@ namespace Telegram.Api.TL.Methods.Phone
 	{
 		public TLInputPhoneCall Peer { get; set; }
 		public Byte[] GB { get; set; }
-		public Int64 KeyFingerprint { get; set; }
 		public TLPhoneCallProtocol Protocol { get; set; }
 
 		public TLPhoneAcceptCall() { }
@@ -26,16 +25,14 @@ namespace Telegram.Api.TL.Methods.Phone
 		{
 			Peer = TLFactory.Read<TLInputPhoneCall>(from);
 			GB = from.ReadByteArray();
-			KeyFingerprint = from.ReadInt64();
 			Protocol = TLFactory.Read<TLPhoneCallProtocol>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x220F0B20);
+			to.Write(0x3BD2B4A0);
 			to.WriteObject(Peer);
 			to.WriteByteArray(GB);
-			to.Write(KeyFingerprint);
 			to.WriteObject(Protocol);
 		}
 	}

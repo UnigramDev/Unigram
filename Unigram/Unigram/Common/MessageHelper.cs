@@ -17,7 +17,7 @@ using Template10.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Users;
@@ -76,9 +76,9 @@ namespace Unigram.Common
             if (message != null /*&& sender.Visibility == Visibility.Visible*/)
             {
                 var caption = false;
-                if (message.Media is ITLMediaCaption)
+                if (message.Media is ITLMessageMediaCaption)
                 {
-                    caption = !string.IsNullOrWhiteSpace(((ITLMediaCaption)message.Media).Caption);
+                    caption = !string.IsNullOrWhiteSpace(((ITLMessageMediaCaption)message.Media).Caption);
                 }
 
                 var game = false;
@@ -130,7 +130,7 @@ namespace Unigram.Common
                     }
                     else if (caption)
                     {
-                        var captionMedia = message.Media as ITLMediaCaption;
+                        var captionMedia = message.Media as ITLMessageMediaCaption;
                         if (captionMedia != null && !string.IsNullOrWhiteSpace(captionMedia.Caption))
                         {
                             Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a ITLMediaCaption");
@@ -148,7 +148,7 @@ namespace Unigram.Common
                     //ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
-                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMediaCaption || empty || message?.Media == null)
+                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || empty || message?.Media == null)
                 {
                     if (IsAnyCharacterRightToLeft(message.Message))
                     {
@@ -354,6 +354,12 @@ namespace Unigram.Common
                 if (entity.Offset > previous)
                 {
                     paragraph.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
+                }
+
+                if (entity.Length + entity.Offset > text.Length)
+                {
+                    previous = entity.Offset + entity.Length;
+                    continue;
                 }
 
                 var type = entity.TypeId;

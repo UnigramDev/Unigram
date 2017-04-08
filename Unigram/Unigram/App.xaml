@@ -35,7 +35,7 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
-            <!-- Temp -->
+            <converters:InvoiceToAmountConverter x:Key="InvoiceToAmountConverter"/>
             <converters:PhoneNumberFormatConverter x:Key="PhoneNumberFormatConverter"/>
             <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />
             <converters:BubblePlaceholderConverter x:Key="BubblePlaceholderConverter" />
@@ -99,6 +99,12 @@
                 <Setter Property="TextWrapping" Value="NoWrap"/>
                 <Setter Property="MaxLines" Value="1"/>
                 <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            </Style>
+
+            <Style x:Key="DisabledBodyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
+                <Setter Property="TextWrapping" Value="NoWrap"/>
+                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
             </Style>
 
         </ResourceDictionary>

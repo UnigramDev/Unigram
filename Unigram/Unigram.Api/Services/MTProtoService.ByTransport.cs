@@ -350,7 +350,7 @@ namespace Telegram.Api.Services
                         TLUtils.WriteException(new Exception("_activeTransport.DCId==0"));
                     }
 
-                    LogOutCallback(callback, faultCallback);
+                    LogOutAsync(callback, faultCallback);
                     return;
                 }
             }
@@ -386,7 +386,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void GetFileCallback(int dcId, TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFile> callback, Action<TLRPCError> faultCallback = null)
+        public void GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFile> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUploadGetFile { Location = location, Offset = offset, Limit = limit };
 
@@ -1787,7 +1787,7 @@ namespace Telegram.Api.Services
                     }
                 }
                 // to bind authKey to current TCPTransport
-                UpdateStatusCallback(false, result => { });
+                UpdateStatusAsync(false, result => { });
             }
         }
 

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
 using Template10.Utils;
 using Unigram.Common;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;

@@ -4,11 +4,13 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Helpers;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Unigram.Strings;
 using Windows.Globalization.DateTimeFormatting;
+using Windows.Globalization.NumberFormatting;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -51,6 +53,16 @@ namespace Unigram.Converters
             return PlaceholderColors[(uid + SettingsHelper.UserId) % PlaceholderColors.Count];
         }
 
+        public string PhoneNumber(string number)
+        {
+            if (number == null)
+            {
+                return null;
+            }
+
+            return Telegram.Helpers.PhoneNumber.Format(number);
+        }
+
 
         //private SolidColorBrush BubbleInternal(int? value)
         //{
@@ -79,6 +91,107 @@ namespace Unigram.Converters
         //    }
         //}
 
+        private Dictionary<string, CurrencyFormatter> _currencyCache = new Dictionary<string, CurrencyFormatter>();
+        private Dictionary<string, DateTimeFormatter> _formatterCache = new Dictionary<string, DateTimeFormatter>();
+
+        public string FormatAmount(long amount, string currency)
+        {
+            if (currency == null)
+            {
+                return string.Empty;
+            }
+
+            bool discount;
+            string customFormat;
+            double doubleAmount;
+
+            currency = currency.ToUpper();
+
+            if (amount < 0)
+            {
+                discount = true;
+            }
+            else
+            {
+                discount = false;
+            }
+
+            amount = Math.Abs(amount);
+
+            switch (currency)
+            {
+                case "CLF":
+                    customFormat = " {0:N4}";
+                    doubleAmount = ((double)amount) / 10000.0d;
+                    break;
+                case "BHD":
+                case "IQD":
+                case "JOD":
+                case "KWD":
+                case "LYD":
+                case "OMR":
+                case "TND":
+                    customFormat = " {0:N3}";
+                    doubleAmount = ((double)amount) / 1000.0d;
+                    break;
+                case "BIF":
+                case "BYR":
+                case "CLP":
+                case "CVE":
+                case "DJF":
+                case "GNF":
+                case "ISK":
+                case "JPY":
+                case "KMF":
+                case "KRW":
+                case "MGA":
+                case "PYG":
+                case "RWF":
+                case "UGX":
+                case "UYI":
+                case "VND":
+                case "VUV":
+                case "XAF":
+                case "XOF":
+                case "XPF":
+                    customFormat = " {0:N0}";
+                    doubleAmount = (double)amount;
+                    break;
+                case "MRO":
+                    customFormat = " {0:N1}";
+                    doubleAmount = ((double)amount) / 10.0d;
+                    break;
+                default:
+                    customFormat = " {0:N2}";
+                    doubleAmount = ((double)amount) / 100.0d;
+                    break;
+            }
+
+            if (_currencyCache.TryGetValue(currency, out CurrencyFormatter formatter) == false)
+            {
+                formatter = new CurrencyFormatter(currency, Windows.System.UserProfile.GlobalizationPreferences.Languages, Windows.System.UserProfile.GlobalizationPreferences.HomeGeographicRegion);
+                _currencyCache[currency] = formatter;
+            }
+
+            if (formatter != null)
+            {
+                return (discount ? "-" : string.Empty) + formatter.Format(doubleAmount);
+            }
+
+            return (discount ? "-" : string.Empty) + string.Format(currency + customFormat, doubleAmount);
+        }
+
+        public string ShippingOptiopn(TLShippingOption option, string currency)
+        {
+            var amount = 0L;
+            foreach (var price in option.Prices)
+            {
+                amount += price.Amount;
+            }
+
+            return $"{FormatAmount(amount, currency)} - {option.Title}";
+        }
+
         public string CallDuration(int seconds)
         {
             if (seconds < 60)
@@ -98,7 +211,7 @@ namespace Unigram.Converters
                     format = AppResources.CallSeconds_3_10;
                 }
 
-                return string.Format(format, seconds);
+                return string.Format(format, number);
             }
             else
             {
@@ -117,7 +230,7 @@ namespace Unigram.Converters
                     format = AppResources.CallMinutes_3_10;
                 }
 
-                return string.Format(format, seconds);
+                return string.Format(format, number);
             }
         }
 
@@ -140,7 +253,7 @@ namespace Unigram.Converters
                     format = AppResources.CallShortSeconds_3_10;
                 }
 
-                return string.Format(format, seconds);
+                return string.Format(format, number);
             }
             else
             {
@@ -159,8 +272,42 @@ namespace Unigram.Converters
                     format = AppResources.CallShortMinutes_3_10;
                 }
 
-                return string.Format(format, seconds);
+                return string.Format(format, number);
             }
+        }
+
+        public string DateExtended(int value)
+        {
+            var clientDelta = MTProtoService.Current.ClientTicksDelta;
+            var utc0SecsLong = value * 4294967296 - clientDelta;
+            var utc0SecsInt = utc0SecsLong / 4294967296.0;
+            var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
+
+            var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
+            var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
+
+            //Today
+            if (dateTime.Date == System.DateTime.Now.Date)
+            {
+                //TimeLabel.Text = dateTime.ToString(string.Format("{0}", shortTimePattern), cultureInfo);
+                return ShortTime.Format(dateTime);
+            }
+
+            //Week
+            if (dateTime.Date.AddDays(6) >= System.DateTime.Now.Date)
+            {
+                if (_formatterCache.TryGetValue("dayofweek.abbreviated", out DateTimeFormatter formatter) == false)
+                {
+                    formatter = new DateTimeFormatter("dayofweek.abbreviated", Windows.System.UserProfile.GlobalizationPreferences.Languages);
+                    _formatterCache["dayofweek.abbreviated"] = formatter;
+                }
+
+                return formatter.Format(dateTime);
+            }
+
+            //Long long time ago
+            //TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
+            return ShortDate.Format(dateTime);
         }
 
         public string Date(int value)

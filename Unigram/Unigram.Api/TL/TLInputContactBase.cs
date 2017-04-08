@@ -5,9 +5,5 @@ namespace Telegram.Api.TL
 {
 	public abstract partial class TLInputContactBase : TLObject
 	{
-		public Int64 ClientId { get; set; }
-		public String Phone { get; set; }
-		public String FirstName { get; set; }
-		public String LastName { get; set; }
 	}
 }

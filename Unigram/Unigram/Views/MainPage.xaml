@@ -147,15 +147,9 @@
                 </Pivot.LeftHeader>
                 <Pivot.RightHeader>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="{ThemeResource AppBarExpandButtonThemeWidthGridLength}"/>
-                            <ColumnDefinition Width="{ThemeResource AppBarExpandButtonThemeWidthGridLength}"/>
-                        </Grid.ColumnDefinitions>
-
                         <Button x:Name="btnOptions"
                                 Padding="16,23,16,0"
-                                Style="{StaticResource EllipsisButton}"
-                                Grid.Column="1">
+                                Style="{StaticResource EllipsisButton}">
                             <FontIcon x:Name="EllipsisIcon"
                                       VerticalAlignment="Center"
                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -187,7 +181,6 @@
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>
-
                     </Grid>
                 </Pivot.RightHeader>
                 <PivotItem Header="Chats">
@@ -216,6 +209,8 @@
                                                       ItemClick="ListView_ItemClick"
                                                       SelectionChanged="ListView_SelectionChanged"
                                                       Grid.Row="1">
+                                                      <!--CanDragItems="True" 
+                                                      AllowDrop="True"-->
                                 <ListView.Header>
                                     <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                                         <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8">
@@ -458,7 +453,7 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
-                                            <controls:ProfilePictureView x:Phase="3" Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="48" Height="48" Margin="12" Grid.RowSpan="2"/>
+                                            <controls:ProfilePictureView x:Phase="3" Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="64" Height="64" Margin="12" Grid.RowSpan="2"/>
 
                                             <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
                                             <TextBlock Text="{x:Bind Phone, Converter={StaticResource PhoneNumberFormatConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>

@@ -637,7 +637,7 @@ namespace Telegram.Api.TL
         public static TLPeerBase GetPeerFromMessage(TLMessageBase message)
         {
             TLPeerBase peer = null;
-            var commonMessage = message as TLMessage;
+            var commonMessage = message as TLMessageCommonBase;
             if (commonMessage != null)
             {
                 if (commonMessage.ToId is TLPeerChannel)
@@ -673,7 +673,7 @@ namespace Telegram.Api.TL
             var isChannel = false;
             channel = null;
 
-            var messageCommon = message as TLMessage;
+            var messageCommon = message as TLMessageCommonBase;
             if (messageCommon != null)
             {
                 channel = messageCommon.ToId as TLPeerChannel;
@@ -963,6 +963,14 @@ namespace Telegram.Api.TL
             }
 
             return currentIndex - 1;
+        }
+
+        public static int Now
+        {
+            get
+            {
+                return TLUtils.DateToUniversalTimeTLInt(MTProtoService.Current.ClientTicksDelta, DateTime.Now);
+            }
         }
 
         public static int DateToUniversalTimeTLInt(long clientDelta, DateTime date)

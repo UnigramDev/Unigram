@@ -246,7 +246,7 @@ namespace Unigram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if (ViewModel?.Media == null || !IsFullMedia(ViewModel?.Media))
+            if (ViewModel?.Media == null || !IsFullMedia(ViewModel?.Media, true))
             {
                 return base.MeasureOverride(availableSize);
             }
@@ -259,6 +259,10 @@ namespace Unigram.Controls.Messages
             else if (ViewModel?.Media.TypeId == TLType.MessageMediaDocument)
             {
                 constraint = ((TLMessageMediaDocument)ViewModel?.Media).Document;
+            }
+            else if (ViewModel?.Media.TypeId == TLType.MessageMediaInvoice)
+            {
+                constraint = ((TLMessageMediaInvoice)ViewModel?.Media).Photo;
             }
 
             if (constraint == null)
@@ -286,10 +290,19 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            var document = constraint as TLDocument;
-            if (document != null)
+            if (constraint is TLDocument document)
             {
-                var imageSize = document.Attributes.OfType<TLDocumentAttributeImageSize>().FirstOrDefault();
+                constraint = document.Attributes;
+            }
+
+            if (constraint is TLWebDocument webDocument)
+            {
+                constraint = webDocument.Attributes;
+            }
+
+            if (constraint is TLVector<TLDocumentAttributeBase> attributes)
+            {
+                var imageSize = attributes.OfType<TLDocumentAttributeImageSize>().FirstOrDefault();
                 if (imageSize != null)
                 {
                     width = imageSize.W;
@@ -298,7 +311,7 @@ namespace Unigram.Controls.Messages
                     goto Calculate;
                 }
 
-                var video = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+                var video = attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 if (video != null)
                 {
                     width = video.W;
@@ -338,7 +351,7 @@ namespace Unigram.Controls.Messages
         protected static SolidColorBrush StatusLightLabelForegroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageSubtleLabelBrush"]; } }
         protected static SolidColorBrush StatusLightGlyphForegroundBrush { get { return (SolidColorBrush)App.Current.Resources["MessageSubtleGlyphBrush"]; } }
 
-        protected static bool IsFullMedia(TLMessageMediaBase media)
+        protected static bool IsFullMedia(TLMessageMediaBase media, bool width = false)
         {
             if (media == null) return false;
 
@@ -350,6 +363,14 @@ namespace Unigram.Controls.Messages
                 var documentMedia = media as TLMessageMediaDocument;
                 if (TLMessage.IsGif(documentMedia.Document)) return true;
                 else if (TLMessage.IsVideo(documentMedia.Document)) return true;
+            }
+            else if (media.TypeId == TLType.MessageMediaInvoice && width)
+            {
+                var invoiceMedia = media as TLMessageMediaInvoice;
+                if (invoiceMedia.HasPhoto && invoiceMedia.Photo != null)
+                {
+                    return true;
+                }
             }
 
             return false;
