@@ -6,6 +6,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI.Core;
+using Windows.UI.Input.Inking;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -21,11 +23,16 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class EditYourPhotoView : ContentDialogBase
     {
+        private InkPresenter _inkPresenter;
+
         public StorageFile Result { get; private set; }
 
         public EditYourPhotoView(StorageFile file)
         {
             InitializeComponent();
+
+            _inkPresenter = Canvas.InkPresenter;
+            _inkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen | CoreInputDeviceTypes.Touch;
 
             Loaded += async (s, args) =>
             {

@@ -124,8 +124,10 @@ namespace Unigram.Controls
         protected override void OnApplyTemplate()
         {
             m_layoutRoot = (Grid)GetTemplateChild("LayoutRoot");
-            m_imageViewer = (Image)GetTemplateChild("ImageThumb");
+            m_imageViewer = (Image)GetTemplateChild("ImageViewer");
             m_imageThumb = (FrameworkElement)GetTemplateChild("ImageThumb");
+
+            m_imageThumb.ManipulationMode = ManipulationModes.Rotate | ManipulationModes.Scale | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             m_imageThumb.ManipulationDelta += ImageThumb_ManipulationDelta;
 
             m_outerClip = (Geometry)GetTemplateChild("OuterClip");

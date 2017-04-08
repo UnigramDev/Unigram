@@ -48,7 +48,7 @@
                         </Grid.Resources>
 
                         <Canvas>
-                            <Grid x:Name="ImageThumb" RenderTransformOrigin="0.5,0.5" ManipulationMode="Rotate,Scale,TranslateX,TranslateY">
+                            <Grid x:Name="ImageThumb" RenderTransformOrigin="0.5,0.5">
                                 <Grid.RenderTransform>
                                     <CompositeTransform x:Name="ImageThumbTransform" />
                                 </Grid.RenderTransform>

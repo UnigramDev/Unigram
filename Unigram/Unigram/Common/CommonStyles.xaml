@@ -4,6 +4,8 @@
                     xmlns:controls="using:Unigram.Controls">
 
     <Style x:Key="RoundImageCropperStyle" TargetType="controls:ImageCropper">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
         <Setter Property="Background" Value="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}" />
         <Setter Property="Padding" Value="48" />
         <Setter Property="Template">
@@ -46,11 +48,14 @@
                         </Grid.Resources>
 
                         <Canvas>
-                            <Image x:Name="ImageThumb" Stretch="None" RenderTransformOrigin="0.5,0.5" ManipulationMode="Rotate,Scale,TranslateX,TranslateY">
-                                <Image.RenderTransform>
+                            <Grid x:Name="ImageThumb" RenderTransformOrigin="0.5,0.5">
+                                <Grid.RenderTransform>
                                     <CompositeTransform x:Name="ImageThumbTransform" />
-                                </Image.RenderTransform>
-                            </Image>
+                                </Grid.RenderTransform>
+                                <Image x:Name="ImageViewer" Stretch="None"/>
+                                <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Grid>
 
                             <Path Fill="{TemplateBinding Background}" Stroke="Transparent" StrokeThickness="1">
                                 <Path.Data>
