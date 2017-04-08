@@ -31,6 +31,13 @@ namespace Unigram.Controls
         private ManualResetEvent _startReset = new ManualResetEvent(true);
         private ManualResetEvent _stopReset = new ManualResetEvent(false);
 
+        public TimeSpan Elapsed
+        {
+            get
+            {
+                return DateTime.Now - _start;
+            }
+        }
 
         public VoiceButton()
         {
@@ -118,6 +125,11 @@ namespace Unigram.Controls
 
                 Debug.WriteLine("Start: " + _start);
                 Debug.WriteLine("Stop unlocked");
+
+                Execute.BeginOnUIThread(() =>
+                {
+                    RecordingStarted?.Invoke(this, EventArgs.Empty);
+                });
             });
         }
 
@@ -127,6 +139,11 @@ namespace Unigram.Controls
             {
                 _stopReset.WaitOne();
                 _stopReset.Reset();
+
+                Execute.BeginOnUIThread(() =>
+                {
+                    RecordingStopped?.Invoke(this, EventArgs.Empty);
+                });
 
                 var now = DateTime.Now;
                 var elapsed = now - _start;
@@ -142,7 +159,7 @@ namespace Unigram.Controls
 
                 if (_recorder.IsRecording)
                 {
-                    _recorder.Stop();
+                    await _recorder.StopAsync();
                 }
 
                 if (_cancelOnRelease || elapsed < TimeSpan.FromSeconds(1))
@@ -206,9 +223,6 @@ namespace Unigram.Controls
                 settings.MediaCategory = MediaCategory.Speech;
                 settings.AudioProcessing = AudioProcessing.Default;
                 settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
-                settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
-                settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
-                settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
                 settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
                 settings.StreamingCaptureMode = StreamingCaptureMode.Audio;
             }
@@ -224,18 +238,24 @@ namespace Unigram.Controls
                 await m_mediaCapture.StartRecordToCustomSinkAsync(wavEncodingProfile, m_opusSink);
             }
 
-            public void Stop()
+            public async Task StopAsync()
             {
+                await m_mediaCapture.StopRecordAsync();
+
                 m_mediaCapture.Dispose();
                 m_mediaCapture = null;
-                if(m_opusSink != null)
+
+                if (m_opusSink is IDisposable disposable)
                 {
-                    ((IDisposable)m_opusSink).Dispose();
+                    disposable.Dispose();
                     m_opusSink = null;
                 }
             }
 
             #endregion
         }
+
+        public event EventHandler RecordingStarted;
+        public event EventHandler RecordingStopped;
     }
 }

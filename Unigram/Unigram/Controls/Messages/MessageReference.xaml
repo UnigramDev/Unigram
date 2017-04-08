@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Margin="0,4,0,4"
+    BorderThickness="2,0,0,0"
+    BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
     HorizontalContentAlignment="Stretch"
     VerticalContentAlignment="Stretch"
     HorizontalAlignment="Stretch"
@@ -14,7 +16,7 @@
     d:DesignHeight="36"
     mc:Ignorable="d">
 
-    <Grid Background="Transparent" BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0">
+    <Grid Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>

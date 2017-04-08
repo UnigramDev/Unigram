@@ -957,6 +957,7 @@
         <Grid x:Name="TextArea" 
               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+              SizeChanged="TextArea_SizeChanged"
               Grid.Row="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -968,6 +969,8 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
+
+
             <Grid Visibility="{Binding ReplyInfo, Converter={StaticResource NullToVisibilityConverter}}" Grid.ColumnSpan="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="48"/>
@@ -976,14 +979,14 @@
                 </Grid.ColumnDefinitions>
                 <!-- ContentTemplateSelector="{StaticResource ReplyTemplateSelector}" Visibility="{Binding ReplyVisibility}" BorderBrush="#2fa9e2" Foreground="#0e7acd" Style="{StaticResource MediaControlStyle}" -->
 
-                <messages:MessageReference Message="{Binding ReplyInfo}" Click="Reply_Click" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="-8,0,0,0" Grid.Column="1"/>
-
-                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                    <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
-                </Border>
+                <messages:MessageReference Message="{Binding ReplyInfo}" Click="Reply_Click" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="-8,0,0,0" BorderBrush="Transparent" Grid.Column="1"/>
+                <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
 
                 <controls:GlyphButton Command="{Binding ClearReplyCommand}" AllowFocusOnInteraction="False" Glyph="&#xE106;" FontSize="16" Grid.Column="2"/>
+
+                <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="3"/>
             </Grid>
+                        
             <controls:BubbleTextBox
                 x:Name="txtMessage"
                 x:Uid="Chat-Input-Message"
@@ -1005,13 +1008,26 @@
                 Grid.ColumnSpan="2"
                 Grid.Row="1"/>
 
+            <StackPanel x:Name="ElapsedPanel" SizeChanged="ElapsedPanel_SizeChanged" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,48,0" Grid.ColumnSpan="4" Grid.Row="1">
+                <Ellipse Fill="Red" Width="12" Height="12" Margin="12,0,8,0"/>
+                <TextBlock x:Name="ElapsedLabel" Text="0:00,00" Margin="0,0,0,1" Width="64" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <Border HorizontalAlignment="Right" Margin="0,0,84,0" Grid.ColumnSpan="4" Grid.Row="1">
+                <StackPanel x:Name="SlidePanel" SizeChanged="SlidePanel_SizeChanged" Orientation="Horizontal">
+                    <FontIcon Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Glyph="&#xE00E;" FontSize="12" Margin="12,1,4,0"/>
+                    <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Text="Slide to cancel" VerticalAlignment="Center" Margin="0,0,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+            </Border>
+
             <Grid Visibility="{Binding ReplyInfo, Converter={StaticResource EditToVisibilityConverter}, ConverterParameter=invert}" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:GlyphToggleButton UncheckedGlyph="&#xE609;"
+                <controls:GlyphToggleButton x:Name="ButtonSilent"
+                                            UncheckedGlyph="&#xE609;"
                                             CheckedGlyph="&#xE60A;"
                                             FontFamily="{StaticResource TelegramThemeFontFamily}"
                                             IsChecked="{Binding With.NotifySettings.IsSilent}"
@@ -1026,10 +1042,15 @@
                                       VerticalAlignment="Bottom"
                                       Grid.Column="1"/>
 
-                <Border Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="2">
+                <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="2" Canvas.ZIndex="1000">
+                    <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <controls:VoiceButton x:Name="btnVoiceMessage"
-                                          AllowFocusOnInteraction="False"/>
-                </Border>
+                                          AllowFocusOnInteraction="False"
+                                          RecordingStarted="VoiceButton_RecordingStarted"
+                                          RecordingStopped="VoiceButton_RecordingStopped"
+                                          ManipulationDelta="VoiceButton_ManipulationDelta"
+                                          ManipulationMode="TranslateX"/>
+                </Grid>
 
                 <controls:GlyphButton x:Name="btnSendMessage"
                                       VerticalAlignment="Bottom"
@@ -1054,7 +1075,7 @@
                                   Grid.Column="3"
                                   Grid.Row="1"/>
 
-            <controls:GlyphButton x:Name="Attach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
+            <controls:GlyphButton x:Name="ButtonAttach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
                 <FlyoutBase.AttachedFlyout>
                     <MenuFlyout Placement="Top">
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
@@ -1140,6 +1161,8 @@
                 Grid.ColumnSpan="4"
                 Grid.Row="1"/>
 
+            <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="4" Grid.Row="1"/>
+
             <!--<ScrollViewer x:Name="ReplyMarkupViewer"
                           VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto"
@@ -1149,8 +1172,6 @@
                           Grid.Row="2">
                 <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0"/>
             </ScrollViewer>-->
-
-            <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="4" Grid.RowSpan="2"/>
         </Grid>
     </Grid>
 </Page>
