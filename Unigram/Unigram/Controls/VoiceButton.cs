@@ -25,7 +25,7 @@ namespace Unigram.Controls
         private OpusRecorder _recorder;
         private StorageFile _file;
         private bool _cancelOnRelease;
-        private bool _isPressed;
+        private bool _pressed;
         private DateTime _start;
 
         private ManualResetEvent _startReset = new ManualResetEvent(true);
@@ -56,7 +56,7 @@ namespace Unigram.Controls
         {
             base.OnPointerReleased(e);
 
-            _isPressed = false;
+            _pressed = false;
 
             Stop();
 
@@ -67,7 +67,7 @@ namespace Unigram.Controls
         {
             base.OnPointerEntered(e);
 
-            if (_isPressed)
+            if (_pressed)
             {
                 _cancelOnRelease = false;
             }
@@ -77,7 +77,7 @@ namespace Unigram.Controls
         {
             base.OnPointerExited(e);
 
-            if (_isPressed)
+            if (_pressed)
             {
                 _cancelOnRelease = true;
             }
@@ -125,7 +125,7 @@ namespace Unigram.Controls
                     return;
                 }
 
-                _isPressed = true;
+                _pressed = true;
                 _cancelOnRelease = false;
                 _start = DateTime.Now;
                 _stopReset.Set();

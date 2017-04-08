@@ -612,15 +612,16 @@ namespace Telegram.Api.Helpers
 
         public static void SaveWithTempFile<T>(string fileName, T data) where T : TLObject
         {
-            string text = fileName + ".temp";
-            using (var file = File.Open(GetFileName(text), FileMode.Create))
-            {
-                using (var to = new TLBinaryWriter(file))
-                {
-                    data.Write(to);
-                }
-            }
-            File.Copy(GetFileName(text), GetFileName(fileName), true);
+            //string text = fileName + ".temp";
+            //using (var file = File.Open(GetFileName(text), FileMode.Create))
+            //{
+            //    using (var to = new TLBinaryWriter(file))
+            //    {
+            //        data.Write(to);
+            //    }
+            //}
+
+            //File.Copy(GetFileName(text), GetFileName(fileName), true);
         }
     }
 }

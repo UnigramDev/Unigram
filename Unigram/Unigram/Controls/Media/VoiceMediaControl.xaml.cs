@@ -211,7 +211,7 @@ namespace Unigram.Controls.Media
                     var document = documentMedia.Document as TLDocument;
                     if (document != null)
                     {
-                        var fileName = Path.GetFileNameWithoutExtension(document.GetFileName()) + ".ogg";
+                        var fileName = document.GetFileName();
                         if (File.Exists(FileUtils.GetTempFileName(fileName)) == false)
                         {
                             _state = PlaybackState.Loading;

@@ -16,6 +16,23 @@
     d:DesignHeight="36"
     mc:Ignorable="d">
 
+    <HyperlinkButton.Template>
+        <ControlTemplate TargetType="HyperlinkButton">
+            <Grid x:Name="RootGrid" Padding="{TemplateBinding Padding}">
+                <ContentPresenter x:Name="ContentPresenter"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Content="{TemplateBinding Content}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw" />
+            </Grid>
+        </ControlTemplate>
+    </HyperlinkButton.Template>
+
     <Grid Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>

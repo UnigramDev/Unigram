@@ -722,7 +722,7 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="btnPinnedMessage" Command="{Binding PinnedCommand}" Padding="0,0,48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                <messages:MessageReference Click="Reply_Click" Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="0" Padding="12,0"/>
+                <messages:MessageReference Click="Reply_Click" Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6"/>
             </Button>
 
             <controls:GlyphButton Glyph="&#xE106;" FontSize="12" Grid.Column="1"/>
@@ -983,35 +983,113 @@
                 <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
 
                 <controls:GlyphButton Command="{Binding ClearReplyCommand}" AllowFocusOnInteraction="False" Glyph="&#xE106;" FontSize="16" Grid.Column="2"/>
-
-                <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="3"/>
             </Grid>
-                        
-            <controls:BubbleTextBox
-                x:Name="txtMessage"
-                x:Uid="Chat-Input-Message"
-                Background="Transparent"
-                Text="{Binding Text, Mode=TwoWay}"
-                Reply="{Binding Reply}"
-                AcceptsReturn="False"
-                PlaceholderText="Type your message..."
-                BorderThickness="0"
-                Padding="48,4,0,6"
-                TextWrapping="Wrap"
-                InputScope="Text"
-                IsSpellCheckEnabled="True"
-                VerticalAlignment="Bottom"
-                VerticalContentAlignment="Bottom"
-                MinHeight="48"
-                MaxHeight="96"
-                TextChanging="txtMessage_TextChanging"
-                Grid.ColumnSpan="2"
-                Grid.Row="1"/>
 
-            <StackPanel x:Name="ElapsedPanel" SizeChanged="ElapsedPanel_SizeChanged" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,48,0" Grid.ColumnSpan="4" Grid.Row="1">
-                <Ellipse Fill="Red" Width="12" Height="12" Margin="12,0,8,0"/>
-                <TextBlock x:Name="ElapsedLabel" Text="0:00,00" Margin="0,0,0,1" Width="64" VerticalAlignment="Center"/>
-            </StackPanel>
+            <Grid Grid.ColumnSpan="2" Grid.Row="1">
+                <controls:BubbleTextBox
+                    x:Name="txtMessage"
+                    x:Uid="Chat-Input-Message"
+                    Background="Transparent"
+                    Text="{Binding Text, Mode=TwoWay}"
+                    Reply="{Binding Reply}"
+                    AcceptsReturn="False"
+                    PlaceholderText="Type your message..."
+                    BorderThickness="0"
+                    Padding="48,4,0,6"
+                    TextWrapping="Wrap"
+                    InputScope="Text"
+                    IsSpellCheckEnabled="True"
+                    VerticalAlignment="Bottom"
+                    VerticalContentAlignment="Bottom"
+                    MinHeight="48"
+                    MaxHeight="96"
+                    TextChanging="txtMessage_TextChanging"/>
+                
+                <controls:GlyphButton x:Name="ButtonAttach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
+                    <FlyoutBase.AttachedFlyout>
+                        <MenuFlyout Placement="Top">
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            x:Uid="FCBTN-PhotoOrVideo"
+                                            Tag="&#xEB9F;"
+                                            Text="Photo or video"
+                                            Command="{Binding SendPhotoCommand}"/>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            x:Uid="FCBTN-File"
+                                            Text="File"
+                                            Tag="&#xE160;"
+                                            Command="{Binding SendFileCommand}"/>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            x:Uid="FCBTN-Location"
+                                            Visibility="Collapsed"
+                                            IsEnabled="False"
+                                            Text="Location"
+                                            Tag="&#xE1C4;"/>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            x:Uid="FCBTN-Contact"
+                                            Text="Contact"
+                                            Visibility="Collapsed"
+                                            Tag="&#xE136;"/>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            Visibility="Visible"
+                                            IsEnabled="True"
+                                            Text="¯\_(ツ)_/¯"
+                                            Tag="&#xE8BD;"
+                                            Click="{x:Bind SendShrug}"/>
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <Style TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+                                    <Setter Property="BorderBrush" Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+                                    <Setter Property="BorderThickness" Value="{ThemeResource FlyoutBorderThemeThickness}" />
+                                    <Setter Property="Padding" Value="{ThemeResource MenuFlyoutPresenterThemePadding}" />
+                                    <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+                                    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+                                    <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto" />
+                                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+                                    <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False" />
+                                    <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="False" />
+                                    <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
+                                    <Setter Property="MaxWidth" Value="{ThemeResource FlyoutThemeMaxWidth}" />
+                                    <Setter Property="MinHeight" Value="{ThemeResource MenuFlyoutThemeMinHeight}" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="MenuFlyoutPresenter">
+                                                <Grid Background="{TemplateBinding Background}">
+                                                    <ScrollViewer x:Name="MenuFlyoutPresenterScrollViewer"
+                                                                  Padding="{TemplateBinding Padding}"
+                                                                  Margin="{TemplateBinding BorderThickness}"
+                                                                  MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.FlyoutContentMinWidth}"
+                                                                  HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                                                  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                                                  VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                                                  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                                                  IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                                                  IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                                                  ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
+                                                                  AutomationProperties.AccessibilityView="Raw">
+                                                        <ItemsPresenter Margin="0,0,0,8">
+                                                            <ItemsPresenter.Header>
+                                                                <controls:AttachPickerFlyout ItemClick="AttachPickerFlyout_ItemClick"/>
+                                                            </ItemsPresenter.Header>
+                                                        </ItemsPresenter>
+                                                    </ScrollViewer>
+                                                    <Border x:Name="MenuFlyoutPresenterBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                        </MenuFlyout>
+                    </FlyoutBase.AttachedFlyout>
+                </controls:GlyphButton>
+            </Grid>
+
+            <Border HorizontalAlignment="Left" Margin="0,0,48,0" Grid.ColumnSpan="4" Grid.Row="1">
+                <StackPanel x:Name="ElapsedPanel" SizeChanged="ElapsedPanel_SizeChanged" Orientation="Horizontal">
+                    <Ellipse Fill="Red" Width="12" Height="12" Margin="12,0,8,0"/>
+                    <TextBlock x:Name="ElapsedLabel" Text="0:00,00" Margin="0,0,0,1" Width="64" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
 
             <Border HorizontalAlignment="Right" Margin="0,0,84,0" Grid.ColumnSpan="4" Grid.Row="1">
                 <StackPanel x:Name="SlidePanel" SizeChanged="SlidePanel_SizeChanged" Orientation="Horizontal">
@@ -1076,84 +1154,6 @@
                                   Grid.Column="3"
                                   Grid.Row="1"/>
 
-            <controls:GlyphButton x:Name="ButtonAttach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
-                <FlyoutBase.AttachedFlyout>
-                    <MenuFlyout Placement="Top">
-                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                        x:Uid="FCBTN-PhotoOrVideo"
-                                        Tag="&#xEB9F;"
-                                        Text="Photo or video"
-                                        Command="{Binding SendPhotoCommand}"/>
-                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                        x:Uid="FCBTN-File"
-                                        Text="File"
-                                        Tag="&#xE160;"
-                                        Command="{Binding SendFileCommand}"/>
-                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                        x:Uid="FCBTN-Location"
-                                        Visibility="Collapsed"
-                                        IsEnabled="False"
-                                        Text="Location"
-                                        Tag="&#xE1C4;"/>
-                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                        x:Uid="FCBTN-Contact"
-                                        Text="Contact"
-                                        Visibility="Collapsed"
-                                        Tag="&#xE136;"/>
-                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                        Visibility="Visible"
-                                        IsEnabled="True"
-                                        Text="¯\_(ツ)_/¯"
-                                        Tag="&#xE8BD;"
-                                        Click="{x:Bind SendShrug}"/>
-                        <MenuFlyout.MenuFlyoutPresenterStyle>
-                            <Style TargetType="MenuFlyoutPresenter">
-                                <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
-                                <Setter Property="BorderBrush" Value="{ThemeResource TelegramBackgroundAccentBrush}" />
-                                <Setter Property="BorderThickness" Value="{ThemeResource FlyoutBorderThemeThickness}" />
-                                <Setter Property="Padding" Value="{ThemeResource MenuFlyoutPresenterThemePadding}" />
-                                <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
-                                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
-                                <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto" />
-                                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-                                <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False" />
-                                <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="False" />
-                                <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
-                                <Setter Property="MaxWidth" Value="{ThemeResource FlyoutThemeMaxWidth}" />
-                                <Setter Property="MinHeight" Value="{ThemeResource MenuFlyoutThemeMinHeight}" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="MenuFlyoutPresenter">
-                                            <Grid Background="{TemplateBinding Background}">
-                                                <ScrollViewer x:Name="MenuFlyoutPresenterScrollViewer"
-                                                              Padding="{TemplateBinding Padding}"
-                                                              Margin="{TemplateBinding BorderThickness}"
-                                                              MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.FlyoutContentMinWidth}"
-                                                              HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                                                              HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                                              VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                                                              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                                              IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                                                              IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                                                              ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
-                                                              AutomationProperties.AccessibilityView="Raw">
-                                                    <ItemsPresenter Margin="0,0,0,8">
-                                                        <ItemsPresenter.Header>
-                                                            <controls:AttachPickerFlyout ItemClick="AttachPickerFlyout_ItemClick"/>
-                                                        </ItemsPresenter.Header>
-                                                    </ItemsPresenter>
-                                                </ScrollViewer>
-                                                <Border x:Name="MenuFlyoutPresenterBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </MenuFlyout.MenuFlyoutPresenterStyle>
-                    </MenuFlyout>
-                </FlyoutBase.AttachedFlyout>
-            </controls:GlyphButton>
-
             <!--<controls:DialogSearchBar Grid.ColumnSpan="4" Grid.Row="1"/>-->
 
             <controls:BubbleActionButton
@@ -1162,7 +1162,7 @@
                 Grid.ColumnSpan="4"
                 Grid.Row="1"/>
 
-            <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="4" Grid.Row="1"/>
+            <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="4" Grid.RowSpan="2"/>
 
             <!--<ScrollViewer x:Name="ReplyMarkupViewer"
                           VerticalScrollBarVisibility="Auto"

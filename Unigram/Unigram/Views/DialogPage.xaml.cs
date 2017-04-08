@@ -864,6 +864,10 @@ namespace Unigram.Views
 
                 _slideVisual.Offset = point;
 
+                point = _elapsedVisual.Offset;
+                point.X = -_elapsedVisual.Size.X;
+
+                _elapsedVisual.Offset = point;
             };
             batch.End();
         }

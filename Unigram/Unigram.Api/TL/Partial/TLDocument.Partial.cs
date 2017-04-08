@@ -96,6 +96,12 @@ namespace Telegram.Api.TL
                 return ".mp4";
             }
 
+            var audioAttribute = Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+            if (audioAttribute != null)
+            {
+                return ".ogg";
+            }
+
             // TODO: mime conversion?
 
             return ".dat";

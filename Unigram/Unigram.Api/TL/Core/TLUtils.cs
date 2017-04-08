@@ -551,8 +551,7 @@ namespace Telegram.Api.TL
             return default(T);
         }
 
-        public static T OpenObjectFromMTProtoFile<T>(object syncRoot, string fileName)
-            where T : TLObject
+        public static T OpenObjectFromMTProtoFile<T>(object syncRoot, string fileName) where T : TLObject
         {
             try
             {
@@ -576,26 +575,6 @@ namespace Telegram.Api.TL
                 WriteException(e);
             }
             return default(T);
-        }
-
-        public static void SaveObjectToFile<T>(object syncRoot, string fileName, T data)
-        {
-            try
-            {
-                lock (syncRoot)
-                {
-                    using (var fileStream = FileUtils.GetLocalFileStreamForWrite(fileName))
-                    {
-                        var dcs = new DataContractSerializer(typeof(T));
-                        dcs.WriteObject(fileStream, data);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                WriteLine("FILE ERROR: cannot write " + typeof(T) + " to file " + fileName, LogSeverity.Error);
-                WriteException(e);
-            }
         }
 
         public static void SaveObjectToMTProtoFile<T>(object syncRoot, string fileName, T data) where T: TLObject
