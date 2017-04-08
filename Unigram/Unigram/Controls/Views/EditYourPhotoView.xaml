@@ -34,6 +34,7 @@
 
             <controls:GlyphButton Glyph="&#xE7A8;" IsEnabled="False" Grid.Column="2"/>
             <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="3"/>
+            <controls:GlyphToggleButton IsChecked="{Binding Path=IsCropEnabled, ElementName=Cropper, Mode=TwoWay}" CheckedGlyph="&#xEE56;" UncheckedGlyph="&#xE78D;" Grid.Column="3"/>
             <controls:GlyphButton Glyph="&#xE78D;" IsEnabled="False" FontFamily="ms-appx:///Assets/PhtoMDL2.2.08.ttf#Photos MDL2 Assets" Grid.Column="4"/>
 
             <controls:GlyphButton Click="Accept_Click"

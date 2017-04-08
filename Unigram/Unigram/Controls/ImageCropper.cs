@@ -44,7 +44,7 @@ namespace Unigram.Controls
         #endregion
     }
 
-    public sealed class ImageCropper : ContentControl
+    public class ImageCropper : ContentControl
     {
         #region fields
         private static readonly DependencyProperty s_proportionsProperty = DependencyProperty.Register("Proportions", typeof(ImageCroppingProportions), typeof(ImageCropper),
@@ -53,6 +53,8 @@ namespace Unigram.Controls
             new PropertyMetadata(default(Rect), new PropertyChangedCallback(CropRectangleProperty_Changed)));
         private static readonly DependencyProperty s_rotationAngleProperty = DependencyProperty.Register("RotationAngle", typeof(double), typeof(ImageCropper),
             new PropertyMetadata(0.0, new PropertyChangedCallback(RotationAngleProperty_Changed)));
+        private static readonly DependencyProperty s_isCropEnabledProperty = DependencyProperty.Register("IsCropEnabled", typeof(bool), typeof(ImageCropper),
+            new PropertyMetadata(true, new PropertyChangedCallback(IsCropEnabled_Changed)));
 
         private static Size s_minimumSize = new Size(100, 100);
 
@@ -107,6 +109,17 @@ namespace Unigram.Controls
             get { return (Rect)GetValue(s_cropRectangleProperty); }
             set { SetValue(s_cropRectangleProperty, value); }
         }
+
+        public static DependencyProperty IsCropEnabledProperty
+        {
+            get { return s_isCropEnabledProperty; }
+        }
+
+        public bool IsCropEnabled
+        {
+            get { return (bool)GetValue(s_isCropEnabledProperty); }
+            set { SetValue(s_isCropEnabledProperty, value); }
+        }
         #endregion
 
         #region constructors
@@ -127,7 +140,7 @@ namespace Unigram.Controls
             m_imageViewer = (Image)GetTemplateChild("ImageViewer");
             m_imageThumb = (FrameworkElement)GetTemplateChild("ImageThumb");
 
-            m_imageThumb.ManipulationMode = ManipulationModes.Rotate | ManipulationModes.Scale | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
+            //m_imageThumb.ManipulationMode = ManipulationModes.Rotate | ManipulationModes.Scale | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             m_imageThumb.ManipulationDelta += ImageThumb_ManipulationDelta;
 
             m_outerClip = (Geometry)GetTemplateChild("OuterClip");
@@ -383,12 +396,17 @@ namespace Unigram.Controls
             SetCropRectangle(cropRectangle, true);
         }
 
-        private void OnRotationAngleChanged(double oldValue, double newValue)
+        protected virtual void OnRotationAngleChanged(double oldValue, double newValue)
         {
         }
 
-        private void OnCropRectangleChanged(Rect oldValue, Rect newValue)
+        protected virtual void OnCropRectangleChanged(Rect oldValue, Rect newValue)
         {
+        }
+
+        protected virtual void OnIsCropEnabledChanged(bool oldValue, bool newValue)
+        {
+            VisualStateManager.GoToState(this, newValue ? "Normal" : "Disabled", true);
         }
 
         private static Size GetImageSourceSize(ImageSource imageSource)
@@ -928,6 +946,12 @@ namespace Unigram.Controls
         {
             ((ImageCropper)d).OnCropRectangleChanged((Rect)e.OldValue, (Rect)e.NewValue);
         }
+
+        private static void IsCropEnabled_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ImageCropper)d).OnIsCropEnabledChanged((bool)e.OldValue, (bool)e.NewValue);
+        }
+
         #endregion
     }
 

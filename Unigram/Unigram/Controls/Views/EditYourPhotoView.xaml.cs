@@ -23,7 +23,7 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class EditYourPhotoView : ContentDialogBase
     {
-        private InkPresenter _inkPresenter;
+        //private InkPresenter _inkPresenter;
 
         public StorageFile Result { get; private set; }
 
@@ -31,8 +31,8 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
 
-            _inkPresenter = Canvas.InkPresenter;
-            _inkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen | CoreInputDeviceTypes.Touch;
+            //_inkPresenter = Canvas.InkPresenter;
+            //_inkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen | CoreInputDeviceTypes.Touch;
 
             Loaded += async (s, args) =>
             {
