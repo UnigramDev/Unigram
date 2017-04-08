@@ -50,9 +50,9 @@ namespace Unigram.Controls
         private static readonly DependencyProperty s_proportionsProperty = DependencyProperty.Register("Proportions", typeof(ImageCroppingProportions), typeof(ImageCropper),
             new PropertyMetadata(ImageCroppingProportions.Original, new PropertyChangedCallback(ProportionsProperty_Changed)));
         private static readonly DependencyProperty s_cropRectangleProperty = DependencyProperty.Register("CropRectangle", typeof(Rect), typeof(ImageCropper),
-            new PropertyMetadata(default(Rect), new PropertyChangedCallback(CropRectangleProperty_Changed)));
-        private static readonly DependencyProperty s_rotationAngleProperty = DependencyProperty.Register("RotationAngle", typeof(double), typeof(ImageCropper),
-            new PropertyMetadata(0.0, new PropertyChangedCallback(RotationAngleProperty_Changed)));
+            new PropertyMetadata(new Rect(0.0, 0.0, 100.0, 100.0), new PropertyChangedCallback(CropRectangleProperty_Changed)));
+        //private static readonly DependencyProperty s_rotationAngleProperty = DependencyProperty.Register("RotationAngle", typeof(double), typeof(ImageCropper),
+        //    new PropertyMetadata(0.0, new PropertyChangedCallback(RotationAngleProperty_Changed)));
         private static readonly DependencyProperty s_isCropEnabledProperty = DependencyProperty.Register("IsCropEnabled", typeof(bool), typeof(ImageCropper),
             new PropertyMetadata(true, new PropertyChangedCallback(IsCropEnabled_Changed)));
 
@@ -68,12 +68,13 @@ namespace Unigram.Controls
         private Image m_imageViewer;
         private FrameworkElement m_imageThumb;
         private CompositeTransform m_imageThumbTransform;
-        private Grid m_thumbsContainer;
-        private Size m_imageSize;
+        private Grid m_thumbsContainer; 
         private Dictionary<uint, Point> m_pointerPositions;
+        private Size m_imageSize;
         private Rect m_thumbsRectangle;
         private Rect m_currentThumbsRectangle;
         private Rect m_imageRectangle;
+        private Rect m_cropRectangle;
         #endregion
 
         #region properties
@@ -88,16 +89,16 @@ namespace Unigram.Controls
             set { SetValue(s_proportionsProperty, value); }
         }
 
-        public static DependencyProperty RotationAngleProperty
-        {
-            get { return s_rotationAngleProperty; }
-        }
+        //public static DependencyProperty RotationAngleProperty
+        //{
+        //    get { return s_rotationAngleProperty; }
+        //}
 
-        public double RotationAngle
-        {
-            get { return (double)GetValue(s_rotationAngleProperty); }
-            set { SetValue(s_rotationAngleProperty, value); }
-        }
+        //public double RotationAngle
+        //{
+        //    get { return (double)GetValue(s_rotationAngleProperty); }
+        //    set { SetValue(s_rotationAngleProperty, value); }
+        //}
 
         public static DependencyProperty CropRectangleProperty
         {
@@ -127,9 +128,11 @@ namespace Unigram.Controls
         {
             DefaultStyleKey = typeof(ImageCropper);
 
+            m_imageSize = new Size(100, 00);
+            m_cropRectangle = new Rect(0.0, 0.0, 100.0, 100.0);
             m_pointerPositions = new Dictionary<uint, Point>();
 
-            SizeChanged += OnSizeChanged;
+            SizeChanged += ImageCropper_SizeChanged;
         }
         #endregion
 
@@ -228,6 +231,8 @@ namespace Unigram.Controls
                 bottomRightThumb.PointerReleased += Thumb_PointerReleased;
                 bottomRightThumb.PointerMoved += BottomRightThumb_PointerMoved;
             }
+
+            UpdateCropRectangle(CropRectangle, false);
         }
 
         private void UpdateThumbs(Rect thumbsRectangle)
@@ -255,53 +260,55 @@ namespace Unigram.Controls
         {
             var cropScaleX = m_imageRectangle.Width / m_imageSize.Width;
             var cropScaleY = m_imageRectangle.Height / m_imageSize.Height;
-            SetCropRectangle(new Rect((m_currentThumbsRectangle.X - m_imageRectangle.X) / cropScaleX,
+            m_cropRectangle = new Rect((m_currentThumbsRectangle.X - m_imageRectangle.X) / cropScaleX,
                 (m_currentThumbsRectangle.Y - m_imageRectangle.Y) / cropScaleY,
-                m_currentThumbsRectangle.Width / cropScaleX, m_currentThumbsRectangle.Height / cropScaleY), animate);
+                m_currentThumbsRectangle.Width / cropScaleX, m_currentThumbsRectangle.Height / cropScaleY);
+
+            UpdateCropRectangle(m_cropRectangle, animate);
         }
 
-        private void SetCropRectangle(Rect cropRectangle, bool animate)
+        private void UpdateCropRectangle(Rect cropRectangle, bool animate)
         {
-            if (cropRectangle.Width == 0 || cropRectangle.Width == 0 || m_imageSize.Width == 0 || m_imageSize.Height == 0)
-                return;
-
-            Size thumbsRectangleSize;
-            var cropScale = cropRectangle.Width / cropRectangle.Height;
-            if (m_layoutRoot.ActualWidth / m_layoutRoot.ActualHeight < cropScale)
+            if (m_layoutRoot != null)
             {
-                thumbsRectangleSize = new Size(m_layoutRoot.ActualWidth, m_layoutRoot.ActualWidth / cropScale);
-            }
-            else
-            {
-                thumbsRectangleSize = new Size(m_layoutRoot.ActualHeight * cropScale, m_layoutRoot.ActualHeight);
-            }
+                Size thumbsRectangleSize;
+                var cropScale = cropRectangle.Width / cropRectangle.Height;
+                if (m_layoutRoot.ActualWidth / m_layoutRoot.ActualHeight < cropScale)
+                {
+                    thumbsRectangleSize = new Size(m_layoutRoot.ActualWidth, m_layoutRoot.ActualWidth / cropScale);
+                }
+                else
+                {
+                    thumbsRectangleSize = new Size(m_layoutRoot.ActualHeight * cropScale, m_layoutRoot.ActualHeight);
+                }
 
-            var finalThumbsRectangle = new Rect((m_layoutRoot.ActualWidth - thumbsRectangleSize.Width) / 2.0,
-                (m_layoutRoot.ActualHeight - thumbsRectangleSize.Height) / 2.0, thumbsRectangleSize.Width, thumbsRectangleSize.Height);
+                var finalThumbsRectangle = new Rect((m_layoutRoot.ActualWidth - thumbsRectangleSize.Width) / 2.0,
+                    (m_layoutRoot.ActualHeight - thumbsRectangleSize.Height) / 2.0, thumbsRectangleSize.Width, thumbsRectangleSize.Height);
 
-            m_thumbsRectangle = m_currentThumbsRectangle = finalThumbsRectangle;
+                m_thumbsRectangle = m_currentThumbsRectangle = finalThumbsRectangle;
 
-            var imageScaleX = finalThumbsRectangle.Width / cropRectangle.Width;
-            var imageScaleY = finalThumbsRectangle.Height / cropRectangle.Height;
-            var imageRectangleWidth = m_imageSize.Width * imageScaleX;
-            var imageRectangleHeight = m_imageSize.Height * imageScaleY;
+                var imageScaleX = finalThumbsRectangle.Width / cropRectangle.Width;
+                var imageScaleY = finalThumbsRectangle.Height / cropRectangle.Height;
+                var imageRectangleWidth = m_imageSize.Width * imageScaleX;
+                var imageRectangleHeight = m_imageSize.Height * imageScaleY;
 
-            m_imageRectangle = new Rect(finalThumbsRectangle.X - cropRectangle.X * imageScaleX,
-                finalThumbsRectangle.Y - cropRectangle.Y * imageScaleY,
-                imageRectangleWidth, imageRectangleHeight);
+                m_imageRectangle = new Rect(finalThumbsRectangle.X - cropRectangle.X * imageScaleX,
+                    finalThumbsRectangle.Y - cropRectangle.Y * imageScaleY,
+                    imageRectangleWidth, imageRectangleHeight);
 
-            if (animate)
-            {
-                AnimateToCropRectangle(m_thumbsRectangle, m_imageRectangle);
-            }
-            else
-            {
-                UpdateThumbs(m_thumbsRectangle);
+                if (animate)
+                {
+                    AnimateToCropRectangle(m_thumbsRectangle, m_imageRectangle);
+                }
+                else
+                {
+                    UpdateThumbs(m_thumbsRectangle);
 
-                m_imageThumbTransform.ScaleX = m_imageRectangle.Width / m_imageSize.Width;
-                m_imageThumbTransform.ScaleY = m_imageRectangle.Height / m_imageSize.Height;
-                m_imageThumbTransform.TranslateX = (m_imageRectangle.Width - m_thumbsRectangle.Width) / 2.0 - m_thumbsRectangle.X + m_imageRectangle.X;
-                m_imageThumbTransform.TranslateY = (m_imageRectangle.Height - m_thumbsRectangle.Height) / 2.0 - m_thumbsRectangle.Y + m_imageRectangle.Y;
+                    m_imageThumbTransform.ScaleX = m_imageRectangle.Width / m_imageSize.Width;
+                    m_imageThumbTransform.ScaleY = m_imageRectangle.Height / m_imageSize.Height;
+                    m_imageThumbTransform.TranslateX = (m_imageRectangle.Width - m_thumbsRectangle.Width) / 2.0 - m_thumbsRectangle.X + m_imageRectangle.X;
+                    m_imageThumbTransform.TranslateY = (m_imageRectangle.Height - m_thumbsRectangle.Height) / 2.0 - m_thumbsRectangle.Y + m_imageRectangle.Y;
+                }
             }
 
             CropRectangle = cropRectangle;
@@ -372,36 +379,128 @@ namespace Unigram.Controls
             }
         }
 
+        public async void SetSource(StorageFile file)
+        {
+            await SetSourceAsync(file);
+        }
+
+        public async Task<StorageFile> CropAsync()
+        {
+            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
+
+            using (var fileStream = await m_imageSource.OpenAsync(FileAccessMode.Read))
+            using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                var decoder = await BitmapDecoder.CreateAsync(fileStream);
+                var bounds = new BitmapBounds();
+                bounds.X = (uint)CropRectangle.X;
+                bounds.Y = (uint)CropRectangle.Y;
+                bounds.Width = (uint)CropRectangle.Width;
+                bounds.Height = (uint)CropRectangle.Height;
+
+                var transform = ComputeScalingTransformForSourceImage(decoder);
+                transform.Bounds = bounds;
+
+                var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+                var propertySet = new BitmapPropertySet();
+                var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
+                propertySet.Add("ImageQuality", qualityValue);
+
+                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
+                encoder.SetSoftwareBitmap(pixelData);
+                await encoder.FlushAsync();
+            }
+
+            return file;
+        }
+
+        public async Task SetSourceAsync(StorageFile file)
+        {
+            SoftwareBitmapSource source;
+            using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
+            {
+                var decoder = await BitmapDecoder.CreateAsync(fileStream);
+                var transform = ComputeScalingTransformForSourceImage(decoder);
+
+                var software = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+                source = new SoftwareBitmapSource();
+                await source.SetBitmapAsync(software);
+
+                m_imagePreview = source;
+                m_imageSource = file;
+                m_imageSize = new Size(software.PixelWidth, software.PixelHeight);
+                m_imageViewer.Source = m_imagePreview;
+            }
+
+            Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
+            Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
+
+            var imageScale = m_imageSize.Width / m_imageSize.Height;
+            var cropScale = GetProportionsFactor(Proportions, imageScale);
+            if (imageScale < cropScale)
+            {
+                var cropHeight = m_imageSize.Width / cropScale;
+                m_cropRectangle = new Rect(0.0, (m_imageSize.Height - cropHeight) / 2.0, m_imageSize.Width, cropHeight);
+            }
+            else
+            {
+                var cropWidth = m_imageSize.Height * cropScale;
+                m_cropRectangle = new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height);
+            }
+
+            UpdateCropRectangle(m_cropRectangle, false);
+        }
+
+        private BitmapTransform ComputeScalingTransformForSourceImage(BitmapDecoder sourceDecoder)
+        {
+            var transform = new BitmapTransform();
+
+            if (sourceDecoder.PixelHeight > 1280)
+            {
+                float scalingFactor = (float)1280.0 / (float)sourceDecoder.PixelHeight;
+
+                transform.ScaledWidth = (uint)Math.Floor(sourceDecoder.PixelWidth * scalingFactor);
+                transform.ScaledHeight = (uint)Math.Floor(sourceDecoder.PixelHeight * scalingFactor);
+            }
+
+            return transform;
+        }
+
         private void OnProportionsChanged(ImageCroppingProportions oldValue, ImageCroppingProportions newValue)
         {
-            var cropRectangle = CropRectangle;
-            var cropScale = cropRectangle.Width / cropRectangle.Height;
+            var cropScale = m_cropRectangle.Width / m_cropRectangle.Height;
             var proportionalCropScale = GetProportionsFactor(Proportions, cropScale);
 
             if (cropScale < proportionalCropScale)
             {
-                var cropHeight = cropRectangle.Width / proportionalCropScale;
+                var cropHeight = m_cropRectangle.Width / proportionalCropScale;
 
-                cropRectangle.Y = Clamp(cropRectangle.Y + (cropRectangle.Height - cropHeight) / 2.0, 0.0, m_imageSize.Height - cropHeight);
-                cropRectangle.Height = cropHeight;
+                m_cropRectangle.Y = Clamp(m_cropRectangle.Y + (m_cropRectangle.Height - cropHeight) / 2.0, 0.0, m_imageSize.Height - cropHeight);
+                m_cropRectangle.Height = cropHeight;
             }
             else
             {
-                var cropWidth = cropRectangle.Height * proportionalCropScale;
+                var cropWidth = m_cropRectangle.Height * proportionalCropScale;
 
-                cropRectangle.X = Clamp(cropRectangle.X + (cropRectangle.Width - cropWidth) / 2.0, 0.0, m_imageSize.Width - cropWidth);
-                cropRectangle.Width = cropWidth;
+                m_cropRectangle.X = Clamp(m_cropRectangle.X + (m_cropRectangle.Width - cropWidth) / 2.0, 0.0, m_imageSize.Width - cropWidth);
+                m_cropRectangle.Width = cropWidth;
             }
 
-            SetCropRectangle(cropRectangle, true);
+            UpdateCropRectangle(m_cropRectangle, true);
         }
 
-        protected virtual void OnRotationAngleChanged(double oldValue, double newValue)
-        {
-        }
+        //protected virtual void OnRotationAngleChanged(double oldValue, double newValue)
+        //{
+        //}
 
         protected virtual void OnCropRectangleChanged(Rect oldValue, Rect newValue)
         {
+            if (newValue != m_cropRectangle)
+            {
+                m_cropRectangle = newValue;
+                UpdateCropRectangle(m_cropRectangle, false);
+            }
         }
 
         protected virtual void OnIsCropEnabledChanged(bool oldValue, bool newValue)
@@ -503,25 +602,39 @@ namespace Unigram.Controls
         {
             if (e.Delta.Scale != 1.0)
             {
-#warning TODO: fix minimum scale to avoid an image rectangle smaller than the crop rectangle
+                double width;
+                double height;
+                var imageScale = m_imageRectangle.Width / m_imageRectangle.Height;
 
-                var width = m_imageRectangle.Width * e.Delta.Scale;
-                var height = m_imageRectangle.Height * e.Delta.Scale;
+                if (m_thumbsRectangle.Width / m_thumbsRectangle.Height < imageScale)
+                {
+                    height = Math.Max(m_imageRectangle.Height * e.Delta.Scale, m_thumbsRectangle.Height);
+                    width = height * imageScale;
+                }
+                else
+                {
+                    width = Math.Max(m_imageRectangle.Width * e.Delta.Scale, m_thumbsRectangle.Width);
+                    height = width / imageScale;
+                }
 
-                m_imageRectangle.X = Clamp(m_imageRectangle.Left + (m_imageRectangle.Width - width) / 2.0, m_thumbsRectangle.Right - m_imageRectangle.Width, m_thumbsRectangle.Left);
-                m_imageRectangle.Y = Clamp(m_imageRectangle.Top + (m_imageRectangle.Height - height) / 2.0, m_thumbsRectangle.Bottom - m_imageRectangle.Height, m_thumbsRectangle.Top);
+                m_imageRectangle.X = Clamp(m_imageRectangle.Left + (m_imageRectangle.Width - width) / 2.0, m_thumbsRectangle.Right - width, m_thumbsRectangle.Left);
+                m_imageRectangle.Y = Clamp(m_imageRectangle.Top + (m_imageRectangle.Height - height) / 2.0, m_thumbsRectangle.Bottom - height, m_thumbsRectangle.Top);
                 m_imageRectangle.Width = width;
                 m_imageRectangle.Height = height;
+
+                UpdateCropRectangle(false);
+
+                e.Handled = true;
             }
             else if (e.Delta.Translation.X != 0.0 || e.Delta.Translation.Y != 0.0)
             {
                 m_imageRectangle.X = Clamp(m_imageRectangle.Left + e.Delta.Translation.X, m_thumbsRectangle.Right - m_imageRectangle.Width, m_thumbsRectangle.Left);
                 m_imageRectangle.Y = Clamp(m_imageRectangle.Top + e.Delta.Translation.Y, m_thumbsRectangle.Bottom - m_imageRectangle.Height, m_thumbsRectangle.Top);
+
+                UpdateCropRectangle(false);
+
+                e.Handled = true;
             }
-
-            UpdateCropRectangle(false);
-
-            e.Handled = true;
         }
 
         private void TopLeftThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
@@ -830,10 +943,8 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        private void ImageCropper_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
-            Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
             //Clip = new RectangleGeometry() { Rect = new Rect(default(Point), e.NewSize) };
 
             switch (m_outerClip)
@@ -843,93 +954,10 @@ namespace Unigram.Controls
                     break;
             }
 
-            SetCropRectangle(CropRectangle, false);
-        }
-
-        public async void SetSource(StorageFile file)
-        {
-            await SetSourceAsync(file);
-        }
-
-        public async Task<StorageFile> CropAsync()
-        {
-            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
-
-            using (var fileStream = await m_imageSource.OpenAsync(FileAccessMode.Read))
-            using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
-            {
-                var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                var bounds = new BitmapBounds();
-                bounds.X = (uint)CropRectangle.X;
-                bounds.Y = (uint)CropRectangle.Y;
-                bounds.Width = (uint)CropRectangle.Width;
-                bounds.Height = (uint)CropRectangle.Height;
-
-                var transform = ComputeScalingTransformForSourceImage(decoder);
-                transform.Bounds = bounds;
-
-                var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-
-                var propertySet = new BitmapPropertySet();
-                var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
-                propertySet.Add("ImageQuality", qualityValue);
-
-                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
-                encoder.SetSoftwareBitmap(pixelData);
-                await encoder.FlushAsync();
-            }
-
-            return file;
-        }
-
-        public async Task SetSourceAsync(StorageFile file)
-        {
-            SoftwareBitmapSource source;
-            using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
-            {
-                var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                var transform = ComputeScalingTransformForSourceImage(decoder);
-
-                var software = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-                source = new SoftwareBitmapSource();
-                await source.SetBitmapAsync(software);
-
-                m_imagePreview = source;
-                m_imageSource = file;
-                m_imageSize = new Size(software.PixelWidth, software.PixelHeight);
-                m_imageViewer.Source = m_imagePreview;
-            }
-
             Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
             Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
 
-            var imageScale = m_imageSize.Width / m_imageSize.Height;
-            var cropScale = GetProportionsFactor(Proportions, imageScale);
-            if (imageScale < cropScale)
-            {
-                var cropHeight = m_imageSize.Width / cropScale;
-                SetCropRectangle(new Rect(0.0, (m_imageSize.Height - cropHeight) / 2.0, m_imageSize.Width, cropHeight), false);
-            }
-            else
-            {
-                var cropWidth = m_imageSize.Height * cropScale;
-                SetCropRectangle(new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height), false);
-            }
-        }
-
-        private BitmapTransform ComputeScalingTransformForSourceImage(BitmapDecoder sourceDecoder)
-        {
-            var transform = new BitmapTransform();
-
-            if (sourceDecoder.PixelHeight > 1280)
-            {
-                float scalingFactor = (float)1280.0 / (float)sourceDecoder.PixelHeight;
-
-                transform.ScaledWidth = (uint)Math.Floor(sourceDecoder.PixelWidth * scalingFactor);
-                transform.ScaledHeight = (uint)Math.Floor(sourceDecoder.PixelHeight * scalingFactor);
-            }
-
-            return transform;
+            UpdateCropRectangle(m_cropRectangle, false);
         }
 
         private static void ProportionsProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -937,10 +965,10 @@ namespace Unigram.Controls
             ((ImageCropper)d).OnProportionsChanged((ImageCroppingProportions)e.OldValue, (ImageCroppingProportions)e.NewValue);
         }
 
-        private static void RotationAngleProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ImageCropper)d).OnRotationAngleChanged((double)e.OldValue, (double)e.NewValue);
-        }
+        //private static void RotationAngleProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    ((ImageCropper)d).OnRotationAngleChanged((double)e.OldValue, (double)e.NewValue);
+        //}
 
         private static void CropRectangleProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
