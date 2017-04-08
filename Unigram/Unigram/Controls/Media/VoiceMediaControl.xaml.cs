@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Common;
 using Windows.System.Display;
+using Telegram.Api.Services;
 
 namespace Unigram.Controls.Media
 {
@@ -205,8 +206,7 @@ namespace Unigram.Controls.Media
                     _currentPlaying.Toggle_Click(null, null);
                 }
 
-                var documentMedia = ViewModel?.Media as TLMessageMediaDocument;
-                if (documentMedia != null)
+                if (ViewModel is TLMessage message && message.Media is TLMessageMediaDocument documentMedia)
                 {
                     var document = documentMedia.Document as TLDocument;
                     if (document != null)
@@ -218,6 +218,15 @@ namespace Unigram.Controls.Media
                             UpdateGlyph();
                             var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                             var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
+                        }
+
+                        if (message.IsMediaUnread && !message.IsOut)
+                        {
+                            MTProtoService.Current.ReadMessageContentsAsync(new TLVector<int> { message.Id }, affected =>
+                            {
+                                message.IsMediaUnread = false;
+                                message.RaisePropertyChanged(() => message.IsMediaUnread);
+                            });
                         }
 
                         var settings = new AudioGraphSettings(AudioRenderCategory.Media);
