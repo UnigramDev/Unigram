@@ -44,7 +44,7 @@ namespace Unigram.Controls
         #endregion
     }
 
-    public sealed class ImageCropper : Control
+    public sealed class ImageCropper : ContentControl
     {
         #region fields
         private static readonly DependencyProperty s_proportionsProperty = DependencyProperty.Register("Proportions", typeof(ImageCroppingProportions), typeof(ImageCropper),
@@ -63,7 +63,8 @@ namespace Unigram.Controls
         private Geometry m_innerClip;
 
         private Grid m_layoutRoot;
-        private Image m_imageThumb;
+        private Image m_imageViewer;
+        private FrameworkElement m_imageThumb;
         private CompositeTransform m_imageThumbTransform;
         private Grid m_thumbsContainer;
         private Size m_imageSize;
@@ -123,8 +124,8 @@ namespace Unigram.Controls
         protected override void OnApplyTemplate()
         {
             m_layoutRoot = (Grid)GetTemplateChild("LayoutRoot");
-            m_imageThumb = (Image)GetTemplateChild("ImageThumb");
-            //m_imageThumb.ImageOpened += ImageThumb_ImageOpened;
+            m_imageViewer = (Image)GetTemplateChild("ImageThumb");
+            m_imageThumb = (FrameworkElement)GetTemplateChild("ImageThumb");
             m_imageThumb.ManipulationDelta += ImageThumb_ManipulationDelta;
 
             m_outerClip = (Geometry)GetTemplateChild("OuterClip");
@@ -876,7 +877,7 @@ namespace Unigram.Controls
                 m_imagePreview = source;
                 m_imageSource = file;
                 m_imageSize = new Size(software.PixelWidth, software.PixelHeight);
-                m_imageThumb.Source = m_imagePreview;
+                m_imageViewer.Source = m_imagePreview;
             }
 
             Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
