@@ -90,6 +90,13 @@ namespace Unigram.Controls
                 _startReset.WaitOne();
                 _startReset.Reset();
 
+                _start = DateTime.Now;
+
+                Execute.BeginOnUIThread(() =>
+                {
+                    RecordingStarted?.Invoke(this, EventArgs.Empty);
+                });
+
                 _file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\recording.ogg", CreationCollisionOption.ReplaceExisting);
                 _recorder = new OpusRecorder(_file);
 
@@ -125,11 +132,6 @@ namespace Unigram.Controls
 
                 Debug.WriteLine("Start: " + _start);
                 Debug.WriteLine("Stop unlocked");
-
-                Execute.BeginOnUIThread(() =>
-                {
-                    RecordingStarted?.Invoke(this, EventArgs.Empty);
-                });
             });
         }
 

@@ -824,7 +824,7 @@ namespace Unigram.Views
                 _elapsedTimer.Start();
 
                 AttachExpression();
-                DetachTextAreaExpression();
+                //DetachTextAreaExpression();
             };
             batch.End();
         }
@@ -857,7 +857,7 @@ namespace Unigram.Views
                 _elapsedTimer.Stop();
 
                 DetachExpression();
-                DetachTextAreaExpression();
+                //DetachTextAreaExpression();
 
                 var point = _slideVisual.Offset;
                 point.X = _slideVisual.Size.X + 36;
