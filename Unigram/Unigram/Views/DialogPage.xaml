@@ -1142,19 +1142,19 @@
                                       Canvas.ZIndex="1001"/>
             </Grid>
 
-            <controls:GlyphButton x:Name="btnEditMessage"
-                                  VerticalAlignment="Bottom"
-                                  Click="btnSendMessage_Click"
-                                  Glyph="&#xE10B;"
-                                  AllowFocusOnInteraction="False"
-                                  Visibility="{Binding ReplyInfo, Converter={StaticResource EditToVisibilityConverter}}"
-                                  Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                  HorizontalAlignment="Right"
-                                  Padding="0,2,0,0"
-                                  Grid.Column="3"
-                                  Grid.Row="1"/>
-
-            <!--<controls:DialogSearchBar Grid.ColumnSpan="4" Grid.Row="1"/>-->
+            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    Visibility="{Binding ReplyInfo, Converter={StaticResource EditToVisibilityConverter}}"
+                    HorizontalAlignment="Right"
+                    Grid.Column="3"
+                    Grid.Row="1">
+                <controls:GlyphButton x:Name="btnEditMessage"
+                                      VerticalAlignment="Bottom"
+                                      Click="btnSendMessage_Click"
+                                      Glyph="&#xE10B;"
+                                      AllowFocusOnInteraction="False"
+                                      Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                      Padding="0,2,0,0"/>
+            </Border>
 
             <controls:BubbleActionButton
                 With="{x:Bind ViewModel.With, Mode=OneWay}"
