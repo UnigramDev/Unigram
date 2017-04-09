@@ -1642,11 +1642,13 @@ namespace Unigram.Services
                         var stickers = newStickers != null && newStickers.Count > 0 ? new List<TLDocument>(newStickers) : null;
                         if (stickers != null)
                         {
+#if DEBUG
                             var noDuples = stickers.Distinct(new FunctionalEqualityComparer<TLDocument>((x, y) => x.Id == y.Id, x => x.Id.GetHashCode())).ToList();
                             if (noDuples.Count != stickers.Count)
                             {
                                 Debugger.Break();
                             }
+#endif
                         }
 
                         return stickers;

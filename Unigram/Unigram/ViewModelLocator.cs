@@ -138,13 +138,13 @@ namespace Unigram
 
         private void InitializeLayer()
         {
-            var deleteIfExists = new Action<string>((path) =>
+            void deleteIfExists(string path)
             {
                 if (File.Exists(FileUtils.GetFileName(path)))
                 {
                     File.Delete(FileUtils.GetFileName(path));
                 }
-            });
+            }
 
             if (SettingsHelper.SupportedLayer < 65)
             {
