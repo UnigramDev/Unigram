@@ -1020,10 +1020,10 @@
                                             Command="{Binding SendFileCommand}"/>
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                             x:Uid="FCBTN-Location"
-                                            Visibility="Collapsed"
-                                            IsEnabled="False"
                                             Text="Location"
-                                            Tag="&#xE1C4;"/>
+                                            Tag="&#xE1C4;"
+                                            Visibility="Collapsed"
+                                            Command="{x:Bind ViewModel.SendLocationCommand}"/>
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                             x:Uid="FCBTN-Contact"
                                             Text="Contact"

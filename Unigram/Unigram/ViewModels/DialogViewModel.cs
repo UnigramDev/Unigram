@@ -44,6 +44,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Popups;
 using Telegram.Api.TL.Methods.Messages;
 using Telegram.Api;
+using Unigram.Views;
 
 namespace Unigram.ViewModels
 {
@@ -1963,6 +1964,12 @@ namespace Unigram.ViewModels
             });
 
             return tsc.Task;
+        }
+
+        public RelayCommand SendLocationCommand => new RelayCommand(SendLocationExecute);
+        private void SendLocationExecute()
+        {
+            NavigationService.Navigate(typeof(DialogSendLocationPage));
         }
 
         public Task<bool> SendGeoPointAsync(double latitude, double longitude)
