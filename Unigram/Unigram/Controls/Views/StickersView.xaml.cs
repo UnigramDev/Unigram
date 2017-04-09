@@ -79,7 +79,10 @@ namespace Unigram.Controls.Views
 
         private void Toolbar_ItemClick(object sender, ItemClickEventArgs e)
         {
-            Stickers.ScrollIntoView(((TLMessagesStickerSet)e.ClickedItem).Documents[0]);
+            if (e.ClickedItem is TLMessagesStickerSet set && set.Cover != null)
+            {
+                Stickers.ScrollIntoView(set.Cover);
+            }
         }
 
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
