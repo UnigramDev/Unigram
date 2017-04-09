@@ -263,7 +263,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Execute.BeginOnUIThread(delegate
+            Execute.BeginOnUIThread(() =>
             {
                 int msgId;
                 if (message.ToId is TLPeerUser)
@@ -293,7 +293,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Execute.BeginOnUIThread(delegate
+            Execute.BeginOnUIThread(() =>
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
@@ -307,7 +307,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateDraftMessage update)
         {
-            Execute.BeginOnUIThread(delegate
+            Execute.BeginOnUIThread(() =>
             {
                 TLDialog dialog = null;
                 for (int i = 0; i < Items.Count; i++)
@@ -688,7 +688,7 @@ namespace Unigram.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    Log.Write(string.Format("DialogsViewModel.Handle OnTopMessageUpdatedEventArgs ex " + ex, new object[0]), null);
+                    Log.Write("DialogsViewModel.Handle OnTopMessageUpdatedEventArgs ex " + ex, null);
                     throw ex;
                 }
             });

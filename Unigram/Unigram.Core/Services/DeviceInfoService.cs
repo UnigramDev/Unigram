@@ -12,7 +12,7 @@ using Windows.System.Profile;
 
 namespace Unigram.Core.Services
 {
-    public class DeviceInfoService : IDeviceInfoService, IExtendedDeviceInfoService
+    public class DeviceInfoService : IDeviceInfoService
     {
         public bool IsBackground
         {
@@ -78,22 +78,6 @@ namespace Unigram.Core.Services
             }
         }
 
-        public bool IsWiFiEnabled
-        {
-            get
-            {
-                return NetworkInformation.GetInternetConnectionProfile().IsWlanConnectionProfile;
-            }
-        }
-
-        public bool IsCellularDataEnabled
-        {
-            get
-            {
-                return NetworkInformation.GetInternetConnectionProfile().IsWwanConnectionProfile;
-            }
-        }
-
         private static string GetShortModel(string phoneCode)
         {
             var cleanCode = phoneCode.Replace("-", string.Empty).ToLowerInvariant();
@@ -111,69 +95,56 @@ namespace Unigram.Core.Services
 
         private static readonly Dictionary<string, string> models = new Dictionary<string, string>
         {
-            {"rm923", "Lumia505"},
-            {"rm898", "Lumia510"},
-            {"rm889", "Lumia510"},
-            {"rm915", "Lumia520"},
-            {"rm917", "Lumia521"},
-            {"rm998", "Lumia525"},
-            {"rm997", "Lumia526"},
-            {"rm1017", "Lumia530"},
-            {"rm1018", "Lumia530"},
-            {"rm1019", "Lumia530"},
-            {"rm1020", "Lumia530"},
-            {"rm1090", "Lumia535"},
-            {"rm836", "Lumia610"},
-            {"rm849", "Lumia610"},
-            {"rm846", "Lumia620"},
-            {"rm941", "Lumia625"},
-            {"rm942", "Lumia625"},
-            {"rm943", "Lumia625"},
-            {"rm974", "Lumia630"},
-            {"rm976", "Lumia630"},
-            {"rm977", "Lumia630"},
-            {"rm978", "Lumia630"},
-            {"rm975", "Lumia635"},
-            {"rm803", "Lumia710"},
-            {"rm809", "Lumia710"},
-            {"rm885", "Lumia720"},
-            {"rm887", "Lumia720"},
-            {"rm1038", "Lumia730"},
-            {"rm801", "Lumia800"},
-            {"rm802", "Lumia800"},
-            {"rm819", "Lumia800"},
-            {"rm878", "Lumia810"},
-            {"rm824", "Lumia820"},
-            {"rm825", "Lumia820"},
-            {"rm826", "Lumia820"},
-            {"rm845", "Lumia822"},
-            {"rm983", "Lumia830"},
-            {"rm984", "Lumia830"},
-            {"rm985", "Lumia830"},
-            {"rm808", "Lumia900"},
-            {"rm823", "Lumia900"},
-            {"rm820", "Lumia920"},
-            {"rm821", "Lumia920"},
-            {"rm822", "Lumia920"},
-            {"rm867", "Lumia920"},
-            {"rm892", "Lumia925"},
-            {"rm893", "Lumia925"},
-            {"rm910", "Lumia925"},
-            {"rm955", "Lumia925"},
-            {"rm860", "Lumia928"},
-            {"rm1045", "Lumia930"},
-            {"rm875", "Lumia1020"},
-            {"rm876", "Lumia1020"},
-            {"rm877", "Lumia1020"},
-            {"rm994", "Lumia1320"},
-            {"rm995", "Lumia1320"},
-            {"rm996", "Lumia1320"},
-            {"rm937", "Lumia1520"},
-            {"rm938", "Lumia1520"},
-            {"rm939", "Lumia1520"},
-            {"rm940", "Lumia1520"},
-            {"rm927", "LumiaIcon"},
-
+            { "rm915", "Lumia 520" },
+            { "rm917", "Lumia 521" },
+            { "rm998", "Lumia 525" },
+            { "rm997", "Lumia 526" },
+            { "rm1017", "Lumia 530" },
+            { "rm1018", "Lumia 530" },
+            { "rm1019", "Lumia 530" },
+            { "rm1020", "Lumia 530" },
+            { "rm1090", "Lumia 535" },
+            { "rm846", "Lumia 620" },
+            { "rm941", "Lumia 625" },
+            { "rm942", "Lumia 625" },
+            { "rm943", "Lumia 625" },
+            { "rm974", "Lumia 630" },
+            { "rm976", "Lumia 630" },
+            { "rm977", "Lumia 630" },
+            { "rm978", "Lumia 630" },
+            { "rm975", "Lumia 635" },
+            { "rm885", "Lumia 720" },
+            { "rm887", "Lumia 720" },
+            { "rm1038", "Lumia 730" },
+            { "rm878", "Lumia 810" },
+            { "rm824", "Lumia 820" },
+            { "rm825", "Lumia 820" },
+            { "rm826", "Lumia 820" },
+            { "rm845", "Lumia 822" },
+            { "rm983", "Lumia 830" },
+            { "rm984", "Lumia 830" },
+            { "rm985", "Lumia 830" },
+            { "rm820", "Lumia 920" },
+            { "rm821", "Lumia 920" },
+            { "rm822", "Lumia 920" },
+            { "rm867", "Lumia 920" },
+            { "rm892", "Lumia 925" },
+            { "rm893", "Lumia 925" },
+            { "rm910", "Lumia 925" },
+            { "rm955", "Lumia 925" },
+            { "rm860", "Lumia 928" },
+            { "rm1045", "Lumia 930" },
+            { "rm875", "Lumia 1020" },
+            { "rm876", "Lumia 1020" },
+            { "rm877", "Lumia 1020" },
+            { "rm994", "Lumia 1320" },
+            { "rm995", "Lumia 1320" },
+            { "rm996", "Lumia 1320" },
+            { "rm937", "Lumia 1520" },
+            { "rm938", "Lumia 1520" },
+            { "rm939", "Lumia 1520" },
+            { "rm940", "Lumia 1520" },
+            { "rm927", "Lumia Icon" },
         };
     }
 }
