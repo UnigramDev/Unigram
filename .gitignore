@@ -15,6 +15,8 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+[Pp]review/
+[Pp]roduction/
 x64/
 x86/
 bld/
