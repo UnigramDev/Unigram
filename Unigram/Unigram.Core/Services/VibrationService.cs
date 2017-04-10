@@ -42,6 +42,19 @@ namespace Unigram.Core.Services
         }
     }
 
+    public class FakeVibrationService : IVibrationService
+    {
+        public Task<bool> GetAvailabilityAsync()
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task VibrateAsync()
+        {
+            return Task.CompletedTask;
+        }
+    }
+
     public class WindowsPhoneVibrationService : IVibrationService
     {
         public Task<bool> GetAvailabilityAsync()

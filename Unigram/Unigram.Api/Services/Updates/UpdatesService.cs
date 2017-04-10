@@ -3185,7 +3185,7 @@ namespace Telegram.Api.Services.Updates
                         {
                             for (var i = ClientSeq.Value + 1; i < seqList[0]; i++)
                             {
-                                _lostSeq[i] = new Tuple<DateTime, TLUpdatesState>(DateTime.Now, new TLUpdatesState { Seq = ClientSeq.Value, Pts = _pts.Value, Date = _date.Value, Qts = _qts.Value });
+                                _lostSeq[i] = new Tuple<DateTime, TLUpdatesState>(DateTime.Now, new TLUpdatesState { Seq = ClientSeq ?? 0, Pts = _pts ?? 0, Date = _date ?? 0, Qts = _qts ?? 0 });
                             }
                         }
 
