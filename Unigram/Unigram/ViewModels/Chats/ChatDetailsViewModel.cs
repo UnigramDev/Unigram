@@ -8,6 +8,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Views;
@@ -18,41 +19,13 @@ namespace Unigram.ViewModels.Chats
 {
     public class ChatDetailsViewModel : UnigramViewModelBase
     {
-        public ObservableCollection<TLUser> UsersList = new ObservableCollection<TLUser>();
-        public ObservableCollection<TLUser> TempList = new ObservableCollection<TLUser>();
-        public object photo;
-        public string Status { get; internal set; }
-        public ChatDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) : base(protoService, cacheService, aggregator)
+        public ChatDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+            : base(protoService, cacheService, aggregator)
         {
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
-        {
-            var channel = parameter as TLPeerChannel;
-            var chat = parameter as TLPeerChat;
-
-            Item = CacheService.GetChat(chat?.ChatId ?? channel?.ChannelId);
-
-            //if (channel != null)
-            //{
-            //    TLInputChannel x = new TLInputChannel();                
-            //    x.ChannelId = channel.ChannelId;
-            //    x.AccessHash = channel.AccessHash;
-            //    var channelDetails = await ProtoService.GetFullChannelAsync(x);
-            //    Status = ((TLChannelFull)channelDetails.Result.FullChat).About;
-            //    // TODO: photo = channelDetails.Value.Chats[0].Photo;
-            //}
-            //if (chat != null)
-            //{
-            //    var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
-            //}
-            //TempList.Clear();
-            //UsersList.Clear();
-            //getMembers(channel, chat);
-        }
-
-        private TLChatBase _item;
-        public TLChatBase Item
+        private TLChat _item;
+        public TLChat Item
         {
             get
             {
@@ -64,63 +37,106 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public async Task getMembers(TLInputPeerChannel channel, TLInputPeerChat chat)
+        private TLChatFull _full;
+        public TLChatFull Full
         {
-
-            if (channel != null)
+            get
             {
-                //set visibility
-                TLInputChannel x = new TLInputChannel();
-                x.ChannelId = channel.ChannelId;
-                x.AccessHash = channel.AccessHash;
-                var participants = await ProtoService.GetParticipantsAsync(x, null, 0, int.MaxValue);
-                foreach (var item in participants.Result.Users)
-                {
-                    var User = item as TLUser;
-                    //var TempX = new UsersPanelListItem(User);
-                    //var Status = LastSeenHelper.GetLastSeen(User);
-                    //TempX.fullName = User.FullName;
-                    //TempX.lastSeen = Status.Item1;
-                    //TempX.Photo = TempX._parent.Photo;
-                    TempList.Add(User);
-                }
+                return _full;
+            }
+            set
+            {
+                Set(ref _full, value);
+            }
+        }
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        {
+            var chat = parameter as TLChat;
+            var peer = parameter as TLPeerChat;
+            if (peer != null)
+            {
+                chat = CacheService.GetChat(peer.ChatId) as TLChat;
             }
 
             if (chat != null)
             {
-                //set visibility
-                var chatDetails = await ProtoService.GetFullChatAsync(chat.ChatId);
-                foreach (var item in chatDetails.Result.Users)
+                Item = chat;
+
+                var response = await ProtoService.GetFullChatAsync(chat.Id);
+                if (response.IsSucceeded)
                 {
-                    var User = item as TLUser;
-                    //var TempX = new UsersPanelListItem(User);
-                    //var Status = LastSeenHelper.GetLastSeen(User);
-                    //TempX.fullName = User.FullName;
-                    //TempX.lastSeen = Status.Item1;
-                    //TempX.Photo = TempX._parent.Photo;
-                    TempList.Add(User);
+                    var collection = new SortedObservableCollection<TLChatParticipantBase>(new TLChatParticipantBaseComparer(true));
+                    Full = response.Result.FullChat as TLChatFull;
+                    Participants = collection;
+
+                    RaisePropertyChanged(() => Participants);
+
+                    if (_full.Participants is TLChatParticipants participants)
+                    {
+                        collection.AddRange(participants.Participants, true);
+                    }
                 }
             }
-
-            //foreach (var item in TempList.OrderByDescending(person => person.lastSeen))
-            //{
-            //    UsersList.Add(item);
-            //}
         }
+
+        public SortedObservableCollection<TLChatParticipantBase> Participants { get; private set; }
 
         public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
         private void MediaExecute()
         {
-            var channel = Item as TLChannel;
-            if (channel != null)
-            {
-                NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value });
-            }
-
             var chat = Item as TLChat;
             if (chat != null)
             {
                 NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerChat { ChatId = chat.Id });
+            }
+        }
+    }
+
+    public class TLChatParticipantBaseComparer : IComparer<TLChatParticipantBase>
+    {
+        private bool _epoch;
+
+        public TLChatParticipantBaseComparer(bool epoch)
+        {
+            _epoch = epoch;
+        }
+
+        public int Compare(TLChatParticipantBase x, TLChatParticipantBase y)
+        {
+            var xUser = x.User;
+            var yUser = y.User;
+
+            if (xUser == null || yUser == null)
+            {
+                return -1;
+            }
+
+            if (_epoch)
+            {
+                var epoch = LastSeenConverter.GetIndex(yUser).CompareTo(LastSeenConverter.GetIndex(xUser));
+                if (epoch == 0)
+                {
+                    var fullName = xUser.FullName.CompareTo(yUser.FullName);
+                    if (fullName == 0)
+                    {
+                        return yUser.Id.CompareTo(xUser.Id);
+                    }
+
+                    return fullName;
+                }
+
+                return epoch;
+            }
+            else
+            {
+                var fullName = xUser.FullName.CompareTo(yUser.FullName);
+                if (fullName == 0)
+                {
+                    return yUser.Id.CompareTo(xUser.Id);
+                }
+
+                return fullName;
             }
         }
     }

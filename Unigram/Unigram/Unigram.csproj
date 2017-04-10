@@ -159,6 +159,7 @@
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelDetailsViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
@@ -186,6 +187,9 @@
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
+    <Compile Include="Views\Channels\ChannelDetailsPage.xaml.cs">
+      <DependentUpon>ChannelDetailsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Channels\CreateChannelStep2Page.xaml.cs">
       <DependentUpon>CreateChannelStep2Page.xaml</DependentUpon>
     </Compile>
@@ -767,6 +771,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\BlankPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Channels\ChannelDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

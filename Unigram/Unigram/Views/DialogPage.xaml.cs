@@ -48,6 +48,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI;
+using Unigram.Views.Channels;
 
 namespace Unigram.Views
 {
@@ -261,7 +262,7 @@ namespace Unigram.Views
             }
             else if (ViewModel.With is TLChannel)
             {
-                ViewModel.NavigationService.Navigate(typeof(ChatDetailsPage), ViewModel.Peer.ToPeer());
+                ViewModel.NavigationService.Navigate(typeof(ChannelDetailsPage), ViewModel.Peer.ToPeer());
             }
             else if (ViewModel.With is TLChat)
             {

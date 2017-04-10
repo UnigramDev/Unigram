@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
-using Unigram.Views;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Chats;
-using Unigram.Views.Users;
+using Unigram.ViewModels.Channels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -18,16 +14,21 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Chats
-{
-    public sealed partial class ChatDetailsPage : Page
-    {
-        public ChatDetailsViewModel ViewModel => DataContext as ChatDetailsViewModel;
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-        public ChatDetailsPage()
+namespace Unigram.Views.Channels
+{
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
+    public sealed partial class ChannelDetailsPage : Page
+    {
+        public ChannelDetailsViewModel ViewModel => DataContext as ChannelDetailsViewModel;
+
+        public ChannelDetailsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ChatDetailsViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<ChannelDetailsViewModel>();
         }
 
         private void Photo_Click(object sender, RoutedEventArgs e)
