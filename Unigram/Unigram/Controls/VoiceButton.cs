@@ -186,6 +186,8 @@ namespace Unigram.Controls
         {
             #region fields
 
+            private bool m_isRecording;
+
             private StorageFile m_file;
             private IMediaExtension m_opusSink;
             public MediaCapture m_mediaCapture;
@@ -202,7 +204,7 @@ namespace Unigram.Controls
 
             public bool IsRecording
             {
-                get { return m_mediaCapture != null; }
+                get { return m_mediaCapture != null && m_isRecording; }
             }
 
             #endregion
@@ -231,6 +233,7 @@ namespace Unigram.Controls
 
             public async Task StartAsync()
             {
+                m_isRecording = true;
                 m_opusSink = await OpusCodec.CreateMediaSinkAsync(m_file);
 
                 var wavEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
