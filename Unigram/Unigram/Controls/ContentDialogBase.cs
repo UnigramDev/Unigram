@@ -150,7 +150,7 @@ namespace Unigram.Controls
             //BackButtonVisibility = SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility;
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
-            BootStrapper.BackRequested += BootStrapper_BackRequested;
+            BootStrapper.BackRequested += OnBackRequested;
             //Window.Current.SizeChanged += OnSizeChanged;
 
             OnVisibleBoundsChanged(_applicationView, null);
@@ -164,10 +164,10 @@ namespace Unigram.Controls
 
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
             _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
-            BootStrapper.BackRequested -= BootStrapper_BackRequested;
+            BootStrapper.BackRequested -= OnBackRequested;
         }
 
-        private void BootStrapper_BackRequested(object sender, HandledEventArgs e)
+        protected virtual void OnBackRequested(object sender, HandledEventArgs e)
         {
             e.Handled = true;
             Hide(ContentDialogBaseResult.None);

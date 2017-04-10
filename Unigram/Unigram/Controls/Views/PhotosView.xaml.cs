@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -38,20 +39,8 @@ namespace Unigram.Controls.Views
 
         public PhotosView()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            Loaded += OnLoaded;
-            Loading += OnLoading;
-            Unloaded += OnUnloaded;
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            BootStrapper.BackRequested += BootStrapper_BackRequested;
-        }
-
-        private void OnLoading(FrameworkElement sender, object args)
-        {
             _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
             _topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
             _botBarVisual = ElementCompositionPreview.GetElementVisual(BotBar);
@@ -61,14 +50,9 @@ namespace Unigram.Controls.Views
             _botBarVisual.Offset = new Vector3(0, 48, 0);
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnBackRequested(object sender, HandledEventArgs e)
         {
-            BootStrapper.BackRequested -= BootStrapper_BackRequested;
-        }
-
-        private void BootStrapper_BackRequested(object sender, HandledEventArgs e)
-        {
-            if (Flip.SelectedIndex == 0 && _firstImage != null)
+            if (Flip.SelectedIndex == 0 && _firstImage != null && _firstImage.ActualWidth > 0)
             {
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _firstImage);
                 if (animation != null)
@@ -118,6 +102,11 @@ namespace Unigram.Controls.Views
         private void ImageView_ImageOpened(object sender, RoutedEventArgs e)
         {
             var image = sender as FrameworkElement;
+            if (image != null)
+            {
+                image.Opacity = 1;
+            }
+
             if (image.DataContext == ViewModel.SelectedItem)
             {
                 _firstImage = image;
@@ -154,6 +143,15 @@ namespace Unigram.Controls.Views
                     Flip.Opacity = 1;
                     animation.TryStart(image);
                 }
+            }
+        }
+
+        private void ImageView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            var image = sender as FrameworkElement;
+            if (image != null)
+            {
+                image.Opacity = 0;
             }
         }
 
