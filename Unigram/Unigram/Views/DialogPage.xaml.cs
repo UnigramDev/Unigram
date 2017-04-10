@@ -47,6 +47,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI;
 
 namespace Unigram.Views
 {
@@ -945,10 +946,7 @@ namespace Unigram.Views
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
     {
         public StorageFileQueryResult Query { get; private set; }
-
         public uint StartIndex { get; private set; }
-
-        private CoreDispatcher _dispatcher;
 
         public MediaLibraryCollection()
         {
@@ -960,13 +958,11 @@ namespace Unigram.Views
             Query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
             Query.ContentsChanged += OnContentsChanged;
             StartIndex = 0;
-
-            _dispatcher = Window.Current.Dispatcher;
         }
 
-        private async void OnContentsChanged(IStorageQueryResultBase sender, object args)
+        private void OnContentsChanged(IStorageQueryResultBase sender, object args)
         {
-            await _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            Execute.BeginOnUIThread(() =>
             {
                 StartIndex = 0;
                 Clear();
