@@ -325,7 +325,6 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\FluidGridView.cs" />
     <Compile Include="Common\IncrementalCollection.cs" />
-    <Compile Include="Common\LastSeenHelper.cs" />
     <Compile Include="Common\TLBitmapSource.cs" />
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\ListCollectionView.cs" />

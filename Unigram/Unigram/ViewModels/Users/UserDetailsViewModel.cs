@@ -24,6 +24,7 @@ using Unigram.Common;
 using System.Linq;
 using Unigram.Controls.Views;
 using Unigram.Views.Users;
+using Unigram.Converters;
 
 namespace Unigram.ViewModels.Users
 {
@@ -96,7 +97,7 @@ namespace Unigram.ViewModels.Users
                     RaisePropertyChanged(() => AddContactVisibility);
                 }
 
-                LastSeen = LastSeenHelper.GetLastSeenTime(user, true);
+                LastSeen = LastSeenConverter.GetLastSeenTime(user, true);
 
                 Aggregator.Subscribe(this);
             }
