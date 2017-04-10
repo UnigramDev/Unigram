@@ -1066,7 +1066,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>Powershell -File "$(ProjectDir)UpdateManifest.ps1" "$(ProjectDir),$(ConfigurationName)"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!--<PropertyGroup>
     <PreBuildEvent>xcopy /y /s "$(SolutionDir)Unigram.DesktopService\bin\$(ConfigurationName)\Unigram.DesktopService.exe" "$(SolutionDir)\Unigram\bin\x64\$(ConfigurationName)\AppX\"
