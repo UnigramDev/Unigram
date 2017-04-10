@@ -4,10 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Core.Common;
 
 namespace Unigram.Collections
 {
-    public class SortedObservableCollection<T> : ObservableCollection<T>
+    public class SortedObservableCollection<T> : ObservableCollectionEx<T>
     {
         private readonly IComparer<T> _comparer;
 

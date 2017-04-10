@@ -16,7 +16,7 @@ namespace Unigram.Converters
             var user = value as TLUser;
             if (user != null)
             {
-                return LastSeenHelper.GetLastSeenLabel(user);
+                return LastSeenHelper.GetLastSeenLabel(user, parameter == null);
             }
 
             return null;

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Converters;
 using Windows.Globalization.DateTimeFormatting;
@@ -12,96 +13,86 @@ namespace Unigram.Common
 {
     public class LastSeenHelper
     {
-        public static Tuple<string, DateTime> GetLastSeen(TLUser user)
+        public static int GetLastSeenIndex(TLUser user)
         {
-            if (user.Id == 777000)
-            {
-                return Tuple.Create("Service notifications", DateTime.Now);
-            }
             if (user.IsBot)
             {
-                // TODO: messages access
-                return Tuple.Create("Bot", DateTime.Now);
-            }
-            if (user.IsSelf)
-            {
-                return Tuple.Create("Chat with yourself", DateTime.Now);
+                // Last
+                return user.IsBotChatHistory ? 1 : 0;
             }
 
             if (user.HasStatus && user.Status != null)
             {
-                switch (user.Status.TypeId)
+                switch (user.Status)
                 {
-                    case TLType.UserStatusOffline:
-                        {
-                            var status = user.Status as TLUserStatusOffline;
-                            var seen = TLUtils.ToDateTime(status.WasOnline);
-                            var now = DateTime.Now;
-                            var time = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? "moments ago" : (now - seen).Minutes.ToString() + ((now - seen).Minutes.ToString() == "1" ? " minute ago" : " minutes ago")) : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString()) == "1" ? (" hour ago") : (" hours ago"))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? "yesterday " + BindConvert.Current.ShortTime.Format(seen) : BindConvert.Current.ShortDate.Format(seen);
-
-                            return Tuple.Create($"Last seen {time}", seen);
-                        }
-                    case TLType.UserStatusOnline:
-                        return Tuple.Create("online", DateTime.Now);
-                    case TLType.UserStatusRecently:
-                        return Tuple.Create("Last seen recently", DateTime.Now.AddYears(-2));
-                    case TLType.UserStatusLastWeek:
-                        return Tuple.Create("Last seen within a week", DateTime.Now.AddYears(-3));
-                    case TLType.UserStatusLastMonth:
-                        return Tuple.Create("Last seen within a month", DateTime.Now.AddYears(-4));
-                    case TLType.UserStatusEmpty:
+                    case TLUserStatusOffline offline:
+                        return offline.WasOnline;
+                    case TLUserStatusOnline online:
+                        return TLUtils.Now;
+                    case TLUserStatusRecently recently:
+                        // recently
+                        // Before within a week
+                        return 5;
+                    case TLUserStatusLastWeek lastWeek:
+                        // within a week
+                        // Before within a month
+                        return 4;
+                    case TLUserStatusLastMonth lastMonth:
+                        // within a month
+                        // Before long time ago
+                        return 3;
+                    case TLUserStatusEmpty empty:
                     default:
-                        return Tuple.Create("Last seen a long time ago", DateTime.Now.AddYears(-5));
+                        // long time ago
+                        // Before bots
+                        return 2;
                 }
             }
 
-            if (user.IsBot)
-            {
-                // TODO
-            }
-
-            // Debugger.Break();
-            return Tuple.Create("Last seen a long time ago", DateTime.Now.AddYears(-30));
+            // long time ago
+            // Before bots
+            return 2;
         }
 
-        public static string GetLastSeenLabel(TLUser user)
+        public static string GetLastSeenLabel(TLUser user, bool details)
         {
             if (user.Id == 777000)
             {
                 return "Service notifications";
             }
-            if (user.IsBot)
+            else if (user.IsBot)
             {
-                // TODO: messages access
-                return "Bot";
+                if (details)
+                {
+                    return "Bot";
+                }
+
+                return user.IsBotChatHistory ? "Has access to messages" : "Has no access to messages";
             }
-            if (user.IsSelf)
+            else if (user.IsSelf && details)
             {
                 return "Chat with yourself";
             }
 
             if (user.HasStatus && user.Status != null)
             {
-                switch (user.Status.TypeId)
+                switch (user.Status)
                 {
-                    case TLType.UserStatusOffline:
-                        {
-                            var status = user.Status as TLUserStatusOffline;
-                            var seen = TLUtils.ToDateTime(status.WasOnline);
-                            var now = DateTime.Now;
-                            var time = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? "moments ago" : (now - seen).Minutes.ToString() + ((now - seen).Minutes.ToString() == "1" ? " minute ago" : " minutes ago")) : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString()) == "1" ? (" hour ago") : (" hours ago"))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? "yesterday " + BindConvert.Current.ShortTime.Format(seen) : BindConvert.Current.ShortDate.Format(seen);
+                    case TLUserStatusOffline offline:
+                        var now = DateTime.Now;
+                        var seen = TLUtils.ToDateTime(offline.WasOnline);
+                        var time = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? "moments ago" : (now - seen).Minutes.ToString() + ((now - seen).Minutes.ToString() == "1" ? " minute ago" : " minutes ago")) : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString()) == "1" ? (" hour ago") : (" hours ago"))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? "yesterday " + BindConvert.Current.ShortTime.Format(seen) : BindConvert.Current.ShortDate.Format(seen);
 
-                            return $"Last seen {time}";
-                        }
-                    case TLType.UserStatusOnline:
+                        return string.Format("Last seen {0}", time);
+                    case TLUserStatusOnline online:
                         return "online";
-                    case TLType.UserStatusRecently:
+                    case TLUserStatusRecently recently:
                         return "Last seen recently";
-                    case TLType.UserStatusLastWeek:
+                    case TLUserStatusLastWeek lastWeek:
                         return "Last seen within a week";
-                    case TLType.UserStatusLastMonth:
+                    case TLUserStatusLastMonth lastMonth:
                         return "Last seen within a month";
-                    case TLType.UserStatusEmpty:
+                    case TLUserStatusEmpty empty:
                     default:
                         return "Last seen a long time ago";
                 }
@@ -111,18 +102,22 @@ namespace Unigram.Common
             return "Last seen a long time ago";
         }
 
-        public static string GetLastSeenTime(TLUser user)
+        public static string GetLastSeenTime(TLUser user, bool details)
         {
             if (user.Id == 777000)
             {
                 return "Service notifications";
             }
-            if (user.IsBot)
+            else if (user.IsBot)
             {
-                // TODO: messages access
-                return "Bot";
+                if (details)
+                {
+                    return "Bot";
+                }
+
+                return user.IsBotChatHistory ? "Has access to messages" : "Has no access to messages";
             }
-            if (user.IsSelf)
+            else if (user.IsSelf && details)
             {
                 return "Chat with yourself";
             }
@@ -137,7 +132,7 @@ namespace Unigram.Common
             }
             else
             {
-                return GetLastSeenLabel(user);
+                return GetLastSeenLabel(user, details);
             }
         }
     }
