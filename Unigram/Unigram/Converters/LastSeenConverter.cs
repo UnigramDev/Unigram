@@ -16,7 +16,7 @@ namespace Unigram.Converters
             var user = value as TLUser;
             if (user != null)
             {
-                return GetLastSeenLabel(user, parameter == null);
+                return GetLabel(user, parameter == null);
             }
 
             return null;
@@ -27,7 +27,7 @@ namespace Unigram.Converters
             throw new NotImplementedException();
         }
 
-        public static int GetLastSeenIndex(TLUser user)
+        public static int GetIndex(TLUser user)
         {
             if (user.IsBot)
             {
@@ -68,7 +68,7 @@ namespace Unigram.Converters
             return 2;
         }
 
-        public static string GetLastSeenLabel(TLUser user, bool details)
+        public static string GetLabel(TLUser user, bool details)
         {
             if (user.Id == 777000)
             {
@@ -95,7 +95,15 @@ namespace Unigram.Converters
                     case TLUserStatusOffline offline:
                         var now = DateTime.Now;
                         var seen = TLUtils.ToDateTime(offline.WasOnline);
-                        var time = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? "moments ago" : (now - seen).Minutes.ToString() + ((now - seen).Minutes.ToString() == "1" ? " minute ago" : " minutes ago")) : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString()) == "1" ? (" hour ago") : (" hours ago"))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? "yesterday " + BindConvert.Current.ShortTime.Format(seen) : BindConvert.Current.ShortDate.Format(seen);
+                        var time = string.Empty;
+                        if (details)
+                        {
+                            time = ((now.Date == seen.Date) ? "today at " : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? "yesterday at " : BindConvert.Current.ShortDate.Format(seen) + " ")) + BindConvert.Current.ShortTime.Format(seen);
+                        }
+                        else
+                        {
+                            time = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? "moments ago" : (now - seen).Minutes.ToString() + ((now - seen).Minutes.ToString() == "1" ? " minute ago" : " minutes ago")) : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString()) == "1" ? (" hour ago") : (" hours ago"))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? "yesterday " + BindConvert.Current.ShortTime.Format(seen) : BindConvert.Current.ShortDate.Format(seen);
+                        }
 
                         return string.Format("Last seen {0}", time);
                     case TLUserStatusOnline online:
@@ -114,40 +122,6 @@ namespace Unigram.Converters
 
             // Debugger.Break();
             return "Last seen a long time ago";
-        }
-
-        public static string GetLastSeenTime(TLUser user, bool details)
-        {
-            if (user.Id == 777000)
-            {
-                return "Service notifications";
-            }
-            else if (user.IsBot)
-            {
-                if (details)
-                {
-                    return "Bot";
-                }
-
-                return user.IsBotChatHistory ? "Has access to messages" : "Has no access to messages";
-            }
-            else if (user.IsSelf && details)
-            {
-                return "Chat with yourself";
-            }
-
-            if (!user.IsSelf && user.HasStatus && user.Status != null && user.Status.TypeId == TLType.UserStatusOffline)
-            {
-                var status = user.Status as TLUserStatusOffline;
-                var seen = TLUtils.ToDateTime(status.WasOnline);
-                var now = DateTime.Now;
-                var time = ((now.Date == seen.Date) ? "today at " : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? "yesterday at " : BindConvert.Current.ShortDate.Format(seen) + " ")) + BindConvert.Current.ShortTime.Format(seen);
-                return $"Last seen {time}";
-            }
-            else
-            {
-                return GetLastSeenLabel(user, details);
-            }
         }
     }
 }

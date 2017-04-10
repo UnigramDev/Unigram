@@ -97,7 +97,7 @@ namespace Unigram.ViewModels.Users
                     RaisePropertyChanged(() => AddContactVisibility);
                 }
 
-                LastSeen = LastSeenConverter.GetLastSeenTime(user, true);
+                LastSeen = LastSeenConverter.GetLabel(user, true);
 
                 Aggregator.Subscribe(this);
             }

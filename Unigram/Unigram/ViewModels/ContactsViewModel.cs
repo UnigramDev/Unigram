@@ -213,7 +213,7 @@ namespace Unigram.ViewModels
         {
             if (_epoch)
             {
-                var epoch = LastSeenConverter.GetLastSeenIndex(y).CompareTo(LastSeenConverter.GetLastSeenIndex(x));
+                var epoch = LastSeenConverter.GetIndex(y).CompareTo(LastSeenConverter.GetIndex(x));
                 if (epoch == 0)
                 {
                     var fullName = x.FullName.CompareTo(y.FullName);
