@@ -60,6 +60,16 @@ namespace Unigram.ViewModels
                         var action = message.Action as TLMessageActionPhoneCall;
 
                         var peer = _cacheService.GetUser(message.IsOut ? message.ToId.Id : message.FromId) as TLUser;
+                        if (peer == null)
+                        {
+                            peer = response.Result.Users.FirstOrDefault(x => x.Id == (message.IsOut ? message.ToId.Id : message.FromId)) as TLUser;
+                        }
+
+                        if (peer == null)
+                        {
+                            continue;
+                        }
+
                         var outgoing = message.IsOut;
                         var reason = action.Reason;
                         var missed = reason is TLPhoneCallDiscardReasonMissed || reason is TLPhoneCallDiscardReasonBusy;
