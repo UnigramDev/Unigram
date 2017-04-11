@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Template10.Common;
 using Template10.Services.LoggingService;
@@ -135,34 +136,29 @@ namespace Unigram.Common
 
         public static void RemovePeerFromBackStack(this INavigationService service, TLPeerBase target)
         {
-            if (service.CurrentPageType == typeof(DialogPage))
-            {
-                if (TryGetPeerFromParameter(service, service.CurrentPageParam, out TLPeerBase peer))
-                {
-                    if (peer.Equals(target))
-                    {
-                        service.GoBack();
-                        service.Frame.ForwardStack.Clear();
-                    }
-                }
-            }
-
-            var found = false;
+            TLPeerBase peer;
+            bool found = false;
 
             for (int i = 0; i < service.Frame.BackStackDepth; i++)
             {
                 var entry = service.Frame.BackStack[i];
-                if (entry.SourcePageType == typeof(DialogPage))
+                if (TryGetPeerFromParameter(service, entry.Parameter, out peer))
                 {
-                    if (TryGetPeerFromParameter(service, entry.Parameter, out TLPeerBase peer))
-                    {
-                        found = peer.Equals(target);
-                    }
+                    found = peer.Equals(target);
                 }
 
                 if (found)
                 {
                     service.Frame.BackStack.RemoveAt(i);
+                }
+            }
+
+            if (TryGetPeerFromParameter(service, service.CurrentPageParam, out peer))
+            {
+                if (peer.Equals(target))
+                {
+                    service.GoBack();
+                    service.Frame.ForwardStack.Clear();
                 }
             }
         }
@@ -199,10 +195,25 @@ namespace Unigram.Common
                 parameter = TLSerializationService.Current.Deserialize((string)parameter);
             }
 
-            var tuple = parameter as Tuple<TLPeerBase, int>;
-            if (tuple != null)
+            if (parameter is Tuple<TLPeerBase, int> tuple)
             {
                 parameter = tuple.Item1;
+            }
+
+            switch (parameter)
+            {
+                case TLInputPeerBase inputPeer:
+                    parameter = inputPeer.ToPeer();
+                    break;
+                case TLInputUser inputUser:
+                    parameter = new TLPeerUser { UserId = inputUser.UserId };
+                    break;
+                case TLInputUserSelf inputSelf:
+                    parameter = new TLPeerUser { UserId = SettingsHelper.UserId };
+                    break;
+                case TLInputChannel inputChannel:
+                    parameter = new TLPeerChannel { ChannelId = inputChannel.ChannelId };
+                    break;
             }
 
             peer = parameter as TLPeerBase;
