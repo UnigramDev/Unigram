@@ -480,7 +480,7 @@
     <value>You joined the group</value>
   </data>
   <data name="MessageActionChatMigrateTo" xml:space="preserve">
-    <value>Chat migrated to channel "{0}"</value>
+    <value>Chat migrated to supergroup "{0}"</value>
   </data>
   <data name="MessageActionDisableMessageTTL" xml:space="preserve">
     <value>{0} disabled the self-destruct timer</value>
@@ -715,5 +715,8 @@
   </data>
   <data name="CallOutgoingShort" xml:space="preserve">
     <value>Outgoing</value>
+  </data>
+  <data name="MessageActionChatMigrateToGeneric" xml:space="preserve">
+    <value>Chat migrated to supergroup</value>
   </data>
 </root>

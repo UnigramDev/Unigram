@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 04/04/2017 20:07:29
+// 	Generated: 04/11/2017 11:07:21
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -259,7 +259,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Chat migrated to channel "{0}""
+        /// Localized resource similar to "Chat migrated to supergroup "{0}""
         /// </summary>
         public static string MessageActionChatMigrateTo
         {
@@ -1124,6 +1124,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CallOutgoingShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat migrated to supergroup"
+        /// </summary>
+        public static string MessageActionChatMigrateToGeneric
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatMigrateToGeneric");
             }
         }
     }

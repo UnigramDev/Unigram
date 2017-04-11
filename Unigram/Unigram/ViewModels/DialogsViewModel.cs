@@ -145,8 +145,7 @@ namespace Unigram.ViewModels
                             item.PinnedIndex = pinnedIndex++;
                         }
 
-                        var chat = item.With as TLChat;
-                        if (chat != null && chat.HasMigratedTo)
+                        if (item.With is TLChat chat && chat.HasMigratedTo)
                         {
                             continue;
                         }
@@ -241,7 +240,18 @@ namespace Unigram.ViewModels
             Execute.BeginOnUIThread(() =>
             {
                 Items.Clear();
-                Items.AddRange(dialogs);
+
+                foreach (var item in dialogs)
+                {
+                    if (item.With is TLChat chat && chat.HasMigratedTo)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        Items.Add(item);
+                    }
+                }
             });
         }
 
