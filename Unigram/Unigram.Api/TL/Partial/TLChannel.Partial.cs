@@ -8,7 +8,7 @@ using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLChannel : ITLReadMaxId, ITLInputPeer
+    public partial class TLChannel : ITLReadMaxId
     {
         public Int32 AdminsCount { get; set; }
 

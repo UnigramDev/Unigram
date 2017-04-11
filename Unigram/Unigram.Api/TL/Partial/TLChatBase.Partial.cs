@@ -8,7 +8,7 @@ using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public abstract partial class TLChatBase : ITLDialogWith
+    public abstract partial class TLChatBase : ITLDialogWith, ITLInputPeer
     {
         #region Full chat information
 
