@@ -174,7 +174,7 @@ namespace Unigram.Controls
                             var settings = channel.NotifySettings as TLPeerNotifySettings;
                             if (settings != null)
                             {
-                                Content = settings.IsSilent || settings.MuteUntil > 0 ? "Unmute" : "Mute";
+                                Content = settings.MuteUntil > 0 ? "Unmute" : "Mute";
                             }
                             else
                             {
