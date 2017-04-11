@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Unigram.Common;
+using Unigram.Core.Common;
 
 namespace Unigram.ViewModels
 {
@@ -40,7 +42,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private int _totalItems;
+        protected int _totalItems;
         public int TotalItems
         {
             get
@@ -53,7 +55,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private object _selectedItem;
+        protected object _selectedItem;
         public object SelectedItem
         {
             get
@@ -67,7 +69,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private object _poster;
+        protected object _poster;
         public object Poster
         {
             get
@@ -85,5 +87,26 @@ namespace Unigram.ViewModels
         protected virtual void LoadPrevious() { }
 
         protected virtual void LoadNext() { }
+
+        public virtual bool CanDelete
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual bool CanSave
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
+        protected virtual void DeleteExecute()
+        {
+        }
     }
 }

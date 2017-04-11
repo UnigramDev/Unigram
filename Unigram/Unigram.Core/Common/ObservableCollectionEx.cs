@@ -25,8 +25,19 @@ namespace Unigram.Core.Common
             base.OnCollectionChanged(e);
         }
 
-        public void AddRange(IEnumerable<T> source, bool clear = false)
+        public void AddRange(IList<T> source, bool clear = false)
         {
+            if (source.Count == 1)
+            {
+                if (clear)
+                {
+                    Clear();
+                }
+
+                Add(source[0]);
+                return;
+            }
+
             _suspendUpdates = true;
 
             if (clear)
@@ -46,7 +57,7 @@ namespace Unigram.Core.Common
             }
             else
             {
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, Items));
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, source));
             }
         }
     }
