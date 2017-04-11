@@ -1244,6 +1244,8 @@ namespace Unigram.ViewModels
                 clone.Id = 0;
                 clone.HasReplyToMsgId = false;
                 clone.ReplyToMsgId = null;
+                clone.HasReplyMarkup = false;
+                clone.ReplyMarkup = null;
                 clone.Date = date;
                 clone.ToId = Peer.ToPeer();
                 clone.RandomId = TLLong.Random();
