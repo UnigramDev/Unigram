@@ -1110,7 +1110,7 @@ namespace Unigram.ViewModels
             if (confirm == ContentDialogResult.Primary)
             {
                 var peer = dialog.ToInputPeer();
-                var response = await ProtoService.DeleteHistoryAsync(justClear, peer, 0);
+                var response = await ProtoService.DeleteHistoryAsync(justClear, peer, int.MaxValue);
                 if (response.IsSucceeded)
                 {
                     if (justClear)

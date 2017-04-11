@@ -1665,10 +1665,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int offset)
+        public Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int maxId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedHistory>>();
-            DeleteHistoryAsync(justClear, peer, offset, (callback) =>
+            DeleteHistoryAsync(justClear, peer, maxId, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedHistory>(callback));
             }, (faultCallback) =>
