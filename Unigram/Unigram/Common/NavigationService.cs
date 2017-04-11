@@ -10,6 +10,7 @@ using Template10.Services.LoggingService;
 using Template10.Services.NavigationService;
 using Template10.Services.SerializationService;
 using Template10.Services.ViewService;
+using Unigram.Core.Services;
 using Unigram.Views;
 using Unigram.Views;
 using Unigram.Views.Payments;
@@ -103,7 +104,7 @@ namespace Unigram.Common
 
 
 
-
+        #region Payments
 
         public static void NavigateToPaymentFormStep1(this INavigationService service, TLMessage message, TLPaymentsPaymentForm paymentForm)
         {
@@ -129,5 +130,50 @@ namespace Unigram.Common
         {
             service.Navigate(typeof(PaymentFormStep5Page), TLTuple.Create(message, paymentForm, info, validatedInfo, shipping, title ?? string.Empty, credentials ?? string.Empty, save));
         }
+
+        #endregion
+
+        public static TLPeerBase GetPeerFromBackStack(this INavigationService service)
+        {
+            if (service.CurrentPageType == typeof(DialogPage))
+            {
+                if (TryGetPeerFromParameter(service, service.CurrentPageParam, out TLPeerBase peer))
+                {
+                    return peer;
+                }
+            }
+
+            for (int i = service.Frame.BackStackDepth - 1; i >= 0; i--)
+            {
+                var entry = service.Frame.BackStack[i];
+                if (entry.SourcePageType == typeof(DialogPage))
+                {
+                    if (TryGetPeerFromParameter(service, entry.Parameter, out TLPeerBase peer))
+                    {
+                        return peer;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public static bool TryGetPeerFromParameter(this INavigationService service, object parameter, out TLPeerBase peer)
+        {
+            if (parameter is string)
+            {
+                parameter = TLSerializationService.Current.Deserialize((string)parameter);
+            }
+
+            var tuple = parameter as Tuple<TLPeerBase, int>;
+            if (tuple != null)
+            {
+                parameter = tuple.Item1;
+            }
+
+            peer = parameter as TLPeerBase;
+            return peer != null;
+        }
+
     }
 }
