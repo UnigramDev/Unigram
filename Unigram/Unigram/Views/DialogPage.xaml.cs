@@ -861,6 +861,8 @@ namespace Unigram.Views
                 DetachExpression();
                 //DetachTextAreaExpression();
 
+                ElapsedLabel.Text = "0:00,0";
+
                 var point = _slideVisual.Offset;
                 point.X = _slideVisual.Size.X + 36;
 
