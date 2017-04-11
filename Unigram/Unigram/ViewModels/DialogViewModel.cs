@@ -679,11 +679,7 @@ namespace Unigram.ViewModels
             }
 
             var participant = GetParticipant(parameter as TLPeerBase);
-            var channel = participant as TLChannel;
-            var chat = participant as TLChat;
-            var user = participant as TLUser;
-
-            if (user != null)
+            if (participant is TLUser user)
             {
                 var full = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
 
@@ -736,7 +732,7 @@ namespace Unigram.ViewModels
                 //    });
                 //}
             }
-            else if (channel != null)
+            else if (participant is TLChannel channel)
             {
                 if (channel.IsRestricted)
                 {
@@ -797,7 +793,7 @@ namespace Unigram.ViewModels
                 }
 
             }
-            else if (chat != null)
+            else if (participant is TLChat chat)
             {
                 With = chat;
                 Peer = new TLInputPeerChat { ChatId = chat.Id };
@@ -820,6 +816,11 @@ namespace Unigram.ViewModels
                 //    }
                 //    LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
                 //}
+            }
+            else if (participant is TLChatForbidden forbiddenChat)
+            {
+                With = forbiddenChat;
+                Peer = new TLInputPeerChat { ChatId = forbiddenChat.Id };
             }
 
             _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
@@ -859,7 +860,7 @@ namespace Unigram.ViewModels
             if (dialog != null && Messages.Count > 0)
             {
                 var unread = dialog.UnreadCount;
-                if (Peer is TLInputPeerChannel && channel != null)
+                if (Peer is TLInputPeerChannel && participant is TLChannel channel)
                 {
                     await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
                 }
