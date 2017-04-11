@@ -69,20 +69,22 @@ namespace Unigram.Converters
             //    return DefaultPhotoConverter.ReturnOrEnqueueImage(timer, this.CheckChatSettings, encryptedFile, encryptedFile, null);
             //}
 
-            var user = value as TLUser;
-            if (user != null)
+            if (value is TLUser user)
             {
                 return BitmapContext[user];
             }
 
-            var chat = value as TLChat;
-            if (chat != null)
+            if (value is TLChat chat)
             {
                 return BitmapContext[chat];
             }
 
-            var channel = value as TLChannel;
-            if (channel != null)
+            if (value is TLChatForbidden forbiddenChat)
+            {
+                return BitmapContext[forbiddenChat];
+            }
+
+            if (value is TLChannel channel)
             {
                 return BitmapContext[channel];
             }
