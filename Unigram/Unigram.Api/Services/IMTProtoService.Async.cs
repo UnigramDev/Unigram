@@ -85,7 +85,8 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLChatInviteBase>> CheckChatInviteAsync(string hash);
         Task<MTProtoResponse<TLDocumentBase>> GetDocumentByHashAsync(byte[] sha256, int size, string mimeType);
         Task<MTProtoResponse<bool>> SaveDraftAsync(TLInputPeerBase peer, TLDraftMessageBase draft);
-        Task<MTProtoResponse<TLPhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id);
+        Task<MTProtoResponse<TLUserProfilePhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id);
+        Task<MTProtoResponse<TLVector<long>>> DeletePhotosAsync(TLVector<TLInputPhotoBase> id);
         Task<MTProtoResponse<TLContactsBlockedBase>> GetBlockedAsync(int offset, int limit);
         Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(string hash);
         Task<MTProtoResponse<TLUserFull>> GetFullUserAsync(TLInputUserBase id);

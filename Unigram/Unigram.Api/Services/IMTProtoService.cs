@@ -107,7 +107,8 @@ namespace Telegram.Api.Services
         // didn't work
         //void GetUsersAsync(TLVector<TLInputUserBase> id, Action<TLVector<TLUserBase>> callback, Action<TLRPCError> faultCallback = null);
         void UploadProfilePhotoAsync(TLInputFile file, Action<TLPhotosPhoto> callback, Action<TLRPCError> faultCallback = null);
-        void UpdateProfilePhotoAsync(TLInputPhotoBase id, Action<TLPhotoBase> callback, Action<TLRPCError> faultCallback = null);
+        void UpdateProfilePhotoAsync(TLInputPhotoBase id, Action<TLUserProfilePhotoBase> callback, Action<TLRPCError> faultCallback = null);
+        void DeletePhotosAsync(TLVector<TLInputPhotoBase> id, Action<TLVector<long>> callback, Action<TLRPCError> faultCallback = null);
 
         void GetDHConfigAsync(int version, int randomLength, Action<TLMessagesDHConfig> callback, Action<TLRPCError> faultCallback = null);
         // TODO: Encrypted void RequestEncryptionAsync(TLInputUserBase userId, int randomId, byte[] g_a, Action<TLEncryptedChatBase> callback, Action<TLRPCError> faultCallback = null);

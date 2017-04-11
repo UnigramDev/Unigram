@@ -10,21 +10,32 @@ namespace Telegram.Api.Services
         {
             var obj = new TLPhotosUploadProfilePhoto { File = file };
 
-            SendInformativeMessage("photos.uploadProfilePhoto", obj, callback, faultCallback);
+            const string caption = "photos.uploadProfilePhoto";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void UpdateProfilePhotoAsync(TLInputPhotoBase id, Action<TLPhotoBase> callback, Action<TLRPCError> faultCallback = null)
+        public void UpdateProfilePhotoAsync(TLInputPhotoBase id, Action<TLUserProfilePhotoBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLPhotosUpdateProfilePhoto { Id = id };
 
-            SendInformativeMessage("photos.updateProfilePhoto", obj, callback, faultCallback);
+            const string caption = "photos.updateProfilePhoto";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetUserPhotosAsync(TLInputUserBase userId, int offset, long maxId, int limit, Action<TLPhotosPhotosBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLPhotosGetUserPhotos { UserId = userId, Offset = offset, MaxId = maxId, Limit = limit };
 
-            SendInformativeMessage("photos.getUserPhotos", obj, callback, faultCallback);
+            const string caption = "photos.getUserPhotos";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void DeletePhotosAsync(TLVector<TLInputPhotoBase> id, Action<TLVector<long>> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLPhotosDeletePhotos { Id = id };
+
+            const string caption = "photos.deletePhotos";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
     }
 }
