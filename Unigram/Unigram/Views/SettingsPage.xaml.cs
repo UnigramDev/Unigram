@@ -16,6 +16,8 @@ using Windows.System;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Media.Animation;
+using Telegram.Api.TL;
 
 namespace Unigram.Views
 {
@@ -125,6 +127,33 @@ namespace Unigram.Views
         private void Accounts_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsAccountsPage));
+        }
+
+        private async void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Photo);
+
+            var user = ViewModel.Self;
+            if (user.HasPhoto)
+            {
+                if (user.Photo is TLUserProfilePhoto photo)
+                {
+                    var test = new UserPhotosViewModel(user, ViewModel.ProtoService);
+                    var dialog = new PhotosView { DataContext = test };
+                    dialog.Background = null;
+                    dialog.OverlayBrush = null;
+                    dialog.Closing += (s, args) =>
+                    {
+                        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                        if (animation != null)
+                        {
+                            animation.TryStart(Photo);
+                        }
+                    };
+
+                    await dialog.ShowAsync();
+                }
+            }
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)

@@ -220,7 +220,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <controls:ProfilePictureView Command="{Binding PhotoCommand}" Source="{x:Bind ViewModel.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Height="64" Width="64" Margin="12" Grid.RowSpan="2"/>
+                        <controls:ProfilePictureView x:Name="Photo" Click="Photo_Click" Source="{x:Bind ViewModel.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Height="64" Width="64" Margin="12" Grid.RowSpan="2"/>
 
                         <TextBlock Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
                         <TextBlock Text="online" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
