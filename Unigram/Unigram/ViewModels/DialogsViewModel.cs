@@ -1044,7 +1044,7 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
         private async void DialogDeleteExecute(TLDialog dialog)
         {
-            if (dialog.With is TLUser || dialog.With is TLChat)
+            if (dialog.With is TLUser || dialog.With is TLChat || dialog.With is TLChatForbidden)
             {
                 await ClearHistoryAsync(dialog, false);
             }
@@ -1099,7 +1099,7 @@ namespace Unigram.ViewModels
             {
                 message = string.Format("Are you sure, you want to delete all message history with {0}?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName);
             }
-            else if (dialog.With is TLChat)
+            else if (dialog.With is TLChat || dialog.With is TLChatForbidden)
             {
                 message = justClear ? string.Format("Are you sure, you want to delete all message history in \"{0}\"?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName) : string.Format("Are you sure, you want to delete all message history and leave \"{0}\"?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName);
             }

@@ -604,7 +604,7 @@ namespace Unigram.Views
                 var dialog = element.DataContext as TLDialog;
                 if (dialog != null)
                 {
-                    element.Visibility = dialog.Peer is TLPeerChat ? Visibility.Visible : Visibility.Collapsed;
+                    element.Visibility = dialog.Peer is TLPeerChat && dialog.With is TLChat ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
         }

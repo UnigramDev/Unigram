@@ -2300,6 +2300,18 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Delete and Exit
+
+        public RelayCommand DialogDeleteCommand => new RelayCommand(DialogDeleteExecute);
+        private void DialogDeleteExecute()
+        {
+            if (_currentDialog != null)
+            {
+                UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.DialogDeleteCommand.Execute(_currentDialog);
+            }
+        }
+
+        #endregion
     }
 
     public class MessageCollection : ObservableCollection<TLMessageBase>

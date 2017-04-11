@@ -1161,6 +1161,7 @@
             <controls:BubbleActionButton
                 With="{x:Bind ViewModel.With, Mode=OneWay}"
                 ToggleMuteCommand="{x:Bind ViewModel.ToggleMuteCommand}"
+                DeleteAndExitCommand="{x:Bind ViewModel.DialogDeleteCommand}"
                 Grid.ColumnSpan="4"
                 Grid.Row="1"/>
 
