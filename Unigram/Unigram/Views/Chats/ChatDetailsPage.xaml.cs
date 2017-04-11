@@ -92,5 +92,13 @@ namespace Unigram.Views.Chats
         }
 
         #endregion
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is TLChatParticipantBase participant && participant.User != null)
+            {
+                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), participant.User.ToPeer());
+            }
+        }
     }
 }
