@@ -1081,6 +1081,8 @@ namespace Unigram.ViewModels
                     {
                         CacheService.DeleteDialog(dialog);
                         Items.Remove(dialog);
+
+                        NavigationService.RemovePeerFromBackStack(dialog.With.ToPeer());
                     }
                 }
             }
@@ -1120,6 +1122,8 @@ namespace Unigram.ViewModels
                     {
                         CacheService.DeleteDialog(dialog);
                         Items.Remove(dialog);
+
+                        NavigationService.RemovePeerFromBackStack(dialog.With.ToPeer());
                     }
                 }
                 else

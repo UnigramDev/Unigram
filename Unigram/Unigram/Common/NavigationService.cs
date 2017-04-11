@@ -133,6 +133,40 @@ namespace Unigram.Common
 
         #endregion
 
+        public static void RemovePeerFromBackStack(this INavigationService service, TLPeerBase target)
+        {
+            if (service.CurrentPageType == typeof(DialogPage))
+            {
+                if (TryGetPeerFromParameter(service, service.CurrentPageParam, out TLPeerBase peer))
+                {
+                    if (peer.Equals(target))
+                    {
+                        service.GoBack();
+                        service.Frame.ForwardStack.Clear();
+                    }
+                }
+            }
+
+            var found = false;
+
+            for (int i = 0; i < service.Frame.BackStackDepth; i++)
+            {
+                var entry = service.Frame.BackStack[i];
+                if (entry.SourcePageType == typeof(DialogPage))
+                {
+                    if (TryGetPeerFromParameter(service, entry.Parameter, out TLPeerBase peer))
+                    {
+                        found = peer.Equals(target);
+                    }
+                }
+
+                if (found)
+                {
+                    service.Frame.BackStack.RemoveAt(i);
+                }
+            }
+        }
+
         public static TLPeerBase GetPeerFromBackStack(this INavigationService service)
         {
             if (service.CurrentPageType == typeof(DialogPage))

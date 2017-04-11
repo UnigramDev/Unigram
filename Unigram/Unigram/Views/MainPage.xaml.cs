@@ -95,6 +95,9 @@ namespace Unigram.Views
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
+            ViewModel.Dialogs.NavigationService = MasterDetail.NavigationService;
+            ViewModel.Contacts.NavigationService = MasterDetail.NavigationService;
+            ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
 
             if (e.Parameter is string)
             {
