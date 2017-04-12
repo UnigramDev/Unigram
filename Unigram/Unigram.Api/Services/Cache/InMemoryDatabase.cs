@@ -1924,8 +1924,9 @@ namespace Telegram.Api.Services.Cache
 
         public void CommitInternal()
         {
-            //return;
-            //return;
+#warning CommitInternal FORCED RETURN
+            return;
+
             if (!_isOpened) return;
 
             var timer = Stopwatch.StartNew();

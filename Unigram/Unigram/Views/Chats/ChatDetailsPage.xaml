@@ -176,6 +176,11 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <MenuFlyout x:Key="ParticipantMenuFlyout" Opening="MenuFlyout_Opening">
+            <MenuFlyoutItem Loaded="ParticipantRemove_Loaded" Command="{x:Bind ViewModel.ParticipantRemoveCommand}" CommandParameter="{Binding}" Text="Remove from group"/>
+        </MenuFlyout>
+
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -192,7 +197,11 @@
         <controls:ButtonPageHeader Title="Info"
                                    Glyph="&#xE104;"/>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Participants}" Grid.Row="1">
+        <ListView ItemsSource="{x:Bind ViewModel.Participants}"
+                  ItemClick="ListView_ItemClick"
+                  IsItemClickEnabled="True"
+                  SelectionMode="None"
+                  Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
                     <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
@@ -211,6 +220,7 @@
                     </Grid>
                     <controls:HyperButton Content="Set group photo"
                                           Click="EditPhoto_Click"
+                                          Visibility="{x:Bind (Visibility)ViewModel.CanEditNameAndPhoto}"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Grid.Row="1"/>
 
@@ -245,7 +255,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:TLChatParticipantBase">
-                    <Grid Margin="0,6">
+                    <Grid Margin="0,6" Background="Transparent" ContextFlyout="{StaticResource ParticipantMenuFlyout}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>

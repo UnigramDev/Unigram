@@ -60,11 +60,36 @@
         </Grid>
 
         <Border Grid.Row="2">
-            <CommandBar x:Name="BotBar">
-                <CommandBar.Background>
+            <Border x:Name="BotBar">
+                <Border.Background>
                     <SolidColorBrush Color="Black" Opacity="0.6"/>
-                </CommandBar.Background>
-            </CommandBar>
+                </Border.Background>
+                <Button x:Name="btnOptions"
+                        Padding="16,23,16,0"
+                        HorizontalAlignment="Right"
+                        Height="48"
+                        Style="{StaticResource EllipsisButton}">
+                    <FontIcon x:Name="EllipsisIcon"
+                              VerticalAlignment="Center"
+                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              FontSize="16"
+                              Glyph="&#xE10C;"
+                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            Command="{x:Bind ViewModel.DeleteCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
+                                            Tag="&#xE107;"
+                                            Text="Delete"/>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
+                                            Tag="&#xE105;"
+                                            Text="Save file as..." />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </Border>
         </Border>
     </Grid>
 </local:ContentDialogBase>

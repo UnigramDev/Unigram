@@ -85,7 +85,8 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLChatInviteBase>> CheckChatInviteAsync(string hash);
         Task<MTProtoResponse<TLDocumentBase>> GetDocumentByHashAsync(byte[] sha256, int size, string mimeType);
         Task<MTProtoResponse<bool>> SaveDraftAsync(TLInputPeerBase peer, TLDraftMessageBase draft);
-        Task<MTProtoResponse<TLPhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id);
+        Task<MTProtoResponse<TLUserProfilePhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id);
+        Task<MTProtoResponse<TLVector<long>>> DeletePhotosAsync(TLVector<TLInputPhotoBase> id);
         Task<MTProtoResponse<TLContactsBlockedBase>> GetBlockedAsync(int offset, int limit);
         Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(string hash);
         Task<MTProtoResponse<TLUserFull>> GetFullUserAsync(TLInputUserBase id);
@@ -130,7 +131,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<bool>> UninstallStickerSetAsync(TLInputStickerSetBase stickerset);
         Task<MTProtoResponse<TLUpdatesBase>> CreateChatAsync(TLVector<TLInputUserBase> users, string title);
         Task<MTProtoResponse<TLUpdatesBase>> StartBotAsync(TLInputUserBase bot, string startParam, TLMessage message);
-        Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int offset);
+        Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int maxId);
         Task<MTProtoResponse<TLAccountAuthorizations>> GetAuthorizationsAsync();
         Task<MTProtoResponse<bool>> EditChatAdminAsync(int chatId, TLInputUserBase userId, bool isAdmin);
         Task<MTProtoResponse<TLUpdatesBase>> InviteToChannelAsync(TLInputChannelBase channel, TLVector<TLInputUserBase> users);

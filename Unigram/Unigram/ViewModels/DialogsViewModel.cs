@@ -145,8 +145,7 @@ namespace Unigram.ViewModels
                             item.PinnedIndex = pinnedIndex++;
                         }
 
-                        var chat = item.With as TLChat;
-                        if (chat != null && chat.HasMigratedTo)
+                        if (item.With is TLChat chat && chat.HasMigratedTo)
                         {
                             continue;
                         }
@@ -241,7 +240,18 @@ namespace Unigram.ViewModels
             Execute.BeginOnUIThread(() =>
             {
                 Items.Clear();
-                Items.AddRange(dialogs);
+
+                foreach (var item in dialogs)
+                {
+                    if (item.With is TLChat chat && chat.HasMigratedTo)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        Items.Add(item);
+                    }
+                }
             });
         }
 
@@ -1044,7 +1054,7 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
         private async void DialogDeleteExecute(TLDialog dialog)
         {
-            if (dialog.With is TLUser || dialog.With is TLChat)
+            if (dialog.With is TLUser || dialog.With is TLChat || dialog.With is TLChatForbidden)
             {
                 await ClearHistoryAsync(dialog, false);
             }
@@ -1081,6 +1091,8 @@ namespace Unigram.ViewModels
                     {
                         CacheService.DeleteDialog(dialog);
                         Items.Remove(dialog);
+
+                        NavigationService.RemovePeerFromBackStack(dialog.With.ToPeer());
                     }
                 }
             }
@@ -1099,7 +1111,7 @@ namespace Unigram.ViewModels
             {
                 message = string.Format("Are you sure, you want to delete all message history with {0}?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName);
             }
-            else if (dialog.With is TLChat)
+            else if (dialog.With is TLChat || dialog.With is TLChatForbidden)
             {
                 message = justClear ? string.Format("Are you sure, you want to delete all message history in \"{0}\"?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName) : string.Format("Are you sure, you want to delete all message history and leave \"{0}\"?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName);
             }
@@ -1108,7 +1120,7 @@ namespace Unigram.ViewModels
             if (confirm == ContentDialogResult.Primary)
             {
                 var peer = dialog.ToInputPeer();
-                var response = await ProtoService.DeleteHistoryAsync(justClear, peer, 0);
+                var response = await ProtoService.DeleteHistoryAsync(justClear, peer, int.MaxValue);
                 if (response.IsSucceeded)
                 {
                     if (justClear)
@@ -1120,6 +1132,8 @@ namespace Unigram.ViewModels
                     {
                         CacheService.DeleteDialog(dialog);
                         Items.Remove(dialog);
+
+                        NavigationService.RemovePeerFromBackStack(dialog.With.ToPeer());
                     }
                 }
                 else

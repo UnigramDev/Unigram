@@ -1021,15 +1021,29 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLPhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id)
+        public Task<MTProtoResponse<TLUserProfilePhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id)
         {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLPhotoBase>>();
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUserProfilePhotoBase>>();
             UpdateProfilePhotoAsync(id, (callback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLPhotoBase>(callback));
+                tsc.TrySetResult(new MTProtoResponse<TLUserProfilePhotoBase>(callback));
             }, (faultCallback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLPhotoBase>(faultCallback));
+                tsc.TrySetResult(new MTProtoResponse<TLUserProfilePhotoBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLVector<long>>> DeletePhotosAsync(TLVector<TLInputPhotoBase> id)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<long>>>();
+            DeletePhotosAsync(id, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<long>>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<long>>(faultCallback));
             });
             return tsc.Task;
         }
@@ -1651,10 +1665,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int offset)
+        public Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int maxId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedHistory>>();
-            DeleteHistoryAsync(justClear, peer, offset, (callback) =>
+            DeleteHistoryAsync(justClear, peer, maxId, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedHistory>(callback));
             }, (faultCallback) =>

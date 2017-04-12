@@ -90,6 +90,10 @@ namespace Unigram
                 // To keep vibration compatibility with Anniversary Update
                 container.ContainerBuilder.RegisterType<WindowsPhoneVibrationService>().As<IVibrationService>().SingleInstance();
             }
+            else
+            {
+                container.ContainerBuilder.RegisterType<FakeVibrationService>().As<IVibrationService>().SingleInstance();
+            }
 
             // ViewModels
             container.ContainerBuilder.RegisterType<SignInWelcomeViewModel>();

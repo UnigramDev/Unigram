@@ -1459,14 +1459,9 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int offset, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null)
+        public void DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int maxId, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesDeleteHistory { Flags = 0, Peer = peer, MaxId = int.MaxValue };
-
-            if (justClear)
-            {
-                obj.IsJustClear = true;
-            }
+            var obj = new TLMessagesDeleteHistory { IsJustClear = justClear, Peer = peer, MaxId = maxId };
 
             const string caption = "messages.deleteHistory";
             SendInformativeMessage<TLMessagesAffectedHistory>(caption, obj,

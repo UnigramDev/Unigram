@@ -17,6 +17,11 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Telegram.Api.Helpers;
+using Windows.Storage.Pickers;
+using Unigram.Controls.Views;
+using Unigram.Controls;
+using Unigram.Common;
 
 namespace Unigram.Views.Chats
 {
@@ -35,9 +40,65 @@ namespace Unigram.Views.Chats
 
         }
 
-        private void EditPhoto_Click(object sender, RoutedEventArgs e)
+        private async void EditPhoto_Click(object sender, RoutedEventArgs e)
         {
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
 
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                var dialog = new EditYourPhotoView(file);
+                var dialogResult = await dialog.ShowAsync();
+                if (dialogResult == ContentDialogBaseResult.OK)
+                {
+                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
+                }
+            }
+
+        }
+
+        #region Context menu
+
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            var flyout = sender as MenuFlyout;
+
+            foreach (var item in flyout.Items)
+            {
+                item.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ParticipantRemove_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                switch (element.DataContext)
+                {
+                    case TLChatParticipant participant:
+                        element.Visibility = participant.InviterId == SettingsHelper.UserId ? Visibility.Visible : Visibility.Collapsed;
+                        return;
+                    case TLChatParticipantAdmin admin:
+                        element.Visibility = admin.InviterId == SettingsHelper.UserId ? Visibility.Visible : Visibility.Collapsed;
+                        return;
+                }
+
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        #endregion
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is TLChatParticipantBase participant && participant.User != null)
+            {
+                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), participant.User.ToPeer());
+            }
         }
     }
 }

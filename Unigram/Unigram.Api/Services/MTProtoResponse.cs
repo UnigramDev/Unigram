@@ -68,6 +68,11 @@ namespace Telegram.Api.Services
                     return Error == null;
                 }
 
+                if (Result == null)
+                {
+                    return Error == null;
+                }
+
                 return Error == null && !Result.Equals(default(T));
             }
         }

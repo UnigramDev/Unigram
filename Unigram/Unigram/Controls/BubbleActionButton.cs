@@ -25,8 +25,7 @@ namespace Unigram.Controls
 
         private void OnClick(object sender, RoutedEventArgs e)
         {
-            var channel = With as TLChannel;
-            if (channel != null)
+            if (With is TLChannel channel)
             {
                 if (channel.IsLeft)
                 {
@@ -52,8 +51,12 @@ namespace Unigram.Controls
                 }
             }
 
-            var user = With as TLUser;
-            if (user != null)
+            if (With is TLChatForbidden forbiddenChat)
+            {
+                DeleteAndExitCommand?.Execute(null);
+            }
+
+            if (With is TLUser user)
             {
                 // TODO: check if blocked
                 // WARNING: this is absolutely the wrong way
@@ -146,8 +149,7 @@ namespace Unigram.Controls
 
         private Visibility UpdateVisibility(object with)
         {
-            var channel = with as TLChannel;
-            if (channel != null)
+            if (with is TLChannel channel)
             {
                 if (channel.IsLeft)
                 {
@@ -172,7 +174,7 @@ namespace Unigram.Controls
                             var settings = channel.NotifySettings as TLPeerNotifySettings;
                             if (settings != null)
                             {
-                                Content = settings.IsSilent || settings.MuteUntil > 0 ? "Unmute" : "Mute";
+                                Content = settings.MuteUntil > 0 ? "Unmute" : "Mute";
                             }
                             else
                             {
@@ -185,8 +187,18 @@ namespace Unigram.Controls
                 }
             }
 
-            var user = with as TLUser;
-            if (user != null)
+            if (with is TLChat chat)
+            {
+
+            }
+
+            if (with is TLChatForbidden forbiddenChat)
+            {
+                Content = "Delete and exit";
+                return Visibility.Visible;
+            }
+
+            if (with is TLUser user)
             {
                 // TODO: check if blocked
                 // WARNING: this is absolutely the wrong way

@@ -95,6 +95,9 @@ namespace Unigram.Views
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
+            ViewModel.Dialogs.NavigationService = MasterDetail.NavigationService;
+            ViewModel.Contacts.NavigationService = MasterDetail.NavigationService;
+            ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
 
             if (e.Parameter is string)
             {
@@ -160,7 +163,7 @@ namespace Unigram.Views
             }
             else
             {
-                UpdateListViewsSelectedItem(GetPeerFromBackStack());
+                UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
             }
         }
 
@@ -199,48 +202,6 @@ namespace Unigram.Views
                 _lastSelected = null;
                 UsersListView.SelectedItem = null;
             }
-        }
-
-        private TLPeerBase GetPeerFromBackStack()
-        {
-            if (MasterDetail.NavigationService.CurrentPageType == typeof(DialogPage))
-            {
-                if (TryGetPeerFromParameter(MasterDetail.NavigationService.CurrentPageParam, out TLPeerBase peer))
-                {
-                    return peer;
-                }
-            }
-
-            for (int i = MasterDetail.NavigationService.Frame.BackStackDepth - 1; i >= 0; i--)
-            {
-                var entry = MasterDetail.NavigationService.Frame.BackStack[i];
-                if (entry.SourcePageType == typeof(DialogPage))
-                {
-                    if (TryGetPeerFromParameter(entry.Parameter, out TLPeerBase peer))
-                    {
-                        return peer;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        public static bool TryGetPeerFromParameter(object parameter, out TLPeerBase peer)
-        {
-            if (parameter is string)
-            {
-                parameter = TLSerializationService.Current.Deserialize((string)parameter);
-            }
-
-            var tuple = parameter as Tuple<TLPeerBase, int>;
-            if (tuple != null)
-            {
-                parameter = tuple.Item1;
-            }
-
-            peer = parameter as TLPeerBase;
-            return peer != null;
         }
 
         private void ClearNavigation()
@@ -340,7 +301,7 @@ namespace Unigram.Views
             {
                 // Find another solution
                 await Task.Delay(500);
-                UpdateListViewsSelectedItem(GetPeerFromBackStack());
+                UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
             }
 
             //if (listView.SelectedItem != null && _lastSelected != listView.SelectedItem)
@@ -604,7 +565,7 @@ namespace Unigram.Views
                 var dialog = element.DataContext as TLDialog;
                 if (dialog != null)
                 {
-                    element.Visibility = dialog.Peer is TLPeerChat ? Visibility.Visible : Visibility.Collapsed;
+                    element.Visibility = dialog.Peer is TLPeerChat && dialog.With is TLChat ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
         }

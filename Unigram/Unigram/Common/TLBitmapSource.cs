@@ -67,20 +67,17 @@ namespace Unigram.Common
 
             TLChatPhotoBase chatPhotoBase = null;
 
-            var channel = chatBase as TLChannel;
-            if (channel != null)
+            if (chatBase is TLChannel channel)
             {
                 chatPhotoBase = channel.Photo;
             }
 
-            var chat = chatBase as TLChat;
-            if (chat != null)
+            if (chatBase is TLChat chat)
             {
                 chatPhotoBase = chat.Photo;
             }
 
-            var chatPhoto = chatPhotoBase as TLChatPhoto;
-            if (chatPhoto != null)
+            if (chatPhotoBase is TLChatPhoto chatPhoto)
             {
                 if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
                 {

@@ -67,7 +67,7 @@ namespace Unigram.Common
                 var key = (object)user.Photo;
                 if (key == null)
                 {
-                    key = user.Id;
+                    key = user.FullName;
                 }
 
                 if (_context.TryGetValue(key, out WeakReference<TLBitmapSource> reference) && 
@@ -103,6 +103,27 @@ namespace Unigram.Common
             }
         }
 
+        public BitmapImage this[TLChatForbidden forbiddenChat]
+        {
+            get
+            {
+                if (forbiddenChat == null)
+                {
+                    return null;
+                }
+
+                if (_context.TryGetValue(forbiddenChat.Title, out WeakReference<TLBitmapSource> reference) &&
+                    reference.TryGetTarget(out TLBitmapSource target))
+                {
+                    return target.Image;
+                }
+
+                target = new TLBitmapSource(forbiddenChat);
+                _context[forbiddenChat.Title] = new WeakReference<TLBitmapSource>(target);
+                return target.Image;
+            }
+        }
+
         public BitmapImage this[TLChannel channel]
         {
             get
@@ -112,14 +133,20 @@ namespace Unigram.Common
                     return null;
                 }
 
-                if (_context.TryGetValue(channel.Photo, out WeakReference<TLBitmapSource> reference) && 
+                var key = (object)channel.Photo;
+                if (key == null)
+                {
+                    key = channel.Title;
+                }
+
+                if (_context.TryGetValue(key, out WeakReference<TLBitmapSource> reference) && 
                     reference.TryGetTarget(out TLBitmapSource target))
                 {
                     return target.Image;
                 }
 
                 target = new TLBitmapSource(channel);
-                _context[channel.Photo] = new WeakReference<TLBitmapSource>(target);
+                _context[key] = new WeakReference<TLBitmapSource>(target);
                 return target.Image;
             }
         }

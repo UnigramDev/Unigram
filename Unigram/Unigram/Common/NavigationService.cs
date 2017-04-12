@@ -4,12 +4,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Template10.Common;
 using Template10.Services.LoggingService;
 using Template10.Services.NavigationService;
 using Template10.Services.SerializationService;
 using Template10.Services.ViewService;
+using Unigram.Core.Services;
 using Unigram.Views;
 using Unigram.Views;
 using Unigram.Views.Payments;
@@ -103,7 +105,7 @@ namespace Unigram.Common
 
 
 
-
+        #region Payments
 
         public static void NavigateToPaymentFormStep1(this INavigationService service, TLMessage message, TLPaymentsPaymentForm paymentForm)
         {
@@ -129,5 +131,94 @@ namespace Unigram.Common
         {
             service.Navigate(typeof(PaymentFormStep5Page), TLTuple.Create(message, paymentForm, info, validatedInfo, shipping, title ?? string.Empty, credentials ?? string.Empty, save));
         }
+
+        #endregion
+
+        public static void RemovePeerFromBackStack(this INavigationService service, TLPeerBase target)
+        {
+            TLPeerBase peer;
+            bool found = false;
+
+            for (int i = 0; i < service.Frame.BackStackDepth; i++)
+            {
+                var entry = service.Frame.BackStack[i];
+                if (TryGetPeerFromParameter(service, entry.Parameter, out peer))
+                {
+                    found = peer.Equals(target);
+                }
+
+                if (found)
+                {
+                    service.Frame.BackStack.RemoveAt(i);
+                }
+            }
+
+            if (TryGetPeerFromParameter(service, service.CurrentPageParam, out peer))
+            {
+                if (peer.Equals(target))
+                {
+                    service.GoBack();
+                    service.Frame.ForwardStack.Clear();
+                }
+            }
+        }
+
+        public static TLPeerBase GetPeerFromBackStack(this INavigationService service)
+        {
+            if (service.CurrentPageType == typeof(DialogPage))
+            {
+                if (TryGetPeerFromParameter(service, service.CurrentPageParam, out TLPeerBase peer))
+                {
+                    return peer;
+                }
+            }
+
+            for (int i = service.Frame.BackStackDepth - 1; i >= 0; i--)
+            {
+                var entry = service.Frame.BackStack[i];
+                if (entry.SourcePageType == typeof(DialogPage))
+                {
+                    if (TryGetPeerFromParameter(service, entry.Parameter, out TLPeerBase peer))
+                    {
+                        return peer;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public static bool TryGetPeerFromParameter(this INavigationService service, object parameter, out TLPeerBase peer)
+        {
+            if (parameter is string)
+            {
+                parameter = TLSerializationService.Current.Deserialize((string)parameter);
+            }
+
+            if (parameter is Tuple<TLPeerBase, int> tuple)
+            {
+                parameter = tuple.Item1;
+            }
+
+            switch (parameter)
+            {
+                case TLInputPeerBase inputPeer:
+                    parameter = inputPeer.ToPeer();
+                    break;
+                case TLInputUser inputUser:
+                    parameter = new TLPeerUser { UserId = inputUser.UserId };
+                    break;
+                case TLInputUserSelf inputSelf:
+                    parameter = new TLPeerUser { UserId = SettingsHelper.UserId };
+                    break;
+                case TLInputChannel inputChannel:
+                    parameter = new TLPeerChannel { ChannelId = inputChannel.ChannelId };
+                    break;
+            }
+
+            peer = parameter as TLPeerBase;
+            return peer != null;
+        }
+
     }
 }

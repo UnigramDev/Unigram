@@ -567,15 +567,27 @@
     <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-150.png" />
     <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-200.png" />
     <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-400.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-100.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-125.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-150.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.scale-400.png" />
+    <Content Include="..\Square44x44Logo\$(ConfigurationName)\Square44x44Logo.scale-100.png">
+      <Link>Assets\Logos\Square44x44Logo\Square44x44Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\Square44x44Logo\$(ConfigurationName)\Square44x44Logo.scale-125.png">
+      <Link>Assets\Logos\Square44x44Logo\Square44x44Logo.scale-125.png</Link>
+    </Content>
+    <Content Include="..\Square44x44Logo\$(ConfigurationName)\Square44x44Logo.scale-150.png">
+      <Link>Assets\Logos\Square44x44Logo\Square44x44Logo.scale-150.png</Link>
+    </Content>
+    <Content Include="..\Square44x44Logo\$(ConfigurationName)\Square44x44Logo.scale-200.png">
+      <Link>Assets\Logos\Square44x44Logo\Square44x44Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\Square44x44Logo\$(ConfigurationName)\Square44x44Logo.scale-400.png">
+      <Link>Assets\Logos\Square44x44Logo\Square44x44Logo.scale-400.png</Link>
+    </Content>
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-16.png" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-16_altform-unplated.png" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-24.png" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-32_altform-unplated.png" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-256.png" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-256_altform-unplated.png" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-48.png" />
@@ -1004,7 +1016,59 @@
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Preview|x86'">
+    <OutputPath>bin\x86\Preview\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Preview|ARM'">
+    <OutputPath>bin\ARM\Preview\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Preview|x64'">
+    <OutputPath>bin\x64\Preview\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|x86'">
+    <OutputPath>bin\x86\Production\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|ARM'">
+    <OutputPath>bin\ARM\Production\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|x64'">
+    <OutputPath>bin\x64\Production\</OutputPath>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
   <!--<PropertyGroup>
     <PreBuildEvent>xcopy /y /s "$(SolutionDir)Unigram.DesktopService\bin\$(ConfigurationName)\Unigram.DesktopService.exe" "$(SolutionDir)\Unigram\bin\x64\$(ConfigurationName)\AppX\"
 xcopy /y /s "$(SolutionDir)Unigram.DesktopService\bin\$(ConfigurationName)\Unigram.DesktopService.exe" "$(SolutionDir)\Unigram\bin\x86\$(ConfigurationName)\AppX\"</PreBuildEvent>
