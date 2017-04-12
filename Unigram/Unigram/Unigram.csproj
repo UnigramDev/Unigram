@@ -94,7 +94,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Preview|x86'">
     <OutputPath>bin\x86\Preview\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -106,7 +106,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Preview|ARM'">
     <OutputPath>bin\ARM\Preview\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -118,7 +118,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Preview|x64'">
     <OutputPath>bin\x64\Preview\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>

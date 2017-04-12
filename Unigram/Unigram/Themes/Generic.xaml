@@ -508,7 +508,7 @@
     <Style TargetType="local:ContentDialogBase">
         <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseHighBrush}" />
         <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" />
-        <Setter Property="OverlayBrush" Value="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}" />
+        <Setter Property="OverlayBrush" Value="#99000000" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="IsTabStop" Value="False" />

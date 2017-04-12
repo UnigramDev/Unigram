@@ -640,8 +640,7 @@
                                         Tag="&#xE133;"
                                         Text="Manage"
                                         MinWidth="120"/>
-                        <MenuFlyoutSeparator/>
-                        <!-- Manually hidden -->
+                        <!--<MenuFlyoutSeparator/>
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                         Command="{x:Bind ViewModel.CallCommand}"
                                         x:Name="cbtnCall"
@@ -649,7 +648,7 @@
                                         Visibility="Visible"
                                         IsEnabled="True"
                                         Tag="&#xE13A;"
-                                        Text="Call" />
+                                        Text="Call" />-->
                         <!-- Manually hidden -->
                         <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                         x:Name="cbtnReportSpam"

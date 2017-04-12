@@ -107,6 +107,25 @@ namespace Unigram.Controls
             }
         }
 
+        public bool IsOpen
+        {
+            get
+            {
+                return _popupHost?.IsOpen ?? false;
+            }
+            set
+            {
+                if (value)
+                {
+                    ShowAsync();
+                }
+                else
+                {
+                    Hide();
+                }
+            }
+        }
+
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync()
         {
             return AsyncInfo.Run(async (token) =>
