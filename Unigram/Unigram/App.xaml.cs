@@ -240,10 +240,12 @@ namespace Unigram
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
             ToastNotificationManager.History.Clear();
 
+#if !DEBUG && !PREVIEW && !RELEASE
             Execute.BeginOnThreadPool(async () =>
             {
                 await new AppUpdateService().CheckForUpdatesAsync();
             });
+#endif
 
             try
             {

@@ -154,13 +154,13 @@ namespace Unigram
                 }
             }
 
-            if (SettingsHelper.SupportedLayer < 65)
-            {
-                SettingsHelper.SupportedLayer = 65;
-                deleteIfExists("database.sqlite");
-                ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
-                ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
-            }
+            //if (SettingsHelper.SupportedLayer < 65)
+            //{
+            //    SettingsHelper.SupportedLayer = 65;
+            //    deleteIfExists("database.sqlite");
+            //    ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
+            //    ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
+            //}
 
             //if (SettingsHelper.SupportedLayer != Constants.SupportedLayer ||
             //    SettingsHelper.DatabaseVersion != Constants.DatabaseVersion)
