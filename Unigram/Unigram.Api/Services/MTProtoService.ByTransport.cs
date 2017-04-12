@@ -386,7 +386,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFile> callback, Action<TLRPCError> faultCallback = null)
+        public void GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFileBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUploadGetFile { Location = location, Offset = offset, Limit = limit };
 

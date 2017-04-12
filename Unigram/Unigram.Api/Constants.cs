@@ -16,7 +16,7 @@ namespace Telegram.Api
 
         public const int DatabaseVersion = 1;
 
-        public const int SupportedLayer = 65;
+        public const int SupportedLayer = 66;
 
         public const int SecretSupportedLayer = 23;
 
@@ -57,7 +57,7 @@ namespace Telegram.Api
         public static int DocumentUploadersCount = 3;
         public static int AudioDownloadersCount = 3;
         public static int MaximumChunksCount = 3000;
-        public static int DownloadChunkSize = 64 * 1024;    // 1MB % DownloadedChunkSize = 0 && DownloadedChunkSize % 1KB = 0
+        public static int DownloadChunkSize = 32 * 1024;    // 1MB % DownloadedChunkSize = 0 && DownloadedChunkSize % 1KB = 0
         public static int DocumentDownloadChunkSize = 128 * 1024;    // 1MB % DownloadedChunkSize = 0 && DownloadedChunkSize % 1KB = 0
         public static ulong MaximumUploadedFileSize = 512 * 1024 * 3000;    // 1,5GB
 

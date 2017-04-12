@@ -64,7 +64,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLPhotosPhotosBase>> GetUserPhotosAsync(TLInputUserBase userId, int offset, long maxId, int limit);
         Task<MTProtoResponse<TLPhotosPhoto>> UploadProfilePhotoAsync(TLInputFile file);
         Task<MTProtoResponse<bool>> UpdateNotifySettingsAsync(TLInputNotifyPeerBase peer, TLInputPeerNotifySettings settings);
-        Task<MTProtoResponse<TLUploadFile>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit);
+        Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit);
         Task<MTProtoResponse<TLUserBase>> UpdateProfileAsync(string firstName, string lastName, string about);
         Task<MTProtoResponse<TLContactsImportedContacts>> ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace);
         Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, bool typing);
@@ -166,7 +166,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLContactsResolvedPeer>> ResolveUsernameAsync(string username);
         Task<MTProtoResponse<TLAccountDaysTTL>> GetAccountTTLAsync();
         Task<MTProtoResponse<TLPong>> PingDelayDisconnectAsync(long pingId, int disconnectDelay);
-        Task<MTProtoResponse<TLUploadFile>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit);
+        Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit);
         Task<MTProtoResponse<TLMessagesMessagesBase>> SearchAsync(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit);
         Task<MTProtoResponse<bool>> DeleteAccountAsync(string reason);
         Task<MTProtoResponse<TLUpdatesChannelDifferenceBase>> GetChannelDifferenceAsync(TLInputChannelBase inputChannel, TLChannelMessagesFilterBase filter, int pts, int limit);

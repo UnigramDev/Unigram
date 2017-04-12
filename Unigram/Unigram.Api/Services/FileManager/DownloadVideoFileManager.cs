@@ -97,10 +97,10 @@ namespace Telegram.Api.Services.FileManager
             }
 
             var partName = string.Format("video{0}_{1}_{2}.dat", part.ParentItem.InputVideoLocation.Id, part.ParentItem.InputVideoLocation.AccessHash, part.Number);
-            part.File = GetFile(part.ParentItem.DCId, (TLInputFileLocationBase)part.ParentItem.InputVideoLocation, part.Offset, part.Limit);
+            part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputVideoLocation, part.Offset, part.Limit) as TLUploadFile;
             while (part.File == null)
             {
-                part.File = GetFile(part.ParentItem.DCId, (TLInputFileLocationBase)part.ParentItem.InputVideoLocation, part.Offset, part.Limit);
+                part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputVideoLocation, part.Offset, part.Limit) as TLUploadFile;
             }
 
             // indicate progress
@@ -165,10 +165,10 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private TLUploadFile GetFile(int dcId, TLInputFileLocationBase location, int offset, int limit)
+        private TLUploadFileBase GetFile(int dcId, TLInputFileLocationBase location, int offset, int limit)
         {
             var manualResetEvent = new ManualResetEvent(false);
-            TLUploadFile result = null;
+            TLUploadFileBase result = null;
 
             _mtProtoService.GetFileAsync(dcId, location, offset, limit,
                 file =>

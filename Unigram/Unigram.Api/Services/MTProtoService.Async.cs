@@ -713,15 +713,15 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUploadFile>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit)
+        public Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit)
         {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFile>>();
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFileBase>>();
             GetFileAsync(dcId, location, offset, limit, (callback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLUploadFile>(callback));
+                tsc.TrySetResult(new MTProtoResponse<TLUploadFileBase>(callback));
             }, (faultCallback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLUploadFile>(faultCallback));
+                tsc.TrySetResult(new MTProtoResponse<TLUploadFileBase>(faultCallback));
             });
             return tsc.Task;
         }
@@ -2155,15 +2155,15 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUploadFile>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit)
+        public Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit)
         {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFile>>();
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFileBase>>();
             GetFileAsync(location, offset, limit, (callback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLUploadFile>(callback));
+                tsc.TrySetResult(new MTProtoResponse<TLUploadFileBase>(callback));
             }, (faultCallback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLUploadFile>(faultCallback));
+                tsc.TrySetResult(new MTProtoResponse<TLUploadFileBase>(faultCallback));
             });
             return tsc.Task;
         }

@@ -47,7 +47,7 @@ namespace Telegram.Api.Services.FileManager
 
             for (int i = 0; i < Constants.WorkersNumber; i++)
             {
-                var worker = new Worker(OnDownloading, "downloader"+i);
+                var worker = new Worker(OnDownloading, "downloader" + i);
                 _workers.Add(worker);
             }
 
@@ -96,7 +96,7 @@ namespace Telegram.Api.Services.FileManager
 
             TLRPCError error;
             bool canceled;
-            part.File = GetFile(part.ParentItem.Location, part.Offset, part.Limit, out error, out canceled);
+            part.File = GetFile(part.ParentItem.Location, part.Offset, part.Limit, out error, out canceled) as TLUploadFile;
             if (canceled)
             {
                 lock (_itemsSyncRoot)
@@ -110,7 +110,7 @@ namespace Telegram.Api.Services.FileManager
             }
             while (part.File == null)
             {
-                part.File = GetFile(part.ParentItem.Location, part.Offset, part.Limit, out error, out canceled);
+                part.File = GetFile(part.ParentItem.Location, part.Offset, part.Limit, out error, out canceled) as TLUploadFile;
                 if (canceled)
                 {
                     lock (_itemsSyncRoot)
@@ -176,7 +176,7 @@ namespace Telegram.Api.Services.FileManager
                     //part.ParentItem.Location.Buffer = bytes;
                     var fileName = String.Format("{0}_{1}_{2}.jpg",
                         part.ParentItem.Location.VolumeId,
-                        part.ParentItem.Location.LocalId, 
+                        part.ParentItem.Location.LocalId,
                         part.ParentItem.Location.Secret);
 
                     FileUtils.WriteTemporaryBites(fileName, bytes);
@@ -206,11 +206,11 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private TLUploadFile GetFile(TLFileLocation location, int offset, int limit, out TLRPCError er, out bool isCanceled)
+        private TLUploadFileBase GetFile(TLFileLocation location, int offset, int limit, out TLRPCError er, out bool isCanceled)
         {
 
             var manualResetEvent = new ManualResetEvent(false);
-            TLUploadFile result = null;
+            TLUploadFileBase result = null;
             TLRPCError outError = null;
             var outIsCanceled = false;
             _mtProtoService.GetFileAsync(location.DCId, location.ToInputFileLocation(), offset, limit,
@@ -344,7 +344,8 @@ namespace Telegram.Api.Services.FileManager
             var partsCount = size / chunkSize + 1;
             for (var i = 0; i < partsCount; i++)
             {
-                var part = new DownloadablePart(item, i * chunkSize, size == 0? 0 : chunkSize);
+                //var part = new DownloadablePart(item, i * chunkSize, size == 0 ? 0 : chunkSize);
+                var part = new DownloadablePart(item, i * chunkSize, chunkSize);
                 parts.Add(part);
             }
 

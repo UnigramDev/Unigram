@@ -98,11 +98,11 @@ namespace Telegram.Api.Services.FileManager
             }
 
             var partName = part.ParentItem.InputDocumentLocation.GetPartFileName(part.Number);//string.Format("document{0}_{1}_{2}.dat", part.ParentItem.InputDocumentLocation.Id, part.ParentItem.InputDocumentLocation.AccessHash, part.Number);
-            part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputDocumentLocation, part.Offset, part.Limit);
+            part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputDocumentLocation, part.Offset, part.Limit) as TLUploadFile;
 
             while (part.File == null)
             {
-                part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputDocumentLocation, part.Offset, part.Limit);
+                part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputDocumentLocation, part.Offset, part.Limit) as TLUploadFile;
             }
             
 
@@ -214,10 +214,10 @@ namespace Telegram.Api.Services.FileManager
             return string.Format("document{0}_{1}{2}", id, accessHash, fileExtension);
         }
 
-        private TLUploadFile GetFile(int dcId, TLInputDocumentFileLocation location, int offset, int limit)
+        private TLUploadFileBase GetFile(int dcId, TLInputDocumentFileLocation location, int offset, int limit)
         {
             var manualResetEvent = new ManualResetEvent(false);
-            TLUploadFile result = null;
+            TLUploadFileBase result = null;
 
             _mtProtoService.GetFileAsync(dcId, location, offset, limit,
                 file =>

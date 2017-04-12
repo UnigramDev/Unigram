@@ -154,10 +154,10 @@ namespace Unigram
                 }
             }
 
-            if (SettingsHelper.SupportedLayer < 65)
+            if (SettingsHelper.SupportedLayer < 66)
             {
-                SettingsHelper.SupportedLayer = 65;
                 deleteIfExists("database.sqlite");
+                SettingsHelper.SupportedLayer = 66;
                 ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
                 ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
             }
