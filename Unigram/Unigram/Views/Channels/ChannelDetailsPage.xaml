@@ -270,7 +270,7 @@
                         <TextBlock Text="admin"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   Visibility="{x:Bind (Visibility)IsAdmin}"
+                                   Visibility="{x:Bind (Visibility)IsEditor}"
                                    Grid.Column="2"
                                    Grid.RowSpan="2"/>
                     </Grid>

@@ -9,6 +9,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Utils;
 using Unigram.Collections;
+using Unigram.Common;
 using Unigram.Converters;
 using Windows.UI.Xaml.Navigation;
 
@@ -16,16 +17,13 @@ namespace Unigram.ViewModels.Channels
 {
     public class ChannelDetailsViewModel : UnigramViewModelBase
     {
-        public ICacheService _CacheService;
-        public int offset = 0;
         public ChannelDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
-            _CacheService = cacheService;
         }
 
-        private TLChat _item;
-        public TLChat Item
+        private TLChannel _item;
+        public TLChannel Item
         {
             get
             {
@@ -37,8 +35,8 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        private TLChatFull _full;
-        public TLChatFull Full
+        private TLChannelFull _full;
+        public TLChannelFull Full
         {
             get
             {
@@ -50,69 +48,84 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public SortedObservableCollection<TLChannelParticipantBase> Participants { get; private set; }
-
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var inputPeerChannel = parameter as TLInputPeerChannel;
-            var inputChannel = new TLInputChannel { AccessHash = inputPeerChannel.AccessHash, ChannelId = inputPeerChannel.ChannelId };
-            var peerChannel = inputPeerChannel.ToPeer();
-            var channel = await ProtoService.GetFullChannelAsync(inputChannel);
-            if (channel.IsSucceeded)
+            Item = null;
+            Full = null;
+
+            var channel = parameter as TLChannel;
+            var peer = parameter as TLPeerChannel;
+            if (peer != null)
             {
-               Item = CacheService.GetChat(channel.Result.FullChat.Id) as TLChat;
-               var participantsX = await ProtoService.GetParticipantsAsync(inputChannel, null, offset, 20);
-               offset += 20;
-               var collection = new SortedObservableCollection<TLChannelParticipantBase>(new TLChannelParticipantBaseComparer(true));
+                channel = CacheService.GetChat(peer.ChannelId) as TLChannel;
+            }
 
-               Participants = collection;
-               RaisePropertyChanged(() => Participants);
+            if (channel != null)
+            {
+                Item = channel;
 
-               collection.AddRange(participantsX.Result.Participants, true);
+                var response = await ProtoService.GetFullChannelAsync(channel.ToInputChannel());
+                if (response.IsSucceeded)
+                {
+                    Full = response.Result.FullChat as TLChannelFull;
+                    Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), null);
+
+                    RaisePropertyChanged(() => Participants);
+                }
             }
         }
 
-        public void getMoreParticipants()
+        public ItemsCollection Participants { get; private set; }
+
+        public class ItemsCollection : IncrementalCollection<TLChannelParticipantBase>
         {
+            private readonly IMTProtoService _protoService;
+            private readonly TLInputChannelBase _inputChannel;
+            private readonly TLChannelParticipantsFilterBase _filter;
 
-        }
-
-        public class TLChannelParticipantBaseComparer : IComparer<TLChannelParticipantBase>
-        {
-            private bool _epoch;
-
-            public TLChannelParticipantBaseComparer(bool epoch)
+            public ItemsCollection(IMTProtoService protoService, TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter)
             {
-                _epoch = epoch;
+                _protoService = protoService;
+                _inputChannel = inputChannel;
+                _filter = filter;
             }
 
-            public int Compare(TLChannelParticipantBase x, TLChannelParticipantBase y)
+            public override async Task<IList<TLChannelParticipantBase>> LoadDataAsync()
             {
-
-                var xUser = x.User;
-                var yUser = y.User;
-                if (xUser == null || yUser == null)
+                var response = await _protoService.GetParticipantsAsync(_inputChannel, _filter, Items.Count, 200);
+                if (response.IsSucceeded)
                 {
-                    return -1;
+                    return response.Result.Participants;
                 }
 
-                if (_epoch)
-                {
-                    var epoch = LastSeenConverter.GetIndex(yUser).CompareTo(LastSeenConverter.GetIndex(xUser));
-                    if (epoch == 0)
-                    {
-                        var fullName = xUser.FullName.CompareTo(yUser.FullName);
-                        if (fullName == 0)
-                        {
-                            return yUser.Id.CompareTo(xUser.Id);
-                        }
+                return new TLChannelParticipantBase[0];
+            }
+        }
+    }
 
-                        return fullName;
-                    }
+    public class TLChannelParticipantBaseComparer : IComparer<TLChannelParticipantBase>
+    {
+        private bool _epoch;
 
-                    return epoch;
-                }
-                else
+        public TLChannelParticipantBaseComparer(bool epoch)
+        {
+            _epoch = epoch;
+        }
+
+        public int Compare(TLChannelParticipantBase x, TLChannelParticipantBase y)
+        {
+
+            var xUser = x.User;
+            var yUser = y.User;
+            if (xUser == null || yUser == null)
+            {
+                return -1;
+            }
+
+            if (_epoch)
+            {
+                var epoch = LastSeenConverter.GetIndex(yUser).CompareTo(LastSeenConverter.GetIndex(xUser));
+                if (epoch == 0)
                 {
                     var fullName = xUser.FullName.CompareTo(yUser.FullName);
                     if (fullName == 0)
@@ -122,6 +135,18 @@ namespace Unigram.ViewModels.Channels
 
                     return fullName;
                 }
+
+                return epoch;
+            }
+            else
+            {
+                var fullName = xUser.FullName.CompareTo(yUser.FullName);
+                if (fullName == 0)
+                {
+                    return yUser.Id.CompareTo(xUser.Id);
+                }
+
+                return fullName;
             }
         }
     }

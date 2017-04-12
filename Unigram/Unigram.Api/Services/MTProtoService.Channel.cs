@@ -106,16 +106,18 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLChannelsChannelParticipants>(caption, obj,
                 result =>
                 {
-                    for (var i = 0; i < result.Users.Count; i++)
-                    {
-                        var cachedUser = _cacheService.GetUser(result.Users[i].Id) as TLUser;
-                        if (cachedUser != null)
-                        {
-                            // TODO: cachedUser._status = ((TLUser)result.Users[i]).Status;
-                            cachedUser.Status = ((TLUser)result.Users[i]).Status;
-                            result.Users[i] = cachedUser;
-                        }
-                    }
+                    //for (var i = 0; i < result.Users.Count; i++)
+                    //{
+                    //    var cachedUser = _cacheService.GetUser(result.Users[i].Id) as TLUser;
+                    //    if (cachedUser != null)
+                    //    {
+                    //        // TODO: cachedUser._status = ((TLUser)result.Users[i]).Status;
+                    //        cachedUser.Status = ((TLUser)result.Users[i]).Status;
+                    //        result.Users[i] = cachedUser;
+                    //    }
+                    //}
+
+                    _cacheService.SyncUsers(result.Users, r => { });
 
                     callback?.Invoke(result);
                 },
