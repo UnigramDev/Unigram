@@ -60,6 +60,9 @@ namespace Unigram.ViewModels.Chats
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            Item = null;
+            Full = null;
+
             var chat = parameter as TLChat;
             var peer = parameter as TLPeerChat;
             if (peer != null)

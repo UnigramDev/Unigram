@@ -62,7 +62,7 @@ namespace Unigram.Controls
             }
         }
 
-        protected void MaskTitleAndStatusBar()
+        protected virtual void MaskTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
             var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;

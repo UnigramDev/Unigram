@@ -68,6 +68,9 @@ namespace Unigram.ViewModels.Users
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            Item = null;
+            Full = null;
+
             var user = parameter as TLUser;
             var peer = parameter as TLPeerUser;
             if (peer != null)
