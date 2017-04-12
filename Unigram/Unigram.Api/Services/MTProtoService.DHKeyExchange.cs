@@ -470,31 +470,45 @@ namespace Telegram.Api.Services
         // g - serialized data
         // dhPrime - serialized data
         // returns big-endian G_B
-        public static byte[] GetGB(byte[] bData, int? gData, byte[] pString)
+        public static byte[] GetGB(byte[] bData, int gData, byte[] pString)
         {
-            //var bBytes = new byte[256]; // big endian bytes
-            //var random = new Random();
-            //random.NextBytes(bBytes);
+            var i_g_a = Org.BouncyCastle.Math.BigInteger.ValueOf(gData);
+            i_g_a = i_g_a.ModPow(new Org.BouncyCastle.Math.BigInteger(1, bData), new Org.BouncyCastle.Math.BigInteger(1, pString));
 
-            var g = new BigInteger(gData.Value);
-            var p = pString.ToBigInteger();
-            var b = new BigInteger(bData.Reverse().Concat(new byte[] { 0x00 }).ToArray());
-
-            var gb = BigInteger.ModPow(g, b, p).ToByteArray(); // little endian + (may be) zero last byte
-            //remove last zero byte
-            if (gb[gb.Length - 1] == 0x00)
+            byte[] g_a = i_g_a.ToByteArray();
+            if (g_a.Length > 256)
             {
-                gb = gb.SubArray(0, gb.Length - 1);
+                byte[] correctedAuth = new byte[256];
+                Buffer.BlockCopy(g_a, 1, correctedAuth, 0, 256);
+                g_a = correctedAuth;
             }
 
-            var length = gb.Length;
-            var result = new byte[length];
-            for (int i = 0; i < length; i++)
-            {
-                result[length - i - 1] = gb[i];
-            }
+            return g_a;
 
-            return result;
+            // OLD IMPLEMENTATION
+            ////var bBytes = new byte[256]; // big endian bytes
+            ////var random = new Random();
+            ////random.NextBytes(bBytes);
+
+            //var g = new BigInteger(gData.Value);
+            //var p = pString.ToBigInteger();
+            //var b = new BigInteger(bData.Reverse().Concat(new byte[] { 0x00 }).ToArray());
+
+            //var gb = BigInteger.ModPow(g, b, p).ToByteArray(); // little endian + (may be) zero last byte
+            ////remove last zero byte
+            //if (gb[gb.Length - 1] == 0x00)
+            //{
+            //    gb = gb.SubArray(0, gb.Length - 1);
+            //}
+
+            //var length = gb.Length;
+            //var result = new byte[length];
+            //for (int i = 0; i < length; i++)
+            //{
+            //    result[length - i - 1] = gb[i];
+            //}
+
+            //return result;
         }
 
         //public BigInteger ToBigInteger()

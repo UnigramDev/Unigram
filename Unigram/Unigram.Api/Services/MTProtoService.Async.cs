@@ -13,6 +13,20 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<T>> SendRequestAsync<T>(string caption, TLObject obj)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<T>>();
+            SendRequestAsync<T>(caption, obj, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<T>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<T>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ClearSavedInfoAsync(bool info, bool credentials)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();

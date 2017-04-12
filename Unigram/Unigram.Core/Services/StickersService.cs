@@ -806,7 +806,7 @@ namespace Unigram.Services
                 var req = new TLMessagesGetArchivedStickers();
                 req.Limit = 0;
                 req.IsMasks = stickerType == StickerType.Mask;
-                _protoService.SendRequestAsync<TLMessagesArchivedStickers>(req, result =>
+                _protoService.SendRequestAsync<TLMessagesArchivedStickers>("messages.getArchivedStickers", req, result =>
                 {
                     archivedStickersCount[type] = result.Count;
                     ApplicationSettings.Current.AddOrUpdateValue("archivedStickersCount" + type, result.Count);
@@ -1182,18 +1182,21 @@ namespace Unigram.Services
             {
                 TLObject req;
                 int hash;
+                string caption;
                 if (stickerType == StickerType.Image)
                 {
                     req = new TLMessagesGetAllStickers();
                     hash = ((TLMessagesGetAllStickers)req).Hash = force ? 0 : loadHash[type];
+                    caption = "messages.getAllStickers";
                 }
                 else
                 {
                     req = new TLMessagesGetMaskStickers();
                     hash = ((TLMessagesGetMaskStickers)req).Hash = force ? 0 : loadHash[type];
+                    caption = "messages.getMaskStickers";
                 }
 
-                _protoService.SendRequestAsync<TLMessagesAllStickersBase>(req, result =>
+                _protoService.SendRequestAsync<TLMessagesAllStickersBase>(caption, req, result =>
                 {
                     if (result is TLMessagesAllStickers res)
                     {
@@ -1532,7 +1535,7 @@ namespace Unigram.Services
                 TLMessagesInstallStickerSet req = new TLMessagesInstallStickerSet();
                 req.StickerSet = stickerSetID;
                 req.Archived = hide == 1;
-                _protoService.SendRequestAsync<TLMessagesStickerSetInstallResultBase>(req, result =>
+                _protoService.SendRequestAsync<TLMessagesStickerSetInstallResultBase>("messages.installStickerSet", req, result =>
                 {
                     if (result is TLMessagesStickerSetInstallResultArchive)
                     {
@@ -1553,7 +1556,7 @@ namespace Unigram.Services
             {
                 TLMessagesUninstallStickerSet req = new TLMessagesUninstallStickerSet();
                 req.StickerSet = stickerSetID;
-                _protoService.SendRequestAsync<bool>(req, result =>
+                _protoService.SendRequestAsync<bool>("messages.uninstallStickerSet", req, result =>
                 {
                     //try
                     //{

@@ -629,8 +629,22 @@ namespace Telegram.Api.Helpers
 
         public static byte[] ComputeSHA1(byte[] data)
         {
-            var sha1 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1);
-            return sha1.HashData(data.AsBuffer()).ToArray();
+            var algorithm = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1);
+            var buffer = CryptographicBuffer.CreateFromByteArray(data);
+            var hash = algorithm.HashData(buffer);
+
+            CryptographicBuffer.CopyToByteArray(hash, out byte[] digest);
+            return digest;
+        }
+
+        public static byte[] ComputeSHA256(byte[] data)
+        {
+            var algorithm = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+            var buffer = CryptographicBuffer.CreateFromByteArray(data);
+            var hash = algorithm.HashData(buffer);
+
+            CryptographicBuffer.CopyToByteArray(hash, out byte[] digest);
+            return digest;
         }
 
         public static byte[] ComputeMD5(string data)
