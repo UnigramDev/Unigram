@@ -39,14 +39,22 @@ namespace Unigram.Views
             // THIS CODE WILL RUN ONLY IF FIRST CONFIGURED SERVER IP IS TEST SERVER
             if (Telegram.Api.Constants.FirstServerIpAddress.Equals("149.154.167.40"))
             {
-                var option = new HyperButton();
-                option.Style = Resources["HyperButtonStyle"] as Style;
-                option.Command = ViewModel.DeleteAccountCommand;
-                option.Content = "!!! DELETE ACCOUNT !!!";
+                var optionDelete = new HyperButton();
+                optionDelete.Style = Resources["HyperButtonStyle"] as Style;
+                optionDelete.Command = ViewModel.DeleteAccountCommand;
+                optionDelete.Content = "!!! DELETE ACCOUNT !!!";
 
                 OptionsGroup4.Children.Clear();
-                OptionsGroup4.Children.Add(option);
+                OptionsGroup4.Children.Add(optionDelete);
             }
+
+            var optionAccounts = new HyperButton();
+            optionAccounts.Style = Resources["HyperButtonStyle"] as Style;
+            optionAccounts.Click += Accounts_Click;
+            optionAccounts.Content = "Accounts management";
+
+            OptionsGroup3.Children.Clear();
+            OptionsGroup3.Children.Add(optionAccounts);
 #endif
         }
 
