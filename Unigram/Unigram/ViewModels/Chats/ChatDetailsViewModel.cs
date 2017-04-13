@@ -142,11 +142,7 @@ namespace Unigram.ViewModels.Chats
         public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
         private void MediaExecute()
         {
-            var chat = Item as TLChat;
-            if (chat != null)
-            {
-                NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerChat { ChatId = chat.Id });
-            }
+            NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
         }
 
         public RelayCommand<TLChatParticipantBase> ParticipantRemoveCommand => new RelayCommand<TLChatParticipantBase>(ParticipantRemoveExecute);

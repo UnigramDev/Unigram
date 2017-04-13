@@ -22,7 +22,8 @@ namespace Unigram.ViewModels.Channels
     public class ChannelDetailsViewModel : UnigramViewModelBase
     {
         private readonly IUploadFileManager _uploadFileManager;
-        public ChannelDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager) 
+
+        public ChannelDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager)
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
@@ -81,38 +82,11 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public ItemsCollection Participants { get; private set; }
-
-        public class ItemsCollection : IncrementalCollection<TLChannelParticipantBase>
-        {
-            private readonly IMTProtoService _protoService;
-            private readonly TLInputChannelBase _inputChannel;
-            private readonly TLChannelParticipantsFilterBase _filter;
-
-            public ItemsCollection(IMTProtoService protoService, TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter)
-            {
-                _protoService = protoService;
-                _inputChannel = inputChannel;
-                _filter = filter;
-            }
-
-            public override async Task<IList<TLChannelParticipantBase>> LoadDataAsync()
-            {
-                var response = await _protoService.GetParticipantsAsync(_inputChannel, _filter, Items.Count, 200);
-                if (response.IsSucceeded)
-                {
-                    return response.Result.Participants;
-                }
-
-                return new TLChannelParticipantBase[0];
-            }
-        }
-
         public bool CanEditNameAndPhoto
         {
             get
             {
-                return _item != null && (_item.IsCreator || _item.IsEditor || _item.IsModerator );
+                return _item != null && (_item.IsCreator || _item.IsEditor || _item.IsModerator);
             }
         }
 
@@ -140,9 +114,8 @@ namespace Unigram.ViewModels.Channels
             var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false);
             if (upload != null)
             {
-                var x = _item.ToPeer().Id;
                 var response = await ProtoService.EditPhotoAsync(_item, new TLInputChatUploadedPhoto { File = upload.ToInputFile() });
-                if(response.IsSucceeded)
+                if (response.IsSucceeded)
                 {
 
                 }
@@ -152,13 +125,35 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
         private void MediaExecute()
         {
-            var chat = Item as TLChannel;
-            if (chat != null)
-            {
-                NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerChannel { ChannelId = chat.Id, AccessHash=chat.AccessHash.GetValueOrDefault() });
-            }
+            NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
         }
 
+        public ItemsCollection Participants { get; private set; }
+
+        public class ItemsCollection : IncrementalCollection<TLChannelParticipantBase>
+        {
+            private readonly IMTProtoService _protoService;
+            private readonly TLInputChannelBase _inputChannel;
+            private readonly TLChannelParticipantsFilterBase _filter;
+
+            public ItemsCollection(IMTProtoService protoService, TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter)
+            {
+                _protoService = protoService;
+                _inputChannel = inputChannel;
+                _filter = filter;
+            }
+
+            public override async Task<IList<TLChannelParticipantBase>> LoadDataAsync()
+            {
+                var response = await _protoService.GetParticipantsAsync(_inputChannel, _filter, Items.Count, 200);
+                if (response.IsSucceeded)
+                {
+                    return response.Result.Participants;
+                }
+
+                return new TLChannelParticipantBase[0];
+            }
+        }
     }
 
     public class TLChannelParticipantBaseComparer : IComparer<TLChannelParticipantBase>
