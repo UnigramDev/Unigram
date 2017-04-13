@@ -209,6 +209,7 @@
                     </Grid>
                     <controls:HyperButton Content="Set group photo"
                                           Click="EditPhoto_Click"
+                                          Visibility="{x:Bind (Visibility)ViewModel.CanEditNameAndPhoto}"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Grid.Row="1"/>
 
