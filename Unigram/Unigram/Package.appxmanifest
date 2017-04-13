@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" IgnorableNamespaces="uap mp rescap desktop">
-  <Identity Name="38833FF26BA1D.UnigramPreview" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="0.1.152.0" />
-  <mp:PhoneIdentity PhoneProductId="61c7bb5f-6bb6-4b35-b0fd-18ed7311bc0c" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="38833FF26BA1D.Unigram" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="1.1.0.0" />
+  <mp:PhoneIdentity PhoneProductId="505fe6a3-c157-4260-b704-f44200dc2b8d" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>Unigram Preview</DisplayName>
+    <DisplayName>Unigram</DisplayName>
     <PublisherDisplayName>Unigram, Inc.</PublisherDisplayName>
     <Logo>Assets\Logos\StoreLogo\StoreLogo.png</Logo>
   </Properties>
@@ -94,5 +94,6 @@
     <!--<rescap:Capability Name="runFullTrust" />-->
     <DeviceCapability Name="location" />
     <DeviceCapability Name="microphone" />
+    <DeviceCapability Name="webcam" />
   </Capabilities>
 </Package>
