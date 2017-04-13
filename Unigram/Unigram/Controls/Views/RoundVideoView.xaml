@@ -36,7 +36,8 @@
     </Control.Resources>
     
     <Grid>
-        <Ellipse Width="180" Height="180" Fill="Gray"/>
+        <Ellipse x:Name="Capture" Width="180" Height="180" Fill="Gray"/>
+        <!--<MediaPlayerElement x:Name="PlayerElement"/>-->
         <controls:ProgressBarRing Value="0.5"/>
     </Grid>
 </controls:ContentDialogBase>

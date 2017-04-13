@@ -88,6 +88,7 @@
     <ClCompile Include="NativeUtils.cpp" />
     <ClCompile Include="PlaceholderImageSource.cpp" />
     <ClCompile Include="MediaCapturePreview.cpp" />
+    <ClCompile Include="DeviceLostHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -181,5 +182,6 @@
       <Filter>Helpers</Filter>
     </ClInclude>
     <ClInclude Include="MediaCapturePreview.h" />
+    <ClInclude Include="DeviceLostHelper.h" />
   </ItemGroup>
 </Project>

@@ -32,7 +32,7 @@ namespace Unigram.Controls
         private ManualResetEvent _startReset = new ManualResetEvent(true);
         private ManualResetEvent _stopReset = new ManualResetEvent(false);
 
-        private RoundVideoView _roundView = new RoundVideoView();
+        //private RoundVideoView _roundView = new RoundVideoView();
 
         public TimeSpan Elapsed
         {
@@ -101,6 +101,9 @@ namespace Unigram.Controls
                     RecordingStarted?.Invoke(this, EventArgs.Empty);
                 });
 
+                //_stopReset.Set();
+                //return;
+
                 _file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\recording.ogg", CreationCollisionOption.ReplaceExisting);
                 _recorder = new OpusRecorder(_file);
 
@@ -151,6 +154,9 @@ namespace Unigram.Controls
                     //_roundView.IsOpen = false;
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
                 });
+
+                //_startReset.Set();
+                //return;
 
                 var now = DateTime.Now;
                 var elapsed = now - _start;
