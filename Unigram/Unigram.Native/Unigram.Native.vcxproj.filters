@@ -87,6 +87,7 @@
     </ClCompile>
     <ClCompile Include="NativeUtils.cpp" />
     <ClCompile Include="PlaceholderImageSource.cpp" />
+    <ClCompile Include="MediaCapturePreview.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -179,5 +180,6 @@
     <ClInclude Include="Helpers\DirectXEx.h">
       <Filter>Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="MediaCapturePreview.h" />
   </ItemGroup>
 </Project>

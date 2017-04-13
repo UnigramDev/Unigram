@@ -214,6 +214,7 @@ namespace Unigram.Controls
             public OpusRecorder(StorageFile file)
             {
                 m_file = file;
+
                 InitializeSettings();
             }
 
@@ -240,6 +241,7 @@ namespace Unigram.Controls
                 wavEncodingProfile.Audio.BitsPerSample = 16;
                 wavEncodingProfile.Audio.SampleRate = 48000;
                 wavEncodingProfile.Audio.ChannelCount = 1;
+
                 await m_mediaCapture.StartRecordToCustomSinkAsync(wavEncodingProfile, m_opusSink);
             }
 

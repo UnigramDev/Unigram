@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Lorenzo Rossoni
+// Copyright (c) 2017 Lorenzo Rossoni
 
 #include "pch.h"
 #include "FinalizeAsyncOperation.h"

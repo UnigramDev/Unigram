@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Lorenzo Rossoni
+// Copyright (c) 2017 Lorenzo Rossoni
 
 #include "pch.h"
 #include "AsyncCallbackState.h"
@@ -314,7 +314,10 @@ HRESULT MediaSource::OnAsyncStart(IMFAsyncResult* asyncResult)
 
 		m_activeStreamCount = 0;
 
-		for (DWORD i = 0; i < GetMediaStreamCount(); i++)
+		DWORD streamDescriptorCount;
+		BreakIfFailed(result, startInfo->PresentationDescriptor->GetStreamDescriptorCount(&streamDescriptorCount));
+
+		for (DWORD i = 0; i < streamDescriptorCount; i++)
 		{
 			BOOL selected;
 			ComPtr<IMFStreamDescriptor> streamDescriptor;
@@ -411,7 +414,8 @@ HRESULT MediaSource::OnAsyncPause(IMFAsyncResult* asyncResult)
 
 
 MediaStream::MediaStream() :
-	m_state(MediaStreamState::None)
+	m_state(MediaStreamState::None),
+	m_isActive(false)
 {
 }
 
@@ -432,6 +436,7 @@ HRESULT MediaStream::RuntimeClassInitialize(MediaSource* mediaSource, IMFStreamD
 	m_mediaSource->CastToUnknown()->AddRef();
 
 	m_streamDescriptor = streamDescriptor;
+	m_state = MediaStreamState::Stopped;
 	return S_OK;
 }
 
