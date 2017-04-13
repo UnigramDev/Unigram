@@ -12,6 +12,8 @@ namespace Telegram.Api.Services
 {
     public partial interface IMTProtoService
     {
+        Task<MTProtoResponse<T>> SendRequestAsync<T>(string caption, TLObject obj);
+
         Task<MTProtoResponse<bool>> ClearSavedInfoAsync(bool info, bool credentials);
         Task<MTProtoResponse<TLPaymentsPaymentForm>> GetPaymentFormAsync(int msgId);
         Task<MTProtoResponse<TLPaymentsPaymentReceipt>> GetPaymentReceiptAsync(int msgId);

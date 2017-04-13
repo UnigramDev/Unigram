@@ -1,0 +1,42 @@
+﻿<controls:ContentDialogBase
+    x:Class="Unigram.Controls.Views.RoundVideoView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Views"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    VerticalAlignment="Stretch"
+    HorizontalAlignment="Stretch"
+    Background="Transparent">
+
+    <Control.Resources>
+        <Style TargetType="controls:ProgressBarRing">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#FFFFFFFF"/>
+            <Setter Property="Minimum" Value="0"/>
+            <Setter Property="Maximum" Value="1"/>
+            <Setter Property="Width" Value="188"/>
+            <Setter Property="Height" Value="188"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:ProgressBarRing">
+                        <Grid Background="{TemplateBinding Background}" CornerRadius="24">
+                            <controls:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" InnerRadius="92" Radius="94" StartAngle="0" EndAngle="0">
+                                <Path.RenderTransform>
+                                    <RotateTransform x:Name="Rotation" CenterX="94" CenterY="94" Angle="0"/>
+                                </Path.RenderTransform>
+                            </controls:ProgressBarRingSlice>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Control.Resources>
+    
+    <Grid>
+        <Ellipse Width="180" Height="180" Fill="Gray"/>
+        <controls:ProgressBarRing Value="0.5"/>
+    </Grid>
+</controls:ContentDialogBase>

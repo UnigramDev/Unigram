@@ -293,9 +293,9 @@
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                            Margin="0,24,0,0">
-                        <controls:HyperButton Content="Accounts management"
+                        <!--<controls:HyperButton Content="Accounts management"
                                               Click="Accounts_Click"
-                                              Style="{StaticResource HyperButtonStyle}"/>
+                                              Style="{StaticResource HyperButtonStyle}"/>-->
                     </local:TableStackPanel>
                     <local:TableStackPanel x:Name="OptionsGroup4"
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"

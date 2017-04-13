@@ -45,6 +45,7 @@ using Windows.UI.Popups;
 using Telegram.Api.TL.Methods.Messages;
 using Telegram.Api;
 using Unigram.Views;
+using Telegram.Api.TL.Methods.Phone;
 
 namespace Unigram.ViewModels
 {
@@ -380,7 +381,7 @@ namespace Unigram.ViewModels
             var limit = 1;
 
             var obj = new TLMessagesGetHistory { Peer = Peer, OffsetId = 0, OffsetDate = dateOffset - 1, AddOffset = offset, Limit = limit, MaxId = 0, MinId = 0 };
-            ProtoService.SendRequestAsync<TLMessagesMessagesBase>(obj, result =>
+            ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.getHistory", obj, result =>
             {
                 Execute.BeginOnUIThread(async () =>
                 {
@@ -685,52 +686,6 @@ namespace Unigram.ViewModels
 
                 With = user;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
-
-                //test calls
-                //var config = await ProtoService.GetDHConfigAsync(0, 0);
-                //if (config.IsSucceeded)
-                //{
-                //    var dh = config.Result;
-                //    if (!TLUtils.CheckPrime(dh.P, dh.G))
-                //    {
-                //        return;
-                //    }
-
-                //    var array = new byte[256];
-                //    var secureRandom = new SecureRandom();
-                //    secureRandom.NextBytes(array);
-
-                //    var a = array;
-                //    var p = dh.P;
-                //    var g = dh.G;
-                //    var gb = MTProtoService.GetGB(array, dh.G, dh.P);
-                //    var ga = gb;
-
-                //    var request = new Telegram.Api.TL.Methods.Phone.TLPhoneRequestCall
-                //    {
-                //        UserId = new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 },
-                //        RandomId = TLInt.Random(),
-                //        GA = ga,
-                //        Protocol = new TLPhoneCallProtocol
-                //        {
-                //            IsUdpP2p = true,
-                //            IsUdpReflector = true,
-                //            MinLayer = 65,
-                //            MaxLayer = 65,
-                //        }
-                //    };
-
-                //    var proto = (MTProtoService)ProtoService;
-                //    proto.SendInformativeMessageInternal<TLPhonePhoneCall>("phone.requestCall", request,
-                //    result =>
-                //    {
-                //        Debugger.Break();
-                //    },
-                //    fault =>
-                //    {
-                //        Debugger.Break();
-                //    });
-                //}
             }
             else if (participant is TLChannel channel)
             {
@@ -2308,6 +2263,53 @@ namespace Unigram.ViewModels
             if (_currentDialog != null)
             {
                 UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.DialogDeleteCommand.Execute(_currentDialog);
+            }
+        }
+
+        #endregion
+
+        #region Call
+
+        public RelayCommand CallCommand => new RelayCommand(CallExecute);
+        private async void CallExecute()
+        {
+            var user = With as TLUser;
+            if (user == null)
+            {
+                return;
+            }
+
+            var config = await ProtoService.GetDHConfigAsync(0, 256);
+            if (config.IsSucceeded)
+            {
+                var dh = config.Result;
+                if (!TLUtils.CheckPrime(dh.P, dh.G))
+                {
+                    return;
+                }
+
+                var salt = new byte[256];
+                var secureRandom = new SecureRandom();
+                secureRandom.NextBytes(salt);
+
+                var g_a = MTProtoService.GetGB(salt, dh.G, dh.P);
+
+                var request = new TLPhoneRequestCall
+                {
+                    UserId = new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 },
+                    RandomId = TLInt.Random(),
+                    GAHash = Utils.ComputeSHA256(g_a),
+                    Protocol = new TLPhoneCallProtocol
+                    {
+                        IsUdpP2p = true,
+                        IsUdpReflector = true,
+                        MinLayer = 65,
+                        MaxLayer = 65,
+                    }
+                };
+
+                var response = await ProtoService.SendRequestAsync<TLPhonePhoneCall>("phone.requestCall", request);
+                Debugger.Break();
             }
         }
 

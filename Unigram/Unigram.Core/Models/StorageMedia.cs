@@ -49,7 +49,7 @@ namespace Unigram.Core.Models
 
         private async void LoadThumbnail()
         {
-            if (System.IO.File.Exists(File.Path) && !File.Attributes.HasFlag(FileAttributes.Temporary))
+            if (!File.Attributes.HasFlag(FileAttributes.Temporary))
             {
                 using (var thumbnail = await File.GetThumbnailAsync(ThumbnailMode.ListView, 96, ThumbnailOptions.UseCurrentScale))
                 {
