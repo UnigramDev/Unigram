@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Channels;
+using Unigram.Views.Users;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
@@ -56,6 +58,14 @@ namespace Unigram.Views.Channels
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
+            }
+        }
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is TLChannelParticipantBase participant && participant.User != null)
+            {
+                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), participant.User.ToPeer());
             }
         }
     }

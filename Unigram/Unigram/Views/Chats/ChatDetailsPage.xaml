@@ -197,7 +197,13 @@
         <controls:ButtonPageHeader Title="Info"
                                    Glyph="&#xE104;"/>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Participants}"
+        <controls:ScrollViewerBackground
+            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
+        <ListView x:Name="ScrollingHost"
+                  ItemsSource="{x:Bind ViewModel.Participants}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
