@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Lorenzo Rossoni
+// Copyright (c) 2017 Lorenzo Rossoni
 
 #include "pch.h"
 #include "BufferLock.h"
@@ -104,8 +104,8 @@ HRESULT OpusMediaStream::RuntimeClassInitialize(OpusMediaSource* mediaSource, Op
 	ReturnIfFailed(result, MFCreateStreamDescriptor(0, 1, mediaType.GetAddressOf(), &streamDescriptor));
 
 	ComPtr<IMFMediaTypeHandler> mediaTypeHandler;
-	ThrowIfFailed(streamDescriptor->GetMediaTypeHandler(&mediaTypeHandler));
-	ThrowIfFailed(mediaTypeHandler->SetCurrentMediaType(mediaType.Get()));
+	ReturnIfFailed(result, streamDescriptor->GetMediaTypeHandler(&mediaTypeHandler));
+	ReturnIfFailed(result, mediaTypeHandler->SetCurrentMediaType(mediaType.Get()));
 
 	ComPtr<IMFPresentationDescriptor> presentationDescriptor;
 	ReturnIfFailed(result, MFCreatePresentationDescriptor(1, streamDescriptor.GetAddressOf(), &presentationDescriptor));

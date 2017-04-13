@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Lorenzo Rossoni
+// Copyright (c) 2017 Lorenzo Rossoni
 
 #include "pch.h"
 #include "Helpers\MediaFoundationHelper.h"
@@ -20,6 +20,7 @@ MediaSink::~MediaSink()
 
 HRESULT MediaSink::RuntimeClassInitialize()
 {
+	m_state = MediaSinkState::Stopped;
 	return S_OK;
 }
 
@@ -351,6 +352,7 @@ HRESULT StreamSink::RuntimeClassInitialize(MediaSink* mediaSink, IMFMediaType* m
 	m_mediaSink->CastToUnknown()->AddRef();
 
 	m_mediaType = mediaType;
+	m_state = StreamSinkState::Stopped;
 	return S_OK;
 }
 
@@ -421,7 +423,7 @@ HRESULT StreamSink::SetCurrentMediaType(IMFMediaType* pMediaType)
 		if (m_mediaType != nullptr)
 		{
 			BOOL areEquals;
-			ReturnIfFailed(result, m_mediaType->Compare(pMediaType, MF_ATTRIBUTES_MATCH_TYPE::MF_ATTRIBUTES_MATCH_ALL_ITEMS, &areEquals));
+			ReturnIfFailed(result, m_mediaType->Compare(pMediaType, MF_ATTRIBUTES_MATCH_ALL_ITEMS, &areEquals));
 
 			if (areEquals)
 				return S_OK;
@@ -646,7 +648,7 @@ HRESULT StreamSink::Shutdown()
 	m_queuedSamples = {};
 	m_state = StreamSinkState::Shutdown;
 
-	return MFUnlockWorkQueue(m_workQueueId);
+	return S_OK;
 }
 
 HRESULT StreamSink::NotifyRequestSample()

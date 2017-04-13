@@ -167,6 +167,9 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Compile Include="Behaviors\AspectRatioBehavior.cs" />
+    <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
+    <Compile Include="Common\ImageLoader\ImageLoader.cs" />
+    <Compile Include="Common\ImageLoader\ManagedSurface.cs" />
     <Compile Include="Common\MessageDialogExtensions.cs" />
     <Compile Include="Common\RatioControl.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
@@ -204,6 +207,7 @@
     </Compile>
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
+    <Compile Include="Controls\ScrollViewerBackground.cs" />
     <Compile Include="Controls\StickerView.cs" />
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />

@@ -4,22 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Template10.Utils;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Views;
+using Windows.Storage;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
     public class ChannelDetailsViewModel : UnigramViewModelBase
     {
-        public ChannelDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        private readonly IUploadFileManager _uploadFileManager;
+
+        public ChannelDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager)
             : base(protoService, cacheService, aggregator)
         {
+            _uploadFileManager = uploadFileManager;
         }
 
         private TLChannel _item;
@@ -73,6 +80,52 @@ namespace Unigram.ViewModels.Channels
                     RaisePropertyChanged(() => Participants);
                 }
             }
+        }
+
+        public bool CanEditNameAndPhoto
+        {
+            get
+            {
+                return _item != null && (_item.IsCreator || _item.IsEditor || _item.IsModerator);
+            }
+        }
+
+        public RelayCommand<StorageFile> EditPhotoCommand => new RelayCommand<StorageFile>(EditPhotoExecute);
+        private async void EditPhotoExecute(StorageFile file)
+        {
+            var fileLocation = new TLFileLocation
+            {
+                VolumeId = TLLong.Random(),
+                LocalId = TLInt.Random(),
+                Secret = TLLong.Random(),
+                DCId = 0
+            };
+
+            var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+            var fileCache = await FileUtils.CreateTempFileAsync(fileName);
+
+            await file.CopyAndReplaceAsync(fileCache);
+            var fileScale = fileCache;
+
+            var basicProps = await fileScale.GetBasicPropertiesAsync();
+            var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
+
+            var fileId = TLLong.Random();
+            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false);
+            if (upload != null)
+            {
+                var response = await ProtoService.EditPhotoAsync(_item, new TLInputChatUploadedPhoto { File = upload.ToInputFile() });
+                if (response.IsSucceeded)
+                {
+
+                }
+            }
+        }
+
+        public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
+        private void MediaExecute()
+        {
+            NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
         }
 
         public ItemsCollection Participants { get; private set; }

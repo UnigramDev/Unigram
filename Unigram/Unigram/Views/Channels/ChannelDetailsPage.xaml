@@ -190,7 +190,17 @@
         <controls:ButtonPageHeader Title="Info"
                                    Glyph="&#xE104;"/>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Participants}" Grid.Row="1">
+        <controls:ScrollViewerBackground 
+            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
+        <ListView x:Name="ScrollingHost"
+                  ItemsSource="{x:Bind ViewModel.Participants}"
+                  ItemClick="ListView_ItemClick"
+                  IsItemClickEnabled="True"
+                  SelectionMode="None"
+                  Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
                     <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
@@ -209,6 +219,7 @@
                     </Grid>
                     <controls:HyperButton Content="Set group photo"
                                           Click="EditPhoto_Click"
+                                          Visibility="{x:Bind (Visibility)ViewModel.CanEditNameAndPhoto}"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Grid.Row="1"/>
 

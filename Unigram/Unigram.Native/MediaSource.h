@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Lorenzo Rossoni
+// Copyright (c) 2017 Lorenzo Rossoni
 
 #pragma once
 #include <queue>
@@ -22,7 +22,7 @@ namespace Unigram
 	{
 
 		class MediaSource abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, ABI::Windows::Media::Core::IMediaSource,
-			ABI::Windows::Foundation::IClosable, IMFAsyncCallback, IMFMediaSource, IMFMediaSourceEx, IMFMediaEventGenerator, IMFGetService>
+			ABI::Windows::Foundation::IClosable, ABI::Windows::Media::Playback::IMediaPlaybackSource, IMFAsyncCallback, IMFMediaSource, IMFMediaSourceEx, IMFMediaEventGenerator, IMFGetService>
 		{
 			friend class MediaStream;
 

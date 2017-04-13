@@ -187,10 +187,17 @@
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
-            <StackPanel>
+        <controls:ScrollViewerBackground 
+            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
+        <ScrollViewer
+            x:Name="ScrollingHost"
+            VerticalScrollBarVisibility="Auto"
+            VerticalScrollMode="Auto"
+            Grid.Row="1">
+            <StackPanel Margin="0,0,0,24">
                 <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -278,9 +285,9 @@
                                                Style="{ThemeResource CheckButtonStyle}"/>
 
                     <!--<controls:HyperButton Content="Groups in common"
-                                          Command="{Binding MediaCommand}"
-                                          Style="{StaticResource HyperButtonStyle}"
-                                          Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>-->
+                         Command="{Binding MediaCommand}"
+                         Style="{StaticResource HyperButtonStyle}"
+                         Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>-->
                     <controls:BadgeButton Content="Groups in common"
                                           Command="{x:Bind ViewModel.CommonChatsCommand}"
                                           Badge="{x:Bind ViewModel.Full.CommonChatsCount, Mode=OneWay}"

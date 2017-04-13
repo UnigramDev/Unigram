@@ -353,6 +353,7 @@
     <ClInclude Include="AsyncCallbackState.h" />
     <ClInclude Include="BufferLock.h" />
     <ClInclude Include="ByteStreamHandler.h" />
+    <ClInclude Include="DeviceLostHelper.h" />
     <ClInclude Include="FinalizeAsyncOperation.h" />
     <ClInclude Include="Helpers\DirectXEx.h" />
     <ClInclude Include="MediaFoundationExtensions.h" />
@@ -367,6 +368,7 @@
     <ClInclude Include="Opus\OpusMediaType.h" />
     <ClInclude Include="Opus\OpusOutputByteStream.h" />
     <ClInclude Include="PlaceholderImageSource.h" />
+    <ClInclude Include="MediaCapturePreview.h" />
     <ClInclude Include="WebP\DemuxerWrapper.h" />
     <ClInclude Include="GIF\GIFByteStreamHandler.h" />
     <ClInclude Include="GIF\GIFMediaSource.h" />
@@ -386,6 +388,7 @@
     <ClCompile Include="AnimatedImageSource\VirtualImageSourceRendererCallback.cpp" />
     <ClCompile Include="BufferLock.cpp" />
     <ClCompile Include="ByteStreamHandler.cpp" />
+    <ClCompile Include="DeviceLostHelper.cpp" />
     <ClCompile Include="FinalizeAsyncOperation.cpp" />
     <ClCompile Include="GIF\GIFByteStreamHandler.cpp" />
     <ClCompile Include="GIF\GIFMediaSource.cpp" />
@@ -414,6 +417,7 @@
     <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.cpp" />
     <ClCompile Include="AnimatedImageSource\FramesCacheStore.cpp" />
     <ClCompile Include="PlaceholderImageSource.cpp" />
+    <ClCompile Include="MediaCapturePreview.cpp" />
     <ClCompile Include="WebP\WebPFrame.cpp" />
     <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>

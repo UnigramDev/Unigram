@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Lorenzo Rossoni
+// Copyright (c) 2017 Lorenzo Rossoni
 
 #include "pch.h"
 #include "Helpers\COMHelper.h"
@@ -19,7 +19,7 @@ HMODULE GetModuleHandle(LPCTSTR libFileName)
 		"GetModuleHandleW"))(libFileName);
 }
 
-HRESULT MFScheduleWorkItem(_In_ IMFAsyncCallback* pCallback, _In_ IUnknown* pState, _In_ INT64 Timeout, _Out_ MFWORKITEM_KEY* pKey)
+HRESULT MFScheduleWorkItem(IMFAsyncCallback* pCallback, IUnknown* pState, INT64 Timeout, MFWORKITEM_KEY* pKey)
 {
 	typedef HRESULT(WINAPI *pMFScheduleWorkItem)(_In_ IMFAsyncCallback*, _In_ IUnknown*, _In_ INT64, _Out_ MFWORKITEM_KEY*);
 	static const auto procMFScheduleWorkItem = reinterpret_cast<pMFScheduleWorkItem>(GetProcAddress(GetModuleHandle(L"Mfplat.dll"), "MFScheduleWorkItem"));
@@ -27,7 +27,7 @@ HRESULT MFScheduleWorkItem(_In_ IMFAsyncCallback* pCallback, _In_ IUnknown* pSta
 	return procMFScheduleWorkItem(pCallback, pState, Timeout, pKey);
 }
 
-HRESULT MFRegisterLocalByteStreamHandler(_In_ PCWSTR szFileExtension, _In_ PCWSTR szMimeType, _In_ IMFActivate* pActivate)
+HRESULT MFRegisterLocalByteStreamHandler(PCWSTR szFileExtension, PCWSTR szMimeType, IMFActivate* pActivate)
 {
 	typedef HRESULT(WINAPI *pMFRegisterLocalByteStreamHandler)(_In_ PCWSTR, _In_ PCWSTR, _In_ IMFActivate*);
 	static const auto procMFRegisterLocalByteStreamHandler = reinterpret_cast<pMFRegisterLocalByteStreamHandler>(GetProcAddress(GetModuleHandle(L"Mfplat.dll"),
