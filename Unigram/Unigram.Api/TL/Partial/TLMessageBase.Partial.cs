@@ -309,6 +309,7 @@ namespace Telegram.Api.TL
         #endregion
 
         #region Video
+
         public bool IsVideo()
         {
             var documentMedia = Media as TLMessageMediaDocument;
@@ -329,11 +330,42 @@ namespace Telegram.Api.TL
                 var animatedAttribute = document.Attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
                 if (videoAttribute != null /*&& animatedAttribute == null*/)
                 {
-                    return true;
+                    return !videoAttribute.IsRoundMessage;
                 }
             }
             return false;
         }
+
+        #endregion
+
+        #region RoundVideo
+
+        public bool IsRoundVideo()
+        {
+            var documentMedia = Media as TLMessageMediaDocument;
+            return documentMedia != null && IsRoundVideo(documentMedia.Document);
+        }
+
+        public static bool IsRoundVideo(TLDocumentBase documentBase)
+        {
+            var document = documentBase as TLDocument;
+            return document != null && IsRoundVideo(document, document.Size);
+        }
+
+        public static bool IsRoundVideo(TLDocument document, int size)
+        {
+            if (size > 0)
+            {
+                var videoAttribute = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+                var animatedAttribute = document.Attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
+                if (videoAttribute != null /*&& animatedAttribute == null*/)
+                {
+                    return videoAttribute.IsRoundMessage;
+                }
+            }
+            return false;
+        }
+
         #endregion
 
         #region Audio

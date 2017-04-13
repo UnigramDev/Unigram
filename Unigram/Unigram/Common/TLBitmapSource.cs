@@ -229,7 +229,8 @@ namespace Unigram.Common
                             Execute.BeginOnUIThread(() =>
                             {
                                 //Image.SetSource(FileUtils.GetTempFileUri(fileName));
-                                Image.UriSource = FileUtils.GetTempFileUri(fileName);
+                                //Image.UriSource = FileUtils.GetTempFileUri(fileName);
+                                Image.UriSource = new Uri("ms-appdata:///temp/" + result.DestFileName);
                             });
                         }
                     });

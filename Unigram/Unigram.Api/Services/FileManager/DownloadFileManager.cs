@@ -11,6 +11,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
 using Windows.Foundation;
+using Windows.Storage;
 
 namespace Telegram.Api.Services.FileManager
 {
@@ -251,9 +252,22 @@ namespace Telegram.Api.Services.FileManager
 
         public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLFileLocation file, int fileSize)
         {
-            return AsyncInfo.Run<DownloadableItem, double>((token, progress) =>
+            return AsyncInfo.Run<DownloadableItem, double>(async (token, progress) =>
             {
                 var tsc = new TaskCompletionSource<DownloadableItem>();
+                var boh = new TaskCompletionSource<string>();
+
+                FileLoader.Current.LoadFile(file, ".jpg", fileSize, false, boh);
+                var name = await boh.Task;
+
+                return new DownloadableItem { DestFileName = name };
+                //return tsc.Task;
+
+
+
+
+
+
 
                 var downloadableItem = GetDownloadableItem(file, null, fileSize);
                 downloadableItem.Callback = tsc;
@@ -284,12 +298,24 @@ namespace Telegram.Api.Services.FileManager
 
                 StartAwaitingWorkers();
 
-                return tsc.Task;
+                //return tsc.Task;
             });
         }
 
-        public void DownloadFile(TLFileLocation file, int fileSize, Action<DownloadableItem> callback)
+        public async void DownloadFile(TLFileLocation file, int fileSize, Action<DownloadableItem> callback)
         {
+            //var operation = new FileLoadOperation(file, ".jpg", fileSize);
+            //operation.setDelegate(new FileLoadOperationDelegate());
+            //operation.setPaths(ApplicationData.Current.LocalCacheFolder.Path, ApplicationData.Current.TemporaryFolder.Path);
+            //operation.start();
+            var tsc = new TaskCompletionSource<string>();
+
+            FileLoader.Current.LoadFile(file, ".jpg", fileSize, false, tsc);
+            var name = await tsc.Task;
+            callback?.Invoke(new DownloadableItem { DestFileName = name });
+
+            return;
+
             var downloadableItem = GetDownloadableItem(file, null, fileSize);
             downloadableItem.Action = callback;
 

@@ -658,6 +658,16 @@ namespace Telegram.Api.Helpers
             return digest;
         }
 
+        public static string MD5(string data)
+        {
+            var input = CryptographicBuffer.ConvertStringToBinary(data, BinaryStringEncoding.Utf8);
+            var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+            var hashed = hasher.HashData(input);
+            var digest = CryptographicBuffer.EncodeToBase64String(hashed);
+
+            return digest;
+        }
+
         public static string CurrentUICulture()
         {
             return Windows.Globalization.Language.CurrentInputMethodLanguageTag;

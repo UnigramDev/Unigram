@@ -3,6 +3,23 @@
                     xmlns:local="using:Unigram.Common"
                     xmlns:controls="using:Unigram.Controls">
 
+    <Style x:Key="RoundImageViewStyle" TargetType="controls:ImageView">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ImageView">
+                    <Ellipse x:Name="Holder">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{Binding Source, RelativeSource={RelativeSource Mode=TemplatedParent}}" AlignmentY="Center" AlignmentX="Center" Stretch="UniformToFill"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
     <Style x:Key="RoundImageCropperStyle" TargetType="controls:ImageCropper">
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>

@@ -267,6 +267,10 @@ namespace Unigram.Controls.Items
                         {
                             return result + "Video" + caption;
                         }
+                        else if (message.IsRoundVideo())
+                        {
+                            return result + "Video message" + caption;
+                        }
                         else if (message.IsGif())
                         {
                             return result + "GIF" + caption;

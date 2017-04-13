@@ -516,6 +516,134 @@ namespace Telegram.Api.Services
             }
         }
 
+        public void SendRequestAsync<T>(string caption, TLObject obj, int dcId, Action<T> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var transport = GetMediaTransportByDCId(dcId);
+
+            lock (_activeTransportRoot)
+            {
+                if (_activeTransport.DCId == dcId)
+                {
+                    if (_activeTransport.DCId == 0)
+                    {
+                        TLUtils.WriteException(new Exception("_activeTransport.DCId==0"));
+                    }
+
+                    SendInformativeMessageByTransport(transport, caption, obj, callback, faultCallback);
+                    return;
+                }
+            }
+
+            if (transport == null)
+            {
+                faultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "GetFileAsync: Empty transport for dc id " + dcId });
+
+                return;
+            }
+
+            if (transport.AuthKey == null)
+            {
+                var cancelInitializing = false;
+                lock (transport.SyncRoot)
+                {
+                    if (transport.IsInitializing)
+                    {
+                        cancelInitializing = true;
+                    }
+                    else
+                    {
+                        transport.IsInitializing = true;
+                    }
+                }
+
+                if (cancelInitializing)
+                {
+                    faultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "DC " + dcId + " is already initializing" });
+                    return;
+                }
+
+                InitTransportAsync(
+                    transport,
+                    tuple =>
+                    {
+                        lock (transport.SyncRoot)
+                        {
+                            transport.AuthKey = tuple.Item1;
+                            transport.Salt = tuple.Item2;
+                            transport.SessionId = tuple.Item3;
+
+                            transport.IsInitializing = false;
+                        }
+                        var authKeyId = TLUtils.GenerateLongAuthKeyId(tuple.Item1);
+
+                        lock (_authKeysRoot)
+                        {
+                            if (!_authKeys.ContainsKey(authKeyId))
+                            {
+                                _authKeys.Add(authKeyId, new AuthKeyItem { AuthKey = tuple.Item1, AutkKeyId = authKeyId });
+                            }
+                        }
+
+                        ExportImportAuthorizationAsync(
+                            transport,
+                            () =>
+                            {
+                                foreach (var dcOption in _config.DCOptions)
+                                {
+                                    if (dcOption.Id == transport.DCId)
+                                    {
+                                        dcOption.AuthKey = tuple.Item1;
+                                        dcOption.Salt = tuple.Item2;
+                                        dcOption.SessionId = tuple.Item3;
+                                    }
+                                }
+
+                                _cacheService.SetConfig(_config);
+
+                                SendInformativeMessageByTransport(transport, caption, obj, callback, faultCallback);
+                            },
+                            error =>
+                            {
+                                if (!error.CodeEquals(TLErrorCode.NOT_FOUND) &&
+                                    !error.ErrorMessage.ToString().Contains("is already authorizing"))
+                                {
+                                    Execute.ShowDebugMessage("ExportImportAuthorization error " + error);
+                                }
+
+                                faultCallback?.Invoke(error);
+                            });
+                    },
+                    error =>
+                    {
+                        lock (transport.SyncRoot)
+                        {
+                            transport.IsInitializing = false;
+                        }
+
+                        faultCallback?.Invoke(error);
+                    });
+            }
+            else
+            {
+                ExportImportAuthorizationAsync(
+                    transport,
+                    () =>
+                    {
+                        SendInformativeMessageByTransport(transport, caption, obj, callback, faultCallback);
+                    },
+                    error =>
+                    {
+                        if (!error.CodeEquals(TLErrorCode.NOT_FOUND)
+                            && !error.ErrorMessage.ToString().Contains("is already authorizing"))
+                        {
+                            Execute.ShowDebugMessage("ExportImportAuthorization error " + error);
+                        }
+
+                        faultCallback?.Invoke(error);
+                    });
+            }
+        }
+
         private void ExportImportAuthorizationAsync(ITransport toTransport, Action callback, Action<TLRPCError> faultCallback = null)
         {
             if (!toTransport.IsAuthorized)
