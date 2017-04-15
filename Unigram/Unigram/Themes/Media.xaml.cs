@@ -123,7 +123,7 @@ namespace Unigram.Themes
                         }
                         else
                         {
-                            //var watch = Stopwatch.StartNew();
+                            var watch = Stopwatch.StartNew();
 
                             //var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
 
@@ -138,8 +138,8 @@ namespace Unigram.Themes
                             {
                                 border.Update();
 
-                                //await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
-                                //return;
+                                await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
+                                return;
 
                                 var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
                                 await Launcher.LaunchFileAsync(file);

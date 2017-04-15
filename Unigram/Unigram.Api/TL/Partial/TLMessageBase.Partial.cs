@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.TL;
 using Windows.UI.Xaml;
 
 namespace Telegram.Api.TL
@@ -429,6 +430,119 @@ namespace Telegram.Api.TL
                 {
                     return true;
                 }
+            }
+            return false;
+        }
+        #endregion
+
+        #region Helpers
+        public static bool isStickerDocument(TLDocument document)
+        {
+            if (document != null)
+            {
+                for (int a = 0; a < document.Attributes.Count; a++)
+                {
+                    TLDocumentAttributeBase attribute = document.Attributes[a];
+                    if (attribute is TLDocumentAttributeSticker)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool isMaskDocument(TLDocument document)
+        {
+            if (document != null)
+            {
+                for (int a = 0; a < document.Attributes.Count; a++)
+                {
+                    TLDocumentAttributeBase attribute = document.Attributes[a];
+                    if (attribute is TLDocumentAttributeSticker stickerAttribute && stickerAttribute.IsMask)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool isVoiceDocument(TLDocument document)
+        {
+            if (document != null)
+            {
+                for (int a = 0; a < document.Attributes.Count; a++)
+                {
+                    TLDocumentAttributeBase attribute = document.Attributes[a];
+                    if (attribute is TLDocumentAttributeAudio audioAttribute)
+                    {
+                        return audioAttribute.IsVoice;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool isVoiceWebDocument(TLWebDocument webDocument)
+        {
+            return webDocument != null && webDocument.MimeType.Equals("audio/ogg");
+        }
+
+        public static bool isImageWebDocument(TLWebDocument webDocument)
+        {
+            return webDocument != null && webDocument.MimeType.StartsWith("image/");
+        }
+
+        public static bool isVideoWebDocument(TLWebDocument webDocument)
+        {
+            return webDocument != null && webDocument.MimeType.StartsWith("video/");
+        }
+
+        public static bool isMusicDocument(TLDocument document)
+        {
+            if (document != null)
+            {
+                for (int a = 0; a < document.Attributes.Count; a++)
+                {
+                    TLDocumentAttributeBase attribute = document.Attributes[a];
+                    if (attribute is TLDocumentAttributeAudio audioAttribute)
+                    {
+                        return !audioAttribute.IsVoice;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool isVideoDocument(TLDocument document)
+        {
+            if (document != null)
+            {
+                bool isAnimated = false;
+                bool isVideo = false;
+                int width = 0;
+                int height = 0;
+
+                for (int a = 0; a < document.Attributes.Count; a++)
+                {
+                    TLDocumentAttributeBase attribute = document.Attributes[a];
+                    if (attribute is TLDocumentAttributeVideo videoAttribute)
+                    {
+                        isVideo = true;
+                        width = videoAttribute.W;
+                        height = videoAttribute.H;
+                    }
+                    else if (attribute is TLDocumentAttributeAnimated)
+                    {
+                        isAnimated = true;
+                    }
+                }
+                if (isAnimated && (width > 1280 || height > 1280))
+                {
+                    isAnimated = false;
+                }
+                return isVideo && !isAnimated;
             }
             return false;
         }

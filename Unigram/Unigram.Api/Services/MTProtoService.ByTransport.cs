@@ -537,7 +537,6 @@ namespace Telegram.Api.Services
             if (transport == null)
             {
                 faultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "GetFileAsync: Empty transport for dc id " + dcId });
-
                 return;
             }
 

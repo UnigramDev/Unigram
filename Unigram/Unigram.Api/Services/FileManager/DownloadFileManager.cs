@@ -252,16 +252,15 @@ namespace Telegram.Api.Services.FileManager
 
         public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLFileLocation file, int fileSize)
         {
-            return AsyncInfo.Run<DownloadableItem, double>(async (token, progress) =>
+            return AsyncInfo.Run<DownloadableItem, double>((token, progress) =>
             {
                 var tsc = new TaskCompletionSource<DownloadableItem>();
-                var boh = new TaskCompletionSource<string>();
+                //var boh = new TaskCompletionSource<string>();
 
-                FileLoader.Current.LoadFile(file, ".jpg", fileSize, false, boh);
-                var name = await boh.Task;
+                //FileLoader.Current.LoadFile(file, ".jpg", fileSize, false, boh);
+                //var name = await boh.Task;
 
-                return new DownloadableItem { DestFileName = name };
-                //return tsc.Task;
+                //return new DownloadableItem { DestFileName = name };
 
 
 
@@ -298,23 +297,19 @@ namespace Telegram.Api.Services.FileManager
 
                 StartAwaitingWorkers();
 
-                //return tsc.Task;
+                return tsc.Task;
             });
         }
 
-        public async void DownloadFile(TLFileLocation file, int fileSize, Action<DownloadableItem> callback)
+        public void DownloadFile(TLFileLocation file, int fileSize, Action<DownloadableItem> callback)
         {
-            //var operation = new FileLoadOperation(file, ".jpg", fileSize);
-            //operation.setDelegate(new FileLoadOperationDelegate());
-            //operation.setPaths(ApplicationData.Current.LocalCacheFolder.Path, ApplicationData.Current.TemporaryFolder.Path);
-            //operation.start();
-            var tsc = new TaskCompletionSource<string>();
+            //var tsc = new TaskCompletionSource<string>();
 
-            FileLoader.Current.LoadFile(file, ".jpg", fileSize, false, tsc);
-            var name = await tsc.Task;
-            callback?.Invoke(new DownloadableItem { DestFileName = name });
+            //FileLoader.Current.LoadFile(file, ".jpg", fileSize, false, tsc);
+            //var name = await tsc.Task;
+            //callback?.Invoke(new DownloadableItem { DestFileName = name });
 
-            return;
+            //return;
 
             var downloadableItem = GetDownloadableItem(file, null, fileSize);
             downloadableItem.Action = callback;

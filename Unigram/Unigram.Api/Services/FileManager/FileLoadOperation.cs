@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
@@ -662,14 +663,7 @@ namespace Telegram.Api.Services.FileManager
                                 //delayedRequestInfo.responseCdn.disableFree = false;
                                 //delayedRequestInfo.responseCdn.freeResources();
                             }
-                            if (finishedDownloading)
-                            {
-                                startDownloadRequest();
-                            }
-                            else
-                            {
-                                OnFinishLoadingFile(true);
-                            }
+                            break;
                         }
                     }
                     if (finishedDownloading)
@@ -734,6 +728,11 @@ namespace Telegram.Api.Services.FileManager
                 else if (error.ErrorMessage.Contains("RETRY_LIMIT"))
                 {
                     onFail(false, 2);
+                }
+                else if (error.ErrorMessage.Contains("is already authorizing"))
+                {
+                    nextDownloadOffset = 0;
+                    startDownloadRequest();
                 }
                 else
                 {
@@ -897,9 +896,10 @@ namespace Telegram.Api.Services.FileManager
                     dcId = datacenter_id;
                 }
 
-
+                //var reset = new ManualResetEvent(false);
                 MTProtoService.Current.SendRequestAsync<TLObject>("", request, dcId, result =>
                 {
+                    //reset.Set();
                     if (result is TLUploadFileCdnRedirect redirect)
                     {
                         isCdn = true;
@@ -976,6 +976,7 @@ namespace Telegram.Api.Services.FileManager
                     }
                 }, fault =>
                 {
+                    //reset.Set();
                     if (request is TLUploadGetCdnFile && fault.ErrorMessage.Equals("FILE_TOKEN_INVALID"))
                     {
                         isCdn = false;
@@ -988,6 +989,7 @@ namespace Telegram.Api.Services.FileManager
                     }
                 });
                 requestsCount++;
+                //reset.WaitOne();
             }
         }
     }

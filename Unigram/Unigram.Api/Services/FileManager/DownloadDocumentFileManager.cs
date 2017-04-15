@@ -104,7 +104,7 @@ namespace Telegram.Api.Services.FileManager
             {
                 part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputDocumentLocation, part.Offset, part.Limit) as TLUploadFile;
             }
-            
+
 
             // indicate progress
             // indicate complete
@@ -245,6 +245,22 @@ namespace Telegram.Api.Services.FileManager
             return AsyncInfo.Run<DownloadableItem, double>((token, progress) =>
             {
                 var tsc = new TaskCompletionSource<DownloadableItem>();
+                //var boh = new TaskCompletionSource<string>();
+
+                //FileLoader.Current.LoadFile(new TLDocument
+                //{
+                //    Id = fileLocation.Id,
+                //    AccessHash = fileLocation.AccessHash,
+                //    Version = fileLocation.Version,
+                //    Size = fileSize,
+                //    DCId = dcId,
+                //    Attributes = new TLVector<TLDocumentAttributeBase>{
+                //    new TLDocumentAttributeFilename { FileName = originalFileName }
+                //}
+                //}, false, false, boh);
+                //var name = await boh.Task;
+
+                //return new DownloadableItem { DestFileName = name };
 
                 var downloadableItem = GetDownloadableItem(originalFileName, dcId, fileLocation, null, fileSize);
                 downloadableItem.Callback = tsc;

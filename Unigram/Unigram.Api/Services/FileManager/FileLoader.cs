@@ -139,18 +139,18 @@ namespace Telegram.Api.Services.FileManager
                     {
                         operation.setForceRequest(true);
                         List<FileLoadOperation> downloadQueue;
-                        //if (MessageObject.isVoiceDocument(document) || MessageObject.isVoiceWebDocument(webDocument))
-                        //{
-                        //    downloadQueue = audioLoadOperationQueue;
-                        //}
-                        //else if (location != null || MessageObject.isImageWebDocument(webDocument))
+                        if (TLMessage.isVoiceDocument(document) || TLMessage.isVoiceWebDocument(webDocument))
+                        {
+                            downloadQueue = audioLoadOperationQueue;
+                        }
+                        else if (location != null || TLMessage.isImageWebDocument(webDocument))
                         {
                             downloadQueue = photoLoadOperationQueue;
                         }
-                        //else
-                        //{
-                        //    downloadQueue = loadOperationQueue;
-                        //}
+                        else
+                        {
+                            downloadQueue = loadOperationQueue;
+                        }
                         if (downloadQueue != null)
                         {
                             int index = downloadQueue.IndexOf(operation);
@@ -176,15 +176,15 @@ namespace Telegram.Api.Services.FileManager
                 else if (document != null)
                 {
                     operation = new FileLoadOperation(document);
-                    //if (MessageObject.isVoiceDocument(document))
-                    //{
-                    //    type = MEDIA_DIR_AUDIO;
-                    //}
-                    //else if (MessageObject.isVideoDocument(document))
-                    //{
-                    //    type = MEDIA_DIR_VIDEO;
-                    //}
-                    //else
+                    if (TLMessage.isVoiceDocument(document))
+                    {
+                        type = MEDIA_DIR_AUDIO;
+                    }
+                    else if (TLMessage.isVideoDocument(document))
+                    {
+                        type = MEDIA_DIR_VIDEO;
+                    }
+                    else
                     {
                         type = MEDIA_DIR_DOCUMENT;
                     }
@@ -192,19 +192,19 @@ namespace Telegram.Api.Services.FileManager
                 else if (webDocument != null)
                 {
                     operation = new FileLoadOperation(webDocument);
-                    //if (MessageObject.isVoiceWebDocument(webDocument))
-                    //{
-                    //    type = MEDIA_DIR_AUDIO;
-                    //}
-                    //else if (MessageObject.isVideoWebDocument(webDocument))
-                    //{
-                    //    type = MEDIA_DIR_VIDEO;
-                    //}
-                    //else if (MessageObject.isImageWebDocument(webDocument))
-                    //{
-                    //    type = MEDIA_DIR_IMAGE;
-                    //}
-                    //else
+                    if (TLMessage.isVoiceWebDocument(webDocument))
+                    {
+                        type = MEDIA_DIR_AUDIO;
+                    }
+                    else if (TLMessage.isVideoWebDocument(webDocument))
+                    {
+                        type = MEDIA_DIR_VIDEO;
+                    }
+                    else if (TLMessage.isImageWebDocument(webDocument))
+                    {
+                        type = MEDIA_DIR_IMAGE;
+                    }
+                    else
                     {
                         type = MEDIA_DIR_DOCUMENT;
                     }
@@ -249,11 +249,12 @@ namespace Telegram.Api.Services.FileManager
                 //};
                 //operation.setDelegate(fileLoadOperationDelegate);
 
+                operation.DidChangedLoadProgress = (s, args) => Debug.WriteLine("Download progress: " + args);
                 operation.DidFailedLoadingFile = (s, args) => checkDownloadQueue(document, webDocument, location, finalFileName);
                 operation.DidFinishLoadingFile = (s, args) =>
                 {
                     checkDownloadQueue(document, webDocument, location, finalFileName);
-                    tsc.SetResult(finalFileName);
+                    tsc.SetResult(args.FullName);
                 };
 
                 /*if (location != null) {
@@ -362,38 +363,38 @@ namespace Telegram.Api.Services.FileManager
             Execute.BeginOnThreadPool(() =>
             {
                 loadOperationPaths.TryRemove(arg1, out FileLoadOperation operation);
-                //if (MessageObject.isVoiceDocument(document) || MessageObject.isVoiceWebDocument(webDocument))
-                //{
-                //    if (operation != null)
-                //    {
-                //        if (operation.wasStarted())
-                //        {
-                //            currentAudioLoadOperationsCount--;
-                //        }
-                //        else
-                //        {
-                //            audioLoadOperationQueue.Remove(operation);
-                //        }
-                //    }
-                //    while (audioLoadOperationQueue.Count > 0)
-                //    {
-                //        operation = audioLoadOperationQueue[0];
-                //        int maxCount = operation.isForceRequest() ? 3 : 1;
-                //        if (currentAudioLoadOperationsCount < maxCount)
-                //        {
-                //            operation = audioLoadOperationQueue.Poll();
-                //            if (operation != null && operation.start())
-                //            {
-                //                currentAudioLoadOperationsCount++;
-                //            }
-                //        }
-                //        else
-                //        {
-                //            break;
-                //        }
-                //    }
-                //}
-                //else if (location != null || MessageObject.isImageWebDocument(webDocument))
+                if (TLMessage.isVoiceDocument(document) || TLMessage.isVoiceWebDocument(webDocument))
+                {
+                    if (operation != null)
+                    {
+                        if (operation.WasStarted())
+                        {
+                            currentAudioLoadOperationsCount--;
+                        }
+                        else
+                        {
+                            audioLoadOperationQueue.Remove(operation);
+                        }
+                    }
+                    while (audioLoadOperationQueue.Count > 0)
+                    {
+                        operation = audioLoadOperationQueue[0];
+                        int maxCount = operation.IsForceRequest() ? 3 : 1;
+                        if (currentAudioLoadOperationsCount < maxCount)
+                        {
+                            operation = audioLoadOperationQueue.Poll();
+                            if (operation != null && operation.Start())
+                            {
+                                currentAudioLoadOperationsCount++;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                else if (location != null || TLMessage.isImageWebDocument(webDocument))
                 {
                     if (operation != null)
                     {
@@ -428,37 +429,37 @@ namespace Telegram.Api.Services.FileManager
                         }
                     }
                 }
-                //else
-                //{
-                //    if (operation != null)
-                //    {
-                //        if (operation.wasStarted())
-                //        {
-                //            currentLoadOperationsCount--;
-                //        }
-                //        else
-                //        {
-                //            loadOperationQueue.Remove(operation);
-                //        }
-                //    }
-                //    while (loadOperationQueue.Count > 0)
-                //    {
-                //        operation = loadOperationQueue[0];
-                //        int maxCount = operation.IsForceRequest() ? 3 : 1;
-                //        if (currentLoadOperationsCount < maxCount)
-                //        {
-                //            operation = loadOperationQueue.Poll();
-                //            if (operation != null && operation.start())
-                //            {
-                //                currentLoadOperationsCount++;
-                //            }
-                //        }
-                //        else
-                //        {
-                //            break;
-                //        }
-                //    }
-                //}
+                else
+                {
+                    if (operation != null)
+                    {
+                        if (operation.WasStarted())
+                        {
+                            currentLoadOperationsCount--;
+                        }
+                        else
+                        {
+                            loadOperationQueue.Remove(operation);
+                        }
+                    }
+                    while (loadOperationQueue.Count > 0)
+                    {
+                        operation = loadOperationQueue[0];
+                        int maxCount = operation.IsForceRequest() ? 3 : 1;
+                        if (currentLoadOperationsCount < maxCount)
+                        {
+                            operation = loadOperationQueue.Poll();
+                            if (operation != null && operation.Start())
+                            {
+                                currentLoadOperationsCount++;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
             });
         }
 
