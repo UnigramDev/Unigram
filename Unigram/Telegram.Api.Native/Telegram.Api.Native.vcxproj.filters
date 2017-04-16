@@ -8,8 +8,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="ConnectionManager.cpp" />
+    <ClCompile Include="TLBinaryReader.cpp" />
+    <ClCompile Include="TLBinaryWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="TLObject.h" />
+    <ClInclude Include="ConnectionManager.h" />
+    <ClInclude Include="TLBinaryReader.h" />
+    <ClInclude Include="TLBinaryWriter.h" />
   </ItemGroup>
 </Project>

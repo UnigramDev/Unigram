@@ -174,11 +174,5 @@
     <ClInclude Include="PlaceholderImageSource.h" />
     <ClInclude Include="MediaCapturePreview.h" />
     <ClInclude Include="DeviceLostHelper.h" />
-    <ClInclude Include="Helpers\DebugHelper.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Helpers\COMHelper.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

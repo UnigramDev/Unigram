@@ -106,7 +106,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared" />
+  <ImportGroup Label="Shared">
+    <Import Project="..\Unigram.Native.Shared\Unigram.Native.Shared.vcxitems" Label="Shared" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -333,8 +335,6 @@
     <ClInclude Include="ByteStreamHandler.h" />
     <ClInclude Include="DeviceLostHelper.h" />
     <ClInclude Include="FinalizeAsyncOperation.h" />
-    <ClInclude Include="Helpers\COMHelper.h" />
-    <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="MediaFoundationExtensions.h" />
     <ClInclude Include="MediaSink.h" />
     <ClInclude Include="MediaSource.h" />
@@ -410,9 +410,6 @@
     </ProjectReference>
     <ProjectReference Include="..\Libraries\libwebp\libwebp.vcxproj">
       <Project>{7789c8b7-887c-46b6-bd76-952c590b1853}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\tgnet\tgnet.vcxproj">
-      <Project>{148400b0-9867-414f-a982-b872b15f45e6}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

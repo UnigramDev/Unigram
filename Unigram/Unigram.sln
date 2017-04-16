@@ -39,9 +39,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Tasks", "Uni
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram.Webview", "Unigram.WebView\Unigram.Webview.csproj", "{AC06B3E5-5174-4381-A167-8F912D61F3DE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tgnet", "tgnet\tgnet.vcxproj", "{148400B0-9867-414F-A982-B872B15F45E6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Telegram.Api.Native", "Telegram.Api.Native\Telegram.Api.Native.vcxproj", "{6A7D27D0-36E8-4364-AC69-740B75EE653C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Shared", "Unigram.Native.Shared\Unigram.Native.Shared.vcxitems", "{C50F57B3-33E1-4235-9D02-0C9F1C4176A8}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{1b521e77-46bd-4d60-89f6-d68e9bb9abff}*SharedItemsImports = 4
+		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{6a7d27d0-36e8-4364-ac69-740b75ee653c}*SharedItemsImports = 4
+		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{c50f57b3-33e1-4235-9d02-0c9f1c4176a8}*SharedItemsImports = 9
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
 		Debug|x64 = Debug|x64
@@ -279,24 +286,24 @@ Global
 		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Release|x64.Build.0 = Release|x64
 		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Release|x86.ActiveCfg = Release|x86
 		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Release|x86.Build.0 = Release|x86
-		{148400B0-9867-414F-A982-B872B15F45E6}.Debug|ARM.ActiveCfg = Debug|ARM
-		{148400B0-9867-414F-A982-B872B15F45E6}.Debug|ARM.Build.0 = Debug|ARM
-		{148400B0-9867-414F-A982-B872B15F45E6}.Debug|x64.ActiveCfg = Debug|x64
-		{148400B0-9867-414F-A982-B872B15F45E6}.Debug|x64.Build.0 = Debug|x64
-		{148400B0-9867-414F-A982-B872B15F45E6}.Debug|x86.ActiveCfg = Debug|Win32
-		{148400B0-9867-414F-A982-B872B15F45E6}.Debug|x86.Build.0 = Debug|Win32
-		{148400B0-9867-414F-A982-B872B15F45E6}.Preview|ARM.ActiveCfg = Release|ARM
-		{148400B0-9867-414F-A982-B872B15F45E6}.Preview|ARM.Build.0 = Release|ARM
-		{148400B0-9867-414F-A982-B872B15F45E6}.Preview|x64.ActiveCfg = Release|x64
-		{148400B0-9867-414F-A982-B872B15F45E6}.Preview|x64.Build.0 = Release|x64
-		{148400B0-9867-414F-A982-B872B15F45E6}.Preview|x86.ActiveCfg = Release|Win32
-		{148400B0-9867-414F-A982-B872B15F45E6}.Preview|x86.Build.0 = Release|Win32
-		{148400B0-9867-414F-A982-B872B15F45E6}.Release|ARM.ActiveCfg = Release|ARM
-		{148400B0-9867-414F-A982-B872B15F45E6}.Release|ARM.Build.0 = Release|ARM
-		{148400B0-9867-414F-A982-B872B15F45E6}.Release|x64.ActiveCfg = Release|x64
-		{148400B0-9867-414F-A982-B872B15F45E6}.Release|x64.Build.0 = Release|x64
-		{148400B0-9867-414F-A982-B872B15F45E6}.Release|x86.ActiveCfg = Release|Win32
-		{148400B0-9867-414F-A982-B872B15F45E6}.Release|x86.Build.0 = Release|Win32
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|ARM.ActiveCfg = Debug|ARM
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|ARM.Build.0 = Debug|ARM
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|x64.ActiveCfg = Debug|x64
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|x64.Build.0 = Debug|x64
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|x86.ActiveCfg = Debug|Win32
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|x86.Build.0 = Debug|Win32
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Preview|ARM.ActiveCfg = Release|ARM
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Preview|ARM.Build.0 = Release|ARM
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Preview|x64.ActiveCfg = Release|x64
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Preview|x64.Build.0 = Release|x64
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Preview|x86.ActiveCfg = Release|Win32
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Preview|x86.Build.0 = Release|Win32
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|ARM.ActiveCfg = Release|ARM
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|ARM.Build.0 = Release|ARM
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|x64.ActiveCfg = Release|x64
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|x64.Build.0 = Release|x64
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|x86.ActiveCfg = Release|Win32
+		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -306,6 +313,5 @@ Global
 		{904AC506-51A0-474E-9F55-EC3FEBBCCCD9} = {C385BB20-B82D-496E-A38D-835D017AC0EA}
 		{3520C5E6-F0C2-468F-8970-372414C233DC} = {C385BB20-B82D-496E-A38D-835D017AC0EA}
 		{6766A2C0-AB30-43CC-9EF3-7DDC13736A38} = {C385BB20-B82D-496E-A38D-835D017AC0EA}
-		{148400B0-9867-414F-A982-B872B15F45E6} = {C385BB20-B82D-496E-A38D-835D017AC0EA}
 	EndGlobalSection
 EndGlobal
