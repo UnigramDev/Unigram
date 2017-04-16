@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PlaceholderImageSource.h"
+
 using namespace concurrency;
 using namespace D2D1;
 using namespace Windows::Storage;
@@ -25,7 +26,7 @@ void PlaceholderImageSource::Draw(Color clear, Platform::String^ text, IRandomAc
 	//gradientStops[0].position = 0.0f;
 	//gradientStops[1].color = D2D1::ColorF(end.R / 255.0f, end.G / 255.0f, end.B / 255.0f, end.A / 255.0f);
 	//gradientStops[1].position = 1.0f;
-	//DX::ThrowIfFailed(m_instance->m_d2dContext->CreateGradientStopCollection(
+	//ThrowIfFailed(m_instance->m_d2dContext->CreateGradientStopCollection(
 	//	gradientStops,
 	//	2,
 	//	D2D1_GAMMA_2_2,
@@ -33,7 +34,7 @@ void PlaceholderImageSource::Draw(Color clear, Platform::String^ text, IRandomAc
 	//	&pGradientStops)
 	//);
 
-	//DX::ThrowIfFailed(m_instance->m_d2dContext->CreateLinearGradientBrush(
+	//ThrowIfFailed(m_instance->m_d2dContext->CreateLinearGradientBrush(
 	//	D2D1::LinearGradientBrushProperties(
 	//		D2D1::Point2F(0, 0),
 	//		D2D1::Point2F(0, 192)),
@@ -58,7 +59,7 @@ PlaceholderImageSource::PlaceholderImageSource(int width, int height)
 	D2D1_SIZE_U size = { width, height };
 	D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		m_d2dContext->CreateBitmap(
 			size, (const void *)0, 0,
 			&properties,
@@ -86,7 +87,7 @@ void PlaceholderImageSource::CreateDeviceIndependentResources()
 	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
 
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		D2D1CreateFactory(
 			D2D1_FACTORY_TYPE_SINGLE_THREADED,
 			__uuidof(ID2D1Factory1),
@@ -94,7 +95,7 @@ void PlaceholderImageSource::CreateDeviceIndependentResources()
 			&m_d2dFactory)
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		CoCreateInstance(
 			CLSID_WICImagingFactory,
 			nullptr,
@@ -102,7 +103,7 @@ void PlaceholderImageSource::CreateDeviceIndependentResources()
 			IID_PPV_ARGS(&m_wicFactory))
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		DWriteCreateFactory(
 			DWRITE_FACTORY_TYPE_SHARED,
 			__uuidof(IDWriteFactory),
@@ -128,7 +129,7 @@ void PlaceholderImageSource::CreateDeviceResources()
 	ComPtr<ID3D11Device> device;
 	ComPtr<ID3D11DeviceContext> context;
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		D3D11CreateDevice(
 			nullptr,                    // specify null to use the default adapter
 			D3D_DRIVER_TYPE_HARDWARE,
@@ -145,15 +146,15 @@ void PlaceholderImageSource::CreateDeviceResources()
 
 	ComPtr<IDXGIDevice> dxgiDevice;
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		device.As(&dxgiDevice)
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		m_d2dFactory->CreateDevice(dxgiDevice.Get(), &m_d2dDevice)
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		m_d2dDevice->CreateDeviceContext(
 			D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
 			&m_d2dContext)
@@ -169,7 +170,7 @@ void PlaceholderImageSource::BeginDraw(Color clear)
 
 void PlaceholderImageSource::EndDraw()
 {
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		m_d2dContext->EndDraw()
 	);
 
@@ -179,7 +180,7 @@ void PlaceholderImageSource::EndDraw()
 	//	ComPtr<IStream> stream;
 	//	ComPtr<ISequentialStream> ss;
 	//	auto inMemStream = ref new InMemoryRandomAccessStream();
-	//	DX::ThrowIfFailed(
+	//	ThrowIfFailed(
 	//		CreateStreamOverRandomAccessStream(inMemStream, IID_PPV_ARGS(&stream))
 	//		);
 
@@ -195,7 +196,7 @@ void PlaceholderImageSource::DrawText(Platform::String^ text, int x, int y, Plat
 	D2D1_COLOR_F textColor, float fontSize, DWRITE_FONT_STYLE fontStyle,
 	DWRITE_FONT_WEIGHT fontWeight)
 {
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		m_dwriteFactory->CreateTextFormat(
 			fontFamilyName->Data(),				 // font family name
 			nullptr,							 // system font collection
@@ -209,18 +210,18 @@ void PlaceholderImageSource::DrawText(Platform::String^ text, int x, int y, Plat
 	);
 
 	// Set text alignment.
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING)
 	);
 
 	// Set paragraph alignment.
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
 	);
 
 	D2D1_RECT_F layoutRect = { x, y, m_renderTargetSize.width, m_renderTargetSize.height };
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		m_d2dContext->CreateSolidColorBrush(
 			textColor,
 			&m_textBrush
@@ -232,7 +233,7 @@ void PlaceholderImageSource::DrawText(Platform::String^ text, int x, int y, Plat
 
 void PlaceholderImageSource::MeasureText(Platform::String^ text, Platform::String^ fontFamilyName, float fontSize, DWRITE_FONT_STYLE fontStyle, DWRITE_FONT_WEIGHT fontWeight, DWRITE_TEXT_METRICS* textMetrics)
 {
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		m_dwriteFactory->CreateTextFormat(
 			fontFamilyName->Data(),				 // font family name
 			nullptr,							 // system font collection
@@ -245,11 +246,11 @@ void PlaceholderImageSource::MeasureText(Platform::String^ text, Platform::Strin
 		)
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING)
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
 	);
 
@@ -263,7 +264,7 @@ void PlaceholderImageSource::MeasureText(Platform::String^ text, Platform::Strin
 		&pTextLayout_  // The IDWriteTextLayout interface pointer.
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		pTextLayout_->GetMetrics(textMetrics)
 	);
 }
@@ -309,7 +310,7 @@ void PlaceholderImageSource::SaveBitmapToFile(Streams::IRandomAccessStream^ rand
 	//{
 		// Convert the RandomAccessStream to an IStream.
 	ComPtr<IStream> stream;
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		CreateStreamOverRandomAccessStream(randomAccessStream, IID_PPV_ARGS(&stream))
 	);
 
@@ -326,7 +327,7 @@ void PlaceholderImageSource::SaveBitmapToStream(
 )
 {
 	ComPtr<IWICBitmapEncoder> wicBitmapEncoder;
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		wicFactory2->CreateEncoder(
 			wicFormat,
 			nullptr,    // No preferred codec vendor.
@@ -334,7 +335,7 @@ void PlaceholderImageSource::SaveBitmapToStream(
 		)
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		wicBitmapEncoder->Initialize(
 			stream,
 			WICBitmapEncoderNoCache
@@ -342,14 +343,14 @@ void PlaceholderImageSource::SaveBitmapToStream(
 	);
 
 	ComPtr<IWICBitmapFrameEncode> wicFrameEncode;
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		wicBitmapEncoder->CreateNewFrame(
 			&wicFrameEncode,
 			nullptr     // No encoder options.
 		)
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		wicFrameEncode->Initialize(nullptr)
 	);
 
@@ -357,7 +358,7 @@ void PlaceholderImageSource::SaveBitmapToStream(
 	d2dContext->GetDevice(&d2dDevice);
 
 	ComPtr<IWICImageEncoder> imageEncoder;
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		wicFactory2->CreateImageEncoder(
 			d2dDevice.Get(),
 			&imageEncoder
@@ -374,7 +375,7 @@ void PlaceholderImageSource::SaveBitmapToStream(
 	parames->PixelWidth = imageSize.width;
 	parames->Top = 0;
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		imageEncoder->WriteFrame(
 			d2dBitmap.Get(),
 			wicFrameEncode.Get(),
@@ -383,15 +384,15 @@ void PlaceholderImageSource::SaveBitmapToStream(
 		)
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		wicFrameEncode->Commit()
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		wicBitmapEncoder->Commit()
 	);
 
-	DX::ThrowIfFailed(
+	ThrowIfFailed(
 		stream->Commit(STGC_DEFAULT)
 	);
 }
