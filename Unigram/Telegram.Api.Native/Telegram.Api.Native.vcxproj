@@ -29,7 +29,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6a7d27d0-36e8-4364-ac69-740b75ee653c}</ProjectGuid>
     <Keyword>DynamicLibrary</Keyword>
-    <RootNamespace>Telegram_Api_Native</RootNamespace>
+    <RootNamespace>Telegram.Api.Native</RootNamespace>
     <DefaultLanguage>it-IT</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
@@ -130,14 +130,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir "$(OutDir)Metadata"
-move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
-rmdir "$(OutDir)Metadata" /s /q</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -147,14 +141,8 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir "$(OutDir)Metadata"
-move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
-rmdir "$(OutDir)Metadata" /s /q</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm'">
     <ClCompile>
@@ -164,14 +152,8 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir "$(OutDir)Metadata"
-move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
-rmdir "$(OutDir)Metadata" /s /q</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm'">
     <ClCompile>
@@ -181,14 +163,8 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir "$(OutDir)Metadata"
-move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
-rmdir "$(OutDir)Metadata" /s /q</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -198,14 +174,8 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir "$(OutDir)Metadata"
-move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
-rmdir "$(OutDir)Metadata" /s /q</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -215,23 +185,21 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir "$(OutDir)Metadata"
-move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
-rmdir "$(OutDir)Metadata" /s /q</Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Connection.h" />
     <ClInclude Include="ConnectionManager.h" />
+    <ClInclude Include="IEventObject.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="TLBinaryReader.h" />
     <ClInclude Include="TLBinaryWriter.h" />
     <ClInclude Include="TLObject.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Connection.cpp" />
     <ClCompile Include="ConnectionManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -241,10 +209,23 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TLBinaryReader.cpp" />
     <ClCompile Include="TLBinaryWriter.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\OpenSSL.Static.Uwp.1.0.2\build\native\OpenSSL.Static.Uwp.targets" Condition="Exists('..\packages\OpenSSL.Static.Uwp.1.0.2\build\native\OpenSSL.Static.Uwp.targets')" />
+    <Import Project="..\packages\zlib.Static.Uwp.1.2.3\build\native\zlib.Static.Uwp.targets" Condition="Exists('..\packages\zlib.Static.Uwp.1.2.3\build\native\zlib.Static.Uwp.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Questo progetto fa riferimento a uno o più pacchetti NuGet che non sono presenti in questo computer. Usare lo strumento di ripristino dei pacchetti NuGet per scaricarli. Per altre informazioni, vedere http://go.microsoft.com/fwlink/?LinkID=322105. Il file mancante è {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\OpenSSL.Static.Uwp.1.0.2\build\native\OpenSSL.Static.Uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OpenSSL.Static.Uwp.1.0.2\build\native\OpenSSL.Static.Uwp.targets'))" />
+    <Error Condition="!Exists('..\packages\zlib.Static.Uwp.1.2.3\build\native\zlib.Static.Uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\zlib.Static.Uwp.1.2.3\build\native\zlib.Static.Uwp.targets'))" />
+  </Target>
 </Project>

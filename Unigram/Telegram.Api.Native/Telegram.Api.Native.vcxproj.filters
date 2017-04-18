@@ -11,6 +11,8 @@
     <ClCompile Include="ConnectionManager.cpp" />
     <ClCompile Include="TLBinaryReader.cpp" />
     <ClCompile Include="TLBinaryWriter.cpp" />
+    <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -18,5 +20,11 @@
     <ClInclude Include="ConnectionManager.h" />
     <ClInclude Include="TLBinaryReader.h" />
     <ClInclude Include="TLBinaryWriter.h" />
+    <ClInclude Include="Connection.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="IEventObject.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
