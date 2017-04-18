@@ -1,12 +1,14 @@
 ﻿#include "pch.h"
 #include "NotificationTask.h"
 
+#include <ppltasks.h>
 #include <iostream>  
 #include <iomanip>
 #include <sstream>
 #include <windows.h>
 #include "Shlwapi.h"
 
+using namespace concurrency;
 using namespace Windows::UI::Notifications;
 using namespace Windows::ApplicationModel::Resources;
 using namespace Windows::Data::Json;
@@ -14,6 +16,8 @@ using namespace Windows::Data::Xml::Dom;
 using namespace Unigram::Native::Tasks;
 using namespace Platform;
 using namespace Windows::Storage;
+using namespace Windows::ApplicationModel::Calls;
+using namespace Windows::Foundation;
 
 void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 {
@@ -77,7 +81,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST")) 
 		{
-			//UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
+			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
 		{
@@ -419,6 +423,16 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 
 void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
 {
+	auto coordinator = VoipCallCoordinator::GetDefault();
+	create_task(coordinator->ReserveCallResourcesAsync("Unigram.Native.Tasks.VoipCallRtcTask")).then([coordinator, caption, message, picture](VoipPhoneCallResourceReservationStatus status)
+	{
+		TimeSpan timeout = { 128000000 };
+		auto call = coordinator->RequestNewIncomingCall("Unigram", caption, message, ref new Windows::Foundation::Uri(picture), "Unigram", nullptr, nullptr, nullptr, VoipPhoneCallMedia::Audio, timeout);
+	});
+
+
+	return;
+
 	std::wstring key = loc_key->Data();
 	std::wstring actions = L"";
 	if (group != nullptr && key.find(L"CHANNEL"))
