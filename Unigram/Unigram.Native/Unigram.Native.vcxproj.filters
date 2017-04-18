@@ -175,4 +175,7 @@
     <ClInclude Include="MediaCapturePreview.h" />
     <ClInclude Include="DeviceLostHelper.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>

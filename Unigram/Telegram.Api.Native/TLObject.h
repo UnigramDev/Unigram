@@ -11,8 +11,8 @@ namespace Telegram
 
 			public interface class ITLObject
 			{
-				void Read(TLBinaryReader^ reader);
-				void Write(TLBinaryWriter^ writer);
+				void Read(_In_ TLBinaryReader^ reader);
+				void Write(_In_ TLBinaryWriter^ writer);
 			};
 
 		}
