@@ -412,19 +412,6 @@
       <Project>{7789c8b7-887c-46b6-bd76-952c590b1853}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\zlib.Static.Uwp.1.2.3\build\native\zlib.Static.Uwp.targets" Condition="Exists('..\packages\zlib.Static.Uwp.1.2.3\build\native\zlib.Static.Uwp.targets')" />
-    <Import Project="..\packages\OpenSSL.Static.Uwp.1.0.2\build\native\OpenSSL.Static.Uwp.targets" Condition="Exists('..\packages\OpenSSL.Static.Uwp.1.0.2\build\native\OpenSSL.Static.Uwp.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>Questo progetto fa riferimento a uno o più pacchetti NuGet che non sono presenti in questo computer. Usare lo strumento di ripristino dei pacchetti NuGet per scaricarli. Per altre informazioni, vedere http://go.microsoft.com/fwlink/?LinkID=322105. Il file mancante è {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\zlib.Static.Uwp.1.2.3\build\native\zlib.Static.Uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\zlib.Static.Uwp.1.2.3\build\native\zlib.Static.Uwp.targets'))" />
-    <Error Condition="!Exists('..\packages\OpenSSL.Static.Uwp.1.0.2\build\native\OpenSSL.Static.Uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OpenSSL.Static.Uwp.1.0.2\build\native\OpenSSL.Static.Uwp.targets'))" />
-  </Target>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

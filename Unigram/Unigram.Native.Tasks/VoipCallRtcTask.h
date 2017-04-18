@@ -1,5 +1,7 @@
 #pragma once
 
+#include <agile.h>
+
 using namespace Platform;
 using namespace Windows::Data::Json;
 using namespace Windows::ApplicationModel::Background;
@@ -20,10 +22,10 @@ namespace Unigram
 				virtual void Run(IBackgroundTaskInstance^ taskInstance);
 
 			private:
-				void OnCanceled(Windows::ApplicationModel::Background::IBackgroundTaskInstance^ taskInstance, Windows::ApplicationModel::Background::BackgroundTaskCancellationReason reason);
+				void OnCanceled(IBackgroundTaskInstance^ taskInstance, BackgroundTaskCancellationReason reason);
 
 			private:
-				Platform::Agile<Windows::ApplicationModel::Background::BackgroundTaskDeferral> m_deferral = nullptr;
+				Agile<BackgroundTaskDeferral> m_deferral = nullptr;
 			};
 		}
 	}
