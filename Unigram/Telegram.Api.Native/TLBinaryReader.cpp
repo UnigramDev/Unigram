@@ -5,39 +5,54 @@ using namespace Telegram::Api::Native;
 
 TLBinaryReader::TLBinaryReader()
 {
+	I_WANT_TO_DIE_IS_THE_NEW_TODO
 }
 
 int32 TLBinaryReader::ReadInt32()
 {
-	return 0;
+	I_WANT_TO_DIE_IS_THE_NEW_TODO
+
+		return 0;
 }
 
 int64 TLBinaryReader::ReadInt64()
 {
-	return 0;
+	I_WANT_TO_DIE_IS_THE_NEW_TODO
+
+		return 0;
 }
 
 bool TLBinaryReader::ReadBool()
 {
-	return false;
+	I_WANT_TO_DIE_IS_THE_NEW_TODO
+
+		return false;
 }
 
 uint8 TLBinaryReader::ReadByte()
 {
-	return 0;
+	I_WANT_TO_DIE_IS_THE_NEW_TODO
+
+		return 0;
 }
 
 String^ TLBinaryReader::ReadString()
 {
-	return nullptr;
+	I_WANT_TO_DIE_IS_THE_NEW_TODO
+
+		return nullptr;
 }
 
 Array<uint8>^ TLBinaryReader::ReadByteArray()
 {
-	return nullptr;
+	I_WANT_TO_DIE_IS_THE_NEW_TODO
+
+		return nullptr;
 }
 
 double TLBinaryReader::ReadDouble()
 {
-	return 0.0;
+	I_WANT_TO_DIE_IS_THE_NEW_TODO
+
+		return 0.0;
 }

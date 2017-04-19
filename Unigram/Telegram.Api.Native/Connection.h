@@ -1,7 +1,9 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include <openssl/aes.h>
 #include "Timer.h"
+#include "Datacenter.h"
 
 namespace Telegram
 {
@@ -18,30 +20,73 @@ namespace Telegram
 				Push = 8
 			};
 
-			public ref class Connection sealed
+			ref class Connection sealed : IEventObject
 			{
 				friend ref class ConnectionManager;
 
 			public:
-				property Telegram::Api::Native::ConnectionType ConnectionType
+				//Connection
+
+				property ConnectionType Type
 				{
-					Telegram::Api::Native::ConnectionType get();
+					ConnectionType get();
 				}
 
-				property uint32 ConnectionToken
+				property Telegram::Api::Native::Datacenter^ Datacenter
+				{
+					Telegram::Api::Native::Datacenter^ get();
+				}
+
+				property uint32 Token
 				{
 					uint32 get();
 				}
 
 				void Connect();
+				void Suspend();
+				//void SendData(_In_ NativeByteBuffer^ buffer, bool reportAck);
+
+
+				//ConnectionSession
+
+				property int64 SessionId
+				{
+					int64 get();
+					void set(int64 value);
+				}
+
+				property bool HasMessagesToConfirm
+				{
+					bool get();
+				}
+
+				void RecreateSession();
+				void GenereateNewSessionId();
+				uint32 GenerateMessageSeqNo(bool increment);
+				bool IsMessageIdProcessed(int64 messageId);
+				void AddProcessedMessageId(int64 messageId);
+				void AddMessageToConfirm(int64 messageId);
+				//NetworkMessage^ GenerateConfirmationRequest();
+				bool IsSessionProcessed(int64 sessionId);
+				void AddProcessedSession(int64 sessionId);
 
 			internal:
-				Connection(Telegram::Api::Native::ConnectionType connectionType);
+				Connection(_In_ Telegram::Api::Native::Datacenter^ datacenter, ConnectionType connectionType);
 
 			private:
-				Telegram::Api::Native::ConnectionType m_connectionType;
-				uint32 m_connectionToken;
+				virtual void OnEvent(uint32 events) sealed = IEventObject::OnEvent;
+
+				CriticalSection m_criticalSection;
+
+
+				//Connection
+
+				void Reconnect();
+
+				ConnectionType m_type;
+				uint32 m_token;
 				Timer^ m_reconnectTimer;
+				Telegram::Api::Native::Datacenter^ m_datacenter;
 
 				AES_KEY m_encryptKey;
 				uint8_t m_encryptIv[16];
@@ -52,6 +97,16 @@ namespace Telegram
 				uint8_t m_decryptIv[16];
 				uint32_t m_decryptNum;
 				uint8_t m_decryptCount[16];
+
+
+				//ConnectionSession
+
+				int64 m_sessionId;
+				uint32 m_nextSeqNo  ;
+				int64 m_minProcessedMessageId  ;
+				std::vector<int64> m_processedMessageIds;
+				std::vector<int64> m_messagesIdsForConfirmation;
+				std::vector<int64> m_processedSessionChanges;
 			};
 
 		}

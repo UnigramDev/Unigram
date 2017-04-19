@@ -34,9 +34,10 @@ bool ConnectionManager::IsNetworkAvailable::get()
 
 void ConnectionManager::ScheduleEvent(IEventObject^ eventObject, uint32 timeout)
 {
+	//I want to die
 }
 
 void ConnectionManager::RemoveEvent(IEventObject^ eventObject)
 {
-
+	//I want to die
 }

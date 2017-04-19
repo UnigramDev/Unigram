@@ -9,7 +9,7 @@ namespace Telegram
 		namespace Native
 		{
 
-			ref class Timer : IEventObject
+			ref class Timer sealed : IEventObject
 			{
 			public:
 				property bool Started
@@ -30,7 +30,6 @@ namespace Telegram
 				void Start();
 				void Stop();
 				void SetTimeout(uint32 timeout, bool repeat);
-				virtual void OnEvent(uint32 events);
 
 			internal:
 				Timer(std::function<void()> callback);
@@ -38,6 +37,7 @@ namespace Telegram
 			private:
 				~Timer();
 
+				virtual void OnEvent(uint32 events) sealed = IEventObject::OnEvent;
 
 				bool m_started;
 				bool m_repeatable;
