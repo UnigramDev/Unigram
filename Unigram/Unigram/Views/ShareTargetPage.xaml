@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -174,13 +175,24 @@
             <ProgressBar x:Name="prgSendStatus" VerticalAlignment="Bottom" Background="Transparent"/>
         </Grid>
 
-        <ListView x:Name="lvDialogs"
-                  ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
-                  IsItemClickEnabled="True"
-                  SelectionMode="None"
-                  ItemClick="lvMasterChats_ItemClick"
-                  Grid.Row="1">
+        <controls:DialogsListView x:Name="lvDialogs"
+            ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
+            IsItemClickEnabled="True"
+            SelectionMode="None"
+            ItemClick="lvMasterChats_ItemClick"
+            Grid.Row="1">
             <ListView.Header>
+                <!--
+                <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8">
+                        <controls:SearchTextBox x:Name="SearchDialogs"
+                                                                    Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
+                                                                    PlaceholderText="Search chats and messages"
+                                                                    TextChanged="txtSearch_TextChanged"
+                                                                    Margin="0"/>
+                    </Border>
+                </Grid>
+                -->
                 <StackPanel>
                     <Grid x:Name="ListHeader"
                           BorderThickness="0,0,0,1"
@@ -232,11 +244,31 @@
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.ItemContainerStyleSelector>
+                <selectors:DialogStyleSelector>
+                    <selectors:DialogStyleSelector.DialogStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="0"/>
+                        </Style>
+                    </selectors:DialogStyleSelector.DialogStyle>
+                    <selectors:DialogStyleSelector.PinnedStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                            <Setter Property="Padding" Value="0"/>
+                        </Style>
+                    </selectors:DialogStyleSelector.PinnedStyle>
+                </selectors:DialogStyleSelector>
+            </ListView.ItemContainerStyleSelector>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <items:SimpleDialogListViewItem/>
+                    <items:DialogListViewItem />
                 </DataTemplate>
             </ListView.ItemTemplate>
-        </ListView>
+            <ListView.Footer>
+                <Border Height="6"/>
+            </ListView.Footer>
+        </controls:DialogsListView>
     </Grid>
 </Page>
