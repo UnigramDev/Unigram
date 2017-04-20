@@ -75,28 +75,22 @@ namespace Unigram.Controls.Items
             switch (GetColorIndex(ViewModel.WithId))
             {
                 case 0:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderRedBrush"] as SolidColorBrush;
+                    Placeholder.Fill = Application.Current.Resources["Placeholder0Brush"] as SolidColorBrush;
                     break;
                 case 1:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderGreenBrush"] as SolidColorBrush;
+                    Placeholder.Fill = Application.Current.Resources["Placeholder1Brush"] as SolidColorBrush;
                     break;
                 case 2:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderYellowBrush"] as SolidColorBrush;
+                    Placeholder.Fill = Application.Current.Resources["Placeholder2Brush"] as SolidColorBrush;
                     break;
                 case 3:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderBlueBrush"] as SolidColorBrush;
+                    Placeholder.Fill = Application.Current.Resources["Placeholder3Brush"] as SolidColorBrush;
                     break;
                 case 4:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderPurpleBrush"] as SolidColorBrush;
+                    Placeholder.Fill = Application.Current.Resources["Placeholder4Brush"] as SolidColorBrush;
                     break;
                 case 5:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderPinkBrush"] as SolidColorBrush;
-                    break;
-                case 6:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderCyanBrush"] as SolidColorBrush;
-                    break;
-                case 7:
-                    Placeholder.Fill = Application.Current.Resources["PlaceholderOrangeBrush"] as SolidColorBrush;
+                    Placeholder.Fill = Application.Current.Resources["Placeholder5Brush"] as SolidColorBrush;
                     break;
                 default:
                     Placeholder.Fill = Application.Current.Resources["PlaceholderListViewItemPlaceholderBackgroundThemeBrush"] as SolidColorBrush;
@@ -130,7 +124,7 @@ namespace Unigram.Controls.Items
             }
             catch { }
 
-            return id % 8;
+            return id % 6;
         }
 
         private void UpdateTimeLabel()
