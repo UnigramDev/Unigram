@@ -128,6 +128,7 @@
     <Compile Include="Common\ObservableCollectionEx.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Dependency\UnigramContainerBuilder.cs" />
+    <Compile Include="EncryptionKeyEmojifier.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Managers\BackgroundTaskManager.cs" />
     <Compile Include="Managers\ResourcesManager.cs" />
