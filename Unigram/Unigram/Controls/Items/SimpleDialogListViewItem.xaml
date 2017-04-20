@@ -9,42 +9,54 @@
     d:DesignHeight="52"
     d:DesignWidth="400">
 
-    <Grid Margin="0,8">
+    <Grid Padding="12,6" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-        <!-- User photo -->
-        <Ellipse x:Name="Placeholder"
-                 Width="36"
-                 Height="36"
-                 VerticalAlignment="Top"
-                 Fill="Red"/>
-        <Ellipse Width="36"
-                 Height="36"
-                 VerticalAlignment="Top">
+        <Ellipse Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2">
             <Ellipse.Fill>
-                <ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                <ImageBrush ImageSource="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
             </Ellipse.Fill>
         </Ellipse>
 
-        <!-- Username -->
-        <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="8,0"
-                    Grid.Column="1">
-            <FontIcon Glyph="&#xE125;"
-                      Visibility="{Binding GroupChat}"
-                      Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                      VerticalAlignment="Bottom"
-                      FontSize="16"
-                      Margin="0,0,4,1"/>
-            <TextBlock Text="{Binding FullName}"
-                       MaxLines="1"
-                       TextWrapping="NoWrap"
-                       TextTrimming="CharacterEllipsis"
-                       Style="{StaticResource BaseTextBlockStyle}"/>
-        </StackPanel>
+        <Grid VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid Margin="0,0,4,0" HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <FontIcon x:Name="fiType"
+                          Glyph="&#xE125;"
+                          Visibility="{x:Bind ViewModel.ChatBaseVisibility, Mode=OneWay}"
+                          Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                          VerticalAlignment="Bottom"
+                          FontSize="16"
+                          Margin="0,0,4,1"
+                          Grid.Column="0"/>
+                <TextBlock Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}"
+                           Grid.Column="1"
+                           MaxLines="1"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Style="{StaticResource BaseTextBlockStyle}"/>
+                <Grid Margin="4,0,0,-2" Visibility="{x:Bind ViewModel.VerifiedVisibility, Mode=OneWay}" Grid.Column="2">
+                    <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
+                    <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
+                </Grid>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

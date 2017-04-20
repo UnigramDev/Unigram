@@ -263,7 +263,7 @@
             </ListView.ItemContainerStyleSelector>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <items:DialogListViewItem />
+                    <items:SimpleDialogListViewItem />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
