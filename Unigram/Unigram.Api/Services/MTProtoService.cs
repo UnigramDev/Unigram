@@ -83,28 +83,29 @@ namespace Telegram.Api.Services
 
         public long ClientTicksDelta { get { return _activeTransport.ClientTicksDelta; } }
 
-        //private bool _isInitialized;
+        private bool _isInitialized;
 
         /// <summary>
         /// Получен ли ключ авторизации
         /// </summary>
-        //public bool IsInitialized
-        //{
-        //    get { return _isInitialized; }
-        //    protected set
-        //    {
-        //        if (_isInitialized != value)
-        //        {
-        //            _isInitialized = value;
-        //            RaisePropertyChanged(() => IsInitialized);
-        //        }
-        //    }
-        //}
+        public bool IsInitialized
+        {
+            get { return _isInitialized; }
+            protected set
+            {
+                if (_isInitialized != value)
+                {
+                    _isInitialized = value;
+                    RaisePropertyChanged(() => IsInitialized);
+                }
+            }
+        }
 
         public event EventHandler Initialized;
 
         protected virtual void RaiseInitialized()
         {
+            IsInitialized = true;
             Initialized?.Invoke(this, EventArgs.Empty);
         }
 

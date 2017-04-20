@@ -153,36 +153,25 @@ namespace Unigram.Views
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>() as MTProtoService;
                 prgSendStatus.Value = 20;
 
-                protoService.Initialized += (s, args) =>
+                if (!protoService.IsInitialized)
                 {
-                    prgSendStatus.Value = 30;
-
-                    // Now, prepare the message with the correct date and message itself.
-                    var date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
-                    prgSendStatus.Value = 40;
-
-                    // Send the correct message according to the send content
-                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.Peer, TLMessageState.Sending, true, true, date, txtMessage.Text.Trim(), new TLMessageMediaEmpty(), TLLong.Random(), 0);
-                    prgSendStatus.Value = 50;
-                    cacheService.SyncSendingMessage(message, null, async (m) =>
+                    protoService.Initialized += (s, args) =>
                     {
-                        await protoService.SendMessageAsync(message, () =>
-                        {
-                            // TODO: fast callback
-                        });
+                        SendSharedData(protoService, cacheService, manualResetEvent, dialog);
+                    };
+                    protoService.InitializationFailed += (s, args) =>
+                    {
                         manualResetEvent.Set();
-                        prgSendStatus.Value = 60;
-                    });
-
-                    prgSendStatus.Value = 70;
-                };
-                protoService.InitializationFailed += (s, args) =>
+                    };
+                    cacheService.Init();
+                    prgSendStatus.Value = 80;
+                    protoService.Initialize();
+                }
+                else
                 {
-                    manualResetEvent.Set();
-                };
-                cacheService.Init();
-                prgSendStatus.Value = 80;
-                protoService.Initialize();
+                    prgSendStatus.Value = 80;
+                    SendSharedData(protoService, cacheService, manualResetEvent, dialog);
+                }
                 prgSendStatus.Value = 90;
                 manualResetEvent.WaitOne(4000);
                 prgSendStatus.Value = 100;
@@ -199,6 +188,30 @@ namespace Unigram.Views
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
             sth.ShareOperation.ReportCompleted();
+        }
+
+        private void SendSharedData(IMTProtoService protoService, ICacheService cacheService, ManualResetEvent manualResetEvent, TLDialog dialog)
+        {
+            prgSendStatus.Value = 30;
+
+            // Now, prepare the message with the correct date and message itself.
+            var date = TLUtils.DateToUniversalTimeTLInt(protoService.ClientTicksDelta, DateTime.Now);
+            prgSendStatus.Value = 40;
+
+            // Send the correct message according to the send content
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.Peer, TLMessageState.Sending, true, true, date, txtMessage.Text.Trim(), new TLMessageMediaEmpty(), TLLong.Random(), 0);
+            prgSendStatus.Value = 50;
+            cacheService.SyncSendingMessage(message, null, async (m) =>
+            {
+                await protoService.SendMessageAsync(message, () =>
+                {
+                    // TODO: fast callback
+                });
+                manualResetEvent.Set();
+                prgSendStatus.Value = 60;
+            });
+
+            prgSendStatus.Value = 70;
         }
     }
 }
