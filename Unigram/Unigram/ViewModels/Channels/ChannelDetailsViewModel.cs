@@ -129,6 +129,12 @@ namespace Unigram.ViewModels.Channels
         {
             NavigationService.Navigate(typeof(ChannelKickedPage), _item.ToPeer());
         }
+
+        public RelayCommand ParticipantsCommand => new RelayCommand(ParticipantsExecute);
+        private void ParticipantsExecute()
+        {
+            NavigationService.Navigate(typeof(ChannelParticipantsPage), _item.ToPeer());
+        }
     }
 
     public class TLChannelParticipantBaseComparer : IComparer<TLChannelParticipantBase>

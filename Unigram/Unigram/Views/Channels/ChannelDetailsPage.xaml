@@ -258,7 +258,10 @@
                                           Command="{x:Bind ViewModel.KickedCommand}"
                                           Badge="{x:Bind ViewModel.Full.KickedCount, Mode=OneWay}"
                                           Visibility="{x:Bind ViewModel.Full.HasKickedCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
-
+                        <controls:BadgeButton Content="Members"
+                                          Command="{x:Bind ViewModel.ParticipantsCommand}"
+                                          Badge="{x:Bind ViewModel.Full.ParticipantsCount, Mode=OneWay}"
+                                          Visibility="{x:Bind ViewModel.Full.HasParticipantsCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
                     </local:TableStackPanel>
 
                 </StackPanel>

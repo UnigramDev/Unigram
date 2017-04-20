@@ -111,6 +111,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<ChannelDetailsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelAdminsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelKickedViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<ChannelParticipantsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
             container.ContainerBuilder.RegisterType<UsersSelectionViewModel>(); //.SingleInstance();
             container.ContainerBuilder.RegisterType<CreateChannelStep1ViewModel>(); //.SingleInstance();
