@@ -1,10 +1,12 @@
 ﻿#pragma once
 
+#include <ios>
+#include <fstream>
+
 using namespace Platform;
 using namespace Windows::Data::Json;
 using namespace Windows::ApplicationModel::Background;
 using namespace Windows::Networking::PushNotifications;
-
 
 namespace Unigram
 {
@@ -20,7 +22,7 @@ namespace Unigram
 				virtual void Run(IBackgroundTaskInstance^ taskInstance);
 
 			private:
-				static void UpdateToastAndTiles(String^ content);
+				static void UpdateToastAndTiles(String^ content, std::wofstream* log);
 				static String^ GetCaption(JsonArray^ loc_args, String^ loc_key);
 				static String^ GetMessage(JsonArray^ loc_args, String^ loc_key);
 				static String^ GetLaunch(JsonObject^ custom, String^ loc_key);
