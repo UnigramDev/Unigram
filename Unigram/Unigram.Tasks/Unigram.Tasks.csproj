@@ -117,9 +117,11 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <None Include="project.json" />
     <PRIResource Include="Strings\de\Resources.resw" />
     <PRIResource Include="Strings\pt\Resources.resw" />
     <PRIResource Include="Strings\nl\Resources.resw" />
@@ -133,6 +135,14 @@
     <Compile Include="InteractiveTask.cs" />
     <Compile Include="TLPush.cs" />
     <Compile Include="TLPushUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>5.3.2</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>10.0.2</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unigram.Api\Unigram.Api.csproj">

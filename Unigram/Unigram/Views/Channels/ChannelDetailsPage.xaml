@@ -176,17 +176,12 @@
             </Setter>
         </Style>
     </Page.Resources>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-
-        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
-            <TextBlock Text="Info" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-        </Grid>
-
         <controls:ButtonPageHeader Title="Info"
                                    Glyph="&#xE104;"/>
 
@@ -227,7 +222,7 @@
                                            BorderThickness="0,0,0,1"
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                           Margin="0,24,0,18">
+                                           Margin="0,24,0,0">
                         <controls:HyperButton Content="Shared media"
                                               Command="{Binding MediaCommand}"
                                               Style="{StaticResource HyperButtonStyle}"
@@ -248,6 +243,25 @@
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
+                    </local:TableStackPanel>
+
+                    <local:TableStackPanel x:Name="Group2"
+                                           BorderThickness="0,0,0,1"
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                           Margin="0,24,0,18">
+                        <controls:BadgeButton Content="Admins"
+                                          Command="{x:Bind ViewModel.AdminsCommand}"
+                                          Badge="{x:Bind ViewModel.Full.AdminsCount, Mode=OneWay}"
+                                          Visibility="{x:Bind ViewModel.Full.HasAdminsCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
+                        <controls:BadgeButton Content="Blacklist"
+                                          Command="{x:Bind ViewModel.KickedCommand}"
+                                          Badge="{x:Bind ViewModel.Full.KickedCount, Mode=OneWay}"
+                                          Visibility="{x:Bind ViewModel.Full.HasKickedCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
+                        <controls:BadgeButton Content="Members"
+                                          Command="{x:Bind ViewModel.ParticipantsCommand}"
+                                          Badge="{x:Bind ViewModel.Full.ParticipantsCount, Mode=OneWay}"
+                                          Visibility="{x:Bind ViewModel.Full.HasParticipantsCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
                     </local:TableStackPanel>
 
                 </StackPanel>

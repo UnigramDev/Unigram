@@ -14,32 +14,20 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Views;
+using Unigram.Views.Channels;
 using Windows.Storage;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
-    public class ChannelDetailsViewModel : UnigramViewModelBase
+    public class ChannelDetailsViewModel : ChannelParticipantsViewModelBase
     {
         private readonly IUploadFileManager _uploadFileManager;
 
         public ChannelDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager)
-            : base(protoService, cacheService, aggregator)
+            : base(protoService, cacheService, aggregator, null)
         {
             _uploadFileManager = uploadFileManager;
-        }
-
-        private TLChannel _item;
-        public TLChannel Item
-        {
-            get
-            {
-                return _item;
-            }
-            set
-            {
-                Set(ref _item, value);
-            }
         }
 
         private TLChannelFull _full;
@@ -57,6 +45,8 @@ namespace Unigram.ViewModels.Channels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            // SHOULD NOT CALL BASE!
+
             Item = null;
             Full = null;
 
@@ -128,31 +118,22 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
         }
 
-        public ItemsCollection Participants { get; private set; }
-
-        public class ItemsCollection : IncrementalCollection<TLChannelParticipantBase>
+        public RelayCommand AdminsCommand => new RelayCommand(AdminsExecute);
+        private void AdminsExecute()
         {
-            private readonly IMTProtoService _protoService;
-            private readonly TLInputChannelBase _inputChannel;
-            private readonly TLChannelParticipantsFilterBase _filter;
+            NavigationService.Navigate(typeof(ChannelAdminsPage), _item.ToPeer());
+        }
 
-            public ItemsCollection(IMTProtoService protoService, TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter)
-            {
-                _protoService = protoService;
-                _inputChannel = inputChannel;
-                _filter = filter;
-            }
+        public RelayCommand KickedCommand => new RelayCommand(KickedExecute);
+        private void KickedExecute()
+        {
+            NavigationService.Navigate(typeof(ChannelKickedPage), _item.ToPeer());
+        }
 
-            public override async Task<IList<TLChannelParticipantBase>> LoadDataAsync()
-            {
-                var response = await _protoService.GetParticipantsAsync(_inputChannel, _filter, Items.Count, 200);
-                if (response.IsSucceeded)
-                {
-                    return response.Result.Participants;
-                }
-
-                return new TLChannelParticipantBase[0];
-            }
+        public RelayCommand ParticipantsCommand => new RelayCommand(ParticipantsExecute);
+        private void ParticipantsExecute()
+        {
+            NavigationService.Navigate(typeof(ChannelParticipantsPage), _item.ToPeer());
         }
     }
 

@@ -1,12 +1,17 @@
 ﻿#include "pch.h"
 #include "NotificationTask.h"
 
+#include <ios>
+#include <fstream>
+
+#include <ppltasks.h>
 #include <iostream>  
 #include <iomanip>
 #include <sstream>
 #include <windows.h>
 #include "Shlwapi.h"
 
+using namespace concurrency;
 using namespace Windows::UI::Notifications;
 using namespace Windows::ApplicationModel::Resources;
 using namespace Windows::Data::Json;
@@ -14,9 +19,32 @@ using namespace Windows::Data::Xml::Dom;
 using namespace Unigram::Native::Tasks;
 using namespace Platform;
 using namespace Windows::Storage;
+using namespace Windows::ApplicationModel::Calls;
+using namespace Windows::Foundation;
 
 void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 {
+	auto temp = ApplicationData::Current->LocalFolder->Path;
+	std::wstringstream path;
+	path << temp->Data()
+		<< L"\\background_log.txt";
+
+	std::wofstream log(path.str(), std::ios_base::app | std::ios_base::out);
+
+	time_t rawtime = time(NULL);
+	struct tm timeinfo;
+	wchar_t buffer[80];
+
+	time(&rawtime);
+	localtime_s(&timeinfo, &rawtime);
+
+	wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+	std::wstring str(buffer);
+
+	log << L"[";
+	log << str;
+	log << L"] Starting background task\n";
+
 	auto deferral = taskInstance->GetDeferral();
 	auto details = safe_cast<RawNotification^>(taskInstance->TriggerDetails);
 
@@ -24,15 +52,36 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 	{
 		try
 		{
-			UpdateToastAndTiles(details->Content);
+			UpdateToastAndTiles(details->Content, &log);
 		}
-		catch (Exception^ ex) { }
+		catch (Exception^ ex) 
+		{
+			time(&rawtime);
+			localtime_s(&timeinfo, &rawtime);
+
+			wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+			std::wstring str3(buffer);
+
+			log << L"[";
+			log << str3;
+			log << "] Exception while processing notification";
+		}
 	}
+
+	time(&rawtime);
+	localtime_s(&timeinfo, &rawtime);
+
+	wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+	std::wstring str2(buffer);
+
+	log << L"[";
+	log << str2;
+	log << L"] Quitting background task\n";
 
 	deferral->Complete();
 }
 
-void NotificationTask::UpdateToastAndTiles(String^ content)
+void NotificationTask::UpdateToastAndTiles(String^ content, std::wofstream* log)
 {
 	auto notification = JsonValue::Parse(content)->GetObject();
 	auto data = notification->GetNamedObject("data");
@@ -43,6 +92,20 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 
 	if (data->HasKey("loc_key") == false)
 	{
+		time_t rawtime = time(NULL);
+		struct tm timeinfo;
+		wchar_t buffer[80];
+
+		time(&rawtime);
+		localtime_s(&timeinfo, &rawtime);
+
+		wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+		std::wstring str(buffer);
+
+		*log << L"[";
+		*log << str;
+		*log << L"] Removing a toast notification\n";
+
 		auto custom = data->GetNamedObject("custom");
 		auto group = GetGroup(custom);
 
@@ -62,6 +125,22 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 		auto loc_args = data->GetNamedArray("loc_args");
 		auto custom = data->GetNamedObject("custom", nullptr);
 
+		time_t rawtime = time(NULL);
+		struct tm timeinfo;
+		wchar_t buffer[80];
+
+		time(&rawtime);
+		localtime_s(&timeinfo, &rawtime);
+
+		wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+		std::wstring str(buffer);
+
+		*log << L"[";
+		*log << str;
+		*log << L"] Received notification with loc_key ";
+		*log << loc_key->Data();
+		*log << L"\n";
+
 		auto caption = GetCaption(loc_args, loc_key);
 		auto message = GetMessage(loc_args, loc_key);
 		auto sound = data->GetNamedString("sound", "silent");
@@ -77,7 +156,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content)
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST")) 
 		{
-			//UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
+			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
 		{
@@ -353,8 +432,8 @@ void NotificationTask::UpdateTile(String^ caption, String^ message)
 	xml += L"</binding></visual></tile>";
 
 	auto updater = TileUpdateManager::CreateTileUpdaterForApplication();
-	updater->EnableNotificationQueue(false);
-	updater->EnableNotificationQueueForSquare150x150(false);
+	//updater->EnableNotificationQueue(false);
+	//updater->EnableNotificationQueueForSquare150x150(false);
 
 	auto document = ref new XmlDocument();
 	document->LoadXml(ref new String(xml.c_str()));
@@ -419,6 +498,16 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 
 void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
 {
+	auto coordinator = VoipCallCoordinator::GetDefault();
+	create_task(coordinator->ReserveCallResourcesAsync("Unigram.Native.Tasks.VoipCallRtcTask")).then([coordinator, caption, message, picture](VoipPhoneCallResourceReservationStatus status)
+	{
+		TimeSpan timeout = { 128000000 };
+		auto call = coordinator->RequestNewIncomingCall("Unigram", caption, message, ref new Windows::Foundation::Uri(picture), "Unigram", nullptr, nullptr, nullptr, VoipPhoneCallMedia::Audio, timeout);
+	});
+
+
+	return;
+
 	std::wstring key = loc_key->Data();
 	std::wstring actions = L"";
 	if (group != nullptr && key.find(L"CHANNEL"))

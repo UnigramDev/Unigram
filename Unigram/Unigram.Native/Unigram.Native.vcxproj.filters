@@ -98,16 +98,10 @@
     <ClInclude Include="WebP\WebPImage.h">
       <Filter>WebP</Filter>
     </ClInclude>
-    <ClInclude Include="Helpers\COMHelper.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="Helpers\MediaFoundationHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
     <ClInclude Include="Helpers\MathHelper.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Helpers\DebugHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
     <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRenderer.h">
@@ -178,9 +172,6 @@
     </ClInclude>
     <ClInclude Include="NativeUtils.h" />
     <ClInclude Include="PlaceholderImageSource.h" />
-    <ClInclude Include="Helpers\DirectXEx.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="MediaCapturePreview.h" />
     <ClInclude Include="DeviceLostHelper.h" />
   </ItemGroup>

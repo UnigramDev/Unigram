@@ -2,7 +2,7 @@
 #include <mfobjects.h>
 #include <mfapi.h>
 #include <wrl.h>
-#include "COMHelper.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Microsoft::WRL;
 
