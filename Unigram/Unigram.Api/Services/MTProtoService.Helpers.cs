@@ -265,7 +265,7 @@ namespace Telegram.Api.Services
                 Caption = caption,
                 Object = obj,
                 Message = transportMessage,
-                Callback = t => callback((T)t),
+                Callback = t => callback?.Invoke((T)t),
                 AttemptFailed = attemptFailed,
                 FaultCallback = faultCallback,
                 ClientTicksDelta = clientsTicksDelta,

@@ -1,3 +1,6 @@
 [submodule "Unigram/Unigram.Core/Unidecode/UpdateScript/unidecode"]
 	path = Unigram/Unigram.Core/Unidecode/UpdateScript/unidecode
 	url = https://www.tablix.org/~avian/git/unidecode.git
+[submodule "Unigram/Libraries/libtgvoip"]
+	path = Unigram/Libraries/libtgvoip
+	url = https://github.com/grishka/libtgvoip.git

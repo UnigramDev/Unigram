@@ -40,11 +40,13 @@ namespace Unigram
 			void StopWatchingCurrentDevice();
 
 			event DeviceLostEventHandler^ DeviceLost;
+
 		private:
 			~DeviceLostHelper();
 			void RaiseDeviceLostEvent(IDirect3DDevice^ oldDevice);
 
 			static void CALLBACK OnDeviceLost(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WAIT wait, TP_WAIT_RESULT waitResult);
+
 		private:
 			IDirect3DDevice^ m_device;
 

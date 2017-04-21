@@ -35,6 +35,7 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:ChannelParticipantToTypeConverter x:Key="ChannelParticipantToTypeConverter"/>
             <converters:InvoiceToAmountConverter x:Key="InvoiceToAmountConverter"/>
             <converters:PhoneNumberFormatConverter x:Key="PhoneNumberFormatConverter"/>
             <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />

@@ -28,7 +28,7 @@
       </uap:VisualElements>
       <Extensions>
         <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
-          <BackgroundTasks>
+          <BackgroundTasks ServerName="UnigramHost">
             <Task Type="pushNotification" />
           </BackgroundTasks>
         </Extension>
@@ -37,6 +37,15 @@
             <Task Type="systemEvent" />
           </BackgroundTasks>
         </Extension>
+        <uap:Extension Category="windows.voipCall"/>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.VoIPCallTask">
+          <BackgroundTasks ServerName="UnigramHost">
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
+        <!--<uap:Extension Category="windows.appService" EntryPoint="VoipTasks.AppService">
+          <uap:AppService Name="VoipTasks.AppService" ServerName="VoipHost" />
+        </uap:Extension>-->
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="tg" />
         </uap:Extension>
@@ -82,6 +91,13 @@
         <Path>Unigram.Native.dll</Path>
         <ActivatableClass ActivatableClassId="Unigram.Native.OpusByteStreamHandler" ThreadingModel="both" />
       </InProcessServer>
+    </Extension>
+    <Extension Category="windows.activatableClass.outOfProcessServer">
+      <OutOfProcessServer ServerName="UnigramHost">
+        <Path>UnigramHost.exe</Path>
+        <Instancing>singleInstance</Instancing>
+        <ActivatableClass ActivatableClassId="UnigramHost.Server" />
+      </OutOfProcessServer>
     </Extension>
   </Extensions>
   <Capabilities>

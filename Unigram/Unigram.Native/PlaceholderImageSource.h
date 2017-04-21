@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ppl.h>
-#include "Helpers\DirectXEx.h"
+#include "Helpers\COMHelper.h"
 
 using Concurrency::critical_section;
 using namespace Microsoft::WRL;
