@@ -2,6 +2,7 @@
 #include <zlib.h>
 #include "ConnectionManager.h"
 #include "Connection.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
 
@@ -10,6 +11,16 @@ ConnectionManager^ ConnectionManager::s_instance = nullptr;
 ConnectionManager::ConnectionManager() :
 	m_connectionState(Telegram::Api::Native::ConnectionState::NotInitialized)
 {
+	WSADATA wsaData;
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+	{
+		ThrowWSALastError();
+	}
+}
+
+ConnectionManager::~ConnectionManager()
+{
+	WSACleanup();
 }
 
 ConnectionManager^ ConnectionManager::Instance::get()
