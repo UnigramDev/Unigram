@@ -301,7 +301,7 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="NotificationTask.h" />
-    <ClInclude Include="VoipCallRtcTask.h" />
+    <ClInclude Include="VoIPCallTask.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -316,7 +316,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Preview|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="NotificationTask.cpp" />
-    <ClCompile Include="VoipCallRtcTask.cpp" />
+    <ClCompile Include="VoIPCallTask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="..\unigram.tasks\strings\de\resources.resw" />
