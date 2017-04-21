@@ -59,7 +59,13 @@ namespace Unigram.Controls.Items
 
         private Brush UpdateEllipseBrush(TLMessage message)
         {
-            var brushes = new[] { App.Current.Resources["PlaceholderBlueBrush"], App.Current.Resources["PlaceholderGreenBrush"], App.Current.Resources["PlaceholderRedBrush"], App.Current.Resources["PlaceholderYellowBrush"] };
+            var brushes = new[]
+            {
+                App.Current.Resources["Placeholder0Brush"],
+                App.Current.Resources["Placeholder1Brush"],
+                App.Current.Resources["Placeholder2Brush"],
+                App.Current.Resources["Placeholder3Brush"]
+            };
 
             var mediaDocument = message.Media as TLMessageMediaDocument;
             if (mediaDocument == null)
