@@ -119,60 +119,77 @@ namespace Unigram.Views
 
         private void ProcessBlock(TLPageBase page, TLPageBlockBase block)
         {
-            switch (block.TypeId)
+            switch (block)
             {
-                case TLType.PageBlockCover:
-                    ProcessCover(page, (TLPageBlockCover)block);
+                case TLPageBlockCover cover:
+                    ProcessCover(page, cover);
                     break;
-                case TLType.PageBlockAuthorDate:
-                    ProcessAuthorDate(page, (TLPageBlockAuthorDate)block);
+                case TLPageBlockAuthorDate authorDate:
+                    ProcessAuthorDate(page, authorDate);
                     break;
-                case TLType.PageBlockHeader:
-                case TLType.PageBlockSubheader:
-                case TLType.PageBlockTitle:
-                case TLType.PageBlockSubtitle:
-                case TLType.PageBlockFooter:
-                case TLType.PageBlockParagraph:
+                case TLPageBlockHeader header:
+                case TLPageBlockSubheader subheader:
+                case TLPageBlockTitle title:
+                case TLPageBlockSubtitle subtitle:
+                case TLPageBlockFooter footer:
+                case TLPageBlockParagraph paragraph:
                     ProcessTextBlock(page, block, false);
                     break;
-                case TLType.PageBlockBlockquote:
-                    ProcessBlockquote(page, (TLPageBlockBlockquote)block);
+                case TLPageBlockBlockquote blockquote:
+                    ProcessBlockquote(page, blockquote);
                     break;
-                case TLType.PageBlockDivider:
-                    ProcessDivider(page, (TLPageBlockDivider)block);
+                case TLPageBlockDivider divider:
+                    ProcessDivider(page, divider);
                     break;
-                case TLType.PageBlockPhoto:
-                    ProcessPhoto(page, (TLPageBlockPhoto)block);
+                case TLPageBlockPhoto photo:
+                    ProcessPhoto(page, photo);
                     break;
-                case TLType.PageBlockList:
-                    ProcessList(page, (TLPageBlockList)block);
+                case TLPageBlockList list:
+                    ProcessList(page, list);
                     break;
-                case TLType.PageBlockVideo:
-                    ProcessVideo(page, (TLPageBlockVideo)block);
+                case TLPageBlockVideo video:
+                    ProcessVideo(page, video);
                     break;
-                case TLType.PageBlockEmbedPost:
-                    ProcessEmbedPost(page, (TLPageBlockEmbedPost)block);
+                case TLPageBlockEmbedPost embedPost:
+                    ProcessEmbedPost(page, embedPost);
                     break;
-                case TLType.PageBlockSlideshow:
-                    ProcessSlideshow(page, (TLPageBlockSlideshow)block);
+                case TLPageBlockSlideshow slideshow:
+                    ProcessSlideshow(page, slideshow);
                     break;
-                case TLType.PageBlockCollage:
-                    ProcessCollage(page, (TLPageBlockCollage)block);
+                case TLPageBlockCollage collage:
+                    ProcessCollage(page, collage);
                     break;
-                case TLType.PageBlockEmbed:
-                    ProcessEmbed(page, (TLPageBlockEmbed)block);
+                case TLPageBlockEmbed embed:
+                    ProcessEmbed(page, embed);
                     break;
-                case TLType.PageBlockPullquote:
-                    ProcessPullquote(page, (TLPageBlockPullquote)block);
+                case TLPageBlockPullquote pullquote:
+                    ProcessPullquote(page, pullquote);
                     break;
-                case TLType.PageBlockAnchor:
-                    ProcessAnchor(page, (TLPageBlockAnchor)block);
+                case TLPageBlockAnchor anchor:
+                    ProcessAnchor(page, anchor);
                     break;
-                case TLType.PageBlockPreformatted:
-                case TLType.PageBlockUnsupported:
+                case TLPageBlockPreformatted preformatted:
+                    ProcesPreformatted(page, preformatted);
+                    break;
+                case TLPageBlockUnsupported unsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
                     break;
             }
+        }
+
+        private void ProcesPreformatted(TLPageBase page, TLPageBlockPreformatted block)
+        {
+            _containers.Push(new StackPanel
+            {
+                Style = Resources["BlockPreformattedStyle"] as Style,
+                Margin = new Thickness(0, 0, 0, 12),
+                Padding = new Thickness(0, 8, 0, 0)
+            });
+
+            ProcessTextBlock(page, block, false);
+
+            var panel = _containers.Pop();
+            _containers.Peek().Children.Add(panel);
         }
 
         private void ProcessAnchor(TLPageBase page, TLPageBlockAnchor block)
@@ -530,46 +547,49 @@ namespace Unigram.Views
         private void ProcessTextBlock(TLPageBase page, TLPageBlockBase block, bool caption)
         {
             TLRichTextBase text = null;
-            switch (block.TypeId)
+            switch (block)
             {
-                case TLType.PageBlockTitle:
-                    text = ((TLPageBlockTitle)block).Text;
+                case TLPageBlockTitle title:
+                    text = title.Text;
                     break;
-                case TLType.PageBlockSubtitle:
-                    text = ((TLPageBlockSubtitle)block).Text;
+                case TLPageBlockSubtitle subtitle:
+                    text = subtitle.Text;
                     break;
-                case TLType.PageBlockHeader:
-                    text = ((TLPageBlockHeader)block).Text;
+                case TLPageBlockHeader header:
+                    text = header.Text;
                     break;
-                case TLType.PageBlockSubheader:
-                    text = ((TLPageBlockSubheader)block).Text;
+                case TLPageBlockSubheader subheader:
+                    text = subheader.Text;
                     break;
-                case TLType.PageBlockFooter:
-                    text = ((TLPageBlockFooter)block).Text;
+                case TLPageBlockFooter footer:
+                    text = footer.Text;
                     break;
-                case TLType.PageBlockParagraph:
-                    text = ((TLPageBlockParagraph)block).Text;
+                case TLPageBlockParagraph paragraph:
+                    text = paragraph.Text;
                     break;
-                case TLType.PageBlockPhoto:
-                    text = ((TLPageBlockPhoto)block).Caption;
+                case TLPageBlockPreformatted preformatted:
+                    text = preformatted.Text;
                     break;
-                case TLType.PageBlockVideo:
-                    text = ((TLPageBlockVideo)block).Caption;
+                case TLPageBlockPhoto photo:
+                    text = photo.Caption;
                     break;
-                case TLType.PageBlockSlideshow:
-                    text = ((TLPageBlockSlideshow)block).Caption;
+                case TLPageBlockVideo video:
+                    text = video.Caption;
                     break;
-                case TLType.PageBlockEmbed:
-                    text = ((TLPageBlockEmbed)block).Caption;
+                case TLPageBlockSlideshow slideshow:
+                    text = slideshow.Caption;
                     break;
-                case TLType.PageBlockEmbedPost:
-                    text = ((TLPageBlockEmbedPost)block).Caption;
+                case TLPageBlockEmbed embed:
+                    text = embed.Caption;
                     break;
-                case TLType.PageBlockBlockquote:
-                    text = caption ? ((TLPageBlockBlockquote)block).Caption : ((TLPageBlockBlockquote)block).Text;
+                case TLPageBlockEmbedPost embedPost:
+                    text = embedPost.Caption;
                     break;
-                case TLType.PageBlockPullquote:
-                    text = caption ? ((TLPageBlockPullquote)block).Caption : ((TLPageBlockPullquote)block).Text;
+                case TLPageBlockBlockquote blockquote:
+                    text = caption ? blockquote.Caption : blockquote.Text;
+                    break;
+                case TLPageBlockPullquote pullquote:
+                    text = caption ? pullquote.Caption : pullquote.Text;
                     break;
             }
 
@@ -681,17 +701,18 @@ namespace Unigram.Views
 
         private void ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block)
         {
-            var textBlock = new TextBlock();
-            var span = new Span();
-            textBlock.FontSize = 14;
-            textBlock.Inlines.Add(new Run { Text = "By " });
-            textBlock.Inlines.Add(span);
-            textBlock.TextWrapping = TextWrapping.Wrap;
-            textBlock.Margin = new Thickness(12, 0, 12, 12);
-            textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-            ProcessText(block.Author, span);
+            var textBlock = new TextBlock { Style = Resources["AuthorDateTextBlockStyle"] as Style };
 
-            textBlock.Inlines.Add(new Run { Text = " — " });
+            if (block.Author.TypeId != TLType.TextEmpty)
+            {
+                var span = new Span();
+                textBlock.Inlines.Add(new Run { Text = "By " });
+                textBlock.Inlines.Add(span);
+                ProcessText(block.Author, span);
+
+                textBlock.Inlines.Add(new Run { Text = " — " });
+            }
+
             //textBlock.Inlines.Add(new Run { Text = DateTimeFormatter.LongDate.Format(BindConvert.Current.DateTime(block.PublishedDate)) });
             textBlock.Inlines.Add(new Run { Text = BindConvert.Current.DateTime(block.PublishedDate).ToString("dd MMMM yyyy") });
 
