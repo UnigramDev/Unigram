@@ -782,6 +782,7 @@ namespace Telegram.Api.TL
 				case TLType.PageBlockEmbedPost: return (T)(Object)new TLPageBlockEmbedPost(from);
 				case TLType.PageBlockCollage: return (T)(Object)new TLPageBlockCollage(from);
 				case TLType.PageBlockSlideshow: return (T)(Object)new TLPageBlockSlideshow(from);
+				case TLType.PageBlockChannel: return (T)(Object)new TLPageBlockChannel(from);
 				case TLType.PagePart: return (T)(Object)new TLPagePart(from);
 				case TLType.PageFull: return (T)(Object)new TLPageFull(from);
 				case TLType.PhoneCallDiscardReasonMissed: return (T)(Object)new TLPhoneCallDiscardReasonMissed(from);

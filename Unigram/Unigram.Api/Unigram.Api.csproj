@@ -936,6 +936,7 @@
     <Compile Include="TL\TLPageBlockAuthorDate.cs" />
     <Compile Include="TL\TLPageBlockBase.cs" />
     <Compile Include="TL\TLPageBlockBlockquote.cs" />
+    <Compile Include="TL\TLPageBlockChannel.cs" />
     <Compile Include="TL\TLPageBlockCollage.cs" />
     <Compile Include="TL\TLPageBlockCover.cs" />
     <Compile Include="TL\TLPageBlockDivider.cs" />
