@@ -721,12 +721,9 @@ namespace Unigram.Views
 
         private void ProcessText(TLRichTextBase text, Span span)
         {
-            switch (text.TypeId)
+            switch (text)
             {
-                case TLType.TextPlain:
-                    var plainText = (TLTextPlain)text;
-
-                    // Strikethrough fallback
+                case TLTextPlain plainText:
                     if (GetIsStrikethrough(span))
                     {
                         span.Inlines.Add(new Run { Text = StrikethroughFallback(plainText.Text) });
@@ -736,8 +733,7 @@ namespace Unigram.Views
                         span.Inlines.Add(new Run { Text = plainText.Text });
                     }
                     break;
-                case TLType.TextConcat:
-                    var concatText = (TLTextConcat)text;
+                case TLTextConcat concatText:
                     foreach (var concat in concatText.Texts)
                     {
                         var concatRun = new Span();
@@ -745,50 +741,38 @@ namespace Unigram.Views
                         ProcessText(concat, concatRun);
                     }
                     break;
-                case TLType.TextBold:
-                    var boldText = (TLTextBold)text;
+                case TLTextBold boldText:
                     span.FontWeight = FontWeights.SemiBold;
                     ProcessText(boldText.Text, span);
                     break;
-                case TLType.TextEmail:
-                    var emailText = (TLTextEmail)text;
+                case TLTextEmail emailText:
                     ProcessText(emailText.Text, span);
                     break;
-                case TLType.TextFixed:
-                    var fixedText = (TLTextFixed)text;
+                case TLTextFixed fixedText:
                     span.FontFamily = new FontFamily("Consolas");
                     ProcessText(fixedText.Text, span);
                     break;
-                case TLType.TextItalic:
-                    var italicText = (TLTextItalic)text;
-                    span.FontStyle = FontStyle.Italic;
+                case TLTextItalic italicText:
+                    span.FontStyle |= FontStyle.Italic;
                     ProcessText(italicText.Text, span);
                     break;
-                case TLType.TextStrike:
-                    var strikeText = (TLTextStrike)text;
-                    // 10.0.15021 or higher
+                case TLTextStrike strikeText:
                     if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
                     {
-                        // TODO: uncomment when RTM SDK will be publicly available
-                        //span.TextDecorations = Windows.UI.Text.TextDecorations.Strikethrough;
-                        //ProcessText(underlineText.Text, collection, span);
+                        span.TextDecorations |= TextDecorations.Strikethrough;
+                        ProcessText(strikeText.Text, span);
                     }
                     else
                     {
-                        // TODO: not supported in xaml
                         SetIsStrikethrough(span, true);
                         ProcessText(strikeText.Text, span);
                     }
                     break;
-                case TLType.TextUnderline:
-                    var underlineText = (TLTextUnderline)text;
-
-                    // 10.0.15021 or higher
+                case TLTextUnderline underlineText:
                     if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
                     {
-                        // TODO: uncomment when RTM SDK will be publicly available
-                        //span.TextDecorations = Windows.UI.Text.TextDecorations.Underline;
-                        //ProcessText(underlineText.Text, collection, span);
+                        span.TextDecorations |= TextDecorations.Underline;
+                        ProcessText(underlineText.Text, span);
                     }
                     else
                     {
@@ -797,15 +781,13 @@ namespace Unigram.Views
                         ProcessText(underlineText.Text, underline);
                     }
                     break;
-                case TLType.TextUrl:
-                    var urlText = (TLTextUrl)text;
+                case TLTextUrl urlText:
                     var hyperlink = new Hyperlink();
                     span.Inlines.Add(hyperlink);
                     hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
                     ProcessText(urlText.Text, hyperlink);
                     break;
-                case TLType.TextEmpty:
-                    var emptyText = (TLTextEmpty)text;
+                case TLTextEmpty emptyText:
                     break;
             }
         }
@@ -823,7 +805,7 @@ namespace Unigram.Views
                         var transform = anchor.TransformToVisual(LayoutRoot);
                         var position = transform.TransformPoint(new Point());
 
-                        ScrollingHost.ChangeView(null, Math.Max(0, position.Y - 12), null);
+                        ScrollingHost.ChangeView(null, Math.Max(0, position.Y - 8), null, false);
                     }
                 }
             }
