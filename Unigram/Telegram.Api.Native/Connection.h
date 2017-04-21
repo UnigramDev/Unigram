@@ -1,9 +1,12 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <Winsock2.h>
 #include <openssl/aes.h>
 #include "Timer.h"
-#include "Datacenter.h"
+
+#define DOWNLOAD_CONNECTIONS_COUNT 2
+#define UPLOAD_CONNECTIONS_COUNT 2
 
 namespace Telegram
 {
@@ -11,6 +14,8 @@ namespace Telegram
 	{
 		namespace Native
 		{
+
+			ref class Datacenter;
 
 			public enum class ConnectionType
 			{
@@ -20,7 +25,32 @@ namespace Telegram
 				Push = 8
 			};
 
-			ref class Connection sealed : IEventObject
+			interface class IConnectionSession
+			{
+				property int64 SessionId
+				{
+					int64 get();
+					void set(int64 value);
+				}
+
+				property bool HasMessagesToConfirm
+				{
+					bool get();
+				}
+
+				void RecreateSession();
+				void GenereateNewSessionId();
+				uint32 GenerateMessageSeqNo(bool increment);
+				bool IsMessageIdProcessed(int64 messageId);
+				void AddProcessedMessageId(int64 messageId);
+				void AddMessageToConfirm(int64 messageId);
+				//NetworkMessage^ GenerateConfirmationRequest();
+				bool IsSessionProcessed(int64 sessionId);
+				void AddProcessedSession(int64 sessionId);
+
+			};
+
+			ref class Connection sealed : IEventObject, public IConnectionSession
 			{
 				friend ref class ConnectionManager;
 
@@ -49,26 +79,26 @@ namespace Telegram
 
 				//ConnectionSession
 
-				property int64 SessionId
+				virtual property int64 SessionId
 				{
 					int64 get();
 					void set(int64 value);
 				}
 
-				property bool HasMessagesToConfirm
+				virtual property bool HasMessagesToConfirm
 				{
 					bool get();
 				}
 
-				void RecreateSession();
-				void GenereateNewSessionId();
-				uint32 GenerateMessageSeqNo(bool increment);
-				bool IsMessageIdProcessed(int64 messageId);
-				void AddProcessedMessageId(int64 messageId);
-				void AddMessageToConfirm(int64 messageId);
-				//NetworkMessage^ GenerateConfirmationRequest();
-				bool IsSessionProcessed(int64 sessionId);
-				void AddProcessedSession(int64 sessionId);
+				virtual void RecreateSession();
+				virtual void GenereateNewSessionId();
+				virtual uint32 GenerateMessageSeqNo(bool increment);
+				virtual bool IsMessageIdProcessed(int64 messageId);
+				virtual void AddProcessedMessageId(int64 messageId);
+				virtual void AddMessageToConfirm(int64 messageId);
+				//virtual NetworkMessage^ GenerateConfirmationRequest();
+				virtual bool IsSessionProcessed(int64 sessionId);
+				virtual void AddProcessedSession(int64 sessionId);
 
 			internal:
 				Connection(_In_ Telegram::Api::Native::Datacenter^ datacenter, ConnectionType connectionType);
@@ -77,7 +107,6 @@ namespace Telegram
 				virtual void OnEvent(uint32 events) sealed = IEventObject::OnEvent;
 
 				CriticalSection m_criticalSection;
-
 
 				//Connection
 
@@ -89,24 +118,29 @@ namespace Telegram
 				Telegram::Api::Native::Datacenter^ m_datacenter;
 
 				AES_KEY m_encryptKey;
-				uint8_t m_encryptIv[16];
-				uint32_t m_encryptNum;
-				uint8_t m_encryptCount[16];
+				uint8 m_encryptIv[16];
+				uint32 m_encryptNum;
+				uint8 m_encryptCount[16];
 
 				AES_KEY m_decryptKey;
-				uint8_t m_decryptIv[16];
-				uint32_t m_decryptNum;
-				uint8_t m_decryptCount[16];
+				uint8 m_decryptIv[16];
+				uint32 m_decryptNum;
+				uint8 m_decryptCount[16];
 
 
 				//ConnectionSession
 
 				int64 m_sessionId;
-				uint32 m_nextSeqNo  ;
-				int64 m_minProcessedMessageId  ;
+				uint32 m_nextSeqNo;
+				int64 m_minProcessedMessageId;
 				std::vector<int64> m_processedMessageIds;
 				std::vector<int64> m_messagesIdsForConfirmation;
 				std::vector<int64> m_processedSessionChanges;
+
+
+				//ConnectionSocket
+
+				SOCKET m_socket;
 			};
 
 		}

@@ -2,6 +2,7 @@
 #include <openssl/rand.h>
 #include "Connection.h"
 #include "ConnectionManager.h"
+#include "Datacenter.h"
 
 using namespace Telegram::Api::Native;
 
@@ -9,7 +10,8 @@ Connection::Connection(Telegram::Api::Native::Datacenter^ datacenter, Connection
 	m_type(type),
 	m_datacenter(datacenter),
 	m_nextSeqNo(0),
-	m_minProcessedMessageId(0)
+	m_minProcessedMessageId(0),
+	m_socket(INVALID_SOCKET)
 {
 	GenereateNewSessionId();
 
@@ -140,6 +142,27 @@ void Connection::AddMessageToConfirm(int64 messageId)
 
 //NetworkMessage^ Connection::GenerateConfirmationRequest()
 //{
+//	auto lock = m_criticalSection.Lock();
+//
+//	if (!m_messagesIdsForConfirmation.empty())
+//	{
+//		return nullptr;
+//	}
+//
+//	TL_msgs_ack *msgAck = new TL_msgs_ack();
+//	msgAck->msg_ids.insert(msgAck->msg_ids.begin(), m_messagesIdsForConfirmation.begin(), m_messagesIdsForConfirmation.end());
+//	NativeByteBuffer *os = new NativeByteBuffer(true);
+//	msgAck->serializeToStream(os);
+//
+//	auto networkMessage = new NetworkMessage();
+//	networkMessage->message = std::unique_ptr<TL_message>(new TL_message);
+//	networkMessage->message->msg_id = ConnectionsManager::Instance->GenerateMessageId();
+//	networkMessage->message->seqno = GenerateMessageSeqNo(false);
+//	networkMessage->message->bytes = os->capacity();
+//	networkMessage->message->body = std::unique_ptr<TLObject>(msgAck);
+//	m_messagesIdsForConfirmation.clear();
+//
+//	return networkMessage;
 //}
 
 bool Connection::IsSessionProcessed(int64 sessionId)

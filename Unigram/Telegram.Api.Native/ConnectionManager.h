@@ -50,10 +50,11 @@ namespace Telegram
 
 			private:
 				ConnectionManager();
-
-				Telegram::Api::Native::ConnectionState m_connectionState;
+				~ConnectionManager();
+				
 				CriticalSection m_criticalSection;
-
+				Telegram::Api::Native::ConnectionState m_connectionState;
+			
 				static ConnectionManager^ s_instance;
 			};
 
