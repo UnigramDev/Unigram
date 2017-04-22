@@ -169,7 +169,7 @@ namespace Unigram.Views
                     ProcessAnchor(page, anchor);
                     break;
                 case TLPageBlockPreformatted preformatted:
-                    ProcesPreformatted(page, preformatted);
+                    ProcessPreformatted(page, preformatted);
                     break;
                 case TLPageBlockUnsupported unsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
@@ -177,7 +177,7 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcesPreformatted(TLPageBase page, TLPageBlockPreformatted block)
+        private void ProcessPreformatted(TLPageBase page, TLPageBlockPreformatted block)
         {
             _containers.Push(new StackPanel
             {
