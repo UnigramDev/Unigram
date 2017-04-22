@@ -38,7 +38,7 @@
           </BackgroundTasks>
         </Extension>
         <uap:Extension Category="windows.voipCall"/>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.VoIPCallTask">
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.VoIPCallTask">
           <BackgroundTasks ServerName="UnigramHost">
             <Task Type="systemEvent" />
           </BackgroundTasks>

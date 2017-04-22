@@ -135,6 +135,7 @@
     <Compile Include="InteractiveTask.cs" />
     <Compile Include="TLPush.cs" />
     <Compile Include="TLPushUtils.cs" />
+    <Compile Include="VoIPCallTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">

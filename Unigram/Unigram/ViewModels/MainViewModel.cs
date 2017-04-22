@@ -50,7 +50,7 @@ namespace Unigram.ViewModels
             Contacts = new ContactsViewModel(protoService, cacheService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, aggregator);
 
-            aggregator.Subscribe(this);
+            //aggregator.Subscribe(this);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
