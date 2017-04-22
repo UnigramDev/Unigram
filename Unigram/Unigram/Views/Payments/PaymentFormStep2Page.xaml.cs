@@ -92,7 +92,7 @@ namespace Unigram.Views.Payments
 
                     var radio = new RadioButton();
                     radio.IsChecked = i == 0;
-                    radio.Content = BindConvert.Current.ShippingOptiopn(option, _currency);
+                    radio.Content = BindConvert.Current.ShippingOption(option, _currency);
                     radio.Margin = new Thickness(12, 4, 12, 4);
                     radio.DataContext = option;
                     radio.Checked += (s, args) =>

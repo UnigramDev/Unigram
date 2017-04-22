@@ -132,6 +132,12 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>mkdir "$(OutDir)Metadata\"
+move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+rmdir "$(OutDir)Metadata" /s /q</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -143,6 +149,12 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>mkdir "$(OutDir)Metadata\"
+move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+rmdir "$(OutDir)Metadata" /s /q</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm'">
     <ClCompile>
@@ -154,6 +166,12 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>mkdir "$(OutDir)Metadata\"
+move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+rmdir "$(OutDir)Metadata" /s /q</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm'">
     <ClCompile>
@@ -165,6 +183,12 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>mkdir "$(OutDir)Metadata\"
+move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+rmdir "$(OutDir)Metadata" /s /q</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -176,6 +200,12 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>mkdir "$(OutDir)Metadata\"
+move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+rmdir "$(OutDir)Metadata" /s /q</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -187,6 +217,12 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>mkdir "$(OutDir)Metadata\"
+move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+rmdir "$(OutDir)Metadata" /s /q</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />

@@ -19,15 +19,15 @@ namespace Unigram
 			public ref class VoIPCallTask sealed : public IBackgroundTask
 			{
 			public:
-				VoipCallRtcTask() {}
+				VoIPCallTask() {}
 				virtual void Run(IBackgroundTaskInstance^ taskInstance);
 
 				void UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
 
 
-				static property VoipCallRtcTask^ Current
+				static property VoIPCallTask^ Current
 				{
-					VoipCallRtcTask^ get() 
+					VoIPCallTask^ get()
 					{
 						return s_current;
 					}
@@ -42,7 +42,7 @@ namespace Unigram
 				Agile<BackgroundTaskDeferral> m_deferral = nullptr;
 				VoipPhoneCall^ m_systemCall;
 
-				static VoipCallRtcTask^ s_current;
+				static VoIPCallTask^ s_current;
 			};
 		}
 	}

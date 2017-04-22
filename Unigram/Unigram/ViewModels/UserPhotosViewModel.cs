@@ -56,7 +56,7 @@ namespace Unigram.ViewModels
 
         protected override async void LoadNext()
         {
-            if (User != null)
+            if (User != null && TotalItems > Items.Count)
             {
                 using (await _loadMoreLock.WaitAsync())
                 {
