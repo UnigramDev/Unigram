@@ -199,6 +199,7 @@
     <Compile Include="Controls\ZoomableGridViewPopup.xaml.cs">
       <DependentUpon>ZoomableGridViewPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\ChannelJoinedToVisibilityConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />

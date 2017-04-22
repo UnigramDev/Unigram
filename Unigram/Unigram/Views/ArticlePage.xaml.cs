@@ -33,6 +33,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using Telegram.Api.Services.Cache;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -171,10 +172,39 @@ namespace Unigram.Views
                 case TLPageBlockPreformatted preformatted:
                     ProcesPreformatted(page, preformatted);
                     break;
+                case TLPageBlockChannel channel:
+                    ProcessChannel(page, channel);
+                    break;
                 case TLPageBlockUnsupported unsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
                     break;
             }
+        }
+
+        private void ProcessChannel(TLPageBase page, TLPageBlockChannel channel)
+        {
+            var chat = channel.Channel as TLChannel;
+            if (chat.IsMin)
+            {
+                chat = InMemoryCacheService.Current.GetChat(chat.Id) as TLChannel ?? channel.Channel as TLChannel;
+            }
+
+            var button = new Button
+            {
+                Style = Resources["ChannelBlockStyle"] as Style,
+                Content = chat
+            };
+
+            if (chat.IsMin && chat.HasUsername)
+            {
+                MTProtoService.Current.ResolveUsernameAsync(chat.Username,
+                    result =>
+                    {
+                        Execute.BeginOnUIThread(() => button.Content = result.Chats.FirstOrDefault());
+                    });
+            }
+
+            _containers.Peek().Children.Add(button);
         }
 
         private void ProcesPreformatted(TLPageBase page, TLPageBlockPreformatted block)

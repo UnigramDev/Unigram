@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -21,6 +22,29 @@
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property="Margin" Value="12,0,12,12"/>
         </Style>
+        
+        <DataTemplate x:Key="ChannelItemTemplate" x:DataType="tl:TLChannel">
+            <Grid Margin="0,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="48"/>
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePictureView x:Phase="2" Source="{x:Bind PhotoSelf, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                <TextBlock Text="{x:Bind DisplayName}" Grid.Column="1" VerticalAlignment="Center"/>
+
+                <controls:GlyphButton Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}, ConverterParameter=invert}" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Glyph="&#xE109;" Grid.Column="2" Margin="0,-6"/>
+                <FontIcon Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Glyph="&#xE10B;" Grid.Column="2" Grid.RowSpan="2"/>
+            </Grid>
+        </DataTemplate>
+
+        <Style x:Key="ChannelBlockStyle" BasedOn="{StaticResource EmptyButtonStyle}" TargetType="Button">
+            <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}"/>
+            <Setter Property="ContentTemplate" Value="{StaticResource ChannelItemTemplate}"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="Padding" Value="12,0,0,0"/>
+        </Style>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -37,11 +61,11 @@
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
-        <controls:ScrollViewerBackground 
+        <!--<controls:ScrollViewerBackground 
             Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Bottom"
-            Grid.Row="1"/>
+            Grid.Row="1"/>-->
         <ScrollViewer x:Name="ScrollingHost" 
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
