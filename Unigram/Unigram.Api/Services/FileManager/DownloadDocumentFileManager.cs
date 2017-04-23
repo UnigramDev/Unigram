@@ -419,7 +419,7 @@ namespace Telegram.Api.Services.FileManager
 
             for (var i = 0; i < partsCount; i++)
             {
-                var part = new DownloadablePart(item, i * chunkSize, size == 0 ? 0 : chunkSize, i);
+                var part = new DownloadablePart(item, i * chunkSize, chunkSize, i);
                 var partName = item.InputDocumentLocation.GetPartFileName(part.Number); //string.Format("document{0}_{1}_{2}.dat", item.InputDocumentLocation.Id, item.InputDocumentLocation.AccessHash, part.Number);
                 var partLength = FileUtils.GetLocalFileLength(partName);
 

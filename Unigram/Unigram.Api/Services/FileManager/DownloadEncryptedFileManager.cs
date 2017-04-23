@@ -287,7 +287,7 @@ namespace Telegram.Api.Services.FileManager
             var partsCount = size / chunkSize + (size % chunkSize > 0 ? 1 : 0);
             for (var i = 0; i < partsCount; i++)
             {
-                var part = new DownloadablePart(item, i * chunkSize, size == 0 ? 0 : chunkSize, i);
+                var part = new DownloadablePart(item, i * chunkSize, chunkSize, i);
                 parts.Add(part);
             }
 
