@@ -49,6 +49,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI;
 using Unigram.Views.Channels;
+using Unigram.Themes;
 
 namespace Unigram.Views
 {
@@ -753,6 +754,11 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void DownloadDocument_Click(object sender, RoutedEventArgs e)
+        {
+            Media.DownloadDocument(sender);
+        }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {

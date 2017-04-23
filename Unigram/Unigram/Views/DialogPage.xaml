@@ -199,7 +199,7 @@
                         MaxHeight="180"/>
 
                     <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                        <controls:TransferButton Media="{Binding Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                        <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
                         <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
                     </Grid>
 
@@ -234,6 +234,16 @@
                         HorizontalAlignment="Left"
                         MaxWidth="180"
                         MaxHeight="180"/>
+
+                    <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                        <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                        <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                        <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
+                    </StackPanel>
 
                     <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
@@ -301,6 +311,16 @@
                             HorizontalAlignment="Left"
                             MaxWidth="180"
                             MaxHeight="180"/>
+
+                        <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                            <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
+                        </Grid>
+
+                        <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                            <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                            <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
+                        </StackPanel>
 
                         <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                     </Grid>

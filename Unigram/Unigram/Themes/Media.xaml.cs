@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using System.Globalization;
 using System.Net;
 using Unigram.Common;
+using Telegram.Api.Services;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -86,7 +87,12 @@ namespace Unigram.Themes
             }
         }
 
-        private async void DownloadDocument_Click(object sender, RoutedEventArgs e)
+        private void DownloadDocument_Click(object sender, RoutedEventArgs e)
+        {
+            DownloadDocument(sender);
+        }
+
+        public static async void DownloadDocument(object sender)
         {
             var border = sender as TransferButton;
             var message = border.DataContext as TLMessage;
@@ -123,7 +129,7 @@ namespace Unigram.Themes
                         }
                         else
                         {
-                            var watch = Stopwatch.StartNew();
+                            //var watch = Stopwatch.StartNew();
 
                             //var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
 
@@ -138,8 +144,17 @@ namespace Unigram.Themes
                             {
                                 border.Update();
 
-                                await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
-                                return;
+                                //await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
+                                //return;
+
+                                if (message.IsMediaUnread && !message.IsOut)
+                                {
+                                    MTProtoService.Current.ReadMessageContentsAsync(new TLVector<int> { message.Id }, affected =>
+                                    {
+                                        message.IsMediaUnread = false;
+                                        message.RaisePropertyChanged(() => message.IsMediaUnread);
+                                    });
+                                }
 
                                 var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
                                 await Launcher.LaunchFileAsync(file);

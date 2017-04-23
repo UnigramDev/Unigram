@@ -73,7 +73,7 @@ namespace Unigram.Controls
                     var fileName = document.GetFileName();
                     if (File.Exists(FileUtils.GetTempFileName(fileName)))
                     {
-                        if (TLMessage.IsVideo(document))
+                        if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document))
                         {
                             return "\uE102";
                         }
