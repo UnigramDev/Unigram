@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls"
+    xmlns:viewModels="using:Unigram.ViewModels"
     xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -27,13 +28,13 @@
                   Background="Transparent"
                   Grid.RowSpan="3">
             <FlipView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="viewModels:GalleryItem">
                     <local:ImageView Loaded="ImageView_ImageOpened"
                                      Unloaded="ImageView_Unloaded"
                                      HorizontalAlignment="Center"
                                      VerticalAlignment="Center"
-                                     Source="{Binding Converter={StaticResource DefaultPhotoConverter}}"
-                                     Constraint="{Binding}"
+                                     Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
+                                     Constraint="{x:Bind Source}"
                                      Opacity="0"/>
                 </DataTemplate>
             </FlipView.ItemTemplate>
@@ -58,19 +59,43 @@
                 <Run Text="{x:Bind ViewModel.TotalItems, Mode=OneWay}"/>
             </TextBlock>
 
-            <local:GlyphButton Glyph="&#xE60E;" FontFamily="{ThemeResource TelegramThemeFontFamily}" HorizontalAlignment="Right" Grid.Column="2"/>
+            <local:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
+                               Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
+                               FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                               HorizontalAlignment="Right"
+                               FontSize="24"
+                               Glyph="&#xE60E;"
+                               Grid.Column="2"/>
         </Grid>
 
         <Border Grid.Row="2">
-            <Border x:Name="BotBar">
-                <Border.Background>
+            <Grid x:Name="BotBar">
+                <Grid.Background>
                     <SolidColorBrush Color="Black" Opacity="0.6"/>
-                </Border.Background>
+                </Grid.Background>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}" Margin="12,8" Style="{StaticResource BodyTextBlockStyle}" Grid.ColumnSpan="2"/>
+
+                <StackPanel Padding="12,0" VerticalAlignment="Center" Grid.Row="1">
+                    <TextBlock Text="{x:Bind ViewModel.SelectedItem.From.DisplayName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+                
                 <Button x:Name="btnOptions"
                         Padding="16,23,16,0"
                         HorizontalAlignment="Right"
                         Height="48"
-                        Style="{StaticResource EllipsisButton}">
+                        Style="{StaticResource EllipsisButton}"
+                        Grid.Column="1"
+                        Grid.Row="1">
                     <FontIcon x:Name="EllipsisIcon"
                               VerticalAlignment="Center"
                               FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -91,7 +116,7 @@
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
-            </Border>
+            </Grid>
         </Border>
     </Grid>
 </local:ContentDialogBase>

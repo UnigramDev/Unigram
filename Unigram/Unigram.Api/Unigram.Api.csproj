@@ -416,6 +416,7 @@
     <Compile Include="TL\Partial\TLMessagesDialogsBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesMessagesBase.Partial.cs" />
     <Compile Include="TL\Partial\TLPhoto.Partial.cs" />
+    <Compile Include="TL\Partial\TLPhotoBase.Partial.cs" />
     <Compile Include="TL\Partial\TLRPCError.Partial.cs" />
     <Compile Include="TL\Partial\TLStickerSet.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdateBase.Partial.cs" />
@@ -1205,6 +1206,9 @@
     <PackageReference Include="Universal.WinSQLite">
       <Version>3.12.2.2</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="TL\Partial\TLDocumentBase.Partial.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

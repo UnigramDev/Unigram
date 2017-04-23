@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Template10.Common;
+using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -30,6 +31,8 @@ namespace Unigram.Controls.Views
     public sealed partial class GalleryView : ContentDialogBase
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
+
+        public BindConvert Convert => BindConvert.Current;
 
         private FrameworkElement _firstImage;
 
@@ -155,9 +158,10 @@ namespace Unigram.Controls.Views
             }
         }
 
-        //protected override void UpdateView(Rect bounds)
-        //{
-
-        //}
+        private string ConvertDate(int value)
+        {
+            var date = Convert.DateTime(value);
+            return string.Format("{0} at {1}", date.Date == DateTime.Now.Date ? "Today" : Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
+        }
     }
 }

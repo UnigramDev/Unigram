@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.TL;
+using Template10.Mvvm;
 using Unigram.Common;
+using Unigram.Controls.Views;
 using Unigram.Core.Common;
 
 namespace Unigram.ViewModels
@@ -55,8 +58,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        protected object _selectedItem;
-        public object SelectedItem
+        protected GalleryItem _selectedItem;
+        public GalleryItem SelectedItem
         {
             get
             {
@@ -82,7 +85,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public ObservableCollection<object> Items { get; protected set; }
+        public ObservableCollection<GalleryItem> Items { get; protected set; }
 
         protected virtual void LoadPrevious() { }
 
@@ -104,9 +107,58 @@ namespace Unigram.ViewModels
             }
         }
 
+        public RelayCommand StickersCommand => new RelayCommand(StickersExecute);
+        private async void StickersExecute()
+        {
+            if (_selectedItem != null && _selectedItem.HasStickers)
+            {
+                var inputStickered = _selectedItem.ToInputStickeredMedia();
+                if (inputStickered != null)
+                {
+                    var response = await ProtoService.GetAttachedStickersAsync(inputStickered);
+                    if (response.IsSucceeded)
+                    {
+                        await StickerSetView.Current.ShowAsync(response.Result[0]);
+                    }
+                }
+            }
+        }
+
         public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
         protected virtual void DeleteExecute()
         {
+        }
+    }
+
+    public class GalleryItem : BindableBase
+    {
+        public GalleryItem()
+        {
+
+        }
+
+        public GalleryItem(object source, string caption, ITLDialogWith from, int date, bool stickers)
+        {
+            Source = source;
+            Caption = caption;
+            From = from;
+            Date = date;
+            HasStickers = stickers;
+        }
+
+        public virtual object Source { get; private set; }
+
+        public virtual string Caption { get; private set; }
+
+        public virtual ITLDialogWith From { get; private set; }
+
+        public virtual int Date { get; private set; }
+
+        public virtual bool HasStickers { get; private set; }
+
+        public virtual TLInputStickeredMediaBase ToInputStickeredMedia()
+        {
+            return null;
         }
     }
 }
