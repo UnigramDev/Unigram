@@ -31,7 +31,7 @@ namespace Telegram.Api.TL
             }
             else if ((TLType)type == TLType.Vector)
             {
-                if (typeof(T) != typeof(object))
+                if (typeof(T) != typeof(object) && typeof(T) != typeof(TLObject))
                 {
                     return (T)(Object)Activator.CreateInstance(typeof(T), from);
                 }
