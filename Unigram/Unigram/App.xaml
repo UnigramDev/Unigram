@@ -108,6 +108,11 @@
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
             </Style>
 
+            <Style x:Key="SiteNameTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+                <!--<TextBlock Text="{Binding Media.WebPage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>-->
+                <Setter Property="MaxLines" Value="1"/>
+            </Style>
+            
         </ResourceDictionary>
     </Application.Resources>
 

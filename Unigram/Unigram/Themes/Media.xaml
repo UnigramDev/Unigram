@@ -6,7 +6,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:common="using:Unigram.Common"
     xmlns:selectors="using:Unigram.Selectors"
-    xmlns:models="using:Telegram.Api.TL"
+    xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:Unigram.Controls.Messages"
@@ -218,7 +218,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="WebPageSmallPhotoMediaTemplate" x:DataType="models:TLMessageMediaWebPage">
+    <DataTemplate x:Key="WebPageSmallPhotoMediaTemplate" x:DataType="tl:TLMessage">
         <Grid Margin="0,8,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -228,18 +228,26 @@
 
             <StackPanel Grid.Column="1">
                 <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="60"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Margin="0,0,0,2">
-                        <TextBlock Text="{Binding Media.WebPage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{Binding Media.WebPage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{Binding Media.WebPage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{Binding Media.WebPage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
-                    </StackPanel>
 
-                    <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" MaxWidth="88" MaxHeight="88" Margin="12,0,0,0" VerticalAlignment="Bottom" Grid.Column="1"/>
+                    <RichTextBlock common:TextBlockHelper.WebPage="{x:Bind Media.(tl:TLMessageMediaWebPage.WebPage)}" IsTextSelectionEnabled="True" TextAlignment="Justify" OverflowContentTarget="{Binding ElementName=OverflowArea}" Margin="0,0,12,0">
+                        <RichTextBlock.Resources>
+                            <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
+                        </RichTextBlock.Resources>
+                    </RichTextBlock>
+
+                    <Border Width="60" Height="60" Background="Gray" Grid.Column="1">
+                        <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <RichTextBlockOverflow x:Name="OverflowArea" Grid.ColumnSpan="2" Grid.Row="1"/>
                 </Grid>
 
                 <Button Click="InstantView_Click"
@@ -392,7 +400,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="GameMediaTemplate" x:DataType="models:TLMessage">
+    <DataTemplate x:Key="GameMediaTemplate" x:DataType="tl:TLMessage">
         <Grid Margin="0,4,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -427,7 +435,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="InvoiceMediaTemplate" x:DataType="models:TLMessage">
+    <DataTemplate x:Key="InvoiceMediaTemplate" x:DataType="tl:TLMessage">
         <Grid Margin="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -446,7 +454,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="InvoicePhotoMediaTemplate" x:DataType="models:TLMessage">
+    <DataTemplate x:Key="InvoicePhotoMediaTemplate" x:DataType="tl:TLMessage">
         <Grid Margin="0,0,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>

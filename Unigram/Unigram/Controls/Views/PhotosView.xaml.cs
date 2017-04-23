@@ -50,7 +50,7 @@ namespace Unigram.Controls.Views
             _botBarVisual.Offset = new Vector3(0, 48, 0);
         }
 
-        protected override void OnBackRequested(object sender, HandledEventArgs e)
+        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             if (Flip.SelectedIndex == 0 && _firstImage != null && _firstImage.ActualWidth > 0)
             {
