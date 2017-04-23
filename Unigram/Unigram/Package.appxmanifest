@@ -66,6 +66,9 @@
         </uap:Extension>
         <uap:Extension Category="windows.shareTarget">
           <uap:ShareTarget>
+            <uap:SupportedFileTypes>
+              <uap:SupportsAnyFileType />
+            </uap:SupportedFileTypes>
             <uap:DataFormat>Text</uap:DataFormat>
             <uap:DataFormat>URI</uap:DataFormat>
             <uap:DataFormat>StorageItems</uap:DataFormat>
