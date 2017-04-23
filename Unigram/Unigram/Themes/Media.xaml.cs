@@ -55,7 +55,7 @@ namespace Unigram.Themes
                     ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
                     var test = new DialogPhotosViewModel(bubble.Context.Peer, message, bubble.Context.ProtoService);
-                    var dialog = new PhotosView { DataContext = test };
+                    var dialog = new GalleryView { DataContext = test };
                     dialog.Background = null;
                     dialog.OverlayBrush = null;
                     dialog.Closing += (s, args) =>

@@ -27,9 +27,9 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class PhotosView : ContentDialogBase
+    public sealed partial class GalleryView : ContentDialogBase
     {
-        public PhotosViewModelBase ViewModel => DataContext as PhotosViewModelBase;
+        public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
         private FrameworkElement _firstImage;
 
@@ -37,7 +37,7 @@ namespace Unigram.Controls.Views
         private Visual _topBarVisual;
         private Visual _botBarVisual;
 
-        public PhotosView()
+        public GalleryView()
         {
             InitializeComponent();
 

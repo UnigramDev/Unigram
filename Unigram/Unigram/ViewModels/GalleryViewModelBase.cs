@@ -12,9 +12,9 @@ using Unigram.Core.Common;
 
 namespace Unigram.ViewModels
 {
-    public abstract class PhotosViewModelBase : UnigramViewModelBase
+    public abstract class GalleryViewModelBase : UnigramViewModelBase
     {
-        public PhotosViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public GalleryViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
