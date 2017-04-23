@@ -24,6 +24,7 @@ namespace Telegram
 				Connected = 3
 			};
 
+
 			public ref class ConnectionManager sealed
 			{
 				friend ref class Connection;
