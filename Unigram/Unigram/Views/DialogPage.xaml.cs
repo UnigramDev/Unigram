@@ -158,11 +158,15 @@ namespace Unigram.Views
             {
                 CheckMessageBoxEmpty();
             }
+            else if (e.PropertyName.Equals("SelectedItems"))
+            {
+                lvDialogs.SelectedItems.AddRange(ViewModel.SelectedMessages);
+            }
         }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
         {
-            if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
                 ManagePanel.Visibility = Visibility.Collapsed;
                 btnDialogInfo.Visibility = Visibility.Visible;
@@ -179,13 +183,13 @@ namespace Unigram.Views
 
         private void Manage_Click(object sender, RoutedEventArgs e)
         {
-            if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
-                lvDialogs.SelectionMode = ListViewSelectionMode.Multiple;
+                ViewModel.SelectionMode = ListViewSelectionMode.Multiple;
             }
             else
             {
-                lvDialogs.SelectionMode = ListViewSelectionMode.None;
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
             }
         }
 
@@ -669,6 +673,15 @@ namespace Unigram.Views
                 }
 
                 element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void MessageSelect_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                element.Visibility = ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

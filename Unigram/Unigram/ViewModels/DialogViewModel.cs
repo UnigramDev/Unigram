@@ -190,6 +190,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
+        public ListViewSelectionMode SelectionMode
+        {
+            get
+            {
+                return _selectionMode;
+            }
+            set
+            {
+                Set(ref _selectionMode, value);
+            }
+        }
+
         public bool IsFirstSliceLoaded { get; set; }
 
         private bool _isLoadingNextSlice;

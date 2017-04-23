@@ -170,7 +170,7 @@ namespace Unigram.Views
                     ProcessAnchor(page, anchor);
                     break;
                 case TLPageBlockPreformatted preformatted:
-                    ProcesPreformatted(page, preformatted);
+                    ProcessPreformatted(page, preformatted);
                     break;
                 case TLPageBlockChannel channel:
                     ProcessChannel(page, channel);
@@ -207,7 +207,7 @@ namespace Unigram.Views
             _containers.Peek().Children.Add(button);
         }
 
-        private void ProcesPreformatted(TLPageBase page, TLPageBlockPreformatted block)
+        private void ProcessPreformatted(TLPageBase page, TLPageBlockPreformatted block)
         {
             _containers.Push(new StackPanel
             {

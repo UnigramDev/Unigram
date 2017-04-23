@@ -325,6 +325,24 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Select
+
+        public RelayCommand<TLMessageBase> MessageSelectCommand => new RelayCommand<TLMessageBase>(MessageSelectExecute);
+        private void MessageSelectExecute(TLMessageBase message)
+        {
+            if (message == null)
+            {
+                return;
+            }
+
+            SelectionMode = ListViewSelectionMode.Multiple;
+
+            SelectedMessages = new List<TLMessageBase> { message };
+            RaisePropertyChanged("SelectedItems");
+        }
+
+        #endregion
+
         #region Copy
 
         public RelayCommand<TLMessage> MessageCopyCommand => new RelayCommand<TLMessage>(MessageCopyExecute);
