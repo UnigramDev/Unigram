@@ -18,6 +18,7 @@ namespace Telegram
 
 			DEFINE_ENUM_FLAG_OPERATORS(DatacenterEndpointType);
 
+
 			ref class Datacenter sealed
 			{
 				friend ref class ConnectionsManager;
@@ -65,11 +66,10 @@ namespace Telegram
 				//void GetSessions(std::vector<int64> &sessions);
 				void RecreateSessions();
 				void ResetAddressAndPort();
-				Connection^ GetDownloadConnection(uint8 index, bool create);
-				Connection^ GetUploadConnection(uint8 index, bool create);
+				Connection^ GetDownloadConnection(uint32 index, bool create);
+				Connection^ GetUploadConnection(uint32 index, bool create);
 				Connection^ GetGenericConnection(bool create);
 				Connection^ GetPushConnection(bool create);
-				Connection^ GetConnectionByType(ConnectionType type, bool create);
 
 			internal:
 				Datacenter(uint32 id);
@@ -82,7 +82,11 @@ namespace Telegram
 				};
 
 				DatacenterEndpoint* GetCurrentEndpoint(DatacenterEndpointType addressType);
-
+				Connection^ EnsureDownloadConnection(uint32 index);
+				Connection^ EnsureUploadConnection(uint32 index);
+				Connection^ EnsureGenericConnection();
+				Connection^ EnsurePushConnection();
+	
 				CriticalSection m_criticalSection;
 				uint32 m_id;
 				Connection^ m_genericConnection;

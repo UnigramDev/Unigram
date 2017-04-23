@@ -17,6 +17,7 @@ namespace Telegram
 
 			ref class Datacenter;
 
+
 			public enum class ConnectionType
 			{
 				Generic = 1,
@@ -24,6 +25,14 @@ namespace Telegram
 				Upload = 4,
 				Push = 8
 			};
+
+			public enum class ConnectionNeworkType
+			{
+				Mobile = 0,
+				WiFi = 1,
+				Roaming = 2
+			};
+
 
 			interface class IConnectionSession
 			{
@@ -49,6 +58,7 @@ namespace Telegram
 				void AddProcessedSession(int64 sessionId);
 
 			};
+
 
 			ref class Connection sealed : IEventObject, public IConnectionSession
 			{
@@ -99,6 +109,8 @@ namespace Telegram
 				//virtual NetworkMessage^ GenerateConfirmationRequest();
 				virtual bool IsSessionProcessed(int64 sessionId);
 				virtual void AddProcessedSession(int64 sessionId);
+
+				//ConnectionSocket
 
 			internal:
 				Connection(_In_ Telegram::Api::Native::Datacenter^ datacenter, ConnectionType connectionType);
