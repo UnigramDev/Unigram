@@ -39,6 +39,8 @@ namespace Telegram.Api.Services.FileManager
 
         public bool SuppressMerge { get; set; }
 
+        public int FileSize { get; set; }
+
         #region Http
 
         public string SourceUri { get; set; }

@@ -351,7 +351,8 @@ namespace Telegram.Api.Services.FileManager
             var item = new DownloadableItem
             {
                 Owner = owner,
-                Location = location
+                Location = location,
+                FileSize = fileSize
             };
             item.Parts = GetItemParts(fileSize, item);
 
@@ -366,7 +367,7 @@ namespace Telegram.Api.Services.FileManager
             for (var i = 0; i < partsCount; i++)
             {
                 //var part = new DownloadablePart(item, i * chunkSize, size == 0 ? 0 : chunkSize);
-                var part = new DownloadablePart(item, i * chunkSize, chunkSize);
+                var part = new DownloadablePart(item, i * chunkSize, chunkSize, i);
                 parts.Add(part);
             }
 

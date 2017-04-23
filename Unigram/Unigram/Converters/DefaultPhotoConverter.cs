@@ -526,7 +526,7 @@ namespace Unigram.Converters
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var bitmap = new BitmapImage();
-                bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
+                bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
                 return bitmap;
             }
 
@@ -785,8 +785,7 @@ namespace Unigram.Converters
                     var result = await manager.DownloadFileAsync(location, fileSize).AsTask(mediaPhoto?.Download());
                     Execute.BeginOnUIThread(() =>
                     {
-                        //bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
-                        bitmap.UriSource = new Uri("file:///" + result.DestFileName);
+                        bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
                     });
                 });
 
@@ -874,7 +873,7 @@ namespace Unigram.Converters
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var bitmap = new BitmapImage();
-                bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
+                bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
                 _cachedSources[fileName] = new WeakReference(bitmap);
 
                 return bitmap;
@@ -891,7 +890,7 @@ namespace Unigram.Converters
                     await manager.DownloadFileAsync(location, fileSize);
                     Execute.BeginOnUIThread(() =>
                     {
-                        bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
+                        bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
                     });
                 });
 

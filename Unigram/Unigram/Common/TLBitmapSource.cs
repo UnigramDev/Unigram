@@ -229,8 +229,7 @@ namespace Unigram.Common
                             Execute.BeginOnUIThread(() =>
                             {
                                 //Image.SetSource(FileUtils.GetTempFileUri(fileName));
-                                //Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                                Image.UriSource = new Uri("ms-appdata:///temp/" + result.DestFileName);
+                                Image.UriSource = FileUtils.GetTempFileUri(fileName);
                             });
                         }
                     });
@@ -241,22 +240,6 @@ namespace Unigram.Common
 
     public static class LazyBitmapImage
     {
-        public static async void SetSource(this BitmapSource bitmap, Uri uri)
-        {
-            var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
-            using (var stream = await file.OpenReadAsync())
-            {
-                try
-                {
-                    await bitmap.SetSourceAsync(stream);
-                }
-                catch
-                {
-                    Debug.Write("AGGRESSIVE");
-                }
-            }
-        }
-
         public static async void SetSource(this BitmapSource bitmap, byte[] data)
         {
             using (var stream = new InMemoryRandomAccessStream())
