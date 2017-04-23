@@ -118,7 +118,14 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.GetAttachedStickersAsync(inputStickered);
                     if (response.IsSucceeded)
                     {
-                        await StickerSetView.Current.ShowAsync(response.Result[0]);
+                        if (response.Result.Count > 1)
+                        {
+                            await AttachedStickersView.Current.ShowAsync(response.Result);
+                        }
+                        else if (response.Result.Count > 0)
+                        {
+                            await StickerSetView.Current.ShowAsync(response.Result[0]);
+                        }
                     }
                 }
             }
