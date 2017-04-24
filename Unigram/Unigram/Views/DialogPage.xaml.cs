@@ -755,9 +755,9 @@ namespace Unigram.Views
 
         #endregion
 
-        private void DownloadDocument_Click(object sender, RoutedEventArgs e)
+        private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            Media.DownloadDocument(sender);
+            Media.Download(sender, e);
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)

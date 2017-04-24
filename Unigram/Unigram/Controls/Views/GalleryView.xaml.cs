@@ -51,7 +51,7 @@ namespace Unigram.Controls.Views
         private Visual _topBarVisual;
         private Visual _botBarVisual;
 
-        public GalleryView()
+        private GalleryView()
         {
             InitializeComponent();
 
@@ -67,6 +67,47 @@ namespace Unigram.Controls.Views
             _layerVisual.Opacity = 0;
             _topBarVisual.Offset = new Vector3(0, -48, 0);
             _botBarVisual.Offset = new Vector3(0, 48, 0);
+        }
+
+        private static GalleryView _current;
+        public static GalleryView Current
+        {
+            get
+            {
+                if (_current == null)
+                    _current = new GalleryView();
+
+                return _current;
+            }
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter, EventHandler closing)
+        {
+            EventHandler handler = null;
+            handler = new EventHandler((s, args) =>
+            {
+                Closing -= handler;
+                closing?.Invoke(this, args);
+            });
+
+            Closing += handler;
+            return ShowAsync(parameter);
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter)
+        {
+            DataContext = parameter;
+            Bindings.Update();
+
+            RoutedEventHandler handler = null;
+            handler = new RoutedEventHandler(async (s, args) =>
+            {
+                Loaded -= handler;
+                await ViewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+            });
+
+            Loaded += handler;
+            return ShowAsync();
         }
 
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
@@ -198,20 +239,20 @@ namespace Unigram.Controls.Views
                     }
                     else
                     {
-                        if (documentMedia.DownloadingProgress > 0 && documentMedia.DownloadingProgress < 1)
+                        if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
                         {
                             var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                             manager.CancelDownloadFile(document);
 
-                            documentMedia.DownloadingProgress = 0;
+                            document.DownloadingProgress = 0;
                             border.Update();
                         }
-                        else if (documentMedia.UploadingProgress > 0 && documentMedia.UploadingProgress < 1)
+                        else if (document.UploadingProgress > 0 && document.UploadingProgress < 1)
                         {
                             var manager = UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
                             manager.CancelUploadFile(document.Id);
 
-                            documentMedia.UploadingProgress = 0;
+                            document.UploadingProgress = 0;
                             border.Update();
                         }
                         else
@@ -219,10 +260,10 @@ namespace Unigram.Controls.Views
                             var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                             var operation = manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
 
-                            documentMedia.DownloadingProgress = 0.02;
+                            document.DownloadingProgress = 0.02;
                             border.Update();
 
-                            var download = await operation.AsTask(documentMedia.Download());
+                            var download = await operation.AsTask(documentMedia.Document.Download());
                             if (download != null)
                             {
                                 border.Update();

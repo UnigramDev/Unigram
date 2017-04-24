@@ -26,7 +26,7 @@ namespace Unigram.ViewModels
         public DialogPhotosViewModel(TLInputPeerBase peer, TLMessage selected, IMTProtoService protoService)
             : base(protoService, null, null)
         {
-            if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo())
+            if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo() || selected.IsRoundVideo())
             {
                 Items = new ObservableCollection<GalleryItem> { new GalleryMessageItem(selected) };
                 SelectedItem = Items[0];
@@ -63,7 +63,7 @@ namespace Unigram.ViewModels
 
                     foreach (var photo in result.Result.Messages)
                     {
-                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
+                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo() || message.IsRoundVideo()))
                         {
                             Items.Add(new GalleryMessageItem(message));
                         }

@@ -758,19 +758,14 @@ namespace Unigram.Views
 
                 ViewModel.Gallery.SelectedItem = item;
 
-                var dialog = new GalleryView { DataContext = ViewModel.Gallery };
-                dialog.Background = null;
-                dialog.OverlayBrush = null;
-                dialog.Closing += (s, args) =>
+                await GalleryView.Current.ShowAsync(ViewModel.Gallery, (s, args) =>
                 {
                     var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
                     if (animation != null)
                     {
                         animation.TryStart(image);
                     }
-                };
-
-                await dialog.ShowAsync();
+                });
             }
         }
 

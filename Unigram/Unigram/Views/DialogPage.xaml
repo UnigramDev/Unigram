@@ -189,7 +189,7 @@
                     </messages:MessageReference>
                 </StackPanel>
 
-                <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Column="1" Grid.Row="1">
+                <Grid x:Name="MediaControl" ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Column="1" Grid.Row="1">
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
@@ -199,8 +199,8 @@
                         MaxHeight="180"/>
 
                     <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                        <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
+                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
                     </Grid>
 
                     <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
@@ -226,7 +226,7 @@
                 <!-- TODO: not the right way -->
                 <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
-                <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
+                <Grid x:Name="MediaControl" ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
@@ -236,8 +236,8 @@
                         MaxHeight="180"/>
 
                     <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                        <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
+                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
                     </Grid>
 
                     <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
@@ -303,7 +303,7 @@
                     <!-- TODO: not the right way -->
                     <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
-                    <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
+                    <Grid x:Name="MediaControl" ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
                         <controls:ImageView
                             Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
@@ -313,8 +313,8 @@
                             MaxHeight="180"/>
 
                         <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                            <controls:TransferButton Click="DownloadDocument_Click" Media="{Binding Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Progress}" IsHitTestVisible="False"/>
+                            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
                         </Grid>
 
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">

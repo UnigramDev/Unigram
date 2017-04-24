@@ -60,20 +60,15 @@ namespace Unigram.Themes
                 {
                     ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
-                    var test = new DialogPhotosViewModel(bubble.Context.Peer, message, bubble.Context.ProtoService);
-                    var dialog = new GalleryView { DataContext = test };
-                    dialog.Background = null;
-                    dialog.OverlayBrush = null;
-                    dialog.Closing += (s, args) =>
+                    var viewModel = new DialogPhotosViewModel(bubble.Context.Peer, message, bubble.Context.ProtoService);
+                    await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                     {
                         var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
                         if (animation != null)
                         {
                             animation.TryStart(image);
                         }
-                    };
-
-                    await dialog.ShowAsync();
+                    });
                 }
             }
         }
@@ -101,110 +96,49 @@ namespace Unigram.Themes
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
                 var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(item, null as string));
-                var dialog = new GalleryView { DataContext = viewModel };
-                dialog.Background = null;
-                dialog.OverlayBrush = null;
-                dialog.Closing += (s, args) =>
+                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                 {
                     var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
                     if (animation != null)
                     {
                         animation.TryStart(image);
                     }
-                };
-
-                await dialog.ShowAsync();
+                });
             }
         }
 
-        private void DownloadDocument_Click(object sender, RoutedEventArgs e)
+        private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            DownloadDocument(sender);
+            Download(sender, e);
         }
 
-        public static async void DownloadDocument(object sender)
+        public static async void Download(object sender, TransferCompletedEventArgs e)
         {
-            var border = sender as TransferButton;
-            var message = border.DataContext as TLMessage;
-            var documentMedia = message.Media as TLMessageMediaDocument;
-            if (documentMedia != null)
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+
+            if (message != null)
             {
-                var document = documentMedia.Document as TLDocument;
-                if (document != null)
+                if (message.IsVideo() || message.IsRoundVideo())
                 {
-                    var fileName = document.GetFileName();
+                    var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
 
-                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
+
+                    var viewModel = new DialogPhotosViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                    await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                     {
-                        if (message.IsVideo())
+                        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                        if (animation != null)
                         {
-                            Photo_Click(sender);
+                            animation.TryStart(media);
                         }
-                        else
-                        {
-                            var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
-                            await Launcher.LaunchFileAsync(file);
-                        }
-                    }
-                    else
-                    {
-                        if (documentMedia.DownloadingProgress > 0 && documentMedia.DownloadingProgress < 1)
-                        {
-                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
-                            manager.CancelDownloadFile(document);
-
-                            documentMedia.DownloadingProgress = 0;
-                            border.Update();
-                        }
-                        else if (documentMedia.UploadingProgress > 0 && documentMedia.UploadingProgress < 1)
-                        {
-                            var manager = UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
-                            manager.CancelUploadFile(document.Id);
-
-                            documentMedia.UploadingProgress = 0;
-                            border.Update();
-                        }
-                        else
-                        {
-                            //var watch = Stopwatch.StartNew();
-
-                            //var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
-
-                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
-                            var operation = manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
-
-                            documentMedia.DownloadingProgress = 0.02;
-                            border.Update();
-
-                            var download = await operation.AsTask(documentMedia.Download());
-                            if (download != null)
-                            {
-                                border.Update();
-
-                                //await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
-                                //return;
-
-                                if (message.IsMediaUnread && !message.IsOut)
-                                {
-                                    MTProtoService.Current.ReadMessageContentsAsync(new TLVector<int> { message.Id }, affected =>
-                                    {
-                                        message.IsMediaUnread = false;
-                                        message.RaisePropertyChanged(() => message.IsMediaUnread);
-                                    });
-                                }
-
-                                if (message.IsVideo())
-                                {
-                                    Photo_Click(sender);
-                                }
-                                else
-                                {
-                                    var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
-                                    await Launcher.LaunchFileAsync(file);
-                                }
-                            }
-                        }
-                    }
+                    });
+                }
+                else
+                {
+                    var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(e.FileName));
+                    await Launcher.LaunchFileAsync(file);
                 }
             }
         }

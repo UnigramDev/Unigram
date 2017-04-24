@@ -30,7 +30,7 @@ namespace Unigram.Controls.Views
     {
         public AttachedStickersViewModel ViewModel => DataContext as AttachedStickersViewModel;
 
-        public AttachedStickersView()
+        private AttachedStickersView()
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<AttachedStickersViewModel>();
