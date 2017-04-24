@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.FileManager;
@@ -174,11 +175,24 @@ namespace Unigram.ViewModels
 
         public override int Date => _document.Date;
 
+        public override bool IsVideo
+        {
+            get
+            {
+                return TLMessage.IsVideo(_document);
+            }
+        }
+
         public override bool HasStickers => _document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
 
         public override TLInputStickeredMediaBase ToInputStickeredMedia()
         {
             return new TLInputStickeredMediaDocument { Id = _document.ToInputDocument() };
+        }
+
+        public override Uri GetVideoSource()
+        {
+            return FileUtils.GetTempFileUri(_document.GetFileName());
         }
     }
 }

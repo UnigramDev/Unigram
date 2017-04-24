@@ -161,11 +161,18 @@ namespace Unigram.ViewModels
 
         public virtual int Date { get; private set; }
 
+        public virtual bool IsVideo { get; private set; }
+
         public virtual bool HasStickers { get; private set; }
 
         public virtual TLInputStickeredMediaBase ToInputStickeredMedia()
         {
-            return null;
+            throw new NotImplementedException();
+        }
+
+        public virtual Uri GetVideoSource()
+        {
+            throw new NotImplementedException();
         }
     }
 }

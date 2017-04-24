@@ -86,6 +86,31 @@ namespace Unigram.Themes
             }
         }
 
+        private async void SingleMedia_Click(object sender, RoutedEventArgs e)
+        {
+            var image = sender as ImageView;
+            var item = image.Constraint as TLPhoto;
+            if (item != null)
+            {
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
+
+                var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(item, null as string));
+                var dialog = new GalleryView { DataContext = viewModel };
+                dialog.Background = null;
+                dialog.OverlayBrush = null;
+                dialog.Closing += (s, args) =>
+                {
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
+                    {
+                        animation.TryStart(image);
+                    }
+                };
+
+                await dialog.ShowAsync();
+            }
+        }
+
         private async void DownloadDocument_Click(object sender, RoutedEventArgs e)
         {
             var border = sender as TransferButton;
@@ -100,8 +125,15 @@ namespace Unigram.Themes
 
                     if (File.Exists(FileUtils.GetTempFileName(fileName)))
                     {
-                        var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
-                        await Launcher.LaunchFileAsync(file);
+                        if (message.IsVideo())
+                        {
+                            Photo_Click(sender, e);
+                        }
+                        else
+                        {
+                            var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
+                            await Launcher.LaunchFileAsync(file);
+                        }
                     }
                     else
                     {
@@ -141,8 +173,15 @@ namespace Unigram.Themes
                                 //await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
                                 //return;
 
-                                var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
-                                await Launcher.LaunchFileAsync(file);
+                                if (message.IsVideo())
+                                {
+                                    Photo_Click(sender, e);
+                                }
+                                else
+                                {
+                                    var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
+                                    await Launcher.LaunchFileAsync(file);
+                                }
                             }
                         }
                     }
@@ -191,31 +230,6 @@ namespace Unigram.Themes
         private void Unsupported_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
             MessageHelper.HandleTelegramUrl("t.me/unigramchannel");
-        }
-
-        private async void SingleMedia_Click(object sender, RoutedEventArgs e)
-        {
-            var image = sender as ImageView;
-            var item = image.Constraint as TLPhoto;
-            if (item != null)
-            {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
-
-                var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(item, null as string));
-                var dialog = new GalleryView { DataContext = viewModel };
-                dialog.Background = null;
-                dialog.OverlayBrush = null;
-                dialog.Closing += (s, args) =>
-                {
-                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                    if (animation != null)
-                    {
-                        animation.TryStart(image);
-                    }
-                };
-
-                await dialog.ShowAsync();
-            }
         }
     }
 }

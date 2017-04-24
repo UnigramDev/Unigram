@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.FileManager;
@@ -25,8 +26,7 @@ namespace Unigram.ViewModels
         public DialogPhotosViewModel(TLInputPeerBase peer, TLMessage selected, IMTProtoService protoService)
             : base(protoService, null, null)
         {
-            var media = selected.Media as TLMessageMediaPhoto;
-            if (media != null)
+            if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo())
             {
                 Items = new ObservableCollection<GalleryItem> { new GalleryMessageItem(selected) };
                 SelectedItem = Items[0];
@@ -63,7 +63,7 @@ namespace Unigram.ViewModels
 
                     foreach (var photo in result.Result.Messages)
                     {
-                        if (photo is TLMessage message && message.Media is TLMessageMediaPhoto media)
+                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
                         {
                             Items.Add(new GalleryMessageItem(message));
                         }
@@ -102,7 +102,24 @@ namespace Unigram.ViewModels
             _message = message;
         }
 
-        public override object Source => _message.Media;
+        public TLMessage Message => _message;
+
+        public override object Source
+        {
+            get
+            {
+                if (_message.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
+                {
+                    return photo;
+                }
+                else if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    return document;
+                }
+
+                return null;
+            }
+        }
 
         public override string Caption
         {
@@ -120,6 +137,14 @@ namespace Unigram.ViewModels
         public override ITLDialogWith From => _message.From;
 
         public override int Date => _message.Date;
+
+        public override bool IsVideo
+        {
+            get
+            {
+                return _message.IsVideo();
+            }
+        }
 
         public override bool HasStickers
         {
@@ -147,6 +172,16 @@ namespace Unigram.ViewModels
             else if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
             {
                 return new TLInputStickeredMediaDocument { Id = document.ToInputDocument() };
+            }
+
+            return null;
+        }
+
+        public override Uri GetVideoSource()
+        {
+            if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                return FileUtils.GetTempFileUri(document.GetFileName());
             }
 
             return null;

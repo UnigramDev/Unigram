@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Controls"
     xmlns:viewModels="using:Unigram.ViewModels"
     xmlns:common="using:Unigram.Common"
+    xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -12,6 +13,31 @@
     d:DesignWidth="400"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch">
+
+    <Control.Resources>
+        <Style x:Name="yolo" TargetType="MediaPlayerElement">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MediaPlayerElement">
+                        <Grid x:Name="LayoutRoot">
+                            <Border Background="Transparent" />
+                            <Image
+                                Source="{TemplateBinding PosterSource}"
+                                Stretch="{TemplateBinding Stretch}" />
+                            <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
+                                                  IsFullWindow="{TemplateBinding IsFullWindow}"
+                                                  Stretch="{TemplateBinding Stretch}"
+                                                  MediaPlayer="{TemplateBinding MediaPlayer}" />
+                            <Grid x:Name="TimedTextSourcePresenter" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Control.Resources>
 
     <Grid x:Name="LayoutRoot" RequestedTheme="Dark">
         <Grid.RowDefinitions>
@@ -25,19 +51,44 @@
                   Opacity="0"
                   ItemsSource="{x:Bind ViewModel.Items}"
                   SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                  SelectionChanged="Flip_SelectionChanged"
                   Background="Transparent"
                   Grid.RowSpan="3">
-            <FlipView.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:GalleryItem">
-                    <local:ImageView Loaded="ImageView_ImageOpened"
-                                     Unloaded="ImageView_Unloaded"
-                                     HorizontalAlignment="Center"
-                                     VerticalAlignment="Center"
-                                     Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
-                                     Constraint="{x:Bind Source}"
-                                     Opacity="0"/>
-                </DataTemplate>
-            </FlipView.ItemTemplate>
+            <FlipView.ItemTemplateSelector>
+                <selectors:GalleryTemplateSelector>
+                    <selectors:GalleryTemplateSelector.ImageTemplate>
+                        <DataTemplate x:DataType="viewModels:GalleryItem">
+                            <local:ImageView 
+                                Loaded="ImageView_ImageOpened"
+                                Unloaded="ImageView_Unloaded"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{x:Bind Source}"
+                                Opacity="0"/>
+                        </DataTemplate>
+                    </selectors:GalleryTemplateSelector.ImageTemplate>
+                    <selectors:GalleryTemplateSelector.VideoTemplate>
+                        <DataTemplate x:DataType="viewModels:GalleryItem">
+                            <Grid>
+                                <local:ImageView
+                                    x:Name="Surface"
+                                    Loaded="ImageView_ImageOpened"
+                                    Unloaded="ImageView_Unloaded"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{x:Bind Source}"
+                                    Opacity="0"/>
+                                <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                                    <local:TransferButton Click="DownloadDocument_Click" Media="{Binding Message.Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                                    <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Message.Media.Progress}" IsHitTestVisible="False"/>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:GalleryTemplateSelector.VideoTemplate>
+                </selectors:GalleryTemplateSelector>
+            </FlipView.ItemTemplateSelector>
         </FlipView>
 
         <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
@@ -77,19 +128,23 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
+                <MediaTransportControls x:Name="Boh" IsCompact="True" Grid.ColumnSpan="2"/>
+
                 <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.SelectedItem.Caption, Converter={StaticResource NullToVisibilityConverter}}"
                            Style="{StaticResource BodyTextBlockStyle}"
                            Margin="12,8"
-                           Grid.ColumnSpan="2"/>
+                           Grid.ColumnSpan="2"
+                           Grid.Row="1"/>
 
-                <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0" VerticalAlignment="Center" Grid.Row="1">
+                <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0" VerticalAlignment="Center" Grid.Row="2">
                     <TextBlock Text="{x:Bind ViewModel.SelectedItem.From.DisplayName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
                     <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
@@ -100,7 +155,7 @@
                         Height="48"
                         Style="{StaticResource EllipsisButton}"
                         Grid.Column="1"
-                        Grid.Row="1">
+                        Grid.Row="2">
                     <FontIcon x:Name="EllipsisIcon"
                               VerticalAlignment="Center"
                               FontFamily="{ThemeResource SymbolThemeFontFamily}"

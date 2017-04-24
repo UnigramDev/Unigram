@@ -204,6 +204,7 @@
     </Compile>
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
+    <Compile Include="Selectors\GalleryTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
