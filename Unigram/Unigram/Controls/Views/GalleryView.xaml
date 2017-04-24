@@ -84,7 +84,7 @@
 
                 <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}" Margin="12,8" Style="{StaticResource BodyTextBlockStyle}" Grid.ColumnSpan="2"/>
 
-                <StackPanel Padding="12,0" VerticalAlignment="Center" Grid.Row="1">
+                <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0" VerticalAlignment="Center" Grid.Row="1">
                     <TextBlock Text="{x:Bind ViewModel.SelectedItem.From.DisplayName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
                     <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>

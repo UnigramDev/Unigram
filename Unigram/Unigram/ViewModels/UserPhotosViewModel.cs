@@ -114,6 +114,7 @@ namespace Unigram.ViewModels
     {
         private readonly TLPhoto _photo;
         private readonly ITLDialogWith _from;
+        private readonly string _caption;
 
         public GalleryPhotoItem(TLPhoto photo, ITLDialogWith from)
         {
@@ -121,9 +122,17 @@ namespace Unigram.ViewModels
             _from = from;
         }
 
+        public GalleryPhotoItem(TLPhoto photo, string caption)
+        {
+            _photo = photo;
+            _caption = caption;
+        }
+
         public TLPhoto Photo => _photo;
 
         public override object Source => _photo;
+
+        public override string Caption => _caption;
 
         public override ITLDialogWith From => _from;
 
