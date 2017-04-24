@@ -44,28 +44,29 @@
             <Grid.Background>
                 <SolidColorBrush Color="Black" Opacity="0.6"/>
             </Grid.Background>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}"/>
-            <TextBlock VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1">
-                <Run/>
-                <Run Text="of"/>
-            </TextBlock>
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="2">
-                <Run/>
-                <Run Text="{x:Bind ViewModel.TotalItems, Mode=OneWay}"/>
-            </TextBlock>
+            <Grid Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1">
+                    <Run/>
+                    <Run Text="of"/>
+                </TextBlock>
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="2">
+                    <Run/>
+                    <Run Text="{x:Bind ViewModel.TotalItems, Mode=OneWay}"/>
+                </TextBlock>
+            </Grid>
 
             <local:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
                                Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
                                FontFamily="{ThemeResource TelegramThemeFontFamily}"
                                HorizontalAlignment="Right"
-                               FontSize="24"
                                Glyph="&#xE60E;"
-                               Grid.Column="2"/>
+                               FontSize="24"/>
         </Grid>
 
         <Border Grid.Row="2">

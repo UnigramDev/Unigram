@@ -472,6 +472,7 @@ namespace Unigram.Views
             image.Constraint = video;
             image.DataContext = galleryItem;
             image.Click += Image_Click;
+            image.HorizontalAlignment = HorizontalAlignment.Center;
 
             ViewModel.Gallery.Items.Add(galleryItem);
 
@@ -693,6 +694,7 @@ namespace Unigram.Views
             image.Constraint = photo;
             image.DataContext = galleryItem;
             image.Click += Image_Click;
+            image.HorizontalAlignment = HorizontalAlignment.Center;
 
             ViewModel.Gallery.Items.Add(galleryItem);
 

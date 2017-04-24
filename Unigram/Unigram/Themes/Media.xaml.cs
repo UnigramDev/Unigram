@@ -192,5 +192,30 @@ namespace Unigram.Themes
         {
             MessageHelper.HandleTelegramUrl("t.me/unigramchannel");
         }
+
+        private async void SingleMedia_Click(object sender, RoutedEventArgs e)
+        {
+            var image = sender as ImageView;
+            var item = image.Constraint as TLPhoto;
+            if (item != null)
+            {
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
+
+                var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(item, null as string));
+                var dialog = new GalleryView { DataContext = viewModel };
+                dialog.Background = null;
+                dialog.OverlayBrush = null;
+                dialog.Closing += (s, args) =>
+                {
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
+                    {
+                        animation.TryStart(image);
+                    }
+                };
+
+                await dialog.ShowAsync();
+            }
+        }
     }
 }

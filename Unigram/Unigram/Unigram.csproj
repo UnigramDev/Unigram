@@ -239,6 +239,7 @@
     <Compile Include="ViewModels\Settings\SettingsStickersArchivedViewModelBase.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModelBase.cs" />
+    <Compile Include="ViewModels\SingleGalleryViewModel.cs" />
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
