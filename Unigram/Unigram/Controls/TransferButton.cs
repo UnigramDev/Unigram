@@ -14,24 +14,23 @@ namespace Unigram.Controls
 {
     public class TransferButton : GlyphHyperlinkButton
     {
-        #region Media
+        #region Transferable
 
-        public TLMessageMediaBase Media
+        public ITLTransferable Transferable
         {
-            get { return (TLMessageMediaBase)GetValue(MediaProperty); }
-            set { SetValue(MediaProperty, value); }
+            get { return (ITLTransferable)GetValue(TransferableProperty); }
+            set { SetValue(TransferableProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Media.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty MediaProperty =
-            DependencyProperty.Register("Media", typeof(TLMessageMediaBase), typeof(TransferButton), new PropertyMetadata(null, OnMediaChanged));
+        public static readonly DependencyProperty TransferableProperty =
+            DependencyProperty.Register("Transferable", typeof(ITLTransferable), typeof(TransferButton), new PropertyMetadata(null, OnTransferableChanged));
 
-        private static void OnMediaChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnTransferableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((TransferButton)d).OnMediaChanged((TLMessageMediaBase)e.NewValue, (TLMessageMediaBase)e.OldValue);
+            ((TransferButton)d).OnTransferableChanged(e.NewValue as ITLTransferable, e.OldValue as ITLTransferable);
         }
 
-        private void OnMediaChanged(TLMessageMediaBase newValue, TLMessageMediaBase oldValue)
+        private void OnTransferableChanged(ITLTransferable newValue, ITLTransferable oldValue)
         {
             Glyph = UpdateGlyph(newValue, oldValue);
         }
@@ -40,25 +39,18 @@ namespace Unigram.Controls
 
         public void Update()
         {
-            OnMediaChanged(Media, Media);
+            OnTransferableChanged(Transferable, null);
         }
 
-        private string UpdateGlyph(TLMessageMediaBase newValue, TLMessageMediaBase oldValue)
+        private string UpdateGlyph(ITLTransferable newValue, ITLTransferable oldValue)
         {
-            if (newValue is TLMessageMediaPhoto photoMedia)
+            if (newValue is TLPhoto photo)
             {
-                if (photoMedia.Photo is TLPhoto photo)
-                {
-                    return UpdateGlyph(photo);
-                }
+                return UpdateGlyph(photo);
             }
-
-            if (newValue is TLMessageMediaDocument documentMedia)
+            else if (newValue is TLDocument document)
             {
-                if (documentMedia.Document is TLDocument document)
-                {
-                    UpdateGlyph(document);
-                }
+                UpdateGlyph(document);
             }
 
             return "\uE118";

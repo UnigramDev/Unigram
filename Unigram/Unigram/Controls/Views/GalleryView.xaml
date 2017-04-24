@@ -69,8 +69,8 @@
                             Constraint="{x:Bind Source}"
                             Opacity="0"/>
                         <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                            <local:TransferButton Click="DownloadDocument_Click" Media="{Binding Message.Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                            <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Message.Media.Progress}" IsHitTestVisible="False"/>
+                            <local:TransferButton Click="DownloadDocument_Click" Transferable="{Binding Source}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                            <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
                         </Grid>
                     </Grid>
                 </DataTemplate>
