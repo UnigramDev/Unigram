@@ -118,7 +118,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<CreateChannelStep2ViewModel>(); //.SingleInstance();
             container.ContainerBuilder.RegisterType<CreateChatStep1ViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<CreateChatStep2ViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<ArticleViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<InstantViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStorageViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<FeaturedStickersViewModel>().SingleInstance();

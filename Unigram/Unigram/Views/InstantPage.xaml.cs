@@ -34,23 +34,18 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class ArticlePage : Page
+    public sealed partial class InstantPage : Page
     {
-        public ArticleViewModel ViewModel => DataContext as ArticleViewModel;
+        public InstantViewModel ViewModel => DataContext as InstantViewModel;
 
         private readonly string _injectedJs;
 
-        public ArticlePage()
+        public InstantPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ArticleViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<InstantViewModel>();
 
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = File.ReadAllText(jsPath);
@@ -817,7 +812,7 @@ namespace Unigram.Views
                     {
                         Execute.BeginOnUIThread(() =>
                         {
-                            ViewModel.NavigationService.Navigate(typeof(ArticlePage), result);
+                            ViewModel.NavigationService.Navigate(typeof(InstantPage), result);
                         });
                     },
                     fault =>
@@ -872,7 +867,7 @@ namespace Unigram.Views
         }
 
         public static readonly DependencyProperty IsStrikethroughProperty =
-            DependencyProperty.RegisterAttached("IsStrikethrough", typeof(bool), typeof(ArticlePage), new PropertyMetadata(false));
+            DependencyProperty.RegisterAttached("IsStrikethrough", typeof(bool), typeof(InstantPage), new PropertyMetadata(false));
 
         #endregion
     }

@@ -11,9 +11,9 @@ using Unigram.Views;
 
 namespace Unigram.ViewModels
 {
-    public class ArticleViewModel : UnigramViewModelBase
+    public class InstantViewModel : UnigramViewModelBase
     {
-        public ArticleViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public InstantViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
         }

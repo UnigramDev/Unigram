@@ -81,7 +81,7 @@ namespace Unigram.Themes
             {
                 if (bubble.Context != null)
                 {
-                    bubble.Context.NavigationService.Navigate(typeof(ArticlePage), message.Media);
+                    bubble.Context.NavigationService.Navigate(typeof(InstantPage), message.Media);
                 }
             }
         }
