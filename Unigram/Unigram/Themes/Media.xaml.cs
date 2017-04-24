@@ -133,7 +133,7 @@ namespace Unigram.Themes
                     {
                         if (message.IsVideo())
                         {
-                            Photo_Click(sender, e);
+                            Photo_Click(sender, EventArgs.Empty);
                         }
                         else
                         {
@@ -190,7 +190,7 @@ namespace Unigram.Themes
 
                                 if (message.IsVideo())
                                 {
-                                    Photo_Click(sender, e);
+                                    Photo_Click(sender, EventArgs.Empty);
                                 }
                                 else
                                 {
