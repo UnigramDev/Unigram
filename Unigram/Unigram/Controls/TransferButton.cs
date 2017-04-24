@@ -49,48 +49,60 @@ namespace Unigram.Controls
             {
                 if (photoMedia.Photo is TLPhoto photo)
                 {
-                    if (photo.Full is TLPhotoSize photoSize)
-                    {
-                        var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
-                        if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                        {
-                            Visibility = Visibility.Collapsed;
-                            return "\uE160";
-                        }
-
-                        Visibility = Visibility.Visible;
-                        return "\uE118";
-                    }
+                    return UpdateGlyph(photo);
                 }
             }
 
             if (newValue is TLMessageMediaDocument documentMedia)
             {
-                Visibility = Visibility.Visible;
-
                 if (documentMedia.Document is TLDocument document)
                 {
-                    var fileName = document.GetFileName();
-                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                    {
-                        if (TLMessage.IsVideo(document))
-                        {
-                            return "\uE102";
-                        }
-
-                        return "\uE160";
-                    }
-                    else if (documentMedia.DownloadingProgress > 0 && documentMedia.DownloadingProgress < 1)
-                    {
-                        return "\uE10A";
-                    }
-                    else if (documentMedia.UploadingProgress > 0 && documentMedia.DownloadingProgress < 1)
-                    {
-                        return "\uE10A";
-                    }
-
-                    return "\uE118";
+                    UpdateGlyph(document);
                 }
+            }
+
+            return "\uE118";
+        }
+
+        private string UpdateGlyph(TLPhoto photo)
+        {
+            if (photo.Full is TLPhotoSize photoSize)
+            {
+                var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                {
+                    Visibility = Visibility.Collapsed;
+                    return "\uE160";
+                }
+
+                Visibility = Visibility.Visible;
+                return "\uE118";
+            }
+
+            return "\uE118";
+        }
+
+        private string UpdateGlyph(TLDocument document)
+        {
+            Visibility = Visibility.Visible;
+
+            var fileName = document.GetFileName();
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+                if (TLMessage.IsVideo(document))
+                {
+                    return "\uE102";
+                }
+
+                return "\uE160";
+            }
+            else if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
+            {
+                return "\uE10A";
+            }
+            else if (document.UploadingProgress > 0 && document.DownloadingProgress < 1)
+            {
+                return "\uE10A";
             }
 
             return "\uE118";

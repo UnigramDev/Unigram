@@ -56,41 +56,25 @@
                   SelectionChanged="Flip_SelectionChanged"
                   Background="Transparent"
                   Grid.RowSpan="3">
-            <FlipView.ItemTemplateSelector>
-                <selectors:GalleryTemplateSelector>
-                    <selectors:GalleryTemplateSelector.ImageTemplate>
-                        <DataTemplate x:DataType="viewModels:GalleryItem">
-                            <local:ImageView 
-                                Loaded="ImageView_ImageOpened"
-                                Unloaded="ImageView_Unloaded"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
-                                Constraint="{x:Bind Source}"
-                                Opacity="0"/>
-                        </DataTemplate>
-                    </selectors:GalleryTemplateSelector.ImageTemplate>
-                    <selectors:GalleryTemplateSelector.VideoTemplate>
-                        <DataTemplate x:DataType="viewModels:GalleryItem">
-                            <Grid>
-                                <local:ImageView
-                                    x:Name="Surface"
-                                    Loaded="ImageView_ImageOpened"
-                                    Unloaded="ImageView_Unloaded"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{x:Bind Source}"
-                                    Opacity="0"/>
-                                <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                                    <local:TransferButton Click="DownloadDocument_Click" Media="{Binding Message.Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                                    <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Message.Media.Progress}" IsHitTestVisible="False"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </selectors:GalleryTemplateSelector.VideoTemplate>
-                </selectors:GalleryTemplateSelector>
-            </FlipView.ItemTemplateSelector>
+            <FlipView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:GalleryItem">
+                    <Grid>
+                        <local:ImageView
+                            x:Name="Surface"
+                            Loaded="ImageView_ImageOpened"
+                            Unloaded="ImageView_Unloaded"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
+                            Constraint="{x:Bind Source}"
+                            Opacity="0"/>
+                        <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                            <local:TransferButton Click="DownloadDocument_Click" Media="{Binding Message.Media}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                            <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Message.Media.Progress}" IsHitTestVisible="False"/>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </FlipView.ItemTemplate>
         </FlipView>
 
         <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
