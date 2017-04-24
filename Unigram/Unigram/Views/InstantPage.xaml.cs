@@ -33,6 +33,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using Windows.UI.Xaml.Media.Animation;
+using Unigram.Controls.Views;
 
 namespace Unigram.Views
 {
@@ -57,8 +59,6 @@ namespace Unigram.Views
             _containers.Clear();
             _containers.Push(LayoutRoot);
             _anchors.Clear();
-
-            _gallery.Clear();
 
             var parameter = TLSerializationService.Current.Deserialize((string)e.Parameter);
 
@@ -123,8 +123,6 @@ namespace Unigram.Views
         private Stack<TLPageBlockBase> _parents = new Stack<TLPageBlockBase>();
 
         private Dictionary<string, Border> _anchors = new Dictionary<string, Border>();
-
-        private List<GalleryItem> _gallery = new List<GalleryItem>();
 
         private void ProcessBlock(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
@@ -468,9 +466,14 @@ namespace Unigram.Views
             }
 
             var video = videos.FirstOrDefault(x => x.Id == block.VideoId);
+            var galleryItem = new GalleryDocumentItem(video as TLDocument, block.Caption?.ToString());
             var image = new ImageView();
             image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
             image.Constraint = video;
+            image.DataContext = galleryItem;
+            image.Click += Image_Click;
+
+            ViewModel.Gallery.Items.Add(galleryItem);
 
             _containers.Peek().Children.Add(image);
 
@@ -684,9 +687,14 @@ namespace Unigram.Views
             }
 
             var photo = photos.FirstOrDefault(x => x.Id == block.PhotoId);
+            var galleryItem = new GalleryPhotoItem(photo as TLPhoto, block.Caption?.ToString());
             var image = new ImageView();
             image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
             image.Constraint = photo;
+            image.DataContext = galleryItem;
+            image.Click += Image_Click;
+
+            ViewModel.Gallery.Items.Add(galleryItem);
 
             _containers.Peek().Children.Add(image);
 
@@ -705,6 +713,32 @@ namespace Unigram.Views
             if (_parents.Count > 0 && _parents.Peek().TypeId == TLType.PageBlockCover)
             {
                 image.Margin = new Thickness(0, -12, 0, 12);
+            }
+        }
+
+        private async void Image_Click(object sender, RoutedEventArgs e)
+        {
+            var image = sender as ImageView;
+            var item = image.DataContext as GalleryItem;
+            if (item != null)
+            {
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
+
+                ViewModel.Gallery.SelectedItem = item;
+
+                var dialog = new GalleryView { DataContext = ViewModel.Gallery };
+                dialog.Background = null;
+                dialog.OverlayBrush = null;
+                dialog.Closing += (s, args) =>
+                {
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
+                    {
+                        animation.TryStart(image);
+                    }
+                };
+
+                await dialog.ShowAsync();
             }
         }
 

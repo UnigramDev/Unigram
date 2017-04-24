@@ -146,8 +146,8 @@ namespace Unigram.Views
             {
                 if (user.Photo is TLUserProfilePhoto photo)
                 {
-                    var test = new UserPhotosViewModel(user, ViewModel.ProtoService);
-                    var dialog = new GalleryView { DataContext = test };
+                    var viewModel = new UserPhotosViewModel(user, ViewModel.ProtoService);
+                    var dialog = new GalleryView { DataContext = viewModel };
                     dialog.Background = null;
                     dialog.OverlayBrush = null;
                     dialog.Closing += (s, args) =>

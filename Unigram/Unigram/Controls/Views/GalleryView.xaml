@@ -82,7 +82,11 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}" Margin="12,8" Style="{StaticResource BodyTextBlockStyle}" Grid.ColumnSpan="2"/>
+                <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
+                           Visibility="{x:Bind ViewModel.SelectedItem.Caption, Converter={StaticResource NullToVisibilityConverter}}"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           Margin="12,8"
+                           Grid.ColumnSpan="2"/>
 
                 <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0" VerticalAlignment="Center" Grid.Row="1">
                     <TextBlock Text="{x:Bind ViewModel.SelectedItem.From.DisplayName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>

@@ -16,6 +16,20 @@ namespace Unigram.ViewModels
         public InstantViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
+            _gallery = new InstantGalleryViewModel();
+        }
+
+        private InstantGalleryViewModel _gallery;
+        public InstantGalleryViewModel Gallery
+        {
+            get
+            {
+                return _gallery;
+            }
+            set
+            {
+                Set(ref _gallery, value);
+            }
         }
 
         public RelayCommand FeedbackCommand => new RelayCommand(FeedbackExecute);

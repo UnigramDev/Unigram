@@ -145,4 +145,40 @@ namespace Unigram.ViewModels
             return new TLInputStickeredMediaPhoto { Id = _photo.ToInputPhoto() };
         }
     }
+
+    public class GalleryDocumentItem : GalleryItem
+    {
+        private readonly TLDocument _document;
+        private readonly ITLDialogWith _from;
+        private readonly string _caption;
+
+        public GalleryDocumentItem(TLDocument document, ITLDialogWith from)
+        {
+            _document = document;
+            _from = from;
+        }
+
+        public GalleryDocumentItem(TLDocument document, string caption)
+        {
+            _document = document;
+            _caption = caption;
+        }
+
+        public TLDocument Document => _document;
+
+        public override object Source => _document;
+
+        public override string Caption => _caption;
+
+        public override ITLDialogWith From => _from;
+
+        public override int Date => _document.Date;
+
+        public override bool HasStickers => _document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
+
+        public override TLInputStickeredMediaBase ToInputStickeredMedia()
+        {
+            return new TLInputStickeredMediaDocument { Id = _document.ToInputDocument() };
+        }
+    }
 }
