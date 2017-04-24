@@ -62,13 +62,10 @@
                                 VerticalAlignment="Center"
                                 Click="Photo_Click"/>
 
-            <controls:ProgressBarRing Value="{Binding Media.Photo.Progress}"/>
-
-            <!--<controls:ProgressBarRing
-                 SmoothValue="{Binding UploadingProgress}"
-                 common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
-                 Maximum="1"
-                 Visibility="Collapsed"/>-->
+            <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
+            </Grid>
         </Grid>
     </DataTemplate>
 
@@ -89,12 +86,6 @@
                 <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
                 <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
             </Grid>
-
-            <!--<controls:ProgressBarRing
-                 SmoothValue="{Binding UploadingProgress}"
-                 common:Attached.Tapped="{Binding Dialog.MediaCancelUploadingCommand, Source={StaticResource Locator}}"
-                 Maximum="1"
-                 Visibility="Collapsed"/>-->
         </Grid>
     </DataTemplate>
 
