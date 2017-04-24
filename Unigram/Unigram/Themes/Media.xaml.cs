@@ -155,7 +155,7 @@ namespace Unigram.Themes
                             documentMedia.DownloadingProgress = 0.02;
                             border.Update();
 
-                            var download = await operation.AsTask(documentMedia.Download());
+                            var download = await operation.AsTask(documentMedia.Document.Download());
                             if (download != null)
                             {
                                 border.Update();
