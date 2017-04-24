@@ -239,20 +239,20 @@ namespace Unigram.Controls.Views
                     }
                     else
                     {
-                        if (documentMedia.DownloadingProgress > 0 && documentMedia.DownloadingProgress < 1)
+                        if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
                         {
                             var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                             manager.CancelDownloadFile(document);
 
-                            documentMedia.DownloadingProgress = 0;
+                            document.DownloadingProgress = 0;
                             border.Update();
                         }
-                        else if (documentMedia.UploadingProgress > 0 && documentMedia.UploadingProgress < 1)
+                        else if (document.UploadingProgress > 0 && document.UploadingProgress < 1)
                         {
                             var manager = UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
                             manager.CancelUploadFile(document.Id);
 
-                            documentMedia.UploadingProgress = 0;
+                            document.UploadingProgress = 0;
                             border.Update();
                         }
                         else
@@ -260,7 +260,7 @@ namespace Unigram.Controls.Views
                             var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
                             var operation = manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
 
-                            documentMedia.DownloadingProgress = 0.02;
+                            document.DownloadingProgress = 0.02;
                             border.Update();
 
                             var download = await operation.AsTask(documentMedia.Document.Download());

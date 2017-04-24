@@ -940,8 +940,18 @@ namespace Telegram.Api.Services
                     Execute.BeginOnUIThread(() =>
                     {
                         message.State = GetMessageStatus(_cacheService, message.ToId);
-                        message.Media.LastProgress = 0.0;
-                        message.Media.DownloadingProgress = 0.0;
+
+                        // TODO: 24/04/2017 verify if this is really needed
+                        if (message.Media is TLMessageMediaPhoto photoMedia)
+                        {
+                            photoMedia.Photo.LastProgress = 0.0;
+                            photoMedia.Photo.DownloadingProgress = 0.0;
+                        }
+                        else if (message.Media is TLMessageMediaDocument documentMedia)
+                        {
+                            documentMedia.Document.LastProgress = 0.0;
+                            documentMedia.Document.DownloadingProgress = 0.0;
+                        }
                     });
 
                     var multiPts = result as ITLMultiPts;
@@ -987,8 +997,18 @@ namespace Telegram.Api.Services
                     Execute.BeginOnUIThread(() =>
                     {
                         message.State = GetMessageStatus(_cacheService, message.ToId);
-                        message.Media.LastProgress = 0.0;
-                        message.Media.DownloadingProgress = 0.0;
+
+                        // TODO: 24/04/2017 verify if this is really needed
+                        if (message.Media is TLMessageMediaPhoto photoMedia)
+                        {
+                            photoMedia.Photo.LastProgress = 0.0;
+                            photoMedia.Photo.DownloadingProgress = 0.0;
+                        }
+                        else if (message.Media is TLMessageMediaDocument documentMedia)
+                        {
+                            documentMedia.Document.LastProgress = 0.0;
+                            documentMedia.Document.DownloadingProgress = 0.0;
+                        }
                     });
 
                     var multiPts = result as ITLMultiPts;
@@ -1532,8 +1552,18 @@ namespace Telegram.Api.Services
                     Execute.BeginOnUIThread(() =>
                     {
                         message.State = TLMessageState.Confirmed;
-                        message.Media.LastProgress = 0.0;
-                        message.Media.DownloadingProgress = 0.0;
+
+                        // TODO: 24/04/2017 verify if this is really needed
+                        if (message.Media is TLMessageMediaPhoto photoMedia)
+                        {
+                            photoMedia.Photo.LastProgress = 0.0;
+                            photoMedia.Photo.DownloadingProgress = 0.0;
+                        }
+                        else if (message.Media is TLMessageMediaDocument documentMedia)
+                        {
+                            documentMedia.Document.LastProgress = 0.0;
+                            documentMedia.Document.DownloadingProgress = 0.0;
+                        }
                     });
 
                     var multiPts = result as ITLMultiPts;
@@ -1619,8 +1649,18 @@ namespace Telegram.Api.Services
                         for (var i = 0; i < messages.Count; i++)
                         {
                             messages[i].State = TLMessageState.Confirmed;
-                            messages[i].Media.LastProgress = 0.0;
-                            messages[i].Media.DownloadingProgress = 0.0;
+
+                            // TODO: 24/04/2017 verify if this is really needed
+                            if (messages[i].Media is TLMessageMediaPhoto photoMedia)
+                            {
+                                photoMedia.Photo.LastProgress = 0.0;
+                                photoMedia.Photo.DownloadingProgress = 0.0;
+                            }
+                            else if (messages[i].Media is TLMessageMediaDocument documentMedia)
+                            {
+                                documentMedia.Document.LastProgress = 0.0;
+                                documentMedia.Document.DownloadingProgress = 0.0;
+                            }
                         }
                     });
 

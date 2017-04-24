@@ -50,7 +50,7 @@ namespace Unigram.Controls
             }
             else if (newValue is TLDocument document)
             {
-                UpdateGlyph(document);
+                return UpdateGlyph(document);
             }
 
             return "\uE118";

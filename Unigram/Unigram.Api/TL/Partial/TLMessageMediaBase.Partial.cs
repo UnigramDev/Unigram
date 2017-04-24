@@ -12,23 +12,6 @@ namespace Telegram.Api.TL
 {
     public abstract partial class TLMessageMediaBase : INotifyPropertyChanged
     {
-        public virtual double UploadingProgress { get; set; }
-        public virtual double DownloadingProgress { get; set; }
-        public virtual double LastProgress { get; set; }
-
-        public double Progress
-        {
-            get
-            {
-                if (DownloadingProgress > 0)
-                {
-                    return DownloadingProgress;
-                }
-
-                return UploadingProgress;
-            }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         public override void RaisePropertyChanged(string propertyName)
         {
