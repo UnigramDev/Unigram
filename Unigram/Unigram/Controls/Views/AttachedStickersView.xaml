@@ -11,6 +11,8 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    VerticalAlignment="Stretch"
+    Background="Transparent"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
