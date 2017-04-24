@@ -51,7 +51,7 @@ namespace Unigram.Controls.Views
         private Visual _topBarVisual;
         private Visual _botBarVisual;
 
-        public GalleryView()
+        private GalleryView()
         {
             InitializeComponent();
 
@@ -67,6 +67,47 @@ namespace Unigram.Controls.Views
             _layerVisual.Opacity = 0;
             _topBarVisual.Offset = new Vector3(0, -48, 0);
             _botBarVisual.Offset = new Vector3(0, 48, 0);
+        }
+
+        private static GalleryView _current;
+        public static GalleryView Current
+        {
+            get
+            {
+                if (_current == null)
+                    _current = new GalleryView();
+
+                return _current;
+            }
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter, EventHandler closing)
+        {
+            EventHandler handler = null;
+            handler = new EventHandler((s, args) =>
+            {
+                Closing -= handler;
+                closing?.Invoke(this, args);
+            });
+
+            Closing += handler;
+            return ShowAsync(parameter);
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter)
+        {
+            DataContext = parameter;
+            Bindings.Update();
+
+            RoutedEventHandler handler = null;
+            handler = new RoutedEventHandler(async (s, args) =>
+            {
+                Loaded -= handler;
+                await ViewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+            });
+
+            Loaded += handler;
+            return ShowAsync();
         }
 
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)

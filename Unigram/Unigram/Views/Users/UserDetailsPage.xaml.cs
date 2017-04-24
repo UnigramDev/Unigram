@@ -53,20 +53,15 @@ namespace Unigram.Views.Users
                 var photo = user.Photo as TLUserProfilePhoto;
                 if (photo != null)
                 {
-                    var test = new UserPhotosViewModel(user, ViewModel.ProtoService);
-                    var dialog = new GalleryView { DataContext = test };
-                    dialog.Background = null;
-                    dialog.OverlayBrush = null;
-                    dialog.Closing += (s, args) =>
+                    var viewModel = new UserPhotosViewModel(user, ViewModel.ProtoService);
+                    await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                     {
                         var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
                         if (animation != null)
                         {
                             animation.TryStart(Picture);
                         }
-                    };
-
-                    await dialog.ShowAsync();
+                    });
                 }
             }
         }

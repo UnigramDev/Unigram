@@ -32,7 +32,7 @@ namespace Unigram.Controls.Views
     {
         public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
 
-        public StickerSetView()
+        private StickerSetView()
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<StickerSetViewModel>();

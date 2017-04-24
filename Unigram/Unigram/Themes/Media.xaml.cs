@@ -54,20 +54,15 @@ namespace Unigram.Themes
                 {
                     ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
-                    var test = new DialogPhotosViewModel(bubble.Context.Peer, message, bubble.Context.ProtoService);
-                    var dialog = new GalleryView { DataContext = test };
-                    dialog.Background = null;
-                    dialog.OverlayBrush = null;
-                    dialog.Closing += (s, args) =>
+                    var viewModel = new DialogPhotosViewModel(bubble.Context.Peer, message, bubble.Context.ProtoService);
+                    await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                     {
                         var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
                         if (animation != null)
                         {
                             animation.TryStart(image);
                         }
-                    };
-
-                    await dialog.ShowAsync();
+                    });
                 }
             }
         }
@@ -95,19 +90,14 @@ namespace Unigram.Themes
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
                 var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(item, null as string));
-                var dialog = new GalleryView { DataContext = viewModel };
-                dialog.Background = null;
-                dialog.OverlayBrush = null;
-                dialog.Closing += (s, args) =>
+                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                 {
                     var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
                     if (animation != null)
                     {
                         animation.TryStart(image);
                     }
-                };
-
-                await dialog.ShowAsync();
+                });
             }
         }
 

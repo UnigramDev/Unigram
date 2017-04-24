@@ -11,6 +11,8 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
+    Background="{x:Null}"
+    OverlayBrush="{x:Null}"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch">
 
@@ -49,7 +51,7 @@
 
         <FlipView x:Name="Flip"
                   Opacity="0"
-                  ItemsSource="{x:Bind ViewModel.Items}"
+                  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
                   SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                   SelectionChanged="Flip_SelectionChanged"
                   Background="Transparent"
