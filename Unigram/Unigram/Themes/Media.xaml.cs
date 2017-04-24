@@ -44,7 +44,12 @@ namespace Unigram.Themes
             this.InitializeComponent();
         }
 
-        private async void Photo_Click(object sender, RoutedEventArgs e)
+        private void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            Photo_Click(sender);
+        }
+
+        public static async void Photo_Click(object sender)
         {
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
@@ -133,7 +138,7 @@ namespace Unigram.Themes
                     {
                         if (message.IsVideo())
                         {
-                            Photo_Click(sender, EventArgs.Empty);
+                            Photo_Click(sender);
                         }
                         else
                         {
@@ -190,7 +195,7 @@ namespace Unigram.Themes
 
                                 if (message.IsVideo())
                                 {
-                                    Photo_Click(sender, EventArgs.Empty);
+                                    Photo_Click(sender);
                                 }
                                 else
                                 {
