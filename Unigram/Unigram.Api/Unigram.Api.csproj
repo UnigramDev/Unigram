@@ -154,6 +154,7 @@
     <Compile Include="TL\Core\ITLRandomId.cs" />
     <Compile Include="TL\Core\ITLReadMaxId.cs" />
     <Compile Include="TL\Core\ITLStickers.cs" />
+    <Compile Include="TL\Core\ITLTransferable.cs" />
     <Compile Include="TL\Core\TLActionInfo.cs" />
     <Compile Include="TL\Core\TLInt.cs" />
     <Compile Include="TL\Core\TLMessageActionUnreadMessages.cs" />

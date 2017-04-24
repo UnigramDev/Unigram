@@ -9,7 +9,7 @@ using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLDocumentBase : INotifyPropertyChanged
+    public partial class TLDocumentBase : ITLTransferable, INotifyPropertyChanged
     {
 		public virtual TLInputDocumentBase ToInputDocument()
         {
@@ -63,12 +63,6 @@ namespace Telegram.Api.TL
 
         public double LastProgress { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public override void RaisePropertyChanged(string propertyName)
-        {
-            Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
-        }
-
         public Progress<double> Download()
         {
             DownloadingProgress = 0.02;
@@ -89,6 +83,12 @@ namespace Telegram.Api.TL
                 UploadingProgress = value;
                 Debug.WriteLine(value);
             });
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public override void RaisePropertyChanged(string propertyName)
+        {
+            Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
         #endregion
