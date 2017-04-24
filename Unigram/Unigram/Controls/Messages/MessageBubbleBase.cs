@@ -11,6 +11,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Selectors;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Chats;
@@ -251,18 +252,32 @@ namespace Unigram.Controls.Messages
                 return base.MeasureOverride(availableSize);
             }
 
+            var sumWidth = 0.0;
+
             object constraint = null;
-            if (ViewModel?.Media.TypeId == TLType.MessageMediaPhoto)
+            if (ViewModel?.Media is TLMessageMediaPhoto photoMedia)
             {
-                constraint = ((TLMessageMediaPhoto)ViewModel?.Media).Photo;
+                constraint = photoMedia.Photo;
             }
-            else if (ViewModel?.Media.TypeId == TLType.MessageMediaDocument)
+            else if (ViewModel?.Media is TLMessageMediaDocument documentMedia)
             {
-                constraint = ((TLMessageMediaDocument)ViewModel?.Media).Document;
+                constraint = documentMedia.Document;
             }
-            else if (ViewModel?.Media.TypeId == TLType.MessageMediaInvoice)
+            else if (ViewModel?.Media is TLMessageMediaInvoice invoiceMedia)
             {
-                constraint = ((TLMessageMediaInvoice)ViewModel?.Media).Photo;
+                constraint = invoiceMedia.Photo;
+            }
+            else if (ViewModel?.Media is TLMessageMediaWebPage webPageMedia)
+            {
+                if (webPageMedia.WebPage is TLWebPage webPage && MediaTemplateSelector.IsWebPagePhotoTemplate(webPage))
+                {
+                    sumWidth = 8 + 10 + 10;
+                    constraint = webPage.Photo;
+                }
+            }
+            else if (ViewModel?.Media is TLMessageMediaGeo || ViewModel?.Media is TLMessageMediaVenue)
+            {
+                constraint = ViewModel?.Media;
             }
 
             if (constraint == null)
@@ -270,11 +285,19 @@ namespace Unigram.Controls.Messages
                 return base.MeasureOverride(availableSize);
             }
 
-            var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320));
+            var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320 + sumWidth));
             var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 420));
 
             var width = 0.0;
             var height = 0.0;
+
+            if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaVenue)
+            {
+                width = 320;
+                height = 240;
+
+                goto Calculate;
+            }
 
             var photo = constraint as TLPhoto;
             if (photo != null)
@@ -328,7 +351,7 @@ namespace Unigram.Controls.Messages
             if (_statusControl.DesiredSize.IsEmpty)
                 _statusControl.Measure(availableSize);
 
-            width = Math.Max(_statusControl.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, width);
+            width = Math.Max(_statusControl.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, width + sumWidth);
 
             if (width > availableWidth || height > availableHeight)
             {
@@ -368,6 +391,15 @@ namespace Unigram.Controls.Messages
             {
                 var invoiceMedia = media as TLMessageMediaInvoice;
                 if (invoiceMedia.HasPhoto && invoiceMedia.Photo != null)
+                {
+                    return true;
+                }
+            }
+            else if (media.TypeId == TLType.MessageMediaWebPage && width)
+            {
+                var webPageMedia = media as TLMessageMediaWebPage;
+                var webPage = webPageMedia.WebPage as TLWebPage;
+                if (webPage != null && MediaTemplateSelector.IsWebPagePhotoTemplate(webPage))
                 {
                     return true;
                 }

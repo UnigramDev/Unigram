@@ -48,7 +48,7 @@ namespace Telegram.Api.TL
             get
             {
                 var attribute = Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
-                if (attribute != null && !attribute.IsMask)
+                if (attribute != null /* && !attribute.IsMask*/)
                 {
                     return attribute.StickerSet;
                 }

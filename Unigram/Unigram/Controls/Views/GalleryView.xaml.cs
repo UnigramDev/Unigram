@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Template10.Common;
+using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -27,9 +28,11 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class PhotosView : ContentDialogBase
+    public sealed partial class GalleryView : ContentDialogBase
     {
-        public PhotosViewModelBase ViewModel => DataContext as PhotosViewModelBase;
+        public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
+
+        public BindConvert Convert => BindConvert.Current;
 
         private FrameworkElement _firstImage;
 
@@ -37,7 +40,7 @@ namespace Unigram.Controls.Views
         private Visual _topBarVisual;
         private Visual _botBarVisual;
 
-        public PhotosView()
+        public GalleryView()
         {
             InitializeComponent();
 
@@ -50,7 +53,7 @@ namespace Unigram.Controls.Views
             _botBarVisual.Offset = new Vector3(0, 48, 0);
         }
 
-        protected override void OnBackRequested(object sender, HandledEventArgs e)
+        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             if (Flip.SelectedIndex == 0 && _firstImage != null && _firstImage.ActualWidth > 0)
             {
@@ -155,9 +158,10 @@ namespace Unigram.Controls.Views
             }
         }
 
-        //protected override void UpdateView(Rect bounds)
-        //{
-
-        //}
+        private string ConvertDate(int value)
+        {
+            var date = Convert.DateTime(value);
+            return string.Format("{0} at {1}", date.Date == DateTime.Now.Date ? "Today" : Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
+        }
     }
 }

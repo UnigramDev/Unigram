@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class DialogPhotosViewModel : PhotosViewModelBase
+    public class DialogPhotosViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly TLInputPeerBase _peer;
@@ -28,12 +28,12 @@ namespace Unigram.ViewModels
             var media = selected.Media as TLMessageMediaPhoto;
             if (media != null)
             {
-                Items = new ObservableCollection<object> { media.Photo };
-                SelectedItem = media.Photo;
+                Items = new ObservableCollection<GalleryItem> { new GalleryMessageItem(selected) };
+                SelectedItem = Items[0];
             }
             else
             {
-                Items = new ObservableCollection<object>();
+                Items = new ObservableCollection<GalleryItem>();
             }
 
             _peer = peer;
@@ -65,7 +65,7 @@ namespace Unigram.ViewModels
                     {
                         if (photo is TLMessage message && message.Media is TLMessageMediaPhoto media)
                         {
-                            Items.Add(media.Photo);
+                            Items.Add(new GalleryMessageItem(message));
                         }
                     }
 
@@ -91,5 +91,65 @@ namespace Unigram.ViewModels
         //        }
         //    }
         //}
+    }
+
+    public class GalleryMessageItem : GalleryItem
+    {
+        private readonly TLMessage _message;
+
+        public GalleryMessageItem(TLMessage message)
+        {
+            _message = message;
+        }
+
+        public override object Source => _message.Media;
+
+        public override string Caption
+        {
+            get
+            {
+                if (_message.Media is ITLMessageMediaCaption captionMedia)
+                {
+                    return captionMedia.Caption;
+                }
+
+                return null;
+            }
+        }
+
+        public override ITLDialogWith From => _message.From;
+
+        public override int Date => _message.Date;
+
+        public override bool HasStickers
+        {
+            get
+            {
+                if (_message.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
+                {
+                    return photo.IsHasStickers;
+                }
+                else if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    return document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
+                }
+
+                return false;
+            }
+        }
+
+        public override TLInputStickeredMediaBase ToInputStickeredMedia()
+        {
+            if (_message.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
+            {
+                return new TLInputStickeredMediaPhoto { Id = photo.ToInputPhoto() };
+            }
+            else if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                return new TLInputStickeredMediaDocument { Id = document.ToInputDocument() };
+            }
+
+            return null;
+        }
     }
 }

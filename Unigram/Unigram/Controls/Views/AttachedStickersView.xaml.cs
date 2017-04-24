@@ -1,41 +1,39 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
-using Unigram.Views;
+using Template10.Utils;
 using Unigram.ViewModels;
+using Unigram.Views;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
+using Windows.UI.Composition;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using LinqToVisualTree;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Composition;
-using System.Diagnostics;
-using Windows.UI.ViewManagement;
-using Windows.Foundation.Metadata;
-using Windows.UI;
-using Template10.Utils;
 
-// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class StickerSetView : ContentDialogBase
+    public sealed partial class AttachedStickersView : ContentDialogBase
     {
-        public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
+        public AttachedStickersViewModel ViewModel => DataContext as AttachedStickersViewModel;
 
-        public StickerSetView()
+        public AttachedStickersView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<StickerSetViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<AttachedStickersViewModel>();
 
             //Loaded += async (s, args) =>
             //{
@@ -43,56 +41,27 @@ namespace Unigram.Controls.Views
             //};
         }
 
-        private static StickerSetView _current;
-        public static StickerSetView Current
+        private static AttachedStickersView _current;
+        public static AttachedStickersView Current
         {
             get
             {
                 if (_current == null)
-                    _current = new StickerSetView();
+                    _current = new AttachedStickersView();
 
                 return _current;
             }
         }
 
-        public ItemClickEventHandler ItemClick { get; set; }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSet parameter)
-        {
-            return ShowAsync(parameter, null);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSet parameter, ItemClickEventHandler callback)
-        {
-            return ShowAsync(new TLInputStickerSetID { Id = parameter.Id, AccessHash = parameter.AccessHash }, callback);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSetCoveredBase parameter)
-        {
-            return ShowAsync(parameter, null);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSetCoveredBase parameter, ItemClickEventHandler callback)
-        {
-            return ShowAsync(new TLInputStickerSetID { Id = parameter.Set.Id, AccessHash = parameter.Set.AccessHash }, callback);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickerSetBase parameter)
-        {
-            return ShowAsync(parameter, null);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickerSetBase parameter, ItemClickEventHandler callback)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickeredMediaBase parameter)
         {
             ViewModel.IsLoading = true;
-            ViewModel.StickerSet = new TLStickerSet();
             ViewModel.Items.Clear();
 
             RoutedEventHandler handler = null;
             handler = new RoutedEventHandler(async (s, args) =>
             {
                 Loaded -= handler;
-                ItemClick = callback;
                 await ViewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
             });
 
@@ -100,36 +69,24 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessagesStickerSet parameter)
-        {
-            return ShowAsync(parameter, null);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessagesStickerSet parameter, ItemClickEventHandler callback)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLVector<TLStickerSetCoveredBase> parameter)
         {
             ViewModel.IsLoading = false;
-            ViewModel.StickerSet = parameter.Set;
             ViewModel.Items.Clear();
-            ViewModel.Items.Add(parameter);
+            ViewModel.Items.AddRange(parameter.Select(
+                set =>
+                {
+                    if (set is TLStickerSetCovered covered)
+                    {
+                        return new TLStickerSetMultiCovered { Set = covered.Set, Covers = new TLVector<TLDocumentBase> { covered.Cover } };
+                    }
+
+                    return set as TLStickerSetMultiCovered;
+                }));
 
             return ShowAsync();
         }
 
-        private string ConvertIsInstalled(bool installed, bool archived, bool official, bool masks)
-        {
-            if (installed && !archived)
-            {
-                return official 
-                    ? string.Format(masks ? "Archive {0} masks" : "Archive {0} stickers", ViewModel.StickerSet.Count)
-                    : string.Format(masks ? "Remove {0} masks" : "Remove {0} stickers", ViewModel.StickerSet.Count);
-            }
-
-            return official || archived
-                ? string.Format(masks ? "Show {0} masks" : "Show {0} stickers", ViewModel.StickerSet.Count)
-                : string.Format(masks ? "Add {0} masks" : "Add {0} stickers", ViewModel.StickerSet.Count);
-        }
-
-        private Border LineTop;
         private Border LineAccent;
 
         private ScrollViewer _scrollingHost;
@@ -187,9 +144,8 @@ namespace Unigram.Controls.Views
         private void GroupHeader_Loaded(object sender, RoutedEventArgs e)
         {
             var groupHeader = sender as Grid;
-            if (groupHeader != null)
+            if (groupHeader != null && groupHeader.DataContext is TLStickerSetMultiCovered covered && covered == ViewModel.Items[0])
             {
-                LineTop = groupHeader.FindName("LineTop") as Border;
                 LineAccent = groupHeader.FindName("LineAccent") as Border;
 
                 if (_scrollingHost != null)
@@ -202,14 +158,9 @@ namespace Unigram.Controls.Views
         private void Scroll_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scroll = sender as ScrollViewer;
-            var top = 1;
             var accent = 0;
             var bottom = 1;
 
-            if (scroll.VerticalOffset <= BackgroundPanel.Margin.Top)
-            {
-                top = 0;
-            }
             if (scroll.VerticalOffset < BackgroundPanel.Margin.Top)
             {
                 accent = 1;
@@ -231,9 +182,8 @@ namespace Unigram.Controls.Views
             //    }
             //}
 
-            if (LineTop != null)
+            if (LineAccent != null)
             {
-                LineTop.BorderThickness = new Thickness(0, 0, 0, top);
                 LineAccent.BorderThickness = new Thickness(0, accent, 0, 0);
                 LineBottom.BorderThickness = new Thickness(0, bottom, 0, 0);
             }
@@ -321,12 +271,14 @@ namespace Unigram.Controls.Views
             Hide(ContentDialogBaseResult.Cancel);
         }
 
-        private void List_ItemClick(object sender, ItemClickEventArgs e)
+        private async void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (ItemClick != null)
+            Hide(ContentDialogBaseResult.OK);
+
+            var item = e.ClickedItem as TLDocument;
+            if (item != null)
             {
-                ItemClick.Invoke(this, e);
-                Hide(ContentDialogBaseResult.OK);
+                await StickerSetView.Current.ShowAsync(item.StickerSet);
             }
         }
     }

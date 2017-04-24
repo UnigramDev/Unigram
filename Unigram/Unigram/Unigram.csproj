@@ -178,6 +178,9 @@
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\TLListView.cs" />
+    <Compile Include="Controls\Views\AttachedStickersView.xaml.cs">
+      <DependentUpon>AttachedStickersView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\EditYourPhotoView.xaml.cs">
       <DependentUpon>EditYourPhotoView.xaml</DependentUpon>
     </Compile>
@@ -205,6 +208,7 @@
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
+    <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelAdminsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelDetailsViewModel.cs" />
@@ -417,8 +421,8 @@
     </Compile>
     <Compile Include="Controls\MasterDetailView.cs" />
     <Compile Include="Controls\Messages\MessageBubbleBase.cs" />
-    <Compile Include="Controls\Views\PhotosView.xaml.cs">
-      <DependentUpon>PhotosView.xaml</DependentUpon>
+    <Compile Include="Controls\Views\GalleryView.xaml.cs">
+      <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PivotRadioButton.cs" />
     <Compile Include="Controls\Messages\MessageReference.xaml.cs">
@@ -477,7 +481,7 @@
     <Compile Include="ViewModels\SignIn\SignInViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\PhotosViewModelBase.cs" />
+    <Compile Include="ViewModels\GalleryViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsEditNameViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersFeaturedViewModel.cs" />
@@ -765,6 +769,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\AttachedStickersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\DeleteChannelMessageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -781,7 +789,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\PhotosView.xaml">
+    <Page Include="Controls\Views\GalleryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -186,7 +186,13 @@ namespace Unigram.Controls
             BootStrapper.BackRequested -= OnBackRequested;
         }
 
-        protected virtual void OnBackRequested(object sender, HandledEventArgs e)
+        private void OnBackRequested(object sender, HandledEventArgs e)
+        {
+            BootStrapper.BackRequested -= OnBackRequested;
+            OnBackRequestedOverride(sender, e);
+        }
+
+        protected virtual void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             e.Handled = true;
             Hide(ContentDialogBaseResult.None);

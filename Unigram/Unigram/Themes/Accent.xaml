@@ -14,6 +14,7 @@
             <StaticResource x:Key="MessageSubtleForegroundBrush" ResourceKey="SystemControlDisabledChromeDisabledLowBrush"/>
 
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush2" Color="#0e7acd"/>
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
 
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#ffffff"/>
@@ -61,6 +62,7 @@
             <StaticResource x:Key="MessageSubtleForegroundBrush" ResourceKey="SystemControlDisabledChromeDisabledLowBrush"/>
 
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush2" Color="#0e7acd"/>
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
 
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#ffffff"/>

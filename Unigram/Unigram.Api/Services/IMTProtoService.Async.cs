@@ -23,6 +23,8 @@ namespace Telegram.Api.Services
 
         Task<MTProtoResponse<TLAccountTmpPassword>> GetTmpPasswordAsync(byte[] hash, int period);
 
+        Task<MTProtoResponse<TLVector<TLStickerSetCoveredBase>>> GetAttachedStickersAsync(TLInputStickeredMediaBase media);
+
         Task<MTProtoResponse<TLMessagesChatsBase>> GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit);
         Task<MTProtoResponse<TLMessagesChatsBase>> GetAdminedPublicChannelsAsync();
         Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber, bool? currentNumber, Action<int> attemptFailed = null);
