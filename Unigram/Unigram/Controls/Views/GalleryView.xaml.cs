@@ -6,11 +6,17 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
+using Telegram.Api.Services.FileManager;
+using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
+using Unigram.Views;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -35,6 +41,11 @@ namespace Unigram.Controls.Views
         public BindConvert Convert => BindConvert.Current;
 
         private FrameworkElement _firstImage;
+        private MediaPlayerElement _mediaPlayer;
+        private MediaPlayerSurface _mediaSurface;
+
+        private ImageView _surface;
+        private SpriteVisual _surfaceVisual;
 
         private Visual _layerVisual;
         private Visual _topBarVisual;
@@ -43,6 +54,11 @@ namespace Unigram.Controls.Views
         public GalleryView()
         {
             InitializeComponent();
+
+            _mediaPlayer = new MediaPlayerElement { Style = Resources["yolo"] as Style };
+            _mediaPlayer.AreTransportControlsEnabled = true;
+            _mediaPlayer.TransportControls = Boh;
+            _mediaPlayer.SetMediaPlayer(new MediaPlayer());
 
             _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
             _topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
@@ -162,6 +178,104 @@ namespace Unigram.Controls.Views
         {
             var date = Convert.DateTime(value);
             return string.Format("{0} at {1}", date.Date == DateTime.Now.Date ? "Today" : Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
+        }
+
+        private async void DownloadDocument_Click(object sender, RoutedEventArgs e)
+        {
+            var border = sender as TransferButton;
+            var message = border.DataContext as GalleryMessageItem;
+            var documentMedia = message.Message.Media as TLMessageMediaDocument;
+            if (documentMedia != null)
+            {
+                var document = documentMedia.Document as TLDocument;
+                if (document != null)
+                {
+                    var fileName = document.GetFileName();
+
+                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                    {
+                        Play(message);
+                    }
+                    else
+                    {
+                        if (documentMedia.DownloadingProgress > 0 && documentMedia.DownloadingProgress < 1)
+                        {
+                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
+                            manager.CancelDownloadFile(document);
+
+                            documentMedia.DownloadingProgress = 0;
+                            border.Update();
+                        }
+                        else if (documentMedia.UploadingProgress > 0 && documentMedia.UploadingProgress < 1)
+                        {
+                            var manager = UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
+                            manager.CancelUploadFile(document.Id);
+
+                            documentMedia.UploadingProgress = 0;
+                            border.Update();
+                        }
+                        else
+                        {
+                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
+                            var operation = manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
+
+                            documentMedia.DownloadingProgress = 0.02;
+                            border.Update();
+
+                            var download = await operation.AsTask(documentMedia.Download());
+                            if (download != null)
+                            {
+                                border.Update();
+
+                                Play(message);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Play(GalleryItem item)
+        {
+            var container = Flip.ContainerFromItem(item) as ContentControl;
+            if (container != null && container.ContentTemplateRoot is Grid parent)
+            {
+                _surface = parent.FindName("Surface") as ImageView;
+
+                _mediaPlayer.MediaPlayer.SetSurfaceSize(new Size(_surface.ActualWidth, _surface.ActualHeight));
+
+                var swapchain = _mediaPlayer.MediaPlayer.GetSurface(_layerVisual.Compositor);
+                var brush = _layerVisual.Compositor.CreateSurfaceBrush(swapchain.CompositionSurface);
+                var size = new Vector2((float)_surface.ActualWidth, (float)_surface.ActualHeight);
+
+                _surfaceVisual = _layerVisual.Compositor.CreateSpriteVisual();
+                _surfaceVisual.Size = size;
+                _surfaceVisual.Brush = brush;
+
+                ElementCompositionPreview.SetElementChildVisual(_surface, _surfaceVisual);
+
+                _mediaSurface = swapchain;
+                _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
+                _mediaPlayer.MediaPlayer.Play();
+            }
+        }
+
+        private void Flip_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_surface != null)
+            {
+                ElementCompositionPreview.SetElementChildVisual(_surface, null);
+                _surface = null;
+            }
+
+            if (_surfaceVisual != null)
+            {
+                _surfaceVisual.Brush = null;
+                _surfaceVisual = null;
+            }
+
+            _mediaPlayer.MediaPlayer.Pause();
+            _mediaPlayer.Source = null;
         }
     }
 }

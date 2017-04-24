@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.FileManager;
@@ -114,6 +115,7 @@ namespace Unigram.ViewModels
     {
         private readonly TLPhoto _photo;
         private readonly ITLDialogWith _from;
+        private readonly string _caption;
 
         public GalleryPhotoItem(TLPhoto photo, ITLDialogWith from)
         {
@@ -121,9 +123,17 @@ namespace Unigram.ViewModels
             _from = from;
         }
 
+        public GalleryPhotoItem(TLPhoto photo, string caption)
+        {
+            _photo = photo;
+            _caption = caption;
+        }
+
         public TLPhoto Photo => _photo;
 
         public override object Source => _photo;
+
+        public override string Caption => _caption;
 
         public override ITLDialogWith From => _from;
 
@@ -134,6 +144,55 @@ namespace Unigram.ViewModels
         public override TLInputStickeredMediaBase ToInputStickeredMedia()
         {
             return new TLInputStickeredMediaPhoto { Id = _photo.ToInputPhoto() };
+        }
+    }
+
+    public class GalleryDocumentItem : GalleryItem
+    {
+        private readonly TLDocument _document;
+        private readonly ITLDialogWith _from;
+        private readonly string _caption;
+
+        public GalleryDocumentItem(TLDocument document, ITLDialogWith from)
+        {
+            _document = document;
+            _from = from;
+        }
+
+        public GalleryDocumentItem(TLDocument document, string caption)
+        {
+            _document = document;
+            _caption = caption;
+        }
+
+        public TLDocument Document => _document;
+
+        public override object Source => _document;
+
+        public override string Caption => _caption;
+
+        public override ITLDialogWith From => _from;
+
+        public override int Date => _document.Date;
+
+        public override bool IsVideo
+        {
+            get
+            {
+                return TLMessage.IsVideo(_document);
+            }
+        }
+
+        public override bool HasStickers => _document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
+
+        public override TLInputStickeredMediaBase ToInputStickeredMedia()
+        {
+            return new TLInputStickeredMediaDocument { Id = _document.ToInputDocument() };
+        }
+
+        public override Uri GetVideoSource()
+        {
+            return FileUtils.GetTempFileUri(_document.GetFileName());
         }
     }
 }

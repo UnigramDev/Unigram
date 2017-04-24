@@ -266,7 +266,8 @@
                 <controls:ImageView Source="{Binding Media.WebPage.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
                                     Constraint="{Binding Media.WebPage.Photo}"
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                                    MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+                                    MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                    Click="SingleMedia_Click"/>
             </Grid>
 
             <Button Click="InstantView_Click"

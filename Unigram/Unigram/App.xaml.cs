@@ -31,7 +31,7 @@ using Windows.Media;
 using System.IO;
 using Template10.Services.NavigationService;
 using Unigram.Common;
-using Unigram.Views.Login;
+using Unigram.Views.SignIn;
 using Windows.UI.Core;
 using Unigram.Converters;
 using Windows.Foundation.Metadata;

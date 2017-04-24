@@ -12,11 +12,25 @@ using Unigram.Views;
 
 namespace Unigram.ViewModels
 {
-    public class ArticleViewModel : UnigramViewModelBase
+    public class InstantViewModel : UnigramViewModelBase
     {
-        public ArticleViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public InstantViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
+            _gallery = new InstantGalleryViewModel();
+        }
+
+        private InstantGalleryViewModel _gallery;
+        public InstantGalleryViewModel Gallery
+        {
+            get
+            {
+                return _gallery;
+            }
+            set
+            {
+                Set(ref _gallery, value);
+            }
         }
 
         public RelayCommand<TLChannel> ChannelOpenCommand => new RelayCommand<TLChannel>(ChannelOpenExecute);

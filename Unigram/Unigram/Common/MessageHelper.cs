@@ -671,7 +671,7 @@ namespace Unigram.Common
                                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                                     if (service != null)
                                     {
-                                        service.Navigate(typeof(ArticlePage), webpageMedia);
+                                        service.Navigate(typeof(InstantPage), webpageMedia);
                                         return;
                                     }
                                 }

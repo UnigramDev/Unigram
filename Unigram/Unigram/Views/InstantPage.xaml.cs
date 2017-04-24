@@ -33,25 +33,22 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using Windows.UI.Xaml.Media.Animation;
+using Unigram.Controls.Views;
 using Telegram.Api.Services.Cache;
-
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Unigram.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class ArticlePage : Page
+    public sealed partial class InstantPage : Page
     {
-        public ArticleViewModel ViewModel => DataContext as ArticleViewModel;
+        public InstantViewModel ViewModel => DataContext as InstantViewModel;
 
         private readonly string _injectedJs;
 
-        public ArticlePage()
+        public InstantPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ArticleViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<InstantViewModel>();
 
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = File.ReadAllText(jsPath);
@@ -77,31 +74,41 @@ namespace Unigram.Views
             {
                 _webpageId = webpage.Id;
 
-                if (webpage.HasPhoto && !webpage.CachedPage.Photos.Any(x => x.Id == webpage.Photo.Id))
+                var photos = new List<TLPhotoBase>(webpage.CachedPage.Photos);
+                var videos = new List<TLDocumentBase>(webpage.CachedPage.Videos);
+
+                if (webpage.HasPhoto)
                 {
-                    webpage.CachedPage.Photos.Insert(0, webpage.Photo);
+                    photos.Insert(0, webpage.Photo);
                 }
 
                 var processed = 0;
                 foreach (var block in webpage.CachedPage.Blocks)
                 {
-                    ProcessBlock(webpage.CachedPage, block);
+                    ProcessBlock(webpage.CachedPage, block, photos, videos);
                     processed++;
                 }
 
                 var part = webpage.CachedPage as TLPagePart;
                 if (part != null)
                 {
-                    var protoService = (MTProtoService)MTProtoService.Current;
-                    var response = await protoService.GetWebPageAsync(webpage.Url, webpage.Hash);
+                    var response = await MTProtoService.Current.GetWebPageAsync(webpage.Url, webpage.Hash);
                     if (response.IsSucceeded)
                     {
                         var newpage = response.Result as TLWebPage;
                         if (newpage != null && newpage.HasCachedPage)
                         {
+                            photos = new List<TLPhotoBase>(newpage.CachedPage.Photos);
+                            videos = new List<TLDocumentBase>(newpage.CachedPage.Videos);
+
+                            if (webpage.HasPhoto)
+                            {
+                                photos.Insert(0, webpage.Photo);
+                            }
+
                             for (int i = processed; i < newpage.CachedPage.Blocks.Count; i++)
                             {
-                                ProcessBlock(newpage.CachedPage, newpage.CachedPage.Blocks[i]);
+                                ProcessBlock(newpage.CachedPage, newpage.CachedPage.Blocks[i], photos, videos);
                             }
                         }
                     }
@@ -118,15 +125,15 @@ namespace Unigram.Views
 
         private Dictionary<string, Border> _anchors = new Dictionary<string, Border>();
 
-        private void ProcessBlock(TLPageBase page, TLPageBlockBase block)
+        private void ProcessBlock(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             switch (block)
             {
                 case TLPageBlockCover cover:
-                    ProcessCover(page, cover);
+                    ProcessCover(page, cover, photos, videos);
                     break;
                 case TLPageBlockAuthorDate authorDate:
-                    ProcessAuthorDate(page, authorDate);
+                    ProcessAuthorDate(page, authorDate, photos, videos);
                     break;
                 case TLPageBlockHeader header:
                 case TLPageBlockSubheader subheader:
@@ -134,46 +141,46 @@ namespace Unigram.Views
                 case TLPageBlockSubtitle subtitle:
                 case TLPageBlockFooter footer:
                 case TLPageBlockParagraph paragraph:
-                    ProcessTextBlock(page, block, false);
+                    ProcessTextBlock(page, block, photos, videos, false);
                     break;
                 case TLPageBlockBlockquote blockquote:
-                    ProcessBlockquote(page, blockquote);
+                    ProcessBlockquote(page, blockquote, photos, videos);
                     break;
                 case TLPageBlockDivider divider:
-                    ProcessDivider(page, divider);
+                    ProcessDivider(page, divider, photos, videos);
                     break;
                 case TLPageBlockPhoto photo:
-                    ProcessPhoto(page, photo);
+                    ProcessPhoto(page, photo, photos, videos);
                     break;
                 case TLPageBlockList list:
-                    ProcessList(page, list);
+                    ProcessList(page, list, photos, videos);
                     break;
                 case TLPageBlockVideo video:
-                    ProcessVideo(page, video);
+                    ProcessVideo(page, video, photos, videos);
                     break;
                 case TLPageBlockEmbedPost embedPost:
-                    ProcessEmbedPost(page, embedPost);
+                    ProcessEmbedPost(page, embedPost, photos, videos);
                     break;
                 case TLPageBlockSlideshow slideshow:
-                    ProcessSlideshow(page, slideshow);
+                    ProcessSlideshow(page, slideshow, photos, videos);
                     break;
                 case TLPageBlockCollage collage:
-                    ProcessCollage(page, collage);
+                    ProcessCollage(page, collage, photos, videos);
                     break;
                 case TLPageBlockEmbed embed:
-                    ProcessEmbed(page, embed);
+                    ProcessEmbed(page, embed, photos, videos);
                     break;
                 case TLPageBlockPullquote pullquote:
-                    ProcessPullquote(page, pullquote);
+                    ProcessPullquote(page, pullquote, photos, videos);
                     break;
                 case TLPageBlockAnchor anchor:
-                    ProcessAnchor(page, anchor);
+                    ProcessAnchor(page, anchor, photos, videos);
                     break;
                 case TLPageBlockPreformatted preformatted:
-                    ProcessPreformatted(page, preformatted);
+                    ProcessPreformatted(page, preformatted, photos, videos);
                     break;
                 case TLPageBlockChannel channel:
-                    ProcessChannel(page, channel);
+                    ProcessChannel(page, channel, photos, videos);
                     break;
                 case TLPageBlockUnsupported unsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
@@ -181,7 +188,7 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcessChannel(TLPageBase page, TLPageBlockChannel channel)
+        private void ProcessChannel(TLPageBase page, TLPageBlockChannel channel, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             var chat = channel.Channel as TLChannel;
             if (chat.IsMin)
@@ -207,7 +214,7 @@ namespace Unigram.Views
             _containers.Peek().Children.Add(button);
         }
 
-        private void ProcessPreformatted(TLPageBase page, TLPageBlockPreformatted block)
+        private void ProcessPreformatted(TLPageBase page, TLPageBlockPreformatted block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             _containers.Push(new StackPanel
             {
@@ -216,20 +223,20 @@ namespace Unigram.Views
                 Padding = new Thickness(0, 8, 0, 0)
             });
 
-            ProcessTextBlock(page, block, false);
+            ProcessTextBlock(page, block, photos, videos, false);
 
             var panel = _containers.Pop();
             _containers.Peek().Children.Add(panel);
         }
 
-        private void ProcessAnchor(TLPageBase page, TLPageBlockAnchor block)
+        private void ProcessAnchor(TLPageBase page, TLPageBlockAnchor block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             var child = new Border();
             _containers.Peek().Children.Add(child);
             _anchors[block.Name] = child;
         }
 
-        private void ProcessEmbed(TLPageBase page, TLPageBlockEmbed block)
+        private void ProcessEmbed(TLPageBase page, TLPageBlockEmbed block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
@@ -279,7 +286,7 @@ namespace Unigram.Views
 
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
-                ProcessTextBlock(page, block, true);
+                ProcessTextBlock(page, block, photos, videos, true);
 
                 var panel = _containers.Pop();
                 _containers.Peek().Children.Add(panel);
@@ -301,7 +308,7 @@ namespace Unigram.Views
             await sender.InvokeScriptAsync("eval", new[] { jss });
         }
 
-        private void ProcessCollage(TLPageBase page, TLPageBlockCollage block)
+        private void ProcessCollage(TLPageBase page, TLPageBlockCollage block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
@@ -314,7 +321,7 @@ namespace Unigram.Views
                 var photoBlock = item as TLPageBlockPhoto;
                 if (photoBlock != null)
                 {
-                    var photo = page.Photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
+                    var photo = photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
                     var image = new Image();
                     image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
                     image.Width = 72;
@@ -328,7 +335,7 @@ namespace Unigram.Views
                 var videoBlock = item as TLPageBlockVideo;
                 if (videoBlock != null)
                 {
-                    var video = page.Videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
+                    var video = videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
                     var image = new Image();
                     image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
                     image.Width = 72;
@@ -365,7 +372,7 @@ namespace Unigram.Views
 
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
-                ProcessTextBlock(page, block, true);
+                ProcessTextBlock(page, block, photos, videos, true);
 
                 var panel = _containers.Pop();
                 _containers.Peek().Children.Add(panel);
@@ -376,7 +383,7 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcessSlideshow(TLPageBase page, TLPageBlockSlideshow block)
+        private void ProcessSlideshow(TLPageBase page, TLPageBlockSlideshow block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
@@ -389,7 +396,7 @@ namespace Unigram.Views
                 var photoBlock = item as TLPageBlockPhoto;
                 if (photoBlock != null)
                 {
-                    var photo = page.Photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
+                    var photo = photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
                     var image = new ImageView();
                     image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
                     image.Constraint = photo;
@@ -400,7 +407,7 @@ namespace Unigram.Views
                 var videoBlock = item as TLPageBlockVideo;
                 if (videoBlock != null)
                 {
-                    var video = page.Videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
+                    var video = videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
                     var image = new ImageView();
                     image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
                     image.Constraint = video;
@@ -416,7 +423,7 @@ namespace Unigram.Views
 
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
-                ProcessTextBlock(page, block, true);
+                ProcessTextBlock(page, block, photos, videos, true);
 
                 var panel = _containers.Pop();
                 _containers.Peek().Children.Add(panel);
@@ -427,7 +434,7 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcessEmbedPost(TLPageBase page, TLPageBlockEmbedPost block)
+        private void ProcessEmbedPost(TLPageBase page, TLPageBlockEmbedPost block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             _containers.Push(new StackPanel
             {
@@ -443,7 +450,7 @@ namespace Unigram.Views
             header.ColumnDefinitions.Add(new ColumnDefinition());
             header.Margin = new Thickness(12, 0, 0, 12);
 
-            var photo = page.Photos.FirstOrDefault(x => x.Id == block.AuthorPhotoId);
+            var photo = photos.FirstOrDefault(x => x.Id == block.AuthorPhotoId);
 
             var ellipse = new Ellipse();
             ellipse.Width = 36;
@@ -474,30 +481,36 @@ namespace Unigram.Views
 
             foreach (var sub in block.Blocks)
             {
-                ProcessBlock(page, sub);
+                ProcessBlock(page, sub, photos, videos);
             }
 
             var panel = _containers.Pop();
             _containers.Peek().Children.Add(panel);
         }
 
-        private void ProcessVideo(TLPageBase page, TLPageBlockVideo block)
+        private void ProcessVideo(TLPageBase page, TLPageBlockVideo block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
                 _containers.Push(new StackPanel { HorizontalAlignment = HorizontalAlignment.Center });
             }
 
-            var video = page.Videos.FirstOrDefault(x => x.Id == block.VideoId);
+            var video = videos.FirstOrDefault(x => x.Id == block.VideoId);
+            var galleryItem = new GalleryDocumentItem(video as TLDocument, block.Caption?.ToString());
             var image = new ImageView();
             image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
             image.Constraint = video;
+            image.DataContext = galleryItem;
+            image.Click += Image_Click;
+            image.HorizontalAlignment = HorizontalAlignment.Center;
+
+            ViewModel.Gallery.Items.Add(galleryItem);
 
             _containers.Peek().Children.Add(image);
 
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
-                ProcessTextBlock(page, block, true);
+                ProcessTextBlock(page, block, photos, videos, true);
 
                 var panel = _containers.Pop();
                 _containers.Peek().Children.Add(panel);
@@ -508,7 +521,7 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcessList(TLPageBase page, TLPageBlockList block)
+        private void ProcessList(TLPageBase page, TLPageBlockList block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             var textBlock = new RichTextBlock();
             textBlock.TextWrapping = TextWrapping.Wrap;
@@ -532,7 +545,7 @@ namespace Unigram.Views
             _containers.Peek().Children.Add(textBlock);
         }
 
-        private void ProcessDivider(TLPageBase page, TLPageBlockDivider block)
+        private void ProcessDivider(TLPageBase page, TLPageBlockDivider block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             _containers.Peek().Children.Add(new Rectangle
             {
@@ -542,7 +555,7 @@ namespace Unigram.Views
             });
         }
 
-        private void ProcessBlockquote(TLPageBase page, TLPageBlockBlockquote block)
+        private void ProcessBlockquote(TLPageBase page, TLPageBlockBlockquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             _containers.Push(new StackPanel
             {
@@ -551,14 +564,14 @@ namespace Unigram.Views
                 Margin = new Thickness(12, 0, 0, 12)
             });
 
-            ProcessTextBlock(page, block, false);
-            ProcessTextBlock(page, block, true);
+            ProcessTextBlock(page, block, photos, videos, false);
+            ProcessTextBlock(page, block, photos, videos, true);
 
             var panel = _containers.Pop();
             _containers.Peek().Children.Add(panel);
         }
 
-        private void ProcessPullquote(TLPageBase page, TLPageBlockPullquote block)
+        private void ProcessPullquote(TLPageBase page, TLPageBlockPullquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             _containers.Push(new StackPanel
             {
@@ -567,14 +580,14 @@ namespace Unigram.Views
                 Margin = new Thickness(0, 0, 0, 12)
             });
 
-            ProcessTextBlock(page, block, false);
-            ProcessTextBlock(page, block, true);
+            ProcessTextBlock(page, block, photos, videos, false);
+            ProcessTextBlock(page, block, photos, videos, true);
 
             var panel = _containers.Pop();
             _containers.Peek().Children.Add(panel);
         }
 
-        private void ProcessTextBlock(TLPageBase page, TLPageBlockBase block, bool caption)
+        private void ProcessTextBlock(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos, bool caption)
         {
             TLRichTextBase text = null;
             switch (block)
@@ -690,30 +703,36 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcessCover(TLPageBase page, TLPageBlockCover block)
+        private void ProcessCover(TLPageBase page, TLPageBlockCover block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             _parents.Push(block);
-            ProcessBlock(page, block.Cover);
+            ProcessBlock(page, block.Cover, photos, videos);
             _parents.Pop();
         }
 
-        private void ProcessPhoto(TLPageBase page, TLPageBlockPhoto block)
+        private void ProcessPhoto(TLPageBase page, TLPageBlockPhoto block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
                 _containers.Push(new StackPanel { HorizontalAlignment = HorizontalAlignment.Center });
             }
 
-            var photo = page.Photos.FirstOrDefault(x => x.Id == block.PhotoId);
+            var photo = photos.FirstOrDefault(x => x.Id == block.PhotoId);
+            var galleryItem = new GalleryPhotoItem(photo as TLPhoto, block.Caption?.ToString());
             var image = new ImageView();
             image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
             image.Constraint = photo;
+            image.DataContext = galleryItem;
+            image.Click += Image_Click;
+            image.HorizontalAlignment = HorizontalAlignment.Center;
+
+            ViewModel.Gallery.Items.Add(galleryItem);
 
             _containers.Peek().Children.Add(image);
 
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
-                ProcessTextBlock(page, block, true);
+                ProcessTextBlock(page, block, photos, videos, true);
 
                 var panel = _containers.Pop();
                 _containers.Peek().Children.Add(panel);
@@ -729,7 +748,33 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block)
+        private async void Image_Click(object sender, RoutedEventArgs e)
+        {
+            var image = sender as ImageView;
+            var item = image.DataContext as GalleryItem;
+            if (item != null)
+            {
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
+
+                ViewModel.Gallery.SelectedItem = item;
+
+                var dialog = new GalleryView { DataContext = ViewModel.Gallery };
+                dialog.Background = null;
+                dialog.OverlayBrush = null;
+                dialog.Closing += (s, args) =>
+                {
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
+                    {
+                        animation.TryStart(image);
+                    }
+                };
+
+                await dialog.ShowAsync();
+            }
+        }
+
+        private void ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             var textBlock = new TextBlock { Style = Resources["AuthorDateTextBlockStyle"] as Style };
 
@@ -847,7 +892,7 @@ namespace Unigram.Views
                     {
                         Execute.BeginOnUIThread(() =>
                         {
-                            ViewModel.NavigationService.Navigate(typeof(ArticlePage), result);
+                            ViewModel.NavigationService.Navigate(typeof(InstantPage), result);
                         });
                     },
                     fault =>
@@ -902,7 +947,7 @@ namespace Unigram.Views
         }
 
         public static readonly DependencyProperty IsStrikethroughProperty =
-            DependencyProperty.RegisterAttached("IsStrikethrough", typeof(bool), typeof(ArticlePage), new PropertyMetadata(false));
+            DependencyProperty.RegisterAttached("IsStrikethrough", typeof(bool), typeof(InstantPage), new PropertyMetadata(false));
 
         #endregion
     }

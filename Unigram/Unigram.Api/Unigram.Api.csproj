@@ -1228,6 +1228,9 @@
   <ItemGroup>
     <Compile Include="TL\Partial\TLDocumentBase.Partial.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="TL\Partial\TLRichTextBase.Partial.cs" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -44,16 +44,12 @@ namespace Unigram.ViewModels.Settings
             {
                 Items.Clear();
 
-                var blocked = response.Result as TLContactsBlocked;
-                if (blocked != null)
+                foreach (var contact in response.Result.Blocked)
                 {
-                    foreach (var contact in blocked.Blocked)
+                    var user = CacheService.GetUser(contact.UserId) as TLUser;
+                    if (user != null)
                     {
-                        var user = CacheService.GetUser(contact.UserId) as TLUser;
-                        if (user != null)
-                        {
-                            Items.Add(user);
-                        }
+                        Items.Add(user);
                     }
                 }
             }
@@ -119,6 +115,40 @@ namespace Unigram.ViewModels.Settings
                 {
                     Items.Remove(user);
                 }
+            }
+        }
+
+        public class ItemsCollection : IncrementalCollection<TLUser>
+        {
+            private readonly IMTProtoService _protoService;
+            private readonly ICacheService _cacheService;
+
+            public ItemsCollection(IMTProtoService protoService, ICacheService cacheService)
+            {
+                _protoService = protoService;
+                _cacheService = cacheService;
+            }
+
+            public override async Task<IList<TLUser>> LoadDataAsync()
+            {
+                var response = await _protoService.GetBlockedAsync(Count, 1);
+                if (response.IsSucceeded)
+                {
+                    var result = new List<TLUser>();
+
+                    foreach (var contact in response.Result.Blocked)
+                    {
+                        var user = _cacheService.GetUser(contact.UserId) as TLUser;
+                        if (user != null)
+                        {
+                            result.Add(user);
+                        }
+                    }
+
+                    return result;
+                }
+
+                return new TLUser[0];
             }
         }
     }
