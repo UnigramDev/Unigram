@@ -24,18 +24,25 @@
         </Style>
         
         <DataTemplate x:Key="ChannelItemTemplate" x:DataType="tl:TLChannel">
-            <Grid Margin="0,6">
+            <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePictureView x:Phase="2" Source="{x:Bind PhotoSelf, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                <TextBlock Text="{x:Bind DisplayName}" VerticalAlignment="Center" Padding="12,10"/>
 
-                <TextBlock Text="{x:Bind DisplayName}" Grid.Column="1" VerticalAlignment="Center"/>
-
-                <controls:GlyphButton Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}, ConverterParameter=invert}" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Glyph="&#xE109;" Grid.Column="2" Margin="0,-6"/>
-                <FontIcon Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Glyph="&#xE10B;" Grid.Column="2" Grid.RowSpan="2"/>
+                <Button Content="JOIN"
+                        Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}, ConverterParameter=invert}"
+                        Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                        Background="Transparent"
+                        Padding="12,8"
+                        Grid.Column="1"/>
+                <FontIcon Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}}"
+                          Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                          HorizontalAlignment="Right"
+                          Margin="12,0"
+                          Glyph="&#xE10B;"
+                          Grid.Column="1"/>
             </Grid>
         </DataTemplate>
 
@@ -43,7 +50,6 @@
             <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}"/>
             <Setter Property="ContentTemplate" Value="{StaticResource ChannelItemTemplate}"/>
             <Setter Property="Margin" Value="0,0,0,12"/>
-            <Setter Property="Padding" Value="12,0,0,0"/>
         </Style>
     </Page.Resources>
 
@@ -75,7 +81,9 @@
                     <RowDefinition/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <StackPanel x:Name="LayoutRoot" Padding="0,12"/>
+                <StackPanel x:Name="LayoutRoot" Padding="0,12">
+                    <Button Style="{StaticResource ChannelBlockStyle}"/>
+                </StackPanel>
 
                 <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Grid.Row="1">
                     <Button Command="{x:Bind ViewModel.FeedbackCommand}" Content="Leave feedback about this preview" HorizontalContentAlignment="Center" VerticalAlignment="Center" Padding="8,6" Style="{StaticResource EmptyButtonStyle}"/>
