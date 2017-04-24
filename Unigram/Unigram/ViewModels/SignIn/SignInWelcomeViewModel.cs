@@ -8,10 +8,10 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Unigram.Common;
-using Unigram.Views.Login;
+using Unigram.Views.SignIn;
 using Windows.UI.Xaml;
 
-namespace Unigram.ViewModels.Login
+namespace Unigram.ViewModels.SignIn
 {
     public class SignInWelcomeViewModel : UnigramViewModelBase
     {

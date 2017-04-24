@@ -1,10 +1,10 @@
-﻿namespace Unigram.Views
-{
-    using System;
-    using Windows.ApplicationModel;
-    using Windows.UI.Xaml.Media.Animation;
-    using Windows.UI.Xaml.Navigation;
+﻿using System;
+using Windows.ApplicationModel;
+using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Navigation;
 
+namespace Unigram.Views
+{
     public sealed partial class AboutPage
     {
         public AboutPage()
@@ -134,7 +134,7 @@
         private async void btnUnigramTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             var uriTwitter = new Uri(@"https://twitter.com/UnigramApp");
-            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);            
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
         }
     }
 }

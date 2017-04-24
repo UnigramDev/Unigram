@@ -508,9 +508,6 @@
     <Compile Include="Views\Chats\CreateChatStep1Page.xaml.cs">
       <DependentUpon>CreateChatStep1Page.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DialogInfoAdminsPage.xaml.cs">
-      <DependentUpon>DialogInfoAdminsPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\DialogPage.Bubbles.xaml.cs">
       <DependentUpon>DialogPage.xaml</DependentUpon>
     </Compile>
@@ -905,10 +902,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\CreateChatStep2Page.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\DialogInfoAdminsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
