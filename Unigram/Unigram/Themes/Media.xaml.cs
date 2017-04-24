@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using System.Globalization;
 using System.Net;
 using Unigram.Common;
+using Telegram.Api.Services;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -47,23 +48,20 @@ namespace Unigram.Themes
         {
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
-            var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
-            if (bubble != null)
-            {
-                if (bubble.Context != null)
-                {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
-                    var viewModel = new DialogPhotosViewModel(bubble.Context.Peer, message, bubble.Context.ProtoService);
-                    await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
+            if (message != null)
+            {
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
+
+                var viewModel = new DialogPhotosViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
+                {
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
                     {
-                        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                        if (animation != null)
-                        {
-                            animation.TryStart(image);
-                        }
-                    });
-                }
+                        animation.TryStart(image);
+                    }
+                });
             }
         }
 
@@ -72,6 +70,7 @@ namespace Unigram.Themes
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
             var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
+
             if (bubble != null)
             {
                 if (bubble.Context != null)
@@ -85,6 +84,7 @@ namespace Unigram.Themes
         {
             var image = sender as ImageView;
             var item = image.Constraint as TLPhoto;
+
             if (item != null)
             {
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);

@@ -149,12 +149,20 @@ namespace Unigram.Selectors
         {
             if (webPage.Photo != null && webPage.Type != null)
             {
-                if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) || 
-                    string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase) || 
+                if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(webPage.Type, "article", StringComparison.OrdinalIgnoreCase) ||
                     (webPage.SiteName != null && string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase)))
                 {
                     return true;
+                }
+                else if (string.Equals(webPage.Type, "article", StringComparison.OrdinalIgnoreCase))
+                {
+                    var photo = webPage.Photo as TLPhoto;
+                    var full = photo?.Full as TLPhotoSize;
+                    var fullCache = photo?.Full as TLPhotoCachedSize;
+
+                    return (full?.W > 400 || fullCache?.W > 400) && webPage.HasCachedPage;
                 }
             }
             return false;
