@@ -101,80 +101,33 @@ namespace Unigram.Themes
             }
         }
 
-        private async void DownloadDocument_Click(object sender, RoutedEventArgs e)
+        private async void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            var border = sender as TransferButton;
-            var message = border.DataContext as TLMessage;
-            var documentMedia = message.Media as TLMessageMediaDocument;
-            if (documentMedia != null)
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
+            if (bubble != null)
             {
-                var document = documentMedia.Document as TLDocument;
-                if (document != null)
+                if (bubble.Context != null && message.IsVideo())
                 {
-                    var fileName = document.GetFileName();
+                    var media = bubble.FindName("MediaControl") as UIElement;
 
-                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
+
+                    var viewModel = new DialogPhotosViewModel(bubble.Context.Peer, message, bubble.Context.ProtoService);
+                    await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                     {
-                        if (message.IsVideo())
+                        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                        if (animation != null)
                         {
-                            Photo_Click(sender, e);
+                            animation.TryStart(media);
                         }
-                        else
-                        {
-                            var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
-                            await Launcher.LaunchFileAsync(file);
-                        }
-                    }
-                    else
-                    {
-                        if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
-                        {
-                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
-                            manager.CancelDownloadFile(document);
-
-                            document.DownloadingProgress = 0;
-                            border.Update();
-                        }
-                        else if (document.UploadingProgress > 0 && document.UploadingProgress < 1)
-                        {
-                            var manager = UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
-                            manager.CancelUploadFile(document.Id);
-
-                            document.UploadingProgress = 0;
-                            border.Update();
-                        }
-                        else
-                        {
-                            //var watch = Stopwatch.StartNew();
-
-                            //var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
-
-                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
-                            var operation = manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
-
-                            document.DownloadingProgress = 0.02;
-                            border.Update();
-
-                            var download = await operation.AsTask(documentMedia.Document.Download());
-                            if (download != null)
-                            {
-                                border.Update();
-
-                                //await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
-                                //return;
-
-                                if (message.IsVideo())
-                                {
-                                    Photo_Click(sender, e);
-                                }
-                                else
-                                {
-                                    var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
-                                    await Launcher.LaunchFileAsync(file);
-                                }
-                            }
-                        }
-                    }
+                    });
+                }
+                else
+                {
+                    var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(e.FileName));
+                    await Launcher.LaunchFileAsync(file);
                 }
             }
         }

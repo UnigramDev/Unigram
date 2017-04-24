@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
+using Unigram.Views;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -14,6 +16,71 @@ namespace Unigram.Controls
 {
     public class TransferButton : GlyphHyperlinkButton
     {
+        public TransferButton()
+        {
+            Click += OnClick;
+        }
+
+        public event EventHandler<TransferCompletedEventArgs> Completed;
+
+        private async void OnClick(object sender, RoutedEventArgs e)
+        {
+            if (Transferable is TLPhoto photo)
+            {
+
+            }
+            else if (Transferable is TLDocument document)
+            {
+                var fileName = document.GetFileName();
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                {
+                    Completed?.Invoke(this, new TransferCompletedEventArgs(fileName));
+                }
+                else
+                {
+                    if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
+                    {
+                        var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
+                        manager.CancelDownloadFile(document);
+
+                        document.DownloadingProgress = 0;
+                        Update();
+                    }
+                    else if (document.UploadingProgress > 0 && document.UploadingProgress < 1)
+                    {
+                        var manager = UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
+                        manager.CancelUploadFile(document.Id);
+
+                        document.UploadingProgress = 0;
+                        Update();
+                    }
+                    else
+                    {
+                        //var watch = Stopwatch.StartNew();
+
+                        //var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
+
+                        var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
+                        var operation = manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
+
+                        document.DownloadingProgress = 0.02;
+                        Update();
+
+                        var download = await operation.AsTask(document.Download());
+                        if (download != null)
+                        {
+                            Update();
+
+                            //await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
+                            //return;
+
+                            Completed?.Invoke(this, new TransferCompletedEventArgs(fileName));
+                        }
+                    }
+                }
+            }
+        }
+
         #region Transferable
 
         public ITLTransferable Transferable
@@ -98,6 +165,16 @@ namespace Unigram.Controls
             }
 
             return "\uE118";
+        }
+    }
+
+    public class TransferCompletedEventArgs : EventArgs
+    {
+        public string FileName { get; private set; }
+
+        public TransferCompletedEventArgs(string fileName)
+        {
+            FileName = fileName;
         }
     }
 }
