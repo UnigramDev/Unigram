@@ -114,7 +114,16 @@ namespace Telegram.Api.Services
         {
             var obj = new TLContactsGetBlocked { Offset = offset, Limit = limit };
 
-            SendInformativeMessage("contacts.getBlocked", obj, callback, faultCallback);
+            SendInformativeMessage<TLContactsBlockedBase>("contacts.getBlocked", obj, 
+                result =>
+                {
+                    _cacheService.SyncUsers(result.Users, 
+                        r =>
+                        {
+                            callback?.Invoke(result);
+                        });
+                },
+                faultCallback);
         }
 
         public void SearchAsync(string q, int limit, Action<TLContactsFound> callback, Action<TLRPCError> faultCallback = null)
