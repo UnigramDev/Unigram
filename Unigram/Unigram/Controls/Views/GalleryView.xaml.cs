@@ -57,7 +57,7 @@ namespace Unigram.Controls.Views
 
             _mediaPlayer = new MediaPlayerElement { Style = Resources["yolo"] as Style };
             _mediaPlayer.AreTransportControlsEnabled = true;
-            _mediaPlayer.TransportControls = Boh;
+            _mediaPlayer.TransportControls = Transport;
             _mediaPlayer.SetMediaPlayer(new MediaPlayer());
 
             _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
@@ -221,58 +221,14 @@ namespace Unigram.Controls.Views
             return string.Format("{0} at {1}", date.Date == DateTime.Now.Date ? "Today" : Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
         }
 
-        private async void DownloadDocument_Click(object sender, RoutedEventArgs e)
+        private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
             var border = sender as TransferButton;
-            var message = border.DataContext as GalleryMessageItem;
-            var documentMedia = message.Message.Media as TLMessageMediaDocument;
-            if (documentMedia != null)
+            var item = border.DataContext as GalleryItem;
+
+            if (item.IsVideo)
             {
-                var document = documentMedia.Document as TLDocument;
-                if (document != null)
-                {
-                    var fileName = document.GetFileName();
-
-                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                    {
-                        Play(message);
-                    }
-                    else
-                    {
-                        if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
-                        {
-                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
-                            manager.CancelDownloadFile(document);
-
-                            document.DownloadingProgress = 0;
-                            border.Update();
-                        }
-                        else if (document.UploadingProgress > 0 && document.UploadingProgress < 1)
-                        {
-                            var manager = UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
-                            manager.CancelUploadFile(document.Id);
-
-                            document.UploadingProgress = 0;
-                            border.Update();
-                        }
-                        else
-                        {
-                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
-                            var operation = manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
-
-                            document.DownloadingProgress = 0.02;
-                            border.Update();
-
-                            var download = await operation.AsTask(documentMedia.Document.Download());
-                            if (download != null)
-                            {
-                                border.Update();
-
-                                Play(message);
-                            }
-                        }
-                    }
-                }
+                Play(item);
             }
         }
 
