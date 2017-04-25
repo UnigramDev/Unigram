@@ -142,20 +142,17 @@ namespace Unigram.Views
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Photo);
 
             var user = ViewModel.Self;
-            if (user.HasPhoto)
+            if (user.HasPhoto && user.Photo is TLUserProfilePhoto photo)
             {
-                if (user.Photo is TLUserProfilePhoto photo)
+                var viewModel = new UserPhotosViewModel(user, ViewModel.ProtoService);
+                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                 {
-                    var viewModel = new UserPhotosViewModel(user, ViewModel.ProtoService);
-                    await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
                     {
-                        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                        if (animation != null)
-                        {
-                            animation.TryStart(Photo);
-                        }
-                    });
-                }
+                        animation.TryStart(Photo);
+                    }
+                });
             }
         }
 

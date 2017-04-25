@@ -132,7 +132,7 @@
 
                 <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0" VerticalAlignment="Center" Grid.Row="2">
                     <TextBlock Text="{x:Bind ViewModel.SelectedItem.From.DisplayName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
                 
                 <Button x:Name="btnOptions"
