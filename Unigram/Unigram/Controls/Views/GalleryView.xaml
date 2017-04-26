@@ -69,7 +69,7 @@
                             Constraint="{x:Bind Source}"
                             Opacity="0"/>
                         <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                            <local:TransferButton Click="DownloadDocument_Click" Transferable="{Binding Source}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                            <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
                             <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
                         </Grid>
                     </Grid>
@@ -121,7 +121,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <MediaTransportControls x:Name="Boh" IsCompact="True" Grid.ColumnSpan="2"/>
+                <MediaTransportControls x:Name="Transport" IsCompact="True" Grid.ColumnSpan="2"/>
 
                 <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.SelectedItem.Caption, Converter={StaticResource NullToVisibilityConverter}}"
@@ -132,11 +132,10 @@
 
                 <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0" VerticalAlignment="Center" Grid.Row="2">
                     <TextBlock Text="{x:Bind ViewModel.SelectedItem.From.DisplayName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
                 
-                <Button x:Name="btnOptions"
-                        Padding="16,23,16,0"
+                <Button Padding="16,23,16,0"
                         HorizontalAlignment="Right"
                         Height="48"
                         Style="{StaticResource EllipsisButton}"

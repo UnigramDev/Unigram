@@ -258,6 +258,8 @@
                                     Constraint="{Binding Media.WebPage.Photo}"
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                     MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
                                     Click="SingleMedia_Click"/>
             </Grid>
 

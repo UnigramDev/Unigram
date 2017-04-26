@@ -184,7 +184,7 @@ namespace Unigram.Controls
                         }
                         else if (row.Buttons[i] is TLKeyboardButtonSwitchInline)
                         {
-                            button.Glyph = "\uE248";
+                            button.Glyph = "\uEE35";
                         }
                         else if (row.Buttons[i] is TLKeyboardButton && IsInline)
                         {
