@@ -171,6 +171,7 @@
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Services\StatisticsService.cs" />
     <Compile Include="Services\StickersService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
     <Compile Include="Services\VibrationService.cs" />
