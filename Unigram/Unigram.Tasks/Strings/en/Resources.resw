@@ -210,6 +210,9 @@
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} sent a photo to the group</value>
   </data>
+  <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
+    <value>{0} sent a video message to the group</value>
+  </data>
   <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
     <value>{0} sent a {2}sticker to the group</value>
   </data>
@@ -284,6 +287,9 @@
   </data>
   <data name="MESSAGE_PHOTO" xml:space="preserve">
     <value>sent you a photo</value>
+  </data>
+  <data name="MESSAGE_ROUND" xml:space="preserve">
+    <value>sent you a video message</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
     <value>sent you a {1}sticker</value>
