@@ -15,21 +15,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsDataPage : Page
+    public sealed partial class SettingsStatsPage : Page
     {
-        public SettingsDataPage()
+        public SettingsStatsPage()
         {
             this.InitializeComponent();
-        }
-
-        private void Storage_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStoragePage));
-        }
-
-        private void Stats_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStatsPage));
         }
     }
 }

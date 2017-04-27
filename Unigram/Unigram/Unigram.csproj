@@ -283,6 +283,9 @@
     <Compile Include="Views\Payments\PaymentReceiptPage.xaml.cs">
       <DependentUpon>PaymentReceiptPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
+      <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
@@ -943,6 +946,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Payments\PaymentReceiptPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsStatsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

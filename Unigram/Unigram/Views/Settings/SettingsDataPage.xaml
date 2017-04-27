@@ -19,6 +19,9 @@
 
         <StackPanel Grid.Row="1">
             <Button Content="Storage usage" Click="Storage_Click"/>
+            <Button Content="Mobile data usage" Click="Stats_Click"/>
+            <Button Content="Wi-Fi data usage" Click="Stats_Click"/>
+            <Button Content="Roaming data usage" Click="Stats_Click"/>
         </StackPanel>
     </Grid>
 </Page>
