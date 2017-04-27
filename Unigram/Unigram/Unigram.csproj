@@ -284,6 +284,9 @@
     <Compile Include="Views\Payments\PaymentReceiptPage.xaml.cs">
       <DependentUpon>PaymentReceiptPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
+      <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
@@ -689,9 +692,7 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="Assets\Noise.jpg" />
-    <Content Include="Assets\Webviews\injected.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Assets\Webviews\injected.js" />
     <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
@@ -949,6 +950,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\SettingsStatsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SignIn\SignInPasswordPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1116,10 +1121,6 @@
     <ProjectReference Include="..\Unigram.WebView\Unigram.Webview.csproj">
       <Project>{ac06b3e5-5174-4381-a167-8f912d61f3de}</Project>
       <Name>Unigram.Webview</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UnigramHost\UnigramHost.vcxproj">
-      <Project>{0dbcf059-2952-4809-9003-193ca0c6d499}</Project>
-      <Name>UnigramHost</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
