@@ -73,9 +73,6 @@ namespace Unigram.Views
 
             CheckMessageBoxEmpty();
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
-
             ViewModel.PropertyChanged += OnPropertyChanged;
 
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
@@ -98,41 +95,6 @@ namespace Unigram.Views
             {
                 ElapsedLabel.Text = btnVoiceMessage.Elapsed.ToString("m\\:ss\\.ff");
             };
-
-            //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
-            //{
-            //    var visual = ElementCompositionPreview.GetElementVisual(Header);
-            //    visual.Clip = Window.Current.Compositor.CreateInsetClip();
-
-            //    var showShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    showShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
-            //    showShowAnimation.InsertKeyFrame(1.0f, new Vector3());
-            //    showShowAnimation.Target = nameof(Visual.Offset);
-            //    showShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    var showHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    showHideAnimation.InsertKeyFrame(0.0f, new Vector3());
-            //    showHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0));
-            //    showHideAnimation.Target = nameof(Visual.Offset);
-            //    showHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    var hideHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    hideHideAnimation.InsertKeyFrame(0.0f, new Vector3());
-            //    hideHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0));
-            //    hideHideAnimation.Target = nameof(Visual.Offset);
-            //    hideHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    var hideShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    hideShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0));
-            //    hideShowAnimation.InsertKeyFrame(1.0f, new Vector3());
-            //    hideShowAnimation.Target = nameof(Visual.Offset);
-            //    hideShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, showShowAnimation);
-            //    ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
-            //    ElementCompositionPreview.SetImplicitShowAnimation(btnDialogInfo, hideShowAnimation);
-            //    ElementCompositionPreview.SetImplicitHideAnimation(btnDialogInfo, showHideAnimation);
-            //}
         }
 
         //protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -151,6 +113,59 @@ namespace Unigram.Views
 
         //    base.OnNavigatedTo(e);
         //}
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
+            {
+                var visual = ElementCompositionPreview.GetElementVisual(Header);
+                visual.Clip = Window.Current.Compositor.CreateInsetClip();
+
+                var showShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                showShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
+                showShowAnimation.InsertKeyFrame(1.0f, new Vector3());
+                showShowAnimation.Target = nameof(Visual.Offset);
+                showShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                var showHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                showHideAnimation.InsertKeyFrame(0.0f, new Vector3());
+                showHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0));
+                showHideAnimation.Target = nameof(Visual.Offset);
+                showHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                var hideHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                hideHideAnimation.InsertKeyFrame(0.0f, new Vector3());
+                hideHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0));
+                hideHideAnimation.Target = nameof(Visual.Offset);
+                hideHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                var hideShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                hideShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0));
+                hideShowAnimation.InsertKeyFrame(1.0f, new Vector3());
+                hideShowAnimation.Target = nameof(Visual.Offset);
+                hideShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, showShowAnimation);
+                ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
+                ElementCompositionPreview.SetImplicitShowAnimation(btnDialogInfo, hideShowAnimation);
+                ElementCompositionPreview.SetImplicitHideAnimation(btnDialogInfo, showHideAnimation);
+            }
+
+            base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
+            {
+                ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, null);
+                ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, null);
+                ElementCompositionPreview.SetImplicitShowAnimation(btnDialogInfo, null);
+                ElementCompositionPreview.SetImplicitHideAnimation(btnDialogInfo, null);
+            }
+
+            base.OnNavigatingFrom(e);
+        }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {

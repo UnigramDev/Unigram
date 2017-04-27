@@ -72,9 +72,14 @@ namespace Unigram.Selectors
 
                 return InvoiceTemplate;
             }
-            else if (item is TLMessageMediaDocument documentMedia)
+            else if (item is TLMessageMediaDocument || item is TLDocument)
             {
-                if (documentMedia.Document is TLDocument document)
+                if (item is TLMessageMediaDocument documentMedia)
+                {
+                    item = documentMedia.Document;
+                }
+                
+                if (item is TLDocument document)
                 {
                     if (TLMessage.IsVoice(document))
                     {
@@ -116,11 +121,17 @@ namespace Unigram.Selectors
                 }
                 else if (webpageMedia.WebPage is TLWebPage webpage)
                 {
-                    if (TLMessage.IsGif(webpage.Document))
+                    /*if (TLMessage.IsGif(webpage.Document))
                     {
                         return WebPageGifTemplate;
                     }
-                    else if (webpage.Document != null && webpage.Type.Equals("document", StringComparison.OrdinalIgnoreCase))
+                    else
+                    if (webpage.Document != null && webpage.Type.Equals("document", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return WebPageDocumentTemplate;
+                    }*/
+
+                    if (webpage.Document != null)
                     {
                         return WebPageDocumentTemplate;
                     }
@@ -151,7 +162,6 @@ namespace Unigram.Selectors
             {
                 if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(webPage.Type, "article", StringComparison.OrdinalIgnoreCase) ||
                     (webPage.SiteName != null && string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase)))
                 {
                     return true;

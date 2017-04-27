@@ -146,6 +146,10 @@
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Services\MTProtoResponse.cs" />
     <Compile Include="Services\MTProtoService.Channel.cs" />
+    <Compile Include="TL\Core\EndianBinaryReader.cs" />
+    <Compile Include="TL\Core\EndianBinaryWriter.cs" />
+    <Compile Include="TL\Core\EndianBitConverter.cs" />
+    <Compile Include="TL\Core\Endianness.cs" />
     <Compile Include="TL\Core\ITLChannelInviter.cs" />
     <Compile Include="TL\Core\ITLDialogWith.cs" />
     <Compile Include="TL\Core\ITLInputPeer.cs" />
@@ -155,6 +159,7 @@
     <Compile Include="TL\Core\ITLReadMaxId.cs" />
     <Compile Include="TL\Core\ITLStickers.cs" />
     <Compile Include="TL\Core\ITLTransferable.cs" />
+    <Compile Include="TL\Core\LittleEndianBitConverter.cs" />
     <Compile Include="TL\Core\TLActionInfo.cs" />
     <Compile Include="TL\Core\TLInt.cs" />
     <Compile Include="TL\Core\TLMessageActionUnreadMessages.cs" />

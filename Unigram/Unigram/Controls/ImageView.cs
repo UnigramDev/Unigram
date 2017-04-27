@@ -185,11 +185,11 @@ namespace Unigram.Controls
                 var ratioY = availableHeight / height;
                 var ratio = Math.Min(ratioX, ratioY);
 
-                if (Holder != null)
-                {
-                    Holder.Width = width * ratio;
-                    Holder.Height = height * ratio;
-                }
+                //if (Holder != null)
+                //{
+                //    Holder.Width = width * ratio;
+                //    Holder.Height = height * ratio;
+                //}
 
                 return new Size(width * ratio, height * ratio);
             }
