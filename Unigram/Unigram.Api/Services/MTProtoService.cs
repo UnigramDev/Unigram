@@ -122,14 +122,11 @@ namespace Telegram.Api.Services
         private ITransport _activeTransport;
 
         private readonly ITransportService _transportService;
-
         private readonly ICacheService _cacheService;
-
         private readonly IUpdatesService _updatesService;
-
         private readonly IConnectionService _connectionService;
-
         private readonly IDeviceInfoService _deviceInfo;
+        private readonly IStatsService _statsService;
 
         private readonly Dictionary<long, HistoryItem> _history = new Dictionary<long, HistoryItem>();
 
@@ -163,11 +160,13 @@ namespace Telegram.Api.Services
 
         private Timer _checkTransportTimer;
 
-        public MTProtoService(IDeviceInfoService deviceInfo,IUpdatesService updatesService, ICacheService cacheService, ITransportService transportService, IConnectionService connectionService)
+        public MTProtoService(IDeviceInfoService deviceInfo,IUpdatesService updatesService, ICacheService cacheService, ITransportService transportService, IConnectionService connectionService, IStatsService statsService)
         {
             var isBackground = deviceInfo != null && deviceInfo.IsBackground;
 
             CurrentUserId = SettingsHelper.UserId;
+
+            _statsService = statsService;
 
             _deviceInfo = deviceInfo;
 

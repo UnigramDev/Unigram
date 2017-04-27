@@ -90,22 +90,34 @@ namespace Unigram.Common
                     var foreground = sender.Resources["MessageHeaderForegroundBrush"] as SolidColorBrush;
 
                     paragraph.Inlines.Add(new Run { Text = webPage.SiteName, FontWeight = FontWeights.SemiBold, Foreground = foreground });
-                    paragraph.Inlines.Add(new LineBreak());
                 }
 
                 if (webPage.HasTitle && !string.IsNullOrWhiteSpace(webPage.Title))
                 {
+                    if (paragraph.Inlines.Count > 0)
+                    {
+                        paragraph.Inlines.Add(new LineBreak());
+                    }
+
                     paragraph.Inlines.Add(new Run { Text = webPage.Title, FontWeight = FontWeights.SemiBold });
-                    paragraph.Inlines.Add(new LineBreak());
                 }
                 else if (webPage.HasAuthor && !string.IsNullOrWhiteSpace(webPage.Author))
                 {
+                    if (paragraph.Inlines.Count > 0)
+                    {
+                        paragraph.Inlines.Add(new LineBreak());
+                    }
+
                     paragraph.Inlines.Add(new Run { Text = webPage.Author, FontWeight = FontWeights.SemiBold });
-                    paragraph.Inlines.Add(new LineBreak());
                 }
 
                 if (webPage.HasDescription && !string.IsNullOrWhiteSpace(webPage.Description))
                 {
+                    if (paragraph.Inlines.Count > 0)
+                    {
+                        paragraph.Inlines.Add(new LineBreak());
+                    }
+
                     paragraph.Inlines.Add(new Run { Text = webPage.Description });
                 }
 

@@ -63,14 +63,14 @@
             <Task Type="systemEvent" />
           </BackgroundTasks>
         </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
+          <BackgroundTasks>
+            <Task Type="pushNotification" />
+          </BackgroundTasks>
+        </Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
           <BackgroundTasks>
             <Task Type="systemEvent" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
-          <BackgroundTasks ServerName="UnigramHost">
-            <Task Type="pushNotification" />
           </BackgroundTasks>
         </Extension>
         <uap:Extension Category="windows.voipCall" />

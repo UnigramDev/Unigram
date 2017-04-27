@@ -321,7 +321,7 @@
             </RichTextBlock>
 
             <!-- TODO: video timing -->
-            <Grid MinWidth="260" HorizontalAlignment="Left">
+            <!--<Grid MinWidth="260" HorizontalAlignment="Left">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -334,7 +334,10 @@
                     <TextBlock Text="{Binding Media.WebPage.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
                     <TextBlock Text="{Binding Media.WebPage.Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
-            </Grid>
+            </Grid>-->
+
+            <ContentControl Content="{Binding Media.WebPage.Document}"
+                            ContentTemplateSelector="{StaticResource MediaTemplateSelector}"/>
 
             <Button Click="InstantView_Click"
                     Margin="0,6,0,0"
