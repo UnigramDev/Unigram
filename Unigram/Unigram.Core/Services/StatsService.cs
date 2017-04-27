@@ -5,45 +5,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services;
 using Unigram.Common;
 
 namespace Unigram.Core.Services
 {
-    public interface IStatisticsService
-    {
-        void IncrementReceivedItemsCount(NetworkType networkType, DataType dataType, int value);
-        void IncrementSentItemsCount(NetworkType networkType, DataType dataType, int value);
-        void IncrementReceivedBytesCount(NetworkType networkType, DataType dataType, long value);
-        void IncrementSentBytesCount(NetworkType networkType, DataType dataType, long value);
-        void IncrementTotalCallsTime(NetworkType networkType, int value);
-        int GetRecivedItemsCount(NetworkType networkType, DataType dataType);
-        int GetSentItemsCount(NetworkType networkType, DataType dataType);
-        long GetSentBytesCount(NetworkType networkType, DataType dataType);
-        long GetReceivedBytesCount(NetworkType networkType, DataType dataType);
-        int GetCallsTotalTime(NetworkType networkType);
-        long GetResetStatsDate(NetworkType networkType);
-        void ResetStats(NetworkType networkType);
-    }
-
-    public enum NetworkType
-    {
-        Mobile = 0,
-        WiFi = 1,
-        Roaming = 2
-    }
-
-    public enum DataType
-    {
-        Calls = 0,
-        Messages = 1,
-        Videos = 2,
-        Audios = 3,
-        Photos = 4,
-        Files = 5,
-        Total = 6
-    }
-
-    public class StatisticsService : IStatisticsService
+    public class StatsService : IStatsService
     {
         private const int TYPE_MOBILE = 0;
         private const int TYPE_WIFI = 1;
@@ -67,7 +34,7 @@ namespace Unigram.Core.Services
 
         private ThreadLocal<long> lastStatsSaveTime = new ThreadLocal<long>(() => Utils.CurrentTimestamp - 1000);
 
-        public StatisticsService()
+        public StatsService()
         {
             sentBytes[0] = new long[TYPES_COUNT];
 

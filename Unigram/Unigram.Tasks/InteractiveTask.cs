@@ -42,7 +42,7 @@ namespace Unigram.Tasks
                     var transportService = new TransportService();
                     var connectionService = new ConnectionService(deviceInfoService);
                     var manualResetEvent = new ManualResetEvent(false);
-                    var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService);
+                    var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService, null);
 
                     protoService.Initialized += (s, args) =>
                     {

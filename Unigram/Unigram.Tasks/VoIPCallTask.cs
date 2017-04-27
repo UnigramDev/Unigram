@@ -35,7 +35,7 @@ namespace Unigram.Tasks
             var updatesService = new UpdatesService(cacheService, eventAggregator);
             var transportService = new TransportService();
             var connectionService = new ConnectionService(deviceInfoService);
-            var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService);
+            var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService, null);
 
             eventAggregator.Subscribe(_mediator);
             protoService.Initialize();
