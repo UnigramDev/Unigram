@@ -150,6 +150,9 @@
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
     <value>posted a photo</value>
   </data>
+  <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
+    <value>posted a video message</value>
+  </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
     <value>posted a {1}sticker</value>
   </data>
