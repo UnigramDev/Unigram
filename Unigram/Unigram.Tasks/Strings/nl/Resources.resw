@@ -150,6 +150,9 @@
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
     <value>plaatste een foto</value>
   </data>
+  <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
+    <value>plaatste een videobericht</value>
+  </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
     <value>plaatste een {1}sticker</value>
   </data>
@@ -209,6 +212,9 @@
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} heeft een foto gestuurd naar de groep</value>
+  </data>
+  <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
+    <value>{0} heeft een videobericht gestuurd naar de groep</value>
   </data>
   <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
     <value>{0} heeft een {2}sticker gestuurd naar de groep</value>
@@ -278,6 +284,9 @@
   </data>
   <data name="MESSAGE_PHOTO" xml:space="preserve">
     <value>heeft je een foto gestuurd</value>
+  </data>
+  <data name="MESSAGE_ROUND" xml:space="preserve">
+    <value>heeft je een videobericht gestuurd</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
     <value>heeft je een {1}sticker gestuurd</value>
