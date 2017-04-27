@@ -8,15 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="2000"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
-            <Setter Property="Padding" Value="12,8,12,12"/>
-            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-            <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
-            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
-        </Style>
-    </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -170,7 +161,7 @@
                         <TextBlock Text="16.7 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
                     </Grid>
                 </StackPanel>
-                <StackPanel Padding="12,8">
+                <StackPanel Padding="12,8,12,24">
                     <HyperlinkButton Content="Reset Statistics" Foreground="Red"/>
                     <TextBlock Text="Network usage since MMM dd yyyy, HH:ss" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
