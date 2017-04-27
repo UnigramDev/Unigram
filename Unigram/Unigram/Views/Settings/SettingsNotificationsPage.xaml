@@ -24,7 +24,8 @@
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
-        <ScrollViewer Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+        <ScrollViewer x:Name="ScrollingHost"
+                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
@@ -52,11 +53,16 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.InAppPreview, Mode=TwoWay}" Content="In-App Preview"/>
                 </StackPanel>
 
-                <StackPanel Padding="12,8">
+                <StackPanel Padding="12,8,12,24">
                     <HyperlinkButton Command="{x:Bind ViewModel.ResetCommand}" Content="Reset All Notifications" Foreground="Red"/>
                     <TextBlock Text="Undo all custom notification settings for all your contacts and groups." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
+        <controls:ScrollViewerBackground
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
     </Grid>
 </Page>

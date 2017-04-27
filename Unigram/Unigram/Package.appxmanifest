@@ -59,7 +59,7 @@
           </uap:Protocol>
         </uap:Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.VoIPCallTask">
-          <BackgroundTasks ServerName="UnigramHost">
+          <BackgroundTasks>
             <Task Type="systemEvent" />
           </BackgroundTasks>
         </Extension>
@@ -97,13 +97,13 @@
         <ActivatableClass ActivatableClassId="Unigram.Native.OpusByteStreamHandler" ThreadingModel="both" />
       </InProcessServer>
     </Extension>
-    <Extension Category="windows.activatableClass.outOfProcessServer">
+    <!--<Extension Category="windows.activatableClass.outOfProcessServer">
       <OutOfProcessServer ServerName="UnigramHost">
         <Path>UnigramHost.exe</Path>
         <Instancing>singleInstance</Instancing>
         <ActivatableClass ActivatableClassId="UnigramHost.Server" />
       </OutOfProcessServer>
-    </Extension>
+    </Extension>-->
   </Extensions>
   <Capabilities>
     <Capability Name="internetClient" />

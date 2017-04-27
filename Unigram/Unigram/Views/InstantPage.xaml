@@ -37,16 +37,12 @@
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Bottom"
-            Grid.Row="1"/>
-        <ScrollViewer x:Name="ScrollingHost" 
+        <ScrollViewer x:Name="ScrollingHost"
+                      Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <Grid>
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="Auto"/>
@@ -58,5 +54,10 @@
                 </Border>
             </Grid>
         </ScrollViewer>
+        <controls:ScrollViewerBackground
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
     </Grid>
 </Page>

@@ -65,7 +65,7 @@ namespace Unigram.Controls
 
             if (VerticalAlignment == VerticalAlignment.Top)
             {
-                _animationSize = _compositor.CreateExpressionAnimation("Max(Scroll.Translation.Y + 1, 0)");
+                _animationSize = _compositor.CreateExpressionAnimation("Max(Scroll.Translation.Y, 0)");
                 _animationSize.SetReferenceParameter("Scroll", props);
 
                 _visual.StartAnimation("Size.Y", _animationSize);
