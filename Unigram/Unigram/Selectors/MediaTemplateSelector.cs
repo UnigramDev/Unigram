@@ -21,6 +21,7 @@ namespace Unigram.Selectors
         public DataTemplate GifTemplate { get; set; }
         public DataTemplate InvoiceTemplate { get; set; }
         public DataTemplate InvoicePhotoTemplate { get; set; }
+        public DataTemplate RoundVideoTemplate { get; set; }
         public DataTemplate PhotoTemplate { get; set; }
         public DataTemplate UnsupportedTemplate { get; set; }
         public DataTemplate VenueTemplate { get; set; }
@@ -88,6 +89,10 @@ namespace Unigram.Selectors
                     else if (TLMessage.IsVideo(document))
                     {
                         return VideoTemplate;
+                    }
+                    else if (TLMessage.IsRoundVideo(document))
+                    {
+                        return RoundVideoTemplate;
                     }
                     else if (TLMessage.IsGif(document))
                     {

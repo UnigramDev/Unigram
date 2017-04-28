@@ -90,6 +90,29 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="MediaRoundVideoTemplate">
+        <Grid Background="Black"
+              CornerRadius="90"
+              MinWidth="{ThemeResource TelegramMediaMinWidth}"
+              MinHeight="{ThemeResource TelegramMediaMinHeight}"
+              DataContextChanged="ForceDocument_DataContextChanged">
+            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{Binding Media.Document}"
+                                MaxWidth="{ThemeResource TelegramStickerMaxHeight}"
+                                MaxHeight="{ThemeResource TelegramStickerMaxHeight}"
+                                Style="{StaticResource RoundImageViewStyle}"/>
+
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+            </Border>
+
+            <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="MediaStickerTemplate">
         <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{Binding Media.Document}"
@@ -403,6 +426,7 @@
                                      GameTemplate="{StaticResource MediaGameTemplate}"
                                      GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
                                      GifTemplate="{StaticResource MediaGifTemplate}"
+                                     RoundVideoTemplate="{StaticResource MediaRoundVideoTemplate}"
                                      PhotoTemplate="{StaticResource MediaPhotoTemplate}"
                                      VideoTemplate="{StaticResource MediaVideoTemplate}"
                                      VenueTemplate="{StaticResource MediaVenueTemplate}"
