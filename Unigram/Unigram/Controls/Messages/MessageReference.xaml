@@ -39,7 +39,11 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Border x:Name="ThumbRoot" x:DeferLoadStrategy="Lazy" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="36" Height="36" Margin="6,0,0,0">
-            <Image x:Name="ThumbImage" Stretch="UniformToFill"/>
+            <Border x:Name="ThumbEllipse">
+                <Border.Background>
+                    <ImageBrush x:Name="ThumbImage" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                </Border.Background>
+            </Border>
         </Border>
 
         <TextBlock Margin="8,0,0,2" VerticalAlignment="Center" MaxLines="2" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}" Grid.Column="1">
