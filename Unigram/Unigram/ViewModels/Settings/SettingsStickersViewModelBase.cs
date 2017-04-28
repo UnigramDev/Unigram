@@ -9,7 +9,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
-using Template10.Utils;
+using Unigram.Core.Common;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
@@ -29,7 +29,7 @@ namespace Unigram.ViewModels.Settings
             _stickersService.FeaturedStickersDidLoaded += OnFeaturedStickersDidLoaded;
             _stickersService.ArchivedStickersCountDidLoaded += OnArchivedStickersCountDidLoaded;
 
-            Items = new ObservableCollection<TLMessagesStickerSet>();
+            Items = new MvxObservableCollection<TLMessagesStickerSet>();
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -84,7 +84,7 @@ namespace Unigram.ViewModels.Settings
             var stickers = _stickersService.GetStickerSets(type);
             Execute.BeginOnUIThread(() =>
             {
-                Items.AddRange(stickers, true);
+                Items.ReplaceWith(stickers);
             });
         }
 
@@ -114,6 +114,6 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public ObservableCollection<TLMessagesStickerSet> Items { get; private set; }
+        public MvxObservableCollection<TLMessagesStickerSet> Items { get; private set; }
     }
 }

@@ -8,7 +8,7 @@ using Unigram.Core.Common;
 
 namespace Unigram.Collections
 {
-    public class SortedObservableCollection<T> : ObservableCollectionEx<T>
+    public class SortedObservableCollection<T> : MvxObservableCollection<T>
     {
         private readonly IComparer<T> _comparer;
 
