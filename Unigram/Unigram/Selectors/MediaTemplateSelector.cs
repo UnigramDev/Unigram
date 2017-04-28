@@ -25,7 +25,7 @@ namespace Unigram.Selectors
         public DataTemplate UnsupportedTemplate { get; set; }
         public DataTemplate VenueTemplate { get; set; }
         public DataTemplate VideoTemplate { get; set; }
-        public DataTemplate WebPageGifTemplate { get; set; }
+        public DataTemplate StickerTemplate { get; set; }
         public DataTemplate WebPageDocumentTemplate { get; set; }
         public DataTemplate WebPagePendingTemplate { get; set; }
         public DataTemplate WebPagePhotoTemplate { get; set; }
@@ -85,13 +85,17 @@ namespace Unigram.Selectors
                     {
                         return AudioTemplate;
                     }
-                    if (TLMessage.IsVideo(document))
+                    else if (TLMessage.IsVideo(document))
                     {
                         return VideoTemplate;
                     }
-                    if (TLMessage.IsGif(document))
+                    else if (TLMessage.IsGif(document))
                     {
                         return GifTemplate;
+                    }
+                    else if (TLMessage.IsSticker(document))
+                    {
+                        return StickerTemplate;
                     }
 
                     // TODO: ???
@@ -162,6 +166,7 @@ namespace Unigram.Selectors
             {
                 if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(webPage.Type, "article", StringComparison.OrdinalIgnoreCase) ||
                     (webPage.SiteName != null && string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase)))
                 {
                     return true;

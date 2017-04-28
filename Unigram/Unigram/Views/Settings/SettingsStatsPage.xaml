@@ -4,10 +4,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:viewModels="using:Unigram.ViewModels.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="2000"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <Style TargetType="PivotItem">
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+    </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -15,158 +23,113 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
-            <TextBlock Text="%s data usage" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
-        <ScrollViewer x:Name="ScrollingHost"
-                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                      VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
-            <StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="PHOTOS" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+        <Pivot ItemsSource="{x:Bind ViewModel.Items}" Grid.RowSpan="2">
+            <Pivot.HeaderTemplate>
+                <DataTemplate x:DataType="viewModels:SettingsStatsNetwork">
+                    <TextBlock Text="{x:Bind Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+                </DataTemplate>
+            </Pivot.HeaderTemplate>
+            <Pivot.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:SettingsStatsNetwork">
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="Sent" Margin="0,0,0,4"/>
-                        <TextBlock Text="Received" Margin="0,4" Grid.Row="1"/>
-                        <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
-                        <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
+                        <controls:ScrollViewerBackground 
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            ScrollingHost="{Binding ElementName=ScrollingHost}"
+                            VerticalAlignment="Top"
+                            Grid.Row="1"/>
+                        <ScrollViewer x:Name="ScrollingHost"
+                                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                                      VerticalScrollBarVisibility="Auto"
+                                      VerticalScrollMode="Auto"
+                                      Grid.Row="1">
+                            <StackPanel>
+                                <ItemsControl ItemsSource="{x:Bind Items}">
+                                    <ItemsControl.ItemTemplateSelector>
+                                        <selectors:StatsDataTemplateSelector>
+                                            <selectors:StatsDataTemplateSelector.BaseTemplate>
+                                                <DataTemplate x:DataType="viewModels:SettingsStatsDataBase">
+                                                    <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                                                        <TextBlock Text="{x:Bind Title}" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Text="Bytes sent" Margin="0,4"/>
+                                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="1"/>
 
-                        <TextBlock Text="51" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                        <TextBlock Text="1150" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
-                        <TextBlock Text="2.2 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
-                        <TextBlock Text="16.7 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="3"/>
+                                                            <TextBlock Text="{x:Bind SentBytes, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                                            <TextBlock Text="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </selectors:StatsDataTemplateSelector.BaseTemplate>
+                                            <selectors:StatsDataTemplateSelector.ItemTemplate>
+                                                <DataTemplate x:DataType="viewModels:SettingsStatsData">
+                                                    <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                                                        <TextBlock Text="VOICE MESSAGES" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Text="Sent" Margin="0,0,0,4"/>
+                                                            <TextBlock Text="Received" Margin="0,4" Grid.Row="1"/>
+                                                            <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
+                                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
+
+                                                            <TextBlock Text="{x:Bind SentItems}" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                                            <TextBlock Text="{x:Bind ReceivedItems}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
+                                                            <TextBlock Text="{x:Bind SentBytes, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
+                                                            <TextBlock Text="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="3"/>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </selectors:StatsDataTemplateSelector.ItemTemplate>
+                                            <selectors:StatsDataTemplateSelector.CallTemplate>
+                                                <DataTemplate x:DataType="viewModels:SettingsStatsCallData">
+                                                    <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                                                        <TextBlock Text="CALLS" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Text="Outgoing calls" Margin="0,0,0,4"/>
+                                                            <TextBlock Text="Incoming calls" Margin="0,4" Grid.Row="1"/>
+                                                            <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
+                                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
+                                                            <TextBlock Text="Total time" Margin="0,4" Grid.Row="5"/>
+
+                                                            <TextBlock Text="{x:Bind SentItems}" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                                            <TextBlock Text="{x:Bind ReceivedItems}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
+                                                            <TextBlock Text="{x:Bind SentBytes, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
+                                                            <TextBlock Text="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="3"/>
+                                                            <TextBlock Text="{x:Bind Duration}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="4"/>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </selectors:StatsDataTemplateSelector.CallTemplate>
+                                        </selectors:StatsDataTemplateSelector>
+                                    </ItemsControl.ItemTemplateSelector>
+                                </ItemsControl>
+                                <StackPanel Padding="12,8,12,24">
+                                    <HyperlinkButton Content="Reset Statistics" Foreground="Red"/>
+                                    <TextBlock Text="Network usage since MMM dd yyyy, HH:ss" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
                     </Grid>
-                </StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="VIDEOS" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="Sent" Margin="0,0,0,4"/>
-                        <TextBlock Text="Received" Margin="0,4" Grid.Row="1"/>
-                        <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
-                        <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
-
-                        <TextBlock Text="51" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                        <TextBlock Text="1150" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
-                        <TextBlock Text="2.2 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
-                        <TextBlock Text="16.7 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="3"/>
-                    </Grid>
-                </StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="VOICE MESSAGES" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="Sent" Margin="0,0,0,4"/>
-                        <TextBlock Text="Received" Margin="0,4" Grid.Row="1"/>
-                        <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
-                        <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
-
-                        <TextBlock Text="51" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                        <TextBlock Text="1150" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
-                        <TextBlock Text="2.2 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
-                        <TextBlock Text="16.7 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="3"/>
-                    </Grid>
-                </StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="FILES" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="Sent" Margin="0,0,0,4"/>
-                        <TextBlock Text="Received" Margin="0,4" Grid.Row="1"/>
-                        <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
-                        <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
-
-                        <TextBlock Text="51" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                        <TextBlock Text="1150" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
-                        <TextBlock Text="2.2 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
-                        <TextBlock Text="16.7 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="3"/>
-                    </Grid>
-                </StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="CALLS" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="Outgoing calls" Margin="0,0,0,4"/>
-                        <TextBlock Text="Incoming calls" Margin="0,4" Grid.Row="1"/>
-                        <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
-                        <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
-                        <TextBlock Text="Total time" Margin="0,4" Grid.Row="5"/>
-
-                        <TextBlock Text="51" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                        <TextBlock Text="1150" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
-                        <TextBlock Text="2.2 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
-                        <TextBlock Text="16.7 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="3"/>
-                        <TextBlock Text="0:42" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="4"/>
-                    </Grid>
-                </StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="MESSAGES AND OTHER DATA" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="Bytes sent" Margin="0,4"/>
-                        <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="1"/>
-
-                        <TextBlock Text="2.2 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                        <TextBlock Text="16.7 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
-                    </Grid>
-                </StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="TOTAL" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="Bytes sent" Margin="0,4"/>
-                        <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="1"/>
-
-                        <TextBlock Text="2.2 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                        <TextBlock Text="16.7 MB" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
-                    </Grid>
-                </StackPanel>
-                <StackPanel Padding="12,8,12,24">
-                    <HyperlinkButton Content="Reset Statistics" Foreground="Red"/>
-                    <TextBlock Text="Network usage since MMM dd yyyy, HH:ss" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </StackPanel>
-
-            </StackPanel>
-        </ScrollViewer>
+                </DataTemplate>
+            </Pivot.ItemTemplate>
+        </Pivot>
     </Grid>
 </Page>

@@ -303,7 +303,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ImageView">
-                    <Image x:Name="Holder" Source="{TemplateBinding Source}" Stretch="UniformToFill"/>
+                    <Image x:Name="Holder" Source="{TemplateBinding Source}" Stretch="Uniform"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -49,9 +49,9 @@ namespace Unigram.ViewModels
                 }
             };
 
-            SavedGifs = new ObservableCollection<TLDocument>();
-            FeaturedStickers = new ObservableCollectionEx<TLFeaturedStickerSet>();
-            SavedStickers = new ObservableCollectionEx<TLMessagesStickerSet>();
+            SavedGifs = new MvxObservableCollection<TLDocument>();
+            FeaturedStickers = new MvxObservableCollection<TLFeaturedStickerSet>();
+            SavedStickers = new MvxObservableCollection<TLMessagesStickerSet>();
 
             SyncStickers();
             SyncGifs();
@@ -97,7 +97,7 @@ namespace Unigram.ViewModels
             var recent = _stickersService.GetRecentGifs();
             Execute.BeginOnUIThread(() =>
             {
-                SavedGifs.AddRange(recent, true);
+                SavedGifs.ReplaceWith(recent);
             });
         }
 
@@ -126,7 +126,7 @@ namespace Unigram.ViewModels
             var stickers = _stickersService.GetStickerSets(StickerType.Image);
             Execute.BeginOnUIThread(() =>
             {
-                SavedStickers.AddRange(stickers, true);
+                SavedStickers.ReplaceWith(stickers);
 
                 if (_frequentlyUsed.Documents.Count > 0)
                 {
@@ -144,20 +144,20 @@ namespace Unigram.ViewModels
             {
 
                 FeaturedUnreadCount = unread.Count;
-                FeaturedStickers.AddRange(stickers.Select(set => new TLFeaturedStickerSet
+                FeaturedStickers.ReplaceWith(stickers.Select(set => new TLFeaturedStickerSet
                 {
                     Set = set.Set,
                     IsUnread = unread.Contains(set.Set.Id),
                     Covers = new TLVector<TLDocumentBase>(set.Documents.Take(Math.Min(set.Documents.Count, 5)))
-                }), true);
+                }));
             });
         }
 
-        public ObservableCollection<TLDocument> SavedGifs { get; private set; }
+        public MvxObservableCollection<TLDocument> SavedGifs { get; private set; }
 
-        public ObservableCollectionEx<TLFeaturedStickerSet> FeaturedStickers { get; private set; }
+        public MvxObservableCollection<TLFeaturedStickerSet> FeaturedStickers { get; private set; }
 
-        public ObservableCollectionEx<TLMessagesStickerSet> SavedStickers { get; private set; }
+        public MvxObservableCollection<TLMessagesStickerSet> SavedStickers { get; private set; }
 
         public void SyncStickers()
         {

@@ -85,7 +85,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public ObservableCollection<GalleryItem> Items { get; protected set; }
+        public MvxObservableCollection<GalleryItem> Items { get; protected set; }
 
         protected virtual void LoadPrevious() { }
 

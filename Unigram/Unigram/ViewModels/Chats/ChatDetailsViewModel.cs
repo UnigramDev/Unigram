@@ -85,7 +85,7 @@ namespace Unigram.ViewModels.Chats
 
                     if (_full.Participants is TLChatParticipants participants)
                     {
-                        collection.AddRange(participants.Participants, true);
+                        collection.ReplaceWith(participants.Participants);
                     }
                 }
             }

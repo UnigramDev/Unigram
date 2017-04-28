@@ -40,7 +40,7 @@ namespace Unigram.Controls
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var scrollViewer = ScrollingHost as ScrollViewer;
-            if (scrollViewer == null)
+            if (scrollViewer == null && ScrollingHost != null)
             {
                 scrollViewer = ScrollingHost.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
             }
@@ -84,6 +84,19 @@ namespace Unigram.Controls
             }
         }
 
-        public FrameworkElement ScrollingHost { get; set; }
+        //public FrameworkElement ScrollingHost { get; set; }
+
+        #region ScrollingHost
+
+        public FrameworkElement ScrollingHost
+        {
+            get { return (FrameworkElement)GetValue(ScrollingHostProperty); }
+            set { SetValue(ScrollingHostProperty, value); }
+        }
+
+        public static readonly DependencyProperty ScrollingHostProperty =
+            DependencyProperty.Register("ScrollingHost", typeof(FrameworkElement), typeof(ScrollViewerBackground), new PropertyMetadata(null));
+
+        #endregion
     }
 }

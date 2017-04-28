@@ -27,7 +27,7 @@ namespace Unigram.ViewModels
         public UserPhotosViewModel(TLUser user, IMTProtoService protoService)
             : base(protoService, null, null)
         {
-            Items = new ObservableCollection<GalleryItem>();
+            Items = new MvxObservableCollection<GalleryItem>();
             Initialize(user);
         }
 
@@ -49,7 +49,7 @@ namespace Unigram.ViewModels
                         TotalItems = result.Result.Photos.Count;
                     }
 
-                    Template10.Utils.IEnumerableUtils.AddRange(Items, result.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, user)), true);
+                    Items.ReplaceWith(result.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, user)));
 
                     SelectedItem = Items[0];
                 }
@@ -65,7 +65,7 @@ namespace Unigram.ViewModels
                     var result = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), Items.Count, 0, 0);
                     if (result.IsSucceeded)
                     {
-                        Template10.Utils.IEnumerableUtils.AddRange(Items, result.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, _user)), false);
+                        Items.AddRange(result.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, _user)));
                     }
                 }
             }
