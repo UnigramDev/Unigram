@@ -102,7 +102,11 @@ namespace Unigram.Common
                     codesReplace = string.Concat(string.Join(", ", codes.Take(codes.Count - 1)), " and ", codes.Last());
                 }
 
-                return ReplaceLinks(string.Format(AppResources.MessageActionChatAddUser, "{0}", codesReplace), new[] { fromUserFullName }.Union(names).ToArray(), new[] { "tg-user://" + fromUserId }.Union(users.Select(x => "tg-user://" + x)).ToArray(), useActiveLinks);
+                var tags = users.Select(x => "tg-user://" + x).ToList();
+                names.Insert(0, fromUserFullName);
+                tags.Insert(0, "tg-user://" + fromUserId);
+
+                return ReplaceLinks(string.Format(AppResources.MessageActionChatAddUser, "{0}", codesReplace), names.ToArray(), tags.ToArray(), useActiveLinks);
             });
             _actionsCache.Add(typeof(TLMessageActionChatDeleteUser), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
             {
@@ -492,7 +496,7 @@ namespace Unigram.Common
                             paragraph.Inlines.Add(hyperlink);
                         }
                     }
-                    else
+                    else if (users?.Length > i)
                     {
                         paragraph.Inlines.Add(new Run { Text = users[i] });
                     }
