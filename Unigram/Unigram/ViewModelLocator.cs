@@ -122,6 +122,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<InstantViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStorageViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsStatsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<FeaturedStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsUsernameViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsEditNameViewModel>().SingleInstance();
