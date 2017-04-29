@@ -75,13 +75,11 @@ namespace Unigram.ViewModels
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
         private readonly IUploadVideoManager _uploadVideoManager;
-        private readonly IConnectionService _connectionService;
-        private readonly IStatsService _statsService;
 
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, IConnectionService connectionService, IStatsService statsService, DialogStickersViewModel stickers)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, DialogStickersViewModel stickers)
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
@@ -90,8 +88,6 @@ namespace Unigram.ViewModels
             _uploadVideoManager = uploadVideoManager;
             _stickersService = stickersService;
             _locationService = locationService;
-            _connectionService = connectionService;
-            _statsService = statsService;
 
             _stickers = stickers;
         }
@@ -1164,8 +1160,6 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.SendMessageAsync(message, () => { message.State = TLMessageState.Confirmed; });
                     if (response.IsSucceeded)
                     {
-                        _statsService.IncrementSentItemsCount(_connectionService.NetworkType, DataType.Messages, 1);
-
                         message.RaisePropertyChanged(() => message.Media);
                     }
                     else
