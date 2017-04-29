@@ -93,8 +93,7 @@
         <Grid Background="Black"
               CornerRadius="90"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
-              MinHeight="{ThemeResource TelegramMediaMinHeight}"
-              DataContextChanged="ForceDocument_DataContextChanged">
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Media.Document}"
                                 MaxWidth="{ThemeResource TelegramStickerMaxHeight}"
