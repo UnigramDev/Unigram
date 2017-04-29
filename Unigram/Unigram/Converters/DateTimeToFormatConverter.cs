@@ -26,7 +26,7 @@ namespace Unigram.Converters
             }
             else
             {
-                var formatted = new DateTimeFormatter(format).Format((DateTime)value).Trim('\u200E', '\u200F');
+                var formatted = new DateTimeFormatter(format, Windows.System.UserProfile.GlobalizationPreferences.Languages).Format((DateTime)value).Trim('\u200E', '\u200F');
                 if (format.Contains("full"))
                 {
                     return formatted.Substring(0, 1).ToUpper() + formatted.Substring(1);

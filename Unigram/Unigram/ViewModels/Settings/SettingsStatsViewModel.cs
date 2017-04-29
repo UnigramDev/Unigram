@@ -4,10 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Template10.Mvvm;
+using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Core.Common;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -31,12 +35,27 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            SelectedItem = Items.FirstOrDefault(x => x.Type == ProtoService.NetworkType);
+
             foreach (var item in Items)
             {
                 item.ReloadData();
             }
 
             return Task.CompletedTask;
+        }
+
+        private SettingsStatsNetwork _selectedItem;
+        public SettingsStatsNetwork SelectedItem
+        {
+            get
+            {
+                return _selectedItem;
+            }
+            set
+            {
+                Set(ref _selectedItem, value);
+            }
         }
 
         public MvxObservableCollection<SettingsStatsNetwork> Items { get; private set; }
@@ -63,20 +82,49 @@ namespace Unigram.ViewModels.Settings
                 new SettingsStatsDataBase(statsService, "MESSAGES AND OTHER DATA", type, DataType.Messages),
                 new SettingsStatsDataBase(statsService, "TOTAL", type, DataType.Total)
             };
+
+            ReloadData();
         }
+
+        public string Title { get; private set; }
+
+        public NetworkType Type { get; private set; }
 
         public void ReloadData()
         {
+            ResetDate = Utils.UnixTimestampToDateTime(_statsService.GetResetStatsDate(Type) / 1000);
+
             foreach (var item in Items)
             {
                 item.ReloadData();
             }
         }
 
-        public string Title { get; private set; }
-        public NetworkType Type { get; private set; }
+        private DateTime _resetDate;
+        public DateTime ResetDate
+        {
+            get
+            {
+                return _resetDate;
+            }
+            set
+            {
+                Set(ref _resetDate, value);
+            }
+        }
 
         public MvxObservableCollection<SettingsStatsDataBase> Items { get; private set; }
+
+        public RelayCommand ResetCommand => new RelayCommand(ResetExecute);
+        private async void ResetExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync("Do you want to reset your usage statistics?", "Telegram", "Reset", "Cancel");
+            if (confirm == ContentDialogResult.Primary)
+            {
+                _statsService.ResetStats(Type);
+                ReloadData();
+            }
+        }
     }
 
     public class SettingsStatsCallData : SettingsStatsData
@@ -88,6 +136,7 @@ namespace Unigram.ViewModels.Settings
 
         public override void ReloadData()
         {
+            Duration = TimeSpan.FromSeconds(_statsService.GetCallsTotalTime(_networkType));
             base.ReloadData();
         }
 
@@ -160,14 +209,15 @@ namespace Unigram.ViewModels.Settings
             Type = type;
         }
 
+        public string Title { get; private set; }
+
+        public DataType Type { get; private set; }
+
         public virtual void ReloadData()
         {
             SentBytes = _statsService.GetSentBytesCount(_networkType, Type);
             ReceivedBytes = _statsService.GetReceivedBytesCount(_networkType, Type);
         }
-
-        public string Title { get; private set; }
-        public DataType Type { get; private set; }
 
         private long _sentBytes;
         public long SentBytes
