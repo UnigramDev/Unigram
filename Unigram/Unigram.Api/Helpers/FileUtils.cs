@@ -101,6 +101,7 @@ namespace Telegram.Api.Helpers
                         using (var stream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
                         {
                             await stream.WriteAsync(buffer2);
+                            stream.Dispose();
                         }
 
                         var result = new TLPhotoSize
@@ -273,7 +274,7 @@ namespace Telegram.Api.Helpers
         {
             if (File.Exists(GetTempFileName(fileName)))
             {
-                using (var file = File.Open(GetTempFileName(fileName), FileMode.Open, FileAccess.Read))
+                using (var file = File.Open(GetTempFileName(fileName), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     return (int)file.Length;
                 }

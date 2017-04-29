@@ -81,6 +81,14 @@ namespace Telegram.Api.Services
             }
         }
 
+        public NetworkType NetworkType
+        {
+            get
+            {
+                return _connectionService.NetworkType;
+            }
+        }
+
         public long ClientTicksDelta { get { return _activeTransport.ClientTicksDelta; } }
 
         //private bool _isInitialized;
