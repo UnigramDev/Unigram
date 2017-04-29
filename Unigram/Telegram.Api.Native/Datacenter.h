@@ -1,5 +1,11 @@
 #pragma once
-#include "Connection.h"
+#include <string>
+#include <vector>
+#include <wrl.h>
+#include "Telegram.Api.Native.h"
+
+using namespace Microsoft::WRL;
+using namespace Microsoft::WRL::Wrappers;
 
 namespace Telegram
 {
@@ -8,91 +14,37 @@ namespace Telegram
 		namespace Native
 		{
 
-			public enum class DatacenterEndpointType
-			{
-				Ipv4 = 0,
-				Ipv6 = 1,
-				Ipv4Download = 2,
-				Ipv6Download = 3
-			};
-
 			DEFINE_ENUM_FLAG_OPERATORS(DatacenterEndpointType);
 
 
-			ref class Datacenter sealed
+			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, FtmBase>
 			{
-				friend ref class ConnectionsManager;
+				InspectableClass(RuntimeClass_Telegram_Api_Native_Datacenter, BaseTrust);
 
 			public:
-				property uint32 Id
-				{
-					uint32 get();
-				}
+				Datacenter();
+				~Datacenter();
 
-				property bool IsHandshaking
-				{
-					bool get();
-				}
-
-				property bool HasAuthKey
-				{
-					bool get();
-				}
-
-				property bool IsExportingAuthorization
-				{
-					bool get();
-				}
-
-				property int64 ServerSalt
-				{
-					int64 get();
-				}
-
-				void SwitchTo443Port();
-				String^ GetCurrentAddress(DatacenterEndpointType endpointType);
-				int32 GetCurrentPort(DatacenterEndpointType endpointType);
-				void AddAddressAndPort(_In_ String^ address, uint32 port, DatacenterEndpointType endpointType);
-				void NextAddressOrPort(DatacenterEndpointType endpointType);
-				void StoreCurrentAddressAndPort();
-				//void ReplaceAddressesAndPorts(std::vector<std::wstring> &newAddresses, std::map<std::wstring, uint32> &newPorts, DatacenterEndpointType endpointType);
-				//void SerializeToStream(NativeByteBuffer *stream);
-				void Clear();
-				void ClearServerSalts();
-				//void MergeServerSalts(std::vector<std::unique_ptr<TL_future_salt>> &salts);
-				//void AddServerSalt(std::unique_ptr<TL_future_salt> &serverSalt);
-				bool ContainsServerSalt(int64 value);
-				void SuspendConnections();
-				//void GetSessions(std::vector<int64> &sessions);
-				void RecreateSessions();
-				void ResetAddressAndPort();
-				Connection^ GetDownloadConnection(uint32 index, bool create);
-				Connection^ GetUploadConnection(uint32 index, bool create);
-				Connection^ GetGenericConnection(bool create);
-				Connection^ GetPushConnection(bool create);
-
-			internal:
-				Datacenter(uint32 id);
+				STDMETHODIMP RuntimeClassInitialize(UINT32 id);
+				STDMETHODIMP get_Id(_Out_ UINT32* value);
+				STDMETHODIMP GetCurrentAddress(DatacenterEndpointType endpointType, _Out_ HSTRING* value);
+				STDMETHODIMP GetCurrentPort(DatacenterEndpointType endpointType, _Out_ UINT32* value);
+				STDMETHODIMP GetDownloadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
+				STDMETHODIMP GetUploadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
+				STDMETHODIMP GetGenericConnection(boolean create, _Out_ IConnection** value);
+				STDMETHODIMP GetPushConnection(boolean create, _Out_ IConnection** value);
 
 			private:
 				struct DatacenterEndpoint
 				{
 					std::wstring Address;
-					uint32 Port;
+					UINT32 Port;
 				};
 
-				DatacenterEndpoint* GetCurrentEndpoint(DatacenterEndpointType addressType);
-				Connection^ EnsureDownloadConnection(uint32 index);
-				Connection^ EnsureUploadConnection(uint32 index);
-				Connection^ EnsureGenericConnection();
-				Connection^ EnsurePushConnection();
-	
+				HRESULT GetCurrentEndpoint(DatacenterEndpointType endpointType, _Out_ DatacenterEndpoint** endpoint);
+
 				CriticalSection m_criticalSection;
-				uint32 m_id;
-				Connection^ m_genericConnection;
-				Connection^ m_downloadConnections[DOWNLOAD_CONNECTIONS_COUNT];
-				Connection^ m_uploadConnections[UPLOAD_CONNECTIONS_COUNT];
-				Connection^ m_pushConnection;
+				UINT32 m_id;
 				std::vector<DatacenterEndpoint> m_ipv4Endpoints;
 				std::vector<DatacenterEndpoint> m_ipv4DownloadEndpoints;
 				std::vector<DatacenterEndpoint> m_ipv6Endpoints;
