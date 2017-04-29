@@ -701,6 +701,8 @@ namespace Telegram.Api.Services
 #endif
                 ReceiveBytesAsync(transport, e.Data);
             }
+
+            _statsService.IncrementReceivedBytesCount(_connectionService.NetworkType, DataType.Total, e.Data.Length);
         }
 
         private void OnServiceInitializationFailed(object sender, EventArgs e)

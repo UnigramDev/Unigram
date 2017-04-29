@@ -1871,7 +1871,7 @@ namespace Unigram.ViewModels
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
                 var fileId = TLLong.Random();
-                var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileName, false).AsTask(media.Document.Upload());
+                var upload = await _uploadAudioManager.UploadFileAsync(fileId, fileName, false).AsTask(media.Document.Upload());
                 if (upload != null)
                 {
                     var inputMedia = new TLInputMediaUploadedDocument
