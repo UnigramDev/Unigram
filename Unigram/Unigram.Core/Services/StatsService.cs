@@ -92,7 +92,7 @@ namespace Unigram.Core.Services
             SaveStats();
         }
 
-        public int GetRecivedItemsCount(NetworkType networkType, DataType dataType)
+        public int GetReceivedItemsCount(NetworkType networkType, DataType dataType)
         {
             return receivedItems[(int)networkType][(int)dataType];
         }

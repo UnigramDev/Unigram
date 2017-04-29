@@ -81,6 +81,14 @@ namespace Telegram.Api.Services
             }
         }
 
+        public NetworkType NetworkType
+        {
+            get
+            {
+                return _connectionService.NetworkType;
+            }
+        }
+
         public long ClientTicksDelta { get { return _activeTransport.ClientTicksDelta; } }
 
         //private bool _isInitialized;
@@ -693,6 +701,8 @@ namespace Telegram.Api.Services
 #endif
                 ReceiveBytesAsync(transport, e.Data);
             }
+
+            _statsService.IncrementReceivedBytesCount(_connectionService.NetworkType, DataType.Total, e.Data.Length);
         }
 
         private void OnServiceInitializationFailed(object sender, EventArgs e)

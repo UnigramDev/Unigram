@@ -89,6 +89,13 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="MediaStickerTemplate">
+        <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                            Constraint="{Binding Media.Document}"
+                            MaxWidth="{ThemeResource TelegramStickerMaxWidth}"
+                            MaxHeight="{ThemeResource TelegramStickerMaxHeight}"/>
+    </DataTemplate>
+
     <DataTemplate x:Key="MediaGifTemplate">
         <Grid Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
@@ -102,7 +109,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="ContactMediaTemplate">
+    <DataTemplate x:Key="MediaContactTemplate">
         <Grid MinWidth="260">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -278,40 +285,6 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Key="WebPageGifMediaTemplate">
-        <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Margin="0,8,0,6" Padding="8,0,0,0">
-            <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" Margin="0,0,0,8">
-                <RichTextBlock.Resources>
-                    <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
-                </RichTextBlock.Resources>
-            </RichTextBlock>
-
-            <!-- TODO: video timing -->
-            <Grid Background="Black"
-                    MinWidth="{ThemeResource TelegramMediaMinWidth}"
-                    MinHeight="{ThemeResource TelegramMediaMinHeight}"
-                    HorizontalAlignment="Left">
-                <controls:ImageView Source="{Binding Media.WebPage.Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{Binding Media.WebPage.Document}"
-                                    MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                                    MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
-            </Grid>
-
-            <Button Click="InstantView_Click"
-                    Margin="0,6,0,0"
-                    Background="Transparent"
-                    BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
-                    Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                    RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                    Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <StackPanel Orientation="Horizontal">
-                    <FontIcon Glyph="&#xE945;"/>
-                    <TextBlock Text="INSTANT VIEW" Margin="12,0,0,0"/>
-                </StackPanel>
-            </Button>
-        </StackPanel>
-    </DataTemplate>
-
     <DataTemplate x:Key="WebPageDocumentMediaTemplate">
         <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Margin="0,8,0,6" Padding="8,0,0,0">
             <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" Margin="0,0,0,8">
@@ -319,22 +292,6 @@
                     <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
                 </RichTextBlock.Resources>
             </RichTextBlock>
-
-            <!-- TODO: video timing -->
-            <!--<Grid MinWidth="260" HorizontalAlignment="Left">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
-                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
-                    <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-                </Grid>
-                <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-                    <TextBlock Text="{Binding Media.WebPage.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.WebPage.Document.Size, Converter={StaticResource FileSizeConverter}}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </StackPanel>
-            </Grid>-->
 
             <ContentControl Content="{Binding Media.WebPage.Document}"
                             ContentTemplateSelector="{StaticResource MediaTemplateSelector}"/>
@@ -354,7 +311,7 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Key="GameMediaTemplate" x:DataType="tl:TLMessage">
+    <DataTemplate x:Key="MediaGameTemplate" x:DataType="tl:TLMessage">
         <Grid Margin="0,4,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -389,55 +346,39 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="InvoiceMediaTemplate" x:DataType="tl:TLMessage">
-        <Grid Margin="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <!--<Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>-->
-
-            <StackPanel Grid.Column="1">
-                <StackPanel Margin="0,0,0,8">
-                    <TextBlock Text="{Binding Media.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Description}" Style="{StaticResource BodyTextBlockStyle}"/>
-                </StackPanel>
-
-                <messages:InvoiceStatusControl/>
+    <DataTemplate x:Key="MediaInvoiceTemplate" x:DataType="tl:TLMessage">
+        <StackPanel>
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="{Binding Media.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Description}" Style="{StaticResource BodyTextBlockStyle}"/>
             </StackPanel>
-        </Grid>
+
+            <messages:InvoiceStatusControl/>
+        </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Key="InvoicePhotoMediaTemplate" x:DataType="tl:TLMessage">
-        <Grid Margin="0,0,0,6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <!--<Rectangle Fill="{ThemeResource MessageHeaderBorderBrush}" Width="2" Margin="0,0,8,0"/>-->
-
-            <StackPanel Grid.Column="1">
-                <StackPanel Margin="0,0,0,8">
-                    <TextBlock Text="{Binding Media.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Media.Description}" Style="{StaticResource BodyTextBlockStyle}"/>
-                </StackPanel>
-
-                <Grid Background="Black"
-                      MinWidth="{ThemeResource TelegramMediaMinWidth}"
-                      MinHeight="{ThemeResource TelegramMediaMinHeight}"
-                      Margin="-8,0,-10,0">
-                    <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
-                                        Constraint="{Binding Media.Photo}"
-                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                                        MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
-
-                    <messages:InvoiceStatusControl Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4"/>
-                </Grid>
+    <DataTemplate x:Key="MediaInvoicePhotoTemplate" x:DataType="tl:TLMessage">
+        <StackPanel Margin="0,0,0,6">
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="{Binding Media.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Description}" Style="{StaticResource BodyTextBlockStyle}"/>
             </StackPanel>
-        </Grid>
+
+            <Grid Background="Black"
+                    MinWidth="{ThemeResource TelegramMediaMinWidth}"
+                    MinHeight="{ThemeResource TelegramMediaMinHeight}"
+                    Margin="-8,0,-10,0">
+                <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
+                                    Constraint="{Binding Media.Photo}"
+                                    MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                    MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+
+                <messages:InvoiceStatusControl Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4"/>
+            </Grid>
+        </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Key="UnsupportedMediaTemplate">
+    <DataTemplate x:Key="MediaUnsupportedTemplate">
         <TextBlock Style="{StaticResource BodyTextBlockStyle}">
             <Run Text="This message is not supported on your version of Unigram. Update the app to view:"/>
             <LineBreak/>
@@ -453,22 +394,22 @@
     <selectors:MediaTemplateSelector x:Key="MediaTemplateSelector"
                                      EmptyTemplate="{StaticResource MediaEmptyTemplate}"
                                      AudioTemplate="{StaticResource MediaAudioTemplate}"
-                                     ContactTemplate="{StaticResource ContactMediaTemplate}"
+                                     ContactTemplate="{StaticResource MediaContactTemplate}"
                                      DocumentTemplate="{StaticResource MediaDocumentTemplate}"
                                      DocumentThumbTemplate="{StaticResource MediaDocumentThumbTemplate}"
-                                     GameTemplate="{StaticResource GameMediaTemplate}"
+                                     GameTemplate="{StaticResource MediaGameTemplate}"
                                      GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
                                      GifTemplate="{StaticResource MediaGifTemplate}"
                                      PhotoTemplate="{StaticResource MediaPhotoTemplate}"
                                      VideoTemplate="{StaticResource MediaVideoTemplate}"
                                      VenueTemplate="{StaticResource MediaVenueTemplate}"
+                                     StickerTemplate="{StaticResource MediaStickerTemplate}"
                                      WebPageTemplate="{StaticResource WebPageMediaTemplate}"
-                                     WebPageGifTemplate="{StaticResource WebPageGifMediaTemplate}"
                                      WebPageDocumentTemplate="{StaticResource WebPageDocumentMediaTemplate}"
                                      WebPagePhotoTemplate="{StaticResource WebPagePhotoMediaTemplate}"
                                      WebPageSmallPhotoTemplate="{StaticResource WebPageSmallPhotoMediaTemplate}"
-                                     InvoiceTemplate="{StaticResource InvoiceMediaTemplate}"
-                                     InvoicePhotoTemplate="{StaticResource InvoicePhotoMediaTemplate}"
-                                     UnsupportedTemplate="{StaticResource UnsupportedMediaTemplate}"/>
+                                     InvoiceTemplate="{StaticResource MediaInvoiceTemplate}"
+                                     InvoicePhotoTemplate="{StaticResource MediaInvoicePhotoTemplate}"
+                                     UnsupportedTemplate="{StaticResource MediaUnsupportedTemplate}"/>
 
 </ResourceDictionary>

@@ -12,6 +12,7 @@ using Telegram.Api.Services.FileManager;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Core.Common;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -28,12 +29,12 @@ namespace Unigram.ViewModels
         {
             if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo())
             {
-                Items = new ObservableCollection<GalleryItem> { new GalleryMessageItem(selected) };
+                Items = new MvxObservableCollection<GalleryItem> { new GalleryMessageItem(selected) };
                 SelectedItem = Items[0];
             }
             else
             {
-                Items = new ObservableCollection<GalleryItem>();
+                Items = new MvxObservableCollection<GalleryItem>();
             }
 
             _peer = peer;

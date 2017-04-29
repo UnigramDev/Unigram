@@ -31,7 +31,7 @@ The app uses the following NuGet packages to work:
 * [Microsoft.NETCore.UniversalWindowsPlatform](https://www.nuget.org/packages/Microsoft.NETCore.UniversalWindowsPlatform/)
 * [Microsoft.Xaml.Behaviors.Uwp.Managed](https://www.nuget.org/packages/Microsoft.Xaml.Behaviors.Uwp.Managed/)
 * [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/)
-* [Portable.BouncyCastle](https://www.nuget.org/packages/Portable.BouncyCastle/1.8.1.1) (version 1.8.1.1)
+* [Portable.BouncyCastle](https://www.nuget.org/packages/Portable.BouncyCastle/)
 * [System.Reactive](https://www.nuget.org/packages/System.Reactive/)
 * [Template10](https://www.nuget.org/packages/Template10/)
 * [Universal.WinSQLite](https://www.nuget.org/packages/Universal.WinSQLite/)

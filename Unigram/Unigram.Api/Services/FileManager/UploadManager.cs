@@ -10,6 +10,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Methods.Upload;
 using Windows.Foundation;
 
 namespace Telegram.Api.Services.FileManager
@@ -38,11 +39,15 @@ namespace Telegram.Api.Services.FileManager
 
         private readonly ITelegramEventAggregator _eventAggregator;
         private readonly IMTProtoService _mtProtoService;
+        private readonly IStatsService _statsService;
+        private readonly DataType _dataType;
 
-        public UploadManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
+        public UploadManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService, IStatsService statsService, DataType dataType)
         {
             _eventAggregator = eventAggregator;
             _mtProtoService = mtProtoService;
+            _statsService = statsService;
+            _dataType = dataType;
 
             var timer = Stopwatch.StartNew();
             for (int i = 0; i < Constants.VideoUploadersCount; i++)
@@ -175,6 +180,8 @@ namespace Telegram.Api.Services.FileManager
                         {
                             Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
                         }
+
+                        _statsService.IncrementSentItemsCount(_mtProtoService.NetworkType, _dataType, 1);
                     }
                     else
                     {
@@ -206,6 +213,8 @@ namespace Telegram.Api.Services.FileManager
                 {
                     result = true;
                     manualResetEvent.Set();
+
+                    _statsService.IncrementSentBytesCount(_mtProtoService.NetworkType, _dataType, 8 + 4 + 4 + bytes.Length + 4);
                 },
                 error => Execute.BeginOnThreadPool(TimeSpan.FromSeconds(1.0), () =>
                 {
@@ -227,6 +236,8 @@ namespace Telegram.Api.Services.FileManager
                 {
                     result = true;
                     manualResetEvent.Set();
+
+                    _statsService.IncrementSentBytesCount(_mtProtoService.NetworkType, _dataType, 8 + 4 + bytes.Length + 4);
                 },
                 error => Execute.BeginOnThreadPool(TimeSpan.FromSeconds(1.0), () =>
                 {

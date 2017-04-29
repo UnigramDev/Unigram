@@ -141,6 +141,7 @@ namespace Unigram.Controls
                 _callback = new TaskCompletionSource<ContentDialogBaseResult>();
 
                 _applicationView = ApplicationView.GetForCurrentView();
+                OnVisibleBoundsChanged(_applicationView, null);
 
                 if (_popupHost == null)
                 {

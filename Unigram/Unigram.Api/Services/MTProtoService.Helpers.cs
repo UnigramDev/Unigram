@@ -147,11 +147,14 @@ namespace Telegram.Api.Services
 	            
 	        }
 
+            var payload = data.ToArray();
             transport.SendPacketAsync(
                 caption,
-                data.ToArray(),
+                payload,
                 callback,
                 faultCallback);
+
+            _statsService.IncrementSentBytesCount(_connectionService.NetworkType, DataType.Total, payload.Length);
 	    }
 
         private readonly object _historyRoot = new object();

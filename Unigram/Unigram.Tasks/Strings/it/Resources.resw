@@ -330,6 +330,9 @@
   <data name="PINNED_PHOTO" xml:space="preserve">
     <value>ha fissato una foto</value>
   </data>
+  <data name="PINNED_ROUND" xml:space="preserve">
+    <value>ha fissato un videomessaggio</value>
+  </data>
   <data name="PINNED_STICKER" xml:space="preserve">
     <value>ha fissato uno {1}sticker</value>
   </data>
