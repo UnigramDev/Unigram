@@ -34,16 +34,16 @@ namespace Unigram.Controls.Views
             this.InitializeComponent();
 
 
-            var visual = ElementCompositionPreview.GetElementVisual(this);
-            visual.Clip = visual.Compositor.CreateInsetClip(0, 0, 0, 48);
+            //var visual = ElementCompositionPreview.GetElementVisual(this);
+            //visual.Clip = visual.Compositor.CreateInsetClip(0, 0, 0, 48);
 
-            var capture = ElementCompositionPreview.GetElementVisual(Capture);
-            _compositor = capture.Compositor;
-            _capture = _compositor.CreateSpriteVisual();
-            _capture.Size = new Vector2(180, 180);
+            //var capture = ElementCompositionPreview.GetElementVisual(Capture);
+            //_compositor = capture.Compositor;
+            //_capture = _compositor.CreateSpriteVisual();
+            //_capture.Size = new Vector2(180, 180);
 
-            ImageLoader.Initialize(_compositor);
-            ElementCompositionPreview.SetElementChildVisual(Capture, _capture);
+            //ImageLoader.Initialize(_compositor);
+            //ElementCompositionPreview.SetElementChildVisual(Capture, _capture);
 
             Loaded += OnLoaded;
         }
@@ -67,32 +67,24 @@ namespace Unigram.Controls.Views
             settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
             settings.StreamingCaptureMode = StreamingCaptureMode.AudioAndVideo;
 
-            _preview = MediaCapturePreviewSource.CreateFromVideoEncodingProperties(profile.Video);
+            //_preview = MediaCapturePreviewSource.CreateFromVideoEncodingProperties(profile.Video);
             _media = new MediaCapture();
             await _media.InitializeAsync(settings);
-            await _media.StartPreviewToCustomSinkAsync(profile, _preview.MediaSink);
+            Capture.Source = _media;
+            await _media.StartPreviewAsync();
+            //await _media.StartPreviewToCustomSinkAsync(profile, _preview.MediaSink);
 
-            _player = new MediaPlayer();
-            _player.RealTimePlayback = true;
-            _player.AutoPlay = true;
-            _player.Source = _preview.MediaSource as IMediaPlaybackSource;
+            //_player = new MediaPlayer();
+            //_player.RealTimePlayback = true;
+            //_player.AutoPlay = true;
+            //_player.Source = _preview.MediaSource as IMediaPlaybackSource;
 
-            //PlayerElement.SetMediaPlayer(_player);
+            //_surface = _player.GetSurface(_compositor);
 
-            _surface = _player.GetSurface(_compositor);
+            //var brush = _compositor.CreateSurfaceBrush(_surface.CompositionSurface);
+            //brush.Stretch = CompositionStretch.UniformToFill;
 
-            var brush = _compositor.CreateSurfaceBrush(_surface.CompositionSurface);
-            brush.Stretch = CompositionStretch.UniformToFill;
-
-            _capture.Brush = brush;
-        }
-
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
+            //_capture.Brush = brush;
         }
     }
 }

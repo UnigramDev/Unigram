@@ -35,6 +35,14 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
+            var boh = DataTemplate.GetExtensionInstance(container as FrameworkElement);
+
+            var presenter = container as ContentControl;
+            if (presenter != null && item is TLDocument doc)
+            {
+                presenter.Content = new TLMessage { Media = new TLMessageMediaDocument { Document = doc } };
+            }
+
             if (item is TLMessage message)
             {
                 item = message.Media;
@@ -170,9 +178,7 @@ namespace Unigram.Selectors
             if (webPage.Photo != null && webPage.Type != null)
             {
                 if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(webPage.Type, "article", StringComparison.OrdinalIgnoreCase) ||
-                    (webPage.SiteName != null && string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase)))
+                    string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }

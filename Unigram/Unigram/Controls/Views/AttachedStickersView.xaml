@@ -43,10 +43,9 @@
             </common:FluidGridView.Triggers>
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="tl:TLDocument">
-                    <Grid Margin="2">
+                    <Border Margin="2">
                         <Image x:Phase="3" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
-                        <TextBlock Text="{x:Bind Emoticon}" FontSize="20" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
-                    </Grid>
+                    </Border>
                 </DataTemplate>
             </GridView.ItemTemplate>
             <GridView.Header>

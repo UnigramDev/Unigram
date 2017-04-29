@@ -74,6 +74,8 @@ namespace Unigram.Controls.Views
         {
             get
             {
+                return new GalleryView();
+
                 if (_current == null)
                     _current = new GalleryView();
 
@@ -271,8 +273,11 @@ namespace Unigram.Controls.Views
                 _surfaceVisual = null;
             }
 
-            _mediaPlayer.MediaPlayer.Pause();
-            _mediaPlayer.Source = null;
+            if (_mediaPlayer?.Source != null)
+            {
+                _mediaPlayer.MediaPlayer.Pause();
+                _mediaPlayer.Source = null;
+            }
         }
     }
 }

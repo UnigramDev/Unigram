@@ -13,7 +13,7 @@
     mc:Ignorable="d">
 
     <DataTemplate x:Key="MediaDocumentTemplate">
-        <Grid DataContextChanged="ForceDocument_DataContextChanged" MinWidth="260">
+        <Grid MinWidth="260">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -30,7 +30,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaDocumentThumbTemplate">
-        <Grid DataContextChanged="ForceDocument_DataContextChanged" MinWidth="260">
+        <Grid MinWidth="260">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -72,8 +72,7 @@
     <DataTemplate x:Key="MediaVideoTemplate">
         <Grid Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
-              MinHeight="{ThemeResource TelegramMediaMinHeight}"
-              DataContextChanged="ForceDocument_DataContextChanged">
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Media.Document}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
@@ -117,15 +116,13 @@
         <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{Binding Media.Document}"
                             MaxWidth="{ThemeResource TelegramStickerMaxWidth}"
-                            MaxHeight="{ThemeResource TelegramStickerMaxHeight}"
-                            DataContextChanged="ForceDocument_DataContextChanged"/>
+                            MaxHeight="{ThemeResource TelegramStickerMaxHeight}"/>
     </DataTemplate>
 
     <DataTemplate x:Key="MediaGifTemplate">
         <Grid Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
-              MinHeight="{ThemeResource TelegramMediaMinHeight}"
-              DataContextChanged="ForceDocument_DataContextChanged">
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Media.Document}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
