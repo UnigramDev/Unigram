@@ -165,8 +165,7 @@ namespace Unigram.Selectors
             if (webPage.Photo != null && webPage.Type != null)
             {
                 if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase) ||
-                    (webPage.SiteName != null && string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase)))
+                    string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
