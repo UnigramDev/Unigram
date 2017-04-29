@@ -70,7 +70,7 @@
                                             <selectors:StatsDataTemplateSelector.ItemTemplate>
                                                 <DataTemplate x:DataType="viewModels:SettingsStatsData">
                                                     <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                                                        <TextBlock Text="VOICE MESSAGES" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                                        <TextBlock Text="{x:Bind Title}" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                                                         <Grid>
                                                             <Grid.RowDefinitions>
                                                                 <RowDefinition/>
@@ -94,7 +94,7 @@
                                             <selectors:StatsDataTemplateSelector.CallTemplate>
                                                 <DataTemplate x:DataType="viewModels:SettingsStatsCallData">
                                                     <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                                                        <TextBlock Text="CALLS" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                                        <TextBlock Text="{x:Bind Title}" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                                                         <Grid>
                                                             <Grid.RowDefinitions>
                                                                 <RowDefinition/>

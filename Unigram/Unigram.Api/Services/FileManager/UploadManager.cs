@@ -180,6 +180,8 @@ namespace Telegram.Api.Services.FileManager
                         {
                             Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
                         }
+
+                        _statsService.IncrementSentItemsCount(_mtProtoService.NetworkType, _dataType, 1);
                     }
                     else
                     {
@@ -213,7 +215,6 @@ namespace Telegram.Api.Services.FileManager
                     manualResetEvent.Set();
 
                     _statsService.IncrementSentBytesCount(_mtProtoService.NetworkType, _dataType, 8 + 4 + 4 + bytes.Length + 4);
-                    _statsService.IncrementSentItemsCount(_mtProtoService.NetworkType, _dataType, 1);
                 },
                 error => Execute.BeginOnThreadPool(TimeSpan.FromSeconds(1.0), () =>
                 {
@@ -237,7 +238,6 @@ namespace Telegram.Api.Services.FileManager
                     manualResetEvent.Set();
 
                     _statsService.IncrementSentBytesCount(_mtProtoService.NetworkType, _dataType, 8 + 4 + bytes.Length + 4);
-                    _statsService.IncrementSentItemsCount(_mtProtoService.NetworkType, _dataType, 1);
                 },
                 error => Execute.BeginOnThreadPool(TimeSpan.FromSeconds(1.0), () =>
                 {
