@@ -174,14 +174,5 @@ namespace Unigram.Themes
         {
             MessageHelper.HandleTelegramUrl("t.me/unigramchannel");
         }
-
-        private void ForceDocument_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            if (args.NewValue is TLDocument document)
-            {
-                args.Handled = true;
-                sender.DataContext = new TLMessage { Media = new TLMessageMediaDocument { Document = document } };
-            }
-        }
     }
 }

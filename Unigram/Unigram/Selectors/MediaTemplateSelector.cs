@@ -34,6 +34,14 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
+            var boh = DataTemplate.GetExtensionInstance(container as FrameworkElement);
+
+            var presenter = container as ContentControl;
+            if (presenter != null && item is TLDocument doc)
+            {
+                presenter.Content = new TLMessage { Media = new TLMessageMediaDocument { Document = doc } };
+            }
+
             if (item is TLMessage message)
             {
                 item = message.Media;
