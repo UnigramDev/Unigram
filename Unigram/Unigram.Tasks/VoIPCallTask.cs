@@ -52,7 +52,7 @@ namespace Unigram.Tasks
 
         private void _systemCall_AnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
         {
-            throw new NotImplementedException();
+            _deferral.Complete();
         }
 
         private void OnCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
