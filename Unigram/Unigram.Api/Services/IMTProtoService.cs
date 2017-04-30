@@ -286,5 +286,15 @@ namespace Telegram.Api.Services
         void GetSavedInfoAsync(Action<TLPaymentsSavedInfo> callback, Action<TLRPCError> faultCallback = null);
         void SendPaymentFormAsync(int msgId, string infoId, string optionId, TLInputPaymentCredentialsBase credentials, Action<TLPaymentsPaymentResultBase> callback, Action<TLRPCError> faultCallback = null);
         void ValidateRequestedInfoAsync(int msgId, TLPaymentRequestedInfo info, bool save, Action<TLPaymentsValidatedRequestedInfo> callback, Action<TLRPCError> faultCallback = null);
+
+        // calls
+        void AcceptCallAsync(TLInputPhoneCall peer, byte[] gb, Action<TLPhonePhoneCall> callback, Action<TLRPCError> faultCallback = null);
+        void ConfirmCallAsync(TLInputPhoneCall peer, byte[] ga, long fingerprint, Action<TLPhonePhoneCall> callback, Action<TLRPCError> faultCallback = null);
+        void DiscardCallAsync(TLInputPhoneCall peer, int duration, TLPhoneCallDiscardReasonBase reason, long connectionId, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetCallConfigAsync(Action<TLDataJSON> callback, Action<TLRPCError> faultCallback = null);
+        void ReceivedCallAsync(TLInputPhoneCall peer, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void RequestCallAsync(TLInputUserBase userId, int randomId, byte[] gaHash, Action<TLPhonePhoneCall> callback, Action<TLRPCError> faultCallback = null);
+        void SaveCallDebugAsync(TLInputPhoneCall peer, TLDataJSON debug, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void SetCallRatingAsync(TLInputPhoneCall peer, int rating, string comment, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
     }
 }

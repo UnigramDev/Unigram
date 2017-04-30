@@ -18,6 +18,9 @@ namespace Telegram.Api
 
         public const int SupportedLayer = 65;
 
+        public const int CallsMaxLayer = 65;
+        public const int CallsMinLayer = 65;
+
         public const int SecretSupportedLayer = 23;
 
         public const int LongPollReattemptDelay = 5000;     //ms
