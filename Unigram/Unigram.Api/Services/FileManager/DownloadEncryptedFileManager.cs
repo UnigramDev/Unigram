@@ -184,7 +184,10 @@ namespace Telegram.Api.Services.FileManager
                     result = file;
                     manualResetEvent.Set();
 
-                    _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
+                    if (file is TLUploadFile full)
+                    {
+                        _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + full.Bytes.Length + 4);
+                    }
                 },
                 error =>
                 {
