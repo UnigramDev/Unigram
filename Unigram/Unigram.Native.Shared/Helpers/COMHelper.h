@@ -1,10 +1,10 @@
 #pragma once 
+#include <string>
 #include <stdio.h>
 #include <WinSock2.h>
 #include <wrl\client.h>
 #include <wrl\wrappers\corewrappers.h>
 
-using ::Platform::Exception;
 using namespace Microsoft::WRL::Wrappers;
 
 #define ReturnIfFailed(result, method) \
@@ -15,10 +15,25 @@ using namespace Microsoft::WRL::Wrappers;
 	if(FAILED(result = method)) \
 		break
 
+inline HRESULT WindowsCreateString(std::wstring const& wstring, _Out_ HSTRING* hstring)
+{
+	return WindowsCreateString(wstring.c_str(), wstring.length(), hstring);
+}
+
 inline HRESULT GetLastHRESULT()
 {
 	return HRESULT_FROM_WIN32(GetLastError());
 }
+
+inline HRESULT GetWSALastHRESULT()
+{
+	return HRESULT_FROM_WIN32(WSAGetLastError());
+}
+
+
+#ifdef __cplusplus_winrt
+
+using ::Platform::Exception;
 
 inline void ThrowIfFailed(HRESULT hr)
 {
@@ -38,5 +53,7 @@ inline void ThrowLastError()
 
 inline void ThrowWSALastError()
 {
-	throw Exception::CreateException(HRESULT_FROM_WIN32(WSAGetLastError()));
+	throw Exception::CreateException(GetWSALastHRESULT());
 }
+
+#endif

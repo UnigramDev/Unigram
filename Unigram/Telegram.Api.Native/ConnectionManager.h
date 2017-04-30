@@ -1,10 +1,8 @@
 #pragma once
-#include <queue>
-#include <functional>
-#include <map>
-#include <atomic>
+#include <vector>
 #include <wrl.h>
-#include "IEventObject.h"
+#include "Telegram.Api.Native.h"
+#include "Thread.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -16,47 +14,53 @@ namespace Telegram
 		namespace Native
 		{
 
-			public enum class ConnectionState
+			struct IEventObject;
+
+			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager, FtmBase>
 			{
-				NotInitialized = 0,
-				Connecting = 1,
-				WaitingForNetwork = 2,
-				Connected = 3
+				friend class Connection;
+
+				InspectableClass(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
+
+			public:
+				ConnectionManager();
+				~ConnectionManager();
+
+				STDMETHODIMP RuntimeClassInitialize();
+				STDMETHODIMP get_ConnectionState(_Out_ ConnectionState* value);
+				STDMETHODIMP get_IsIpv6Enabled(_Out_ boolean* value);
+				STDMETHODIMP SendRequest(_In_ ITLObject* object, UINT32 datacenterId, ConnectionType connetionType, boolean immediate, _Out_ UINT32* requestToken);
+
+			private:
+				HRESULT OnConnectionOpened(_In_ Connection* connection);
+				HRESULT OnConnectionDataReceived(_In_ Connection* connection);
+				HRESULT OnConnectionClosed(_In_ Connection* connection);
+
+				static DWORD WINAPI WorkerThread(_In_ LPVOID parameter);
+
+				CriticalSection m_criticalSection;
+				CHAR m_working;
+				ConnectionState m_connectionState;
+				boolean m_isIpv6Enabled;
+				Thread m_workerThread;
+				std::vector<ComPtr<IConnection>> m_activeConnections;
 			};
 
 
-			public ref class ConnectionManager sealed
+			class ConnectionManagerStatics WrlSealed : public ActivationFactory<IConnectionManagerStatics, FtmBase>
 			{
-				friend ref class Connection;
+				InspectableClassStatic(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 
 			public:
-				static property ConnectionManager^ Instance
-				{
-					ConnectionManager^ get();
-				}
+				ConnectionManagerStatics();
+				~ConnectionManagerStatics();
 
-				property Telegram::Api::Native::ConnectionState ConnectionState
-				{
-					Telegram::Api::Native::ConnectionState get();
-				}
+				STDMETHODIMP get_Instance(_Out_ IConnectionManager** value);
 
-				property bool IsNetworkAvailable
-				{
-					bool get();
-				}
-
-			internal:
-				void ScheduleEvent(_In_ IEventObject^ eventObject, uint32 timeout);
-				void RemoveEvent(_In_ IEventObject^ eventObject);
+				static HRESULT GetInstance(_Out_ IConnectionManager** value);
 
 			private:
-				ConnectionManager();
-				~ConnectionManager();
-				
-				CriticalSection m_criticalSection;
-				Telegram::Api::Native::ConnectionState m_connectionState;
-			
-				static ConnectionManager^ s_instance;
+				static ComPtr<ConnectionManager> s_instance;
 			};
 
 		}

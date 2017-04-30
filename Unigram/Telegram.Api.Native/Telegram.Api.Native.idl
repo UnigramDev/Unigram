@@ -1,0 +1,173 @@
+import "inspectable.idl";
+
+#define API_VERSION 1.0
+
+namespace Telegram
+{
+	namespace Api
+	{
+		namespace Native
+		{
+
+			typedef enum DatacenterEndpointType DatacenterEndpointType;
+			typedef enum ConnectionType ConnectionType;
+			typedef enum ConnectionNeworkType ConnectionNeworkType;
+			typedef enum ConnectionState ConnectionState;
+
+			interface ITLObject;
+
+			runtimeclass Datacenter;
+			runtimeclass Connection;
+			runtimeclass ConnectionManager;
+			runtimeclass TLBinaryReader;
+			runtimeclass TLBinaryWriter;
+
+
+			[uuid(B93C4F8A-0308-4598-8C0A-52ACC91E45E3)]
+			[version(API_VERSION)]
+			interface ITLObject : IInspectable
+			{
+				HRESULT Read([in] TLBinaryReader* reader);
+				HRESULT Write([in] TLBinaryWriter* writer);
+			}
+
+
+			[exclusiveto(TLBinaryReader)]
+			[uuid(7F865F69-62F1-4BC9-AD8C-717D0D8DD7F8)]
+			[version(API_VERSION)]
+			interface ITLBinaryReader : IInspectable
+			{
+			}
+
+			[marshaling_behavior(agile)]
+			[threading(both)]
+			[version(API_VERSION)]
+			runtimeclass TLBinaryReader
+			{
+				[default] interface ITLBinaryReader;
+			}
+
+
+			[exclusiveto(TLBinaryWriter)]
+			[uuid(732B4B01-0603-4ADB-8F29-24096FCDF7C6)]
+			[version(API_VERSION)]
+			interface ITLBinaryWriter : IInspectable
+			{
+			}
+
+			[marshaling_behavior(agile)]
+			[threading(both)]
+			[version(API_VERSION)]
+			runtimeclass TLBinaryWriter
+			{
+				[default] interface ITLBinaryWriter;
+			}
+
+
+			[version(API_VERSION)]
+			enum DatacenterEndpointType
+			{
+				Ipv4 = 0,
+				Ipv6 = 1,
+				Ipv4Download = 2,
+				Ipv6Download = 3
+			};
+
+			[exclusiveto(Datacenter)]
+			[uuid(ACBC9624-7B96-417D-A9F9-A7F93C195C86)]
+			[version(API_VERSION)]
+			interface IDatacenter : IInspectable
+			{
+				[propget] HRESULT Id([out][retval] UINT32* value);
+				HRESULT GetCurrentAddress([in] DatacenterEndpointType endpointType,[out][retval] HSTRING* value);
+				HRESULT GetCurrentPort([in] DatacenterEndpointType endpointType,[out][retval] UINT32* value);
+				HRESULT GetDownloadConnection([in] UINT32 index,[in] boolean create,[out][retval] Connection** value);
+				HRESULT GetUploadConnection([in] UINT32 index,[in] boolean create,[out][retval] Connection** value);
+				HRESULT GetGenericConnection([in] boolean create,[out][retval] Connection** value);
+				HRESULT GetPushConnection([in] boolean create,[out][retval] Connection** value);
+			}
+
+			[marshaling_behavior(agile)]
+			[threading(both)]
+			[version(API_VERSION)]
+			runtimeclass Datacenter
+			{
+				[default] interface IDatacenter;
+			}
+
+
+			[version(API_VERSION)]
+			enum ConnectionType
+			{
+				Generic = 1,
+				Download = 2,
+				Upload = 4,
+				Push = 8
+			};
+
+			[version(API_VERSION)]
+			enum ConnectionNeworkType
+			{
+				Mobile = 0,
+				WiFi = 1,
+				Roaming = 2
+			};
+
+			[exclusiveto(Connection)]
+			[uuid(108FB951-3940-4FF5-A8A1-ED449D305029)]
+			[version(API_VERSION)]
+			interface IConnection : IInspectable
+			{
+				[propget] HRESULT Datacenter([out][retval] Datacenter** value);
+				[propget] HRESULT Type([out][retval] ConnectionType* value);
+			}
+
+			[marshaling_behavior(agile)]
+			[threading(both)]
+			[version(API_VERSION)]
+			runtimeclass Connection
+			{
+				[default] interface IConnection;
+			}
+
+
+			[version(API_VERSION)]
+			enum ConnectionState
+			{
+				NotInitialized = 0,
+				Connecting = 1,
+				WaitingForNetwork = 2,
+				Connected = 3
+			};
+
+			[exclusiveto(ConnectionManager)]
+			[uuid(6945B11D-9663-4E6E-B866-7A1AB6A98349)]
+			[version(API_VERSION)]
+			interface IConnectionManagerStatics : IInspectable
+			{
+				[propget] HRESULT Instance([out][retval] ConnectionManager** value);
+			}
+
+			[exclusiveto(ConnectionManager)]
+			[uuid(1C986C1D-56D3-4DA5-8027-5240F0CD2DFF)]
+			[version(API_VERSION)]
+			interface IConnectionManager : IInspectable
+			{
+				[propget] HRESULT ConnectionState([out][retval] ConnectionState* value);
+				[propget] HRESULT IsIpv6Enabled([out][retval] boolean* value);
+				HRESULT SendRequest([in] ITLObject* object, [in] UINT32 datacenterId, [in] ConnectionType connetionType, [in] boolean immediate, [out] UINT32* requestToken);
+			}
+
+			[static(IConnectionManagerStatics, API_VERSION)]
+			[marshaling_behavior(agile)]
+			[threading(both)]
+			[version(API_VERSION)]
+			runtimeclass ConnectionManager
+			{
+				[default] interface IConnectionManager;
+			}
+
+
+		}
+	}
+}

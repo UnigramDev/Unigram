@@ -17,6 +17,8 @@ namespace Telegram.Api.Services.Connection
 {
     public interface IConnectionService
     {
+        NetworkType NetworkType { get; }
+
         void Initialize(IMTProtoService mtProtoService);
         event EventHandler ConnectionLost;
     }
@@ -35,6 +37,30 @@ namespace Telegram.Api.Services.Connection
         public void Initialize(IMTProtoService mtProtoService)
         {
             _mtProtoService = mtProtoService;
+        }
+
+        public NetworkType NetworkType
+        {
+            get
+            {
+                if (_profile != null)
+                {
+                    if (_profile.GetConnectionCost().Roaming)
+                    {
+                        return NetworkType.Roaming;
+                    }
+                    else if (_profile.IsWwanConnectionProfile)
+                    {
+                        return NetworkType.Mobile;
+                    }
+                    else if (_profile.IsWlanConnectionProfile)
+                    {
+                        return NetworkType.WiFi;
+                    }
+                }
+
+                return NetworkType.WiFi;
+            }
         }
 
         private Timer _connectionScheduler;

@@ -100,36 +100,35 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <GenerateManifest>false</GenerateManifest>
-    <IgnoreImportLibrary>false</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <GenerateManifest>false</GenerateManifest>
-    <IgnoreImportLibrary>false</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <GenerateManifest>false</GenerateManifest>
-    <IgnoreImportLibrary>false</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <GenerateManifest>false</GenerateManifest>
-    <IgnoreImportLibrary>false</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <GenerateManifest>false</GenerateManifest>
-    <IgnoreImportLibrary>false</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <GenerateManifest>false</GenerateManifest>
-    <IgnoreImportLibrary>false</IgnoreImportLibrary>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <CompileAsWinRT>true</CompileAsWinRT>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <WindowsMetadataFile>$(OutDir)$(RootNamespace).winmd</WindowsMetadataFile>
+      <ModuleDefinitionFile>Telegram.Api.Native.def</ModuleDefinitionFile>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>vccorlibd; msvcrtd vccorlibd.lib msvcrtd.lib</IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlibd /nodefaultlib:msvcrtd vccorlibd.lib msvcrtd.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
@@ -138,15 +137,25 @@ move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
 mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
+    <Midl>
+      <PrependWithABINamepsace>false</PrependWithABINamepsace>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <MetadataFileName>$(OutDir)%(Filename)_Part.winmd</MetadataFileName>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <CompileAsWinRT>true</CompileAsWinRT>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <WindowsMetadataFile>$(OutDir)$(RootNamespace).winmd</WindowsMetadataFile>
+      <ModuleDefinitionFile>Telegram.Api.Native.def</ModuleDefinitionFile>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>vccorlib; msvcrt vccorlib.lib msvcrt.lib</IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
@@ -155,15 +164,25 @@ move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
 mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
+    <Midl>
+      <PrependWithABINamepsace>false</PrependWithABINamepsace>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <MetadataFileName>$(OutDir)%(Filename)_Part.winmd</MetadataFileName>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <CompileAsWinRT>true</CompileAsWinRT>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <WindowsMetadataFile>$(OutDir)$(RootNamespace).winmd</WindowsMetadataFile>
+      <ModuleDefinitionFile>Telegram.Api.Native.def</ModuleDefinitionFile>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>vccorlibd; msvcrtd vccorlibd.lib msvcrtd.lib</IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlibd /nodefaultlib:msvcrtd vccorlibd.lib msvcrtd.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
@@ -172,15 +191,25 @@ move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
 mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
+    <Midl>
+      <PrependWithABINamepsace>false</PrependWithABINamepsace>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <MetadataFileName>$(OutDir)%(Filename)_Part.winmd</MetadataFileName>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <CompileAsWinRT>true</CompileAsWinRT>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <WindowsMetadataFile>$(OutDir)$(RootNamespace).winmd</WindowsMetadataFile>
+      <ModuleDefinitionFile>Telegram.Api.Native.def</ModuleDefinitionFile>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>vccorlib; msvcrt vccorlib.lib msvcrt.lib</IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
@@ -189,15 +218,25 @@ move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
 mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
+    <Midl>
+      <PrependWithABINamepsace>false</PrependWithABINamepsace>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <MetadataFileName>$(OutDir)%(Filename)_Part.winmd</MetadataFileName>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <CompileAsWinRT>true</CompileAsWinRT>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <WindowsMetadataFile>$(OutDir)$(RootNamespace).winmd</WindowsMetadataFile>
+      <ModuleDefinitionFile>Telegram.Api.Native.def</ModuleDefinitionFile>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>vccorlibd; msvcrtd vccorlibd.lib msvcrtd.lib</IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlibd /nodefaultlib:msvcrtd vccorlibd.lib msvcrtd.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
@@ -206,15 +245,25 @@ move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
 mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
+    <Midl>
+      <PrependWithABINamepsace>false</PrependWithABINamepsace>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <MetadataFileName>$(OutDir)%(Filename)_Part.winmd</MetadataFileName>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <CompileAsWinRT>true</CompileAsWinRT>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <WindowsMetadataFile>$(OutDir)$(RootNamespace).winmd</WindowsMetadataFile>
+      <ModuleDefinitionFile>Telegram.Api.Native.def</ModuleDefinitionFile>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>vccorlib; msvcrt vccorlib.lib msvcrt.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
@@ -223,21 +272,27 @@ move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
 mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
+    <Midl>
+      <PrependWithABINamepsace>false</PrependWithABINamepsace>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <MetadataFileName>$(OutDir)%(Filename)_Part.winmd</MetadataFileName>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />
     <ClInclude Include="ConnectionManager.h" />
+    <ClInclude Include="ConnectionSession.h" />
     <ClInclude Include="Datacenter.h" />
-    <ClInclude Include="IEventObject.h" />
+    <ClInclude Include="EventObject.h" />
+    <ClInclude Include="IoCompletionPort.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="TLBinaryReader.h" />
-    <ClInclude Include="TLBinaryWriter.h" />
-    <ClInclude Include="TLObject.h" />
+    <ClInclude Include="ConnectionSocket.h" />
+    <ClInclude Include="Thread.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="ConnectionManager.cpp" />
+    <ClCompile Include="ConnectionSession.cpp" />
     <ClCompile Include="Datacenter.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -247,12 +302,14 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="TLBinaryReader.cpp" />
-    <ClCompile Include="TLBinaryWriter.cpp" />
+    <ClCompile Include="ConnectionSocket.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Telegram.Api.Native.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="Telegram.Api.Native.idl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -265,5 +322,13 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\OpenSSL.Static.Uwp.1.0.2.1\build\native\OpenSSL.Static.Uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OpenSSL.Static.Uwp.1.0.2.1\build\native\OpenSSL.Static.Uwp.targets'))" />
     <Error Condition="!Exists('..\packages\zlib.Static.Uwp.1.2.3.1\build\native\zlib.Static.Uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\zlib.Static.Uwp.1.2.3.1\build\native\zlib.Static.Uwp.targets'))" />
+  </Target>
+  <Target Name="CopyWinmdArtifactsOutputGroup" Returns="@(CopyWinmdArtifactsOutputGroupOutputs)">
+    <ItemGroup>
+      <CopyWinmdArtifactsOutputGroupOutputs Include="@(_MdMergeOutput)">
+        <TargetPath>$(ProjectName).winmd</TargetPath>
+        <Implementation>$(TargetName)$(TargetExt)</Implementation>
+      </CopyWinmdArtifactsOutputGroupOutputs>
+    </ItemGroup>
   </Target>
 </Project>

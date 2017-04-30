@@ -41,7 +41,7 @@ namespace Telegram.Api.Transport
             else
             {
                 var transport = 
-#if WIN_RT
+#if !WIN_RT
                     new TcpTransportWinRT(host, port);
 #else
                     new TcpTransport(host, port);

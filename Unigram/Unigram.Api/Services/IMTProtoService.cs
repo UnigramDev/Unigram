@@ -23,6 +23,8 @@ namespace Telegram.Api.Services
         string Country { get; }
         event EventHandler<CountryEventArgs> GotUserCountry;
 
+        NetworkType NetworkType { get; }
+
         // To remove multiple UpdateStatusAsync calls, it's prefer to invoke this method instead
         void RaiseSendStatus(SendStatusEventArgs e);
 

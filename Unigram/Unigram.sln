@@ -45,6 +45,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Shared", "Un
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnigramHost", "UnigramHost\UnigramHost.vcxproj", "{0DBCF059-2952-4809-9003-193CA0C6D499}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Api.Native.Test", "Telegram.Api.Native.Test\Telegram.Api.Native.Test.csproj", "{798E4404-1626-44AB-97F5-862867FE51EB}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{1b521e77-46bd-4d60-89f6-d68e9bb9abff}*SharedItemsImports = 4
@@ -324,6 +326,33 @@ Global
 		{0DBCF059-2952-4809-9003-193CA0C6D499}.Release|x64.Build.0 = Release|x64
 		{0DBCF059-2952-4809-9003-193CA0C6D499}.Release|x86.ActiveCfg = Release|Win32
 		{0DBCF059-2952-4809-9003-193CA0C6D499}.Release|x86.Build.0 = Release|Win32
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Debug|ARM.ActiveCfg = Debug|ARM
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Debug|ARM.Build.0 = Debug|ARM
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Debug|ARM.Deploy.0 = Debug|ARM
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Debug|x64.ActiveCfg = Debug|x64
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Debug|x64.Build.0 = Debug|x64
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Debug|x64.Deploy.0 = Debug|x64
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Debug|x86.ActiveCfg = Debug|x86
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Debug|x86.Build.0 = Debug|x86
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Debug|x86.Deploy.0 = Debug|x86
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Preview|ARM.ActiveCfg = Release|ARM
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Preview|ARM.Build.0 = Release|ARM
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Preview|ARM.Deploy.0 = Release|ARM
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Preview|x64.ActiveCfg = Release|x64
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Preview|x64.Build.0 = Release|x64
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Preview|x64.Deploy.0 = Release|x64
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Preview|x86.ActiveCfg = Release|x86
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Preview|x86.Build.0 = Release|x86
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Preview|x86.Deploy.0 = Release|x86
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Release|ARM.ActiveCfg = Release|ARM
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Release|ARM.Build.0 = Release|ARM
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Release|ARM.Deploy.0 = Release|ARM
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Release|x64.ActiveCfg = Release|x64
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Release|x64.Build.0 = Release|x64
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Release|x64.Deploy.0 = Release|x64
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Release|x86.ActiveCfg = Release|x86
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Release|x86.Build.0 = Release|x86
+		{798E4404-1626-44AB-97F5-862867FE51EB}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
