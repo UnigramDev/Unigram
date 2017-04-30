@@ -11,6 +11,7 @@ using Telegram.Api.Services.Connection;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
 using Telegram.Api.Transport;
+using Unigram.Core.Services;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.Calls;
 
@@ -35,7 +36,8 @@ namespace Unigram.Tasks
             var updatesService = new UpdatesService(cacheService, eventAggregator);
             var transportService = new TransportService();
             var connectionService = new ConnectionService(deviceInfoService);
-            var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService, null);
+            var statsService = new StatsService();
+            var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService, statsService);
 
             eventAggregator.Subscribe(_mediator);
             protoService.Initialize();
@@ -57,13 +59,13 @@ namespace Unigram.Tasks
         {
             _deferral.Complete();
         }
-    }
 
-    internal class CallMediator : IHandle<TLUpdatePhoneCall>, IHandle
-    {
-        public void Handle(TLUpdatePhoneCall message)
+        class CallMediator : IHandle<TLUpdatePhoneCall>, IHandle
         {
-            Debug.WriteLine(message.PhoneCall);
+            public void Handle(TLUpdatePhoneCall message)
+            {
+                Debug.WriteLine(message.PhoneCall);
+            }
         }
     }
 }

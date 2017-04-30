@@ -15,6 +15,7 @@ using Telegram.Api.TL;
 using Telegram.Api.TL.Methods.Messages;
 using Telegram.Api.Transport;
 using Unigram.Core.Notifications;
+using Unigram.Core.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Background;
 using Windows.Security.ExchangeActiveSyncProvisioning;
@@ -41,8 +42,9 @@ namespace Unigram.Tasks
                     var updatesService = new UpdatesService(cacheService, eventAggregator);
                     var transportService = new TransportService();
                     var connectionService = new ConnectionService(deviceInfoService);
+                    var statsService = new StatsService();
                     var manualResetEvent = new ManualResetEvent(false);
-                    var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService, null);
+                    var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService, statsService);
 
                     protoService.Initialized += (s, args) =>
                     {
