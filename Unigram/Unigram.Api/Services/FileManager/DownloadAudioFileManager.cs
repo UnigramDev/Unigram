@@ -16,13 +16,8 @@ using Windows.Foundation;
 
 namespace Telegram.Api.Services.FileManager
 {
-    public interface IDownloadAudioFileManager
+    public interface IDownloadAudioFileManager : IDownloadManager
     {
-        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string fileName, int dcId, TLInputDocumentFileLocation file, int fileSize);
-
-        void DownloadFile(string fileName, int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize);
-
-        void CancelDownloadFile(TLDocument document);
     }
 
     public class DownloadAudioFileManager : IDownloadAudioFileManager

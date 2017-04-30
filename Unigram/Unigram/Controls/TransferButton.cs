@@ -40,7 +40,7 @@ namespace Unigram.Controls
                 {
                     if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
                     {
-                        var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
+                        var manager = ChooseDownloadManager(document);
                         manager.CancelDownloadFile(document);
 
                         document.DownloadingProgress = 0;
@@ -48,7 +48,7 @@ namespace Unigram.Controls
                     }
                     else if (document.UploadingProgress > 0 && document.UploadingProgress < 1)
                     {
-                        var manager = UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
+                        var manager = ChooseUploadManager(document);
                         manager.CancelUploadFile(document.Id);
 
                         document.UploadingProgress = 0;
@@ -60,7 +60,7 @@ namespace Unigram.Controls
 
                         //var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
 
-                        var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
+                        var manager = ChooseDownloadManager(document);
                         var operation = manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
 
                         document.DownloadingProgress = 0.02;
@@ -79,6 +79,26 @@ namespace Unigram.Controls
                     }
                 }
             }
+        }
+
+        private IDownloadManager ChooseDownloadManager(TLDocument document)
+        {
+            if (TLMessage.IsVideo(document))
+            {
+                return UnigramContainer.Current.ResolveType<IDownloadVideoFileManager>();
+            }
+
+            return UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
+        }
+
+        private IUploadManager ChooseUploadManager(TLDocument document)
+        {
+            if (TLMessage.IsVideo(document))
+            {
+                return UnigramContainer.Current.ResolveType<IUploadVideoManager>();
+            }
+
+            return UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
         }
 
         #region Transferable
