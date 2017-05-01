@@ -437,9 +437,12 @@ namespace Unigram.Controls
 
         private void FormatText()
         {
-            Document.GetText(TextGetOptions.NoHidden, out string text);
+            if (!ApplicationSettings.Current.IsReplaceEmojiEnabled)
+            {
+                return;
+            }
 
-            if (!ApplicationSettings.Current.IsReplaceEmojiEnabled) return;
+            Document.GetText(TextGetOptions.NoHidden, out string text);
 
             var caretPosition = Document.Selection.StartPosition;
             var result = Emoticon.Pattern.Matches(text);
