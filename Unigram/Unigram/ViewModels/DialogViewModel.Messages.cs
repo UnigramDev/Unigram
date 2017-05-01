@@ -379,11 +379,29 @@ namespace Unigram.ViewModels
         {
             if (message == null) return;
 
-            var channel = With as TLChannel;
-            if (channel != null)
+            if (With is TLChannel channel)
             {
+                var link = $"{channel.Username}/{message.Id}";
+
+                if (message.IsRoundVideo())
+                {
+                    link = $"https://telesco.pe/{link}";
+                }
+                else
+                {
+                    var config = CacheService.GetConfig();
+                    if (config != null)
+                    {
+                        link = $"{config.MeUrlPrefix}{link}";
+                    }
+                    else
+                    {
+                        link = $"https://t.me/{link}";
+                    }
+                }
+
                 var dataPackage = new DataPackage();
-                dataPackage.SetWebLink(new Uri($"https://t.me/{channel.Username}/{message.Id}"));
+                dataPackage.SetWebLink(new Uri(link));
                 Clipboard.SetContent(dataPackage);
             }
         }
