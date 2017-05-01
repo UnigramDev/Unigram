@@ -236,6 +236,7 @@ namespace Unigram
 
         private async void OnStartSync()
         {
+            await VoIPConnection.Current.ConnectAsync();
             await Toast.RegisterBackgroundTasks();
 
             BadgeUpdateManager.CreateBadgeUpdaterForApplication().Clear();
@@ -258,10 +259,12 @@ namespace Unigram
             catch { }
         }
 
-        public override void OnResuming(object s, object e, AppExecutionState previousExecutionState)
+        public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             updatesService.LoadStateAndUpdate(() => { });
+
+            await VoIPConnection.Current.ConnectAsync();
 
             base.OnResuming(s, e, previousExecutionState);
         }

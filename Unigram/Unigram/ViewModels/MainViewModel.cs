@@ -50,7 +50,7 @@ namespace Unigram.ViewModels
             Contacts = new ContactsViewModel(protoService, cacheService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, aggregator);
 
-            //aggregator.Subscribe(this);
+            aggregator.Subscribe(this);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -68,9 +68,12 @@ namespace Unigram.ViewModels
         private byte[] secretP;
         private byte[] a_or_b;
 
-        public void Handle(TLUpdatePhoneCall message)
+        public async void Handle(TLUpdatePhoneCall update)
         {
-            if (message.PhoneCall is TLPhoneCallRequested callRequested)
+            await VoIPConnection.Current.SendUpdateAsync(update);
+            return;
+
+            if (update.PhoneCall is TLPhoneCallRequested callRequested)
             {
                 var reqReceived = new TLPhoneReceivedCall();
                 reqReceived.Peer = new TLInputPhoneCall();
@@ -140,7 +143,7 @@ namespace Unigram.ViewModels
                     }
                 });
             }
-            else if (message.PhoneCall is TLPhoneCall call)
+            else if (update.PhoneCall is TLPhoneCall call)
             {
                 var auth_key = computeAuthKey(call);
                 var g_a = call.GAOrB;
