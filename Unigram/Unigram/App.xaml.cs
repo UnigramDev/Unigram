@@ -159,20 +159,10 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(PlaygroundPage));
-            //return Task.CompletedTask;
-
-            //ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
-            //ModalDialog.ModalBackground = new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
-            //ModalDialog.CanBackButtonDismiss = true;
-            //ModalDialog.DisableBackButtonWhenModal = false;
-
-            var timer = Stopwatch.StartNew();
+            //NavigationService.Navigate(typeof(PhoneCallPage));
 
             if (SettingsHelper.IsAuthorized)
             {
-                //MTProtoService.Current.CurrentUserId = SettingsHelper.UserId;
-
                 var share = args as ShareTargetActivatedEventArgs;
                 var voice = args as VoiceCommandActivatedEventArgs;
 
@@ -206,9 +196,6 @@ namespace Unigram
                     var launch = activate?.Argument ?? null;
 
                     NavigationService.Navigate(typeof(MainPage), launch);
-
-                    timer.Stop();
-                    Debug.WriteLine($"LAUNCH TIME: {timer.Elapsed}");
                 }
             }
             else
@@ -227,7 +214,7 @@ namespace Unigram
 
             ShowStatusBar();
             ColourTitleBar();
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(360, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Task.Run(() => OnStartSync());

@@ -7,14 +7,18 @@ using System.Threading.Tasks;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Controls.Views;
 using Unigram.Core.Services;
 using Unigram.Tasks;
+using Unigram.Views;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 
 namespace Unigram.Common
 {
@@ -62,6 +66,11 @@ namespace Unigram.Common
             return _appConnection.SendMessageAsync(new ValueSet { { nameof(update), TLSerializationService.Current.Serialize(update) } });
         }
 
+        public IAsyncOperation<AppServiceResponse> SendRequestAsync(string caption)
+        {
+            return _appConnection.SendMessageAsync(new ValueSet { { nameof(caption), caption } });
+        }
+
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             var deferral = args.GetDeferral();
@@ -73,7 +82,7 @@ namespace Unigram.Common
                 {
                     var caption = message["caption"] as string;
                     var buffer = message["request"] as string;
-                    var req = TLSerializationService.Current.Deserialize(buffer) as TLObject;
+                    var req = TLSerializationService.Current.Deserialize(buffer);
 
                     if (caption.Equals("voip.getUser") && req is TLPeerUser userPeer)
                     {
@@ -87,9 +96,46 @@ namespace Unigram.Common
                             await args.Request.SendResponseAsync(new ValueSet { { "error", TLSerializationService.Current.Serialize(new TLRPCError { ErrorMessage = "USER_NOT_FOUND", ErrorCode = 404 }) } });
                         }
                     }
+                    else if (caption.Equals("voip.callInfo") && req is byte[] data)
+                    {
+                        using (var from = new TLBinaryReader(data))
+                        {
+                            var tuple = new TLTuple<TLPhoneCallBase, TLUserBase, string>(from);
+
+                            PhoneCallPage newPlayer = null;
+                            CoreApplicationView newView = CoreApplication.CreateNewView();
+                            var newViewId = 0;
+                            await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                            {
+                                newPlayer = new PhoneCallPage();
+                                Window.Current.Content = newPlayer;
+                                Window.Current.Activate();
+                                newViewId = ApplicationView.GetForCurrentView().Id;
+
+                                newPlayer.SetCall(tuple);
+                            });
+
+                            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                            {
+                                var overlay = ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
+                                if (overlay)
+                                {
+                                    var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+                                    preferences.CustomSize = new Size(340, 200);
+
+                                    var viewShown = await ApplicationViewSwitcher.TryShowAsViewModeAsync(newViewId, ApplicationViewMode.CompactOverlay, preferences);
+                                }
+                                else
+                                {
+                                    //await ApplicationViewSwitcher.SwitchAsync(newViewId);
+                                    await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
+                                }
+                            });
+                        }
+                    }
                     else
                     {
-                        var response = await MTProtoService.Current.SendRequestAsync<object>(caption, req);
+                        var response = await MTProtoService.Current.SendRequestAsync<object>(caption, req as TLObject);
                         if (response.IsSucceeded)
                         {
                             await args.Request.SendResponseAsync(new ValueSet { { "result", TLSerializationService.Current.Serialize(response.Result) } });

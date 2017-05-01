@@ -158,5 +158,30 @@ namespace Unigram.Common
             return false;
         }
 
+        public static string BuildUri(string string2)
+        {
+            var result = string.Empty;
+            var i = 0;
+
+            do
+            {
+                if (char.IsSurrogatePair(string2, i))
+                {
+                    result += char.ConvertToUtf32(string2, i).ToString("x2");
+                    i += 2;
+                }
+                else
+                {
+                    result += ((short)string2[i]).ToString("x4");
+                    i++;
+                }
+
+                if (i < string2.Length)
+                    result += "-";
+
+            } while (i < string2.Length);
+
+            return $"ms-appx:///Assets/Emojis/{result}.png";
+        }
     }
 }
