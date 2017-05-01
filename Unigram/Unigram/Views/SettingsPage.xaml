@@ -239,7 +239,11 @@
                         <controls:HyperCheckButton Tag="Send by Enter"
                                                    IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
                                                    Style="{ThemeResource CheckButtonStyle}"/>
-                        
+
+                        <controls:HyperCheckButton Tag="Replace emoji"
+                                                   IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
+                                                   Style="{ThemeResource CheckButtonStyle}"/>
+
                         <!-- Manually hidden -->
                         <controls:HyperCheckButton Content="Enabled"
                                                    Visibility="Collapsed"

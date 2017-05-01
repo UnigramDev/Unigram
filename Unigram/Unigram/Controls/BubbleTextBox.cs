@@ -437,6 +437,11 @@ namespace Unigram.Controls
 
         private void FormatText()
         {
+            if (!ApplicationSettings.Current.IsReplaceEmojiEnabled)
+            {
+                return;
+            }
+
             Document.GetText(TextGetOptions.NoHidden, out string text);
 
             var caretPosition = Document.Selection.StartPosition;
