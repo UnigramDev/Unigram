@@ -1,4 +1,5 @@
-﻿using Org.BouncyCastle.Security;
+﻿using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.Connection;
@@ -14,6 +16,7 @@ using Telegram.Api.TL;
 using Telegram.Api.TL.Methods.Messages;
 using Telegram.Api.TL.Methods.Phone;
 using Telegram.Api.Transport;
+using Unigram.Core;
 using Unigram.Core.Services;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
@@ -66,17 +69,30 @@ namespace Unigram.Tasks
 
         private AppServiceConnection _connection;
         private MTProtoService _protoService;
+        private TransportService _transportService;
 
         private VoipPhoneCall _systemCall;
         private TLPhoneCallBase _phoneCall;
+        private TLUserBase _user;
 
         private BackgroundTaskDeferral _deferral;
         private bool _initialized;
 
-        public void Initialize(AppServiceConnection connection)
+        public async void Initialize(AppServiceConnection connection)
         {
             _connection = connection;
             _connection.RequestReceived += OnRequestReceived;
+
+            if (_protoService != null)
+            {
+                _protoService.Dispose();
+                _transportService.Close();
+            }
+
+            if (_phoneCall != null)
+            {
+                await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.callInfo" }, { "request", TLSerializationService.Current.Serialize(_phoneCall) } });
+            }
         }
 
         public void Initialize(BackgroundTaskDeferral deferral)
@@ -97,6 +113,7 @@ namespace Unigram.Tasks
                 updatesService.LoadStateAndUpdate(() => { });
 
                 _protoService = protoService;
+                _transportService = transportService;
             }
 
             _deferral = deferral;
@@ -130,6 +147,7 @@ namespace Unigram.Tasks
                     var coordinator = VoipCallCoordinator.GetDefault();
                     var call = coordinator.RequestNewIncomingCall("Unigram", user.FullName, user.DisplayName, null, "Unigram", null, "Unigram", null, VoipPhoneCallMedia.Audio, TimeSpan.FromSeconds(128));
 
+                    _user = user;
                     _systemCall = call;
                     _systemCall.AnswerRequested += OnAnswerRequested;
                     _systemCall.RejectRequested += OnRejectRequested;
@@ -140,7 +158,16 @@ namespace Unigram.Tasks
                 }
                 else if (update.PhoneCall is TLPhoneCall call)
                 {
-                    await Task.Delay(5000);
+                    var auth_key = computeAuthKey(call);
+                    var g_a = call.GAOrB;
+
+                    var buffer = TLUtils.Combine(auth_key, g_a);
+                    var sha256 = Utils.ComputeSHA256(buffer);
+
+                    var emoji = EncryptionKeyEmojifier.EmojifyForCall(sha256);
+
+                    await UpdateCallAsync(string.Join(" ", emoji));
+                    await Task.Delay(50000);
 
                     var req = new TLPhoneDiscardCall { Peer = new TLInputPhoneCall { Id = call.Id, AccessHash = call.AccessHash }, Reason = new TLPhoneCallDiscardReasonHangup() };
 
@@ -151,6 +178,15 @@ namespace Unigram.Tasks
                 }
             }
         }
+
+        private async Task UpdateCallAsync(string emoji)
+        {
+            var data = TLTuple.Create(_phoneCall, _user, emoji);
+            await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.callInfo" }, { "request", TLSerializationService.Current.Serialize(data) } });
+        }
+
+        private byte[] secretP;
+        private byte[] a_or_b;
 
         private async void OnAnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
         {
@@ -167,13 +203,13 @@ namespace Unigram.Tasks
                         return;
                     }
 
-                    var secretP = dh.P;
+                    secretP = dh.P;
 
                     var salt = new byte[256];
                     var secureRandom = new SecureRandom();
                     secureRandom.NextBytes(salt);
 
-                    var a_or_b = salt;
+                    a_or_b = salt;
 
                     var g_b = MTProtoService.GetGB(salt, dh.G, dh.P);
 
@@ -202,6 +238,37 @@ namespace Unigram.Tasks
 
                 _systemCall.NotifyCallActive();
             }
+        }
+
+        private byte[] computeAuthKey(TLPhoneCall call)
+        {
+            BigInteger g_a = new BigInteger(1, call.GAOrB);
+            BigInteger p = new BigInteger(1, secretP);
+
+            g_a = g_a.ModPow(new BigInteger(1, a_or_b), p);
+
+            byte[] authKey = g_a.ToByteArray();
+            if (authKey.Length > 256)
+            {
+                byte[] correctedAuth = new byte[256];
+                Buffer.BlockCopy(authKey, authKey.Length - 256, correctedAuth, 0, 256);
+                authKey = correctedAuth;
+            }
+            else if (authKey.Length < 256)
+            {
+                byte[] correctedAuth = new byte[256];
+                Buffer.BlockCopy(authKey, 0, correctedAuth, 256 - authKey.Length, authKey.Length);
+                for (int a = 0; a < 256 - authKey.Length; a++)
+                {
+                    authKey[a] = 0;
+                }
+                authKey = correctedAuth;
+            }
+            byte[] authKeyHash = Utils.ComputeSHA1(authKey);
+            byte[] authKeyId = new byte[8];
+            Buffer.BlockCopy(authKeyHash, authKeyHash.Length - 8, authKeyId, 0, 8);
+
+            return authKey;
         }
 
         private async void OnRejectRequested(VoipPhoneCall sender, CallRejectEventArgs args)
@@ -248,7 +315,7 @@ namespace Unigram.Tasks
             }
         }
 
-        private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             var deferral = args.GetDeferral();
             var message = args.Request.Message;
@@ -268,6 +335,35 @@ namespace Unigram.Tasks
                     }
                 }
             }
+            else if (message.ContainsKey("caption"))
+            {
+                var caption = message["caption"] as string;
+                if (caption.Equals("phone.discardCall"))
+                {
+                    if (_phoneCall is TLPhoneCallRequested requested)
+                    {
+                        var req = new TLPhoneDiscardCall { Peer = new TLInputPhoneCall { Id = requested.Id, AccessHash = requested.AccessHash }, Reason = new TLPhoneCallDiscardReasonHangup() };
+
+                        const string caption2 = "phone.discardCall";
+                        await SendRequestAsync<TLUpdatesBase>(caption2, req);
+
+                        _systemCall.NotifyCallEnded();
+                    }
+                }
+            }
+            else if (message.ContainsKey("voip.callInfo"))
+            {
+                if (_phoneCall != null)
+                {
+                    await args.Request.SendResponseAsync(new ValueSet { { "result", TLSerializationService.Current.Serialize(_phoneCall) } });
+                }
+                else
+                {
+                    await args.Request.SendResponseAsync(new ValueSet { { "error", false } });
+                }
+            }
+
+            deferral.Complete();
         }
 
         public void Handle(TLUpdatePhoneCall update)
