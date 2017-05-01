@@ -14,6 +14,7 @@ namespace Unigram
         public static readonly string[] TelegramHosts = new string[]
         {
             "telegram.me",
+            "telegram.dog",
             "t.me",
             "telesco.pe"
         };
