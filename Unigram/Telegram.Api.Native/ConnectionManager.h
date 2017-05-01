@@ -28,8 +28,10 @@ namespace Telegram
 
 				STDMETHODIMP RuntimeClassInitialize();
 				STDMETHODIMP get_ConnectionState(_Out_ ConnectionState* value);
+				STDMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				STDMETHODIMP get_IsIpv6Enabled(_Out_ boolean* value);
-				STDMETHODIMP SendRequest(_In_ ITLObject* object, UINT32 datacenterId, ConnectionType connetionType, boolean immediate, _Out_ UINT32* requestToken);
+				STDMETHODIMP SendRequest(_In_ ITLObject* object, UINT32 datacenterId, ConnectionType connetionType, boolean immediate, _Out_ INT32* requestToken);
+				STDMETHODIMP CancelRequest(INT32 requestToken, boolean notifyServer);
 
 			private:
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
@@ -41,6 +43,7 @@ namespace Telegram
 				CriticalSection m_criticalSection;
 				CHAR m_working;
 				ConnectionState m_connectionState;
+				ConnectionNeworkType m_currentNetworkType;
 				boolean m_isIpv6Enabled;
 				Thread m_workerThread;
 				std::vector<ComPtr<IConnection>> m_activeConnections;
@@ -57,7 +60,7 @@ namespace Telegram
 
 				STDMETHODIMP get_Instance(_Out_ IConnectionManager** value);
 
-				static HRESULT GetInstance(_Out_ IConnectionManager** value);
+				static HRESULT GetInstance(_Out_ ComPtr<ConnectionManager>& value);
 
 			private:
 				static ComPtr<ConnectionManager> s_instance;

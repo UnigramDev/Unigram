@@ -82,6 +82,8 @@ namespace Telegram
 			};
 
 
+			//IEventObject will probably change
+
 			MIDL_INTERFACE("5D8D896C-235D-47CD-8643-A776A17AB2F0") IEventObject : public IUnknown
 			{
 			public:

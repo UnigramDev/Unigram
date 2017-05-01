@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
  */
-/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-7fe7a8f9:
+/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-0cc1c325:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -194,16 +194,6 @@ extern "C"{
 #if !defined(__cplusplus)
 #if !defined(__cplusplus)
 
-typedef enum __x_Telegram_CApi_CNative_CDatacenterEndpointType __x_Telegram_CApi_CNative_CDatacenterEndpointType;
-
-
-#endif /* end if !defined(__cplusplus) */
-
-
-#endif
-#if !defined(__cplusplus)
-#if !defined(__cplusplus)
-
 typedef enum __x_Telegram_CApi_CNative_CConnectionType __x_Telegram_CApi_CNative_CConnectionType;
 
 
@@ -289,22 +279,6 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 
 /* interface __MIDL_itf_Telegram2EApi2ENative_0000_0000 */
 /* [local] */ 
-
-#ifdef __cplusplus
-
-} /* end extern "C" */
-namespace Telegram {
-    namespace Api {
-        namespace Native {
-            
-            typedef MIDL_ENUM DatacenterEndpointType DatacenterEndpointType;
-            
-        } /* end namespace */
-    } /* end namespace */
-} /* end namespace */
-
-extern "C" { 
-#endif
 
 #ifdef __cplusplus
 
@@ -534,6 +508,31 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryReader;
                 ITLBinaryReader : public IInspectable
                 {
                 public:
+                    virtual HRESULT STDMETHODCALLTYPE ReadByte( 
+                        /* [out][retval] */ BYTE *value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE ReadInt16( 
+                        /* [out][retval] */ INT16 *value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE ReadInt32( 
+                        /* [out][retval] */ INT32 *value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE ReadInt64( 
+                        /* [out][retval] */ INT64 *value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE ReadBool( 
+                        /* [out][retval] */ boolean *value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE ReadString( 
+                        /* [out][retval] */ HSTRING *value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE ReadByteArray( 
+                        /* [out] */ UINT32 *__valueSize,
+                        /* [out][size_is][size_is] */ BYTE **value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE ReadDouble( 
+                        /* [out][retval] */ double *value) = 0;
+                    
                 };
 
                 extern const __declspec(selectany) IID & IID_ITLBinaryReader = __uuidof(ITLBinaryReader);
@@ -575,6 +574,39 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryReader;
             __x_Telegram_CApi_CNative_CITLBinaryReader * This,
             /* [out] */ TrustLevel *trustLevel);
         
+        HRESULT ( STDMETHODCALLTYPE *ReadByte )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out][retval] */ BYTE *value);
+        
+        HRESULT ( STDMETHODCALLTYPE *ReadInt16 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out][retval] */ INT16 *value);
+        
+        HRESULT ( STDMETHODCALLTYPE *ReadInt32 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out][retval] */ INT32 *value);
+        
+        HRESULT ( STDMETHODCALLTYPE *ReadInt64 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out][retval] */ INT64 *value);
+        
+        HRESULT ( STDMETHODCALLTYPE *ReadBool )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out][retval] */ boolean *value);
+        
+        HRESULT ( STDMETHODCALLTYPE *ReadString )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out][retval] */ HSTRING *value);
+        
+        HRESULT ( STDMETHODCALLTYPE *ReadByteArray )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out] */ UINT32 *__valueSize,
+            /* [out][size_is][size_is] */ BYTE **value);
+        
+        HRESULT ( STDMETHODCALLTYPE *ReadDouble )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out][retval] */ double *value);
+        
         END_INTERFACE
     } __x_Telegram_CApi_CNative_CITLBinaryReaderVtbl;
 
@@ -607,6 +639,30 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryReader;
 #define __x_Telegram_CApi_CNative_CITLBinaryReader_GetTrustLevel(This,trustLevel)	\
     ( (This)->lpVtbl -> GetTrustLevel(This,trustLevel) ) 
 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadByte(This,value)	\
+    ( (This)->lpVtbl -> ReadByte(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadInt16(This,value)	\
+    ( (This)->lpVtbl -> ReadInt16(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadInt32(This,value)	\
+    ( (This)->lpVtbl -> ReadInt32(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadInt64(This,value)	\
+    ( (This)->lpVtbl -> ReadInt64(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadBool(This,value)	\
+    ( (This)->lpVtbl -> ReadBool(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadString(This,value)	\
+    ( (This)->lpVtbl -> ReadString(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadByteArray(This,__valueSize,value)	\
+    ( (This)->lpVtbl -> ReadByteArray(This,__valueSize,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadDouble(This,value)	\
+    ( (This)->lpVtbl -> ReadDouble(This,value) ) 
 
 #endif /* COBJMACROS */
 
@@ -663,6 +719,31 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryWriter;
                 ITLBinaryWriter : public IInspectable
                 {
                 public:
+                    virtual HRESULT STDMETHODCALLTYPE WriteByte( 
+                        /* [in] */ BYTE value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE WriteInt16( 
+                        /* [in] */ INT16 value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE WriteInt32( 
+                        /* [in] */ INT32 value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE WriteInt64( 
+                        /* [in] */ INT64 value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE WriteBool( 
+                        /* [in] */ boolean value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE WriteString( 
+                        /* [in] */ HSTRING value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE WriteByteArray( 
+                        /* [in] */ UINT32 __valueSize,
+                        /* [in][size_is] */ BYTE *value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE WriteDouble( 
+                        /* [in] */ double value) = 0;
+                    
                 };
 
                 extern const __declspec(selectany) IID & IID_ITLBinaryWriter = __uuidof(ITLBinaryWriter);
@@ -704,6 +785,39 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryWriter;
             __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
             /* [out] */ TrustLevel *trustLevel);
         
+        HRESULT ( STDMETHODCALLTYPE *WriteByte )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ BYTE value);
+        
+        HRESULT ( STDMETHODCALLTYPE *WriteInt16 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ INT16 value);
+        
+        HRESULT ( STDMETHODCALLTYPE *WriteInt32 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ INT32 value);
+        
+        HRESULT ( STDMETHODCALLTYPE *WriteInt64 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ INT64 value);
+        
+        HRESULT ( STDMETHODCALLTYPE *WriteBool )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ boolean value);
+        
+        HRESULT ( STDMETHODCALLTYPE *WriteString )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ HSTRING value);
+        
+        HRESULT ( STDMETHODCALLTYPE *WriteByteArray )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ UINT32 __valueSize,
+            /* [in][size_is] */ BYTE *value);
+        
+        HRESULT ( STDMETHODCALLTYPE *WriteDouble )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ double value);
+        
         END_INTERFACE
     } __x_Telegram_CApi_CNative_CITLBinaryWriterVtbl;
 
@@ -737,6 +851,30 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryWriter;
     ( (This)->lpVtbl -> GetTrustLevel(This,trustLevel) ) 
 
 
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteByte(This,value)	\
+    ( (This)->lpVtbl -> WriteByte(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteInt16(This,value)	\
+    ( (This)->lpVtbl -> WriteInt16(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteInt32(This,value)	\
+    ( (This)->lpVtbl -> WriteInt32(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteInt64(This,value)	\
+    ( (This)->lpVtbl -> WriteInt64(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteBool(This,value)	\
+    ( (This)->lpVtbl -> WriteBool(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteString(This,value)	\
+    ( (This)->lpVtbl -> WriteString(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteByteArray(This,__valueSize,value)	\
+    ( (This)->lpVtbl -> WriteByteArray(This,__valueSize,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteDouble(This,value)	\
+    ( (This)->lpVtbl -> WriteDouble(This,value) ) 
+
 #endif /* COBJMACROS */
 
 
@@ -759,12 +897,12 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram
 
 #if !defined(__cplusplus)
 /* [v1_enum] */ 
-enum __x_Telegram_CApi_CNative_CDatacenterEndpointType
+enum __x_Telegram_CApi_CNative_CConnectionType
     {
-        DatacenterEndpointType_Ipv4	= 0,
-        DatacenterEndpointType_Ipv6	= 1,
-        DatacenterEndpointType_Ipv4Download	= 2,
-        DatacenterEndpointType_Ipv6Download	= 3
+        ConnectionType_Generic	= 1,
+        ConnectionType_Download	= 2,
+        ConnectionType_Upload	= 4,
+        ConnectionType_Push	= 8
     } ;
 #endif /* end if !defined(__cplusplus) */
 
@@ -784,18 +922,18 @@ namespace Telegram {
         namespace Native {
             
             /* [v1_enum] */ 
-            MIDL_ENUM DatacenterEndpointType
+            MIDL_ENUM ConnectionType
                 {
-                    Ipv4	= 0,
-                    Ipv6	= 1,
-                    Ipv4Download	= 2,
-                    Ipv6Download	= 3
+                    Generic	= 1,
+                    Download	= 2,
+                    Upload	= 4,
+                    Push	= 8
                 } ;
 
-            const MIDL_ENUM DatacenterEndpointType DatacenterEndpointType_Ipv4 = DatacenterEndpointType::Ipv4;
-            const MIDL_ENUM DatacenterEndpointType DatacenterEndpointType_Ipv6 = DatacenterEndpointType::Ipv6;
-            const MIDL_ENUM DatacenterEndpointType DatacenterEndpointType_Ipv4Download = DatacenterEndpointType::Ipv4Download;
-            const MIDL_ENUM DatacenterEndpointType DatacenterEndpointType_Ipv6Download = DatacenterEndpointType::Ipv6Download;
+            const MIDL_ENUM ConnectionType ConnectionType_Generic = ConnectionType::Generic;
+            const MIDL_ENUM ConnectionType ConnectionType_Download = ConnectionType::Download;
+            const MIDL_ENUM ConnectionType ConnectionType_Upload = ConnectionType::Upload;
+            const MIDL_ENUM ConnectionType ConnectionType_Push = ConnectionType::Push;
             
         } /* end namespace */
     } /* end namespace */
@@ -837,11 +975,13 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIDatacenter;
                         /* [out][retval] */ UINT32 *value) = 0;
                     
                     virtual HRESULT STDMETHODCALLTYPE GetCurrentAddress( 
-                        /* [in] */ Telegram::Api::Native::DatacenterEndpointType endpointType,
+                        /* [in] */ Telegram::Api::Native::ConnectionType connectionType,
+                        /* [in] */ boolean ipv6,
                         /* [out][retval] */ HSTRING *value) = 0;
                     
                     virtual HRESULT STDMETHODCALLTYPE GetCurrentPort( 
-                        /* [in] */ Telegram::Api::Native::DatacenterEndpointType endpointType,
+                        /* [in] */ Telegram::Api::Native::ConnectionType connectionType,
+                        /* [in] */ boolean ipv6,
                         /* [out][retval] */ UINT32 *value) = 0;
                     
                     virtual HRESULT STDMETHODCALLTYPE GetDownloadConnection( 
@@ -909,12 +1049,14 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIDatacenter;
         
         HRESULT ( STDMETHODCALLTYPE *GetCurrentAddress )( 
             __x_Telegram_CApi_CNative_CIDatacenter * This,
-            /* [in] */ __x_Telegram_CApi_CNative_CDatacenterEndpointType endpointType,
+            /* [in] */ __x_Telegram_CApi_CNative_CConnectionType connectionType,
+            /* [in] */ boolean ipv6,
             /* [out][retval] */ HSTRING *value);
         
         HRESULT ( STDMETHODCALLTYPE *GetCurrentPort )( 
             __x_Telegram_CApi_CNative_CIDatacenter * This,
-            /* [in] */ __x_Telegram_CApi_CNative_CDatacenterEndpointType endpointType,
+            /* [in] */ __x_Telegram_CApi_CNative_CConnectionType connectionType,
+            /* [in] */ boolean ipv6,
             /* [out][retval] */ UINT32 *value);
         
         HRESULT ( STDMETHODCALLTYPE *GetDownloadConnection )( 
@@ -975,11 +1117,11 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIDatacenter;
 #define __x_Telegram_CApi_CNative_CIDatacenter_get_Id(This,value)	\
     ( (This)->lpVtbl -> get_Id(This,value) ) 
 
-#define __x_Telegram_CApi_CNative_CIDatacenter_GetCurrentAddress(This,endpointType,value)	\
-    ( (This)->lpVtbl -> GetCurrentAddress(This,endpointType,value) ) 
+#define __x_Telegram_CApi_CNative_CIDatacenter_GetCurrentAddress(This,connectionType,ipv6,value)	\
+    ( (This)->lpVtbl -> GetCurrentAddress(This,connectionType,ipv6,value) ) 
 
-#define __x_Telegram_CApi_CNative_CIDatacenter_GetCurrentPort(This,endpointType,value)	\
-    ( (This)->lpVtbl -> GetCurrentPort(This,endpointType,value) ) 
+#define __x_Telegram_CApi_CNative_CIDatacenter_GetCurrentPort(This,connectionType,ipv6,value)	\
+    ( (This)->lpVtbl -> GetCurrentPort(This,connectionType,ipv6,value) ) 
 
 #define __x_Telegram_CApi_CNative_CIDatacenter_GetDownloadConnection(This,index,create,value)	\
     ( (This)->lpVtbl -> GetDownloadConnection(This,index,create,value) ) 
@@ -1015,20 +1157,6 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram
 
 #if !defined(__cplusplus)
 /* [v1_enum] */ 
-enum __x_Telegram_CApi_CNative_CConnectionType
-    {
-        ConnectionType_Generic	= 1,
-        ConnectionType_Download	= 2,
-        ConnectionType_Upload	= 4,
-        ConnectionType_Push	= 8
-    } ;
-#endif /* end if !defined(__cplusplus) */
-
-#endif
-#if !defined(__cplusplus)
-
-#if !defined(__cplusplus)
-/* [v1_enum] */ 
 enum __x_Telegram_CApi_CNative_CConnectionNeworkType
     {
         ConnectionNeworkType_Mobile	= 0,
@@ -1045,33 +1173,6 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 
 /* interface __MIDL_itf_Telegram2EApi2ENative_0000_0004 */
 /* [local] */ 
-
-#ifdef __cplusplus
-} /* end extern "C" */
-namespace Telegram {
-    namespace Api {
-        namespace Native {
-            
-            /* [v1_enum] */ 
-            MIDL_ENUM ConnectionType
-                {
-                    Generic	= 1,
-                    Download	= 2,
-                    Upload	= 4,
-                    Push	= 8
-                } ;
-
-            const MIDL_ENUM ConnectionType ConnectionType_Generic = ConnectionType::Generic;
-            const MIDL_ENUM ConnectionType ConnectionType_Download = ConnectionType::Download;
-            const MIDL_ENUM ConnectionType ConnectionType_Upload = ConnectionType::Upload;
-            const MIDL_ENUM ConnectionType ConnectionType_Push = ConnectionType::Push;
-            
-        } /* end namespace */
-    } /* end namespace */
-} /* end namespace */
-
-extern "C" { 
-#endif
 
 #ifdef __cplusplus
 } /* end extern "C" */
@@ -1127,11 +1228,17 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnection;
                 IConnection : public IInspectable
                 {
                 public:
+                    virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Token( 
+                        /* [out][retval] */ UINT32 *value) = 0;
+                    
                     virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Datacenter( 
                         /* [out][retval] */ Telegram::Api::Native::IDatacenter **value) = 0;
                     
                     virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Type( 
                         /* [out][retval] */ Telegram::Api::Native::ConnectionType *value) = 0;
+                    
+                    virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CurrentNetworkType( 
+                        /* [out][retval] */ Telegram::Api::Native::ConnectionNeworkType *value) = 0;
                     
                 };
 
@@ -1174,6 +1281,10 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnection;
             __x_Telegram_CApi_CNative_CIConnection * This,
             /* [out] */ TrustLevel *trustLevel);
         
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Token )( 
+            __x_Telegram_CApi_CNative_CIConnection * This,
+            /* [out][retval] */ UINT32 *value);
+        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Datacenter )( 
             __x_Telegram_CApi_CNative_CIConnection * This,
             /* [out][retval] */ __x_Telegram_CApi_CNative_CIDatacenter **value);
@@ -1181,6 +1292,10 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnection;
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Type )( 
             __x_Telegram_CApi_CNative_CIConnection * This,
             /* [out][retval] */ __x_Telegram_CApi_CNative_CConnectionType *value);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CurrentNetworkType )( 
+            __x_Telegram_CApi_CNative_CIConnection * This,
+            /* [out][retval] */ __x_Telegram_CApi_CNative_CConnectionNeworkType *value);
         
         END_INTERFACE
     } __x_Telegram_CApi_CNative_CIConnectionVtbl;
@@ -1215,11 +1330,17 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnection;
     ( (This)->lpVtbl -> GetTrustLevel(This,trustLevel) ) 
 
 
+#define __x_Telegram_CApi_CNative_CIConnection_get_Token(This,value)	\
+    ( (This)->lpVtbl -> get_Token(This,value) ) 
+
 #define __x_Telegram_CApi_CNative_CIConnection_get_Datacenter(This,value)	\
     ( (This)->lpVtbl -> get_Datacenter(This,value) ) 
 
 #define __x_Telegram_CApi_CNative_CIConnection_get_Type(This,value)	\
     ( (This)->lpVtbl -> get_Type(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CIConnection_get_CurrentNetworkType(This,value)	\
+    ( (This)->lpVtbl -> get_CurrentNetworkType(This,value) ) 
 
 #endif /* COBJMACROS */
 
@@ -1245,7 +1366,6 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram
 /* [v1_enum] */ 
 enum __x_Telegram_CApi_CNative_CConnectionState
     {
-        ConnectionState_NotInitialized	= 0,
         ConnectionState_Connecting	= 1,
         ConnectionState_WaitingForNetwork	= 2,
         ConnectionState_Connected	= 3
@@ -1270,13 +1390,11 @@ namespace Telegram {
             /* [v1_enum] */ 
             MIDL_ENUM ConnectionState
                 {
-                    NotInitialized	= 0,
                     Connecting	= 1,
                     WaitingForNetwork	= 2,
                     Connected	= 3
                 } ;
 
-            const MIDL_ENUM ConnectionState ConnectionState_NotInitialized = ConnectionState::NotInitialized;
             const MIDL_ENUM ConnectionState ConnectionState_Connecting = ConnectionState::Connecting;
             const MIDL_ENUM ConnectionState ConnectionState_WaitingForNetwork = ConnectionState::WaitingForNetwork;
             const MIDL_ENUM ConnectionState ConnectionState_Connected = ConnectionState::Connected;
@@ -1455,6 +1573,9 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnectionManager;
                     virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ConnectionState( 
                         /* [out][retval] */ Telegram::Api::Native::ConnectionState *value) = 0;
                     
+                    virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CurrentNetworkType( 
+                        /* [out][retval] */ Telegram::Api::Native::ConnectionNeworkType *value) = 0;
+                    
                     virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsIpv6Enabled( 
                         /* [out][retval] */ boolean *value) = 0;
                     
@@ -1463,7 +1584,11 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnectionManager;
                         /* [in] */ UINT32 datacenterId,
                         /* [in] */ Telegram::Api::Native::ConnectionType connetionType,
                         /* [in] */ boolean immediate,
-                        /* [out] */ UINT32 *requestToken) = 0;
+                        /* [out] */ INT32 *requestToken) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE CancelRequest( 
+                        INT32 requestToken,
+                        boolean notifyServer) = 0;
                     
                 };
 
@@ -1510,6 +1635,10 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnectionManager;
             __x_Telegram_CApi_CNative_CIConnectionManager * This,
             /* [out][retval] */ __x_Telegram_CApi_CNative_CConnectionState *value);
         
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CurrentNetworkType )( 
+            __x_Telegram_CApi_CNative_CIConnectionManager * This,
+            /* [out][retval] */ __x_Telegram_CApi_CNative_CConnectionNeworkType *value);
+        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsIpv6Enabled )( 
             __x_Telegram_CApi_CNative_CIConnectionManager * This,
             /* [out][retval] */ boolean *value);
@@ -1520,7 +1649,12 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnectionManager;
             /* [in] */ UINT32 datacenterId,
             /* [in] */ __x_Telegram_CApi_CNative_CConnectionType connetionType,
             /* [in] */ boolean immediate,
-            /* [out] */ UINT32 *requestToken);
+            /* [out] */ INT32 *requestToken);
+        
+        HRESULT ( STDMETHODCALLTYPE *CancelRequest )( 
+            __x_Telegram_CApi_CNative_CIConnectionManager * This,
+            INT32 requestToken,
+            boolean notifyServer);
         
         END_INTERFACE
     } __x_Telegram_CApi_CNative_CIConnectionManagerVtbl;
@@ -1558,11 +1692,17 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnectionManager;
 #define __x_Telegram_CApi_CNative_CIConnectionManager_get_ConnectionState(This,value)	\
     ( (This)->lpVtbl -> get_ConnectionState(This,value) ) 
 
+#define __x_Telegram_CApi_CNative_CIConnectionManager_get_CurrentNetworkType(This,value)	\
+    ( (This)->lpVtbl -> get_CurrentNetworkType(This,value) ) 
+
 #define __x_Telegram_CApi_CNative_CIConnectionManager_get_IsIpv6Enabled(This,value)	\
     ( (This)->lpVtbl -> get_IsIpv6Enabled(This,value) ) 
 
 #define __x_Telegram_CApi_CNative_CIConnectionManager_SendRequest(This,object,datacenterId,connetionType,immediate,requestToken)	\
     ( (This)->lpVtbl -> SendRequest(This,object,datacenterId,connetionType,immediate,requestToken) ) 
+
+#define __x_Telegram_CApi_CNative_CIConnectionManager_CancelRequest(This,requestToken,notifyServer)	\
+    ( (This)->lpVtbl -> CancelRequest(This,requestToken,notifyServer) ) 
 
 #endif /* COBJMACROS */
 

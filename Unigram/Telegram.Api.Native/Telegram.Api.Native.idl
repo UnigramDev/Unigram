@@ -9,7 +9,6 @@ namespace Telegram
 		namespace Native
 		{
 
-			typedef enum DatacenterEndpointType DatacenterEndpointType;
 			typedef enum ConnectionType ConnectionType;
 			typedef enum ConnectionNeworkType ConnectionNeworkType;
 			typedef enum ConnectionState ConnectionState;
@@ -37,10 +36,18 @@ namespace Telegram
 			[version(API_VERSION)]
 			interface ITLBinaryReader : IInspectable
 			{
+				HRESULT ReadByte([out][retval] BYTE* value);
+				HRESULT ReadInt16([out][retval] INT16* value);
+				HRESULT ReadInt32([out][retval] INT32* value);
+				HRESULT ReadInt64([out][retval] INT64* value);
+				HRESULT ReadBool([out][retval] boolean* value);	
+				HRESULT ReadString([out][retval] HSTRING* value);
+				HRESULT ReadByteArray([out] UINT32* __valueSize, [out][size_is(, *__valueSize)] BYTE** value);
+				HRESULT ReadDouble([out][retval] double* value);
 			}
 
-			[marshaling_behavior(agile)]
-			[threading(both)]
+			//[marshaling_behavior(agile)]
+			//[threading(both)]
 			[version(API_VERSION)]
 			runtimeclass TLBinaryReader
 			{
@@ -53,46 +60,22 @@ namespace Telegram
 			[version(API_VERSION)]
 			interface ITLBinaryWriter : IInspectable
 			{
+				HRESULT WriteByte([in] BYTE value);
+				HRESULT WriteInt16([in] INT16 value);
+				HRESULT WriteInt32([in] INT32 value);
+				HRESULT WriteInt64([in] INT64 value);
+				HRESULT WriteBool([in] boolean value);
+				HRESULT WriteString([in] HSTRING value);
+				HRESULT WriteByteArray([in] UINT32 __valueSize, [in][size_is(__valueSize)] BYTE* value);
+				HRESULT WriteDouble([in] double value);
 			}
 
-			[marshaling_behavior(agile)]
-			[threading(both)]
+			/*[marshaling_behavior(agile)]
+			[threading(both)]*/
 			[version(API_VERSION)]
 			runtimeclass TLBinaryWriter
 			{
 				[default] interface ITLBinaryWriter;
-			}
-
-
-			[version(API_VERSION)]
-			enum DatacenterEndpointType
-			{
-				Ipv4 = 0,
-				Ipv6 = 1,
-				Ipv4Download = 2,
-				Ipv6Download = 3
-			};
-
-			[exclusiveto(Datacenter)]
-			[uuid(ACBC9624-7B96-417D-A9F9-A7F93C195C86)]
-			[version(API_VERSION)]
-			interface IDatacenter : IInspectable
-			{
-				[propget] HRESULT Id([out][retval] UINT32* value);
-				HRESULT GetCurrentAddress([in] DatacenterEndpointType endpointType,[out][retval] HSTRING* value);
-				HRESULT GetCurrentPort([in] DatacenterEndpointType endpointType,[out][retval] UINT32* value);
-				HRESULT GetDownloadConnection([in] UINT32 index,[in] boolean create,[out][retval] Connection** value);
-				HRESULT GetUploadConnection([in] UINT32 index,[in] boolean create,[out][retval] Connection** value);
-				HRESULT GetGenericConnection([in] boolean create,[out][retval] Connection** value);
-				HRESULT GetPushConnection([in] boolean create,[out][retval] Connection** value);
-			}
-
-			[marshaling_behavior(agile)]
-			[threading(both)]
-			[version(API_VERSION)]
-			runtimeclass Datacenter
-			{
-				[default] interface IDatacenter;
 			}
 
 
@@ -104,6 +87,29 @@ namespace Telegram
 				Upload = 4,
 				Push = 8
 			};
+
+			[exclusiveto(Datacenter)]
+			[uuid(ACBC9624-7B96-417D-A9F9-A7F93C195C86)]
+			[version(API_VERSION)]
+			interface IDatacenter : IInspectable
+			{
+				[propget] HRESULT Id([out][retval] UINT32* value);
+				HRESULT GetCurrentAddress([in] ConnectionType connectionType, [in] boolean ipv6, [out][retval] HSTRING* value);
+				HRESULT GetCurrentPort([in] ConnectionType connectionType, [in] boolean ipv6, [out][retval] UINT32* value);
+				HRESULT GetDownloadConnection([in] UINT32 index,[in] boolean create, [out][retval] Connection** value);
+				HRESULT GetUploadConnection([in] UINT32 index, [in] boolean create, [out][retval] Connection** value);
+				HRESULT GetGenericConnection([in] boolean create, [out][retval] Connection** value);
+				HRESULT GetPushConnection([in] boolean create, [out][retval] Connection** value);
+			}
+
+			[marshaling_behavior(agile)]
+			[threading(both)]
+			[version(API_VERSION)]
+			runtimeclass Datacenter
+			{
+				[default] interface IDatacenter;
+			}
+
 
 			[version(API_VERSION)]
 			enum ConnectionNeworkType
@@ -118,8 +124,10 @@ namespace Telegram
 			[version(API_VERSION)]
 			interface IConnection : IInspectable
 			{
+				[propget] HRESULT Token([out][retval] UINT32* value);
 				[propget] HRESULT Datacenter([out][retval] Datacenter** value);
 				[propget] HRESULT Type([out][retval] ConnectionType* value);
+				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
 			}
 
 			[marshaling_behavior(agile)]
@@ -134,7 +142,6 @@ namespace Telegram
 			[version(API_VERSION)]
 			enum ConnectionState
 			{
-				NotInitialized = 0,
 				Connecting = 1,
 				WaitingForNetwork = 2,
 				Connected = 3
@@ -154,8 +161,10 @@ namespace Telegram
 			interface IConnectionManager : IInspectable
 			{
 				[propget] HRESULT ConnectionState([out][retval] ConnectionState* value);
+				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
 				[propget] HRESULT IsIpv6Enabled([out][retval] boolean* value);
-				HRESULT SendRequest([in] ITLObject* object, [in] UINT32 datacenterId, [in] ConnectionType connetionType, [in] boolean immediate, [out] UINT32* requestToken);
+				HRESULT SendRequest([in] ITLObject* object,[in] UINT32 datacenterId, [in] ConnectionType connetionType, [in] boolean immediate, [out] INT32* requestToken);
+				HRESULT CancelRequest(INT32 requestToken, boolean notifyServer);
 			}
 
 			[static(IConnectionManagerStatics, API_VERSION)]

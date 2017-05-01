@@ -35,7 +35,7 @@ HRESULT Datacenter::get_Id(UINT32* value)
 	return S_OK;
 }
 
-HRESULT Datacenter::GetCurrentAddress(DatacenterEndpointType endpointType, HSTRING* value)
+HRESULT Datacenter::GetCurrentAddress(ConnectionType connectionType, boolean ipv6, HSTRING* value)
 {
 	if (value == nullptr)
 	{
@@ -44,14 +44,13 @@ HRESULT Datacenter::GetCurrentAddress(DatacenterEndpointType endpointType, HSTRI
 
 	HRESULT result;
 	DatacenterEndpoint* endpoint;
-	auto lock = m_criticalSection.Lock();
 
-	ReturnIfFailed(result, GetCurrentEndpoint(endpointType, &endpoint));
+	ReturnIfFailed(result, GetCurrentEndpoint(connectionType, ipv6, &endpoint));
 
 	return WindowsCreateString(endpoint->Address, value);
 }
 
-HRESULT Datacenter::GetCurrentPort(DatacenterEndpointType endpointType, UINT32* value)
+HRESULT Datacenter::GetCurrentPort(ConnectionType connectionType, boolean ipv6, UINT32* value)
 {
 	if (value == nullptr)
 	{
@@ -60,9 +59,8 @@ HRESULT Datacenter::GetCurrentPort(DatacenterEndpointType endpointType, UINT32* 
 
 	HRESULT result;
 	DatacenterEndpoint* endpoint;
-	auto lock = m_criticalSection.Lock();
 
-	ReturnIfFailed(result, GetCurrentEndpoint(endpointType, &endpoint));
+	ReturnIfFailed(result, GetCurrentEndpoint(connectionType, ipv6, &endpoint));
 
 	*value = endpoint->Port;
 	return S_OK;
@@ -124,7 +122,50 @@ HRESULT Datacenter::GetPushConnection(boolean create, IConnection** value)
 	return S_OK;
 }
 
-HRESULT Datacenter::GetCurrentEndpoint(DatacenterEndpointType endpointType, DatacenterEndpoint** endpoint)
+HRESULT Datacenter::SwitchTo443Port()
+{
+	auto lock = m_criticalSection.Lock();
+
+	for (size_t i = 0; i < m_ipv4Endpoints.size(); i++)
+	{
+		if (m_ipv4Endpoints[i].Port == 443)
+		{
+			m_currentIpv4EndpointIndex = i;
+			break;
+		}
+	}
+
+	for (size_t i = 0; i < m_ipv4DownloadEndpoints.size(); i++)
+	{
+		if (m_ipv4DownloadEndpoints[i].Port == 443)
+		{
+			m_currentIpv4DownloadEndpointIndex = i;
+			break;
+		}
+	}
+
+	for (size_t i = 0; i < m_ipv6Endpoints.size(); i++)
+	{
+		if (m_ipv6Endpoints[i].Port == 443)
+		{
+			m_currentIpv6EndpointIndex = i;
+			break;
+		}
+	}
+
+	for (size_t i = 0; i < m_ipv6DownloadEndpoints.size(); i++)
+	{
+		if (m_ipv6DownloadEndpoints[i].Port == 443)
+		{
+			m_currentIpv6DownloadEndpointIndex = i;
+			break;
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, DatacenterEndpoint** endpoint)
 {
 	if (endpoint == nullptr)
 	{
@@ -133,24 +174,35 @@ HRESULT Datacenter::GetCurrentEndpoint(DatacenterEndpointType endpointType, Data
 
 	size_t currentEndpointIndex;
 	std::vector<DatacenterEndpoint>* endpoints;
+	auto lock = m_criticalSection.Lock();
 
-	switch (endpointType)
+	switch (connectionType)
 	{
-	case DatacenterEndpointType::Ipv4:
-		currentEndpointIndex = m_currentIpv4EndpointIndex;
-		endpoints = &m_ipv4Endpoints;
+	case ConnectionType::Generic:
+	case ConnectionType::Upload:
+	case ConnectionType::Push:
+		if (ipv6)
+		{
+			currentEndpointIndex = m_currentIpv6EndpointIndex;
+			endpoints = &m_ipv6Endpoints;
+		}
+		else
+		{
+			currentEndpointIndex = m_currentIpv4EndpointIndex;
+			endpoints = &m_ipv4Endpoints;
+		}
 		break;
-	case DatacenterEndpointType::Ipv6:
-		currentEndpointIndex = m_currentIpv6EndpointIndex;
-		endpoints = &m_ipv6Endpoints;
-		break;
-	case DatacenterEndpointType::Ipv4Download:
-		currentEndpointIndex = m_currentIpv4DownloadEndpointIndex;
-		endpoints = &m_ipv4DownloadEndpoints;
-		break;
-	case DatacenterEndpointType::Ipv6Download:
-		currentEndpointIndex = m_currentIpv6DownloadEndpointIndex;
-		endpoints = &m_ipv6DownloadEndpoints;
+	case ConnectionType::Download:
+		if (ipv6)
+		{
+			currentEndpointIndex = m_currentIpv6DownloadEndpointIndex;
+			endpoints = &m_ipv6DownloadEndpoints;
+		}
+		else
+		{
+			currentEndpointIndex = m_currentIpv4DownloadEndpointIndex;
+			endpoints = &m_ipv4DownloadEndpoints;
+		}
 		break;
 	default:
 		return E_INVALIDARG;

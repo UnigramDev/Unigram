@@ -288,6 +288,9 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="pch.h" />
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="Thread.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="TLBinaryReader.h" />
+    <ClInclude Include="TLBinaryWriter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
@@ -303,6 +306,9 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ConnectionSocket.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="TLBinaryReader.cpp" />
+    <ClCompile Include="TLBinaryWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

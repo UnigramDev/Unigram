@@ -12,6 +12,9 @@
     <ClCompile Include="ConnectionSession.cpp" />
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="ConnectionManager.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="TLBinaryReader.cpp" />
+    <ClCompile Include="TLBinaryWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -27,6 +30,9 @@
     <ClInclude Include="ConnectionSession.h" />
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="ConnectionManager.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="TLBinaryReader.h" />
+    <ClInclude Include="TLBinaryWriter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

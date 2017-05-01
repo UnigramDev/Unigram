@@ -12,7 +12,8 @@ ActivatableStaticOnlyFactory(ConnectionManagerStatics);
 
 
 ConnectionManager::ConnectionManager() :
-	m_connectionState(ConnectionState::NotInitialized),
+	m_connectionState(ConnectionState::Connecting),
+	m_currentNetworkType(ConnectionNeworkType::WiFi),
 	m_working(TRUE),
 	m_isIpv6Enabled(false)
 {
@@ -57,6 +58,19 @@ HRESULT ConnectionManager::get_ConnectionState(ConnectionState* value)
 	return S_OK;
 }
 
+HRESULT ConnectionManager::get_CurrentNetworkType(ConnectionNeworkType* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto lock = m_criticalSection.Lock();
+
+	*value = m_currentNetworkType;
+	return S_OK;
+}
+
 HRESULT ConnectionManager::get_IsIpv6Enabled(boolean* value)
 {
 	if (value == nullptr)
@@ -70,7 +84,7 @@ HRESULT ConnectionManager::get_IsIpv6Enabled(boolean* value)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::SendRequest(ITLObject* object, UINT32 datacenterId, ConnectionType connetionType, boolean immediate, UINT32* requestToken)
+HRESULT ConnectionManager::SendRequest(ITLObject* object, UINT32 datacenterId, ConnectionType connetionType, boolean immediate, INT32* requestToken)
 {
 	if (object == nullptr || requestToken == nullptr)
 	{
@@ -82,13 +96,19 @@ HRESULT ConnectionManager::SendRequest(ITLObject* object, UINT32 datacenterId, C
 	return S_OK;
 }
 
+HRESULT ConnectionManager::CancelRequest(INT32 requestToken, boolean notifyServer)
+{
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+
+	return S_OK;
+}
+
 HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 {
 	HRESULT result;
 	auto lock = m_criticalSection.Lock();
 
-	ComPtr<IDatacenter> datacenter;
-	ReturnIfFailed(result, connection->get_Datacenter(&datacenter));
+	auto datacenter = connection->GetDatacenter();
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
 
@@ -100,8 +120,7 @@ HRESULT ConnectionManager::OnConnectionDataReceived(Connection* connection)
 	HRESULT result;
 	auto lock = m_criticalSection.Lock();
 
-	ComPtr<IDatacenter> datacenter;
-	ReturnIfFailed(result, connection->get_Datacenter(&datacenter));
+	auto datacenter = connection->GetDatacenter();
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
 
@@ -113,8 +132,7 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 	HRESULT result;
 	auto lock = m_criticalSection.Lock();
 
-	ComPtr<IDatacenter> datacenter;
-	ReturnIfFailed(result, connection->get_Datacenter(&datacenter));
+	auto datacenter = connection->GetDatacenter();
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
 
@@ -146,21 +164,27 @@ ConnectionManagerStatics::~ConnectionManagerStatics()
 
 HRESULT ConnectionManagerStatics::get_Instance(IConnectionManager** value)
 {
-	return ConnectionManagerStatics::GetInstance(value);
-}
-
-HRESULT ConnectionManagerStatics::GetInstance(IConnectionManager** value)
-{
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
+	HRESULT result;
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManagerStatics::GetInstance(connectionManager));
+
+	*value = connectionManager.Detach();
+	return S_OK;
+}
+
+HRESULT ConnectionManagerStatics::GetInstance(ComPtr<ConnectionManager>& value)
+{
 	if (s_instance == nullptr)
 	{
 		HRESULT result;
 		ReturnIfFailed(result, MakeAndInitialize<ConnectionManager>(&s_instance));
 	}
-
-	return s_instance.CopyTo(value);
+	
+	value = s_instance;
+	return S_OK;
 }
