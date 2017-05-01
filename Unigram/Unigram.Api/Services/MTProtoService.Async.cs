@@ -13,6 +13,126 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLPhonePhoneCall>> AcceptCallAsync(TLInputPhoneCall peer, byte[] gb)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLPhonePhoneCall>>();
+            AcceptCallAsync(peer, gb, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPhonePhoneCall>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPhonePhoneCall>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLPhonePhoneCall>> ConfirmCallAsync(TLInputPhoneCall peer, byte[] ga, long fingerprint)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLPhonePhoneCall>>();
+            ConfirmCallAsync(peer, ga, fingerprint, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPhonePhoneCall>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPhonePhoneCall>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLUpdatesBase>> DiscardCallAsync(TLInputPhoneCall peer, int duration, TLPhoneCallDiscardReasonBase reason, long connectionId)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
+            DiscardCallAsync(peer, duration, reason, connectionId, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLDataJSON>> GetCallConfigAsync()
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLDataJSON>>();
+            GetCallConfigAsync((callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLDataJSON>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLDataJSON>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<bool>> ReceivedCallAsync(TLInputPhoneCall peer)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
+            ReceivedCallAsync(peer, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLPhonePhoneCall>> RequestCallAsync(TLInputUserBase userId, int randomId, byte[] gaHash)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLPhonePhoneCall>>();
+            RequestCallAsync(userId, randomId, gaHash, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPhonePhoneCall>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLPhonePhoneCall>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<bool>> SaveCallDebugAsync(TLInputPhoneCall peer, TLDataJSON debug)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
+            SaveCallDebugAsync(peer, debug, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLUpdatesBase>> SetCallRatingAsync(TLInputPhoneCall peer, int rating, string comment)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
+            SetCallRatingAsync(peer, rating, comment, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+
+
+
+
+
+
+
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLVector<TLStickerSetCoveredBase>>> GetAttachedStickersAsync(TLInputStickeredMediaBase media)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLStickerSetCoveredBase>>>();

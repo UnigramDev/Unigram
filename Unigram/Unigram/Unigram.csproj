@@ -141,6 +141,7 @@
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
+    <Compile Include="Common\VoIPConnection.cs" />
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
@@ -1081,7 +1082,7 @@
       <Version>4.1.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.3.3</Version>
+      <Version>5.3.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.0</Version>
@@ -1123,6 +1124,10 @@
     <ProjectReference Include="..\Unigram.WebView\Unigram.Webview.csproj">
       <Project>{ac06b3e5-5174-4381-a167-8f912d61f3de}</Project>
       <Name>Unigram.Webview</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnigramHost\UnigramHost.vcxproj">
+      <Project>{0dbcf059-2952-4809-9003-193ca0c6d499}</Project>
+      <Name>UnigramHost</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Unigram.Common;
+using Windows.ApplicationModel;
 using Windows.Networking.PushNotifications;
 
 namespace Unigram.Core.Services
@@ -50,7 +52,10 @@ namespace Unigram.Core.Services
                         await _protoService.UnregisterDeviceAsync(8, oldUri);
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debugger.Break();
+                }
             }
         }
     }

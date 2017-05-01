@@ -2135,10 +2135,7 @@ namespace Telegram.Api.Services.Updates
             var updatePhoneCall = update as TLUpdatePhoneCall;
             if (updatePhoneCall != null)
             {
-                if (notifyNewMessage)
-                {
-                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updatePhoneCall));
-                }
+                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updatePhoneCall));
 
                 return true;
             }

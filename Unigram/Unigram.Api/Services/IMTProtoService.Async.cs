@@ -25,6 +25,15 @@ namespace Telegram.Api.Services
 
         Task<MTProtoResponse<TLVector<TLStickerSetCoveredBase>>> GetAttachedStickersAsync(TLInputStickeredMediaBase media);
 
+        Task<MTProtoResponse<TLPhonePhoneCall>> AcceptCallAsync(TLInputPhoneCall peer, byte[] gb);
+        Task<MTProtoResponse<TLPhonePhoneCall>> ConfirmCallAsync(TLInputPhoneCall peer, byte[] ga, long fingerprint);
+        Task<MTProtoResponse<TLUpdatesBase>> DiscardCallAsync(TLInputPhoneCall peer, int duration, TLPhoneCallDiscardReasonBase reason, long connectionId);
+        Task<MTProtoResponse<TLDataJSON>> GetCallConfigAsync();
+        Task<MTProtoResponse<bool>> ReceivedCallAsync(TLInputPhoneCall peer);
+        Task<MTProtoResponse<TLPhonePhoneCall>> RequestCallAsync(TLInputUserBase userId, int randomId, byte[] gaHash);
+        Task<MTProtoResponse<bool>> SaveCallDebugAsync(TLInputPhoneCall peer, TLDataJSON debug);
+        Task<MTProtoResponse<TLUpdatesBase>> SetCallRatingAsync(TLInputPhoneCall peer, int rating, string comment);
+
         Task<MTProtoResponse<TLMessagesChatsBase>> GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit);
         Task<MTProtoResponse<TLMessagesChatsBase>> GetAdminedPublicChannelsAsync();
         Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber, bool? currentNumber, Action<int> attemptFailed = null);

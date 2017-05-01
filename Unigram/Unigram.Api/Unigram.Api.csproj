@@ -144,6 +144,7 @@
     <Compile Include="Services\IMTProtoService.Async.cs" />
     <Compile Include="Services\MTProtoService.Async.cs" />
     <Compile Include="Services\MTProtoService.Payments.cs" />
+    <Compile Include="Services\MTProtoService.Phone.cs" />
     <Compile Include="Services\Stats\StatsService.cs" />
     <Compile Include="TLExtensions.cs" />
     <Compile Include="Hash\CRC32.cs" />
@@ -1213,7 +1214,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.3.3</Version>
+      <Version>5.3.2</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.2</Version>
