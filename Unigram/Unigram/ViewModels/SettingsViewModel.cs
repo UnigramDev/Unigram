@@ -75,6 +75,18 @@ namespace Unigram.ViewModels
             }
         }
 
+        public bool IsReplaceEmojiEnabled
+        {
+            get
+            {
+                return ApplicationSettings.Current.IsReplaceEmojiEnabled;
+            }
+            set
+            {
+                ApplicationSettings.Current.IsReplaceEmojiEnabled = value;
+            }
+        }
+
         public RelayCommand<StorageFile> EditPhotoCommand => new RelayCommand<StorageFile>(EditPhotoExecute);
         private async void EditPhotoExecute(StorageFile file)
         {

@@ -90,6 +90,18 @@ namespace Unigram.Common
             }
         }
 
+        public bool IsReplaceEmojiEnabled
+        {
+            get
+            {
+                return GetValueOrDefault("IsReplaceEmojiEnabled", true);
+            }
+            set
+            {
+                AddOrUpdateValue("IsReplaceEmojiEnabled", value);
+            }
+        }
+
         private TLAccountTmpPassword _tmpPassword;
         public TLAccountTmpPassword TmpPassword
         {

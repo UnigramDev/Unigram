@@ -439,6 +439,8 @@ namespace Unigram.Controls
         {
             Document.GetText(TextGetOptions.NoHidden, out string text);
 
+            if (!ApplicationSettings.Current.IsReplaceEmojiEnabled) return;
+
             var caretPosition = Document.Selection.StartPosition;
             var result = Emoticon.Pattern.Matches(text);
 
