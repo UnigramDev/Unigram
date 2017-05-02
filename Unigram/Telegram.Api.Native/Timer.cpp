@@ -18,12 +18,6 @@ Timer::~Timer()
 
 HRESULT Timer::RuntimeClassInitialize(TimerCallback callback)
 {
-	/*m_waitableTimer.Attach(CreateWaitableTimer(nullptr, FALSE, nullptr));
-	if (!m_waitableTimer.IsValid())
-	{
-		return GetLastHRESULT();
-	}*/
-
 	m_callback = callback;
 	return S_OK;
 }

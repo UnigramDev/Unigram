@@ -165,6 +165,8 @@ namespace Telegram
 				[propget] HRESULT IsIpv6Enabled([out][retval] boolean* value);
 				HRESULT SendRequest([in] ITLObject* object,[in] UINT32 datacenterId, [in] ConnectionType connetionType, [in] boolean immediate, [out] INT32* requestToken);
 				HRESULT CancelRequest(INT32 requestToken, boolean notifyServer);
+
+				HRESULT BoomBaby();
 			}
 
 			[static(IConnectionManagerStatics, API_VERSION)]

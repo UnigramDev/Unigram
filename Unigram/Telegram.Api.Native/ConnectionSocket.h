@@ -36,12 +36,12 @@ namespace Telegram
 				HRESULT CloseSocket();
 				HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
 
-				virtual HRESULT OnSocketOpened() = 0;
+				virtual HRESULT OnSocketCreated() = 0;
 				virtual HRESULT OnDataReceived() = 0;
-				virtual HRESULT OnSocketClosed() = 0;
+				virtual HRESULT OnSocketClosed(int wsaError) = 0;
 
 			private:
-				HRESULT CloseSocket(boolean error);
+				HRESULT CloseSocket(int wsaError);
 
 				SOCKET m_socket;
 				WSAEvent m_socketEvent;

@@ -4,7 +4,6 @@
 #include "Datacenter.h"
 #include "Connection.h"
 #include "Helpers\COMHelper.h"
-#include "Helpers\DebugHelper.h"
 
 using namespace Telegram::Api::Native;
 
@@ -49,7 +48,7 @@ HRESULT ConnectionManager::RuntimeClassInitialize(DWORD minimumThreadCount, DWOR
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
 	{
-		return GetWSALastHRESULT();
+		return WSAGetLastHRESULT();
 	}
 
 	InitializeThreadpoolEnvironment(&m_threadpoolEnvironment);
@@ -75,48 +74,6 @@ HRESULT ConnectionManager::RuntimeClassInitialize(DWORD minimumThreadCount, DWOR
 	SetThreadpoolCallbackPool(&m_threadpoolEnvironment, m_threadpool);
 	SetThreadpoolCallbackCleanupGroup(&m_threadpoolEnvironment, m_threadpoolCleanupGroup, nullptr);
 
-	/*ComPtr<Timer> timer;
-	ComPtr<IEventObject> eventObject;
-
-	Event evnt(CreateEvent(nullptr, FALSE, FALSE, nullptr));
-
-	DWORD count = 0;
-	ULONGLONG lastTimestamp = GetTickCount64();
-
-	HRESULT result = MakeAndInitialize<Timer>(&timer, [&]
-	{
-		ULONGLONG newLastTimestamp = GetTickCount64();
-		OutputDebugStringFormat(L"Count: %d, timestamp: %I64u\n", count, newLastTimestamp - lastTimestamp);
-		lastTimestamp = newLastTimestamp;
-
-		if (++count == 10)
-		{
-			SetEvent(evnt.Get());
-
-			return S_OK;
-		}
-
-		return S_OK;
-	});
-
-	result = timer.CopyTo(IID_PPV_ARGS(&eventObject));
-	result = timer->AttachToThreadoool(&m_threadpoolEnvironment);
-
-	result = timer->SetTimeout(1000, true);
-	result = timer->Start();
-
-	WaitForSingleObject(evnt.Get(), INFINITE);
-
-	count = 0;
-	lastTimestamp = GetTickCount64();
-
-	result = timer->Stop();
-	result = timer->SetTimeout(100, true);
-	result = timer->Start();
-
-	WaitForSingleObject(evnt.Get(), INFINITE);
-
-	result = eventObject->DetachFromThreadpool();*/
 	return S_OK;
 }
 
@@ -210,6 +167,62 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 	auto datacenter = connection->GetDatacenter();
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+
+	return S_OK;
+}
+
+
+HRESULT ConnectionManager::BoomBaby()
+{
+	HRESULT result;
+	Connection* connection;
+	ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, nullptr, ConnectionType::Generic));
+	ReturnIfFailed(result, connection->AttachToThreadoool(&m_threadpoolEnvironment));
+
+	ReturnIfFailed(result, connection->Connect());
+
+	/*ComPtr<Timer> timer;
+	ComPtr<IEventObject> eventObject;
+
+	Event evnt(CreateEvent(nullptr, FALSE, FALSE, nullptr));
+
+	DWORD count = 0;
+	ULONGLONG lastTimestamp = GetTickCount64();
+
+	HRESULT result = MakeAndInitialize<Timer>(&timer, [&]
+	{
+	ULONGLONG newLastTimestamp = GetTickCount64();
+	OutputDebugStringFormat(L"Count: %d, timestamp: %I64u\n", count, newLastTimestamp - lastTimestamp);
+	lastTimestamp = newLastTimestamp;
+
+	if (++count == 10)
+	{
+	SetEvent(evnt.Get());
+
+	return S_OK;
+	}
+
+	return S_OK;
+	});
+
+	result = timer.CopyTo(IID_PPV_ARGS(&eventObject));
+	result = timer->AttachToThreadoool(&m_threadpoolEnvironment);
+
+	result = timer->SetTimeout(1000, true);
+	result = timer->Start();
+
+	WaitForSingleObject(evnt.Get(), INFINITE);
+
+	count = 0;
+	lastTimestamp = GetTickCount64();
+
+	result = timer->Stop();
+	result = timer->SetTimeout(100, true);
+	result = timer->Start();
+
+	WaitForSingleObject(evnt.Get(), INFINITE);
+
+	result = eventObject->DetachFromThreadpool();*/
 
 	return S_OK;
 }

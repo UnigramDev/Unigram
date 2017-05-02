@@ -35,6 +35,8 @@ namespace Telegram
 				STDMETHODIMP SendRequest(_In_ ITLObject* object, UINT32 datacenterId, ConnectionType connetionType, boolean immediate, _Out_ INT32* requestToken);
 				STDMETHODIMP CancelRequest(INT32 requestToken, boolean notifyServer);
 
+				STDMETHODIMP BoomBaby();
+
 			private:
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionDataReceived(_In_ Connection* connection);

@@ -83,24 +83,29 @@ HRESULT Connection::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 {
 	auto lock = m_criticalSection.Lock();
 
-	return ConnectionSocket::OnEvent(callbackInstance);
+	HRESULT result;
+	if (SUCCEEDED(result = ConnectionSocket::OnEvent(callbackInstance)))
+	{
+		SetThreadpoolWait(GetThreadpoolObjectHandle(), GetSocketEvent(), nullptr);
+	}
+
+	return result;
 }
 
 HRESULT Connection::Connect()
 {
 	HRESULT result;
-	auto lock = m_criticalSection.Lock();
+	//auto lock = m_criticalSection.Lock();
 
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManagerStatics::GetInstance(connectionManager));
 
-
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement connection start");
+	//I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement connection start");
 
 	boolean ipv6;
 	ReturnIfFailed(result, connectionManager->get_IsIpv6Enabled(&ipv6));
 
-	Datacenter::DatacenterEndpoint* endpoint;
+	/*Datacenter::DatacenterEndpoint* endpoint;
 	if (FAILED(result = m_datacenter->GetCurrentEndpoint(m_type, ipv6, &endpoint)) && ipv6)
 	{
 		ipv6 = false;
@@ -113,8 +118,31 @@ HRESULT Connection::Connect()
 
 	ReturnIfFailed(result, m_reconnectionTimer->Stop());
 
-	ReturnIfFailed(result, OpenSocket(endpoint->Address, endpoint->Port, ipv6));
+	ReturnIfFailed(result, OpenSocket(endpoint->Address, endpoint->Port, ipv6));*/
+
+	ReturnIfFailed(result, m_reconnectionTimer->Stop());
+
+	{
+		auto lock = m_criticalSection.Lock();
+		ReturnIfFailed(result, OpenSocket(L"172.217.23.68", 80, false));
+	}
+
+
 	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&m_currentNetworkType));
+
+	Sleep(10000);
+
+	{
+		auto lock = m_criticalSection.Lock();
+		ReturnIfFailed(result, CloseSocket());
+	}
+
+	Sleep(10000);
+
+	{
+		auto lock = m_criticalSection.Lock();
+		ReturnIfFailed(result, OpenSocket(L"172.217.23.68", 80, false));
+	}
 
 	return S_OK;
 }
@@ -139,10 +167,15 @@ HRESULT Connection::Suspend()
 	return S_OK;
 }
 
-HRESULT Connection::OnSocketOpened()
+HRESULT Connection::OnSocketCreated()
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connection opened handling");
+	auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
+	if (threadpoolObjectHandle == nullptr)
+	{
+		return E_NOT_VALID_STATE;
+	}
 
+	SetThreadpoolWait(threadpoolObjectHandle, GetSocketEvent(), nullptr);
 	return S_OK;
 }
 
@@ -153,9 +186,16 @@ HRESULT Connection::OnDataReceived()
 	return S_OK;
 }
 
-HRESULT Connection::OnSocketClosed()
+HRESULT Connection::OnSocketClosed(int wsaError)
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connection closed handling");
 
+	auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
+	if (threadpoolObjectHandle == nullptr)
+	{
+		return E_NOT_VALID_STATE;
+	}
+
+	SetThreadpoolWait(threadpoolObjectHandle, nullptr, nullptr);
 	return S_OK;
 }

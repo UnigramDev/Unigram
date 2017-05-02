@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
  */
-/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-648b90a9:
+/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-c0ef77b8:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -1590,6 +1590,8 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnectionManager;
                         INT32 requestToken,
                         boolean notifyServer) = 0;
                     
+                    virtual HRESULT STDMETHODCALLTYPE BoomBaby( void) = 0;
+                    
                 };
 
                 extern const __declspec(selectany) IID & IID_IConnectionManager = __uuidof(IConnectionManager);
@@ -1656,6 +1658,9 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnectionManager;
             INT32 requestToken,
             boolean notifyServer);
         
+        HRESULT ( STDMETHODCALLTYPE *BoomBaby )( 
+            __x_Telegram_CApi_CNative_CIConnectionManager * This);
+        
         END_INTERFACE
     } __x_Telegram_CApi_CNative_CIConnectionManagerVtbl;
 
@@ -1703,6 +1708,9 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIConnectionManager;
 
 #define __x_Telegram_CApi_CNative_CIConnectionManager_CancelRequest(This,requestToken,notifyServer)	\
     ( (This)->lpVtbl -> CancelRequest(This,requestToken,notifyServer) ) 
+
+#define __x_Telegram_CApi_CNative_CIConnectionManager_BoomBaby(This)	\
+    ( (This)->lpVtbl -> BoomBaby(This) ) 
 
 #endif /* COBJMACROS */
 

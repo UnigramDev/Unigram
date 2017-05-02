@@ -26,7 +26,7 @@ namespace Telegram.Api.Native.Test
         {
             this.InitializeComponent();
 
-            var xxx = ConnectionManager.Instance;
+            ConnectionManager.Instance.BoomBaby();
         }
     }
 }

@@ -20,10 +20,11 @@ HRESULT ConnectionSocket::OpenSocket(std::wstring address, UINT16 port, boolean 
 {
 	if (m_socket != INVALID_SOCKET)
 	{
-		return E_INVALIDARG;
+		return E_NOT_VALID_STATE;
 	}
 
 	HRESULT result;
+	int wsaLastError;
 	sockaddr_storage socketAddress = {};
 	if (ipv6)
 	{
@@ -33,99 +34,154 @@ HRESULT ConnectionSocket::OpenSocket(std::wstring address, UINT16 port, boolean 
 
 		if (InetPton(AF_INET6, address.c_str(), &socketAddressIpv6->sin6_addr) != 1)
 		{
-			result = GetWSALastHRESULT();
-			CloseSocket(true);
+			wsaLastError = WSAGetLastError();
+			CloseSocket(wsaLastError);
 
-			return result;
+			return HRESULT_FROM_WIN32(wsaLastError);
 		}
 	}
 	else
 	{
 		auto socketAddressIpv4 = reinterpret_cast<sockaddr_in*>(&socketAddress);
-		socketAddressIpv4->sin_family = AF_INET6;
+		socketAddressIpv4->sin_family = AF_INET;
 		socketAddressIpv4->sin_port = htons(port);
 
-		if (InetPton(AF_INET6, address.c_str(), &socketAddressIpv4->sin_addr) != 1)
+		if (InetPton(AF_INET, address.c_str(), &socketAddressIpv4->sin_addr) != 1)
 		{
-			result = GetWSALastHRESULT();
-			CloseSocket(true);
+			wsaLastError = WSAGetLastError();
+			CloseSocket(wsaLastError);
 
-			return result;
+			return HRESULT_FROM_WIN32(wsaLastError);
 		}
-	}
-
-	m_socketEvent.Attach(WSACreateEvent());
-	if (!m_socketEvent.IsValid())
-	{
-		result = GetWSALastHRESULT();
-		CloseSocket(true);
-
-		return result;
 	}
 
 	if ((m_socket = socket(socketAddress.ss_family, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
-		result = GetWSALastHRESULT();
-		CloseSocket(true);
+		wsaLastError = WSAGetLastError();
+		CloseSocket(wsaLastError);
 
-		return result;
+		return HRESULT_FROM_WIN32(wsaLastError);
 	}
 
 	int noDelay = 1;
 	setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&noDelay), sizeof(int));
 
 	u_long nonBlock = 1;
-	if (ioctlsocket(m_socket, FIONBIO, &nonBlock) != NO_ERROR)
+	if (ioctlsocket(m_socket, FIONBIO, &nonBlock) == SOCKET_ERROR)
 	{
-		result = GetWSALastHRESULT();
-		CloseSocket(true);
+		wsaLastError = WSAGetLastError();
+		CloseSocket(wsaLastError);
+
+		return HRESULT_FROM_WIN32(wsaLastError);
+	}
+
+	m_socketEvent.Attach(WSACreateEvent());
+	if (!m_socketEvent.IsValid())
+	{
+		wsaLastError = WSAGetLastError();
+		CloseSocket(wsaLastError);
+
+		return HRESULT_FROM_WIN32(wsaLastError);
+	}
+
+	if (FAILED(result = OnSocketCreated()))
+	{
+		CloseSocket(WSA_OPERATION_ABORTED);
 
 		return result;
 	}
 
-	if (connect(m_socket, reinterpret_cast<sockaddr*>(&socketAddress), ipv6 ? sizeof(sockaddr_in6) : sizeof(sockaddr_in)) != NO_ERROR)
+	if (WSAEventSelect(m_socket, m_socketEvent.Get(), FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE) == SOCKET_ERROR)
 	{
-		result = GetWSALastHRESULT();
-		CloseSocket(true);
+		wsaLastError = WSAGetLastError();
+		CloseSocket(wsaLastError);
 
-		return result;
+		return HRESULT_FROM_WIN32(wsaLastError);
 	}
 
-	return OnSocketOpened();
+	if (connect(m_socket, reinterpret_cast<sockaddr*>(&socketAddress), ipv6 ? sizeof(sockaddr_in6) : sizeof(sockaddr_in)) == SOCKET_ERROR)
+	{
+		auto wsaLastError = WSAGetLastError();
+		if (wsaLastError != WSAEWOULDBLOCK)
+		{
+			wsaLastError = WSAGetLastError();
+			CloseSocket(wsaLastError);
+
+			return HRESULT_FROM_WIN32(wsaLastError);
+		}
+	}
+
+	return S_OK;
 }
 
 HRESULT ConnectionSocket::CloseSocket()
 {
-	return CloseSocket(false);
+	return CloseSocket(NO_ERROR);
 }
 
-HRESULT ConnectionSocket::CloseSocket(boolean error)
+HRESULT ConnectionSocket::CloseSocket(int wsaError)
 {
 	if (m_socket == INVALID_SOCKET)
 	{
-		return E_INVALIDARG;
+		return E_NOT_VALID_STATE;
 	}
 
-	if (closesocket(m_socket) != NO_ERROR)
+	if (closesocket(m_socket) == SOCKET_ERROR)
 	{
-		return GetWSALastHRESULT();
+		return WSAGetLastHRESULT();
 	}
 
 	m_socket = INVALID_SOCKET;
-	m_socketEvent.Close();
 
-	return error ? S_OK : OnSocketClosed();
+	return OnSocketClosed(wsaError);
 }
 
 HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 {
+	int wsaLastError;
 	WSANETWORKEVENTS networkEvents;
-	if (WSAEnumNetworkEvents(m_socket, nullptr, &networkEvents) != NO_ERROR)
+	if (WSAEnumNetworkEvents(m_socket, m_socketEvent.Get(), &networkEvents) == SOCKET_ERROR)
 	{
-		return GetWSALastHRESULT();
+		wsaLastError = WSAGetLastError();
+
+		return HRESULT_FROM_WIN32(wsaLastError);
 	}
 
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket event handling");
+	if (networkEvents.lNetworkEvents & FD_CLOSE)
+	{
+		if ((wsaLastError = networkEvents.iErrorCode[FD_CLOSE_BIT]) != NO_ERROR)
+		{
+		}
+
+		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket close event");
+	}
+
+	if (networkEvents.lNetworkEvents & FD_CONNECT)
+	{
+		if ((wsaLastError = networkEvents.iErrorCode[FD_CONNECT_BIT]) != NO_ERROR)
+		{
+		}
+
+		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connection event");
+	}
+
+	if (networkEvents.lNetworkEvents & FD_WRITE)
+	{
+		if ((wsaLastError = networkEvents.iErrorCode[FD_WRITE_BIT]) != NO_ERROR)
+		{
+		}
+
+		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket write event");
+	}
+
+	if (networkEvents.lNetworkEvents & FD_READ)
+	{
+		if ((wsaLastError = networkEvents.iErrorCode[FD_READ_BIT]) != NO_ERROR)
+		{
+		}
+
+		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket read event");
+	}
 
 	return S_OK;
 }
