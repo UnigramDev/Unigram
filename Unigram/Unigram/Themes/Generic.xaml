@@ -3,6 +3,24 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls">
 
+    <Style TargetType="local:RatingBar">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="2,8"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RatingBar">
+                    <StackPanel Background="{TemplateBinding Background}" Orientation="Horizontal">
+                        <FontIcon x:Name="Star0" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
+                        <FontIcon x:Name="Star1" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
+                        <FontIcon x:Name="Star2" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
+                        <FontIcon x:Name="Star3" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
+                        <FontIcon x:Name="Star4" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <Style TargetType="local:ImageCropper">
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
@@ -97,7 +115,7 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{TemplateBinding Title}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                        <TextBlock Text="{TemplateBinding Text}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
                         <local:GlyphButton Glyph="{TemplateBinding Glyph}" Command="{TemplateBinding Command}" CommandParameter="{TemplateBinding CommandParameter}" Visibility="{TemplateBinding CommandVisibility}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
                         <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
@@ -114,7 +132,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:PageHeader">
                     <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
-                        <TextBlock Text="{TemplateBinding Title}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                        <TextBlock Text="{TemplateBinding Text}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
                         <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
                         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
                     </Grid>
