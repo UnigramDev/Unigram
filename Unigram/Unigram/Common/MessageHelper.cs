@@ -19,7 +19,6 @@ using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Views;
 using Unigram.ViewModels;
-using Unigram.Views;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Email;
