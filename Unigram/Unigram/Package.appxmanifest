@@ -5,7 +5,7 @@
          xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
          xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
          xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
-         IgnorableNamespaces="uap mp rescap desktop">
+         IgnorableNamespaces="uap uap4 mp rescap desktop">
   <Identity Name="38833FF26BA1D.Unigram" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="1.1.0.0" />
   <mp:PhoneIdentity PhoneProductId="505fe6a3-c157-4260-b704-f44200dc2b8d" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>

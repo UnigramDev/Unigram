@@ -40,6 +40,7 @@ namespace Unigram.Tasks
         {
             Current = null;
             Connection = null;
+            VoIPCallTask.Mediator.Initialize(null as AppServiceConnection);
             _deferral?.Complete();
         }
     }

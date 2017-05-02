@@ -46,6 +46,8 @@ namespace Unigram.Tasks
         {
             _deferral = taskInstance.GetDeferral();
 
+            TLPushUtils.AddToast("VoIPCallTask started", "VoIPCallTask started", "default", "started", null, "voip1", "voip");
+
             Mediator.Initialize(_deferral);
             taskInstance.Canceled += OnCanceled;
 
@@ -80,8 +82,16 @@ namespace Unigram.Tasks
 
         public async void Initialize(AppServiceConnection connection)
         {
-            _connection = connection;
-            _connection.RequestReceived += OnRequestReceived;
+            if (_connection != null)
+            {
+                _connection = connection;
+                _connection.RequestReceived += OnRequestReceived;
+            }
+            else
+            {
+                _connection.RequestReceived -= OnRequestReceived;
+                _connection = null;
+            }
 
             if (_protoService != null)
             {
@@ -89,7 +99,7 @@ namespace Unigram.Tasks
                 _transportService.Close();
             }
 
-            if (_phoneCall != null)
+            if (_phoneCall != null && _connection != null)
             {
                 await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.callInfo" }, { "request", TLSerializationService.Current.Serialize(_phoneCall) } });
             }
@@ -99,6 +109,8 @@ namespace Unigram.Tasks
         {
             if (_connection == null & _protoService == null)
             {
+                TLPushUtils.AddToast("Mediator initialized", "Creating proto service", "default", "started", null, "voip3", "voip");
+
                 var deviceInfoService = new DeviceInfoService();
                 var eventAggregator = new TelegramEventAggregator();
                 var cacheService = new InMemoryCacheService(eventAggregator);
@@ -108,12 +120,21 @@ namespace Unigram.Tasks
                 var statsService = new StatsService();
                 var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService, statsService);
 
+                protoService.Initialized += (s, args) =>
+                {
+                    TLPushUtils.AddToast("ProtoService initialized", "waiting for updates", "default", "started", null, "voip3", "voip");
+                };
+
                 eventAggregator.Subscribe(this);
                 protoService.Initialize();
                 updatesService.LoadStateAndUpdate(() => { });
 
                 _protoService = protoService;
                 _transportService = transportService;
+            }
+            else
+            {
+                TLPushUtils.AddToast("Mediator initialized", "_connection is null: " + (_connection == null), "default", "started", null, "voip3", "voip");
             }
 
             _deferral = deferral;

@@ -159,7 +159,8 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(PhoneCallPage));
+            //NavigationService.Navigate(typeof(PlaygroundPage2));
+            //return Task.CompletedTask;
 
             if (SettingsHelper.IsAuthorized)
             {
@@ -296,37 +297,45 @@ namespace Unigram
             try
             {
                 // Changes to the titlebar (colour, and such)
-                ApplicationViewTitleBar titlebar = ApplicationView.GetForCurrentView().TitleBar;
                 CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
 
-                // Accent Color
-                var accentBrush = Application.Current.Resources["SystemControlHighlightAccentBrush"] as SolidColorBrush;
-                var titleBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
-                var subtitleBrush = Application.Current.Resources["TelegramBackgroundSubtitleBarBrush"] as SolidColorBrush;
+                var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+                var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+                var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
 
-                // Foreground
-                titlebar.ButtonForegroundColor = Colors.White;
-                titlebar.ButtonHoverForegroundColor = Colors.White;
-                titlebar.ButtonInactiveForegroundColor = Colors.LightGray;
-                titlebar.ButtonPressedForegroundColor = Colors.White;
-                titlebar.ForegroundColor = Colors.White;
-                titlebar.InactiveForegroundColor = Colors.LightGray;
+                titlebar.BackgroundColor = backgroundBrush.Color;
+                titlebar.ForegroundColor = foregroundBrush.Color;
+                titlebar.ButtonBackgroundColor = backgroundBrush.Color;
+                titlebar.ButtonForegroundColor = foregroundBrush.Color;
 
-                // Background
-                titlebar.BackgroundColor = titleBrush.Color;
-                titlebar.ButtonBackgroundColor = titleBrush.Color;
+                //// Accent Color
+                //var accentBrush = Application.Current.Resources["SystemControlHighlightAccentBrush"] as SolidColorBrush;
+                //var titleBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+                //var subtitleBrush = Application.Current.Resources["TelegramBackgroundSubtitleBarBrush"] as SolidColorBrush;
 
-                titlebar.InactiveBackgroundColor = subtitleBrush.Color;
-                titlebar.ButtonInactiveBackgroundColor = subtitleBrush.Color;
+                //// Foreground
+                //titlebar.ButtonForegroundColor = Colors.White;
+                //titlebar.ButtonHoverForegroundColor = Colors.White;
+                //titlebar.ButtonInactiveForegroundColor = Colors.LightGray;
+                //titlebar.ButtonPressedForegroundColor = Colors.White;
+                //titlebar.ForegroundColor = Colors.White;
+                //titlebar.InactiveForegroundColor = Colors.LightGray;
 
-                titlebar.ButtonHoverBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.06f);
-                titlebar.ButtonPressedBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.09f);
+                //// Background
+                //titlebar.BackgroundColor = titleBrush.Color;
+                //titlebar.ButtonBackgroundColor = titleBrush.Color;
 
-                // Branding colours
-                //titlebar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);
-                //titlebar.ButtonBackgroundColor = Color.FromArgb(255, 54, 173, 225);
-                //titlebar.ButtonHoverBackgroundColor = Color.FromArgb(255, 69, 179, 227);
-                //titlebar.ButtonPressedBackgroundColor = Color.FromArgb(255, 84, 185, 229);
+                //titlebar.InactiveBackgroundColor = subtitleBrush.Color;
+                //titlebar.ButtonInactiveBackgroundColor = subtitleBrush.Color;
+
+                //titlebar.ButtonHoverBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.06f);
+                //titlebar.ButtonPressedBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.09f);
+
+                //// Branding colours
+                ////titlebar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);
+                ////titlebar.ButtonBackgroundColor = Color.FromArgb(255, 54, 173, 225);
+                ////titlebar.ButtonHoverBackgroundColor = Color.FromArgb(255, 69, 179, 227);
+                ////titlebar.ButtonPressedBackgroundColor = Color.FromArgb(255, 84, 185, 229);
             }
             catch (Exception ex)
             {
