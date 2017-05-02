@@ -157,6 +157,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content, std::wofstream* log)
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST")) 
 		{
+			UpdateToast(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
@@ -502,6 +503,7 @@ void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^
 	auto coordinator = VoipCallCoordinator::GetDefault();
 	create_task(coordinator->ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask")).then([this, coordinator, caption, message, sound, launch, tag, group, picture, date, loc_key](VoipPhoneCallResourceReservationStatus status)
 	{
+		Sleep(10000);
 		//VoIPCallTask::Current->UpdatePhoneCall(caption, message, sound, launch, tag, group, picture, date, loc_key);
 	});
 }
