@@ -4,6 +4,7 @@
 #include "Datacenter.h"
 #include "Connection.h"
 #include "Helpers\COMHelper.h"
+#include "Helpers\DebugHelper.h"
 
 using namespace Telegram::Api::Native;
 
@@ -14,34 +15,108 @@ ActivatableStaticOnlyFactory(ConnectionManagerStatics);
 ConnectionManager::ConnectionManager() :
 	m_connectionState(ConnectionState::Connecting),
 	m_currentNetworkType(ConnectionNeworkType::WiFi),
-	m_working(TRUE),
+	m_threadpool(nullptr),
+	m_threadpoolCleanupGroup(nullptr),
 	m_isIpv6Enabled(false)
 {
 }
 
 ConnectionManager::~ConnectionManager()
 {
-	InterlockedExchange8(&m_working, FALSE);
+	if (m_threadpoolCleanupGroup != nullptr)
+	{
+		CloseThreadpoolCleanupGroupMembers(m_threadpoolCleanupGroup, FALSE, nullptr);
+		CloseThreadpoolCleanupGroup(m_threadpoolCleanupGroup);
+	}
 
-	m_workerThread.Join();
+	if (m_threadpool != nullptr)
+	{
+		CloseThreadpool(m_threadpool);
+	}
+
+	DestroyThreadpoolEnvironment(&m_threadpoolEnvironment);
 
 	WSACleanup();
 }
 
-HRESULT ConnectionManager::RuntimeClassInitialize()
+HRESULT ConnectionManager::RuntimeClassInitialize(DWORD minimumThreadCount, DWORD maximumThreadCount)
 {
+	if (minimumThreadCount == 0 || minimumThreadCount > maximumThreadCount)
+	{
+		return E_INVALIDARG;
+	}
+
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
 	{
 		return GetWSALastHRESULT();
 	}
 
-	m_workerThread.Attach(CreateThread(nullptr, 0, ConnectionManager::WorkerThread, reinterpret_cast<LPVOID>(this), 0, nullptr));
-	if (!m_workerThread.IsValid())
+	InitializeThreadpoolEnvironment(&m_threadpoolEnvironment);
+
+	m_threadpool = CreateThreadpool(nullptr);
+	if (m_threadpool == nullptr)
 	{
 		return GetLastHRESULT();
 	}
 
+	SetThreadpoolThreadMaximum(m_threadpool, maximumThreadCount);
+	if (!SetThreadpoolThreadMinimum(m_threadpool, minimumThreadCount))
+	{
+		return GetLastHRESULT();
+	}
+
+	m_threadpoolCleanupGroup = CreateThreadpoolCleanupGroup();
+	if (m_threadpoolCleanupGroup == nullptr)
+	{
+		return GetLastHRESULT();
+	}
+
+	SetThreadpoolCallbackPool(&m_threadpoolEnvironment, m_threadpool);
+	SetThreadpoolCallbackCleanupGroup(&m_threadpoolEnvironment, m_threadpoolCleanupGroup, nullptr);
+
+	/*ComPtr<Timer> timer;
+	ComPtr<IEventObject> eventObject;
+
+	Event evnt(CreateEvent(nullptr, FALSE, FALSE, nullptr));
+
+	DWORD count = 0;
+	ULONGLONG lastTimestamp = GetTickCount64();
+
+	HRESULT result = MakeAndInitialize<Timer>(&timer, [&]
+	{
+		ULONGLONG newLastTimestamp = GetTickCount64();
+		OutputDebugStringFormat(L"Count: %d, timestamp: %I64u\n", count, newLastTimestamp - lastTimestamp);
+		lastTimestamp = newLastTimestamp;
+
+		if (++count == 10)
+		{
+			SetEvent(evnt.Get());
+
+			return S_OK;
+		}
+
+		return S_OK;
+	});
+
+	result = timer.CopyTo(IID_PPV_ARGS(&eventObject));
+	result = timer->AttachToThreadoool(&m_threadpoolEnvironment);
+
+	result = timer->SetTimeout(1000, true);
+	result = timer->Start();
+
+	WaitForSingleObject(evnt.Get(), INFINITE);
+
+	count = 0;
+	lastTimestamp = GetTickCount64();
+
+	result = timer->Stop();
+	result = timer->SetTimeout(100, true);
+	result = timer->Start();
+
+	WaitForSingleObject(evnt.Get(), INFINITE);
+
+	result = eventObject->DetachFromThreadpool();*/
 	return S_OK;
 }
 
@@ -139,16 +214,9 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 	return S_OK;
 }
 
-DWORD ConnectionManager::WorkerThread(LPVOID parameter)
+void ConnectionManager::OnEventObjectError(EventObject const* eventObject, HRESULT error)
 {
-	ComPtr<ConnectionManager> connectionManager = reinterpret_cast<ConnectionManager*>(parameter);
-
-	while (InterlockedAnd8(&connectionManager->m_working, TRUE) == TRUE)
-	{
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
-	}
-
-	return NO_ERROR;
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement EventObject callback error tracing");
 }
 
 
@@ -184,7 +252,7 @@ HRESULT ConnectionManagerStatics::GetInstance(ComPtr<ConnectionManager>& value)
 		HRESULT result;
 		ReturnIfFailed(result, MakeAndInitialize<ConnectionManager>(&s_instance));
 	}
-	
+
 	value = s_instance;
 	return S_OK;
 }

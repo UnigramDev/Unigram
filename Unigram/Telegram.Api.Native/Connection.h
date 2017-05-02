@@ -16,7 +16,7 @@ namespace Telegram
 		namespace Native
 		{
 
-			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, EventObjectT<EventTraits::WSAEventTraits>, FtmBase>,
+			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, EventObjectT<EventTraits::WaitTraits>, FtmBase>,
 				public ConnectionSession, public ConnectionSocket
 			{
 				friend class ConnectionManager;
@@ -33,20 +33,20 @@ namespace Telegram
 				STDMETHODIMP get_Type(_Out_ ConnectionType* value);
 				STDMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 
-			protected:
-				HRESULT Connect();
-				HRESULT Reconnect();
-				HRESULT Suspend();
-
-				virtual HRESULT OnSocketOpened() override;
-				virtual HRESULT OnDataReceived() override;
-				virtual HRESULT OnSocketClosed() override;
-
 			private:
 				inline Datacenter* GetDatacenter() const
 				{
 					return m_datacenter.Get();
 				}
+
+				STDMETHODIMP OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
+				HRESULT Connect();
+				HRESULT Reconnect();
+				HRESULT Suspend();
+				virtual HRESULT OnSocketOpened() override;
+				virtual HRESULT OnDataReceived() override;
+				virtual HRESULT OnSocketClosed() override;
+				void OnEventObjectError(EventObject* eventObject, HRESULT result);
 
 				CriticalSection m_criticalSection;
 				UINT32 m_token;

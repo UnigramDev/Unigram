@@ -18,13 +18,34 @@ Timer::~Timer()
 
 HRESULT Timer::RuntimeClassInitialize(TimerCallback callback)
 {
-	m_waitableTimer.Attach(CreateWaitableTimer(nullptr, FALSE, nullptr));
+	/*m_waitableTimer.Attach(CreateWaitableTimer(nullptr, FALSE, nullptr));
 	if (!m_waitableTimer.IsValid())
 	{
 		return GetLastHRESULT();
-	}
+	}*/
 
 	m_callback = callback;
+	return S_OK;
+}
+
+HRESULT Timer::get_IsStarted(boolean* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto lock = m_criticalSection.Lock();
+
+	/*auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
+	if (threadpoolObjectHandle == nullptr)
+	{
+		return E_NOT_VALID_STATE;
+	}
+
+	*value = IsThreadpoolTimerSet(threadpoolObjectHandle) == TRUE;*/
+
+	*value = m_started;
 	return S_OK;
 }
 
@@ -50,7 +71,7 @@ HRESULT Timer::Start()
 {
 	auto lock = m_criticalSection.Lock();
 
-	if (m_started || m_timeout == 0)
+	if (m_timeout == 0)
 	{
 		return E_NOT_VALID_STATE;
 	}
@@ -64,38 +85,37 @@ HRESULT Timer::Stop()
 
 	if (m_started)
 	{
-		if (!CancelWaitableTimer(m_waitableTimer.Get()))
+		auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
+		if (threadpoolObjectHandle != nullptr)
 		{
-			return GetLastHRESULT();
+			WaitForThreadpoolTimerCallbacks(threadpoolObjectHandle, TRUE);
+			SetThreadpoolTimer(threadpoolObjectHandle, nullptr, 0, 0);
 		}
-
-		m_started = false;
 	}
 
 	return S_OK;
 }
 
-HRESULT Timer::OnEvent(EventObjectEventContext const* context)
+HRESULT Timer::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 {
 	auto lock = m_criticalSection.Lock();
 
 	HRESULT result = m_callback();
 
 	m_started = m_repeatable;
-
 	return result;
 }
 
 HRESULT Timer::SetTimerTimeout()
 {
-	LARGE_INTEGER dueTime;
-	dueTime.QuadPart = -10000LL * m_timeout;
-
-	if (!SetWaitableTimer(m_waitableTimer.Get(), &dueTime, m_repeatable ? m_timeout : 0, nullptr, nullptr, FALSE))
+	auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
+	if (threadpoolObjectHandle == nullptr)
 	{
-		return GetLastHRESULT();
+		return E_NOT_VALID_STATE;
 	}
 
-	m_started = true;
+	INT64 timeout = -10000LL * m_timeout;
+	SetThreadpoolTimer(threadpoolObjectHandle, reinterpret_cast<PFILETIME>(&timeout), m_repeatable ? m_timeout : 0, 0);
+
 	return S_OK;
 }

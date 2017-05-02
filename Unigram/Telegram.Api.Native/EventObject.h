@@ -1,5 +1,4 @@
 #pragma once
-#include <WinSock2.h>
 #include <wrl.h>
 #include "Helpers\COMHelper.h"
 
@@ -11,148 +10,190 @@ namespace Telegram
 	{
 		namespace Native
 		{
+			namespace EventTraits
+			{
+
+				struct TimerTraits;
+				struct WaitTraits;
+				struct WorkerTraits;
+
+			}
+
+			MIDL_INTERFACE("8225DD5F-F2C1-4D1B-B354-F353BCE37427") IEventObject : public IUnknown
+			{
+			public:
+				virtual STDMETHODIMP AttachToThreadoool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) = 0;
+				virtual STDMETHODIMP DetachFromThreadpool() = 0;
+				virtual STDMETHODIMP OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance) = 0;
+			};
+
+			class EventObject abstract : public Implements<RuntimeClassFlags<ClassicCom>, IEventObject>
+			{
+				friend struct EventTraits::TimerTraits;
+				friend struct EventTraits::WaitTraits;
+				friend struct EventTraits::WorkerTraits;
+
+			protected:
+				virtual STDMETHODIMP OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance) = 0;
+
+			private:
+				virtual STDMETHODIMP AttachToThreadoool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) = 0;
+				virtual STDMETHODIMP DetachFromThreadpool() = 0;
+				void OnThreadpoolCallback(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
+			};
+
 
 			namespace EventTraits
 			{
 
-				struct EventTraits
+				struct TimerTraits
 				{
-					inline static HANDLE Create() throw()
+				public:
+					typedef PTP_TIMER Handle;
+
+					inline static Handle Create(_In_ EventObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
 					{
-						return ::CreateEvent(nullptr, TRUE, FALSE, nullptr);
+						return ::CreateThreadpoolTimer(TimerTraits::Callback, eventObject, threadpoolEnvironment);
 					}
 
-					inline static bool Reset(_In_ HANDLE h) throw()
+					inline static void Wait(_In_ Handle timer, BOOL cancelPendingCallbacks) throw()
 					{
-						return ::ResetEvent(h) != FALSE;
+						::WaitForThreadpoolTimerCallbacks(timer, cancelPendingCallbacks);
 					}
 
-					inline static bool Close(_In_ HANDLE h) throw()
+					inline static void Close(_In_ Handle timer) throw()
 					{
-						return ::CloseHandle(h) != FALSE;
+						::CloseThreadpoolTimer(timer);
 					}
 
-					inline static HANDLE GetInvalidValue() throw()
+				private:
+					static void NTAPI Callback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle work)
 					{
-						return nullptr;
-					}
-
-					inline static HRESULT GetLastHRESULT() throw()
-					{
-						return ::GetLastHRESULT();
+						reinterpret_cast<EventObject*>(context)->OnThreadpoolCallback(instance);
 					}
 				};
 
-				struct WSAEventTraits
+				struct WaitTraits
 				{
-					inline static HANDLE Create() throw()
+				public:
+					typedef PTP_WAIT Handle;
+
+					inline static Handle Create(_In_ EventObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
 					{
-						return ::WSACreateEvent();
+						return ::CreateThreadpoolWait(WaitTraits::Callback, eventObject, threadpoolEnvironment);
 					}
 
-					inline static bool Reset(_In_ HANDLE h) throw()
+					inline static void Wait(_In_ Handle wait, BOOL cancelPendingCallbacks) throw()
 					{
-						return ::WSAResetEvent(h) != FALSE;
+						::WaitForThreadpoolWaitCallbacks(wait, cancelPendingCallbacks);
 					}
 
-					inline static bool Close(_In_ HANDLE h) throw()
+					inline static void Close(_In_ Handle wait) throw()
 					{
-						return ::WSACloseEvent(h) != FALSE;
+						::CloseThreadpoolWait(wait);
 					}
 
-					inline static HANDLE GetInvalidValue() throw()
+				private:
+					static void NTAPI Callback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle wait, _In_ TP_WAIT_RESULT waitResult)
 					{
-						return WSA_INVALID_EVENT;
+						if (waitResult == WAIT_OBJECT_0)
+						{
+							reinterpret_cast<EventObject*>(context)->OnThreadpoolCallback(instance);
+						}
+					}
+				};
+
+				struct WorkerTraits
+				{
+				public:
+					typedef PTP_WORK Handle;
+
+					inline static Handle Create(_In_ EventObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
+					{
+						return ::CreateThreadpoolWork(WorkerTraits::Callback, eventObject, threadpoolEnvironment);
 					}
 
-					inline static HRESULT GetLastHRESULT() throw()
+					inline static void Wait(_In_ Handle work, BOOL cancelPendingCallbacks) throw()
 					{
-						return ::GetWSALastHRESULT();
+						::WaitForThreadpoolWorkCallbacks(work, cancelPendingCallbacks);
+					}
+
+					inline static void Close(_In_ Handle work) throw()
+					{
+						::CloseThreadpoolWork(work);
+					}
+
+				private:
+					static void NTAPI Callback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle work)
+					{
+						reinterpret_cast<EventObject*>(context)->OnThreadpoolCallback(instance);
 					}
 				};
 
 			}
 
 
-			struct EventObjectEventContext
-			{
-				OVERLAPPED Overlapped;
-				DWORD Operation;
-				LPVOID UserData;
-			};
-
-
-			//IEventObject will probably change
-
-			MIDL_INTERFACE("5D8D896C-235D-47CD-8643-A776A17AB2F0") IEventObject : public IUnknown
-			{
-			public:
-				virtual HRESULT STDMETHODCALLTYPE CreateEventContext(DWORD operation, _In_opt_ LPVOID userData, _In_opt_ LPOVERLAPPED overlapped, _Out_ EventObjectEventContext** context) = 0;
-				virtual HRESULT STDMETHODCALLTYPE FreeEventContext(_In_ EventObjectEventContext* context) = 0;
-				virtual HRESULT STDMETHODCALLTYPE OnEvent(_In_ EventObjectEventContext const* context) = 0;
-			};
-
-			class EventObject abstract : public Implements<RuntimeClassFlags<ClassicCom>, IEventObject>
-			{
-			private:
-				virtual STDMETHODIMP CreateEventContext(DWORD operation, _In_opt_ LPVOID userData, _In_opt_ LPOVERLAPPED overlapped, _Out_ EventObjectEventContext** context) = 0;
-				virtual STDMETHODIMP FreeEventContext(_In_ EventObjectEventContext* context) = 0;
-			};
-
 			template<typename EventTraits>
 			class EventObjectT abstract : public EventObject
 			{
 				friend class ConnectionManager;
 
-			private:
-				virtual STDMETHODIMP CreateEventContext(DWORD operation, _In_opt_ LPVOID userData, _In_opt_ LPOVERLAPPED overlapped, _Out_ EventObjectEventContext** pContext) final
+			public:
+				EventObjectT() :
+					m_handle(nullptr)
 				{
-					if (pContext == nullptr)
+				}
+
+				~EventObjectT()
+				{
+					DetachFromThreadpool();
+				}
+
+			protected:
+				inline typename EventTraits::Handle GetThreadpoolObjectHandle() const
+				{
+					return m_handle;
+				}
+
+			private:
+				virtual STDMETHODIMP AttachToThreadoool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) final
+				{
+					if (threadpoolEnvironment == nullptr)
 					{
 						return E_POINTER;
 					}
 
-					auto context = reinterpret_cast<EventObjectEventContext*>(GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(EventObjectEventContext)));
-					if (context == nullptr)
+					if (m_handle != nullptr)
+					{
+						return E_NOT_VALID_STATE;
+					}
+
+					m_handle = EventTraits::Create(this, threadpoolEnvironment);
+					if (m_handle == nullptr)
 					{
 						return GetLastHRESULT();
 					}
 
-					if (overlapped != nullptr)
-					{
-						CopyMemory(&context->Overlapped, overlapped, sizeof(OVERLAPPED));
-					}
-
-					if (context->Overlapped.hEvent == nullptr && (context->Overlapped.hEvent = EventTraits::Create()) == EventTraits::GetInvalidValue())
-					{
-						HRESULT result = EventTraits::GetLastHRESULT();
-						GlobalFree(context);
-
-						return result;
-					}
-
-					context->Operation = operation;
-					context->UserData = userData;
-
-					*pContext = context;
 					return S_OK;
 				}
 
-				virtual STDMETHODIMP FreeEventContext(_In_ EventObjectEventContext* context) final
+				virtual STDMETHODIMP DetachFromThreadpool() final
 				{
-					if (context == nullptr)
+					if (m_handle == nullptr)
 					{
-						return E_POINTER;
+						return E_NOT_VALID_STATE;
 					}
 
-					if (!EventTraits::Close(context->Overlapped.hEvent))
-					{
-						return EventTraits::GetLastHRESULT();
-					}
+#pragma message("Check if this can cause a nullpointer exception")
 
-					GlobalFree(context);
+					EventTraits::Wait(m_handle, TRUE);
+					EventTraits::Close(m_handle);
+
+					m_handle = nullptr;
 					return S_OK;
 				}
+
+				typename EventTraits::Handle m_handle;
 			};
 
 		}

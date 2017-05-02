@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
 #include <Winsock2.h>
-#include <rpc.h>
-#include <rpcndr.h>
+#include "WSAEvent.h"
+
+using namespace Microsoft::WRL;
+using namespace Microsoft::WRL::Wrappers;
 
 namespace Telegram
 {
@@ -25,9 +27,14 @@ namespace Telegram
 					return m_socket;
 				}
 
+				inline HANDLE GetSocketEvent() const
+				{
+					return m_socketEvent.Get();
+				}
+
 				HRESULT OpenSocket(std::wstring address, UINT16 port, boolean ipv6);
 				HRESULT CloseSocket();
-				HRESULT HandleEvent(_In_ EventObjectEventContext const* context);
+				HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
 
 				virtual HRESULT OnSocketOpened() = 0;
 				virtual HRESULT OnDataReceived() = 0;
@@ -37,6 +44,7 @@ namespace Telegram
 				HRESULT CloseSocket(boolean error);
 
 				SOCKET m_socket;
+				WSAEvent m_socketEvent;
 			};
 
 		}

@@ -54,6 +54,15 @@ HRESULT ConnectionSocket::OpenSocket(std::wstring address, UINT16 port, boolean 
 		}
 	}
 
+	m_socketEvent.Attach(WSACreateEvent());
+	if (!m_socketEvent.IsValid())
+	{
+		result = GetWSALastHRESULT();
+		CloseSocket(true);
+
+		return result;
+	}
+
 	if ((m_socket = socket(socketAddress.ss_family, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
 		result = GetWSALastHRESULT();
@@ -103,12 +112,19 @@ HRESULT ConnectionSocket::CloseSocket(boolean error)
 	}
 
 	m_socket = INVALID_SOCKET;
+	m_socketEvent.Close();
 
 	return error ? S_OK : OnSocketClosed();
 }
 
-HRESULT ConnectionSocket::HandleEvent(EventObjectEventContext const* context)
+HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 {
+	WSANETWORKEVENTS networkEvents;
+	if (WSAEnumNetworkEvents(m_socket, nullptr, &networkEvents) != NO_ERROR)
+	{
+		return GetWSALastHRESULT();
+	}
+
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket event handling");
 
 	return S_OK;

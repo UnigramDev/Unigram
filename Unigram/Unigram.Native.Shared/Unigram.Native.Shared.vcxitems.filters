@@ -6,7 +6,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Helpers\COMHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Helpers\DebugHelper.h" />
+    <ClInclude Include="D:\loren\Source\Repos\Unigram\Unigram\Unigram.Native.Shared\Helpers\DebugHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\loren\Source\Repos\Unigram\Unigram\Unigram.Native.Shared\Helpers\COMHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

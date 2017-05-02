@@ -40,7 +40,7 @@ namespace Telegram
 					UINT32 Port;
 				};
 
-				HRESULT SwitchTo443Port();
+				void SwitchTo443Port();
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ DatacenterEndpoint** endpoint);
 
 				CriticalSection m_criticalSection;

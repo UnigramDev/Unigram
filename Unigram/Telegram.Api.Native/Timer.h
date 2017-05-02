@@ -17,12 +17,13 @@ namespace Telegram
 			MIDL_INTERFACE("9980B73C-F2A3-4F89-91A7-EC679F3B018B") ITimer : public IUnknown
 			{
 			public:
+				virtual HRESULT STDMETHODCALLTYPE get_IsStarted(_Out_ boolean* value) = 0;
 				virtual HRESULT STDMETHODCALLTYPE SetTimeout(UINT32 msTimeout, boolean repeat) = 0;
 				virtual HRESULT STDMETHODCALLTYPE Start() = 0;
 				virtual HRESULT STDMETHODCALLTYPE Stop() = 0;
 			};
 
-			class Timer WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ITimer, EventObjectT<EventTraits::EventTraits>>
+			class Timer WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ITimer, EventObjectT<EventTraits::TimerTraits>>
 			{
 				typedef std::function<HRESULT()> TimerCallback;
 
@@ -31,16 +32,16 @@ namespace Telegram
 				~Timer();
 
 				STDMETHODIMP RuntimeClassInitialize(TimerCallback callback);
+				STDMETHODIMP get_IsStarted(_Out_ boolean* value);
 				STDMETHODIMP SetTimeout(UINT32 msTimeout, boolean repeat);
 				STDMETHODIMP Start();
 				STDMETHODIMP Stop();
 
 			private:
-				STDMETHODIMP OnEvent(_In_ EventObjectEventContext const* context);
+				STDMETHODIMP OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
 				HRESULT SetTimerTimeout();
 
 				CriticalSection m_criticalSection;
-				Event m_waitableTimer;
 				boolean m_started;
 				boolean m_repeatable;
 				UINT32 m_timeout;

@@ -122,7 +122,7 @@ HRESULT Datacenter::GetPushConnection(boolean create, IConnection** value)
 	return S_OK;
 }
 
-HRESULT Datacenter::SwitchTo443Port()
+void Datacenter::SwitchTo443Port()
 {
 	auto lock = m_criticalSection.Lock();
 
@@ -161,8 +161,6 @@ HRESULT Datacenter::SwitchTo443Port()
 			break;
 		}
 	}
-
-	return S_OK;
 }
 
 HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, DatacenterEndpoint** endpoint)

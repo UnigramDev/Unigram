@@ -2,7 +2,8 @@
 #include <vector>
 #include <wrl.h>
 #include "Telegram.Api.Native.h"
-#include "Thread.h"
+
+#define THREAD_COUNT 1
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -19,6 +20,7 @@ namespace Telegram
 			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager, FtmBase>
 			{
 				friend class Connection;
+				friend class EventObject;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 
@@ -26,7 +28,7 @@ namespace Telegram
 				ConnectionManager();
 				~ConnectionManager();
 
-				STDMETHODIMP RuntimeClassInitialize();
+				STDMETHODIMP RuntimeClassInitialize(DWORD minimumThreadCount = THREAD_COUNT, DWORD maximumThreadCount = THREAD_COUNT);
 				STDMETHODIMP get_ConnectionState(_Out_ ConnectionState* value);
 				STDMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				STDMETHODIMP get_IsIpv6Enabled(_Out_ boolean* value);
@@ -37,15 +39,15 @@ namespace Telegram
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionDataReceived(_In_ Connection* connection);
 				HRESULT OnConnectionClosed(_In_ Connection* connection);
-
-				static DWORD WINAPI WorkerThread(_In_ LPVOID parameter);
+				void OnEventObjectError(_In_ EventObject const* eventObject, HRESULT error);
 
 				CriticalSection m_criticalSection;
-				CHAR m_working;
+				TP_CALLBACK_ENVIRON m_threadpoolEnvironment;
+				PTP_POOL m_threadpool;
+				PTP_CLEANUP_GROUP m_threadpoolCleanupGroup;
 				ConnectionState m_connectionState;
 				ConnectionNeworkType m_currentNetworkType;
 				boolean m_isIpv6Enabled;
-				Thread m_workerThread;
 				std::vector<ComPtr<IConnection>> m_activeConnections;
 			};
 

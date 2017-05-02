@@ -79,6 +79,13 @@ HRESULT Connection::get_CurrentNetworkType(ConnectionNeworkType* value)
 	return S_OK;
 }
 
+HRESULT Connection::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
+{
+	auto lock = m_criticalSection.Lock();
+
+	return ConnectionSocket::OnEvent(callbackInstance);
+}
+
 HRESULT Connection::Connect()
 {
 	HRESULT result;

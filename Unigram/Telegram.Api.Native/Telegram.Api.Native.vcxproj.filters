@@ -15,16 +15,11 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TLBinaryReader.cpp" />
     <ClCompile Include="TLBinaryWriter.cpp" />
+    <ClCompile Include="EventObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="EventObject.h" />
-    <ClInclude Include="IoCompletionPort.h">
-      <Filter>Wrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="Thread.h">
-      <Filter>Wrappers</Filter>
-    </ClInclude>
     <ClInclude Include="Datacenter.h" />
     <ClInclude Include="Connection.h" />
     <ClInclude Include="ConnectionSession.h" />
@@ -33,6 +28,9 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TLBinaryReader.h" />
     <ClInclude Include="TLBinaryWriter.h" />
+    <ClInclude Include="WSAEvent.h">
+      <Filter>Wrappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
