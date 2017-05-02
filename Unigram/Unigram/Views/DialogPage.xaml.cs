@@ -73,9 +73,6 @@ namespace Unigram.Views
 
             CheckMessageBoxEmpty();
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
-
             ViewModel.PropertyChanged += OnPropertyChanged;
 
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
@@ -98,41 +95,6 @@ namespace Unigram.Views
             {
                 ElapsedLabel.Text = btnVoiceMessage.Elapsed.ToString("m\\:ss\\.ff");
             };
-
-            //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
-            //{
-            //    var visual = ElementCompositionPreview.GetElementVisual(Header);
-            //    visual.Clip = Window.Current.Compositor.CreateInsetClip();
-
-            //    var showShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    showShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
-            //    showShowAnimation.InsertKeyFrame(1.0f, new Vector3());
-            //    showShowAnimation.Target = nameof(Visual.Offset);
-            //    showShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    var showHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    showHideAnimation.InsertKeyFrame(0.0f, new Vector3());
-            //    showHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0));
-            //    showHideAnimation.Target = nameof(Visual.Offset);
-            //    showHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    var hideHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    hideHideAnimation.InsertKeyFrame(0.0f, new Vector3());
-            //    hideHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0));
-            //    hideHideAnimation.Target = nameof(Visual.Offset);
-            //    hideHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    var hideShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    hideShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0));
-            //    hideShowAnimation.InsertKeyFrame(1.0f, new Vector3());
-            //    hideShowAnimation.Target = nameof(Visual.Offset);
-            //    hideShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, showShowAnimation);
-            //    ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
-            //    ElementCompositionPreview.SetImplicitShowAnimation(btnDialogInfo, hideShowAnimation);
-            //    ElementCompositionPreview.SetImplicitHideAnimation(btnDialogInfo, showHideAnimation);
-            //}
         }
 
         //protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -152,17 +114,74 @@ namespace Unigram.Views
         //    base.OnNavigatedTo(e);
         //}
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
+            {
+                var visual = ElementCompositionPreview.GetElementVisual(Header);
+                visual.Clip = Window.Current.Compositor.CreateInsetClip();
+
+                var showShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                showShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
+                showShowAnimation.InsertKeyFrame(1.0f, new Vector3());
+                showShowAnimation.Target = nameof(Visual.Offset);
+                showShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                var showHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                showHideAnimation.InsertKeyFrame(0.0f, new Vector3());
+                showHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0));
+                showHideAnimation.Target = nameof(Visual.Offset);
+                showHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                var hideHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                hideHideAnimation.InsertKeyFrame(0.0f, new Vector3());
+                hideHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0));
+                hideHideAnimation.Target = nameof(Visual.Offset);
+                hideHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                var hideShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                hideShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0));
+                hideShowAnimation.InsertKeyFrame(1.0f, new Vector3());
+                hideShowAnimation.Target = nameof(Visual.Offset);
+                hideShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+                ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, showShowAnimation);
+                ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
+                ElementCompositionPreview.SetImplicitShowAnimation(btnDialogInfo, hideShowAnimation);
+                ElementCompositionPreview.SetImplicitHideAnimation(btnDialogInfo, showHideAnimation);
+            }
+
+            base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
+            {
+                ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, null);
+                ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, null);
+                ElementCompositionPreview.SetImplicitShowAnimation(btnDialogInfo, null);
+                ElementCompositionPreview.SetImplicitHideAnimation(btnDialogInfo, null);
+            }
+
+            base.OnNavigatingFrom(e);
+        }
+
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals("Reply"))
             {
                 CheckMessageBoxEmpty();
             }
+            else if (e.PropertyName.Equals("SelectedItems"))
+            {
+                lvDialogs.SelectedItems.AddRange(ViewModel.SelectedMessages);
+            }
         }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
         {
-            if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
                 ManagePanel.Visibility = Visibility.Collapsed;
                 btnDialogInfo.Visibility = Visibility.Visible;
@@ -179,13 +198,13 @@ namespace Unigram.Views
 
         private void Manage_Click(object sender, RoutedEventArgs e)
         {
-            if (lvDialogs.SelectionMode == ListViewSelectionMode.None)
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
-                lvDialogs.SelectionMode = ListViewSelectionMode.Multiple;
+                ViewModel.SelectionMode = ListViewSelectionMode.Multiple;
             }
             else
             {
-                lvDialogs.SelectionMode = ListViewSelectionMode.None;
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
             }
         }
 
@@ -672,6 +691,15 @@ namespace Unigram.Views
             }
         }
 
+        private void MessageSelect_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                element.Visibility = ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
         private void MessageStickerPackInfo_Loaded(object sender, RoutedEventArgs e)
         {
 
@@ -788,6 +816,7 @@ namespace Unigram.Views
             var point = _slideVisual.Offset;
             point.X = (float)e.NewSize.Width + 36;
 
+            _slideVisual.Opacity = 0;
             _slideVisual.Offset = point;
             _slideVisual.Size = new Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
         }
@@ -796,6 +825,8 @@ namespace Unigram.Views
         {
             var slideWidth = (float)SlidePanel.ActualWidth;
             var elapsedWidth = (float)ElapsedPanel.ActualWidth;
+
+            _slideVisual.Opacity = 1;
 
             var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
@@ -871,6 +902,7 @@ namespace Unigram.Views
                 var point = _slideVisual.Offset;
                 point.X = _slideVisual.Size.X + 36;
 
+                _slideVisual.Opacity = 0;
                 _slideVisual.Offset = point;
 
                 point = _elapsedVisual.Offset;

@@ -408,7 +408,8 @@ namespace Unigram.Controls.Messages
                     MessageLabel.Text += photoMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(photoMedia, true);
+                ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
+                ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photoMedia, true);
             }
 
             return true;
@@ -466,7 +467,8 @@ namespace Unigram.Controls.Messages
             {
                 ServiceLabel.Text = $"🎮 {gameMedia.Game.Title}";
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(gameMedia.Game.Photo, true);
+                ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
+                ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(gameMedia.Game.Photo, true);
             }
 
             return true;
@@ -581,7 +583,8 @@ namespace Unigram.Controls.Messages
                     ServiceLabel.Text = string.Empty;
                     MessageLabel.Text = message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
 
-                    ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(webPage.Photo, true);
+                    ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
+                    ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(webPage.Photo, true);
                 }
                 else
                 {
@@ -613,7 +616,8 @@ namespace Unigram.Controls.Messages
                     MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
+                ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
+                ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
             }
 
             return true;
@@ -640,7 +644,8 @@ namespace Unigram.Controls.Messages
                     MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
+                ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
+                ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
             }
 
             return true;
@@ -695,7 +700,8 @@ namespace Unigram.Controls.Messages
                         if (ThumbRoot != null)
                             ThumbRoot.Visibility = Visibility.Visible;
 
-                        ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
+                        ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
+                        ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
                     }
                     else
                     {
@@ -748,7 +754,8 @@ namespace Unigram.Controls.Messages
             var action = message.Action as TLMessageActionChatEditPhoto;
             if (action != null)
             {
-                ThumbImage.Source = (ImageSource)DefaultPhotoConverter.Convert(action.Photo, true);
+                ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
+                ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(action.Photo, true);
             }
 
             return true;

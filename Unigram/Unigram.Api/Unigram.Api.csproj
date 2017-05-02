@@ -141,6 +141,8 @@
     <Compile Include="Services\IMTProtoService.Async.cs" />
     <Compile Include="Services\MTProtoService.Async.cs" />
     <Compile Include="Services\MTProtoService.Payments.cs" />
+    <Compile Include="Services\MTProtoService.Phone.cs" />
+    <Compile Include="Services\Stats\StatsService.cs" />
     <Compile Include="TLExtensions.cs" />
     <Compile Include="Hash\CRC32.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
@@ -154,6 +156,7 @@
     <Compile Include="TL\Core\ITLRandomId.cs" />
     <Compile Include="TL\Core\ITLReadMaxId.cs" />
     <Compile Include="TL\Core\ITLStickers.cs" />
+    <Compile Include="TL\Core\ITLTransferable.cs" />
     <Compile Include="TL\Core\TLActionInfo.cs" />
     <Compile Include="TL\Core\TLInt.cs" />
     <Compile Include="TL\Core\TLMessageActionUnreadMessages.cs" />
@@ -392,7 +395,8 @@
     <Compile Include="TL\Partial\TLInputPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaContact.Partial.cs" />
-    <Compile Include="TL\Partial\TLMessageMediaInvoice.Partial.cs" />
+    <Compile Include="TL\Partial\TLMessageMediaDocument.Partial.cs" />
+    <Compile Include="TL\Partial\TLMessageMediaPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesAllStickers.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesArchivedStickers.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesFeaturedStickers.Partial.cs" />
@@ -416,6 +420,7 @@
     <Compile Include="TL\Partial\TLMessagesDialogsBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesMessagesBase.Partial.cs" />
     <Compile Include="TL\Partial\TLPhoto.Partial.cs" />
+    <Compile Include="TL\Partial\TLPhotoBase.Partial.cs" />
     <Compile Include="TL\Partial\TLRPCError.Partial.cs" />
     <Compile Include="TL\Partial\TLStickerSet.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdateBase.Partial.cs" />
@@ -501,7 +506,7 @@
     <Compile Include="TL\Partial\TLMessageBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUserProfilePhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLUserProfilePhotoBase.Partial.cs" />
-    <Compile Include="TL\Partial\TLWebpageBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLWebPageBase.Partial.cs" />
     <Compile Include="TL\TLAccountAuthorizations.cs" />
     <Compile Include="TL\TLAccountDaysTTL.cs" />
     <Compile Include="TL\TLAccountNoPassword.cs" />
@@ -1205,6 +1210,12 @@
     <PackageReference Include="Universal.WinSQLite">
       <Version>3.12.2.2</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="TL\Partial\TLDocumentBase.Partial.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="TL\Partial\TLRichTextBase.Partial.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

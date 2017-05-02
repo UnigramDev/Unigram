@@ -1,0 +1,167 @@
+﻿<local:ContentDialogBase
+    x:Class="Unigram.Controls.Views.GalleryView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls"
+    xmlns:viewModels="using:Unigram.ViewModels"
+    xmlns:common="using:Unigram.Common"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    Background="{x:Null}"
+    OverlayBrush="{x:Null}"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch">
+
+    <Control.Resources>
+        <Style x:Name="yolo" TargetType="MediaPlayerElement">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MediaPlayerElement">
+                        <Grid x:Name="LayoutRoot">
+                            <Border Background="Transparent" />
+                            <Image
+                                Source="{TemplateBinding PosterSource}"
+                                Stretch="{TemplateBinding Stretch}" />
+                            <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
+                                                  IsFullWindow="{TemplateBinding IsFullWindow}"
+                                                  Stretch="{TemplateBinding Stretch}"
+                                                  MediaPlayer="{TemplateBinding MediaPlayer}" />
+                            <Grid x:Name="TimedTextSourcePresenter" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Control.Resources>
+
+    <Grid x:Name="LayoutRoot" RequestedTheme="Dark">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border x:Name="Layer" Background="Black" Grid.RowSpan="3"/>
+
+        <FlipView x:Name="Flip"
+                  Opacity="0"
+                  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
+                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                  SelectionChanged="Flip_SelectionChanged"
+                  Background="Transparent"
+                  Grid.RowSpan="3">
+            <FlipView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:GalleryItem">
+                    <Grid>
+                        <local:ImageView
+                            x:Name="Surface"
+                            Loaded="ImageView_ImageOpened"
+                            Unloaded="ImageView_Unloaded"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
+                            Constraint="{x:Bind Source}"
+                            Opacity="0"/>
+                        <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                            <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                            <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </FlipView.ItemTemplate>
+        </FlipView>
+
+        <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
+            <Grid.Background>
+                <SolidColorBrush Color="Black" Opacity="0.6"/>
+            </Grid.Background>
+            <Grid Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1">
+                    <Run/>
+                    <Run Text="of"/>
+                </TextBlock>
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="2">
+                    <Run/>
+                    <Run Text="{x:Bind ViewModel.TotalItems, Mode=OneWay}"/>
+                </TextBlock>
+            </Grid>
+
+            <local:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
+                               Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
+                               FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                               HorizontalAlignment="Right"
+                               Glyph="&#xE60E;"
+                               FontSize="24"/>
+        </Grid>
+
+        <Border Grid.Row="2">
+            <Grid x:Name="BotBar">
+                <Grid.Background>
+                    <SolidColorBrush Color="Black" Opacity="0.6"/>
+                </Grid.Background>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <MediaTransportControls x:Name="Transport" IsCompact="True" Grid.ColumnSpan="2"/>
+
+                <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
+                           Visibility="{x:Bind ViewModel.SelectedItem.Caption, Converter={StaticResource NullToVisibilityConverter}}"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           Margin="12,8"
+                           Grid.ColumnSpan="2"
+                           Grid.Row="1"/>
+
+                <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0" VerticalAlignment="Center" Grid.Row="2">
+                    <TextBlock Text="{x:Bind ViewModel.SelectedItem.From.DisplayName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+                
+                <Button Padding="16,23,16,0"
+                        HorizontalAlignment="Right"
+                        Height="48"
+                        Style="{StaticResource EllipsisButton}"
+                        Grid.Column="1"
+                        Grid.Row="2">
+                    <FontIcon x:Name="EllipsisIcon"
+                              VerticalAlignment="Center"
+                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              FontSize="16"
+                              Glyph="&#xE10C;"
+                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            Command="{x:Bind ViewModel.DeleteCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
+                                            Tag="&#xE107;"
+                                            Text="Delete"/>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
+                                            Tag="&#xE105;"
+                                            Text="Save file as..." />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+</local:ContentDialogBase>

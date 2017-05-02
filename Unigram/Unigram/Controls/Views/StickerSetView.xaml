@@ -73,7 +73,7 @@
                                   Loaded="GroupHeader_Loaded"
                                   VerticalAlignment="Bottom" 
                                   Margin="-12,0">
-                                <Border x:Name="LineAccent" BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}" BorderThickness="0,1,0,0" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                                <Border x:Name="LineAccent" BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                                 <Border x:Name="LineTop" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                                 <TextBlock Text="{Binding Set.Title}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
                             </Grid>

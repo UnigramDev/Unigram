@@ -3,6 +3,13 @@
                     xmlns:local="using:Unigram.Common"
                     xmlns:controls="using:Unigram.Controls">
 
+    <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
+        <Setter Property="Padding" Value="12,8,12,12"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+    </Style>
+
     <Style x:Key="RoundImageCropperStyle" TargetType="controls:ImageCropper">
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>

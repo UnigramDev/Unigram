@@ -17,11 +17,15 @@ namespace Unigram.Controls
     {
         private Compositor _compositor;
         private SpriteVisual _visual;
-        private ExpressionAnimation _animationSize;
-        private ExpressionAnimation _animationOffset;
+        private ExpressionAnimation _animation;
 
         public ScrollViewerBackground()
         {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
             _visual = _compositor.CreateSpriteVisual();
 
@@ -36,7 +40,7 @@ namespace Unigram.Controls
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var scrollViewer = ScrollingHost as ScrollViewer;
-            if (scrollViewer == null)
+            if (scrollViewer == null && ScrollingHost != null)
             {
                 scrollViewer = ScrollingHost.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
             }
@@ -54,14 +58,10 @@ namespace Unigram.Controls
 
             if (VerticalAlignment == VerticalAlignment.Top)
             {
-                _animationSize = _compositor.CreateExpressionAnimation("Max(Scroll.Translation.Y + 1, 0)");
-                _animationSize.SetReferenceParameter("Scroll", props);
+                _animation = _compositor.CreateExpressionAnimation("Max(Scroll.Translation.Y, 0)");
+                _animation.SetReferenceParameter("Scroll", props);
 
-                _visual.StartAnimation("Size.Y", _animationSize);
-            }
-            else if (VerticalAlignment == VerticalAlignment.Bottom)
-            {
-
+                _visual.StartAnimation("Size.Y", _animation);
             }
         }
 
@@ -69,11 +69,11 @@ namespace Unigram.Controls
         {
             _visual.Size = new Vector2((float)e.NewSize.Width, _visual.Size.Y);
 
-            if (_animationSize != null)
-                _visual.StartAnimation("Size.Y", _animationSize);
-
-            if (_animationOffset != null)
-                _visual.StartAnimation("Offset.Y", _animationSize);
+            if (_animation != null)
+            {
+                _visual.StopAnimation("Size.Y");
+                _visual.StartAnimation("Size.Y", _animation);
+            }
         }
 
         private void OnBackgroundChanged(DependencyObject sender, DependencyProperty dp)

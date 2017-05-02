@@ -12,14 +12,14 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Views;
-using Unigram.Views.Login;
+using Unigram.Views.SignIn;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Login
+namespace Unigram.ViewModels.SignIn
 {
     public class SignInPasswordViewModel : UnigramViewModelBase
     {

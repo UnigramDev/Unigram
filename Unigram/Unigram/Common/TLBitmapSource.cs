@@ -51,7 +51,7 @@ namespace Unigram.Common
                 if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
                 {
                     //SetProfilePlaceholder(user, "u" + user.Id, user.Id, user.FullName);
-                    SetSource(userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
+                    SetSource(null, userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
                 }
             }
             else
@@ -82,7 +82,7 @@ namespace Unigram.Common
                 if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
                 {
                     //SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.DisplayName);
-                    SetSource(chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
+                    SetSource(null, chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
                 }
             }
             else
@@ -98,15 +98,15 @@ namespace Unigram.Common
             {
                 if (TrySetSource(photo.Full, PHASE_FULL) == false)
                 {
-                    SetSource(photo.Thumb, PHASE_THUMBNAIL);
-                    SetSource(photo.Full, PHASE_FULL);
+                    SetSource(null, photo.Thumb, PHASE_THUMBNAIL);
+                    SetSource(photo, photo.Full, PHASE_FULL);
                 }
             }
         }
 
         public TLBitmapSource(TLDocument document)
         {
-            SetSource(document.Thumb, PHASE_THUMBNAIL);
+            SetSource(null, document.Thumb, PHASE_THUMBNAIL);
         }
 
         public async void SetProfilePlaceholder(object value, string group, int id, string name)
@@ -159,12 +159,12 @@ namespace Unigram.Common
             return false;
         }
 
-        public void SetSource(TLPhotoSizeBase photoSizeBase, int phase)
+        public void SetSource(ITLTransferable transferable, TLPhotoSizeBase photoSizeBase, int phase)
         {
             var photoSize = photoSizeBase as TLPhotoSize;
             if (photoSize != null)
             {
-                SetSource(photoSize.Location as TLFileLocation, photoSize.Size, phase);
+                SetSource(transferable, photoSize.Location as TLFileLocation, photoSize.Size, phase);
             }
 
             var photoCachedSize = photoSizeBase as TLPhotoCachedSize;
@@ -196,7 +196,7 @@ namespace Unigram.Common
             return false;
         }
 
-        public void SetSource(TLFileLocation location, int fileSize, int phase)
+        public void SetSource(ITLTransferable transferable, TLFileLocation location, int fileSize, int phase)
         {
             if (phase >= Phase && location != null)
             {
@@ -210,29 +210,29 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    //Execute.BeginOnThreadPool(async () =>
-                    //{
-                    //    var result = await _downloadFileManager.DownloadFileAsync(location, fileSize);
-                    //    if (result != null && Phase <= phase)
-                    //    {
-                    //        Execute.BeginOnUIThread(() =>
-                    //        {
-                    //            Image.SetSource(FileUtils.GetTempFileUri(fileName));
-                    //        });
-                    //    }
-                    //});
-
-                    _downloadFileManager.DownloadFile(location, fileSize, result =>
+                    Execute.BeginOnThreadPool(async () =>
                     {
+                        var result = await _downloadFileManager.DownloadFileAsync(location, fileSize).AsTask(transferable?.Download());
                         if (result != null && Phase <= phase)
                         {
                             Execute.BeginOnUIThread(() =>
                             {
-                                //Image.SetSource(FileUtils.GetTempFileUri(fileName));
                                 Image.UriSource = FileUtils.GetTempFileUri(fileName);
                             });
                         }
                     });
+
+                    //_downloadFileManager.DownloadFile(location, fileSize, result =>
+                    //{
+                    //    if (result != null && Phase <= phase)
+                    //    {
+                    //        Execute.BeginOnUIThread(() =>
+                    //        {
+                    //            //Image.SetSource(FileUtils.GetTempFileUri(fileName));
+                    //            Image.UriSource = FileUtils.GetTempFileUri(fileName);
+                    //        });
+                    //    }
+                    //});
                 }
             }
         }
@@ -240,22 +240,6 @@ namespace Unigram.Common
 
     public static class LazyBitmapImage
     {
-        public static async void SetSource(this BitmapSource bitmap, Uri uri)
-        {
-            var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
-            using (var stream = await file.OpenReadAsync())
-            {
-                try
-                {
-                    await bitmap.SetSourceAsync(stream);
-                }
-                catch
-                {
-                    Debug.Write("AGGRESSIVE");
-                }
-            }
-        }
-
         public static async void SetSource(this BitmapSource bitmap, byte[] data)
         {
             using (var stream = new InMemoryRandomAccessStream())

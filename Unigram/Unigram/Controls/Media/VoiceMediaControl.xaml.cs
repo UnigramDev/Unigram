@@ -216,8 +216,8 @@ namespace Unigram.Controls.Media
                         {
                             _state = PlaybackState.Loading;
                             UpdateGlyph();
-                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
-                            var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
+                            var manager = UnigramContainer.Current.ResolveType<IDownloadAudioFileManager>();
+                            var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Document.Download());
                         }
 
                         if (message.IsMediaUnread && !message.IsOut)

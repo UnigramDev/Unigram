@@ -23,13 +23,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views.Users
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class UserDetailsPage : Page
     {
         public UserDetailsViewModel ViewModel => DataContext as UserDetailsViewModel;
@@ -53,26 +48,17 @@ namespace Unigram.Views.Users
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Picture);
 
             var user = ViewModel.Item as TLUser;
-            if (user.HasPhoto)
+            if (user.HasPhoto && user.Photo is TLUserProfilePhoto photo)
             {
-                var photo = user.Photo as TLUserProfilePhoto;
-                if (photo != null)
+                var viewModel = new UserPhotosViewModel(user, ViewModel.ProtoService);
+                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                 {
-                    var test = new UserPhotosViewModel(user, ViewModel.ProtoService);
-                    var dialog = new PhotosView { DataContext = test };
-                    dialog.Background = null;
-                    dialog.OverlayBrush = null;
-                    dialog.Closing += (s, args) =>
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
                     {
-                        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                        if (animation != null)
-                        {
-                            animation.TryStart(Picture);
-                        }
-                    };
-
-                    await dialog.ShowAsync();
-                }
+                        animation.TryStart(Picture);
+                    }
+                });
             }
         }
     }

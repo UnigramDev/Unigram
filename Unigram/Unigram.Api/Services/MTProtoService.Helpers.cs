@@ -147,11 +147,14 @@ namespace Telegram.Api.Services
 	            
 	        }
 
+            var payload = data.ToArray();
             transport.SendPacketAsync(
                 caption,
-                data.ToArray(),
+                payload,
                 callback,
                 faultCallback);
+
+            _statsService.IncrementSentBytesCount(_connectionService.NetworkType, DataType.Total, payload.Length);
 	    }
 
         private readonly object _historyRoot = new object();
@@ -265,7 +268,7 @@ namespace Telegram.Api.Services
                 Caption = caption,
                 Object = obj,
                 Message = transportMessage,
-                Callback = t => callback((T)t),
+                Callback = t => callback?.Invoke((T)t),
                 AttemptFailed = attemptFailed,
                 FaultCallback = faultCallback,
                 ClientTicksDelta = clientsTicksDelta,

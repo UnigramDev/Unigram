@@ -27,6 +27,11 @@ namespace Unigram.Controls
 
         public BackDrop()
         {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
             m_rootVisual = ElementCompositionPreview.GetElementVisual(this as UIElement);
             Compositor = m_rootVisual.Compositor;
 

@@ -188,11 +188,9 @@
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged">
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="48" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-
-            <!-- Titlebar -->
             <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -239,7 +237,11 @@
                         <controls:HyperCheckButton Tag="Send by Enter"
                                                    IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
                                                    Style="{ThemeResource CheckButtonStyle}"/>
-                        
+
+                        <controls:HyperCheckButton Tag="Replace emoji"
+                                                   IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
+                                                   Style="{ThemeResource CheckButtonStyle}"/>
+
                         <!-- Manually hidden -->
                         <controls:HyperCheckButton Content="Enabled"
                                                    Visibility="Collapsed"

@@ -150,6 +150,9 @@
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
     <value>hat ein Bild gesendet</value>
   </data>
+  <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
+    <value>hat eine Videonachricht gesendet</value>
+  </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
     <value>hat einen {1}Sticker gesendet</value>
   </data>
@@ -209,6 +212,9 @@
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} hat ein Bild an die Gruppe gesendet</value>
+  </data>
+  <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
+    <value>{0} hat eine Videonachricht an die Gruppe gesendet</value>
   </data>
   <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
     <value>{0} hat einen {2}Sticker an die Gruppe gesendet</value>
@@ -279,6 +285,9 @@
   <data name="MESSAGE_PHOTO" xml:space="preserve">
     <value>hat dir ein Bild gesendet</value>
   </data>
+  <data name="MESSAGE_ROUND" xml:space="preserve">
+    <value>hat dir eine Videonachricht gesendet</value>
+  </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
     <value>hat dir einen {1}Sticker gesendet</value>
   </data>
@@ -320,6 +329,9 @@
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
     <value>hat ein Bild angeheftet</value>
+  </data>
+  <data name="PINNED_ROUND" xml:space="preserve">
+    <value>hat eine Videonachricht angeheftet</value>
   </data>
   <data name="PINNED_STICKER" xml:space="preserve">
     <value>hat einen {1}Sticker angeheftet</value>

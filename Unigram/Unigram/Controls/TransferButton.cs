@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
+using Unigram.Views;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -14,24 +16,108 @@ namespace Unigram.Controls
 {
     public class TransferButton : GlyphHyperlinkButton
     {
-        #region Media
-
-        public TLMessageMediaBase Media
+        public TransferButton()
         {
-            get { return (TLMessageMediaBase)GetValue(MediaProperty); }
-            set { SetValue(MediaProperty, value); }
+            Click += OnClick;
         }
 
-        // Using a DependencyProperty as the backing store for Media.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty MediaProperty =
-            DependencyProperty.Register("Media", typeof(TLMessageMediaBase), typeof(TransferButton), new PropertyMetadata(null, OnMediaChanged));
+        public event EventHandler<TransferCompletedEventArgs> Completed;
 
-        private static void OnMediaChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private async void OnClick(object sender, RoutedEventArgs e)
         {
-            ((TransferButton)d).OnMediaChanged((TLMessageMediaBase)e.NewValue, (TLMessageMediaBase)e.OldValue);
+            if (Transferable is TLPhoto photo)
+            {
+
+            }
+            else if (Transferable is TLDocument document)
+            {
+                var fileName = document.GetFileName();
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                {
+                    Completed?.Invoke(this, new TransferCompletedEventArgs(fileName));
+                }
+                else
+                {
+                    if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
+                    {
+                        var manager = ChooseDownloadManager(document);
+                        manager.CancelDownloadFile(document);
+
+                        document.DownloadingProgress = 0;
+                        Update();
+                    }
+                    else if (document.UploadingProgress > 0 && document.UploadingProgress < 1)
+                    {
+                        var manager = ChooseUploadManager(document);
+                        manager.CancelUploadFile(document.Id);
+
+                        document.UploadingProgress = 0;
+                        Update();
+                    }
+                    else
+                    {
+                        //var watch = Stopwatch.StartNew();
+
+                        //var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
+
+                        var manager = ChooseDownloadManager(document);
+                        var operation = manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
+
+                        document.DownloadingProgress = 0.02;
+                        Update();
+
+                        var download = await operation.AsTask(document.Download());
+                        if (download != null)
+                        {
+                            Update();
+
+                            //await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
+                            //return;
+
+                            Completed?.Invoke(this, new TransferCompletedEventArgs(fileName));
+                        }
+                    }
+                }
+            }
         }
 
-        private void OnMediaChanged(TLMessageMediaBase newValue, TLMessageMediaBase oldValue)
+        private IDownloadManager ChooseDownloadManager(TLDocument document)
+        {
+            if (TLMessage.IsVideo(document))
+            {
+                return UnigramContainer.Current.ResolveType<IDownloadVideoFileManager>();
+            }
+
+            return UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
+        }
+
+        private IUploadManager ChooseUploadManager(TLDocument document)
+        {
+            if (TLMessage.IsVideo(document))
+            {
+                return UnigramContainer.Current.ResolveType<IUploadVideoManager>();
+            }
+
+            return UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
+        }
+
+        #region Transferable
+
+        public ITLTransferable Transferable
+        {
+            get { return (ITLTransferable)GetValue(TransferableProperty); }
+            set { SetValue(TransferableProperty, value); }
+        }
+
+        public static readonly DependencyProperty TransferableProperty =
+            DependencyProperty.Register("Transferable", typeof(ITLTransferable), typeof(TransferButton), new PropertyMetadata(null, OnTransferableChanged));
+
+        private static void OnTransferableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((TransferButton)d).OnTransferableChanged(e.NewValue as ITLTransferable, e.OldValue as ITLTransferable);
+        }
+
+        private void OnTransferableChanged(ITLTransferable newValue, ITLTransferable oldValue)
         {
             Glyph = UpdateGlyph(newValue, oldValue);
         }
@@ -40,60 +126,75 @@ namespace Unigram.Controls
 
         public void Update()
         {
-            OnMediaChanged(Media, Media);
+            OnTransferableChanged(Transferable, null);
         }
 
-        private string UpdateGlyph(TLMessageMediaBase newValue, TLMessageMediaBase oldValue)
+        private string UpdateGlyph(ITLTransferable newValue, ITLTransferable oldValue)
         {
-            if (newValue is TLMessageMediaPhoto photoMedia)
+            if (newValue is TLPhoto photo)
             {
-                if (photoMedia.Photo is TLPhoto photo)
-                {
-                    if (photo.Full is TLPhotoSize photoSize)
-                    {
-                        var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
-                        if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                        {
-                            Visibility = Visibility.Collapsed;
-                            return "\uE160";
-                        }
-
-                        Visibility = Visibility.Visible;
-                        return "\uE118";
-                    }
-                }
+                return UpdateGlyph(photo);
             }
-
-            if (newValue is TLMessageMediaDocument documentMedia)
+            else if (newValue is TLDocument document)
             {
-                Visibility = Visibility.Visible;
-
-                if (documentMedia.Document is TLDocument document)
-                {
-                    var fileName = document.GetFileName();
-                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                    {
-                        if (TLMessage.IsVideo(document))
-                        {
-                            return "\uE102";
-                        }
-
-                        return "\uE160";
-                    }
-                    else if (documentMedia.DownloadingProgress > 0 && documentMedia.DownloadingProgress < 1)
-                    {
-                        return "\uE10A";
-                    }
-                    else if (documentMedia.UploadingProgress > 0 && documentMedia.DownloadingProgress < 1)
-                    {
-                        return "\uE10A";
-                    }
-
-                    return "\uE118";
-                }
+                return UpdateGlyph(document);
             }
 
             return "\uE118";
+        }
+
+        private string UpdateGlyph(TLPhoto photo)
+        {
+            if (photo.Full is TLPhotoSize photoSize)
+            {
+                var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                {
+                    Visibility = Visibility.Collapsed;
+                    return "\uE160";
+                }
+
+                Visibility = Visibility.Visible;
+                return "\uE118";
+            }
+
+            return "\uE118";
+        }
+
+        private string UpdateGlyph(TLDocument document)
+        {
+            Visibility = Visibility.Visible;
+
+            var fileName = document.GetFileName();
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+                if (TLMessage.IsVideo(document))
+                {
+                    return "\uE102";
+                }
+
+                return "\uE160";
+            }
+            else if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
+            {
+                return "\uE10A";
+            }
+            else if (document.UploadingProgress > 0 && document.DownloadingProgress < 1)
+            {
+                return "\uE10A";
+            }
+
+            return "\uE118";
+        }
+    }
+
+    public class TransferCompletedEventArgs : EventArgs
+    {
+        public string FileName { get; private set; }
+
+        public TransferCompletedEventArgs(string fileName)
+        {
+            FileName = fileName;
         }
     }
 }

@@ -526,7 +526,7 @@ namespace Unigram.Converters
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var bitmap = new BitmapImage();
-                bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
+                bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
                 return bitmap;
             }
 
@@ -770,7 +770,7 @@ namespace Unigram.Converters
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var bitmap = new BitmapImage();
-                bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
+                bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
                 return bitmap;
             }
 
@@ -782,10 +782,10 @@ namespace Unigram.Converters
                 //Execute.BeginOnThreadPool(() => manager.DownloadFile(location, owner, fileSize));
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(location, fileSize).AsTask(mediaPhoto?.Download());
+                    await manager.DownloadFileAsync(location, fileSize).AsTask(mediaPhoto?.Photo.Download());
                     Execute.BeginOnUIThread(() =>
                     {
-                        bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
+                        bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
                     });
                 });
 
@@ -873,7 +873,7 @@ namespace Unigram.Converters
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var bitmap = new BitmapImage();
-                bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
+                bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
                 _cachedSources[fileName] = new WeakReference(bitmap);
 
                 return bitmap;
@@ -890,7 +890,7 @@ namespace Unigram.Converters
                     await manager.DownloadFileAsync(location, fileSize);
                     Execute.BeginOnUIThread(() =>
                     {
-                        bitmap.SetSource(FileUtils.GetTempFileUri(fileName));
+                        bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
                     });
                 });
 

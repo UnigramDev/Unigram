@@ -16,13 +16,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views.Payments
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class PaymentFormStep2Page : Page
     {
         public PaymentFormStep2ViewModel ViewModel => DataContext as PaymentFormStep2ViewModel;
@@ -92,7 +87,7 @@ namespace Unigram.Views.Payments
 
                     var radio = new RadioButton();
                     radio.IsChecked = i == 0;
-                    radio.Content = BindConvert.Current.ShippingOptiopn(option, _currency);
+                    radio.Content = BindConvert.Current.ShippingOption(option, _currency);
                     radio.Margin = new Thickness(12, 4, 12, 4);
                     radio.DataContext = option;
                     radio.Checked += (s, args) =>

@@ -18,13 +18,8 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Hosting;
 using Unigram.Common;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views.Payments
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class PaymentFormStep1Page : Page
     {
         public PaymentFormStep1ViewModel ViewModel => DataContext as PaymentFormStep1ViewModel;

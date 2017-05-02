@@ -150,6 +150,9 @@
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
     <value>ha pubblicato una foto</value>
   </data>
+  <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
+    <value>ha pubblicato un videomessaggio</value>
+  </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
     <value>ha pubblicato uno {1}sticker</value>
   </data>
@@ -209,6 +212,9 @@
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} ha inviato una foto al gruppo</value>
+  </data>
+  <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
+    <value>{0} ha inviato un videomessaggio al gruppo</value>
   </data>
   <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
     <value>{0} ha inviato uno {2}sticker al gruppo</value>
@@ -279,6 +285,9 @@
   <data name="MESSAGE_PHOTO" xml:space="preserve">
     <value>ti ha inviato una foto</value>
   </data>
+  <data name="MESSAGE_ROUND" xml:space="preserve">
+    <value>ti ha inviato un videomessaggio</value>
+  </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
     <value>ti ha inviato uno {1}sticker</value>
   </data>
@@ -320,6 +329,9 @@
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
     <value>ha fissato una foto</value>
+  </data>
+  <data name="PINNED_ROUND" xml:space="preserve">
+    <value>ha fissato un videomessaggio</value>
   </data>
   <data name="PINNED_STICKER" xml:space="preserve">
     <value>ha fissato uno {1}sticker</value>

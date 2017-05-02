@@ -16,13 +16,8 @@ using Windows.Foundation;
 
 namespace Telegram.Api.Services.FileManager
 {
-    public interface IDownloadDocumentFileManager
+    public interface IDownloadDocumentFileManager : IDownloadManager
     {
-        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string fileName, int dcId, TLInputDocumentFileLocation file, int fileSize);
-
-        void DownloadFile(string fileName, int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize);
-
-        void CancelDownloadFile(TLDocument document);
     }
 
     public class DownloadDocumentFileManager : IDownloadDocumentFileManager
@@ -38,14 +33,15 @@ namespace Telegram.Api.Services.FileManager
         private readonly List<DownloadableItem> _items = new List<DownloadableItem>();
 
         private readonly ITelegramEventAggregator _eventAggregator;
-
         private readonly IMTProtoService _mtProtoService;
+        private readonly IStatsService _statsService;
+        private readonly DataType _dataType = DataType.Files;
 
-        public DownloadDocumentFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService)
+        public DownloadDocumentFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService, IStatsService statsService)
         {
             _eventAggregator = eventAggregator;
             _mtProtoService = mtProtoService;
-
+            _statsService = statsService;
 
             var timer = Stopwatch.StartNew();
             for (int i = 0; i < Constants.BigFileDownloadersCount; i++)
@@ -183,6 +179,8 @@ namespace Telegram.Api.Services.FileManager
                     {
                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
                     }
+
+                    _statsService.IncrementReceivedItemsCount(_mtProtoService.NetworkType, _dataType, 1);
                 }
                 else
                 {
@@ -224,6 +222,8 @@ namespace Telegram.Api.Services.FileManager
                 {
                     result = file;
                     manualResetEvent.Set();
+
+                    _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
                 },
                 error =>
                 {

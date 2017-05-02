@@ -10,9 +10,9 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
-using Template10.Utils;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Core.Common;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -26,7 +26,7 @@ namespace Unigram.ViewModels.Channels
         public CreateChannelStep2ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
-            AdminedPublicChannels = new ObservableCollection<TLChannel>();
+            AdminedPublicChannels = new MvxObservableCollection<TLChannel>();
             PropertyChanged += OnPropertyChanged;
         }
 
@@ -60,7 +60,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public ObservableCollection<TLChannel> AdminedPublicChannels { get; private set; }
+        public MvxObservableCollection<TLChannel> AdminedPublicChannels { get; private set; }
 
         private bool _isPublic = true;
         public bool IsPublic
@@ -139,7 +139,7 @@ namespace Unigram.ViewModels.Channels
             var response = await ProtoService.GetAdminedPublicChannelsAsync();
             if (response.IsSucceeded)
             {
-                AdminedPublicChannels.AddRange(response.Result.Chats.OfType<TLChannel>(), true);
+                AdminedPublicChannels.ReplaceWith(response.Result.Chats.OfType<TLChannel>());
             }
             else
             {

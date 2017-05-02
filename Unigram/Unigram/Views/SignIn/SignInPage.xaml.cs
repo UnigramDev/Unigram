@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Views;
-using Unigram.ViewModels.Login;
+using Unigram.ViewModels.SignIn;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.ViewManagement;
@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 
-namespace Unigram.Views.Login
+namespace Unigram.Views.SignIn
 {
     public sealed partial class SignInPage : Page
     {

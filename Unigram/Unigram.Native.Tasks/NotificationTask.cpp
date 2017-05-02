@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "NotificationTask.h"
+#include "VoIPCallTask.h"
 
 #include <ios>
 #include <fstream>
@@ -156,6 +157,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content, std::wofstream* log)
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST")) 
 		{
+			UpdateToast(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
@@ -499,55 +501,9 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
 {
 	auto coordinator = VoipCallCoordinator::GetDefault();
-	create_task(coordinator->ReserveCallResourcesAsync("Unigram.Native.Tasks.VoipCallRtcTask")).then([coordinator, caption, message, picture](VoipPhoneCallResourceReservationStatus status)
+	create_task(coordinator->ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask")).then([this, coordinator, caption, message, sound, launch, tag, group, picture, date, loc_key](VoipPhoneCallResourceReservationStatus status)
 	{
-		TimeSpan timeout = { 128000000 };
-		auto call = coordinator->RequestNewIncomingCall("Unigram", caption, message, ref new Windows::Foundation::Uri(picture), "Unigram", nullptr, nullptr, nullptr, VoipPhoneCallMedia::Audio, timeout);
+		Sleep(10000);
+		//VoIPCallTask::Current->UpdatePhoneCall(caption, message, sound, launch, tag, group, picture, date, loc_key);
 	});
-
-
-	return;
-
-	std::wstring key = loc_key->Data();
-	std::wstring actions = L"";
-	if (group != nullptr && key.find(L"CHANNEL"))
-	{
-		actions = L"<actions>";
-		actions += L"<action content='Ignore' imageUri='Assets/Icons/cancel.png' activationType='background' arguments='action=ignore&amp;callId=938163'/>";
-		actions += L"<action content='Answer' imageUri='Assets/Icons/telephone.png' arguments='action=answer&amp;callId=938163'/>";
-		actions += L"</actions>";
-	}
-
-	std::wstring xml = L"<toast launch='";
-	xml += launch->Data();
-	xml += L"' scenario='incomingCall'><visual><binding template='ToastGeneric'>";
-
-	xml += L"<text><![CDATA[";
-	xml += caption->Data();
-	xml += L"]]></text><text><![CDATA[";
-	xml += message->Data();
-	xml += L"]]></text>";
-
-	if (picture != nullptr)
-	{
-		xml += L"<image hint-crop='circle' src='";
-		xml += picture->Data();
-		xml += L"'/>";
-	}
-
-	xml += L"</binding></visual>";
-	xml += actions;
-	xml += L"</toast>";
-
-	auto notifier = ToastNotificationManager::CreateToastNotifier();
-
-	auto document = ref new XmlDocument();
-	document->LoadXml(ref new String(xml.c_str()));
-
-	auto notification = ref new ToastNotification(document);
-
-	if (tag != nullptr) notification->Tag = tag;
-	if (group != nullptr) notification->Group = group;
-
-	notifier->Show(notification);
 }

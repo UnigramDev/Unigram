@@ -25,7 +25,7 @@ namespace Unigram.Selectors
         public DataTemplate UnsupportedTemplate { get; set; }
         public DataTemplate VenueTemplate { get; set; }
         public DataTemplate VideoTemplate { get; set; }
-        public DataTemplate WebPageGifTemplate { get; set; }
+        public DataTemplate StickerTemplate { get; set; }
         public DataTemplate WebPageDocumentTemplate { get; set; }
         public DataTemplate WebPagePendingTemplate { get; set; }
         public DataTemplate WebPagePhotoTemplate { get; set; }
@@ -34,6 +34,14 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
+            var boh = DataTemplate.GetExtensionInstance(container as FrameworkElement);
+
+            var presenter = container as ContentControl;
+            if (presenter != null && item is TLDocument doc)
+            {
+                presenter.Content = new TLMessage { Media = new TLMessageMediaDocument { Document = doc } };
+            }
+
             if (item is TLMessage message)
             {
                 item = message.Media;
@@ -72,21 +80,30 @@ namespace Unigram.Selectors
 
                 return InvoiceTemplate;
             }
-            else if (item is TLMessageMediaDocument documentMedia)
+            else if (item is TLMessageMediaDocument || item is TLDocument)
             {
-                if (documentMedia.Document is TLDocument document)
+                if (item is TLMessageMediaDocument documentMedia)
+                {
+                    item = documentMedia.Document;
+                }
+                
+                if (item is TLDocument document)
                 {
                     if (TLMessage.IsVoice(document))
                     {
                         return AudioTemplate;
                     }
-                    if (TLMessage.IsVideo(document))
+                    else if (TLMessage.IsVideo(document))
                     {
                         return VideoTemplate;
                     }
-                    if (TLMessage.IsGif(document))
+                    else if (TLMessage.IsGif(document))
                     {
                         return GifTemplate;
+                    }
+                    else if (TLMessage.IsSticker(document))
+                    {
+                        return StickerTemplate;
                     }
 
                     // TODO: ???
@@ -116,11 +133,17 @@ namespace Unigram.Selectors
                 }
                 else if (webpageMedia.WebPage is TLWebPage webpage)
                 {
-                    if (TLMessage.IsGif(webpage.Document))
+                    /*if (TLMessage.IsGif(webpage.Document))
                     {
                         return WebPageGifTemplate;
                     }
-                    else if (webpage.Document != null && webpage.Type.Equals("document", StringComparison.OrdinalIgnoreCase))
+                    else
+                    if (webpage.Document != null && webpage.Type.Equals("document", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return WebPageDocumentTemplate;
+                    }*/
+
+                    if (webpage.Document != null)
                     {
                         return WebPageDocumentTemplate;
                     }
@@ -147,13 +170,20 @@ namespace Unigram.Selectors
 
         public static bool IsWebPagePhotoTemplate(TLWebPage webPage)
         {
-            if (webPage.Type != null)
+            if (webPage.Photo != null && webPage.Type != null)
             {
-                if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) || 
-                    string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase) || 
-                    (webPage.SiteName != null && string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase)))
+                if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
+                }
+                else if (string.Equals(webPage.Type, "article", StringComparison.OrdinalIgnoreCase))
+                {
+                    var photo = webPage.Photo as TLPhoto;
+                    var full = photo?.Full as TLPhotoSize;
+                    var fullCache = photo?.Full as TLPhotoCachedSize;
+
+                    return (full?.W > 400 || fullCache?.W > 400) && webPage.HasCachedPage;
                 }
             }
             return false;

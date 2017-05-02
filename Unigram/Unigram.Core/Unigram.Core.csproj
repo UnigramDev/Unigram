@@ -125,7 +125,7 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\FunctionalComparer.cs" />
     <Compile Include="Common\KeyedList.cs" />
-    <Compile Include="Common\ObservableCollectionEx.cs" />
+    <Compile Include="Common\MvxObservableCollection.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Dependency\UnigramContainerBuilder.cs" />
     <Compile Include="EncryptionKeyEmojifier.cs" />
@@ -171,9 +171,11 @@
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Services\StatsService.cs" />
     <Compile Include="Services\StickersService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
     <Compile Include="Services\VibrationService.cs" />
+    <Compile Include="Services\VoIPService.cs" />
     <Compile Include="Stripe\Card.cs" />
     <Compile Include="Stripe\CardUtils.cs" />
     <Compile Include="Stripe\DateUtils.cs" />

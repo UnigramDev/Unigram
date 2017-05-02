@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
-using Unigram.Views.Login;
+using Unigram.Views.SignIn;
 using Telegram.Api.Aggregator;
 using Unigram.Common;
 using Unigram.Core.Models;
@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Controls;
 
-namespace Unigram.ViewModels.Login
+namespace Unigram.ViewModels.SignIn
 {
 
     public class SignInViewModel : UnigramViewModelBase

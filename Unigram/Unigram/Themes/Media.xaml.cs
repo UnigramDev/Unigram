@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using System.Globalization;
 using System.Net;
 using Unigram.Common;
+using Telegram.Api.Services;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -47,28 +48,20 @@ namespace Unigram.Themes
         {
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
-            var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
-            if (bubble != null)
+
+            if (message != null)
             {
-                if (bubble.Context != null)
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
+
+                var viewModel = new DialogPhotosViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                 {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
-
-                    var test = new DialogPhotosViewModel(bubble.Context.Peer, message, bubble.Context.ProtoService);
-                    var dialog = new PhotosView { DataContext = test };
-                    dialog.Background = null;
-                    dialog.OverlayBrush = null;
-                    dialog.Closing += (s, args) =>
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
                     {
-                        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                        if (animation != null)
-                        {
-                            animation.TryStart(image);
-                        }
-                    };
-
-                    await dialog.ShowAsync();
-                }
+                        animation.TryStart(image);
+                    }
+                });
             }
         }
 
@@ -77,75 +70,64 @@ namespace Unigram.Themes
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
             var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
+
             if (bubble != null)
             {
                 if (bubble.Context != null)
                 {
-                    bubble.Context.NavigationService.Navigate(typeof(ArticlePage), message.Media);
+                    bubble.Context.NavigationService.Navigate(typeof(InstantPage), message.Media);
                 }
             }
         }
 
-        private async void DownloadDocument_Click(object sender, RoutedEventArgs e)
+        private async void SingleMedia_Click(object sender, RoutedEventArgs e)
         {
-            var border = sender as TransferButton;
-            var message = border.DataContext as TLMessage;
-            var documentMedia = message.Media as TLMessageMediaDocument;
-            if (documentMedia != null)
+            var image = sender as ImageView;
+            var item = image.Constraint as TLPhoto;
+
+            if (item != null)
             {
-                var document = documentMedia.Document as TLDocument;
-                if (document != null)
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
+
+                var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(item, null as string));
+                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                 {
-                    var fileName = document.GetFileName();
-
-                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
                     {
-                        var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
-                        await Launcher.LaunchFileAsync(file);
+                        animation.TryStart(image);
                     }
-                    else
+                });
+            }
+        }
+
+        private async void Download_Click(object sender, TransferCompletedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
+            if (bubble != null)
+            {
+                if (bubble.Context != null && message.IsVideo())
+                {
+                    var media = bubble.FindName("MediaControl") as UIElement;
+
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
+
+                    var viewModel = new DialogPhotosViewModel(bubble.Context.Peer, message, bubble.Context.ProtoService);
+                    await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                     {
-                        if (documentMedia.DownloadingProgress > 0 && documentMedia.DownloadingProgress < 1)
+                        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                        if (animation != null)
                         {
-                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
-                            manager.CancelDownloadFile(document);
-
-                            documentMedia.DownloadingProgress = 0;
-                            border.Update();
+                            animation.TryStart(media);
                         }
-                        else if (documentMedia.UploadingProgress > 0 && documentMedia.UploadingProgress < 1)
-                        {
-                            var manager = UnigramContainer.Current.ResolveType<IUploadDocumentManager>();
-                            manager.CancelUploadFile(document.Id);
-
-                            documentMedia.UploadingProgress = 0;
-                            border.Update();
-                        }
-                        else
-                        {
-                            //var watch = Stopwatch.StartNew();
-
-                            //var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
-
-                            var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
-                            var operation = manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
-
-                            documentMedia.DownloadingProgress = 0.02;
-                            border.Update();
-
-                            var download = await operation.AsTask(documentMedia.Download());
-                            if (download != null)
-                            {
-                                border.Update();
-
-                                //await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
-                                //return;
-
-                                var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(fileName));
-                                await Launcher.LaunchFileAsync(file);
-                            }
-                        }
-                    }
+                    });
+                }
+                else
+                {
+                    var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(e.FileName));
+                    await Launcher.LaunchFileAsync(file);
                 }
             }
         }

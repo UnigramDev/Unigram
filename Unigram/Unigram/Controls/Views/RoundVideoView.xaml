@@ -36,7 +36,9 @@
     </Control.Resources>
     
     <Grid>
-        <Ellipse x:Name="Capture" Width="180" Height="180" Fill="Gray"/>
+        <!--<Ellipse x:Name="Capture" Width="180" Height="180" Fill="Gray"/>-->
+        <CaptureElement x:Name="Capture" Stretch="UniformToFill" Width="180" Height="180"/>
+        <Image Width="600" Height="600" HorizontalAlignment="Center" VerticalAlignment="Center" Source="ms-appx:///Assets/Ellipse.png"/>
         <!--<MediaPlayerElement x:Name="PlayerElement"/>-->
         <controls:ProgressBarRing Value="0.5"/>
     </Grid>
