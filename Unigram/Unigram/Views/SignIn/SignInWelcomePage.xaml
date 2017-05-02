@@ -136,10 +136,14 @@
                                    TextAlignment="Center"
                                    Style="{ThemeResource TitleTextBlockStyle}"/>
                         <TextBlock Padding="12,0"
-                                   Text="{Binding Text}"
                                    TextAlignment="Center"
                                    Style="{ThemeResource BodyTextBlockStyle}"
-                                   MaxWidth="360"/>
+                                   MaxWidth="360">
+                            <TextBlock.Inlines>
+                                <Run Text="{Binding Bold}" FontWeight="Bold"/>
+                                <Run Text="{Binding Text}"/>
+                            </TextBlock.Inlines>
+                        </TextBlock>
                     </StackPanel>
                 </DataTemplate>
             </FlipView.ItemTemplate>
