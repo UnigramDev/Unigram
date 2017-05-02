@@ -188,11 +188,9 @@
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged">
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="48" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-
-            <!-- Titlebar -->
             <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>

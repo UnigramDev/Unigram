@@ -57,6 +57,7 @@ namespace Unigram.Views
             {
                 Name = "Blur",
                 BlurAmount = 0,
+                BorderMode = EffectBorderMode.Hard,
                 Source = new CompositionEffectSourceParameter("backdrop")
             };
 

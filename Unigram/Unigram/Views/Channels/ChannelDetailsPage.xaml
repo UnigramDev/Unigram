@@ -182,7 +182,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Title="Info"
+        <controls:ButtonPageHeader Text="Info"
                                    Glyph="&#xE104;"/>
 
         <controls:ScrollViewerBackground 

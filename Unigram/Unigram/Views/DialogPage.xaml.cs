@@ -816,6 +816,7 @@ namespace Unigram.Views
             var point = _slideVisual.Offset;
             point.X = (float)e.NewSize.Width + 36;
 
+            _slideVisual.Opacity = 0;
             _slideVisual.Offset = point;
             _slideVisual.Size = new Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
         }
@@ -824,6 +825,8 @@ namespace Unigram.Views
         {
             var slideWidth = (float)SlidePanel.ActualWidth;
             var elapsedWidth = (float)ElapsedPanel.ActualWidth;
+
+            _slideVisual.Opacity = 1;
 
             var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
@@ -899,6 +902,7 @@ namespace Unigram.Views
                 var point = _slideVisual.Offset;
                 point.X = _slideVisual.Size.X + 36;
 
+                _slideVisual.Opacity = 0;
                 _slideVisual.Offset = point;
 
                 point = _elapsedVisual.Offset;

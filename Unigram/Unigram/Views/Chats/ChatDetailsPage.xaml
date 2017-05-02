@@ -194,7 +194,7 @@
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
-        <controls:ButtonPageHeader Title="Info"
+        <controls:ButtonPageHeader Text="Info"
                                    Glyph="&#xE104;"/>
 
         <controls:ScrollViewerBackground

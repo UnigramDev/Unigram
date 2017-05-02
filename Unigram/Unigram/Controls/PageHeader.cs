@@ -16,16 +16,16 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(PageHeader);
         }
 
-        #region Title
+        #region Text
 
-        public string Title
+        public string Text
         {
-            get { return (string)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
         }
 
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register("Title", typeof(string), typeof(PageHeader), new PropertyMetadata(string.Empty));
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(PageHeader), new PropertyMetadata(string.Empty));
 
         #endregion
 

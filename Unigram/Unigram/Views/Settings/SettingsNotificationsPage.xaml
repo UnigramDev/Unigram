@@ -19,11 +19,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
-            <TextBlock Text="Notifications and Sounds" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-        </Grid>
-
+        <controls:PageHeader Text="Notifications and sounds"/>
+        
         <ScrollViewer x:Name="ScrollingHost"
                       Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                       VerticalScrollBarVisibility="Auto"

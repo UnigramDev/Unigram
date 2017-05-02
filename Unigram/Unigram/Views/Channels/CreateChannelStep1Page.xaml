@@ -13,15 +13,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid x:Name="Header" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="New channel" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-            <controls:GlyphButton Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;" Grid.Column="1"/>
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-        </Grid>
+        <controls:ButtonPageHeader
+            Text="New channel"
+            Glyph="&#xE10B;"
+            Command="{x:Bind ViewModel.SendCommand}"/>
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
@@ -38,9 +33,9 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Grid Height="48" Width="48" CornerRadius="24" Margin="12" Grid.RowSpan="2">
-                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24"/>
-                    <controls:GlyphButton Glyph="&#xE114;" FontSize="16" CornerRadius="24"/>
+                <Grid Height="64" Width="64" CornerRadius="32" Margin="12" Grid.RowSpan="2">
+                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="32"/>
+                    <controls:GlyphButton Glyph="&#xE114;" FontSize="16" CornerRadius="32" Width="64" Height="64"/>
                 </Grid>
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
                     <controls:UpdateTextBox Text="{Binding Title, Mode=TwoWay}" MaxLength="{StaticResource ChannelTitleMaxLength}" PlaceholderText="Channel name"/>
