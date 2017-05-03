@@ -41,6 +41,7 @@ using Telegram.Api.TL;
 using System.Collections.Generic;
 using Unigram.Core.Services;
 using Template10.Controls;
+using Windows.Foundation;
 
 namespace Unigram
 {
@@ -159,8 +160,38 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(PlaygroundPage2));
-            //return Task.CompletedTask;
+            //NavigationService.Navigate(typeof(BlankPage));
+            ////return Task.CompletedTask;
+
+            //PhoneCallPage newPlayer = null;
+            //CoreApplicationView newView = CoreApplication.CreateNewView();
+            //var newViewId = 0;
+            //await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //{
+            //    newPlayer = new PhoneCallPage();
+            //    Window.Current.Content = newPlayer;
+            //    Window.Current.Activate();
+            //    newViewId = ApplicationView.GetForCurrentView().Id;
+            //});
+
+            //await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            //{
+            //    var overlay = ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
+            //    if (overlay)
+            //    {
+            //        var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+            //        preferences.CustomSize = new Size(340, 200);
+
+            //        var viewShown = await ApplicationViewSwitcher.TryShowAsViewModeAsync(newViewId, ApplicationViewMode.CompactOverlay, preferences);
+            //    }
+            //    else
+            //    {
+            //        //await ApplicationViewSwitcher.SwitchAsync(newViewId);
+            //        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
+            //    }
+            //});
+
+            //return;
 
             if (SettingsHelper.IsAuthorized)
             {
@@ -227,11 +258,13 @@ namespace Unigram
             await VoIPConnection.Current.ConnectAsync();
             await Toast.RegisterBackgroundTasks();
 
+#if !DEBUG
             BadgeUpdateManager.CreateBadgeUpdaterForApplication().Clear();
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
             ToastNotificationManager.History.Clear();
+#endif
 
-#if !DEBUG && !PREVIEW && !RELEASE
+#if !DEBUG && !PREVIEW
             Execute.BeginOnThreadPool(async () =>
             {
                 await new AppUpdateService().CheckForUpdatesAsync();

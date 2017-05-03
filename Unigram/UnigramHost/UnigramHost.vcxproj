@@ -27,20 +27,30 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="UnigramHost.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <AppxManifest Include="..\Unigram\Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="UnigramHost.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Unigram_StoreKey.pfx" />
+    <None Include="Unigram_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Unigram.Native.Tasks\Unigram.Native.Tasks.vcxproj">
+      <Project>{ca0c2cc0-3d83-4556-a9a3-0923ece8c1d3}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Unigram.Native\Unigram.Native.vcxproj">
       <Project>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Unigram.Tasks\Unigram.Tasks.csproj">
+      <Project>{cf4c1fc3-bc51-4297-a7e1-493fcffe940b}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{0dbcf059-2952-4809-9003-193ca0c6d499}</ProjectGuid>
+    <ProjectGuid>{0DBCF059-2952-4809-9003-193CA0C6D499}</ProjectGuid>
     <Keyword>WindowsRuntimeComponent</Keyword>
     <ProjectName>UnigramHost</ProjectName>
     <RootNamespace>UnigramHost</RootNamespace>
@@ -110,7 +120,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup>
+    <PackageCertificateThumbprint>065F0B2E6BD36F1FD48AEA0B5546196B98A1546C</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>Unigram_StoreKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>

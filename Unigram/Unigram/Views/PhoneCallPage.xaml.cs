@@ -38,7 +38,6 @@ namespace Unigram.Views
     public sealed partial class PhoneCallPage : Page
     {
         private Visual _descriptionVisual;
-        private Visual _smallVisual;
         private Visual _largeVisual;
         private SpriteVisual _blurVisual;
         private CompositionEffectBrush _blurBrush;
@@ -49,7 +48,6 @@ namespace Unigram.Views
             this.InitializeComponent();
 
             _descriptionVisual = ElementCompositionPreview.GetElementVisual(DescriptionLabel);
-            _smallVisual = ElementCompositionPreview.GetElementVisual(SmallPanel);
             _largeVisual = ElementCompositionPreview.GetElementVisual(LargePanel);
             _compositor = _largeVisual.Compositor;
 
@@ -71,7 +69,20 @@ namespace Unigram.Views
             _blurVisual.Brush = _blurBrush;
 
             ElementCompositionPreview.SetElementChildVisual(BlurPanel, _blurVisual);
+
+            //var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            //var coreBar = CoreApplication.GetCurrentView().TitleBar;
+            //coreBar.IsVisibleChanged += CoreBar_IsVisibleChanged;
+            //coreBar.ExtendViewIntoTitleBar = true;
         }
+
+        //private void CoreBar_IsVisibleChanged(CoreApplicationViewTitleBar sender, object args)
+        //{
+        //    Debug.WriteLine("TitleBar height: " + sender.Height);
+
+        //    SmallEmojiLabel.Margin = new Thickness(sender.SystemOverlayLeftInset, 20, sender.SystemOverlayRightInset, 0);
+        //    OnSizeChanged(null, null);
+        //}
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -81,7 +92,6 @@ namespace Unigram.Views
             var position = transform.TransformPoint(new Point());
 
             _descriptionVisual.Opacity = 0;
-            _smallVisual.Opacity = 0;
             _largeVisual.Offset = new Vector3(position.ToVector2(), 0);
             _largeVisual.Scale = new Vector3(0.5f);
             _blurBrush.Properties.InsertScalar("Blur.Bluramount", 0);
@@ -119,7 +129,6 @@ namespace Unigram.Views
             var position = transform.TransformPoint(new Point());
 
             _descriptionVisual.Opacity = 0;
-            _smallVisual.Opacity = 0;
             _largeVisual.Offset = new Vector3(position.ToVector2(), 0);
             _largeVisual.Scale = new Vector3(0.5f);
             _blurBrush.Properties.InsertScalar("Blur.Bluramount", 0);
@@ -162,6 +171,12 @@ namespace Unigram.Views
 
         private void LargeEmojiLabel_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            if (_descriptionVisual.Opacity == 0)
+            {
+                SmallEmojiLabel_Tapped(null, null);
+                return;
+            }
+
             var transform = SmallPanel.TransformToVisual(LargeEmojiLabel);
             var position = transform.TransformPoint(new Point());
 

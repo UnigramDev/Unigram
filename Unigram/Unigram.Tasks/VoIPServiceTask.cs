@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
@@ -15,11 +16,16 @@ namespace Unigram.Tasks
         internal static VoIPServiceTask Current { get; private set; }
         internal static AppServiceConnection Connection { get; private set; }
 
+        [DllImport("kernel32.dll")]
+        static extern uint GetCurrentProcessId();
+
         public void Run(IBackgroundTaskInstance taskInstance)
         {
             try
             {
                 _deferral = taskInstance.GetDeferral();
+
+                TLPushUtils.AddToast("VoIPServiceTask started", GetCurrentProcessId().ToString(), "default", "started", null, null, "voip");
 
                 var details = taskInstance.TriggerDetails as AppServiceTriggerDetails;
 

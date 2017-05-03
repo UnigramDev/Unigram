@@ -11,11 +11,11 @@ namespace Unigram.Core.Managers
     {
         public static async Task<bool> RegisterAsync(string name, string entryPoint, IBackgroundTrigger trigger, Action onCompleted = null)
         {
-            var access = await BackgroundExecutionManager.RequestAccessAsync();
-            if (access == BackgroundAccessStatus.DeniedByUser || access == BackgroundAccessStatus.DeniedBySystemPolicy)
-            {
-                return false;
-            }
+            //var access = await BackgroundExecutionManager.RequestAccessAsync();
+            //if (access == BackgroundAccessStatus.DeniedByUser || access == BackgroundAccessStatus.DeniedBySystemPolicy)
+            //{
+            //    return false;
+            //}
 
             foreach (var t in BackgroundTaskRegistration.AllTasks)
             {

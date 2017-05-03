@@ -256,7 +256,7 @@ namespace Unigram.ViewModels
         #region Multiple Delete
 
         private RelayCommand _messagesDeleteCommand;
-        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages?.Count > 0));
+        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Any()));
 
         private void MessagesDeleteExecute()
         {
@@ -305,7 +305,7 @@ namespace Unigram.ViewModels
         #region Multiple Forward
 
         private RelayCommand _messagesForwardCommand;
-        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages?.Count > 0));
+        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages.All(x => x is TLMessage)));
 
         private void MessagesForwardExecute()
         {
