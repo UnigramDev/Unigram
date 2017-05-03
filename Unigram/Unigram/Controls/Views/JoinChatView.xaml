@@ -44,8 +44,8 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="tl:TLUser">
                     <StackPanel>
-                        <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="8,0"/>
-                        <TextBlock Text="{x:Bind FullName,Mode=OneWay}" Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsHitTestVisible="False" Width="48" Height="48" Margin="8,0"/>
+                        <TextBlock Text="{x:Bind FullName, Mode=OneWay}" Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>

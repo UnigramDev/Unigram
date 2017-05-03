@@ -242,10 +242,13 @@ namespace Unigram.ViewModels
         #region Forward
 
         public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
-        private void MessageForwardExecute(TLMessageBase message)
+        private async void MessageForwardExecute(TLMessageBase message)
         {
             if (message is TLMessage)
             {
+                await ShareView.Current.ShowAsync(new TLStickerSet());
+                return;
+
                 App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
                 NavigationService.GoBackAt(0);
             }

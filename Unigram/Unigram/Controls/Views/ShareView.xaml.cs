@@ -26,23 +26,23 @@ using Template10.Utils;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class StickerSetView : ContentDialogBase
+    public sealed partial class ShareView : ContentDialogBase
     {
-        public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
+        public ShareViewModel ViewModel => DataContext as ShareViewModel;
 
-        private StickerSetView()
+        private ShareView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<StickerSetViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<ShareViewModel>();
         }
 
-        private static StickerSetView _current;
-        public static StickerSetView Current
+        private static ShareView _current;
+        public static ShareView Current
         {
             get
             {
                 if (_current == null)
-                    _current = new StickerSetView();
+                    _current = new ShareView();
 
                 return _current;
             }
@@ -77,19 +77,19 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickerSetBase parameter, ItemClickEventHandler callback)
         {
-            ViewModel.IsLoading = true;
-            ViewModel.StickerSet = new TLStickerSet();
-            ViewModel.Items.Clear();
+            //ViewModel.IsLoading = true;
+            //ViewModel.StickerSet = new TLStickerSet();
+            //ViewModel.Items.Clear();
 
-            RoutedEventHandler handler = null;
-            handler = new RoutedEventHandler(async (s, args) =>
-            {
-                Loaded -= handler;
-                ItemClick = callback;
-                await ViewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
-            });
+            //RoutedEventHandler handler = null;
+            //handler = new RoutedEventHandler(async (s, args) =>
+            //{
+            //    Loaded -= handler;
+            //    ItemClick = callback;
+            //    await ViewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+            //});
 
-            Loaded += handler;
+            //Loaded += handler;
             return ShowAsync();
         }
 
@@ -100,26 +100,12 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessagesStickerSet parameter, ItemClickEventHandler callback)
         {
-            ViewModel.IsLoading = false;
-            ViewModel.StickerSet = parameter.Set;
-            ViewModel.Items.Clear();
-            ViewModel.Items.Add(parameter);
+            //ViewModel.IsLoading = false;
+            //ViewModel.StickerSet = parameter.Set;
+            //ViewModel.Items.Clear();
+            //ViewModel.Items.Add(parameter);
 
             return ShowAsync();
-        }
-
-        private string ConvertIsInstalled(bool installed, bool archived, bool official, bool masks)
-        {
-            if (installed && !archived)
-            {
-                return official 
-                    ? string.Format(masks ? "Archive {0} masks" : "Archive {0} stickers", ViewModel.StickerSet.Count)
-                    : string.Format(masks ? "Remove {0} masks" : "Remove {0} stickers", ViewModel.StickerSet.Count);
-            }
-
-            return official || archived
-                ? string.Format(masks ? "Show {0} masks" : "Show {0} stickers", ViewModel.StickerSet.Count)
-                : string.Format(masks ? "Add {0} masks" : "Add {0} stickers", ViewModel.StickerSet.Count);
         }
 
         private Border LineTop;
