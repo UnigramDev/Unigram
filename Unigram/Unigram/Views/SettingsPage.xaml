@@ -291,7 +291,21 @@
                                           Click="EditPhoto_Click"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Grid.Row="1"/>
-                            
+
+                    <local:TableStackPanel x:Name="Group1"
+                                           BorderThickness="0,0,0,1"
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                        <controls:HyperButton Tag="Phone"
+                                              Content="{x:Bind ViewModel.Self.Phone, Mone=OneWay, Converter={StaticResource PhoneNumberFormatConverter}}"
+                                              Style="{StaticResource SubtitleButtonStyle}"/>
+
+                        <controls:HyperButton Tag="Username"
+                                              Content="{x:Bind ViewModel.Self.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}}"
+                                              Style="{StaticResource SubtitleButtonStyle}"
+                                              Click="Username_Click"/>
+                    </local:TableStackPanel>
+
                     <local:TableStackPanel x:Name="SwitchGroup1"
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
@@ -321,19 +335,6 @@
                                               Visibility="Collapsed"
                                               Command="{x:Bind WallpaperPageCommand}"
                                               Style="{StaticResource HyperButtonStyle}"/>
-                    </local:TableStackPanel>
-                    <local:TableStackPanel x:Name="OptionsGroup2"
-                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                           Margin="0,24,0,0">
-                        <!-- Manually hidden -->
-                        <controls:HyperButton Content="Phone"
-                                              Tag="{x:Bind ViewModel.Self.Phone, Mode=OneWay, Converter={StaticResource PhoneNumberFormatConverter}}"
-                                              Style="{StaticResource HyperDetailButtonStyle}"/>
-                        <controls:HyperButton Content="Username"
-                                              Click="Username_Click"
-                                              Tag="{x:Bind ViewModel.Self.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}}"
-                                              Style="{StaticResource HyperDetailButtonStyle}"/>
                     </local:TableStackPanel>
                     <local:TableStackPanel x:Name="OptionsGroup4"
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
