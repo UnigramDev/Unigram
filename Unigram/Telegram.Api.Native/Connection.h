@@ -16,8 +16,8 @@ namespace Telegram
 		namespace Native
 		{
 
-			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, EventObjectT<EventTraits::WaitTraits>, FtmBase>,
-				public ConnectionSession, public ConnectionSocket
+			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, FtmBase>,
+				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket
 			{
 				friend class ConnectionManager;
 
@@ -39,7 +39,7 @@ namespace Telegram
 					return m_datacenter.Get();
 				}
 
-				STDMETHODIMP OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
+				HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
 				HRESULT Connect();
 				HRESULT Reconnect();
 				HRESULT Suspend();

@@ -4,6 +4,7 @@
 #include <Winsock2.h>
 #include <wrl.h>
 #include "WSAEvent.h"
+#include "EventObject.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -17,7 +18,7 @@ namespace Telegram
 
 			struct EventObjectEventContext;
 
-			class ConnectionSocket abstract
+			class ConnectionSocket abstract : virtual EventObjectT<EventTraits::WaitTraits>
 			{
 			public:
 				ConnectionSocket();
@@ -36,9 +37,8 @@ namespace Telegram
 
 				HRESULT ConnectSocket(std::wstring address, UINT16 port, boolean ipv6);
 				HRESULT DisconnectSocket();
-				HRESULT CloseSocket();
 				HRESULT SendData(_In_reads_(length) BYTE const* buffer, UINT32 length);
-				HRESULT OnSocketEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _Out_ boolean* closed);
+				HRESULT OnSocketEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
 
 				virtual HRESULT OnSocketCreated() = 0;
 				virtual HRESULT OnSocketConnected() = 0;
@@ -47,8 +47,8 @@ namespace Telegram
 				virtual HRESULT OnSocketClosed(int wsaError) = 0;
 
 			private:
-				HRESULT CloseSocket(int wsaError, boolean raiseEvent);
-				HRESULT GetLastErrorAndCloseSocket();
+				HRESULT CloseSocket(int wsaError, BYTE flags);
+				HRESULT GetLastErrorAndCloseSocket(BYTE flags);
 
 				SOCKET m_socket;
 				WSAEvent m_socketEvent;

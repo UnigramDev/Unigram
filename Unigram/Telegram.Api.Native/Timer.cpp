@@ -79,12 +79,7 @@ HRESULT Timer::Stop()
 
 	if (m_started)
 	{
-		auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
-		if (threadpoolObjectHandle != nullptr)
-		{
-			WaitForThreadpoolTimerCallbacks(threadpoolObjectHandle, TRUE);
-			SetThreadpoolTimer(threadpoolObjectHandle, nullptr, 0, 0);
-		}
+		ResetThreadpoolObject();
 	}
 
 	return S_OK;

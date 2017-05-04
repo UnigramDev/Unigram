@@ -15,8 +15,6 @@ Connection::Connection() :
 
 Connection::~Connection()
 {
-	WaitForThreadpoolCallback(true);
-	CloseSocket();
 }
 
 HRESULT Connection::RuntimeClassInitialize(Datacenter* datacenter, ConnectionType type)
@@ -84,22 +82,13 @@ HRESULT Connection::get_CurrentNetworkType(ConnectionNeworkType* value)
 HRESULT Connection::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 {
 	auto lock = m_criticalSection.Lock();
-
-	boolean socketClosed = false;
-	HRESULT result = OnSocketEvent(callbackInstance, &socketClosed);
-
-	if (!socketClosed)
-	{
-		SetThreadpoolWait(GetThreadpoolObjectHandle(), GetSocketEvent(), nullptr);
-	}
-
-	return result;
+	return OnSocketEvent(callbackInstance);
 }
 
 HRESULT Connection::Connect()
 {
 	HRESULT result;
-	//auto lock = m_criticalSection.Lock();
+	auto lock = m_criticalSection.Lock();
 
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManagerStatics::GetInstance(connectionManager));
@@ -126,15 +115,9 @@ HRESULT Connection::Connect()
 
 	ReturnIfFailed(result, m_reconnectionTimer->Stop());
 
-	{
-		auto lock = m_criticalSection.Lock();
-		ReturnIfFailed(result, ConnectSocket(L"172.217.23.68", 80, false));
-	}
-
+	ReturnIfFailed(result, ConnectSocket(L"172.217.23.68", 80, false));
 
 	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&m_currentNetworkType));
-
-	Sleep(10000);
 
 	/*Sleep(10000);
 
@@ -175,13 +158,8 @@ HRESULT Connection::Suspend()
 
 HRESULT Connection::OnSocketCreated()
 {
-	auto threadpoolObjectHandle = EventObjectT::GetThreadpoolObjectHandle();
-	if (threadpoolObjectHandle == nullptr)
-	{
-		return E_NOT_VALID_STATE;
-	}
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket created event handling");
 
-	SetThreadpoolWait(threadpoolObjectHandle, GetSocketEvent(), nullptr);
 	return S_OK;
 }
 
@@ -199,6 +177,8 @@ HRESULT Connection::OnSocketConnected()
 
 HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 {
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket data received event handling");
+
 	OutputDebugStringA(reinterpret_cast<const char*>(buffer));
 
 	return S_OK;
@@ -213,14 +193,7 @@ HRESULT Connection::OnSocketDisconnected()
 
 HRESULT Connection::OnSocketClosed(int wsaError)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connection closed handling");
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket closed event handling");
 
-	auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
-	if (threadpoolObjectHandle == nullptr)
-	{
-		return E_NOT_VALID_STATE;
-	}
-
-	SetThreadpoolWait(threadpoolObjectHandle, nullptr, nullptr);
 	return S_OK;
 }

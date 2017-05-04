@@ -19,26 +19,20 @@ namespace Telegram
 
 			}
 
-			MIDL_INTERFACE("8225DD5F-F2C1-4D1B-B354-F353BCE37427") IEventObject : public IUnknown
-			{
-			public:
-				virtual STDMETHODIMP AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) = 0;
-				virtual STDMETHODIMP DetachFromThreadpool() = 0;
-				virtual STDMETHODIMP OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance) = 0;
-			};
 
-			class EventObject abstract : public Implements<RuntimeClassFlags<ClassicCom>, IEventObject>
+			class EventObject abstract 
 			{
+				friend class ConnectionManager;
 				friend struct EventTraits::TimerTraits;
 				friend struct EventTraits::WaitTraits;
 				friend struct EventTraits::WorkerTraits;
 
 			protected:
-				virtual STDMETHODIMP OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance) = 0;
+				virtual HRESULT AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) = 0;
+				virtual HRESULT DetachFromThreadpool() = 0;
+				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance) = 0;
 
 			private:
-				virtual STDMETHODIMP AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) = 0;
-				virtual STDMETHODIMP DetachFromThreadpool() = 0;
 				void OnThreadpoolCallback(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
 			};
 
@@ -66,6 +60,11 @@ namespace Telegram
 						::CloseThreadpoolTimer(timer);
 					}
 
+					inline static void Reset(_In_ Handle timer) throw()
+					{
+						::SetThreadpoolTimer(timer, nullptr, 0, 0);
+					}
+
 				private:
 					static void NTAPI Callback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle work)
 					{
@@ -91,6 +90,11 @@ namespace Telegram
 					inline static void Close(_In_ Handle wait) throw()
 					{
 						::CloseThreadpoolWait(wait);
+					}
+
+					inline static void Reset(_In_ Handle wait) throw()
+					{
+						::SetThreadpoolWait(wait, nullptr, nullptr);
 					}
 
 				private:
@@ -121,6 +125,11 @@ namespace Telegram
 					inline static void Close(_In_ Handle work) throw()
 					{
 						::CloseThreadpoolWork(work);
+					}
+
+					inline static void Reset(_In_ Handle work) throw()
+					{
+						UNREFERENCED_PARAMETER(work);
 					}
 
 				private:
@@ -166,8 +175,19 @@ namespace Telegram
 					return S_OK;
 				}
 
-			private:
-				virtual STDMETHODIMP AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) final
+				inline HRESULT ResetThreadpoolObject()
+				{
+					if (m_handle == nullptr)
+					{
+						return E_NOT_VALID_STATE;
+					}
+
+					EventTraits::Wait(m_handle, true);
+					EventTraits::Reset(m_handle);
+					return S_OK;
+				}
+
+				virtual HRESULT AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) override final
 				{
 					if (threadpoolEnvironment == nullptr)
 					{
@@ -188,7 +208,7 @@ namespace Telegram
 					return S_OK;
 				}
 
-				virtual STDMETHODIMP DetachFromThreadpool() final
+				virtual HRESULT DetachFromThreadpool() override final
 				{
 					if (m_handle == nullptr)
 					{
@@ -202,6 +222,7 @@ namespace Telegram
 					return S_OK;
 				}
 
+			private:
 				typename EventTraits::Handle m_handle;
 			};
 

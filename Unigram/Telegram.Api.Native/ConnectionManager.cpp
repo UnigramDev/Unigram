@@ -180,6 +180,8 @@ HRESULT ConnectionManager::BoomBaby()
 	ReturnIfFailed(result, connection->AttachToThreadpool(&m_threadpoolEnvironment));
 	ReturnIfFailed(result, connection->Connect());
 
+	Sleep(1000000);
+
 	/*ComPtr<Timer> timer;
 	ComPtr<IEventObject> eventObject;
 

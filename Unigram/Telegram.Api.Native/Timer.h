@@ -23,7 +23,7 @@ namespace Telegram
 				virtual HRESULT STDMETHODCALLTYPE Stop() = 0;
 			};
 
-			class Timer WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ITimer, EventObjectT<EventTraits::TimerTraits>>
+			class Timer WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ITimer>, public EventObjectT<EventTraits::TimerTraits>
 			{
 				typedef std::function<HRESULT()> TimerCallback;
 
@@ -38,7 +38,7 @@ namespace Telegram
 				STDMETHODIMP Stop();
 
 			private:
-				STDMETHODIMP OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
+				HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
 				HRESULT SetTimerTimeout();
 
 				CriticalSection m_criticalSection;
